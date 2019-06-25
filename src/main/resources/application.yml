@@ -1,0 +1,23 @@
+server:
+  session:
+    cookie:
+      name: UISESSION
+security:
+  basic:
+    enabled: false
+  oauth2:
+    client:
+      clientId: c049f975046962b41a7f
+      clientSecret: 319e7ecafbbb8f80742ee160681801a74a12935b
+      accessTokenUri: https://github.com/login/oauth/access_token
+      userAuthorizationUri: https://github.com/login/oauth/authorize
+      scope: repo
+    resource:
+      userInfoUri: https://api.github.com/user
+spring:
+  thymeleaf:
+    cache: false
+
+poc:
+  local-dir: /tmp/git-checkout
+  repo-uri: https://github.com/sebge2/website.git
