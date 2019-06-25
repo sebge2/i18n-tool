@@ -1,4 +1,6 @@
-package be.sgerard.poc.githuboauth.service;
+package be.sgerard.poc.githuboauth.service.git;
+
+import be.sgerard.poc.githuboauth.model.git.PullRequestStatus;
 
 import java.util.List;
 
@@ -11,6 +13,6 @@ public interface PullRequestManager {
 
     List<Integer> listRequests() throws Exception;
 
-    String getStatus(int requestNumber) throws Exception;
+    PullRequestStatus getStatus(int requestNumber) throws Exception;
 
 }

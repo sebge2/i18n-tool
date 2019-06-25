@@ -17,7 +17,12 @@ security:
 spring:
   thymeleaf:
     cache: false
+  datasource:
+    url: jdbc:h2:/tmp/git-oauth
 
 poc:
-  local-dir: /tmp/git-checkout
-  repo-uri: https://github.com/sebge2/website.git
+  local-repository-location: /home/sgerard/sandboxes/emasphere
+  repoUserName: EMAsphere
+  repoName: emasphere
+  lock-timeout-in-s: 120
+  java-translation-bundle-ignored-paths: src/main/java,src/test

@@ -1,13 +1,12 @@
-package be.sgerard.poc.githuboauth.service;
+package be.sgerard.poc.githuboauth.service.git;
 
+import be.sgerard.poc.githuboauth.configuration.AppProperties;
 import be.sgerard.poc.githuboauth.service.auth.AuthenticationManager;
+import be.sgerard.poc.githuboauth.model.git.PullRequestStatus;
 import com.jcabi.github.*;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.StreamSupport;
 
 import static java.util.Collections.emptyMap;
@@ -19,14 +18,12 @@ import static java.util.stream.Collectors.toList;
 @Service
 public class PullRequestManagerImpl implements PullRequestManager {
 
-    private static final Pattern REPOSITORY_REGEX = Pattern.compile("^https://github.com/(.+)/(.+).git$");
-
     private final String repositoryName;
     private final AuthenticationManager authenticationManager;
 
-    public PullRequestManagerImpl(@Value("${poc.repo-uri}") String repoUri,
+    public PullRequestManagerImpl(AppProperties appProperties,
                                   AuthenticationManager authenticationManager) {
-        this.repositoryName = getRepositoryName(repoUri);
+        this.repositoryName = appProperties.getRepoFqnName();
         this.authenticationManager = authenticationManager;
     }
 
@@ -43,8 +40,8 @@ public class PullRequestManagerImpl implements PullRequestManager {
     }
 
     @Override
-    public String getStatus(int requestNumber) throws Exception {
-        return openRepo().pulls().get(requestNumber).json().getString("state");
+    public PullRequestStatus getStatus(int requestNumber) throws Exception {
+        return PullRequestStatus.valueOf(openRepo().pulls().get(requestNumber).json().getString("state"));
     }
 
     private Repo openRepo() {
@@ -53,16 +50,8 @@ public class PullRequestManagerImpl implements PullRequestManager {
         return github.repos().get(new Coordinates.Simple(repositoryName));
     }
 
-    private RtGithub openGitHub() {
+    private Github openGitHub() {
         return new RtGithub(authenticationManager.getCurrentAuth().getToken());
     }
 
-    private String getRepositoryName(String repoUri) {
-        final Matcher matcher = REPOSITORY_REGEX.matcher(repoUri);
-        if (!matcher.matches()) {
-
-        }
-
-        return matcher.group(1) + "/" + matcher.group(2);
-    }
 }

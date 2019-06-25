@@ -1,15 +1,15 @@
-package be.sgerard.poc.githuboauth.auth;
+package be.sgerard.poc.githuboauth.model.auth;
 
 /**
  * @author Sebastien Gerard
  */
-public class Authentication {
+public class AuthenticationDto {
 
     private final String token;
     private final String username;
     private final String email;
 
-    public Authentication(String token, String username, String email) {
+    public AuthenticationDto(String token, String username, String email) {
         this.token = token;
         this.username = username;
         this.email = email;
