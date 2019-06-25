@@ -1,0 +1,17 @@
+app-workspace-table .card {
+    width: 400px;
+    height: 300px;
+    max-height: 300px;
+}
+
+app-repository-initializer .card {
+    width: 400px;
+    height: 300px;
+    max-height: 300px;
+}
+
+app-user-table .card {
+    width: 400px;
+    height: 300px;
+    max-height: 300px;
+}

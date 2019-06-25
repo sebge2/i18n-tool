@@ -1,0 +1,18 @@
+.providers {
+    text-align: center;
+}
+
+:host /deep/ .mat-card-header-text {
+    width: 100%;
+    text-align: center;
+}
+
+svg {
+    width: 100px !important;
+    height: auto !important;
+    transition: ease .3s;
+}
+
+svg:hover {
+    fill: gray;
+}

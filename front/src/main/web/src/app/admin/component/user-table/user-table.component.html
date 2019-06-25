@@ -1,0 +1,54 @@
+<mat-card class="card">
+    <mat-card-header>
+        <mat-card-title><i class="fas fa-users"></i> {{"SHARED.USERS_TITLE" | translate}}</mat-card-title>
+    </mat-card-header>
+    <mat-card-content class="full-height">
+        <mat-table #table [dataSource]="dataSource" on-mouseleave="hoveredUser=null" multiTemplateDataRows>
+            <ng-container matColumnDef="name">
+                <mat-cell *matCellDef="let user">
+                    <img [src]="getAvatarUrl(user)" class="profile-img" alt="{{user.username}}"> {{user.username}}
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="info">
+                <mat-cell *matCellDef="let user">
+                    <i class="fas fa-user-shield" *ngIf="user.hasAdminRole()"></i> &nbsp;
+                    <mat-icon aria-label="Internal user" aria-hidden="false" *ngIf="user.isInternal()">home</mat-icon>
+                    <mat-icon aria-label="External user logged with a Cloud provider" aria-hidden="false" *ngIf="user.isExternal()">cloud_download</mat-icon>
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="action">
+                <mat-cell *matCellDef="let user">
+                    <button id="editButton"
+                            mat-button
+                            *hasRole="['ADMIN']; additionalCondition: user===hoveredUser"
+                            (click)="expandedUser = ((expandedUser != user) ? user : null)">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button id="eraseButton"
+                            mat-button
+                            *hasRole="['ADMIN']; additionalCondition: user===hoveredUser"
+                            (click)="delete(user)"
+                            [disabled]="actionInProgress">
+                        <i class="fas fa-eraser"></i>
+                    </button>
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="expandedDetail">
+                <td mat-cell *matCellDef="let user" [attr.colspan]="displayedColumns.length">
+                    <div class="user-detail-row-element"
+                         [@detailExpand]="user == expandedUser ? 'expanded' : 'collapsed'">
+                        <app-user-table-details [user]="user"></app-user-table-details>
+                    </div>
+                </td>
+            </ng-container>
+
+            <mat-row *matRowDef="let row; columns: displayedColumns;"
+                     on-mouseover="hoveredUser=row"
+                     class="user-row"
+                     [class.expanded-user-row]="expandedUser === row"></mat-row>
+
+            <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="user-detail-row"></tr>
+        </mat-table>
+    </mat-card-content>
+</mat-card>

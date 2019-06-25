@@ -1,0 +1,24 @@
+<mat-expansion-panel [(expanded)]="expanded">
+    <mat-expansion-panel-header>
+        <mat-panel-title>
+            <div [innerHTML]="'TRANSLATIONS.SEARCH_BAR.TITLE' | translate:{criterion: searchRequest.criterion.toString(), workspace: ((this.searchRequest.workspace != null) ? this.searchRequest.workspace.branch : null), locales: ((isSearchForAllLocales() ? true : getLocalesAsHtmlList()))}"></div>
+        </mat-panel-title>
+        <mat-panel-description>
+        </mat-panel-description>
+    </mat-expansion-panel-header>
+
+
+    <div class="container">
+        <app-workspace-selector (valueChange)="onSelectedWorkspace($event)"></app-workspace-selector>
+
+        <app-translation-locales-selector (valueChange)="onSelectedLocales($event)"></app-translation-locales-selector>
+
+        <div>
+            <app-translation-criterion-selector (valueChange)="onSelectedCriterion($event)"></app-translation-criterion-selector>
+        </div>
+
+        <div>
+            <button mat-raised-button (click)="onSearch()"><i class="fas fa-search"></i> {{'TRANSLATIONS.SEARCH_BAR.SEARCH_BUTTON' | translate}}</button>
+        </div>
+    </div>
+</mat-expansion-panel>

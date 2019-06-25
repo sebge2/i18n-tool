@@ -1,0 +1,11 @@
+<mat-nav-list>
+    <a id="menuTranslations" matSubheader routerLink="/translations">Translations</a>
+
+    <mat-divider></mat-divider>
+
+    <a id="menuSettings" matSubheader routerLink="/settings">Settings</a>
+
+    <mat-divider *hasRole="['ADMIN']"></mat-divider>
+
+    <a id="menuAdmin" matSubheader routerLink="/admin" *hasRole="['ADMIN']">Admin</a>
+</mat-nav-list>

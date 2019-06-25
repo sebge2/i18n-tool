@@ -1,0 +1,5 @@
+.start-review {
+    position: absolute;
+    top: calc(100vh - 110px);
+    right: 20px;
+}

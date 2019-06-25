@@ -1,0 +1,18 @@
+<mat-form-field >
+    <mat-label>{{'SHARED.WORKSPACE_LABEL' | translate}}</mat-label>
+
+    <mat-select [value]="value | async" (selectionChange)="onChange($event.value)" required>
+        <mat-select-trigger>
+            <mat-icon *ngIf="(value | async)" class="icon-selection">label</mat-icon>
+            {{(value | async)?.branch}}
+        </mat-select-trigger>
+
+        <mat-option *ngFor="let workspace of (workspaces | async)" [value]="workspace">
+            <mat-icon>label</mat-icon>
+
+            {{workspace.branch}}
+
+            <mat-icon [ngClass]="workspace | workspaceIconCss" class="statusIcon">{{workspace|workspaceIcon}}</mat-icon>
+        </mat-option>
+    </mat-select>
+</mat-form-field>

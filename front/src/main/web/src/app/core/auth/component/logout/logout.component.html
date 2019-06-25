@@ -1,0 +1,32 @@
+<div id="successfulMessage" *ngIf="loggedOut">
+    <div class="errorMessage">
+        <div>
+            <div class="errorMessage-status">
+                <h1>!</h1>
+            </div>
+            <h2>
+                Logged out
+            </h2>
+        </div>
+        <p>
+            You have been logged out from the application.
+            <a id="backToHomepage" routerLink="/">Back to homepage.</a>
+        </p>
+    </div>
+</div>
+
+<div id="unsuccessfulMessage" *ngIf="!loggedOut">
+    <div class="errorMessage">
+        <div>
+            <div class="errorMessage-status">
+                <h1>!</h1>
+            </div>
+            <h2>
+                Logged out fail
+            </h2>
+        </div>
+      <p>
+        You are not logged out. Please <a href=".">refresh this page.</a>
+      </p>
+    </div>
+</div>

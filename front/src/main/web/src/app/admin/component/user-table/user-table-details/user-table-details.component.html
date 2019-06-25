@@ -1,0 +1,37 @@
+<form [formGroup]="form" class="form" (ngSubmit)="save()">
+    <table cellspacing="0">
+        <tr>
+            <td>
+                <table cellspacing="0">
+                    <tr *ngIf="form.controls.username.value !== 'admin'">
+                        <td>
+                            <mat-slide-toggle formControlName="adminRole" color="primary">
+                                {{form.controls.adminRole.value ? 'User is admin' : 'User is not admin'}}
+                            </mat-slide-toggle>
+                        </td>
+                    </tr>
+                    <tr *ngIf="form.controls.internal.value">
+                        <td>
+                            <mat-form-field>
+                                <input matInput
+                                       placeholder="Update Password if Needed"
+                                       formControlName="password"
+                                       [type]="hidePassword ? 'password' : 'text'"
+                                       autocomplete="none">
+                                <button mat-icon-button matSuffix
+                                        (click)="hidePassword = !hidePassword"
+                                        [attr.aria-label]="'Hide password'"
+                                        [attr.aria-pressed]="hidePassword">
+                                    <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+                                </button>
+                            </mat-form-field>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+            <td class="save-button">
+                <mat-spinner-button (btnClick)="save()" [options]="buttonOptions"></mat-spinner-button>
+            </td>
+        </tr>
+    </table>
+</form>

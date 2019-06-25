@@ -1,0 +1,18 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:opService;MVCC=TRUE;
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            client-id: MY_CLIENT_ID
+            client-secret: MY_CLIENT_SECRET
+
+be:
+  sgerard:
+    i18n:
+      repoUserName: MY_REPO_USER_NAME
+      repoName: MY_REPO_NAME
+      git-hub-webhook-secret: WEBHOOK_SECRET
+      base-directory: "${java.io.tmpdir}/git-oauth"

@@ -1,0 +1,21 @@
+.container {
+    display: flex;
+    flex-direction: column;
+}
+
+.container > * {
+    width: 100%;
+}
+
+.container button {
+    margin: 10px 0 0 0;
+}
+
+.container mat-button-toggle-group {
+}
+
+.mat-expansion-panel {
+    position: absolute;
+    z-index: 1;
+    width: calc(100% - 60px);
+}

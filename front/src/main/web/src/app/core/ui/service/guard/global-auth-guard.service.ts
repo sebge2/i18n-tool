@@ -1,0 +1,35 @@
+import {Injectable} from '@angular/core';
+import {ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot} from '@angular/router';
+import {Observable} from 'rxjs';
+import {AuthenticationService} from "../../../auth/service/authentication.service";
+import {map} from "rxjs/operators";
+import {UserRole} from "../../../auth/model/user-role.model";
+import {AuthenticatedUser} from 'src/app/core/auth/model/authenticated-user.model';
+
+@Injectable({
+    providedIn: 'root'
+})
+export class GlobalAuthGuard implements CanActivate {
+
+    constructor(private router: Router,
+                private authenticationService: AuthenticationService) {
+    }
+
+    canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
+        return this.authenticationService.currentUser()
+            .pipe(
+                map((user: AuthenticatedUser) => {
+                        if (user == null) {
+                            this.router.navigate(['/login'], {});
+                            return false;
+                        } else if (user.hasRole(UserRole.MEMBER_OF_ORGANIZATION)) {
+                            return true;
+                        } else {
+                            this.router.navigate(['/error', '403'], {});
+                            return false;
+                        }
+                    }
+                )
+            );
+    }
+}

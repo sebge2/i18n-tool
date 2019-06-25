@@ -1,0 +1,6 @@
+<mat-button-toggle-group name="flagFilter" aria-label="" [value]="value" (change)="onChange($event.value)">
+    <mat-button-toggle [value]="availableCriterion.ALL">{{'TRANSLATIONS.SEARCH_BAR.CRITERION_ALL' | translate}}</mat-button-toggle>
+    <mat-button-toggle [value]="availableCriterion.MISSING_TRANSLATIONS">{{'TRANSLATIONS.SEARCH_BAR.CRITERION_MISSING' | translate}}</mat-button-toggle>
+    <mat-button-toggle [value]="availableCriterion.TRANSLATIONS_CURRENT_USER_UPDATED">{{'TRANSLATIONS.SEARCH_BAR.CRITERION_USER_UPDATED' | translate}}</mat-button-toggle>
+    <mat-button-toggle [value]="availableCriterion.UPDATED_TRANSLATIONS">{{'TRANSLATIONS.SEARCH_BAR.CRITERION_UPDATED' | translate}}</mat-button-toggle>
+</mat-button-toggle-group>
