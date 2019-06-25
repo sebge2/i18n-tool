@@ -1,0 +1,16 @@
+security:
+  oauth2:
+    client:
+      clientId: MY_CLIENT_ID
+      clientSecret: MY_CLIENT_SECRET
+
+poc:
+  repoUserName: MY_REPO_USER_NAME
+  repoName: MY_REPO_NAME
+  git-hub-webhook-secret: WEBHOOK_SECRET
+  local-repository-location: "${java.io.tmpdir}/repo"
+
+
+spring:
+  datasource:
+    url: jdbc:h2:mem:opService;MVCC=TRUE;
