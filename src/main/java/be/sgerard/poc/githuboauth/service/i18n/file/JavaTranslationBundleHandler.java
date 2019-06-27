@@ -45,11 +45,6 @@ public class JavaTranslationBundleHandler implements TranslationBundleHandler {
     }
 
     @Override
-    public boolean support(BundleType bundleType) {
-        return bundleType == BundleType.JAVA;
-    }
-
-    @Override
     public Stream<TranslationBundleFileDto> scanBundles(File directory) {
         return listFiles(directory)
                 .map(
