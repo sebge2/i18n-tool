@@ -18,6 +18,8 @@ public class UiSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     public static final String ROLE_REPO_MEMBER = "REPO_MEMBER";
 
+    public static final String ROLE_USER = "USER";
+
     private final OAuth2ClientContext context;
     private final AppProperties appProperties;
 
@@ -38,7 +40,7 @@ public class UiSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/", "/login**", "/authentication/authenticated")
                 .permitAll()
                 .anyRequest()
-                .hasAnyRole(ROLE_REPO_MEMBER);
+                .hasAnyAuthority(ROLE_REPO_MEMBER, ROLE_USER);
     }
 
 }
