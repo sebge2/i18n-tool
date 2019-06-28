@@ -1,9 +1,13 @@
 package be.sgerard.poc.githuboauth.configuration;
 
+import be.sgerard.poc.githuboauth.service.auth.OrganizationAuthoritiesExtractor;
+import org.springframework.boot.autoconfigure.security.oauth2.client.EnableOAuth2Sso;
+import org.springframework.boot.autoconfigure.security.oauth2.resource.AuthoritiesExtractor;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.boot.autoconfigure.security.oauth2.client.EnableOAuth2Sso;
+import org.springframework.security.oauth2.client.OAuth2ClientContext;
 
 /**
  * @author Sebastien Gerard
@@ -12,13 +16,29 @@ import org.springframework.boot.autoconfigure.security.oauth2.client.EnableOAuth
 @EnableOAuth2Sso
 public class UiSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
+    public static final String ROLE_REPO_MEMBER = "REPO_MEMBER";
+
+    private final OAuth2ClientContext context;
+    private final AppProperties appProperties;
+
+    public UiSecurityConfiguration(OAuth2ClientContext context, AppProperties appProperties) {
+        this.context = context;
+        this.appProperties = appProperties;
+    }
+
+    @Bean
+    public AuthoritiesExtractor organizationAuthoritiesExtractor() {
+        return new OrganizationAuthoritiesExtractor(context, appProperties);
+    }
+
     @Override
     public void configure(HttpSecurity http) throws Exception {
         http.antMatcher("/**")
-            .authorizeRequests()
-            .antMatchers("/", "/login**", "/authentication/authenticated")
-            .permitAll()
-            .anyRequest()
-            .authenticated();
+                .authorizeRequests()
+                .antMatchers("/", "/login**", "/authentication/authenticated")
+                .permitAll()
+                .anyRequest()
+                .hasAnyRole(ROLE_REPO_MEMBER);
     }
+
 }
