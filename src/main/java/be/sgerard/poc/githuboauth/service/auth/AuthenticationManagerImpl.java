@@ -17,13 +17,17 @@ import java.util.Optional;
 @Service
 public class AuthenticationManagerImpl implements AuthenticationManager {
 
+    public static final String EMAIL = "email";
+
+    public static final String AVATAR_URL = "avatar_url";
+
     public AuthenticationManagerImpl() {
     }
 
     @Override
     public AuthenticationDto getCurrentAuth() {
         return doGetCurrentAuth()
-            .orElseThrow(() -> new AccessDeniedException("Please authenticate."));
+                .orElseThrow(() -> new AccessDeniedException("Please authenticate."));
     }
 
     @Override
@@ -41,7 +45,12 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
             @SuppressWarnings("unchecked") final Map<String, String> profileDetails = (Map<String, String>) oauthAuthentication.getUserAuthentication().getDetails();
 
             return Optional.of(
-                new AuthenticationDto(details.getTokenValue(), Objects.toString(oauthAuthentication.getPrincipal(), null), profileDetails.get("email"))
+                    new AuthenticationDto(
+                            details.getTokenValue(),
+                            Objects.toString(oauthAuthentication.getPrincipal(), null),
+                            profileDetails.get(EMAIL),
+                            profileDetails.get(AVATAR_URL)
+                    )
             );
         } else {
             return Optional.empty();
