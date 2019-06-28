@@ -166,7 +166,7 @@ public class RepositoryManagerImpl implements RepositoryManager {
     }
 
     private UsernamePasswordCredentialsProvider createProvider() {
-        return new UsernamePasswordCredentialsProvider(authenticationManager.getCurrentAuth().getToken(), "");
+        return new UsernamePasswordCredentialsProvider(authenticationManager.getAuthToken(), "");
     }
 
     private boolean checkRepoInitialized() {

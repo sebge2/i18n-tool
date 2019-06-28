@@ -1,6 +1,6 @@
 package be.sgerard.poc.githuboauth.service.auth;
 
-import be.sgerard.poc.githuboauth.model.auth.AuthenticationDto;
+import be.sgerard.poc.githuboauth.model.auth.UserDto;
 import org.springframework.security.access.AccessDeniedException;
 
 /**
@@ -8,7 +8,9 @@ import org.springframework.security.access.AccessDeniedException;
  */
 public interface AuthenticationManager {
 
-    AuthenticationDto getCurrentAuth() throws AccessDeniedException;
+    UserDto getCurrentUser() throws AccessDeniedException;
+
+    String getAuthToken() throws AccessDeniedException;
 
     boolean isAuthenticated();
 }

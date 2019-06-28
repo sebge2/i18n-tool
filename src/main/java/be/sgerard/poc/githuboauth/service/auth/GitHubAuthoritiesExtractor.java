@@ -16,12 +16,12 @@ import static be.sgerard.poc.githuboauth.configuration.UiSecurityConfiguration.R
 /**
  * @author Sebastien Gerard
  */
-public class OrganizationAuthoritiesExtractor extends FixedAuthoritiesExtractor {
+public class GitHubAuthoritiesExtractor extends FixedAuthoritiesExtractor {
 
     private final OAuth2ClientContext context;
     private final String repository;
 
-    public OrganizationAuthoritiesExtractor(OAuth2ClientContext context, AppProperties appProperties) {
+    public GitHubAuthoritiesExtractor(OAuth2ClientContext context, AppProperties appProperties) {
         this.context = context;
         this.repository = appProperties.getRepoFqnName();
     }

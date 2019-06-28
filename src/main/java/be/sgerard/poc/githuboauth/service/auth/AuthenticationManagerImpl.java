@@ -1,14 +1,12 @@
 package be.sgerard.poc.githuboauth.service.auth;
 
-import be.sgerard.poc.githuboauth.model.auth.AuthenticationDto;
+import be.sgerard.poc.githuboauth.model.auth.UserDto;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.client.OAuth2ClientContext;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
-import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -17,41 +15,33 @@ import java.util.Optional;
 @Service
 public class AuthenticationManagerImpl implements AuthenticationManager {
 
-    public static final String EMAIL = "email";
+    private final OAuth2ClientContext context;
 
-    public static final String AVATAR_URL = "avatar_url";
-
-    public AuthenticationManagerImpl() {
+    public AuthenticationManagerImpl(OAuth2ClientContext context) {
+        this.context = context;
     }
 
     @Override
-    public AuthenticationDto getCurrentAuth() {
+    public UserDto getCurrentUser() {
         return doGetCurrentAuth()
                 .orElseThrow(() -> new AccessDeniedException("Please authenticate."));
     }
 
     @Override
-    public boolean isAuthenticated() {
-        return doGetCurrentAuth().isPresent();
+    public String getAuthToken() throws AccessDeniedException {
+        return context.getAccessToken().getValue();
     }
 
-    private Optional<AuthenticationDto> doGetCurrentAuth() {
+    @Override
+    public boolean isAuthenticated() {
+        return (context.getAccessToken() != null) && context.getAccessToken().isExpired();
+    }
+
+    private Optional<UserDto> doGetCurrentAuth() {
         final org.springframework.security.core.Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication instanceof OAuth2Authentication) {
-            final OAuth2Authentication oauthAuthentication = (OAuth2Authentication) authentication;
-            final OAuth2AuthenticationDetails details = (OAuth2AuthenticationDetails) oauthAuthentication.getDetails();
-
-            @SuppressWarnings("unchecked") final Map<String, String> profileDetails = (Map<String, String>) oauthAuthentication.getUserAuthentication().getDetails();
-
-            return Optional.of(
-                    new AuthenticationDto(
-                            details.getTokenValue(),
-                            Objects.toString(oauthAuthentication.getPrincipal(), null),
-                            profileDetails.get(EMAIL),
-                            profileDetails.get(AVATAR_URL)
-                    )
-            );
+            return Optional.of((UserDto) authentication.getPrincipal());
         } else {
             return Optional.empty();
         }

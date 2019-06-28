@@ -51,7 +51,7 @@ public class PullRequestManagerImpl implements PullRequestManager {
     }
 
     private Github openGitHub() {
-        return new RtGithub(authenticationManager.getCurrentAuth().getToken());
+        return new RtGithub(authenticationManager.getAuthToken());
     }
 
 }
