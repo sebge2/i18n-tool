@@ -1,8 +1,8 @@
 package be.sgerard.poc.githuboauth.service.git;
 
 import be.sgerard.poc.githuboauth.configuration.AppProperties;
-import be.sgerard.poc.githuboauth.service.auth.AuthenticationManager;
 import be.sgerard.poc.githuboauth.model.git.PullRequestStatus;
+import be.sgerard.poc.githuboauth.service.auth.AuthenticationManager;
 import com.jcabi.github.*;
 import org.springframework.stereotype.Service;
 
@@ -35,8 +35,8 @@ public class PullRequestManagerImpl implements PullRequestManager {
     @Override
     public List<Integer> listRequests() {
         return StreamSupport.stream(openRepo().pulls().iterate(emptyMap()).spliterator(), false)
-            .map(Pull::number)
-            .collect(toList());
+                .map(Pull::number)
+                .collect(toList());
     }
 
     @Override

@@ -5,7 +5,6 @@ import be.sgerard.poc.githuboauth.service.LockService;
 import be.sgerard.poc.githuboauth.service.LockTimeoutException;
 import be.sgerard.poc.githuboauth.service.auth.AuthenticationManager;
 import be.sgerard.poc.githuboauth.service.i18n.file.TranslationFileUtils;
-import org.apache.commons.io.FileUtils;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ListBranchCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -171,7 +170,7 @@ public class RepositoryManagerImpl implements RepositoryManager {
     }
 
     private boolean checkRepoInitialized() {
-        return localRepositoryLocation.exists() && FileUtils.sizeOfDirectory(localRepositoryLocation) > 0;
+        return localRepositoryLocation.exists() && TranslationFileUtils.listFiles(localRepositoryLocation).count() > 0;
     }
 
     private Git getGit() throws Exception {
