@@ -25,4 +25,4 @@ poc:
   repoUserName: EMAsphere
   repoName: emasphere
   lock-timeout-in-s: 120
-  java-translation-bundle-ignored-paths: src/main/java,src/test
+  java-translation-bundle-ignored-paths: src/main/java,src/test,.git,.idea,target/classes

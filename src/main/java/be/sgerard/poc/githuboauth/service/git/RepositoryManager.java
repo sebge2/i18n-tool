@@ -3,6 +3,7 @@ package be.sgerard.poc.githuboauth.service.git;
 import be.sgerard.poc.githuboauth.service.LockTimeoutException;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * @author Sebastien Gerard
@@ -13,6 +14,8 @@ public interface RepositoryManager {
 
     List<String> listBranches() throws RepositoryException, LockTimeoutException;
 
-    <T> T checkoutBranchAndDo(String branchName, RepositoryBrowser<T> repoConsumer) throws RepositoryException, LockTimeoutException;
+    void browseBranch(String branchName, Consumer<BranchBrowsingAPI> apiConsumer) throws RepositoryException, LockTimeoutException;
+
+    String modifyBranch(String branchName, Consumer<BranchModificationAPI> apiConsumer) throws RepositoryException, LockTimeoutException;
 
 }
