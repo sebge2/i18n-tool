@@ -7,10 +7,10 @@ import be.sgerard.poc.githuboauth.model.i18n.file.TranslationFileEntryDto;
 import be.sgerard.poc.githuboauth.service.git.BranchBrowsingAPI;
 import com.fasterxml.jackson.datatype.jdk8.WrappedIOException;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -33,14 +33,16 @@ public class JavaTranslationBundleHandler implements TranslationBundleHandler {
     private static final Pattern BUNDLE_PATTERN = Pattern.compile("^(.+)_([a-z]{2}(_[A-Z]{2})?)\\.properties$");
 
     private final List<String> pathToIgnores;
+    private final AntPathMatcher antPathMatcher;
 
     public JavaTranslationBundleHandler(AppProperties appProperties) {
         this.pathToIgnores = appProperties.getJavaTranslationBundleIgnoredPathsAsList();
+        this.antPathMatcher = new AntPathMatcher();
     }
 
     @Override
     public boolean continueScanning(File directory) {
-        return pathToIgnores.stream().noneMatch(path -> directory.toPath().endsWith(Paths.get(path)));
+        return pathToIgnores.stream().noneMatch(ignoredPathPattern -> antPathMatcher.match(ignoredPathPattern, directory.toPath().toString()));
     }
 
     @Override
