@@ -12,7 +12,11 @@ import java.util.stream.Stream;
  */
 public interface BranchBrowsingAPI {
 
-    Stream<File> listFiles(File file);
+    Stream<File> listAllFiles(File file);
+
+    Stream<File> listNormalFiles(File file);
+
+    Stream<File> listDirectories(File file);
 
     InputStream openFile(File file) throws IOException;
 

@@ -4,6 +4,7 @@ import be.sgerard.poc.githuboauth.configuration.AppProperties;
 import be.sgerard.poc.githuboauth.service.LockService;
 import be.sgerard.poc.githuboauth.service.LockTimeoutException;
 import be.sgerard.poc.githuboauth.service.auth.AuthenticationManager;
+import be.sgerard.poc.githuboauth.service.i18n.file.TranslationFileUtils;
 import org.apache.commons.io.FileUtils;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ListBranchCommand;
@@ -12,9 +13,13 @@ import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
+import java.io.*;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
 
+import static be.sgerard.poc.githuboauth.service.i18n.file.TranslationFileUtils.removeParentFile;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 
@@ -93,14 +98,54 @@ public class RepositoryManagerImpl implements RepositoryManager {
     }
 
     @Override
-    public <T> T checkoutBranchAndDo(String branchName, RepositoryBrowser<T> repoConsumer) throws RepositoryException, LockTimeoutException {
+    public void browseBranch(String branchName, Consumer<BranchBrowsingAPI> apiConsumer) throws RepositoryException, LockTimeoutException {
         try {
-            return lockService.executeInLock(() -> {
+            lockService.executeInLock(() -> {
                 checkoutBranch(branchName);
 
                 refresh();
 
-                return repoConsumer.browse(localRepositoryLocation);
+                final DefaultBranchBrowsingAPI api = new DefaultBranchBrowsingAPI(localRepositoryLocation);
+
+                try {
+                    apiConsumer.accept(api);
+                } finally {
+                    api.close();
+                }
+
+                return null;
+            });
+        } catch (LockTimeoutException | RepositoryException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RepositoryException("Error while listing branches.", e);
+        }
+    }
+
+    @Override
+    public String modifyBranch(String branchName, Consumer<BranchModificationAPI> apiConsumer) throws RepositoryException, LockTimeoutException {
+        try {
+            return lockService.executeInLock(() -> {
+                checkoutBranch(branchName);
+
+                final DefaultBranchModificationAPI api = new DefaultBranchModificationAPI(localRepositoryLocation);
+
+                final String branchNameTmp = branchName + "_i18n_" + LocalDateTime.now();
+
+                try {
+                    createBranch(branchNameTmp);
+
+                    apiConsumer.accept(api);
+
+//                    commitAll();
+
+                    checkoutBranch(branchName);
+                    removeBranch(branchNameTmp);
+                } finally {
+                    api.close();
+                }
+
+                return branchNameTmp;
             });
         } catch (LockTimeoutException | RepositoryException e) {
             throw e;
@@ -117,6 +162,10 @@ public class RepositoryManagerImpl implements RepositoryManager {
         getGit().checkout().setName(branchName).call();
     }
 
+    private void removeBranch(String branchName) throws Exception {
+        getGit().branchDelete().setBranchNames(branchName).call();
+    }
+
     private UsernamePasswordCredentialsProvider createProvider() {
         return new UsernamePasswordCredentialsProvider(authenticationManager.getCurrentAuth().getToken(), "");
     }
@@ -127,7 +176,7 @@ public class RepositoryManagerImpl implements RepositoryManager {
 
     private Git getGit() throws Exception {
         if (git == null) {
-            if(!checkRepoInitialized()){
+            if (!checkRepoInitialized()) {
                 throw new IllegalStateException("The local repository has not been initialized. Hint: call initialize.");
             }
 
@@ -137,15 +186,13 @@ public class RepositoryManagerImpl implements RepositoryManager {
         return git;
     }
 
-    //    private void createBranch(String branchName) throws Exception {
-//        getGit().checkout()
-//                .setCreateBranch(true)
-//                .setName(branchName)
-//                .call();
-//    }
-//
+    private void createBranch(String branchName) throws Exception {
+        getGit().checkout()
+                .setCreateBranch(true)
+                .setName(branchName)
+                .call();
+    }
 
-//
 //    private void commitAll(CommitRequest request) throws Exception {
 //        getGit().add().addFilepattern("*").call();
 //
@@ -157,4 +204,75 @@ public class RepositoryManagerImpl implements RepositoryManager {
 //    private void push() throws Exception {
 //        getGit().push().call();
 //    }
+
+    private static final class DefaultBranchModificationAPI extends DefaultBranchBrowsingAPI implements BranchModificationAPI {
+
+        public DefaultBranchModificationAPI(File localRepositoryLocation) {
+            super(localRepositoryLocation);
+        }
+
+        @Override
+        public OutputStream writeFile(File file) throws IOException {
+            checkNotClosed();
+
+            return new FileOutputStream(new File(getLocalRepositoryLocation(), file.toString()));
+        }
+    }
+
+    private static class DefaultBranchBrowsingAPI implements BranchBrowsingAPI {
+
+        protected final File localRepositoryLocation;
+        private boolean closed = false;
+
+        private DefaultBranchBrowsingAPI(File localRepositoryLocation) {
+            this.localRepositoryLocation = localRepositoryLocation;
+        }
+
+        @Override
+        public Stream<File> listAllFiles(File file) {
+            checkNotClosed();
+
+            return TranslationFileUtils.listFiles(new File(getLocalRepositoryLocation(), file.toString()))
+                    .map(subFile -> removeParentFile(getLocalRepositoryLocation(), subFile));
+        }
+
+        @Override
+        public Stream<File> listNormalFiles(File file) {
+            checkNotClosed();
+
+            return TranslationFileUtils.listFiles(new File(getLocalRepositoryLocation(), file.toString()))
+                    .filter(File::isFile)
+                    .map(subFile -> removeParentFile(getLocalRepositoryLocation(), subFile));
+        }
+
+        @Override
+        public Stream<File> listDirectories(File file) {
+            checkNotClosed();
+
+            return TranslationFileUtils.listFiles(new File(getLocalRepositoryLocation(), file.toString()))
+                    .filter(File::isDirectory)
+                    .map(subFile -> removeParentFile(getLocalRepositoryLocation(), subFile));
+        }
+
+        @Override
+        public InputStream openFile(File file) throws FileNotFoundException {
+            checkNotClosed();
+
+            return new FileInputStream(new File(getLocalRepositoryLocation(), file.toString()));
+        }
+
+        protected File getLocalRepositoryLocation() {
+            return localRepositoryLocation;
+        }
+
+        protected void checkNotClosed() {
+            if (closed) {
+                throw new IllegalStateException("Cannot access the API once closed.");
+            }
+        }
+
+        protected void close() {
+            this.closed = true;
+        }
+    }
 }

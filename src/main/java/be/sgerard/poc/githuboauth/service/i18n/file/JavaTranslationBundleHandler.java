@@ -4,11 +4,11 @@ import be.sgerard.poc.githuboauth.configuration.AppProperties;
 import be.sgerard.poc.githuboauth.model.i18n.file.BundleType;
 import be.sgerard.poc.githuboauth.model.i18n.file.TranslationBundleFileDto;
 import be.sgerard.poc.githuboauth.model.i18n.file.TranslationFileEntryDto;
+import be.sgerard.poc.githuboauth.service.git.BranchBrowsingAPI;
 import com.fasterxml.jackson.datatype.jdk8.WrappedIOException;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.List;
@@ -19,7 +19,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
-import static be.sgerard.poc.githuboauth.service.i18n.file.TranslationFileUtils.listFiles;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
 import static java.util.stream.Collectors.groupingBy;
@@ -45,8 +44,8 @@ public class JavaTranslationBundleHandler implements TranslationBundleHandler {
     }
 
     @Override
-    public Stream<TranslationBundleFileDto> scanBundles(File directory) {
-        return listFiles(directory)
+    public Stream<TranslationBundleFileDto> scanBundles(File directory, BranchBrowsingAPI browseAPI) {
+        return browseAPI.listNormalFiles(directory)
                 .map(
                         file -> {
                             final Matcher matcher = BUNDLE_PATTERN.matcher(file.getName());
@@ -65,13 +64,13 @@ public class JavaTranslationBundleHandler implements TranslationBundleHandler {
     }
 
     @Override
-    public Stream<TranslationFileEntryDto> getEntries(TranslationBundleFileDto bundleFile) throws IOException {
+    public Stream<TranslationFileEntryDto> getEntries(TranslationBundleFileDto bundleFile, BranchBrowsingAPI browseAPI) throws IOException {
         try {
             return bundleFile.getFiles().stream()
                     .flatMap(
                             file -> {
                                 try {
-                                    final PropertyResourceBundle resourceBundle = new PropertyResourceBundle(new FileInputStream(file));
+                                    final PropertyResourceBundle resourceBundle = new PropertyResourceBundle(browseAPI.openFile(file));
 
                                     return resourceBundle.keySet().stream()
                                             .map(key -> new TranslationFileEntryDto(key, singletonMap(getLocale(file), resourceBundle.getString(key))));
