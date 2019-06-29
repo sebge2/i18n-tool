@@ -1,6 +1,7 @@
 package be.sgerard.poc.githuboauth.service.git;
 
 import be.sgerard.poc.githuboauth.configuration.AppProperties;
+import be.sgerard.poc.githuboauth.model.git.CommitRequest;
 import be.sgerard.poc.githuboauth.service.LockService;
 import be.sgerard.poc.githuboauth.service.LockTimeoutException;
 import be.sgerard.poc.githuboauth.service.auth.AuthenticationManager;
@@ -122,7 +123,9 @@ public class RepositoryManagerImpl implements RepositoryManager {
     }
 
     @Override
-    public String modifyBranch(String branchName, Consumer<BranchModificationAPI> apiConsumer) throws RepositoryException, LockTimeoutException {
+    public String modifyBranchAndPush(String branchName,
+                                      CommitRequest commitRequest,
+                                      Consumer<BranchModificationAPI> apiConsumer) throws RepositoryException, LockTimeoutException {
         try {
             return lockService.executeInLock(() -> {
                 checkoutBranch(branchName);
@@ -136,7 +139,8 @@ public class RepositoryManagerImpl implements RepositoryManager {
 
                     apiConsumer.accept(api);
 
-//                    commitAll();
+                    commitAll(commitRequest);
+                    push();
 
                     checkoutBranch(branchName);
                     removeBranch(branchNameTmp);
@@ -192,17 +196,17 @@ public class RepositoryManagerImpl implements RepositoryManager {
                 .call();
     }
 
-//    private void commitAll(CommitRequest request) throws Exception {
-//        getGit().add().addFilepattern("*").call();
-//
-//        getGit().commit()
-//                .setAuthor(request.getAuthorName(), request.getAuthorEmail())
-//                .setMessage(request.getMessage()).call();
-//    }
-//
-//    private void push() throws Exception {
-//        getGit().push().call();
-//    }
+    private void commitAll(CommitRequest request) throws Exception {
+        getGit().add().addFilepattern("*").call();
+
+        getGit().commit()
+                .setAuthor(request.getAuthorName(), request.getAuthorEmail())
+                .setMessage(request.getMessage()).call();
+    }
+
+    private void push() throws Exception {
+        getGit().push().call();
+    }
 
     private static final class DefaultBranchModificationAPI extends DefaultBranchBrowsingAPI implements BranchModificationAPI {
 
