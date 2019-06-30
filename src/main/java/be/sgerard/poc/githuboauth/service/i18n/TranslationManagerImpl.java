@@ -1,10 +1,12 @@
 package be.sgerard.poc.githuboauth.service.i18n;
 
+import be.sgerard.poc.githuboauth.model.i18n.TranslationBundleFileEntity;
 import be.sgerard.poc.githuboauth.model.i18n.TranslationWorkspaceEntity;
 import be.sgerard.poc.githuboauth.model.i18n.TranslationWorkspaceStatus;
 import be.sgerard.poc.githuboauth.model.i18n.file.TranslationBundleFileDto;
 import be.sgerard.poc.githuboauth.model.i18n.file.TranslationFileEntryDto;
 import be.sgerard.poc.githuboauth.service.LockTimeoutException;
+import be.sgerard.poc.githuboauth.service.ResourceNotFoundException;
 import be.sgerard.poc.githuboauth.service.git.RepositoryException;
 import be.sgerard.poc.githuboauth.service.git.RepositoryManager;
 import be.sgerard.poc.githuboauth.service.i18n.file.TranslationBundleWalker;
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -71,18 +74,32 @@ public class TranslationManagerImpl implements TranslationManager {
 
     @Override
     @Transactional
-    public void loadTranslations(String branchName) throws LockTimeoutException, RepositoryException, TranslationLoadingException {
-        // TODO not already loaded
-        repositoryManager.browseBranch(branchName, api -> {
+    public void loadTranslations(String workspaceId) throws LockTimeoutException, RepositoryException, TranslationLoadingException {
+        final TranslationWorkspaceEntity workspaceEntity = repository.findById(workspaceId).orElseThrow(() -> new ResourceNotFoundException(workspaceId));
+
+        if (workspaceEntity.getStatus() != TranslationWorkspaceStatus.AVAILABLE) {
+            throw new IllegalStateException("The workspace status must be available, but was " + workspaceEntity.getStatus() + ".");
+        }
+
+        repositoryManager.browseBranch(workspaceEntity.getBranch(), api -> {
             try {
-                walker.walk(api, this::onBundleFound);
+                walker.walk(api, (bundleFile, entries) -> onBundleFound(workspaceEntity, bundleFile, entries));
             } catch (IOException e) {
                 throw new TranslationLoadingException("Error while loading translation bundle files.", e);
             }
         });
+
+        workspaceEntity.setStatus(TranslationWorkspaceStatus.AVAILABLE);
+        workspaceEntity.setLoadingTime(Instant.now());
     }
 
-    private void onBundleFound(TranslationBundleFileDto bundleFile, Stream<TranslationFileEntryDto> entries) {
-        System.out.println(bundleFile);
+    private void onBundleFound(TranslationWorkspaceEntity workspaceEntity,
+                               TranslationBundleFileDto bundleFile,
+                               Stream<TranslationFileEntryDto> entries) {
+        workspaceEntity.getFiles().add(
+                new TranslationBundleFileEntity(workspaceEntity, bundleFile.getName(), bundleFile.getLocationDirectory().toString())
+        );
+
+        // TODO
     }
 }

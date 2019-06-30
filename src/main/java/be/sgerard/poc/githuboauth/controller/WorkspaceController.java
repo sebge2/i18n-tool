@@ -27,9 +27,9 @@ public class WorkspaceController {
         return translationManager.getWorkspaces();
     }
 
-    @RequestMapping(name = "/workspace", method = RequestMethod.PUT)
+    @PutMapping(path = "/workspace")
     @Async
-    public void loadWorkspace(@RequestAttribute(name = "do") WorkspaceAction doAction) throws LockTimeoutException, RepositoryException {
+    public void executeWorkspacesAction(@RequestParam(name = "do") WorkspaceListAction doAction) throws LockTimeoutException, RepositoryException {
         switch (doAction) {
             case SCAN:
                 translationManager.scanBranches();
@@ -37,14 +37,30 @@ public class WorkspaceController {
         }
     }
 
-    @GetMapping("/workspace/{id}")
+    @GetMapping(path = "/workspace/{id}")
     public TranslationWorkspaceEntity getWorkspace(@PathVariable String id) {
         return translationManager.getWorkspace(id)
                 .orElseThrow(() -> new ResourceNotFoundException(id));
     }
 
-    public enum WorkspaceAction {
+    @PutMapping(path = "/workspace/{id}")
+    @Async
+    public void executeWorkspaceAction(@PathVariable String id,
+                                       @RequestParam(name = "do") WorkspaceAction doAction) throws LockTimeoutException, RepositoryException {
+        switch (doAction) {
+            case LOAD:
+                translationManager.loadTranslations(id);
+                break;
+        }
+    }
+
+    public enum WorkspaceListAction {
 
         SCAN
+    }
+
+    public enum WorkspaceAction {
+
+        LOAD
     }
 }

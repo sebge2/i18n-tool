@@ -3,13 +3,15 @@ package be.sgerard.poc.githuboauth.model.i18n;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.Instant;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.UUID;
 
 /**
  * @author Sebastien Gerard
  */
-@Entity(name = "BranchTranslationWorkspace")
+@Entity(name = "branch_translation_workspace")
 public class TranslationWorkspaceEntity {
 
     @Id
@@ -32,6 +34,9 @@ public class TranslationWorkspaceEntity {
 
     @Column
     private Instant loadingTime;
+
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
+    private Collection<TranslationBundleFileEntity> files = new HashSet<>();
 
     @Version
     private int version;
@@ -91,6 +96,14 @@ public class TranslationWorkspaceEntity {
 
     public void setLoadingTime(Instant loadingTime) {
         this.loadingTime = loadingTime;
+    }
+
+    public Collection<TranslationBundleFileEntity> getFiles() {
+        return files;
+    }
+
+    public void setFiles(Collection<TranslationBundleFileEntity> files) {
+        this.files = files;
     }
 
     public int getVersion() {
