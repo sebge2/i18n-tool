@@ -6,6 +6,7 @@ import be.sgerard.poc.githuboauth.service.auth.AuthenticationManager;
 import com.jcabi.github.*;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.StreamSupport;
 
@@ -28,8 +29,12 @@ public class PullRequestManagerImpl implements PullRequestManager {
     }
 
     @Override
-    public int createRequest(String message, String currentBranch, String targetBranch) throws Exception {
-        return openRepo().pulls().create(message, currentBranch, targetBranch).number();
+    public int createRequest(String message, String currentBranch, String targetBranch) throws RepositoryException {
+        try {
+            return openRepo().pulls().create(message, currentBranch, targetBranch).number();
+        } catch (IOException e) {
+            throw new RepositoryException("Error while creating pull request from branch [" + currentBranch + "].", e);
+        }
     }
 
     @Override
@@ -40,8 +45,12 @@ public class PullRequestManagerImpl implements PullRequestManager {
     }
 
     @Override
-    public PullRequestStatus getStatus(int requestNumber) throws Exception {
-        return PullRequestStatus.valueOf(openRepo().pulls().get(requestNumber).json().getString("state"));
+    public PullRequestStatus getStatus(int requestNumber) throws RepositoryException {
+        try {
+            return PullRequestStatus.valueOf(openRepo().pulls().get(requestNumber).json().getString("state"));
+        } catch (IOException e) {
+            throw new RepositoryException("Error while retrieving the status of the pull request " + requestNumber + ".", e);
+        }
     }
 
     private Repo openRepo() {

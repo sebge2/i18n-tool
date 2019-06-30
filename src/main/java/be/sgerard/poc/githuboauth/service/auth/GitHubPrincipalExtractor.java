@@ -1,5 +1,6 @@
 package be.sgerard.poc.githuboauth.service.auth;
 
+import be.sgerard.poc.githuboauth.model.auth.ExternalUserDto;
 import be.sgerard.poc.githuboauth.model.auth.UserDto;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.PrincipalExtractor;
 
@@ -17,16 +18,23 @@ public class GitHubPrincipalExtractor implements PrincipalExtractor {
 
     public static final String AVATAR_URL = "avatar_url";
 
-    public GitHubPrincipalExtractor() {
+    public static final String EXTERNAL_ID = "node_id";
 
+    private final AuthenticationManager authenticationManager;
+
+    public GitHubPrincipalExtractor(AuthenticationManager authenticationManager) {
+        this.authenticationManager = authenticationManager;
     }
 
     @Override
     public UserDto extractPrincipal(Map<String, Object> map) {
-        return new UserDto(
+        final ExternalUserDto externalUserDto = new ExternalUserDto(
+                Objects.toString(map.get(EXTERNAL_ID)),
                 Objects.toString(map.get(LOGIN)),
                 Objects.toString(map.get(EMAIL)),
                 Objects.toString(map.get(AVATAR_URL))
         );
+
+        return UserDto.builder(authenticationManager.createOrUpdateUser(externalUserDto)).build();
     }
 }

@@ -1,8 +1,8 @@
 package be.sgerard.poc.githuboauth.service.i18n.file;
 
-import be.sgerard.poc.githuboauth.model.i18n.file.TranslationBundleFileDto;
-import be.sgerard.poc.githuboauth.model.i18n.file.TranslationFileEntryDto;
-import be.sgerard.poc.githuboauth.service.git.BranchBrowsingAPI;
+import be.sgerard.poc.githuboauth.model.i18n.file.ScannedBundleFileDto;
+import be.sgerard.poc.githuboauth.model.i18n.file.ScannedBundleFileKeyDto;
+import be.sgerard.poc.githuboauth.service.git.RepositoryAPI;
 import com.fasterxml.jackson.datatype.jdk8.WrappedIOException;
 import org.springframework.stereotype.Service;
 
@@ -25,12 +25,12 @@ public class TranslationBundleWalker {
         this.handlers = handlers;
     }
 
-    public void walk(BranchBrowsingAPI browseAPI, TranslationBundleConsumer consumer) throws IOException {
+    public void walk(RepositoryAPI browseAPI, TranslationBundleConsumer consumer) throws IOException {
         walk(new File("/"), browseAPI, consumer, handlers);
     }
 
     private void walk(File directory,
-                      BranchBrowsingAPI browseAPI,
+                      RepositoryAPI browseAPI,
                       TranslationBundleConsumer consumer,
                       List<TranslationBundleHandler> handlers) throws IOException {
         final List<TranslationBundleHandler> updatedHandlers = handlers.stream()
@@ -46,7 +46,7 @@ public class TranslationBundleWalker {
                 handler.scanBundles(directory, browseAPI)
                         .forEach(bundle -> {
                             try {
-                                consumer.onBundleFound(bundle, handler.getEntries(bundle, browseAPI));
+                                consumer.onBundleFound(bundle, handler.scanKeys(bundle, browseAPI));
                             } catch (IOException e) {
                                 throw new WrappedIOException(e);
                             }
@@ -68,7 +68,7 @@ public class TranslationBundleWalker {
 
     public interface TranslationBundleConsumer {
 
-        void onBundleFound(TranslationBundleFileDto bundleFile, Stream<TranslationFileEntryDto> entries);
+        void onBundleFound(ScannedBundleFileDto bundleFile, Stream<ScannedBundleFileKeyDto> entries);
 
     }
 

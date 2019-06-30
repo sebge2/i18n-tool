@@ -9,10 +9,10 @@ import java.util.List;
  */
 public interface PullRequestManager {
 
-    int createRequest(String message, String currentBranch, String targetBranch) throws Exception;
+    int createRequest(String message, String currentBranch, String targetBranch) throws RepositoryException;
 
-    List<Integer> listRequests() throws Exception;
+    List<Integer> listRequests() throws RepositoryException;
 
-    PullRequestStatus getStatus(int requestNumber) throws Exception;
+    PullRequestStatus getStatus(int requestNumber) throws RepositoryException;
 
 }

@@ -1,5 +1,7 @@
 package be.sgerard.poc.githuboauth.service.i18n.file;
 
+import org.springframework.util.StringUtils;
+
 import java.io.File;
 import java.util.stream.Stream;
 
@@ -19,5 +21,9 @@ public final class TranslationFileUtils {
 
     public static File removeParentFile(File parentFile, File fullFile) {
         return fullFile.toPath().subpath(parentFile.toPath().getNameCount(), fullFile.toPath().getNameCount()).toFile();
+    }
+
+    public static String mapToNullIfEmpty(String value){
+        return StringUtils.isEmpty(value) ? null : value;
     }
 }

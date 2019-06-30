@@ -19,6 +19,7 @@ public class AppProperties {
     private String repoName;
     private int lockTimeoutInS = 120;
     private String javaTranslationBundleIgnoredPaths;
+    private String gitHubWebhookSecret = "";
 
     public AppProperties() {
     }
@@ -75,5 +76,13 @@ public class AppProperties {
 
     public void setJavaTranslationBundleIgnoredPaths(String javaTranslationBundleIgnoredPaths) {
         this.javaTranslationBundleIgnoredPaths = javaTranslationBundleIgnoredPaths;
+    }
+
+    public String getGitHubWebhookSecret() {
+        return gitHubWebhookSecret;
+    }
+
+    public void setGitHubWebhookSecret(String gitHubWebhookSecret) {
+        this.gitHubWebhookSecret = gitHubWebhookSecret;
     }
 }

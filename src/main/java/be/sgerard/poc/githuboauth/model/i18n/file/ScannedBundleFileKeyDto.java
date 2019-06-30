@@ -7,9 +7,9 @@ import java.util.Map;
 /**
  * @author Sebastien Gerard
  */
-public class TranslationFileEntryDto {
+public class ScannedBundleFileKeyDto {
 
-    public static TranslationFileEntryDto merge(TranslationFileEntryDto first, TranslationFileEntryDto second) {
+    public static ScannedBundleFileKeyDto merge(ScannedBundleFileKeyDto first, ScannedBundleFileKeyDto second) {
         if (first == null) {
             return second;
         } else {
@@ -19,7 +19,7 @@ public class TranslationFileEntryDto {
                 final Map<Locale, String> translations = new LinkedHashMap<>(first.getTranslations());
                 translations.putAll(second.getTranslations());
 
-                return new TranslationFileEntryDto(first.getKey(), translations);
+                return new ScannedBundleFileKeyDto(first.getKey(), translations);
             }
         }
     }
@@ -27,7 +27,7 @@ public class TranslationFileEntryDto {
     private final String key;
     private final Map<Locale, String> translations;
 
-    public TranslationFileEntryDto(String key, Map<Locale, String> translations) {
+    public ScannedBundleFileKeyDto(String key, Map<Locale, String> translations) {
         this.key = key;
         this.translations = translations;
     }
@@ -42,6 +42,6 @@ public class TranslationFileEntryDto {
 
     @Override
     public String toString() {
-        return "TranslationFileEntryDto(" + key + ")";
+        return "ScannedBundleFileKeyDto(" + key + ")";
     }
 }

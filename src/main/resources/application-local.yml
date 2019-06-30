@@ -1,0 +1,12 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  datasource:
+    url: jdbc:h2:file:/tmp/h2-db;DB_CLOSE_ON_EXIT=FALSE;
+poc:
+    local-repository-location: ${LOCAL_REPOSITORY}

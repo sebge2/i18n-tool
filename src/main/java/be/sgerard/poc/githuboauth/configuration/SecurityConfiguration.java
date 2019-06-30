@@ -1,5 +1,6 @@
 package be.sgerard.poc.githuboauth.configuration;
 
+import be.sgerard.poc.githuboauth.service.auth.AuthenticationManager;
 import be.sgerard.poc.githuboauth.service.auth.GitHubAuthoritiesExtractor;
 import be.sgerard.poc.githuboauth.service.auth.GitHubPrincipalExtractor;
 import org.springframework.boot.autoconfigure.security.oauth2.client.EnableOAuth2Sso;
@@ -16,7 +17,7 @@ import org.springframework.security.oauth2.client.OAuth2ClientContext;
  */
 @Configuration
 @EnableOAuth2Sso
-public class UiSecurityConfiguration extends WebSecurityConfigurerAdapter {
+public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     public static final String ROLE_REPO_MEMBER = "REPO_MEMBER";
 
@@ -24,10 +25,14 @@ public class UiSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private final OAuth2ClientContext context;
     private final AppProperties appProperties;
+    private final AuthenticationManager authenticationManager;
 
-    public UiSecurityConfiguration(OAuth2ClientContext context, AppProperties appProperties) {
+    public SecurityConfiguration(OAuth2ClientContext context,
+                                 AppProperties appProperties,
+                                 AuthenticationManager authenticationManager) {
         this.context = context;
         this.appProperties = appProperties;
+        this.authenticationManager = authenticationManager;
     }
 
     @Bean
@@ -37,17 +42,18 @@ public class UiSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Bean
     public PrincipalExtractor principalExtractor() {
-        return new GitHubPrincipalExtractor();
+        return new GitHubPrincipalExtractor(authenticationManager);
     }
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
         http.antMatcher("/**")
                 .authorizeRequests()
-                .antMatchers("/", "/login**", "/authentication/authenticated")
+                .antMatchers("/", "/login**", "/api/authentication/authenticated", "/api/git-hub/**")
                 .permitAll()
                 .anyRequest()
-                .hasAnyAuthority(ROLE_REPO_MEMBER, ROLE_USER);
+                .hasAnyAuthority(ROLE_REPO_MEMBER, ROLE_USER)
+                .and().csrf().disable();
     }
 
 }

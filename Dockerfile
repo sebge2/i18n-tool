@@ -1,0 +1,14 @@
+FROM openjdk:12-jdk-alpine
+VOLUME /srv
+
+ARG DEPENDENCY=target/dependency
+ARG CONTAINER_APP_FOLDER=/opt/translation-tool
+ENV CONTAINER_APP_FOLDER ${CONTAINER_APP_FOLDER}
+
+COPY ${DEPENDENCY}/BOOT-INF/lib ${CONTAINER_APP_FOLDER}/lib
+COPY ${DEPENDENCY}/META-INF ${CONTAINER_APP_FOLDER}/META-INF
+COPY ${DEPENDENCY}/BOOT-INF/classes ${CONTAINER_APP_FOLDER}
+
+EXPOSE 8080
+
+CMD java -Dspring.profiles.active=container -cp ${CONTAINER_APP_FOLDER}:${CONTAINER_APP_FOLDER}/lib/* be.sgerard.poc.githuboauth.GithubOauthApplication

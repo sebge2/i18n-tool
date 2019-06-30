@@ -1,4 +1,6 @@
-package be.sgerard.poc.githuboauth.model.i18n;
+package be.sgerard.poc.githuboauth.model.i18n.persistence;
+
+import be.sgerard.poc.githuboauth.model.i18n.WorkspaceStatus;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -8,11 +10,13 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.UUID;
 
+import static java.util.Collections.unmodifiableCollection;
+
 /**
  * @author Sebastien Gerard
  */
-@Entity(name = "branch_translation_workspace")
-public class TranslationWorkspaceEntity {
+@Entity(name = "translation_workspace")
+public class WorkspaceEntity {
 
     @Id
     private String id;
@@ -24,7 +28,7 @@ public class TranslationWorkspaceEntity {
     @NotNull
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private TranslationWorkspaceStatus status;
+    private WorkspaceStatus status;
 
     @Column
     private String pullRequestBranch;
@@ -33,21 +37,21 @@ public class TranslationWorkspaceEntity {
     private Integer pullRequestNumber;
 
     @Column
-    private Instant loadingTime;
+    private Instant initializationTime;
 
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
-    private Collection<TranslationBundleFileEntity> files = new HashSet<>();
+    private Collection<BundleFileEntity> files = new HashSet<>();
 
     @Version
     private int version;
 
-    TranslationWorkspaceEntity() {
+    WorkspaceEntity() {
     }
 
-    public TranslationWorkspaceEntity(String branch) {
+    public WorkspaceEntity(String branch) {
         this.id = UUID.randomUUID().toString();
         this.branch = branch;
-        this.status = TranslationWorkspaceStatus.AVAILABLE;
+        this.status = WorkspaceStatus.NOT_INITIALIZED;
     }
 
     public String getId() {
@@ -66,11 +70,11 @@ public class TranslationWorkspaceEntity {
         this.branch = branch;
     }
 
-    public TranslationWorkspaceStatus getStatus() {
+    public WorkspaceStatus getStatus() {
         return status;
     }
 
-    public void setStatus(TranslationWorkspaceStatus status) {
+    public void setStatus(WorkspaceStatus status) {
         this.status = status;
     }
 
@@ -90,20 +94,20 @@ public class TranslationWorkspaceEntity {
         this.pullRequestNumber = pullRequestNumber;
     }
 
-    public Instant getLoadingTime() {
-        return loadingTime;
+    public Optional<Instant> getInitializationTime() {
+        return Optional.ofNullable(initializationTime);
     }
 
-    public void setLoadingTime(Instant loadingTime) {
-        this.loadingTime = loadingTime;
+    public void setInitializationTime(Instant initializationTime) {
+        this.initializationTime = initializationTime;
     }
 
-    public Collection<TranslationBundleFileEntity> getFiles() {
-        return files;
+    public Collection<BundleFileEntity> getFiles() {
+        return unmodifiableCollection(files);
     }
 
-    public void setFiles(Collection<TranslationBundleFileEntity> files) {
-        this.files = files;
+    void addFile(BundleFileEntity file) {
+        this.files.add(file);
     }
 
     public int getVersion() {

@@ -1,20 +1,30 @@
-package be.sgerard.poc.githuboauth.model.i18n;
+package be.sgerard.poc.githuboauth.model.i18n.persistence;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.UUID;
+
+import static java.util.Collections.unmodifiableCollection;
 
 /**
  * @author Sebastien Gerard
  */
 @Entity(name = "translation_bundle_file")
-public class TranslationBundleFileEntity {
+@Table(
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"workspace", "location"})
+        }
+)
+public class BundleFileEntity {
 
     @Id
     private String id;
 
     @ManyToOne(optional = false)
-    private TranslationWorkspaceEntity workspace;
+    @JoinColumn(name = "workspace")
+    private WorkspaceEntity workspace;
 
     @NotNull
     @Column(nullable = false)
@@ -24,15 +34,21 @@ public class TranslationBundleFileEntity {
     @Column(nullable = false)
     private String location;
 
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
+    private Collection<BundleKeyEntity> keys = new HashSet<>();
+
     @Version
     private int version;
 
-    TranslationBundleFileEntity() {
+    BundleFileEntity() {
     }
 
-    public TranslationBundleFileEntity(TranslationWorkspaceEntity workspace, String name, String location) {
+    public BundleFileEntity(WorkspaceEntity workspace, String name, String location) {
         this.id = UUID.randomUUID().toString();
+
         this.workspace = workspace;
+        this.workspace.addFile(this);
+
         this.name = name;
         this.location = location;
     }
@@ -45,11 +61,11 @@ public class TranslationBundleFileEntity {
         this.id = id;
     }
 
-    public TranslationWorkspaceEntity getWorkspace() {
+    public WorkspaceEntity getWorkspace() {
         return workspace;
     }
 
-    public void setWorkspace(TranslationWorkspaceEntity workspace) {
+    public void setWorkspace(WorkspaceEntity workspace) {
         this.workspace = workspace;
     }
 
@@ -67,6 +83,14 @@ public class TranslationBundleFileEntity {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public Collection<BundleKeyEntity> getKeys() {
+        return unmodifiableCollection(keys);
+    }
+
+    void addKey(BundleKeyEntity keyEntity) {
+        this.keys.add(keyEntity);
     }
 
     public int getVersion() {

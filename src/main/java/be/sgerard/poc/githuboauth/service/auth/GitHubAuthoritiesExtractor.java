@@ -11,7 +11,7 @@ import org.springframework.security.oauth2.client.OAuth2ClientContext;
 import java.util.List;
 import java.util.Map;
 
-import static be.sgerard.poc.githuboauth.configuration.UiSecurityConfiguration.ROLE_REPO_MEMBER;
+import static be.sgerard.poc.githuboauth.configuration.SecurityConfiguration.ROLE_REPO_MEMBER;
 
 /**
  * @author Sebastien Gerard
