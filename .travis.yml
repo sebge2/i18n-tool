@@ -25,4 +25,4 @@ deploy:
     secret_access_key:
       secure: $AWS_SECRET_KEY
     skip_cleanup: true
-    zip-file: ./config/Dockerrun.aws.json
+    zip-file: ./target/config/Dockerrun.aws.json
