@@ -1,6 +1,9 @@
 {
   "AWSEBDockerrunVersion": "1",
-  "Image":  "sebge2/github-oauth:0.0.1-SNAPSHOT",
+  "Image": {
+    "Name": "sebge2/github-oauth:0.0.1-SNAPSHOT",
+    "Update": "true"
+  },
   "Ports": [
     {
       "ContainerPort": 8080,
