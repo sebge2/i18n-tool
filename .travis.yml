@@ -11,6 +11,13 @@ jdk:
   - oraclejdk11
 
 deploy:
-  provider: script
-  script: "echo '$DOCKER_PASSWORD' | docker login -u '$DOCKER_USERNAME' --password-stdin && mvn clean deploy"
-  skip_cleanup: true
+  - provider: script
+    script: "echo '$DOCKER_PASSWORD' | docker login -u '$DOCKER_USERNAME' --password-stdin && mvn clean deploy"
+    skip_cleanup: true
+
+  - provider: elasticbeanstalk
+    region: "eu-central-1"
+    app: "github-oauth"
+    env: "github-oauth"
+    bucket_name: "elasticbeanstalk-eu-central-1-712777222880"
+    bucket_path: "github-oauth"

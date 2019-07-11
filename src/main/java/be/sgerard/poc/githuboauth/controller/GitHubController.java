@@ -40,4 +40,21 @@ public class GitHubController {
         );
     }
 
+
+    @PostMapping(path = "/git-hub/toto")
+    public ResponseEntity<?> toto(RequestEntity<String> requestEntity) {
+        return webHookService.executeWebHook(
+                requestEntity,
+                new WebHookCallback() {
+                    @Override
+                    public void onPullRequest(GitHubPullRequestEventDto pullRequest) {
+                        System.out.println(pullRequest.getId() + " n°" + pullRequest.getNumber() + " status " + pullRequest.getStatus());
+                        logger.error(pullRequest.getId() + " n°" + pullRequest.getNumber() + " status " + pullRequest.getStatus());
+                    }
+                }
+        );
+    }
+
+
+
 }
