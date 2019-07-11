@@ -18,7 +18,7 @@ deploy:
   - provider: elasticbeanstalk
     region: "eu-central-1"
     app: "github-oauth"
-    env: "github-oauth"
+    env: "github-oauth2"
     bucket_name: "elasticbeanstalk-eu-central-1-712777222880"
     bucket_path: "github-oauth"
     access_key_id: $AWS_ACCESS_KEY
