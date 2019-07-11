@@ -28,7 +28,7 @@ public class GitHubController {
     }
 
     @PostMapping(path = "/git-hub/event")
-    @ApiOperation(value = "GitHub webhook notifying events on the repository. Only called by GitHub.com")
+    @ApiOperation(value = "GitHub Webhook notifying events on the repository. Only called by GitHub.com")
     public ResponseEntity<?> handle(RequestEntity<String> requestEntity) {
         return webHookService.executeWebHook(
                 requestEntity,

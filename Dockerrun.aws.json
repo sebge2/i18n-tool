@@ -1,7 +1,7 @@
 {
   "AWSEBDockerrunVersion": "1",
   "Image": {
-    "Name": "sebge2/github-oauth:0.0.1-SNAPSHOT",
+    "Name": "@docker.repository@/@docker.image.name@:@docker.image.version@",
     "Update": "true"
   },
   "Ports": [
