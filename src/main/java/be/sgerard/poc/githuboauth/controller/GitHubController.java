@@ -3,6 +3,7 @@ package be.sgerard.poc.githuboauth.controller;
 import be.sgerard.poc.githuboauth.controller.support.GitHubWebHookService;
 import be.sgerard.poc.githuboauth.controller.support.webhook.GitHubPullRequestEventDto;
 import be.sgerard.poc.githuboauth.controller.support.webhook.WebHookCallback;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.RequestEntity;
@@ -27,6 +28,7 @@ public class GitHubController {
     }
 
     @PostMapping(path = "/git-hub/event")
+    @ApiOperation(value = "GitHub webhook notifying events on the repository. Only called by GitHub.com")
     public ResponseEntity<?> handle(RequestEntity<String> requestEntity) {
         return webHookService.executeWebHook(
                 requestEntity,
@@ -39,22 +41,5 @@ public class GitHubController {
                 }
         );
     }
-
-
-    @PostMapping(path = "/git-hub/toto")
-    public ResponseEntity<?> toto(RequestEntity<String> requestEntity) {
-        return webHookService.executeWebHook(
-                requestEntity,
-                new WebHookCallback() {
-                    @Override
-                    public void onPullRequest(GitHubPullRequestEventDto pullRequest) {
-                        System.out.println(pullRequest.getId() + " n°" + pullRequest.getNumber() + " status " + pullRequest.getStatus());
-                        logger.error(pullRequest.getId() + " n°" + pullRequest.getNumber() + " status " + pullRequest.getStatus());
-                    }
-                }
-        );
-    }
-
-
 
 }
