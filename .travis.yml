@@ -12,11 +12,8 @@ jdk:
 
 deploy:
   - provider: script
-    script: "echo '$DOCKER_PASSWORD' | docker login -u '$DOCKER_USERNAME' --password-stdin && mvn com.spotify:dockerfile-maven-plugin:build "
-    skip_cleanup: true
-
-  - provider: script
-    script: rm Dockerfile
+    script: "echo '$DOCKER_PASSWORD' | docker login -u '$DOCKER_USERNAME' --password-stdin && mvn com.spotify:dockerfile-maven-plugin:push"
+#    skip_cleanup: true
 
   - provider: elasticbeanstalk
     region: "eu-central-1"
@@ -27,3 +24,4 @@ deploy:
     access_key_id: $AWS_ACCESS_KEY
     secret_access_key:
       secure: $AWS_SECRET_KEY
+#    skip_cleanup: false
