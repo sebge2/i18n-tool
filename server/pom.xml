@@ -91,6 +91,9 @@
             <resource>
                 <directory>${project.build.directory}/generated-resources/web</directory>
             </resource>
+            <resource>
+                <directory>${basedir}/src/main/resources</directory>
+            </resource>
         </resources>
 
         <plugins>
