@@ -124,9 +124,9 @@
                         <configuration>
                             <artifactItems>
                                 <artifactItem>
-                                    <groupId>com.emasphere</groupId>
-                                    <artifactId>front-angular</artifactId>
-                                    <version>0.0.1-SNAPSHOT</version>
+                                    <groupId>be.sgerard.tools</groupId>
+                                    <artifactId>i18n-tool-front</artifactId>
+                                    <version>${project.version}</version>
                                     <type>zip</type>
                                 </artifactItem>
                             </artifactItems>
