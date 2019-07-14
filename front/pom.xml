@@ -6,7 +6,6 @@
         <groupId>be.sgerard.tools</groupId>
         <artifactId>i18n-tool-parent</artifactId>
         <version>0.0.1-SNAPSHOT</version>
-        <relativePath/>
     </parent>
     <artifactId>i18n-tool-front</artifactId>
     <name>i18n-tool-front</name>
