@@ -12,7 +12,7 @@ import java.util.Optional;
  */
 public interface AuthenticationManager {
 
-    UserEntity getCurrentUser() throws AccessDeniedException;
+    Optional<UserEntity> getCurrentUser();
 
     Optional<UserEntity> getUserById(String id);
 

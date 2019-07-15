@@ -1,6 +1,8 @@
 package be.sgerard.poc.githuboauth.controller;
 
 import be.sgerard.poc.githuboauth.model.auth.UserDto;
+import be.sgerard.poc.githuboauth.model.auth.UserEntity;
+import be.sgerard.poc.githuboauth.service.ResourceNotFoundException;
 import be.sgerard.poc.githuboauth.service.auth.AuthenticationManager;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -25,14 +27,11 @@ public class AuthenticationController {
     @GetMapping("/authentication/user")
     @ApiOperation(value = "Retrieves the current authenticated user.")
     public UserDto getCurrentUser() {
-        return UserDto.builder(authenticationManager.getCurrentUser())
+        final UserEntity currentUser = authenticationManager.getCurrentUser()
+                .orElseThrow(() -> new ResourceNotFoundException("There is no current user."));
+
+        return UserDto.builder(currentUser)
                 .roles(authenticationManager.getCurrentUserRoles())
                 .build();
-    }
-
-    @GetMapping("/authentication/authenticated")
-    @ApiOperation(value = "Returns whether the current user is authenticated.")
-    public boolean isAuthenticated() {
-        return authenticationManager.isAuthenticated();
     }
 }

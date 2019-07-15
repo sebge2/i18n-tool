@@ -17,7 +17,6 @@ import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
 import java.util.Collection;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -37,9 +36,14 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
     }
 
     @Override
-    public UserEntity getCurrentUser() {
-        return doGetCurrentUser()
-                .orElseThrow(() -> new AccessDeniedException("Please authenticate."));
+    public Optional<UserEntity> getCurrentUser() {
+        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication instanceof OAuth2Authentication) {
+            return getUserFromAuthentication((OAuth2Authentication) authentication);
+        } else {
+            return Optional.empty();
+        }
     }
 
     @Override
@@ -95,16 +99,6 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
         final Optional<UserEntity> user = getUserFromEvent(event);
 
         System.out.println(user);
-    }
-
-    private Optional<UserEntity> doGetCurrentUser() {
-        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        if (authentication instanceof OAuth2Authentication) {
-            return getUserFromAuthentication((OAuth2Authentication) authentication);
-        } else {
-            return Optional.empty();
-        }
     }
 
     private Optional<UserEntity> getUserFromEvent(AbstractSubProtocolEvent event) {
