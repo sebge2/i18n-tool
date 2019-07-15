@@ -1,4 +1,4 @@
-package be.sgerard.poc.githuboauth.controller.support.webhook;
+package be.sgerard.poc.githuboauth.controller.webhook;
 
 /**
  * @author Sebastien Gerard

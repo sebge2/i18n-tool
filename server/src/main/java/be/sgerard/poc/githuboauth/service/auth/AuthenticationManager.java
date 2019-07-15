@@ -4,6 +4,7 @@ import be.sgerard.poc.githuboauth.model.auth.ExternalUserDto;
 import be.sgerard.poc.githuboauth.model.auth.UserEntity;
 import org.springframework.security.access.AccessDeniedException;
 
+import java.util.Collection;
 import java.util.Optional;
 
 /**
@@ -20,4 +21,6 @@ public interface AuthenticationManager {
     String getAuthToken() throws AccessDeniedException;
 
     boolean isAuthenticated();
+
+    Collection<String> getCurrentUserRoles() throws AccessDeniedException;
 }

@@ -1,8 +1,8 @@
 package be.sgerard.poc.githuboauth.controller;
 
-import be.sgerard.poc.githuboauth.controller.support.GitHubWebHookService;
-import be.sgerard.poc.githuboauth.controller.support.webhook.GitHubPullRequestEventDto;
-import be.sgerard.poc.githuboauth.controller.support.webhook.WebHookCallback;
+import be.sgerard.poc.githuboauth.controller.webhook.GitHubWebHookService;
+import be.sgerard.poc.githuboauth.controller.webhook.GitHubPullRequestEventDto;
+import be.sgerard.poc.githuboauth.controller.webhook.WebHookCallback;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -5,6 +5,11 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.security.Principal;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
+import static java.util.Collections.unmodifiableSet;
 
 /**
  * @author Sebastien Gerard
@@ -36,11 +41,15 @@ public class UserDto implements Principal {
     @ApiModelProperty(notes = "URL of the user avatar.")
     private final String avatarUrl;
 
+    @ApiModelProperty(notes = "User roles.")
+    private final Collection<String> roles;
+
     private UserDto(Builder builder) {
         id = builder.id;
         username = builder.username;
         email = builder.email;
         avatarUrl = builder.avatarUrl;
+        roles = unmodifiableSet(builder.roles);
     }
 
     @Override
@@ -65,6 +74,10 @@ public class UserDto implements Principal {
         return avatarUrl;
     }
 
+    public Collection<String> getRoles() {
+        return roles;
+    }
+
     @Override
     public String toString() {
         return "User(" + username + ", " + email + ')';
@@ -76,6 +89,7 @@ public class UserDto implements Principal {
         private String username;
         private String email;
         private String avatarUrl;
+        private final Set<String> roles = new HashSet<>();
 
         private Builder() {
         }
@@ -97,6 +111,11 @@ public class UserDto implements Principal {
 
         public Builder avatarUrl(String avatarUrl) {
             this.avatarUrl = avatarUrl;
+            return this;
+        }
+
+        public Builder roles(Collection<String> roles) {
+            this.roles.addAll(roles);
             return this;
         }
 

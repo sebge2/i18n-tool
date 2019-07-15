@@ -6,6 +6,7 @@ import be.sgerard.poc.githuboauth.model.auth.UserEntity;
 import org.springframework.context.event.EventListener;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.OAuth2ClientContext;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
@@ -14,7 +15,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.socket.messaging.AbstractSubProtocolEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
+import java.util.Collection;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * @author Sebastien Gerard
@@ -66,6 +71,17 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
     @Override
     public boolean isAuthenticated() {
         return (context.getAccessToken() != null) && context.getAccessToken().isExpired();
+    }
+
+    @Override
+    public Collection<String> getCurrentUserRoles() throws AccessDeniedException {
+        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication instanceof OAuth2Authentication) {
+            return ((OAuth2Authentication) authentication).getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(toList());
+        } else {
+            throw new AccessDeniedException("Please authenticate.");
+        }
     }
 
     @EventListener

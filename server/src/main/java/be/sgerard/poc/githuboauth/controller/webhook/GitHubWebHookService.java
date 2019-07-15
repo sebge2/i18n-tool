@@ -1,8 +1,6 @@
-package be.sgerard.poc.githuboauth.controller.support;
+package be.sgerard.poc.githuboauth.controller.webhook;
 
 import be.sgerard.poc.githuboauth.configuration.AppProperties;
-import be.sgerard.poc.githuboauth.controller.support.webhook.GitHubPullRequestEventDto;
-import be.sgerard.poc.githuboauth.controller.support.webhook.WebHookCallback;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.codec.digest.HmacAlgorithms;

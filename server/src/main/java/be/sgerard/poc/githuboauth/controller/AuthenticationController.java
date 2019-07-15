@@ -25,7 +25,9 @@ public class AuthenticationController {
     @GetMapping("/authentication/user")
     @ApiOperation(value = "Retrieves the current authenticated user.")
     public UserDto getCurrentUser() {
-        return UserDto.builder(authenticationManager.getCurrentUser()).build();
+        return UserDto.builder(authenticationManager.getCurrentUser())
+                .roles(authenticationManager.getCurrentUserRoles())
+                .build();
     }
 
     @GetMapping("/authentication/authenticated")
