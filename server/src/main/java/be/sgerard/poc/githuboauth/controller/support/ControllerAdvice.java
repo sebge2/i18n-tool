@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.simp.annotation.SendToUser;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 /**
@@ -23,6 +24,12 @@ public class ControllerAdvice {
     @ExceptionHandler(value = ResourceNotFoundException.class)
     public Object handleResourceNotFoundException(ResourceNotFoundException exception) {
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(value = BadCredentialsException.class)
+    public String handleBadCredentialsException() {
+        // TODO if the token expired
+        return "forward:/login";
     }
 
     @MessageExceptionHandler

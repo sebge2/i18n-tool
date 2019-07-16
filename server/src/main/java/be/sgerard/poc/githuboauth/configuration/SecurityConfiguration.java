@@ -49,7 +49,14 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     public void configure(HttpSecurity http) throws Exception {
         http.antMatcher("/**")
                 .authorizeRequests()
-                .antMatchers("/", "/login", "/api/authentication/authenticated", "/api/authentication/user", "/api/git-hub/**")
+                .antMatchers(
+                        "/",
+                        "/*",
+                        "/login",
+                        "/api/authentication/authenticated",
+                        "/api/authentication/user",
+                        "/api/git-hub/**"
+                )
                 .permitAll()
                 .anyRequest()
                 .hasAnyAuthority(ROLE_REPO_MEMBER, ROLE_USER)

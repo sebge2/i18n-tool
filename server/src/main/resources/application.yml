@@ -1,6 +1,4 @@
 security:
-  basic:
-    enabled: false
   oauth2:
     client:
       clientId: ${GIT_HUB_OAUTH_CLIENT}
