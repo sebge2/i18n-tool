@@ -136,7 +136,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
 
 //            translationManager.updateBundleFiles(workspace); TODO
 
-            api.commitAll(new CommitRequest(message, authenticationManager.getCurrentUser().getUsername(), authenticationManager.getCurrentUser().getEmail()));
+//            api.commitAll(new CommitRequest(message, authenticationManager.getCurrentUser().getUsername(), authenticationManager.getCurrentUser().getEmail()));
 
             api.getPullRequestManager().createRequest(message, pullRequestBranch, workspace.getBranch());
         });
