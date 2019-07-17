@@ -1,3 +1,17 @@
-menu ici
-<router-outlet></router-outlet>
-et puis là aussi hein
+<div class="main-container" [class.smallSize]="smallSize">
+    <app-header [sideBar]="snav"></app-header>
+
+    <mat-sidenav-container class="sidenav-container">
+        <mat-sidenav #snav
+                     [mode]="smallSize ? 'over' : 'side'"
+                     [fixedInViewport]="smallSize"
+                     [opened]="!smallSize"
+                     (click)="onClick()">
+            <app-menu></app-menu>
+        </mat-sidenav>
+
+        <mat-sidenav-content class="inner-container">
+            <router-outlet></router-outlet>
+        </mat-sidenav-content>
+    </mat-sidenav-container>
+</div>

@@ -1,0 +1,18 @@
+.app-name {
+  margin-left: 8px;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.profile-img {
+  margin-right: 5px;
+  background-size: 30px;
+  width: 30px;
+  height: 30px;
+}
+
+.user-name {
+  font-size: 15px;
+}

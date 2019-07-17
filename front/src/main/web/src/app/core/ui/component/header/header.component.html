@@ -1,0 +1,27 @@
+<mat-toolbar color="primary">
+  <button mat-icon-button (click)="sideBar.toggle()">
+    <mat-icon>menu</mat-icon>
+  </button>
+
+  <h1 class="app-name">I18n Tool</h1>
+
+  <span class="spacer"></span>
+
+<!--  <div *ngIf="currentUser != null">-->
+    <button mat-button [matMenuTriggerFor]="loginMenu">
+<!--      <img [src]="getUrl()" class="img-rounded profile-img" alt="{{getDisplayName()}}">-->
+
+      <ng-template [ngIf]="!smallSize">
+        <span class="user-name"><!--{{ getDisplayName() }}-->toto</span>
+      </ng-template>
+
+      <span class="caret"></span>
+    </button>
+
+    <mat-menu #loginMenu="matMenu">
+      <button mat-menu-item>
+        <a routerLink="/logout"><i class="fa fa-sign-out"></i> Logout</a>
+      </button>
+    </mat-menu>
+<!--  </div>-->
+</mat-toolbar>
