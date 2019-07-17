@@ -5,6 +5,7 @@ const routes: Routes = [
     {path: '', pathMatch: 'full', redirectTo: '/translations'},
     {path: '', loadChildren: './core/ui/core-ui.module#CoreUiModule'},
     {path: 'error', loadChildren: './error/core-error.module#CoreErrorModule'},
+    {path: 'logout', loadChildren: './core/auth/core-auth.module#CoreAuthModule'},
     {path: '**', redirectTo: "/error/404"}
 ];
 
