@@ -26,8 +26,8 @@
         <docker-plugin.version>1.4.1</docker-plugin.version>
         <swagger.version>2.9.2</swagger.version>
 
-        <node.version>v8.11.3</node.version>
-        <npm.version>6.3.0</npm.version>
+        <node.version>v11.1.0</node.version>
+        <npm.version>6.10.1</npm.version>
         <npm.command>npm</npm.command>
     </properties>
 

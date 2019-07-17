@@ -10,8 +10,8 @@ const appRoutes: Routes = [
         component: MainComponent,
         canActivate: [GlobalAuthGuard],
         children: [
-            {path: 'translations', loadChildren: './../../translations/translations.module#TranslationsModule'},
-            {path: 'settings', loadChildren: './../../settings/settings.module#SettingsModule'}
+            {path: 'translations', loadChildren: () => import('./../../translations/translations.module').then(m => m.TranslationsModule)},
+            {path: 'settings', loadChildren: () => import('./../../settings/settings.module').then(m => m.SettingsModule)}
         ]
     }
 ];
