@@ -6,18 +6,18 @@ import {AppComponent} from './app.component';
 import {CoreUiModule} from "./core/ui/core-ui.module";
 import {CoreAuthModule} from "./core/auth/core-auth.module";
 import {CoreEventModule} from "./core/event/core-event.module";
+import {CoreSharedModule} from "./core/shared/core-shared-module";
 
 @NgModule({
-    declarations: [
-        AppComponent
-    ],
+    declarations: [AppComponent],
     imports: [
         BrowserModule,
         AppRoutingModule,
 
         CoreUiModule,
         CoreAuthModule,
-        CoreEventModule
+        CoreEventModule,
+        CoreSharedModule
     ],
     bootstrap: [AppComponent]
 })
