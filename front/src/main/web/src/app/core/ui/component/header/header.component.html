@@ -7,12 +7,12 @@
 
   <span class="spacer"></span>
 
-<!--  <div *ngIf="currentUser != null">-->
+  <div *ngIf="currentUser != null">
     <button mat-button [matMenuTriggerFor]="loginMenu">
-<!--      <img [src]="getUrl()" class="img-rounded profile-img" alt="{{getDisplayName()}}">-->
+      <img [src]="getUrl()" class="img-rounded profile-img" alt="{{getDisplayName()}}">
 
       <ng-template [ngIf]="!smallSize">
-        <span class="user-name"><!--{{ getDisplayName() }}-->toto</span>
+        <span class="user-name">{{ getDisplayName() }}</span>
       </ng-template>
 
       <span class="caret"></span>
@@ -23,5 +23,5 @@
         <a routerLink="/logout"><i class="fa fa-sign-out"></i> Logout</a>
       </button>
     </mat-menu>
-<!--  </div>-->
+  </div>
 </mat-toolbar>

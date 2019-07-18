@@ -1,7 +1,7 @@
-package be.sgerard.poc.githuboauth.service.auth;
+package be.sgerard.poc.githuboauth.service.security.auth;
 
-import be.sgerard.poc.githuboauth.model.auth.ExternalUserDto;
-import be.sgerard.poc.githuboauth.model.auth.UserDto;
+import be.sgerard.poc.githuboauth.model.security.user.ExternalUserDto;
+import be.sgerard.poc.githuboauth.model.security.user.UserDto;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.PrincipalExtractor;
 
 import java.util.Map;

@@ -1,6 +1,5 @@
 package be.sgerard.poc.githuboauth.service.i18n;
 
-import be.sgerard.poc.githuboauth.model.git.CommitRequest;
 import be.sgerard.poc.githuboauth.model.i18n.WorkspaceStatus;
 import be.sgerard.poc.githuboauth.model.i18n.file.ScannedBundleFileDto;
 import be.sgerard.poc.githuboauth.model.i18n.file.ScannedBundleFileKeyDto;
@@ -10,7 +9,7 @@ import be.sgerard.poc.githuboauth.model.i18n.persistence.BundleKeyEntryEntity;
 import be.sgerard.poc.githuboauth.model.i18n.persistence.WorkspaceEntity;
 import be.sgerard.poc.githuboauth.service.LockTimeoutException;
 import be.sgerard.poc.githuboauth.service.ResourceNotFoundException;
-import be.sgerard.poc.githuboauth.service.auth.AuthenticationManager;
+import be.sgerard.poc.githuboauth.service.security.auth.AuthenticationManager;
 import be.sgerard.poc.githuboauth.service.git.RepositoryException;
 import be.sgerard.poc.githuboauth.service.git.RepositoryManager;
 import be.sgerard.poc.githuboauth.service.i18n.file.TranslationBundleWalker;

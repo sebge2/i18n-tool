@@ -1,9 +1,9 @@
 package be.sgerard.poc.githuboauth.controller;
 
-import be.sgerard.poc.githuboauth.model.auth.UserDto;
-import be.sgerard.poc.githuboauth.model.auth.UserEntity;
+import be.sgerard.poc.githuboauth.model.security.user.UserDto;
+import be.sgerard.poc.githuboauth.model.security.user.UserEntity;
 import be.sgerard.poc.githuboauth.service.ResourceNotFoundException;
-import be.sgerard.poc.githuboauth.service.auth.AuthenticationManager;
+import be.sgerard.poc.githuboauth.service.security.auth.AuthenticationManager;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.GetMapping;

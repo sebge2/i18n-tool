@@ -1,4 +1,4 @@
-package be.sgerard.poc.githuboauth.service.auth;
+package be.sgerard.poc.githuboauth.service.security.auth;
 
 import be.sgerard.poc.githuboauth.configuration.AppProperties;
 import com.jcabi.github.Coordinates;

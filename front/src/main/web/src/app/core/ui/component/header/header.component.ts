@@ -2,6 +2,8 @@ import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {Subscription} from 'rxjs';
 import {MatSidenav} from '@angular/material';
 import {ScreenService} from '../../service/screen.service';
+import {User} from "../../../auth/model/user.model";
+import {AuthenticationService} from "../../../auth/service/authentication.service";
 
 @Component({
     selector: 'app-header',
@@ -12,13 +14,13 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
     @Input() sideBar: MatSidenav;
 
-    // private _currentUser: User = null;
-    // private currentUserSubscription: Subscription;
+    private _currentUser: User = null;
+    private currentUserSubscription: Subscription;
 
     private _smallSizeSubscription: Subscription;
     private _smallSize: boolean;
 
-    constructor(/*private authService: AuthService,*/
+    constructor(private authService: AuthenticationService,
                 mediaService: ScreenService) {
         this._smallSizeSubscription = mediaService.smallSize
             .subscribe(
@@ -27,29 +29,29 @@ export class HeaderComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        // this.currentUserSubscription = this.authService.currentUser.subscribe(
-        //   user => this._currentUser = user
-        // );
+        this.currentUserSubscription = this.authService.currentUser.subscribe(
+            user => this._currentUser = user
+        );
     }
 
     ngOnDestroy(): void {
-        // this.currentUserSubscription.unsubscribe();
+        this.currentUserSubscription.unsubscribe();
         this._smallSizeSubscription.unsubscribe();
     }
 
-    // get currentUser(): User {
-    //   return this._currentUser;
-    // }
+    get currentUser(): User {
+        return this._currentUser;
+    }
 
-    // getUrl(): string {
-    //     return (this.currentUser != null)
-    //         ? this.currentUser.photoUrl
-    //         : null;
-    // }
+    getUrl(): string {
+        return (this.currentUser != null)
+            ? this.currentUser.avatarUrl
+            : null;
+    }
 
-    // getDisplayName(): string {
-    //     return (this.currentUser) != null ? this.currentUser.displayName : null;
-    // }
+    getDisplayName(): string {
+        return (this.currentUser) != null ? this.currentUser.userName : null;
+    }
 
     get smallSize(): boolean {
         return this._smallSize;

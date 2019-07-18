@@ -1,6 +1,6 @@
-package be.sgerard.poc.githuboauth.service.auth;
+package be.sgerard.poc.githuboauth.service.security.user;
 
-import be.sgerard.poc.githuboauth.model.auth.UserEntity;
+import be.sgerard.poc.githuboauth.model.security.user.UserEntity;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

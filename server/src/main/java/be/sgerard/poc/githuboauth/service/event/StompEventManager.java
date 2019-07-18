@@ -1,6 +1,6 @@
 package be.sgerard.poc.githuboauth.service.event;
 
-import be.sgerard.poc.githuboauth.model.auth.UserEntity;
+import be.sgerard.poc.githuboauth.model.security.user.UserEntity;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;

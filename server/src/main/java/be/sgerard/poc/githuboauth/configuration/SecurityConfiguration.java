@@ -1,8 +1,8 @@
 package be.sgerard.poc.githuboauth.configuration;
 
-import be.sgerard.poc.githuboauth.service.auth.AuthenticationManager;
-import be.sgerard.poc.githuboauth.service.auth.GitHubAuthoritiesExtractor;
-import be.sgerard.poc.githuboauth.service.auth.GitHubPrincipalExtractor;
+import be.sgerard.poc.githuboauth.service.security.auth.AuthenticationManager;
+import be.sgerard.poc.githuboauth.service.security.auth.GitHubAuthoritiesExtractor;
+import be.sgerard.poc.githuboauth.service.security.auth.GitHubPrincipalExtractor;
 import org.springframework.boot.autoconfigure.security.oauth2.client.EnableOAuth2Sso;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.AuthoritiesExtractor;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.PrincipalExtractor;

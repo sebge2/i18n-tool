@@ -1,4 +1,4 @@
-package be.sgerard.poc.githuboauth.model.auth;
+package be.sgerard.poc.githuboauth.model.security.user;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;

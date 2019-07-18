@@ -3,7 +3,7 @@ package be.sgerard.poc.githuboauth.service.git;
 import be.sgerard.poc.githuboauth.configuration.AppProperties;
 import be.sgerard.poc.githuboauth.service.LockService;
 import be.sgerard.poc.githuboauth.service.LockTimeoutException;
-import be.sgerard.poc.githuboauth.service.auth.AuthenticationManager;
+import be.sgerard.poc.githuboauth.service.security.auth.AuthenticationManager;
 import be.sgerard.poc.githuboauth.service.i18n.file.TranslationFileUtils;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;

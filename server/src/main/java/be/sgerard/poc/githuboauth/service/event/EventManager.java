@@ -1,6 +1,6 @@
 package be.sgerard.poc.githuboauth.service.event;
 
-import be.sgerard.poc.githuboauth.model.auth.UserEntity;
+import be.sgerard.poc.githuboauth.model.security.user.UserEntity;
 
 /**
  * @author Sebastien Gerard

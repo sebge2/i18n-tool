@@ -1,4 +1,4 @@
-package be.sgerard.poc.githuboauth.model.auth;
+package be.sgerard.poc.githuboauth.model.security.user;
 
 /**
  * @author Sebastien Gerard

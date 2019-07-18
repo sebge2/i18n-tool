@@ -1,7 +1,7 @@
-package be.sgerard.poc.githuboauth.service.auth;
+package be.sgerard.poc.githuboauth.service.security.auth;
 
-import be.sgerard.poc.githuboauth.model.auth.ExternalUserDto;
-import be.sgerard.poc.githuboauth.model.auth.UserEntity;
+import be.sgerard.poc.githuboauth.model.security.user.ExternalUserDto;
+import be.sgerard.poc.githuboauth.model.security.user.UserEntity;
 import org.springframework.security.access.AccessDeniedException;
 
 import java.util.Collection;

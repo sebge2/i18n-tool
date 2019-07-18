@@ -1,9 +1,13 @@
-package be.sgerard.poc.githuboauth.service.auth;
+package be.sgerard.poc.githuboauth.service.security.auth;
 
-import be.sgerard.poc.githuboauth.model.auth.ExternalUserDto;
-import be.sgerard.poc.githuboauth.model.auth.UserDto;
-import be.sgerard.poc.githuboauth.model.auth.UserEntity;
+import be.sgerard.poc.githuboauth.model.security.user.ExternalUserDto;
+import be.sgerard.poc.githuboauth.model.security.user.UserDto;
+import be.sgerard.poc.githuboauth.model.security.user.UserEntity;
+import be.sgerard.poc.githuboauth.service.security.user.UserRepository;
 import org.springframework.context.event.EventListener;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
+import org.springframework.messaging.support.MessageHeaderAccessor;
+import org.springframework.messaging.support.NativeMessageHeaderAccessor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -13,6 +17,7 @@ import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.socket.messaging.AbstractSubProtocolEvent;
+import org.springframework.web.socket.messaging.SessionConnectedEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
 import java.util.Collection;
@@ -89,9 +94,13 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
     }
 
     @EventListener
-    public void onSessionConnectedEvent(SessionDisconnectEvent event) {
+    public void onSessionConnectedEvent(SessionConnectedEvent event) {
+        final MessageHeaderAccessor accessor = NativeMessageHeaderAccessor.getAccessor(event.getMessage(), SimpMessageHeaderAccessor.class);
+        final String sessionId = SimpMessageHeaderAccessor.getSessionId(accessor.getMessageHeaders());
+
         final Optional<UserEntity> user = getUserFromEvent(event);
-        System.out.println(user);
+
+        System.out.println(sessionId);
     }
 
     @EventListener
