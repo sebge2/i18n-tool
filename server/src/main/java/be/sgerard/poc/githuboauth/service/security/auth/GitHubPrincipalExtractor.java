@@ -2,6 +2,7 @@ package be.sgerard.poc.githuboauth.service.security.auth;
 
 import be.sgerard.poc.githuboauth.model.security.user.ExternalUserDto;
 import be.sgerard.poc.githuboauth.model.security.user.UserDto;
+import be.sgerard.poc.githuboauth.service.security.user.UserManager;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.PrincipalExtractor;
 
 import java.util.Map;
@@ -20,10 +21,10 @@ public class GitHubPrincipalExtractor implements PrincipalExtractor {
 
     public static final String EXTERNAL_ID = "node_id";
 
-    private final AuthenticationManager authenticationManager;
+    private final UserManager userManager;
 
-    public GitHubPrincipalExtractor(AuthenticationManager authenticationManager) {
-        this.authenticationManager = authenticationManager;
+    public GitHubPrincipalExtractor(UserManager userManager) {
+        this.userManager = userManager;
     }
 
     @Override
@@ -35,6 +36,6 @@ public class GitHubPrincipalExtractor implements PrincipalExtractor {
                 Objects.toString(map.get(AVATAR_URL))
         );
 
-        return UserDto.builder(authenticationManager.createOrUpdateUser(externalUserDto)).build();
+        return UserDto.builder(userManager.createOrUpdateUser(externalUserDto)).build();
     }
 }

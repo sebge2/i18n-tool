@@ -1,8 +1,8 @@
 package be.sgerard.poc.githuboauth.configuration;
 
-import be.sgerard.poc.githuboauth.service.security.auth.AuthenticationManager;
 import be.sgerard.poc.githuboauth.service.security.auth.GitHubAuthoritiesExtractor;
 import be.sgerard.poc.githuboauth.service.security.auth.GitHubPrincipalExtractor;
+import be.sgerard.poc.githuboauth.service.security.user.UserManager;
 import org.springframework.boot.autoconfigure.security.oauth2.client.EnableOAuth2Sso;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.AuthoritiesExtractor;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.PrincipalExtractor;
@@ -25,14 +25,14 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private final OAuth2ClientContext context;
     private final AppProperties appProperties;
-    private final AuthenticationManager authenticationManager;
+    private final UserManager userManager;
 
     public SecurityConfiguration(OAuth2ClientContext context,
                                  AppProperties appProperties,
-                                 AuthenticationManager authenticationManager) {
+                                 UserManager userManager) {
         this.context = context;
         this.appProperties = appProperties;
-        this.authenticationManager = authenticationManager;
+        this.userManager = userManager;
     }
 
     @Bean
@@ -42,7 +42,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Bean
     public PrincipalExtractor principalExtractor() {
-        return new GitHubPrincipalExtractor(authenticationManager);
+        return new GitHubPrincipalExtractor(userManager);
     }
 
     @Override
