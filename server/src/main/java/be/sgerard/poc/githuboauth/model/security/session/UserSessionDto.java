@@ -3,6 +3,7 @@ package be.sgerard.poc.githuboauth.model.security.session;
 import be.sgerard.poc.githuboauth.model.security.user.UserDto;
 
 import java.time.Instant;
+import java.util.Optional;
 
 /**
  * @author Sebastien Gerard
@@ -11,6 +12,15 @@ public class UserSessionDto {
 
     public static Builder userSessionDto() {
         return new Builder();
+    }
+
+    public static Builder userSessionDto(UserSessionEntity userSessionEntity) {
+        return userSessionDto()
+                .id(userSessionEntity.getId())
+                .user(UserDto.builder(userSessionEntity.getUser()).build())
+                .simpSessionId(userSessionEntity.getSimpSessionId())
+                .loginTime(userSessionEntity.getLoginTime())
+                .logoutTime(userSessionEntity.getLogoutTime());
     }
 
     private final String id;
@@ -43,8 +53,8 @@ public class UserSessionDto {
         return loginTime;
     }
 
-    public Instant getLogoutTime() {
-        return logoutTime;
+    public Optional<Instant> getLogoutTime() {
+        return Optional.ofNullable(logoutTime);
     }
 
     public static final class Builder {

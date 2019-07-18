@@ -33,8 +33,7 @@ public class UserSessionEntity {
     @Column(nullable = false)
     private Instant loginTime;
 
-    @NotNull
-    @Column(nullable = false)
+    @Column
     private Instant logoutTime;
 
     @Version
