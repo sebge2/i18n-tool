@@ -1,6 +1,9 @@
 package be.sgerard.poc.githuboauth.model.security.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -15,6 +18,7 @@ import static java.util.Collections.unmodifiableSet;
  * @author Sebastien Gerard
  */
 @ApiModel(description = "Description of the user.")
+@JsonDeserialize(builder = UserDto.Builder.class)
 public class UserDto implements Principal {
 
     public static Builder builder() {
@@ -83,6 +87,8 @@ public class UserDto implements Principal {
         return "User(" + username + ", " + email + ')';
     }
 
+    @JsonPOJOBuilder(withPrefix = "")
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder {
 
         private String id;

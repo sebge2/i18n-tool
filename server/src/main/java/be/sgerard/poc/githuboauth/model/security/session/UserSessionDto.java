@@ -1,6 +1,9 @@
 package be.sgerard.poc.githuboauth.model.security.session;
 
 import be.sgerard.poc.githuboauth.model.security.user.UserDto;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -11,6 +14,7 @@ import java.util.Optional;
  * @author Sebastien Gerard
  */
 @ApiModel(description = "Description of a user session.")
+@JsonDeserialize(builder = UserSessionDto.Builder.class)
 public class UserSessionDto {
 
     public static Builder userSessionDto() {
@@ -69,6 +73,8 @@ public class UserSessionDto {
         return Optional.ofNullable(logoutTime);
     }
 
+    @JsonPOJOBuilder(withPrefix = "")
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder {
 
         private String id;

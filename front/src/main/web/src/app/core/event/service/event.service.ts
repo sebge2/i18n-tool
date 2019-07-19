@@ -13,11 +13,11 @@ export class EventService {
     }
 
     public subscribe<T>(destination: string, type: { new(raw: T): T; }): Observable<T> {
-        return this.rxStompService.watch(destination)
+        return this.rxStompService.watch("/topic/" + destination)
             .pipe(map((message: Message) => new type(<T>JSON.parse(message.body))));
     }
 
     public publish(destination: string, payload: any): void {
-        this.rxStompService.publish({destination: destination, body: payload});
+        this.rxStompService.publish({destination: "/app/" + destination, body: JSON.stringify(payload)});
     }
 }

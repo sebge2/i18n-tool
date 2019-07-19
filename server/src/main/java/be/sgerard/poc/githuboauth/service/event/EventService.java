@@ -8,9 +8,9 @@ import be.sgerard.poc.githuboauth.model.security.user.UserEntity;
  */
 public interface EventService {
 
-    String ALL_TOPIC_EVENT = "/topic/event";
+    String ALL_TOPIC_EVENT = "/topic/";
 
-    String USER_TOPIC_EVENT = "/queue/event";
+    String USER_TOPIC_EVENT = "/queue/";
 
     void broadcastInternally(ApplicationEvent event);
 

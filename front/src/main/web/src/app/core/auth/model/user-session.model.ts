@@ -2,37 +2,37 @@ import {User} from "./user.model";
 
 export class UserSession {
 
-  private _id: string;
-  private _user: User;
-  private _simpSessionId: string;
-  private _loginTime: Date;
-  private _logoutTime: Date;
+  private id: string;
+  private user: User;
+  private simpSessionId: string;
+  private loginTime: Date;
+  private logoutTime: Date;
 
   constructor(userSession: UserSession = <UserSession>{}) {
-    this._id = userSession.id;
-    this._user = new User(userSession.user);
-    this._simpSessionId = userSession.simpSessionId;
-    this._loginTime = userSession.loginTime;
-    this._logoutTime= userSession.logoutTime;
+    this.id = userSession.id;
+    this.user = new User(userSession.user);
+    this.simpSessionId = userSession.simpSessionId;
+    this.loginTime = userSession.loginTime;
+    this.logoutTime= userSession.logoutTime;
   }
 
-  get id(): string {
-    return this._id;
+  getId(): string {
+    return this.id;
   }
 
-  get user(): User {
-    return this._user;
+  getUser(): User {
+    return this.user;
   }
 
-  get simpSessionId(): string {
-    return this._simpSessionId;
+  getSimpSessionId(): string {
+    return this.simpSessionId;
   }
 
-  get loginTime(): Date {
-    return this._loginTime;
+  getLoginTime(): Date {
+    return this.loginTime;
   }
 
-  get logoutTime(): Date {
-    return this._logoutTime;
+  getLogoutTime(): Date {
+    return this.logoutTime;
   }
 }
