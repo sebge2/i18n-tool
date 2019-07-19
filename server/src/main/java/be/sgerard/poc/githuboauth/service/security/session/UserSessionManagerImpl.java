@@ -1,7 +1,11 @@
 package be.sgerard.poc.githuboauth.service.security.session;
 
+import be.sgerard.poc.githuboauth.model.security.session.ConnectedUserSessionEvent;
+import be.sgerard.poc.githuboauth.model.security.session.DisconnectedUserSessionEvent;
+import be.sgerard.poc.githuboauth.model.security.session.UserSessionDto;
 import be.sgerard.poc.githuboauth.model.security.session.UserSessionEntity;
 import be.sgerard.poc.githuboauth.model.security.user.UserEntity;
+import be.sgerard.poc.githuboauth.service.event.EventService;
 import be.sgerard.poc.githuboauth.service.security.auth.AuthenticationManager;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
@@ -24,10 +28,14 @@ public class UserSessionManagerImpl implements UserSessionManager {
 
     private final AuthenticationManager authenticationManager;
     private final UserSessionManagerRepository repository;
+    private final EventService eventService;
 
-    public UserSessionManagerImpl(AuthenticationManager authenticationManager, UserSessionManagerRepository repository) {
+    public UserSessionManagerImpl(AuthenticationManager authenticationManager,
+                                  UserSessionManagerRepository repository,
+                                  EventService eventService) {
         this.authenticationManager = authenticationManager;
         this.repository = repository;
+        this.eventService = eventService;
     }
 
     @Override
@@ -41,7 +49,11 @@ public class UserSessionManagerImpl implements UserSessionManager {
     public void onSessionConnectedEvent(SessionConnectedEvent event) {
         final UserEntity user = authenticationManager.getUserFromPrincipal(event.getUser());
 
-        repository.save(new UserSessionEntity(user, getSessionId(event), Instant.now()));
+        final UserSessionEntity sessionEntity = new UserSessionEntity(user, getSessionId(event), Instant.now());
+
+        repository.save(sessionEntity);
+
+        eventService.broadcastEvent(new ConnectedUserSessionEvent(UserSessionDto.userSessionDto(sessionEntity).build()));
     }
 
     @EventListener
@@ -55,6 +67,8 @@ public class UserSessionManagerImpl implements UserSessionManager {
 
         if (sessionEntity.getLogoutTime() == null) {
             sessionEntity.setLogoutTime(Instant.now());
+
+            eventService.broadcastEvent(new DisconnectedUserSessionEvent(UserSessionDto.userSessionDto(sessionEntity).build()));
         }
     }
 
