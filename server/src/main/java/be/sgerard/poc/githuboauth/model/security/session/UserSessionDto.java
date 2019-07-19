@@ -1,6 +1,8 @@
 package be.sgerard.poc.githuboauth.model.security.session;
 
 import be.sgerard.poc.githuboauth.model.security.user.UserDto;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import java.time.Instant;
 import java.util.Optional;
@@ -8,6 +10,7 @@ import java.util.Optional;
 /**
  * @author Sebastien Gerard
  */
+@ApiModel(description = "Description of a user session.")
 public class UserSessionDto {
 
     public static Builder userSessionDto() {
@@ -23,10 +26,19 @@ public class UserSessionDto {
                 .logoutTime(userSessionEntity.getLogoutTime());
     }
 
+    @ApiModelProperty(notes = "Id of this session.", required = true)
     private final String id;
+
+    @ApiModelProperty(notes = "User associated to this session.", required = true)
     private final UserDto user;
+
+    @ApiModelProperty(notes = "Id of the SIMP session.", required = true)
     private final String simpSessionId;
+
+    @ApiModelProperty(notes = "Time when this session was created.", required = true)
     private final Instant loginTime;
+
+    @ApiModelProperty(notes = "Time when this session was closed.", dataType = "java.time.Instant")
     private final Instant logoutTime;
 
     private UserSessionDto(Builder builder) {

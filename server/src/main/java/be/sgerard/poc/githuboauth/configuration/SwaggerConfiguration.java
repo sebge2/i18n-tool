@@ -10,6 +10,8 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
+import java.time.Instant;
+
 import static java.util.Collections.emptyList;
 
 /**
@@ -22,6 +24,7 @@ public class SwaggerConfiguration {
     @Bean
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
+                .directModelSubstitute(Instant.class, java.util.Date.class)
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("be.sgerard.poc.githuboauth.controller"))
                 .paths(PathSelectors.regex("/.*"))
