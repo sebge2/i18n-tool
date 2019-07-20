@@ -27,7 +27,7 @@ export class GlobalAuthGuard implements CanActivate {
                 if (reason.status == 404) {
                     window.location.href = '/login';
                 }else {
-                    console.log("Error while retrieving current user.", reason);
+                    console.error("Error while retrieving current user.", reason);
                 }
 
                 return false;
