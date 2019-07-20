@@ -1,0 +1,16 @@
+package be.sgerard.poc.githuboauth.model.event;
+
+/**
+ * @author Sebastien Gerard
+ */
+public class Events {
+
+    public static final String EVENT_CONNECTED_USER_SESSION = "connected-user-session";
+
+    public static final String EVENT_DISCONNECTED_USER_SESSION = "disconnected-user-session";
+
+    public static final String QUEUE_BROADCAST = "/topic/";
+
+    public static final String QUEUE_USER = "/queue/";
+
+}

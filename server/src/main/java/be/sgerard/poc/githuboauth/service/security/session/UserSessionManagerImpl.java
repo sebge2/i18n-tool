@@ -1,7 +1,6 @@
 package be.sgerard.poc.githuboauth.service.security.session;
 
-import be.sgerard.poc.githuboauth.model.security.session.ConnectedUserSessionEvent;
-import be.sgerard.poc.githuboauth.model.security.session.DisconnectedUserSessionEvent;
+import be.sgerard.poc.githuboauth.model.event.Events;
 import be.sgerard.poc.githuboauth.model.security.session.UserSessionDto;
 import be.sgerard.poc.githuboauth.model.security.session.UserSessionEntity;
 import be.sgerard.poc.githuboauth.model.security.user.UserEntity;
@@ -53,7 +52,7 @@ public class UserSessionManagerImpl implements UserSessionManager {
 
         repository.save(sessionEntity);
 
-        eventService.broadcastEvent(new ConnectedUserSessionEvent(UserSessionDto.userSessionDto(sessionEntity).build()));
+        eventService.broadcastEvent(Events.EVENT_CONNECTED_USER_SESSION, UserSessionDto.userSessionDto(sessionEntity).build());
     }
 
     @EventListener
@@ -68,7 +67,7 @@ public class UserSessionManagerImpl implements UserSessionManager {
         if (sessionEntity.getLogoutTime() == null) {
             sessionEntity.setLogoutTime(Instant.now());
 
-            eventService.broadcastEvent(new DisconnectedUserSessionEvent(UserSessionDto.userSessionDto(sessionEntity).build()));
+            eventService.broadcastEvent(Events.EVENT_DISCONNECTED_USER_SESSION, UserSessionDto.userSessionDto(sessionEntity).build());
         }
     }
 

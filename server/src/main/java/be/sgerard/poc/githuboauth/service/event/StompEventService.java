@@ -1,8 +1,7 @@
 package be.sgerard.poc.githuboauth.service.event;
 
-import be.sgerard.poc.githuboauth.model.event.ApplicationEvent;
+import be.sgerard.poc.githuboauth.model.event.Events;
 import be.sgerard.poc.githuboauth.model.security.user.UserEntity;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 
@@ -13,28 +12,18 @@ import org.springframework.stereotype.Service;
 public class StompEventService implements EventService {
 
     private final SimpMessageSendingOperations template;
-    private final ApplicationEventPublisher eventPublisher;
 
-    public StompEventService(SimpMessageSendingOperations template, ApplicationEventPublisher eventPublisher) {
+    public StompEventService(SimpMessageSendingOperations template) {
         this.template = template;
-        this.eventPublisher = eventPublisher;
     }
 
     @Override
-    public void broadcastInternally(ApplicationEvent event) {
-        eventPublisher.publishEvent(event);
+    public void broadcastEvent(String eventType, Object payload) {
+        template.convertAndSend(Events.QUEUE_BROADCAST + "/" + eventType, payload);
     }
 
     @Override
-    public void broadcastEvent(ApplicationEvent event) {
-        broadcastInternally(event);
-
-        template.convertAndSend(ALL_TOPIC_EVENT + "/" + event.getType(), event.getSource());
+    public void sendEventToUser(UserEntity user, String eventType, Object payload) {
+        template.convertAndSendToUser(user.getId(), Events.QUEUE_USER + "/" + eventType, payload);
     }
-
-    @Override
-    public void sendEventToUser(UserEntity user, ApplicationEvent event) {
-        template.convertAndSendToUser(user.getId(), USER_TOPIC_EVENT + "/" + event.getType(), event.getSource());
-    }
-
 }
