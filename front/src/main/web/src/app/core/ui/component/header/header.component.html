@@ -15,12 +15,12 @@
         <span class="user-name">{{ getDisplayName() }}</span>
       </ng-template>
 
-      <span class="caret"></span>
+      <span class="fas fa-caret-down"></span>
     </button>
 
     <mat-menu #loginMenu="matMenu">
       <button mat-menu-item>
-        <a routerLink="/logout"><i class="fa fa-sign-out"></i> Logout</a>
+        <a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
       </button>
     </mat-menu>
   </div>
