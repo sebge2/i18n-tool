@@ -1,4 +1,4 @@
-package be.sgerard.poc.githuboauth.controller.webhook;
+package be.sgerard.poc.githuboauth.model.git;
 
 import be.sgerard.poc.githuboauth.model.git.PullRequestStatus;
 

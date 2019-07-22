@@ -1,4 +1,6 @@
-package be.sgerard.poc.githuboauth.controller.webhook;
+package be.sgerard.poc.githuboauth.service.git;
+
+import be.sgerard.poc.githuboauth.model.git.GitHubPullRequestEventDto;
 
 /**
  * @author Sebastien Gerard

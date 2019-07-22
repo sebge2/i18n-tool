@@ -23,6 +23,8 @@ public interface WorkspaceManager {
 
     WorkspaceEntity startReviewing(String workspaceId, String message) throws ResourceNotFoundException, LockTimeoutException, RepositoryException;
 
+    // TODO endReview()
+
     void deleteWorkspace(String workspaceId);
 
 }
