@@ -1,5 +1,7 @@
 package be.sgerard.poc.githuboauth.service.i18n;
 
+import be.sgerard.poc.githuboauth.model.git.GitHubPullRequestEventDto;
+import be.sgerard.poc.githuboauth.model.git.PullRequestStatus;
 import be.sgerard.poc.githuboauth.model.i18n.WorkspaceStatus;
 import be.sgerard.poc.githuboauth.model.i18n.dto.WorkspaceDto;
 import be.sgerard.poc.githuboauth.model.i18n.persistence.WorkspaceEntity;
@@ -8,7 +10,10 @@ import be.sgerard.poc.githuboauth.service.ResourceNotFoundException;
 import be.sgerard.poc.githuboauth.service.event.EventService;
 import be.sgerard.poc.githuboauth.service.git.RepositoryException;
 import be.sgerard.poc.githuboauth.service.git.RepositoryManager;
+import be.sgerard.poc.githuboauth.service.git.WebHookCallback;
 import be.sgerard.poc.githuboauth.service.i18n.persistence.WorkspaceRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,12 +27,15 @@ import java.util.Optional;
 
 import static be.sgerard.poc.githuboauth.model.event.Events.EVENT_DELETED_WORKSPACE;
 import static be.sgerard.poc.githuboauth.model.event.Events.EVENT_UPDATED_WORKSPACE;
+import static java.util.Arrays.asList;
 
 /**
  * @author Sebastien Gerard
  */
 @Service
-public class WorkspaceManagerImpl implements WorkspaceManager {
+public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
+
+    private static final Logger logger = LoggerFactory.getLogger(WorkspaceManagerImpl.class);
 
     private final WorkspaceRepository workspaceRepository;
     private final RepositoryManager repositoryManager;
@@ -106,6 +114,8 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
                     throw new IllegalStateException("The workspace status must be available, but was " + workspaceEntity.getStatus() + ".");
                 }
 
+                logger.info("Initialing workspace {}.", workspaceId);
+
                 final Instant now = Instant.now();
                 final String pullRequestBranch = workspaceEntity.getBranch() + "_i18n_" + LocalDate.ofInstant(now, ZoneId.systemDefault()).toString();
 
@@ -149,6 +159,8 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
                     throw new IllegalStateException("The workspace status must be available, but was " + workspaceEntity.getStatus() + ".");
                 }
 
+                logger.info("Start reviewing workspace {}.", workspaceId);
+
                 final String pullRequestBranch = workspaceEntity.getPullRequestBranch().orElseThrow(() -> new IllegalStateException("There is no pull request branch."));
 
                 api.checkout(pullRequestBranch);
@@ -175,8 +187,28 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
                 workspace -> {
                     eventService.broadcastEvent(EVENT_DELETED_WORKSPACE, WorkspaceDto.builder(workspace).build());
 
+                    logger.info("The workspace {} has been deleted.", workspaceId);
+
                     workspaceRepository.delete(workspace);
                 }
         );
+    }
+
+    @Override
+    @Transactional
+    public void onPullRequest(GitHubPullRequestEventDto pullRequest) {
+        if (asList(PullRequestStatus.MERGED, PullRequestStatus.CLOSED).contains(pullRequest.getStatus())) {
+            return;
+        }
+
+        workspaceRepository
+                .findByPullRequestNumber(pullRequest.getNumber())
+                .ifPresent(
+                        workspaceEntity -> {
+                            logger.info("The pull request {} is now finished, deleting the workspace {}.", pullRequest.getNumber(), workspaceEntity.getId());
+
+                            deleteWorkspace(workspaceEntity.getId());
+                        }
+                );
     }
 }

@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.security.MessageDigest;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -39,13 +40,17 @@ public class GitHubWebHookService {
 
     private final ObjectMapper objectMapper;
     private final String secretKey;
+    private final List<WebHookCallback> callbacks;
 
-    public GitHubWebHookService(ObjectMapper objectMapper, AppProperties appProperties) {
+    public GitHubWebHookService(ObjectMapper objectMapper,
+                                AppProperties appProperties,
+                                List<WebHookCallback> callbacks) {
         this.objectMapper = objectMapper;
         this.secretKey = appProperties.getGitHubWebhookSecret();
+        this.callbacks = callbacks;
     }
 
-    public ResponseEntity<?> executeWebHook(RequestEntity<String> requestEntity, WebHookCallback callback) {
+    public ResponseEntity<?> executeWebHook(RequestEntity<String> requestEntity) {
         checkUserAgent(requestEntity);
 
         final String signature = checkSignature(requestEntity);
@@ -60,7 +65,9 @@ public class GitHubWebHookService {
                 final Map<String, Object> properties = objectMapper.readValue(requestEntity.getBody(), new TypeReference<Map<String, Object>>() {
                 });
 
-                callback.onPullRequest(new GitHubPullRequestEventDto(properties));
+                final GitHubPullRequestEventDto event = new GitHubPullRequestEventDto(properties);
+
+                callbacks.forEach(callback -> callback.onPullRequest(event));
             } else {
                 logger.info("Ignore GitHub event type [" + eventType + "].");
             }

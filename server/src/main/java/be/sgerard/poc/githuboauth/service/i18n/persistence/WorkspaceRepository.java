@@ -5,6 +5,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Sebastien Gerard
@@ -13,5 +14,7 @@ import java.util.List;
 public interface WorkspaceRepository extends CrudRepository<WorkspaceEntity, String> {
 
     List<WorkspaceEntity> findAll();
+
+    Optional<WorkspaceEntity> findByPullRequestNumber(int requestNumber);
 
 }
