@@ -6,6 +6,8 @@ import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBr
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
+import static be.sgerard.poc.githuboauth.model.event.Events.*;
+
 /**
  * @author Sebastien Gerard
  */
@@ -18,8 +20,8 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
-        config.enableSimpleBroker("/queue/", "/topic/");
-        config.setApplicationDestinationPrefixes("/app");
+        config.enableSimpleBroker(QUEUE_USER, QUEUE_BROADCAST);
+        config.setApplicationDestinationPrefixes(QUEUE_APP);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package be.sgerard.poc.githuboauth.service.i18n;
 
 import be.sgerard.poc.githuboauth.model.i18n.WorkspaceStatus;
+import be.sgerard.poc.githuboauth.model.i18n.dto.WorkspaceDto;
 import be.sgerard.poc.githuboauth.model.i18n.file.ScannedBundleFileDto;
 import be.sgerard.poc.githuboauth.model.i18n.file.ScannedBundleFileKeyDto;
 import be.sgerard.poc.githuboauth.model.i18n.persistence.BundleFileEntity;
@@ -9,11 +10,12 @@ import be.sgerard.poc.githuboauth.model.i18n.persistence.BundleKeyEntryEntity;
 import be.sgerard.poc.githuboauth.model.i18n.persistence.WorkspaceEntity;
 import be.sgerard.poc.githuboauth.service.LockTimeoutException;
 import be.sgerard.poc.githuboauth.service.ResourceNotFoundException;
-import be.sgerard.poc.githuboauth.service.security.auth.AuthenticationManager;
+import be.sgerard.poc.githuboauth.service.event.EventService;
 import be.sgerard.poc.githuboauth.service.git.RepositoryException;
 import be.sgerard.poc.githuboauth.service.git.RepositoryManager;
 import be.sgerard.poc.githuboauth.service.i18n.file.TranslationBundleWalker;
 import be.sgerard.poc.githuboauth.service.i18n.persistence.WorkspaceRepository;
+import be.sgerard.poc.githuboauth.service.security.auth.AuthenticationManager;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +26,8 @@ import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Stream;
 
+import static be.sgerard.poc.githuboauth.model.event.Events.EVENT_UPDATED_WORKSPACE;
+
 /**
  * @author Sebastien Gerard
  */
@@ -31,18 +35,21 @@ import java.util.stream.Stream;
 public class WorkspaceManagerImpl implements WorkspaceManager {
 
     private final RepositoryManager repositoryManager;
-    private final AuthenticationManager authenticationManager;
     private final TranslationBundleWalker walker;
     private final WorkspaceRepository workspaceRepository;
+    private final AuthenticationManager authenticationManager;
+    private final EventService eventService;
 
     public WorkspaceManagerImpl(RepositoryManager repositoryManager,
                                 AuthenticationManager authenticationManager,
                                 TranslationBundleWalker walker,
-                                WorkspaceRepository workspaceRepository) {
+                                WorkspaceRepository workspaceRepository,
+                                EventService eventService) {
         this.repositoryManager = repositoryManager;
         this.authenticationManager = authenticationManager;
         this.walker = walker;
         this.workspaceRepository = workspaceRepository;
+        this.eventService = eventService;
     }
 
     @Override
@@ -63,7 +70,11 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
 
             final List<WorkspaceEntity> foundWorkspaces = new ArrayList<>();
             for (String availableBranch : availableBranches) {
-                foundWorkspaces.add(new WorkspaceEntity(availableBranch));
+                final WorkspaceEntity workspaceEntity = new WorkspaceEntity(availableBranch);
+
+                foundWorkspaces.add(workspaceEntity);
+
+                eventService.broadcastEvent(EVENT_UPDATED_WORKSPACE, WorkspaceDto.builder(workspaceEntity).build());
             }
 
             workspaceRepository.saveAll(foundWorkspaces);
@@ -87,11 +98,19 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
     @Override
     @Transactional
     public WorkspaceEntity initialize(String workspaceId) throws LockTimeoutException, RepositoryException {
+        final WorkspaceEntity checkEntity = workspaceRepository.findById(workspaceId).orElseThrow(() -> new ResourceNotFoundException(workspaceId));
+
+        if (checkEntity.getStatus() == WorkspaceStatus.INITIALIZED) {
+            return checkEntity;
+        }
+
         return repositoryManager.open(api -> {
             try {
                 final WorkspaceEntity workspaceEntity = workspaceRepository.findById(workspaceId).orElseThrow(() -> new ResourceNotFoundException(workspaceId));
 
-                if (workspaceEntity.getStatus() != WorkspaceStatus.NOT_INITIALIZED) {
+                if (checkEntity.getStatus() == WorkspaceStatus.INITIALIZED) {
+                    return checkEntity;
+                } else if (workspaceEntity.getStatus() != WorkspaceStatus.NOT_INITIALIZED) {
                     throw new IllegalStateException("The workspace status must be available, but was " + workspaceEntity.getStatus() + ".");
                 }
 
@@ -108,7 +127,10 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
 
                 api.createBranch(pullRequestBranch);
 
+                // TODO
                 walker.walk(api, (bundleFile, entries) -> onBundleFound(workspaceEntity, bundleFile, entries));
+
+                eventService.broadcastEvent(EVENT_UPDATED_WORKSPACE, WorkspaceDto.builder(workspaceEntity).build());
 
                 return workspaceEntity;
             } catch (IOException e) {
@@ -119,17 +141,23 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
 
     @Override
     @Transactional
-    public WorkspaceEntity startReviewing(String id, String message) throws ResourceNotFoundException, LockTimeoutException, RepositoryException {
-        final WorkspaceEntity workspace = getWorkspace(id)
-                .orElseThrow(() -> new ResourceNotFoundException(id));
+    public WorkspaceEntity startReviewing(String workspaceId, String message) throws ResourceNotFoundException, LockTimeoutException, RepositoryException {
+        final WorkspaceEntity checkEntity = workspaceRepository.findById(workspaceId).orElseThrow(() -> new ResourceNotFoundException(workspaceId));
 
-        if (workspace.getStatus() != WorkspaceStatus.INITIALIZED) {
-            throw new IllegalStateException("Cannot update translations of workspace [" + id + "], the status "
-                    + workspace.getStatus() + " does not allow it.");
+        if (checkEntity.getStatus() == WorkspaceStatus.IN_REVIEW) {
+            return checkEntity;
         }
 
-        repositoryManager.open(api -> {
-            final String pullRequestBranch = workspace.getPullRequestBranch().orElseThrow(() -> new IllegalStateException("There is no pull request branch."));
+        return repositoryManager.open(api -> {
+            final WorkspaceEntity workspaceEntity = workspaceRepository.findById(workspaceId).orElseThrow(() -> new ResourceNotFoundException(workspaceId));
+
+            if (workspaceEntity.getStatus() == WorkspaceStatus.IN_REVIEW) {
+                return workspaceEntity;
+            } else if (workspaceEntity.getStatus() != WorkspaceStatus.INITIALIZED) {
+                throw new IllegalStateException("The workspace status must be available, but was " + workspaceEntity.getStatus() + ".");
+            }
+
+            final String pullRequestBranch = workspaceEntity.getPullRequestBranch().orElseThrow(() -> new IllegalStateException("There is no pull request branch."));
 
             api.checkout(pullRequestBranch);
 
@@ -137,12 +165,12 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
 
 //            api.commitAll(new CommitRequest(message, authenticationManager.getCurrentUser().getUsername(), authenticationManager.getCurrentUser().getEmail()));
 
-            api.getPullRequestManager().createRequest(message, pullRequestBranch, workspace.getBranch());
+            api.getPullRequestManager().createRequest(message, pullRequestBranch, workspaceEntity.getBranch());
+
+            workspaceEntity.setStatus(WorkspaceStatus.IN_REVIEW);
+
+            return workspaceEntity;
         });
-
-        workspace.setStatus(WorkspaceStatus.IN_REVIEW);
-
-        return workspace;
     }
 
     @Override
