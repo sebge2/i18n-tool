@@ -6,6 +6,7 @@ import be.sgerard.poc.githuboauth.service.ResourceNotFoundException;
 import be.sgerard.poc.githuboauth.service.git.RepositoryException;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -24,6 +25,8 @@ public interface WorkspaceManager {
     WorkspaceEntity startReviewing(String workspaceId, String message) throws ResourceNotFoundException, LockTimeoutException, RepositoryException;
 
     // TODO endReview()
+
+    void updateTranslations(String workspaceId, Map<String, String> translations) throws ResourceNotFoundException;
 
     void deleteWorkspace(String workspaceId);
 

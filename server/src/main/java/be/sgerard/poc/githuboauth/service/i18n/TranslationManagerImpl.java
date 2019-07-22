@@ -113,20 +113,12 @@ public class TranslationManagerImpl implements TranslationManager {
 
     @Override
     @Transactional
-    public void updateTranslations(String workspaceId, Map<String, String> translations) throws ResourceNotFoundException {
-        final WorkspaceEntity workspace = workspaceRepository.findById(workspaceId)
-            .orElseThrow(() -> new ResourceNotFoundException(workspaceId));
-
-        if (workspace.getStatus() != WorkspaceStatus.INITIALIZED) {
-            throw new IllegalStateException("Cannot update translations of workspace [" + workspaceId + "], the status "
-                + workspace.getStatus() + " does not allow it.");
-        }
-
+    public void updateTranslations(WorkspaceEntity workspace, Map<String, String> translations) throws ResourceNotFoundException {
         final String username = authenticationManager.getCurrentUser().getUsername();
 
         for (Map.Entry<String, String> updateEntry : translations.entrySet()) {
             final BundleKeyEntryEntity entry = keyEntryRepository.findById(updateEntry.getKey())
-                .orElseThrow(() -> new ResourceNotFoundException(workspaceId));
+                .orElseThrow(() -> new ResourceNotFoundException(updateEntry.getKey()));
 
             if (!Objects.equals(workspace.getId(), entry.getBundleKey().getBundleFile().getWorkspace().getId())) {
                 throw new IllegalArgumentException("The entry [" + entry.getId() + "] does not belong to the workspace [" + workspace.getId() + "].");

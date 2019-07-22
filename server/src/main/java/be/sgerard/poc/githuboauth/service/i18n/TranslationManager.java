@@ -24,5 +24,5 @@ public interface TranslationManager {
 
     BundleKeysPageDto getTranslations(BundleKeysPageRequestDto searchRequest) throws ResourceNotFoundException;
 
-    void updateTranslations(String workspaceId, Map<String, String> translations) throws ResourceNotFoundException;
+    void updateTranslations(WorkspaceEntity workspaceEntity, Map<String, String> translations) throws ResourceNotFoundException;
 }

@@ -23,6 +23,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static be.sgerard.poc.githuboauth.model.event.Events.EVENT_DELETED_WORKSPACE;
@@ -178,6 +179,20 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
                 throw new RepositoryException("Error while writing translation files.", e);
             }
         });
+    }
+
+    @Override
+    @Transactional
+    public void updateTranslations(String workspaceId, Map<String, String> translations) throws ResourceNotFoundException {
+        final WorkspaceEntity workspace = workspaceRepository.findById(workspaceId)
+                .orElseThrow(() -> new ResourceNotFoundException(workspaceId));
+
+        if (workspace.getStatus() != WorkspaceStatus.INITIALIZED) {
+            throw new IllegalStateException("Cannot update translations of workspace [" + workspaceId + "], the status "
+                    + workspace.getStatus() + " does not allow it.");
+        }
+
+        translationManager.updateTranslations(workspace, translations);
     }
 
     @Override

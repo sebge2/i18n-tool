@@ -108,7 +108,7 @@ public class WorkspaceController {
     @ApiOperation(value = "Updates translations of the workspace having the specified id.")
     public void updateTranslations(@PathVariable String id,
                                    @RequestBody Map<String, String> translations) {
-        translationManager.updateTranslations(id, translations);
+        workspaceManager.updateTranslations(id, translations);
     }
 
     @GetMapping(path = "/workspace/registered-locale")
