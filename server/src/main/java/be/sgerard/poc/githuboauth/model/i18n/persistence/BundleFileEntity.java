@@ -1,5 +1,7 @@
 package be.sgerard.poc.githuboauth.model.i18n.persistence;
 
+import be.sgerard.poc.githuboauth.model.i18n.BundleType;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
@@ -34,6 +36,10 @@ public class BundleFileEntity {
     @Column(nullable = false)
     private String location;
 
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private BundleType type;
+
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
     private Collection<BundleKeyEntity> keys = new HashSet<>();
 
@@ -43,7 +49,10 @@ public class BundleFileEntity {
     BundleFileEntity() {
     }
 
-    public BundleFileEntity(WorkspaceEntity workspace, String name, String location) {
+    public BundleFileEntity(WorkspaceEntity workspace,
+                            String name,
+                            String location,
+                            BundleType type) {
         this.id = UUID.randomUUID().toString();
 
         this.workspace = workspace;
@@ -51,6 +60,7 @@ public class BundleFileEntity {
 
         this.name = name;
         this.location = location;
+        this.type = type;
     }
 
     public String getId() {
@@ -91,6 +101,14 @@ public class BundleFileEntity {
 
     void addKey(BundleKeyEntity keyEntity) {
         this.keys.add(keyEntity);
+    }
+
+    public BundleType getType() {
+        return type;
+    }
+
+    public void setType(BundleType type) {
+        this.type = type;
     }
 
     public int getVersion() {
