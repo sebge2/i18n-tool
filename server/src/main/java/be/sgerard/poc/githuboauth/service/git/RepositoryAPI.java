@@ -1,7 +1,5 @@
 package be.sgerard.poc.githuboauth.service.git;
 
-import be.sgerard.poc.githuboauth.model.git.CommitRequest;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
