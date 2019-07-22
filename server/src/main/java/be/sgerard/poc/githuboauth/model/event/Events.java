@@ -11,6 +11,8 @@ public class Events {
 
     public static final String EVENT_UPDATED_WORKSPACE = "updated-workspace";
 
+    public static final String EVENT_DELETED_WORKSPACE = "deleted-workspace";
+
     public static final String QUEUE_BROADCAST = "/topic/";
 
     public static final String QUEUE_USER = "/queue/";

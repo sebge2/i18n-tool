@@ -3,17 +3,23 @@ package be.sgerard.poc.githuboauth.service.i18n;
 import be.sgerard.poc.githuboauth.controller.AuthenticationController;
 import be.sgerard.poc.githuboauth.model.i18n.WorkspaceStatus;
 import be.sgerard.poc.githuboauth.model.i18n.dto.*;
+import be.sgerard.poc.githuboauth.model.i18n.file.ScannedBundleFileDto;
+import be.sgerard.poc.githuboauth.model.i18n.file.ScannedBundleFileKeyDto;
 import be.sgerard.poc.githuboauth.model.i18n.persistence.BundleFileEntity;
 import be.sgerard.poc.githuboauth.model.i18n.persistence.BundleKeyEntity;
 import be.sgerard.poc.githuboauth.model.i18n.persistence.BundleKeyEntryEntity;
 import be.sgerard.poc.githuboauth.model.i18n.persistence.WorkspaceEntity;
 import be.sgerard.poc.githuboauth.service.ResourceNotFoundException;
+import be.sgerard.poc.githuboauth.service.git.RepositoryAPI;
+import be.sgerard.poc.githuboauth.service.i18n.file.TranslationBundleWalker;
 import be.sgerard.poc.githuboauth.service.i18n.persistence.BundleKeyEntryRepository;
 import be.sgerard.poc.githuboauth.service.i18n.persistence.WorkspaceRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.*;
+import java.util.stream.Stream;
 
 import static be.sgerard.poc.githuboauth.service.i18n.file.TranslationFileUtils.mapToNullIfEmpty;
 import static java.util.stream.Collectors.toList;
@@ -27,13 +33,16 @@ public class TranslationManagerImpl implements TranslationManager {
     private final WorkspaceRepository workspaceRepository;
     private final BundleKeyEntryRepository keyEntryRepository;
     private final AuthenticationController authenticationManager;
+    private final TranslationBundleWalker walker;
 
     public TranslationManagerImpl(WorkspaceRepository workspaceRepository,
                                   BundleKeyEntryRepository keyEntryRepository,
-                                  AuthenticationController authenticationManager) {
+                                  AuthenticationController authenticationManager,
+                                  TranslationBundleWalker walker) {
         this.workspaceRepository = workspaceRepository;
         this.keyEntryRepository = keyEntryRepository;
         this.authenticationManager = authenticationManager;
+        this.walker = walker;
     }
 
     @Override
@@ -88,6 +97,18 @@ public class TranslationManagerImpl implements TranslationManager {
     @Transactional(readOnly = true)
     public Collection<Locale> getRegisteredLocales() {
         return keyEntryRepository.findAllLocales().stream().map(Locale::forLanguageTag).collect(toList());
+    }
+
+    @Override
+    @Transactional
+    public void readTranslations(WorkspaceEntity workspaceEntity, RepositoryAPI api) throws IOException {
+        walker.walk(api, (bundleFile, entries) -> onBundleFound(workspaceEntity, bundleFile, entries));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public void writeTranslations(WorkspaceEntity workspaceEntity, RepositoryAPI api) throws IOException {
+        // TODO
     }
 
     @Override
@@ -148,6 +169,22 @@ public class TranslationManagerImpl implements TranslationManager {
             });
 
         return groupedTranslations;
+    }
+
+    private void onBundleFound(WorkspaceEntity workspaceEntity,
+                               ScannedBundleFileDto bundleFile,
+                               Stream<ScannedBundleFileKeyDto> entries) {
+        final BundleFileEntity bundleFileEntity =
+                new BundleFileEntity(workspaceEntity, bundleFile.getName(), bundleFile.getLocationDirectory().toString());
+
+        entries.forEach(
+                entry -> {
+                    final BundleKeyEntity keyEntity = new BundleKeyEntity(bundleFileEntity, entry.getKey());
+
+                    for (Map.Entry<Locale, String> translationEntry : entry.getTranslations().entrySet()) {
+                        new BundleKeyEntryEntity(keyEntity, translationEntry.getKey().toLanguageTag(), translationEntry.getValue());
+                    }
+                });
     }
 
     private static final class GroupedTranslations {

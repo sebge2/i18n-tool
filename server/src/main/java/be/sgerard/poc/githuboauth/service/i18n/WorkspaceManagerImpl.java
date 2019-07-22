@@ -2,18 +2,12 @@ package be.sgerard.poc.githuboauth.service.i18n;
 
 import be.sgerard.poc.githuboauth.model.i18n.WorkspaceStatus;
 import be.sgerard.poc.githuboauth.model.i18n.dto.WorkspaceDto;
-import be.sgerard.poc.githuboauth.model.i18n.file.ScannedBundleFileDto;
-import be.sgerard.poc.githuboauth.model.i18n.file.ScannedBundleFileKeyDto;
-import be.sgerard.poc.githuboauth.model.i18n.persistence.BundleFileEntity;
-import be.sgerard.poc.githuboauth.model.i18n.persistence.BundleKeyEntity;
-import be.sgerard.poc.githuboauth.model.i18n.persistence.BundleKeyEntryEntity;
 import be.sgerard.poc.githuboauth.model.i18n.persistence.WorkspaceEntity;
 import be.sgerard.poc.githuboauth.service.LockTimeoutException;
 import be.sgerard.poc.githuboauth.service.ResourceNotFoundException;
 import be.sgerard.poc.githuboauth.service.event.EventService;
 import be.sgerard.poc.githuboauth.service.git.RepositoryException;
 import be.sgerard.poc.githuboauth.service.git.RepositoryManager;
-import be.sgerard.poc.githuboauth.service.i18n.file.TranslationBundleWalker;
 import be.sgerard.poc.githuboauth.service.i18n.persistence.WorkspaceRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,9 +16,11 @@ import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.*;
-import java.util.stream.Stream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
+import static be.sgerard.poc.githuboauth.model.event.Events.EVENT_DELETED_WORKSPACE;
 import static be.sgerard.poc.githuboauth.model.event.Events.EVENT_UPDATED_WORKSPACE;
 
 /**
@@ -33,17 +29,17 @@ import static be.sgerard.poc.githuboauth.model.event.Events.EVENT_UPDATED_WORKSP
 @Service
 public class WorkspaceManagerImpl implements WorkspaceManager {
 
-    private final RepositoryManager repositoryManager;
-    private final TranslationBundleWalker walker;
     private final WorkspaceRepository workspaceRepository;
+    private final RepositoryManager repositoryManager;
+    private final TranslationManager translationManager;
     private final EventService eventService;
 
-    public WorkspaceManagerImpl(RepositoryManager repositoryManager,
-                                TranslationBundleWalker walker,
-                                WorkspaceRepository workspaceRepository,
+    public WorkspaceManagerImpl(WorkspaceRepository workspaceRepository,
+                                RepositoryManager repositoryManager,
+                                TranslationManager translationManager,
                                 EventService eventService) {
         this.repositoryManager = repositoryManager;
-        this.walker = walker;
+        this.translationManager = translationManager;
         this.workspaceRepository = workspaceRepository;
         this.eventService = eventService;
     }
@@ -58,7 +54,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
                     .forEach(workspaceEntity -> {
                         if (!availableBranches.contains(workspaceEntity.getBranch())
                                 && (workspaceEntity.getStatus() == WorkspaceStatus.NOT_INITIALIZED)) {
-                            workspaceRepository.delete(workspaceEntity);
+                            deleteWorkspace(workspaceEntity.getId());
                         }
 
                         availableBranches.remove(workspaceEntity.getBranch());
@@ -123,14 +119,13 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
 
                 api.createBranch(pullRequestBranch);
 
-                // TODO
-                walker.walk(api, (bundleFile, entries) -> onBundleFound(workspaceEntity, bundleFile, entries));
+                translationManager.readTranslations(workspaceEntity, api);
 
                 eventService.broadcastEvent(EVENT_UPDATED_WORKSPACE, WorkspaceDto.builder(workspaceEntity).build());
 
                 return workspaceEntity;
             } catch (IOException e) {
-                throw new RepositoryException("Error while loading translation bundle files.", e);
+                throw new RepositoryException("Error while loading translation files.", e);
             }
         });
     }
@@ -145,49 +140,43 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
         }
 
         return repositoryManager.open(api -> {
-            final WorkspaceEntity workspaceEntity = workspaceRepository.findById(workspaceId).orElseThrow(() -> new ResourceNotFoundException(workspaceId));
+            try {
+                final WorkspaceEntity workspaceEntity = workspaceRepository.findById(workspaceId).orElseThrow(() -> new ResourceNotFoundException(workspaceId));
 
-            if (workspaceEntity.getStatus() == WorkspaceStatus.IN_REVIEW) {
+                if (workspaceEntity.getStatus() == WorkspaceStatus.IN_REVIEW) {
+                    return workspaceEntity;
+                } else if (workspaceEntity.getStatus() != WorkspaceStatus.INITIALIZED) {
+                    throw new IllegalStateException("The workspace status must be available, but was " + workspaceEntity.getStatus() + ".");
+                }
+
+                final String pullRequestBranch = workspaceEntity.getPullRequestBranch().orElseThrow(() -> new IllegalStateException("There is no pull request branch."));
+
+                api.checkout(pullRequestBranch);
+
+                translationManager.writeTranslations(workspaceEntity, api);
+
+                api.commitAll(message);
+
+                api.getPullRequestManager().createRequest(message, pullRequestBranch, workspaceEntity.getBranch());
+
+                workspaceEntity.setStatus(WorkspaceStatus.IN_REVIEW);
+
                 return workspaceEntity;
-            } else if (workspaceEntity.getStatus() != WorkspaceStatus.INITIALIZED) {
-                throw new IllegalStateException("The workspace status must be available, but was " + workspaceEntity.getStatus() + ".");
+            } catch (IOException e) {
+                throw new RepositoryException("Error while writing translation files.", e);
             }
-
-            final String pullRequestBranch = workspaceEntity.getPullRequestBranch().orElseThrow(() -> new IllegalStateException("There is no pull request branch."));
-
-            api.checkout(pullRequestBranch);
-
-//            translationManager.updateBundleFiles(workspace); TODO
-
-            api.commitAll(message);
-
-            api.getPullRequestManager().createRequest(message, pullRequestBranch, workspaceEntity.getBranch());
-
-            workspaceEntity.setStatus(WorkspaceStatus.IN_REVIEW);
-
-            return workspaceEntity;
         });
     }
 
     @Override
     @Transactional
     public void deleteWorkspace(String workspaceId) {
-        workspaceRepository.findById(workspaceId).ifPresent(workspaceRepository::delete);
-    }
+        workspaceRepository.findById(workspaceId).ifPresent(
+                workspace -> {
+                    eventService.broadcastEvent(EVENT_DELETED_WORKSPACE, WorkspaceDto.builder(workspace).build());
 
-    private void onBundleFound(WorkspaceEntity workspaceEntity,
-                               ScannedBundleFileDto bundleFile,
-                               Stream<ScannedBundleFileKeyDto> entries) {
-        final BundleFileEntity bundleFileEntity =
-                new BundleFileEntity(workspaceEntity, bundleFile.getName(), bundleFile.getLocationDirectory().toString());
-
-        entries.forEach(
-                entry -> {
-                    final BundleKeyEntity keyEntity = new BundleKeyEntity(bundleFileEntity, entry.getKey());
-
-                    for (Map.Entry<Locale, String> translationEntry : entry.getTranslations().entrySet()) {
-                        new BundleKeyEntryEntity(keyEntity, translationEntry.getKey().toLanguageTag(), translationEntry.getValue());
-                    }
-                });
+                    workspaceRepository.delete(workspace);
+                }
+        );
     }
 }
