@@ -4,7 +4,6 @@ import be.sgerard.poc.githuboauth.configuration.AppProperties;
 import be.sgerard.poc.githuboauth.model.i18n.BundleType;
 import be.sgerard.poc.githuboauth.model.i18n.file.ScannedBundleFileDto;
 import be.sgerard.poc.githuboauth.model.i18n.file.ScannedBundleFileKeyDto;
-import be.sgerard.poc.githuboauth.model.i18n.persistence.BundleFileEntity;
 import be.sgerard.poc.githuboauth.service.git.RepositoryAPI;
 import com.fasterxml.jackson.datatype.jdk8.WrappedIOException;
 import org.springframework.stereotype.Component;
@@ -40,6 +39,11 @@ public class JavaTranslationBundleHandler implements TranslationBundleHandler {
     public JavaTranslationBundleHandler(AppProperties appProperties) {
         this.pathToIgnores = appProperties.getJavaTranslationBundleIgnoredPathsAsList();
         this.antPathMatcher = new AntPathMatcher();
+    }
+
+    @Override
+    public boolean support(ScannedBundleFileDto bundleFile) {
+        return bundleFile.getType() == BundleType.JAVA;
     }
 
     @Override
@@ -89,11 +93,6 @@ public class JavaTranslationBundleHandler implements TranslationBundleHandler {
         } catch (WrappedIOException e) {
             throw e.getCause();
         }
-    }
-
-    @Override
-    public void updateBundle(BundleFileEntity bundleFile, RepositoryAPI repositoryAPI) {
-
     }
 
     private Locale getLocale(File file) {
