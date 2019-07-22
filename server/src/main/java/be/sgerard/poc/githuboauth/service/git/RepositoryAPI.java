@@ -40,7 +40,7 @@ public interface RepositoryAPI extends AutoCloseable {
 
     void revert(File file) throws RepositoryException;
 
-    void commitAll(CommitRequest commitRequest) throws RepositoryException;
+    void commitAll(String message) throws RepositoryException;
 
     PullRequestManager getPullRequestManager();
 

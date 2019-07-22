@@ -44,6 +44,12 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
     }
 
     @Override
+    public UserEntity getCurrentUserOrFail() {
+        return getCurrentUser()
+                .orElseThrow(() -> new AccessDeniedException("Please authenticate."));
+    }
+
+    @Override
     public UserEntity getUserFromPrincipal(Principal principal) {
         if (!(principal instanceof OAuth2Authentication)) {
             throw new IllegalArgumentException("The principal is not of the expected format. " +

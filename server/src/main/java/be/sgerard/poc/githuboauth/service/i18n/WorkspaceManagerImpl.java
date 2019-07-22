@@ -1,5 +1,6 @@
 package be.sgerard.poc.githuboauth.service.i18n;
 
+import be.sgerard.poc.githuboauth.model.git.CommitRequest;
 import be.sgerard.poc.githuboauth.model.i18n.WorkspaceStatus;
 import be.sgerard.poc.githuboauth.model.i18n.dto.WorkspaceDto;
 import be.sgerard.poc.githuboauth.model.i18n.file.ScannedBundleFileDto;
@@ -163,7 +164,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
 
 //            translationManager.updateBundleFiles(workspace); TODO
 
-//            api.commitAll(new CommitRequest(message, authenticationManager.getCurrentUser().getUsername(), authenticationManager.getCurrentUser().getEmail()));
+            api.commitAll(message);
 
             api.getPullRequestManager().createRequest(message, pullRequestBranch, workspaceEntity.getBranch());
 

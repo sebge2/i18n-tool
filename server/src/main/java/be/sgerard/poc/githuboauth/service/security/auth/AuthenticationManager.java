@@ -14,6 +14,8 @@ public interface AuthenticationManager {
 
     Optional<UserEntity> getCurrentUser();
 
+    UserEntity getCurrentUserOrFail() throws AccessDeniedException;
+
     UserEntity getUserFromPrincipal(Principal principal);
 
     String getAuthToken() throws AccessDeniedException;

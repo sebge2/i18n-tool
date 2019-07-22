@@ -3,8 +3,8 @@ package be.sgerard.poc.githuboauth.service.git;
 import be.sgerard.poc.githuboauth.configuration.AppProperties;
 import be.sgerard.poc.githuboauth.service.LockService;
 import be.sgerard.poc.githuboauth.service.LockTimeoutException;
-import be.sgerard.poc.githuboauth.service.security.auth.AuthenticationManager;
 import be.sgerard.poc.githuboauth.service.i18n.file.TranslationFileUtils;
+import be.sgerard.poc.githuboauth.service.security.auth.AuthenticationManager;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
@@ -111,7 +111,13 @@ public class RepositoryManagerImpl implements RepositoryManager {
     }
 
     private RepositoryAPI initializeAPI() throws Exception {
-        final DefaultRepositoryAPI delegate = new DefaultRepositoryAPI(getGit(), localRepositoryLocation, createProvider(), pullRequestManager);
+        final DefaultRepositoryAPI delegate = new DefaultRepositoryAPI(
+                getGit(),
+                localRepositoryLocation,
+                createProvider(),
+                authenticationManager,
+                pullRequestManager
+        );
 
         return (RepositoryAPI) Proxy.newProxyInstance(
                 RepositoryAPI.class.getClassLoader(),

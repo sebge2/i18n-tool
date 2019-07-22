@@ -1,7 +1,8 @@
 package be.sgerard.poc.githuboauth.service.git;
 
-import be.sgerard.poc.githuboauth.model.git.CommitRequest;
+import be.sgerard.poc.githuboauth.model.security.user.UserEntity;
 import be.sgerard.poc.githuboauth.service.i18n.file.TranslationFileUtils;
+import be.sgerard.poc.githuboauth.service.security.auth.AuthenticationManager;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ListBranchCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -30,6 +31,7 @@ class DefaultRepositoryAPI implements RepositoryAPI, AutoCloseable {
     private final Git git;
     private final File localRepositoryLocation;
     private final UsernamePasswordCredentialsProvider credentialsProvider;
+    private final AuthenticationManager authenticationManager;
     private final PullRequestManager pullRequestManager;
 
     private final List<File> modifiedFiles = new ArrayList<>();
@@ -38,10 +40,12 @@ class DefaultRepositoryAPI implements RepositoryAPI, AutoCloseable {
     DefaultRepositoryAPI(Git git,
                          File localRepositoryLocation,
                          UsernamePasswordCredentialsProvider credentialsProvider,
+                         AuthenticationManager authenticationManager,
                          PullRequestManager pullRequestManager) {
         this.git = git;
         this.localRepositoryLocation = localRepositoryLocation;
         this.credentialsProvider = credentialsProvider;
+        this.authenticationManager = authenticationManager;
         this.pullRequestManager = pullRequestManager;
     }
 
@@ -196,13 +200,15 @@ class DefaultRepositoryAPI implements RepositoryAPI, AutoCloseable {
     }
 
     @Override
-    public void commitAll(CommitRequest request) throws RepositoryException {
+    public void commitAll(String message) throws RepositoryException {
         try {
             git.add().addFilepattern("*").call();
 
+            final UserEntity currentUser = authenticationManager.getCurrentUserOrFail();
+
             git.commit()
-                    .setAuthor(request.getAuthorName(), request.getAuthorEmail())
-                    .setMessage(request.getMessage())
+                    .setAuthor(currentUser.getUsername(), currentUser.getEmail())
+                    .setMessage(message)
                     .call();
 
             git.push().call();
