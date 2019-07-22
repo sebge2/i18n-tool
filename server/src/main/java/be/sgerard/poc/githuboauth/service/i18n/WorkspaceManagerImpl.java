@@ -1,6 +1,5 @@
 package be.sgerard.poc.githuboauth.service.i18n;
 
-import be.sgerard.poc.githuboauth.model.git.CommitRequest;
 import be.sgerard.poc.githuboauth.model.i18n.WorkspaceStatus;
 import be.sgerard.poc.githuboauth.model.i18n.dto.WorkspaceDto;
 import be.sgerard.poc.githuboauth.model.i18n.file.ScannedBundleFileDto;
@@ -16,7 +15,6 @@ import be.sgerard.poc.githuboauth.service.git.RepositoryException;
 import be.sgerard.poc.githuboauth.service.git.RepositoryManager;
 import be.sgerard.poc.githuboauth.service.i18n.file.TranslationBundleWalker;
 import be.sgerard.poc.githuboauth.service.i18n.persistence.WorkspaceRepository;
-import be.sgerard.poc.githuboauth.service.security.auth.AuthenticationManager;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,16 +36,13 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
     private final RepositoryManager repositoryManager;
     private final TranslationBundleWalker walker;
     private final WorkspaceRepository workspaceRepository;
-    private final AuthenticationManager authenticationManager;
     private final EventService eventService;
 
     public WorkspaceManagerImpl(RepositoryManager repositoryManager,
-                                AuthenticationManager authenticationManager,
                                 TranslationBundleWalker walker,
                                 WorkspaceRepository workspaceRepository,
                                 EventService eventService) {
         this.repositoryManager = repositoryManager;
-        this.authenticationManager = authenticationManager;
         this.walker = walker;
         this.workspaceRepository = workspaceRepository;
         this.eventService = eventService;
