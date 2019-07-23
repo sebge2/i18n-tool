@@ -4,7 +4,6 @@ import be.sgerard.poc.githuboauth.model.i18n.file.ScannedBundleFileDto;
 import be.sgerard.poc.githuboauth.model.i18n.file.ScannedBundleFileKeyDto;
 import be.sgerard.poc.githuboauth.service.git.RepositoryAPI;
 import com.fasterxml.jackson.datatype.jdk8.WrappedIOException;
-import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,7 +15,6 @@ import static java.util.stream.Collectors.toList;
 /**
  * @author Sebastien Gerard
  */
-@Service
 public class TranslationBundleWalker {
 
     private final List<TranslationBundleHandler> handlers;

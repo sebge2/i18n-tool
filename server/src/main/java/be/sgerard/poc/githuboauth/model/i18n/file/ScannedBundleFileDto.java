@@ -1,17 +1,21 @@
 package be.sgerard.poc.githuboauth.model.i18n.file;
 
 import be.sgerard.poc.githuboauth.model.i18n.BundleType;
+import be.sgerard.poc.githuboauth.model.i18n.persistence.BundleFileEntity;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+
+import static java.util.stream.Collectors.toSet;
 
 /**
  * @author Sebastien Gerard
  */
 public class ScannedBundleFileDto {
 
-    public static ScannedBundleFileDto merge(ScannedBundleFileDto first, ScannedBundleFileDto second){
+    public static ScannedBundleFileDto merge(ScannedBundleFileDto first, ScannedBundleFileDto second) {
         if (first == null) {
             return second;
         } else {
@@ -29,16 +33,25 @@ public class ScannedBundleFileDto {
     private final String name;
     private final BundleType type;
     private final File locationDirectory;
-    private final List<File> files;
+    private final Collection<File> files;
 
     public ScannedBundleFileDto(String name,
                                 BundleType type,
                                 File locationDirectory,
-                                List<File> files) {
+                                Collection<File> files) {
         this.name = name;
         this.type = type;
         this.locationDirectory = locationDirectory;
         this.files = files;
+    }
+
+    public ScannedBundleFileDto(BundleFileEntity entity) {
+        this(
+                entity.getName(),
+                entity.getType(),
+                new File(entity.getLocation()),
+                entity.getFiles().stream().map(File::new).collect(toSet())
+        );
     }
 
     public String getName() {
@@ -53,12 +66,12 @@ public class ScannedBundleFileDto {
         return locationDirectory;
     }
 
-    public List<File> getFiles() {
+    public Collection<File> getFiles() {
         return files;
     }
 
     @Override
     public String toString() {
-        return "ScannedBundleFileDto(" +name + ":" + locationDirectory + ")";
+        return "ScannedBundleFileDto(" + name + ":" + locationDirectory + ")";
     }
 }
