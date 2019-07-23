@@ -2,6 +2,7 @@ package be.sgerard.poc.githuboauth.model.i18n.persistence;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -97,6 +98,10 @@ public class BundleKeyEntryEntity {
         return locale;
     }
 
+    public Locale getJavaLocale(){
+        return Locale.forLanguageTag(getLocale());
+    }
+
     public void setLocale(String locale) {
         this.locale = locale;
     }
@@ -115,6 +120,11 @@ public class BundleKeyEntryEntity {
 
     public void setUpdatedValue(String updatedValue) {
         this.updatedValue = updatedValue;
+    }
+
+    public Optional<String> getValue() {
+        return getUpdatedValue()
+                .or(this::getOriginalValue);
     }
 
     public Optional<String> getLastEditor() {

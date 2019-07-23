@@ -6,6 +6,7 @@ import be.sgerard.poc.githuboauth.service.git.RepositoryAPI;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 /**
@@ -20,5 +21,9 @@ public interface TranslationBundleHandler {
     Stream<ScannedBundleFileDto> scanBundles(File directory, RepositoryAPI repositoryAPI) throws IOException;
 
     Stream<ScannedBundleFileKeyDto> scanKeys(ScannedBundleFileDto bundleFile, RepositoryAPI repositoryAPI) throws IOException;
+
+    void updateBundle(ScannedBundleFileDto bundleFile,
+                      Supplier<Stream<ScannedBundleFileKeyDto>> translationsProvider,
+                      RepositoryAPI repositoryAPI) throws IOException;
 
 }

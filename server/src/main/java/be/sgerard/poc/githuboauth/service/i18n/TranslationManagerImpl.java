@@ -2,26 +2,34 @@ package be.sgerard.poc.githuboauth.service.i18n;
 
 import be.sgerard.poc.githuboauth.controller.AuthenticationController;
 import be.sgerard.poc.githuboauth.model.i18n.dto.*;
+import be.sgerard.poc.githuboauth.model.i18n.event.TranslationsUpdateEventDto;
 import be.sgerard.poc.githuboauth.model.i18n.file.ScannedBundleFileDto;
 import be.sgerard.poc.githuboauth.model.i18n.file.ScannedBundleFileKeyDto;
 import be.sgerard.poc.githuboauth.model.i18n.persistence.BundleFileEntity;
 import be.sgerard.poc.githuboauth.model.i18n.persistence.BundleKeyEntity;
 import be.sgerard.poc.githuboauth.model.i18n.persistence.BundleKeyEntryEntity;
 import be.sgerard.poc.githuboauth.model.i18n.persistence.WorkspaceEntity;
+import be.sgerard.poc.githuboauth.model.security.user.UserDto;
 import be.sgerard.poc.githuboauth.service.ResourceNotFoundException;
+import be.sgerard.poc.githuboauth.service.event.EventService;
 import be.sgerard.poc.githuboauth.service.git.RepositoryAPI;
+import be.sgerard.poc.githuboauth.service.i18n.file.TranslationBundleHandler;
 import be.sgerard.poc.githuboauth.service.i18n.file.TranslationBundleWalker;
 import be.sgerard.poc.githuboauth.service.i18n.persistence.BundleKeyEntryRepository;
 import be.sgerard.poc.githuboauth.service.i18n.persistence.WorkspaceRepository;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Stream;
 
+import static be.sgerard.poc.githuboauth.model.event.Events.EVENT_UPDATED_TRANSLATIONS;
 import static be.sgerard.poc.githuboauth.service.i18n.file.TranslationFileUtils.mapToNullIfEmpty;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 /**
  * @author Sebastien Gerard
@@ -32,16 +40,21 @@ public class TranslationManagerImpl implements TranslationManager {
     private final WorkspaceRepository workspaceRepository;
     private final BundleKeyEntryRepository keyEntryRepository;
     private final AuthenticationController authenticationManager;
+    private final EventService eventService;
     private final TranslationBundleWalker walker;
+    private final List<TranslationBundleHandler> handlers;
 
     public TranslationManagerImpl(WorkspaceRepository workspaceRepository,
                                   BundleKeyEntryRepository keyEntryRepository,
                                   AuthenticationController authenticationManager,
-                                  TranslationBundleWalker walker) {
+                                  EventService eventService,
+                                  List<TranslationBundleHandler> handlers) {
         this.workspaceRepository = workspaceRepository;
         this.keyEntryRepository = keyEntryRepository;
         this.authenticationManager = authenticationManager;
-        this.walker = walker;
+        this.eventService = eventService;
+        this.walker = new TranslationBundleWalker(handlers);
+        this.handlers = handlers;
     }
 
     @Override
@@ -107,13 +120,24 @@ public class TranslationManagerImpl implements TranslationManager {
     @Override
     @Transactional
     public void writeTranslations(WorkspaceEntity workspaceEntity, RepositoryAPI api) throws IOException {
+        for (BundleFileEntity file : workspaceEntity.getFiles()) {
+            final ScannedBundleFileDto bundleFile = new ScannedBundleFileDto(file);
+
+            final TranslationBundleHandler handler = getHandler(bundleFile);
+
+            handler.updateBundle(
+                    bundleFile,
+                    () -> getTranslations(file),
+                    api);
+        }
     }
 
     @Override
     @Transactional
     public void updateTranslations(WorkspaceEntity workspace, Map<String, String> translations) throws ResourceNotFoundException {
-        final String username = authenticationManager.getCurrentUser().getUsername();
+        final UserDto currentUser = authenticationManager.getCurrentUser();
 
+        final List<BundleKeyEntryDto> updatedEntries = new ArrayList<>();
         for (Map.Entry<String, String> updateEntry : translations.entrySet()) {
             final BundleKeyEntryEntity entry = keyEntryRepository.findById(updateEntry.getKey())
                     .orElseThrow(() -> new ResourceNotFoundException(updateEntry.getKey()));
@@ -122,9 +146,19 @@ public class TranslationManagerImpl implements TranslationManager {
                 throw new IllegalArgumentException("The entry [" + entry.getId() + "] does not belong to the workspace [" + workspace.getId() + "].");
             }
 
-            entry.setLastEditor(username);
+            entry.setLastEditor(currentUser.getId());
             entry.setUpdatedValue(mapToNullIfEmpty(updateEntry.getValue()));
+            updatedEntries.add(BundleKeyEntryDto.builder().build());
         }
+
+        eventService.broadcastEvent(
+                EVENT_UPDATED_TRANSLATIONS,
+                new TranslationsUpdateEventDto(
+                        WorkspaceDto.builder(workspace).build(),
+                        currentUser,
+                        updatedEntries
+                )
+        );
     }
 
     private GroupedTranslations doGetTranslations(BundleKeysPageRequestDto searchRequest) {
@@ -161,6 +195,17 @@ public class TranslationManagerImpl implements TranslationManager {
         return groupedTranslations;
     }
 
+    private TranslationBundleHandler getHandler(ScannedBundleFileDto bundleFile) {
+        for (TranslationBundleHandler handler : handlers) {
+
+            if (handler.support(bundleFile)) {
+                return handler;
+            }
+        }
+
+        throw new IllegalStateException("There is no handler supporting [" + bundleFile + "].");
+    }
+
     private void onBundleFound(WorkspaceEntity workspaceEntity,
                                ScannedBundleFileDto bundleFile,
                                Stream<ScannedBundleFileKeyDto> entries) {
@@ -169,7 +214,8 @@ public class TranslationManagerImpl implements TranslationManager {
                         workspaceEntity,
                         bundleFile.getName(),
                         bundleFile.getLocationDirectory().toString(),
-                        bundleFile.getType()
+                        bundleFile.getType(),
+                        bundleFile.getFiles().stream().map(File::toString).collect(toList())
                 );
 
         entries.forEach(
@@ -180,6 +226,21 @@ public class TranslationManagerImpl implements TranslationManager {
                         new BundleKeyEntryEntity(keyEntity, translationEntry.getKey().toLanguageTag(), translationEntry.getValue());
                     }
                 });
+    }
+
+    private Stream<ScannedBundleFileKeyDto> getTranslations(BundleFileEntity file) {
+        return file.getKeys().stream()
+                .map(
+                        keyEntity ->
+                                new ScannedBundleFileKeyDto(
+                                        keyEntity.getKey(),
+                                        keyEntity.getEntries().stream()
+                                                .map(keyEntryEntity ->
+                                                        Pair.of(keyEntryEntity.getJavaLocale(), keyEntryEntity.getValue().orElse(null))
+                                                )
+                                                .collect(toMap(Pair::getKey, Pair::getValue))
+                                )
+                );
     }
 
     private static final class GroupedTranslations {

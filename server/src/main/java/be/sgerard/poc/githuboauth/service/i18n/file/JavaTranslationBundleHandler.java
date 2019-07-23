@@ -6,6 +6,8 @@ import be.sgerard.poc.githuboauth.model.i18n.file.ScannedBundleFileDto;
 import be.sgerard.poc.githuboauth.model.i18n.file.ScannedBundleFileKeyDto;
 import be.sgerard.poc.githuboauth.service.git.RepositoryAPI;
 import com.fasterxml.jackson.datatype.jdk8.WrappedIOException;
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.PropertiesConfiguration;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 
@@ -15,6 +17,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.PropertyResourceBundle;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -92,6 +95,31 @@ public class JavaTranslationBundleHandler implements TranslationBundleHandler {
                     .stream();
         } catch (WrappedIOException e) {
             throw e.getCause();
+        }
+    }
+
+    @Override
+    public void updateBundle(ScannedBundleFileDto bundleFile,
+                             Supplier<Stream<ScannedBundleFileKeyDto>> translationsProvider,
+                             RepositoryAPI repositoryAPI) throws IOException {
+        try {
+            for (File file : bundleFile.getFiles()) {
+                final Matcher matcher = BUNDLE_PATTERN.matcher(file.getName());
+
+                if (!matcher.matches()) {
+                    continue;
+                }
+
+                final PropertiesConfiguration conf = new PropertiesConfiguration(file);
+
+                final Locale locale = getLocale(file);
+
+                translationsProvider.get().forEach(key -> conf.setProperty(key.getKey(), key.getTranslations().getOrDefault(locale, null)));
+
+                conf.save();
+            }
+        } catch (ConfigurationException e) {
+            throw new IOException("Error while updating bundle files.", e);
         }
     }
 
