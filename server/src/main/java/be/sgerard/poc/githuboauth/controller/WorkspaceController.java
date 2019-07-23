@@ -67,7 +67,7 @@ public class WorkspaceController {
     @DeleteMapping(path = "/workspace/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @ApiOperation(value = "Deletes the workspace having the specified id.")
-    public void deleteWorkspace(@PathVariable String id) {
+    public void deleteWorkspace(@PathVariable String id) throws LockTimeoutException, RepositoryException {
         workspaceManager.deleteWorkspace(id);
     }
 
