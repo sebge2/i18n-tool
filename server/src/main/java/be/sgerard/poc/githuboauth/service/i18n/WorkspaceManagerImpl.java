@@ -8,10 +8,7 @@ import be.sgerard.poc.githuboauth.model.i18n.persistence.WorkspaceEntity;
 import be.sgerard.poc.githuboauth.service.LockTimeoutException;
 import be.sgerard.poc.githuboauth.service.ResourceNotFoundException;
 import be.sgerard.poc.githuboauth.service.event.EventService;
-import be.sgerard.poc.githuboauth.service.git.PullRequestManager;
-import be.sgerard.poc.githuboauth.service.git.RepositoryException;
-import be.sgerard.poc.githuboauth.service.git.RepositoryManager;
-import be.sgerard.poc.githuboauth.service.git.WebHookCallback;
+import be.sgerard.poc.githuboauth.service.git.*;
 import be.sgerard.poc.githuboauth.service.i18n.persistence.WorkspaceRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,19 +19,20 @@ import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.regex.Pattern;
 
 import static be.sgerard.poc.githuboauth.model.event.Events.EVENT_DELETED_WORKSPACE;
 import static be.sgerard.poc.githuboauth.model.event.Events.EVENT_UPDATED_WORKSPACE;
+import static java.util.stream.Collectors.toList;
 
 /**
  * @author Sebastien Gerard
  */
 @Service
 public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
+
+    public static final Pattern BRANCHES_TO_KEEP = Pattern.compile("^master|release\\/[0-9]{4}.[0-9]{1,2}$");
 
     private static final Logger logger = LoggerFactory.getLogger(WorkspaceManagerImpl.class);
 
@@ -60,7 +58,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
     @Transactional
     public List<WorkspaceEntity> findWorkspaces() throws RepositoryException, LockTimeoutException {
         return repositoryManager.open(api -> {
-            final List<String> availableBranches = api.listBranches();
+            final List<String> availableBranches = listBranches(api);
 
             for (WorkspaceEntity workspaceEntity : workspaceRepository.findAll()) {
                 switch (workspaceEntity.getStatus()) {
@@ -249,5 +247,21 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
         logger.info("The pull request is now finished, deleting the workspace {}.", workspaceEntity.getId());
 
         deleteWorkspace(workspaceEntity.getId());
+    }
+
+    private List<String> listBranches(RepositoryAPI api) throws RepositoryException {
+        return api.listRemoteBranches()
+                .stream()
+                .filter(name -> BRANCHES_TO_KEEP.matcher(name).matches())
+                .sorted((first, second) -> {
+                    if (RepositoryManagerImpl.DEFAULT_BRANCH.equals(first)) {
+                        return -1;
+                    } else if (RepositoryManagerImpl.DEFAULT_BRANCH.equals(second)) {
+                        return 1;
+                    } else {
+                        return Comparator.<String>reverseOrder().compare(first, second);
+                    }
+                })
+                .collect(toList());
     }
 }
