@@ -72,6 +72,10 @@
             <artifactId>springfox-swagger-ui</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>commons-configuration</groupId>
+            <artifactId>commons-configuration</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>

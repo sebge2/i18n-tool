@@ -1,5 +1,6 @@
 package be.sgerard.poc.githuboauth.model.i18n.dto;
 
+import be.sgerard.poc.githuboauth.model.i18n.persistence.BundleKeyEntryEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -11,6 +12,15 @@ public class BundleKeyEntryDto {
 
     public static Builder builder() {
         return new Builder();
+    }
+
+    public static Builder builder(BundleKeyEntryEntity entity) {
+        return builder()
+                .id(entity.getId())
+                .locale(entity.getLocale())
+                .originalValue(entity.getOriginalValue().orElse(null))
+                .updatedValue(entity.getUpdatedValue().orElse(null))
+                .lastEditor(entity.getLastEditor().orElse(null));
     }
 
     @ApiModelProperty(notes = "Unique identifier of a translation.", required = true)

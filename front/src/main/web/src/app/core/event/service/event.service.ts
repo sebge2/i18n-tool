@@ -12,12 +12,12 @@ export class EventService {
     constructor(private rxStompService: RxStompService) {
     }
 
-    public subscribe<T>(destination: string, type: { new(raw: T): T; }): Observable<T> {
-        return this.rxStompService.watch("/topic/" + destination)
+    public subscribe<T>(eventType: string, type: { new(raw: T): T; }): Observable<T> {
+        return this.rxStompService.watch("/topic/" + eventType)
             .pipe(map((message: Message) => new type(<T>JSON.parse(message.body))));
     }
 
-    public publish(destination: string, payload: any): void {
-        this.rxStompService.publish({destination: "/app/" + destination, body: JSON.stringify(payload)});
+    public publish(eventType: string, payload: any): void {
+        this.rxStompService.publish({destination: "/app/" + eventType, body: JSON.stringify(payload)});
     }
 }
