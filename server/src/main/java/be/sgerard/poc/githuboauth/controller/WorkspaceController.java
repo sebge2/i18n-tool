@@ -11,7 +11,6 @@ import be.sgerard.poc.githuboauth.service.i18n.WorkspaceManager;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.http.HttpStatus;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
@@ -48,8 +47,7 @@ public class WorkspaceController {
     }
 
     @PutMapping(path = "/workspace")
-    @Async
-    @ApiOperation(value = "Executes an action on workspaces (asynchronous call).")
+    @ApiOperation(value = "Executes an action on workspaces.")
     public void executeWorkspacesAction(@RequestParam(name = "do") WorkspaceListAction doAction) throws LockTimeoutException, RepositoryException {
         switch (doAction) {
             case FIND:
@@ -74,8 +72,7 @@ public class WorkspaceController {
     }
 
     @PutMapping(path = "/workspace/{id}")
-    @Async
-    @ApiOperation(value = "Executes an action on the specified workspace (asynchronous call).")
+    @ApiOperation(value = "Executes an action on the specified workspace.")
     public void executeWorkspaceAction(@PathVariable String id,
                                        @RequestParam(name = "do") WorkspaceAction doAction) throws LockTimeoutException, RepositoryException {
         switch (doAction) {
