@@ -8,7 +8,7 @@ import java.util.stream.Stream;
 /**
  * @author Sebastien Gerard
  */
-public interface BundleKeyEntryRepositoryCustom {
+public interface BundleKeyTranslationRepositoryCustom {
 
     Stream<BundleKeyTranslationEntity> searchEntries(BundleKeyEntrySearchRequestDto request);
 }

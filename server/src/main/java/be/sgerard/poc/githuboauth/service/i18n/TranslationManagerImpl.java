@@ -15,7 +15,7 @@ import be.sgerard.poc.githuboauth.service.event.EventService;
 import be.sgerard.poc.githuboauth.service.git.RepositoryAPI;
 import be.sgerard.poc.githuboauth.service.i18n.file.TranslationBundleHandler;
 import be.sgerard.poc.githuboauth.service.i18n.file.TranslationBundleWalker;
-import be.sgerard.poc.githuboauth.service.i18n.persistence.BundleKeyEntryRepository;
+import be.sgerard.poc.githuboauth.service.i18n.persistence.BundleKeyTranslationRepository;
 import be.sgerard.poc.githuboauth.service.i18n.persistence.WorkspaceRepository;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.stereotype.Service;
@@ -24,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Stream;
 
 import static be.sgerard.poc.githuboauth.model.event.Events.EVENT_UPDATED_TRANSLATIONS;
 import static be.sgerard.poc.githuboauth.service.i18n.file.TranslationFileUtils.mapToNullIfEmpty;
@@ -38,14 +37,14 @@ import static java.util.stream.Collectors.toMap;
 public class TranslationManagerImpl implements TranslationManager {
 
     private final WorkspaceRepository workspaceRepository;
-    private final BundleKeyEntryRepository keyEntryRepository;
+    private final BundleKeyTranslationRepository keyEntryRepository;
     private final AuthenticationController authenticationManager;
     private final EventService eventService;
     private final TranslationBundleWalker walker;
     private final List<TranslationBundleHandler> handlers;
 
     public TranslationManagerImpl(WorkspaceRepository workspaceRepository,
-                                  BundleKeyEntryRepository keyEntryRepository,
+                                  BundleKeyTranslationRepository keyEntryRepository,
                                   AuthenticationController authenticationManager,
                                   EventService eventService,
                                   List<TranslationBundleHandler> handlers) {
@@ -203,7 +202,7 @@ public class TranslationManagerImpl implements TranslationManager {
 
     private void onBundleFound(WorkspaceEntity workspaceEntity,
                                ScannedBundleFileDto bundleFile,
-                               Stream<ScannedBundleFileKeyDto> entries) {
+                               Collection<ScannedBundleFileKeyDto> keys) {
         final BundleFileEntity bundleFileEntity =
                 new BundleFileEntity(
                         workspaceEntity,
@@ -213,7 +212,7 @@ public class TranslationManagerImpl implements TranslationManager {
                         bundleFile.getFiles().stream().map(File::toString).collect(toList())
                 );
 
-        entries.forEach(
+        keys.forEach(
                 entry -> {
                     final BundleKeyEntity keyEntity = new BundleKeyEntity(bundleFileEntity, entry.getKey());
 

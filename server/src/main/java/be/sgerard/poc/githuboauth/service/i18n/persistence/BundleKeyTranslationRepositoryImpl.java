@@ -12,13 +12,13 @@ import java.util.stream.Stream;
  * @author Sebastien Gerard
  */
 @SuppressWarnings("unused")
-public class BundleKeyEntryRepositoryImpl implements BundleKeyEntryRepositoryCustom {
+public class BundleKeyTranslationRepositoryImpl implements BundleKeyTranslationRepositoryCustom {
 
     public static final String HINT_FETCH_GRAPH = "javax.persistence.fetchgraph";
 
     private final EntityManager entityManager;
 
-    public BundleKeyEntryRepositoryImpl(EntityManager entityManager) {
+    public BundleKeyTranslationRepositoryImpl(EntityManager entityManager) {
         this.entityManager = entityManager;
     }
 
@@ -29,7 +29,7 @@ public class BundleKeyEntryRepositoryImpl implements BundleKeyEntryRepositoryCus
         final CriteriaQuery<BundleKeyTranslationEntity> query = criteriaBuilder.createQuery(BundleKeyTranslationEntity.class);
 
         final Root<BundleKeyTranslationEntity> selectEntry = query.from(BundleKeyTranslationEntity.class);
-        final Join<BundleKeyTranslationEntity, BundleKeyEntity> bundleKeyJoin = selectEntry.join(BundleKeyEntryEntity_.bundleKey);
+        final Join<BundleKeyTranslationEntity, BundleKeyEntity> bundleKeyJoin = selectEntry.join(BundleKeyTranslationEntity_.bundleKey);
         final Join<BundleKeyEntity, BundleFileEntity> bundleFileJoin = bundleKeyJoin.join(BundleKeyEntity_.bundleFile);
         final Join<BundleFileEntity, WorkspaceEntity> workspaceJoin = bundleFileJoin.join(BundleFileEntity_.workspace);
 
@@ -44,16 +44,16 @@ public class BundleKeyEntryRepositoryImpl implements BundleKeyEntryRepositoryCus
 
         if (!request.getMissingLocales().isEmpty()) {
             whereClause.getExpressions().add(
-                    selectEntry.get(BundleKeyEntryEntity_.locale).in(request.getMissingLocales().stream().map(Locale::toString).toArray())
+                    selectEntry.get(BundleKeyTranslationEntity_.locale).in(request.getMissingLocales().stream().map(Locale::toString).toArray())
             );
 
-            whereClause.getExpressions().add(selectEntry.get(BundleKeyEntryEntity_.originalValue).isNull());
-            whereClause.getExpressions().add(selectEntry.get(BundleKeyEntryEntity_.updatedValue).isNull());
+            whereClause.getExpressions().add(selectEntry.get(BundleKeyTranslationEntity_.originalValue).isNull());
+            whereClause.getExpressions().add(selectEntry.get(BundleKeyTranslationEntity_.updatedValue).isNull());
         }
 
         if (!request.getLocales().isEmpty()) {
             whereClause.getExpressions().add(
-                    selectEntry.get(BundleKeyEntryEntity_.locale).in(request.getLocales().stream().map(Locale::toString).toArray())
+                    selectEntry.get(BundleKeyTranslationEntity_.locale).in(request.getLocales().stream().map(Locale::toString).toArray())
             );
         }
 
@@ -66,8 +66,8 @@ public class BundleKeyEntryRepositoryImpl implements BundleKeyEntryRepositoryCus
                 .ifPresent(hasBeenUpdated ->
                         whereClause.getExpressions().add(
                                 hasBeenUpdated
-                                        ? selectEntry.get(BundleKeyEntryEntity_.updatedValue).isNotNull()
-                                        : selectEntry.get(BundleKeyEntryEntity_.updatedValue).isNull()
+                                        ? selectEntry.get(BundleKeyTranslationEntity_.updatedValue).isNotNull()
+                                        : selectEntry.get(BundleKeyTranslationEntity_.updatedValue).isNull()
                         )
                 );
 
@@ -77,8 +77,8 @@ public class BundleKeyEntryRepositoryImpl implements BundleKeyEntryRepositoryCus
 
         query.orderBy(
                 criteriaBuilder.asc(bundleKeyJoin.get(BundleKeyEntity_.bundleFile)),
-                criteriaBuilder.asc(selectEntry.get(BundleKeyEntryEntity_.bundleKey)),
-                criteriaBuilder.asc(selectEntry.get(BundleKeyEntryEntity_.locale))
+                criteriaBuilder.asc(selectEntry.get(BundleKeyTranslationEntity_.bundleKey)),
+                criteriaBuilder.asc(selectEntry.get(BundleKeyTranslationEntity_.locale))
         );
 
         return entityManager

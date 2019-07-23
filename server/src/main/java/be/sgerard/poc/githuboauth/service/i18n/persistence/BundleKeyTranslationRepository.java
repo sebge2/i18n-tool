@@ -11,7 +11,7 @@ import java.util.Collection;
  * @author Sebastien Gerard
  */
 @Repository
-public interface BundleKeyEntryRepository extends CrudRepository<BundleKeyTranslationEntity, String>, BundleKeyEntryRepositoryCustom {
+public interface BundleKeyTranslationRepository extends CrudRepository<BundleKeyTranslationEntity, String>, BundleKeyTranslationRepositoryCustom {
 
     @Query(value = "select distinct locale from translation_bundle_key_entry", nativeQuery = true)
     Collection<String> findAllLocales();

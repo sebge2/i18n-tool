@@ -7,6 +7,7 @@ import com.fasterxml.jackson.datatype.jdk8.WrappedIOException;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -66,7 +67,7 @@ public class TranslationBundleWalker {
 
     public interface TranslationBundleConsumer {
 
-        void onBundleFound(ScannedBundleFileDto bundleFile, Stream<ScannedBundleFileKeyDto> entries);
+        void onBundleFound(ScannedBundleFileDto bundleFile, Collection<ScannedBundleFileKeyDto> keys);
 
     }
 
