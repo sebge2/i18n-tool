@@ -7,6 +7,6 @@ import be.sgerard.poc.githuboauth.model.git.GitHubPullRequestEventDto;
  */
 public interface WebHookCallback {
 
-    void onPullRequest(GitHubPullRequestEventDto pullRequest);
+    void onPullRequest(GitHubPullRequestEventDto pullRequest) throws Exception;
 
 }

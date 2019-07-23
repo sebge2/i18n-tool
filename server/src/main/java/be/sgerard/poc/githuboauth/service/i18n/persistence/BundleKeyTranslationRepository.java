@@ -13,6 +13,6 @@ import java.util.Collection;
 @Repository
 public interface BundleKeyTranslationRepository extends CrudRepository<BundleKeyTranslationEntity, String>, BundleKeyTranslationRepositoryCustom {
 
-    @Query(value = "select distinct locale from translation_bundle_key_entry", nativeQuery = true)
+    @Query(value = "select distinct locale from bundle_key_translation", nativeQuery = true)
     Collection<String> findAllLocales();
 }

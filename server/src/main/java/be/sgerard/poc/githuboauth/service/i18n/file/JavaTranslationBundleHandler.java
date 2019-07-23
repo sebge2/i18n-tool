@@ -76,7 +76,7 @@ public class JavaTranslationBundleHandler implements TranslationBundleHandler {
             return bundleFile.getFiles().stream()
                     .flatMap(
                             file -> {
-                                try {
+                                try { // TODO language empty
                                     final PropertyResourceBundle resourceBundle = new PropertyResourceBundle(repositoryAPI.openFile(file));
 
                                     return resourceBundle.keySet().stream()

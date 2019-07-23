@@ -210,27 +210,38 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
 
     @Override
     @Transactional
-    public void deleteWorkspace(String workspaceId) {
-        workspaceRepository.findById(workspaceId).ifPresent(
-                workspace -> {
-                    eventService.broadcastEvent(EVENT_DELETED_WORKSPACE, WorkspaceDto.builder(workspace).build());
+    public void deleteWorkspace(String workspaceId) throws RepositoryException, LockTimeoutException {
+        final WorkspaceEntity workspaceEntity = workspaceRepository.findById(workspaceId).orElse(null);
 
-                    logger.info("The workspace {} has been deleted.", workspaceId);
+        if (workspaceEntity != null) {
+            final String pullRequestBranch = workspaceEntity.getPullRequestBranch().orElse(null);
+            if (pullRequestBranch != null) {
+                repositoryManager.open(api -> {
+                    api.removeBranch(pullRequestBranch);
+                });
+            }
 
-                    workspaceRepository.delete(workspace);
-                }
-        );
+            eventService.broadcastEvent(EVENT_DELETED_WORKSPACE, WorkspaceDto.builder(workspaceEntity).build());
+
+            logger.info("The workspace {} has been deleted.", workspaceId);
+
+            workspaceRepository.delete(workspaceEntity);
+        }
     }
 
     @Override
     @Transactional
-    public void onPullRequest(GitHubPullRequestEventDto pullRequest) {
-        workspaceRepository
+    public void onPullRequest(GitHubPullRequestEventDto pullRequest) throws LockTimeoutException, RepositoryException {
+        final WorkspaceEntity workspaceEntity = workspaceRepository
                 .findByPullRequestNumber(pullRequest.getNumber())
-                .ifPresent(workspaceEntity -> updateReviewingWorkspace(workspaceEntity, pullRequest.getStatus()));
+                .orElse(null);
+
+        if (workspaceEntity != null) {
+            updateReviewingWorkspace(workspaceEntity, pullRequest.getStatus());
+        }
     }
 
-    private void updateReviewingWorkspace(WorkspaceEntity workspaceEntity, PullRequestStatus status) {
+    private void updateReviewingWorkspace(WorkspaceEntity workspaceEntity, PullRequestStatus status) throws LockTimeoutException, RepositoryException {
         if (status.isFinished()) {
             return;
         }

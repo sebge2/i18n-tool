@@ -28,6 +28,6 @@ public interface WorkspaceManager {
 
     void updateTranslations(String workspaceId, Map<String, String> translations) throws ResourceNotFoundException;
 
-    void deleteWorkspace(String workspaceId);
+    void deleteWorkspace(String workspaceId) throws RepositoryException, LockTimeoutException;
 
 }

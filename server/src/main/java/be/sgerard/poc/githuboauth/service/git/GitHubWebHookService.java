@@ -67,7 +67,9 @@ public class GitHubWebHookService {
 
                 final GitHubPullRequestEventDto event = new GitHubPullRequestEventDto(properties);
 
-                callbacks.forEach(callback -> callback.onPullRequest(event));
+                for (WebHookCallback callback : callbacks) {
+                    callback.onPullRequest(event);
+                }
             } else {
                 logger.info("Ignore GitHub event type [" + eventType + "].");
             }
@@ -78,6 +80,8 @@ public class GitHubWebHookService {
             );
         } catch (IOException e) {
             return new ResponseEntity<>("Unable to parse response.", HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error while executing request.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
