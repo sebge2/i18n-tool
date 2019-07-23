@@ -123,12 +123,7 @@ public class TranslationManagerImpl implements TranslationManager {
         for (BundleFileEntity file : workspaceEntity.getFiles()) {
             final ScannedBundleFileDto bundleFile = new ScannedBundleFileDto(file);
 
-            final TranslationBundleHandler handler = getHandler(bundleFile);
-
-            handler.updateBundle(
-                    bundleFile,
-                    () -> getTranslations(file),
-                    api);
+            getHandler(bundleFile).updateBundle(bundleFile, getTranslations(file), api);
         }
     }
 
@@ -228,7 +223,7 @@ public class TranslationManagerImpl implements TranslationManager {
                 });
     }
 
-    private Stream<ScannedBundleFileKeyDto> getTranslations(BundleFileEntity file) {
+    private Collection<ScannedBundleFileKeyDto> getTranslations(BundleFileEntity file) {
         return file.getKeys().stream()
                 .map(
                         keyEntity ->
@@ -240,7 +235,8 @@ public class TranslationManagerImpl implements TranslationManager {
                                                 )
                                                 .collect(toMap(Pair::getKey, Pair::getValue))
                                 )
-                );
+                )
+                .collect(toList());
     }
 
     private static final class GroupedTranslations {

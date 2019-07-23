@@ -13,11 +13,7 @@ import org.springframework.util.AntPathMatcher;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.PropertyResourceBundle;
-import java.util.function.Supplier;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -75,7 +71,7 @@ public class JavaTranslationBundleHandler implements TranslationBundleHandler {
     }
 
     @Override
-    public Stream<ScannedBundleFileKeyDto> scanKeys(ScannedBundleFileDto bundleFile, RepositoryAPI repositoryAPI) throws IOException {
+    public Collection<ScannedBundleFileKeyDto> scanKeys(ScannedBundleFileDto bundleFile, RepositoryAPI repositoryAPI) throws IOException {
         try {
             return bundleFile.getFiles().stream()
                     .flatMap(
@@ -91,8 +87,7 @@ public class JavaTranslationBundleHandler implements TranslationBundleHandler {
                             }
                     )
                     .collect(groupingBy(ScannedBundleFileKeyDto::getKey, reducing(null, ScannedBundleFileKeyDto::merge)))
-                    .values()
-                    .stream();
+                    .values();
         } catch (WrappedIOException e) {
             throw e.getCause();
         }
@@ -100,7 +95,7 @@ public class JavaTranslationBundleHandler implements TranslationBundleHandler {
 
     @Override
     public void updateBundle(ScannedBundleFileDto bundleFile,
-                             Supplier<Stream<ScannedBundleFileKeyDto>> translationsProvider,
+                             Collection<ScannedBundleFileKeyDto> keys,
                              RepositoryAPI repositoryAPI) throws IOException {
         try {
             for (File file : bundleFile.getFiles()) {
@@ -114,7 +109,7 @@ public class JavaTranslationBundleHandler implements TranslationBundleHandler {
 
                 final Locale locale = getLocale(file);
 
-                translationsProvider.get().forEach(key -> conf.setProperty(key.getKey(), key.getTranslations().getOrDefault(locale, null)));
+                keys.forEach(key -> conf.setProperty(key.getKey(), key.getTranslations().getOrDefault(locale, null)));
 
                 conf.save();
             }
