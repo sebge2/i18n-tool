@@ -18,7 +18,9 @@ public interface RepositoryAPI extends AutoCloseable {
 
     String getCurrentBranch() throws RepositoryException;
 
-    List<String> listBranches() throws RepositoryException;
+    List<String> listRemoteBranches() throws RepositoryException;
+
+    List<String> listLocalBranches() throws RepositoryException;
 
     void checkout(String branch) throws RepositoryException;
 

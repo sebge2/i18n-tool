@@ -36,7 +36,7 @@ public class RepositoryController {
     @GetMapping("/repository/branch")
     @ApiOperation(value = "Lists all branches found on the repository.")
     public List<String> listBranches() throws Exception {
-        return repositoryManager.open(RepositoryAPI::listBranches);
+        return repositoryManager.open(RepositoryAPI::listRemoteBranches);
     }
 
     public enum RepositoryListAction {

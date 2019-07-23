@@ -17,7 +17,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static be.sgerard.poc.githuboauth.service.git.RepositoryManagerImpl.BRANCHES_TO_KEEP;
+import static be.sgerard.poc.githuboauth.service.git.RepositoryManagerImpl.*;
 import static be.sgerard.poc.githuboauth.service.i18n.file.TranslationFileUtils.removeParentFile;
 import static java.util.stream.Collectors.toList;
 
@@ -59,33 +59,20 @@ class DefaultRepositoryAPI implements RepositoryAPI, AutoCloseable {
     }
 
     @Override
-    public List<String> listBranches() throws RepositoryException {
-        try {
-            return git.branchList().setListMode(ListBranchCommand.ListMode.REMOTE).call().stream()
-                    .map(Ref::getName)
-                    .map(name -> name.startsWith(RepositoryManagerImpl.REFS_ORIGIN_PREFIX) ? name.substring(RepositoryManagerImpl.REFS_ORIGIN_PREFIX.length()) : name)
-                    .filter(name -> BRANCHES_TO_KEEP.matcher(name).matches())
-                    .sorted((first, second) -> {
-                        if (RepositoryManagerImpl.DEFAULT_BRANCH.equals(first)) {
-                            return -1;
-                        } else if (RepositoryManagerImpl.DEFAULT_BRANCH.equals(second)) {
-                            return 1;
-                        } else {
-                            return Comparator.<String>reverseOrder().compare(first, second);
-                        }
-                    })
-                    .distinct()
-                    .collect(toList());
-        } catch (Exception e) {
-            throw new RepositoryException("Error while listing branches.", e);
-        }
+    public List<String> listRemoteBranches() throws RepositoryException {
+        return doListBranches(REFS_ORIGIN_PREFIX);
+    }
+
+    @Override
+    public List<String> listLocalBranches() throws RepositoryException {
+        return doListBranches(REFS_LOCAL_PREFIX);
     }
 
     @Override
     public void checkout(String branch) throws RepositoryException {
         checkNoModifiedFile();
 
-        if (!listBranches().contains(branch)) {
+        if (!listLocalBranches().contains(branch)) {
             throw new IllegalArgumentException("The branch [" + branch + "] does not exist.");
         }
 
@@ -100,7 +87,7 @@ class DefaultRepositoryAPI implements RepositoryAPI, AutoCloseable {
     public void createBranch(String branch) throws RepositoryException {
         checkNoModifiedFile();
 
-        if (listBranches().contains(branch)) {
+        if (listRemoteBranches().contains(branch)) {
             throw new IllegalArgumentException("The branch [" + branch + "] already exists.");
         }
 
@@ -118,8 +105,9 @@ class DefaultRepositoryAPI implements RepositoryAPI, AutoCloseable {
     public void removeBranch(String branch) throws RepositoryException {
         checkNoModifiedFile();
 
+        // TODO if it's current let's switch
         try {
-            git.branchDelete().setBranchNames(branch).call();
+            git.branchDelete().setBranchNames(branch).setForce(true).call();
         } catch (GitAPIException e) {
             throw new RepositoryException("Error while deleting branch [" + branch + "].", e);
         }
@@ -211,7 +199,7 @@ class DefaultRepositoryAPI implements RepositoryAPI, AutoCloseable {
                     .setMessage(message)
                     .call();
 
-            git.push().call();
+            git.push().setCredentialsProvider(credentialsProvider).call();
         } catch (Exception e) {
             throw new RepositoryException("Error while committing.", e);
         }
@@ -253,6 +241,18 @@ class DefaultRepositoryAPI implements RepositoryAPI, AutoCloseable {
             }
 
             throw new IllegalStateException("There are modified files that have not been committed: " + files + ".");
+        }
+    }
+
+    private List<String> doListBranches(String branchPrefix) throws RepositoryException {
+        try {
+            return git.branchList().setListMode(ListBranchCommand.ListMode.ALL).call().stream()
+                    .map(Ref::getName)
+                    .map(name -> name.startsWith(branchPrefix) ? name.substring(branchPrefix.length()) : name)
+                    .distinct()
+                    .collect(toList());
+        } catch (Exception e) {
+            throw new RepositoryException("Error while listing branches.", e);
         }
     }
 }
