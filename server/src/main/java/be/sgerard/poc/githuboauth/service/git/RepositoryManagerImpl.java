@@ -12,7 +12,6 @@ import org.springframework.cglib.proxy.Proxy;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.util.regex.Pattern;
 
 import static java.util.Collections.singletonList;
 
@@ -24,9 +23,9 @@ public class RepositoryManagerImpl implements RepositoryManager {
 
     public static final String DEFAULT_BRANCH = "master";
 
-    public static final Pattern BRANCHES_TO_KEEP = Pattern.compile("^master|release\\/[0-9]{4}.[0-9]{1,2}$");
-
     public static final String REFS_ORIGIN_PREFIX = "refs/remotes/origin/";
+
+    public static final String REFS_LOCAL_PREFIX = "refs/heads/";
 
     private final String repoUri;
     private final File localRepositoryLocation;
