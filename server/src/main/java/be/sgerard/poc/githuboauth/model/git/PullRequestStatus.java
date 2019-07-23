@@ -5,9 +5,19 @@ package be.sgerard.poc.githuboauth.model.git;
  */
 public enum PullRequestStatus {
 
-    OPEN,
+    OPEN(false),
 
-    CLOSED,
+    CLOSED(true),
 
-    MERGED
+    MERGED(true);
+
+    private final boolean finished;
+
+    PullRequestStatus(boolean finished) {
+        this.finished = finished;
+    }
+
+    public boolean isFinished() {
+        return finished;
+    }
 }

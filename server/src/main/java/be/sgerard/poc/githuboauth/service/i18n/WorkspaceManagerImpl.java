@@ -8,6 +8,7 @@ import be.sgerard.poc.githuboauth.model.i18n.persistence.WorkspaceEntity;
 import be.sgerard.poc.githuboauth.service.LockTimeoutException;
 import be.sgerard.poc.githuboauth.service.ResourceNotFoundException;
 import be.sgerard.poc.githuboauth.service.event.EventService;
+import be.sgerard.poc.githuboauth.service.git.PullRequestManager;
 import be.sgerard.poc.githuboauth.service.git.RepositoryException;
 import be.sgerard.poc.githuboauth.service.git.RepositoryManager;
 import be.sgerard.poc.githuboauth.service.git.WebHookCallback;
@@ -28,7 +29,6 @@ import java.util.Optional;
 
 import static be.sgerard.poc.githuboauth.model.event.Events.EVENT_DELETED_WORKSPACE;
 import static be.sgerard.poc.githuboauth.model.event.Events.EVENT_UPDATED_WORKSPACE;
-import static java.util.Arrays.asList;
 
 /**
  * @author Sebastien Gerard
@@ -41,15 +41,18 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
     private final WorkspaceRepository workspaceRepository;
     private final RepositoryManager repositoryManager;
     private final TranslationManager translationManager;
+    private final PullRequestManager pullRequestManager;
     private final EventService eventService;
 
     public WorkspaceManagerImpl(WorkspaceRepository workspaceRepository,
                                 RepositoryManager repositoryManager,
                                 TranslationManager translationManager,
+                                PullRequestManager pullRequestManager,
                                 EventService eventService) {
         this.repositoryManager = repositoryManager;
         this.translationManager = translationManager;
         this.workspaceRepository = workspaceRepository;
+        this.pullRequestManager = pullRequestManager;
         this.eventService = eventService;
     }
 
@@ -59,15 +62,25 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
         return repositoryManager.open(api -> {
             final List<String> availableBranches = api.listBranches();
 
-            workspaceRepository.findAll()
-                    .forEach(workspaceEntity -> {
-                        if (!availableBranches.contains(workspaceEntity.getBranch())
-                                && (workspaceEntity.getStatus() == WorkspaceStatus.NOT_INITIALIZED)) {
+            for (WorkspaceEntity workspaceEntity : workspaceRepository.findAll()) {
+                switch (workspaceEntity.getStatus()) {
+                    case IN_REVIEW:
+                        final Integer requestNumber = workspaceEntity.getPullRequestNumber()
+                                .orElseThrow(() -> new IllegalStateException("There is no pull request number while the workspace [" + workspaceEntity.getId() + "] is in review."));
+
+                        updateReviewingWorkspace(workspaceEntity, pullRequestManager.getStatus(requestNumber));
+
+                        break;
+                    case NOT_INITIALIZED:
+                        if (!availableBranches.contains(workspaceEntity.getBranch())) {
                             deleteWorkspace(workspaceEntity.getId());
                         }
 
-                        availableBranches.remove(workspaceEntity.getBranch());
-                    });
+                        break;
+                }
+
+                availableBranches.remove(workspaceEntity.getBranch());
+            }
 
             final List<WorkspaceEntity> foundWorkspaces = new ArrayList<>();
             for (String availableBranch : availableBranches) {
@@ -212,18 +225,18 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
     @Override
     @Transactional
     public void onPullRequest(GitHubPullRequestEventDto pullRequest) {
-        if (asList(PullRequestStatus.MERGED, PullRequestStatus.CLOSED).contains(pullRequest.getStatus())) {
+        workspaceRepository
+                .findByPullRequestNumber(pullRequest.getNumber())
+                .ifPresent(workspaceEntity -> updateReviewingWorkspace(workspaceEntity, pullRequest.getStatus()));
+    }
+
+    private void updateReviewingWorkspace(WorkspaceEntity workspaceEntity, PullRequestStatus status) {
+        if (status.isFinished()) {
             return;
         }
 
-        workspaceRepository
-                .findByPullRequestNumber(pullRequest.getNumber())
-                .ifPresent(
-                        workspaceEntity -> {
-                            logger.info("The pull request {} is now finished, deleting the workspace {}.", pullRequest.getNumber(), workspaceEntity.getId());
+        logger.info("The pull request is now finished, deleting the workspace {}.", workspaceEntity.getId());
 
-                            deleteWorkspace(workspaceEntity.getId());
-                        }
-                );
+        deleteWorkspace(workspaceEntity.getId());
     }
 }
