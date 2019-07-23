@@ -22,12 +22,12 @@ public class BundleKeyDto {
     private final String key;
 
     @ApiModelProperty(notes = "All translations associated to this key.", required = true)
-    private final List<BundleKeyEntryDto> entries;
+    private final List<BundleKeyTranslationDto> translations;
 
     private BundleKeyDto(Builder builder) {
         id = builder.id;
         key = builder.key;
-        entries = unmodifiableList(builder.entries);
+        translations = unmodifiableList(builder.translations);
     }
 
     public static Builder builder() {
@@ -42,35 +42,35 @@ public class BundleKeyDto {
         return key;
     }
 
-    public List<BundleKeyEntryDto> getEntries() {
-        return entries;
+    public List<BundleKeyTranslationDto> getTranslations() {
+        return translations;
     }
 
     public static final class Builder {
         private String id;
         private String key;
-        private final List<BundleKeyEntryDto> entries = new ArrayList<>();
+        private final List<BundleKeyTranslationDto> translations = new ArrayList<>();
 
         private Builder() {
         }
 
-        public Builder id(String val) {
-            id = val;
+        public Builder id(String id) {
+            this.id = id;
             return this;
         }
 
-        public Builder key(String val) {
-            key = val;
+        public Builder key(String key) {
+            this.key = key;
             return this;
         }
 
-        public Builder entries(List<BundleKeyEntryDto> val) {
-            entries.addAll(val);
+        public Builder translations(List<BundleKeyTranslationDto> translations) {
+            this.translations.addAll(translations);
             return this;
         }
 
-        public Builder entries(BundleKeyEntryDto... val) {
-            return entries(asList(val));
+        public Builder translations(BundleKeyTranslationDto... translations) {
+            return translations(asList(translations));
         }
 
         public BundleKeyDto build() {

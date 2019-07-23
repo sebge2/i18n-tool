@@ -11,7 +11,7 @@ import static java.util.Collections.unmodifiableCollection;
 /**
  * @author Sebastien Gerard
  */
-@Entity(name = "translation_bundle_file")
+@Entity(name = "bundle_file")
 @Table(
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = {"workspace", "location"})

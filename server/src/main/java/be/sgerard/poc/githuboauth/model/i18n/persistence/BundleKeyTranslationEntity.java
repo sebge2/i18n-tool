@@ -10,7 +10,7 @@ import java.util.UUID;
  * @author Sebastien Gerard
  */
 @NamedEntityGraph(
-        name = BundleKeyEntryEntity.GRAPH_FETCH_ENTRIES_TO_WORKSPACE,
+        name = BundleKeyTranslationEntity.GRAPH_FETCH_ENTRIES_TO_WORKSPACE,
         attributeNodes = {
                 @NamedAttributeNode(value = "bundleKey", subgraph = "bundleKey-subgraph"),
         },
@@ -29,14 +29,14 @@ import java.util.UUID;
                 )
         }
 )
-@Entity(name = "translation_bundle_key_entry")
+@Entity(name = "bundle_key_translation")
 @Table(
         indexes = {@Index(columnList = "locale")},
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = {"bundle_key", "locale"})
         }
 )
-public class BundleKeyEntryEntity {
+public class BundleKeyTranslationEntity {
 
     public static final String GRAPH_FETCH_ENTRIES_TO_WORKSPACE = "fetch-entry-with-bundles";
 
@@ -63,16 +63,16 @@ public class BundleKeyEntryEntity {
     @Version
     private int version;
 
-    BundleKeyEntryEntity() {
+    BundleKeyTranslationEntity() {
     }
 
-    public BundleKeyEntryEntity(BundleKeyEntity bundleKey,
-                                String locale,
-                                String originalValue) {
+    public BundleKeyTranslationEntity(BundleKeyEntity bundleKey,
+                                      String locale,
+                                      String originalValue) {
         this.id = UUID.randomUUID().toString();
 
         this.bundleKey = bundleKey;
-        this.bundleKey.addEntry(this);
+        this.bundleKey.addTranslation(this);
 
         this.locale = locale;
         this.originalValue = originalValue;

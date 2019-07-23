@@ -7,7 +7,7 @@ import be.sgerard.poc.githuboauth.model.i18n.file.ScannedBundleFileDto;
 import be.sgerard.poc.githuboauth.model.i18n.file.ScannedBundleFileKeyDto;
 import be.sgerard.poc.githuboauth.model.i18n.persistence.BundleFileEntity;
 import be.sgerard.poc.githuboauth.model.i18n.persistence.BundleKeyEntity;
-import be.sgerard.poc.githuboauth.model.i18n.persistence.BundleKeyEntryEntity;
+import be.sgerard.poc.githuboauth.model.i18n.persistence.BundleKeyTranslationEntity;
 import be.sgerard.poc.githuboauth.model.i18n.persistence.WorkspaceEntity;
 import be.sgerard.poc.githuboauth.model.security.user.UserDto;
 import be.sgerard.poc.githuboauth.service.ResourceNotFoundException;
@@ -80,10 +80,10 @@ public class TranslationManagerImpl implements TranslationManager {
                                                                         BundleKeyDto.builder()
                                                                                 .id(key.getKey().getId())
                                                                                 .key(key.getKey().getKey())
-                                                                                .entries(
+                                                                                .translations(
                                                                                         key.getValue().stream()
                                                                                                 .map(keyEntry ->
-                                                                                                        BundleKeyEntryDto.builder()
+                                                                                                        BundleKeyTranslationDto.builder()
                                                                                                                 .id(keyEntry.getId())
                                                                                                                 .locale(keyEntry.getLocale())
                                                                                                                 .originalValue(keyEntry.getOriginalValue().orElse(null))
@@ -137,9 +137,9 @@ public class TranslationManagerImpl implements TranslationManager {
     public void updateTranslations(WorkspaceEntity workspace, Map<String, String> translations) throws ResourceNotFoundException {
         final UserDto currentUser = authenticationManager.getCurrentUser();
 
-        final List<BundleKeyEntryDto> updatedEntries = new ArrayList<>();
+        final List<BundleKeyTranslationDto> updatedEntries = new ArrayList<>();
         for (Map.Entry<String, String> updateEntry : translations.entrySet()) {
-            final BundleKeyEntryEntity entry = keyEntryRepository.findById(updateEntry.getKey())
+            final BundleKeyTranslationEntity entry = keyEntryRepository.findById(updateEntry.getKey())
                     .orElseThrow(() -> new ResourceNotFoundException(updateEntry.getKey()));
 
             if (!Objects.equals(workspace.getId(), entry.getBundleKey().getBundleFile().getWorkspace().getId())) {
@@ -148,7 +148,7 @@ public class TranslationManagerImpl implements TranslationManager {
 
             entry.setLastEditor(currentUser.getId());
             entry.setUpdatedValue(mapToNullIfEmpty(updateEntry.getValue()));
-            updatedEntries.add(BundleKeyEntryDto.builder().build());
+            updatedEntries.add(BundleKeyTranslationDto.builder().build());
         }
 
         eventService.broadcastEvent(
@@ -223,7 +223,7 @@ public class TranslationManagerImpl implements TranslationManager {
                     final BundleKeyEntity keyEntity = new BundleKeyEntity(bundleFileEntity, entry.getKey());
 
                     for (Map.Entry<Locale, String> translationEntry : entry.getTranslations().entrySet()) {
-                        new BundleKeyEntryEntity(keyEntity, translationEntry.getKey().toLanguageTag(), translationEntry.getValue());
+                        new BundleKeyTranslationEntity(keyEntity, translationEntry.getKey().toLanguageTag(), translationEntry.getValue());
                     }
                 });
     }
@@ -234,7 +234,7 @@ public class TranslationManagerImpl implements TranslationManager {
                         keyEntity ->
                                 new ScannedBundleFileKeyDto(
                                         keyEntity.getKey(),
-                                        keyEntity.getEntries().stream()
+                                        keyEntity.getTranslations().stream()
                                                 .map(keyEntryEntity ->
                                                         Pair.of(keyEntryEntity.getJavaLocale(), keyEntryEntity.getValue().orElse(null))
                                                 )
@@ -245,14 +245,14 @@ public class TranslationManagerImpl implements TranslationManager {
 
     private static final class GroupedTranslations {
 
-        private final Map<BundleFileEntity, Map<BundleKeyEntity, List<BundleKeyEntryEntity>>> groups = new LinkedHashMap<>();
+        private final Map<BundleFileEntity, Map<BundleKeyEntity, List<BundleKeyTranslationEntity>>> groups = new LinkedHashMap<>();
         private String lastKey;
         private int numberEntries;
 
         public GroupedTranslations() {
         }
 
-        public Map<BundleFileEntity, Map<BundleKeyEntity, List<BundleKeyEntryEntity>>> getGroups() {
+        public Map<BundleFileEntity, Map<BundleKeyEntity, List<BundleKeyTranslationEntity>>> getGroups() {
             return groups;
         }
 

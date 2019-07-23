@@ -1,6 +1,6 @@
 package be.sgerard.poc.githuboauth.model.i18n.dto;
 
-import be.sgerard.poc.githuboauth.model.i18n.persistence.BundleKeyEntryEntity;
+import be.sgerard.poc.githuboauth.model.i18n.persistence.BundleKeyTranslationEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -8,13 +8,13 @@ import io.swagger.annotations.ApiModelProperty;
  * @author Sebastien Gerard
  */
 @ApiModel(description = "Translation of a key of a bundle file and associated to a locale.")
-public class BundleKeyEntryDto {
+public class BundleKeyTranslationDto {
 
     public static Builder builder() {
         return new Builder();
     }
 
-    public static Builder builder(BundleKeyEntryEntity entity) {
+    public static Builder builder(BundleKeyTranslationEntity entity) {
         return builder()
                 .id(entity.getId())
                 .locale(entity.getLocale())
@@ -38,7 +38,7 @@ public class BundleKeyEntryDto {
     @ApiModelProperty(notes = "The username of the end-user that has edited this translation.", required = true)
     private final String lastEditor;
 
-    private BundleKeyEntryDto(Builder builder) {
+    private BundleKeyTranslationDto(Builder builder) {
         id = builder.id;
         locale = builder.locale;
         originalValue = builder.originalValue;
@@ -101,8 +101,8 @@ public class BundleKeyEntryDto {
             return this;
         }
 
-        public BundleKeyEntryDto build() {
-            return new BundleKeyEntryDto(this);
+        public BundleKeyTranslationDto build() {
+            return new BundleKeyTranslationDto(this);
         }
     }
 }

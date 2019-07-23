@@ -11,7 +11,7 @@ import static java.util.Collections.unmodifiableCollection;
 /**
  * @author Sebastien Gerard
  */
-@Entity(name = "translation_bundle_key")
+@Entity(name = "bundle_key")
 @Table(
         indexes = {
                 @Index(columnList = "key"),
@@ -32,7 +32,7 @@ public class BundleKeyEntity {
     private BundleFileEntity bundleFile;
 
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
-    private Collection<BundleKeyEntryEntity> entries = new HashSet<>();
+    private Collection<BundleKeyTranslationEntity> translations = new HashSet<>();
 
     @Version
     private int version;
@@ -73,12 +73,12 @@ public class BundleKeyEntity {
         this.bundleFile = bundleFile;
     }
 
-    public Collection<BundleKeyEntryEntity> getEntries() {
-        return unmodifiableCollection(entries);
+    public Collection<BundleKeyTranslationEntity> getTranslations() {
+        return unmodifiableCollection(translations);
     }
 
-    void addEntry(BundleKeyEntryEntity entry) {
-        this.entries.add(entry);
+    void addTranslation(BundleKeyTranslationEntity entry) {
+        this.translations.add(entry);
     }
 
     public int getVersion() {

@@ -23,13 +23,13 @@ public class BundleKeyEntryRepositoryImpl implements BundleKeyEntryRepositoryCus
     }
 
     @Override
-    public Stream<BundleKeyEntryEntity> searchEntries(BundleKeyEntrySearchRequestDto request) {
+    public Stream<BundleKeyTranslationEntity> searchEntries(BundleKeyEntrySearchRequestDto request) {
         final CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
 
-        final CriteriaQuery<BundleKeyEntryEntity> query = criteriaBuilder.createQuery(BundleKeyEntryEntity.class);
+        final CriteriaQuery<BundleKeyTranslationEntity> query = criteriaBuilder.createQuery(BundleKeyTranslationEntity.class);
 
-        final Root<BundleKeyEntryEntity> selectEntry = query.from(BundleKeyEntryEntity.class);
-        final Join<BundleKeyEntryEntity, BundleKeyEntity> bundleKeyJoin = selectEntry.join(BundleKeyEntryEntity_.bundleKey);
+        final Root<BundleKeyTranslationEntity> selectEntry = query.from(BundleKeyTranslationEntity.class);
+        final Join<BundleKeyTranslationEntity, BundleKeyEntity> bundleKeyJoin = selectEntry.join(BundleKeyEntryEntity_.bundleKey);
         final Join<BundleKeyEntity, BundleFileEntity> bundleFileJoin = bundleKeyJoin.join(BundleKeyEntity_.bundleFile);
         final Join<BundleFileEntity, WorkspaceEntity> workspaceJoin = bundleFileJoin.join(BundleFileEntity_.workspace);
 
@@ -84,7 +84,7 @@ public class BundleKeyEntryRepositoryImpl implements BundleKeyEntryRepositoryCus
         return entityManager
                 .createQuery(query)
                 .setMaxResults(request.getMaxKeyEntries())
-                .setHint(HINT_FETCH_GRAPH, entityManager.getEntityGraph(BundleKeyEntryEntity.GRAPH_FETCH_ENTRIES_TO_WORKSPACE))
+                .setHint(HINT_FETCH_GRAPH, entityManager.getEntityGraph(BundleKeyTranslationEntity.GRAPH_FETCH_ENTRIES_TO_WORKSPACE))
                 .getResultStream();
     }
 }
