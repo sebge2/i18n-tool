@@ -75,22 +75,21 @@ public class WorkspaceController {
 
     @PutMapping(path = "/workspace/{id}")
     @ApiOperation(value = "Executes an action on the specified workspace.")
-    public void executeWorkspaceAction(@PathVariable String id,
-                                       @ApiParam("The action to execute.") @RequestParam(name = "do") WorkspaceAction doAction,
-                                       @ApiParam("Specify the message to use for the review.")
-                                       @RequestParam(name = "message", required = false) String message) throws LockTimeoutException, RepositoryException {
+    public Object executeWorkspaceAction(@PathVariable String id,
+                                         @ApiParam("The action to execute.") @RequestParam(name = "do") WorkspaceAction doAction,
+                                         @ApiParam("Specify the message to use for the review.")
+                                         @RequestParam(name = "message", required = false) String message) throws LockTimeoutException, RepositoryException {
         switch (doAction) {
             case INITIALIZE:
-                workspaceManager.initialize(id);
-                break;
+                return workspaceManager.initialize(id);
             case START_REVIEW:
                 if (StringUtils.isEmpty(message)) {
                     throw new IllegalArgumentException("There is no message specify. A message is needed when starting a review.");
                 }
 
-                workspaceManager.startReviewing(id, message);
-
-                break;
+                return workspaceManager.startReviewing(id, message);
+            default:
+                throw new IllegalArgumentException("Action " + doAction + " is not supported.");
         }
     }
 
