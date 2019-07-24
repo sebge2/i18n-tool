@@ -205,7 +205,7 @@ class DefaultRepositoryAPI implements RepositoryAPI, AutoCloseable {
     @Override
     public void commitAll(String message) throws RepositoryException {
         try {
-            git.add().addFilepattern("*").call();
+            git.add().addFilepattern(".").call();
 
             final UserEntity currentUser = authenticationManager.getCurrentUserOrFail();
 
