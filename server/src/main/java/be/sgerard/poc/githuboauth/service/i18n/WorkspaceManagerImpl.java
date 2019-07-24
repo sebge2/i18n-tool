@@ -63,10 +63,10 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
             for (WorkspaceEntity workspaceEntity : workspaceRepository.findAll()) {
                 switch (workspaceEntity.getStatus()) {
                     case IN_REVIEW:
-                        final Integer requestNumber = workspaceEntity.getPullRequestNumber()
-                                .orElseThrow(() -> new IllegalStateException("There is no pull request number while the workspace [" + workspaceEntity.getId() + "] is in review."));
-
-                        updateReviewingWorkspace(workspaceEntity, pullRequestManager.getStatus(requestNumber));
+                        updateReviewingWorkspace(
+                                workspaceEntity,
+                                workspaceEntity.getPullRequestNumber().map(pullRequestManager::getStatus).orElse(null)
+                        );
 
                         break;
                     case NOT_INITIALIZED:
@@ -129,7 +129,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
                 logger.info("Initialing workspace {}.", workspaceId);
 
                 final Instant now = Instant.now();
-                final String pullRequestBranch = workspaceEntity.getBranch() + "_i18n_" + LocalDate.ofInstant(now, ZoneId.systemDefault()).toString();
+                final String pullRequestBranch = workspaceEntity.getBranch() + "_i18n_" + LocalDate.ofInstant(now, ZoneId.systemDefault()).toString() + "a";
 
                 workspaceEntity.setStatus(WorkspaceStatus.INITIALIZED);
                 workspaceEntity.setInitializationTime(now);
@@ -240,7 +240,11 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
     }
 
     private void updateReviewingWorkspace(WorkspaceEntity workspaceEntity, PullRequestStatus status) throws LockTimeoutException, RepositoryException {
-        if (status.isFinished()) {
+        if (workspaceEntity.getStatus() != WorkspaceStatus.IN_REVIEW) {
+            return;
+        } else if (status == null) {
+            logger.error("There is no pull request number while the workspace [" + workspaceEntity.getId() + "] is in review.");
+        } else if (status.isFinished()) {
             return;
         }
 
