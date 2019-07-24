@@ -38,6 +38,8 @@ public interface RepositoryAPI extends AutoCloseable {
 
     OutputStream writeFile(File file) throws IOException;
 
+    File getFQNFile(File file);
+
     void revert(File file) throws RepositoryException;
 
     void commitAll(String message) throws RepositoryException;

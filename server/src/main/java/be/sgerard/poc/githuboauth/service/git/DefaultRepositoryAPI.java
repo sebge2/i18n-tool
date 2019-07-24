@@ -13,8 +13,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 import static be.sgerard.poc.githuboauth.service.git.RepositoryManagerImpl.*;
@@ -47,6 +47,8 @@ class DefaultRepositoryAPI implements RepositoryAPI, AutoCloseable {
         this.credentialsProvider = credentialsProvider;
         this.authenticationManager = authenticationManager;
         this.pullRequestManager = pullRequestManager;
+
+        checkout(DEFAULT_BRANCH);
     }
 
     @Override
@@ -103,9 +105,16 @@ class DefaultRepositoryAPI implements RepositoryAPI, AutoCloseable {
 
     @Override
     public void removeBranch(String branch) throws RepositoryException {
+        if (Objects.equals(branch, DEFAULT_BRANCH)) {
+            throw new IllegalArgumentException("Cannot delete branch " + DEFAULT_BRANCH + ".");
+        }
+
         checkNoModifiedFile();
 
-        // TODO if it's current let's switch
+        if(Objects.equals(branch, getCurrentBranch())){
+            checkout(DEFAULT_BRANCH);
+        }
+
         try {
             git.branchDelete().setBranchNames(branch).setForce(true).call();
         } catch (GitAPIException e) {
@@ -127,7 +136,7 @@ class DefaultRepositoryAPI implements RepositoryAPI, AutoCloseable {
     @Override
     public Stream<File> listAllFiles(File file) throws IOException {
         try {
-            return TranslationFileUtils.listFiles(new File(getLocalRepositoryLocation(), file.toString()))
+            return TranslationFileUtils.listFiles(getFQNFile(file))
                     .map(subFile -> removeParentFile(getLocalRepositoryLocation(), subFile));
         } catch (Exception e) {
             throw new IOException("Error while listing files of [" + file + "].", e);
@@ -137,7 +146,7 @@ class DefaultRepositoryAPI implements RepositoryAPI, AutoCloseable {
     @Override
     public Stream<File> listNormalFiles(File file) throws IOException {
         try {
-            return TranslationFileUtils.listFiles(new File(getLocalRepositoryLocation(), file.toString()))
+            return TranslationFileUtils.listFiles(getFQNFile(file))
                     .filter(File::isFile)
                     .map(subFile -> removeParentFile(getLocalRepositoryLocation(), subFile));
         } catch (Exception e) {
@@ -148,7 +157,7 @@ class DefaultRepositoryAPI implements RepositoryAPI, AutoCloseable {
     @Override
     public Stream<File> listDirectories(File file) throws IOException {
         try {
-            return TranslationFileUtils.listFiles(new File(getLocalRepositoryLocation(), file.toString()))
+            return TranslationFileUtils.listFiles(getFQNFile(file))
                     .filter(File::isDirectory)
                     .map(subFile -> removeParentFile(getLocalRepositoryLocation(), subFile));
         } catch (Exception e) {
@@ -159,7 +168,7 @@ class DefaultRepositoryAPI implements RepositoryAPI, AutoCloseable {
     @Override
     public InputStream openFile(File file) throws IOException {
         try {
-            return new FileInputStream(new File(getLocalRepositoryLocation(), file.toString()));
+            return new FileInputStream(getFQNFile(file));
         } catch (FileNotFoundException e) {
             throw new IOException("Error while opening file [" + file + "].", e);
         }
@@ -170,10 +179,16 @@ class DefaultRepositoryAPI implements RepositoryAPI, AutoCloseable {
         try {
             modifiedFiles.add(file);
 
-            return new FileOutputStream(new File(getLocalRepositoryLocation(), file.toString()));
+            return new FileOutputStream(getFQNFile(file));
         } catch (FileNotFoundException e) {
             throw new IOException("Error while writing file [" + file + "].", e);
         }
+    }
+
+    @Override
+    public File getFQNFile(File file) {
+        // TODO create a temporary
+        return new File(getLocalRepositoryLocation(), file.toString());
     }
 
     @Override
@@ -213,7 +228,11 @@ class DefaultRepositoryAPI implements RepositoryAPI, AutoCloseable {
     @Override
     public void close() {
         try {
-            checkNoModifiedFile();
+            try {
+                checkNoModifiedFile();
+            } finally {
+                checkout(DEFAULT_BRANCH);
+            }
         } finally {
             this.closed = true;
         }
