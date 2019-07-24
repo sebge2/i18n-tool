@@ -10,7 +10,9 @@ import be.sgerard.poc.githuboauth.service.i18n.TranslationManager;
 import be.sgerard.poc.githuboauth.service.i18n.WorkspaceManager;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.http.HttpStatus;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
@@ -48,7 +50,7 @@ public class WorkspaceController {
 
     @PutMapping(path = "/workspace")
     @ApiOperation(value = "Executes an action on workspaces.")
-    public void executeWorkspacesAction(@RequestParam(name = "do") WorkspaceListAction doAction) throws LockTimeoutException, RepositoryException {
+    public void executeWorkspacesAction(@ApiParam("The action to execute.") @RequestParam(name = "do") WorkspaceListAction doAction) throws LockTimeoutException, RepositoryException {
         switch (doAction) {
             case FIND:
                 workspaceManager.findWorkspaces();
@@ -74,10 +76,20 @@ public class WorkspaceController {
     @PutMapping(path = "/workspace/{id}")
     @ApiOperation(value = "Executes an action on the specified workspace.")
     public void executeWorkspaceAction(@PathVariable String id,
-                                       @RequestParam(name = "do") WorkspaceAction doAction) throws LockTimeoutException, RepositoryException {
+                                       @ApiParam("The action to execute.") @RequestParam(name = "do") WorkspaceAction doAction,
+                                       @ApiParam("Specify the message to use for the review.")
+                                       @RequestParam(name = "message") String message) throws LockTimeoutException, RepositoryException {
         switch (doAction) {
             case INITIALIZE:
                 workspaceManager.initialize(id);
+                break;
+            case START_REVIEW:
+                if (StringUtils.isEmpty(message)) {
+                    throw new IllegalArgumentException("There is no message specify. A message is needed when starting a review.");
+                }
+
+                workspaceManager.startReviewing(id, message);
+
                 break;
         }
     }
@@ -121,6 +133,8 @@ public class WorkspaceController {
 
     public enum WorkspaceAction {
 
-        INITIALIZE
+        INITIALIZE,
+
+        START_REVIEW
     }
 }
