@@ -3,6 +3,7 @@ package be.sgerard.poc.githuboauth.service.git;
 import be.sgerard.poc.githuboauth.model.security.user.UserEntity;
 import be.sgerard.poc.githuboauth.service.i18n.file.TranslationFileUtils;
 import be.sgerard.poc.githuboauth.service.security.auth.AuthenticationManager;
+import org.apache.commons.io.FileUtils;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ListBranchCommand;
 import org.eclipse.jgit.api.PullResult;
@@ -265,7 +266,9 @@ class DefaultRepositoryAPI implements RepositoryAPI, AutoCloseable {
     public void close() {
         try {
             try {
-                if (!tempDirectory.delete()) {
+                try {
+                    FileUtils.forceDelete(tempDirectory);
+                } catch (IOException e) {
                     logger.warn("Cannot delete temporary directory [" + tempDirectory + "].");
                 }
 

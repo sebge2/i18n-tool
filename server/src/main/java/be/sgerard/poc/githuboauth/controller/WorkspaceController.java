@@ -78,7 +78,7 @@ public class WorkspaceController {
     public void executeWorkspaceAction(@PathVariable String id,
                                        @ApiParam("The action to execute.") @RequestParam(name = "do") WorkspaceAction doAction,
                                        @ApiParam("Specify the message to use for the review.")
-                                       @RequestParam(name = "message") String message) throws LockTimeoutException, RepositoryException {
+                                       @RequestParam(name = "message", required = false) String message) throws LockTimeoutException, RepositoryException {
         switch (doAction) {
             case INITIALIZE:
                 workspaceManager.initialize(id);
