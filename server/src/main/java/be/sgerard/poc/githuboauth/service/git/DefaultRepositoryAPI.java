@@ -5,6 +5,7 @@ import be.sgerard.poc.githuboauth.service.i18n.file.TranslationFileUtils;
 import be.sgerard.poc.githuboauth.service.security.auth.AuthenticationManager;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ListBranchCommand;
+import org.eclipse.jgit.api.PullResult;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
@@ -15,9 +16,11 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
-import static be.sgerard.poc.githuboauth.service.git.RepositoryManagerImpl.*;
+import static be.sgerard.poc.githuboauth.service.git.RepositoryManagerImpl.DEFAULT_BRANCH;
 import static be.sgerard.poc.githuboauth.service.i18n.file.TranslationFileUtils.removeParentFile;
 import static java.util.stream.Collectors.toList;
 
@@ -25,6 +28,10 @@ import static java.util.stream.Collectors.toList;
  * @author Sebastien Gerard
  */
 class DefaultRepositoryAPI implements RepositoryAPI, AutoCloseable {
+
+    public static final Pattern REMOTE_BRANCH_PATTERN = Pattern.compile("^refs\\/remotes\\/.+\\/(.+)$");
+
+    public static final Pattern LOCAL_BRANCH_PATTERN = Pattern.compile("^(master)|refs\\/heads\\/(.+)$");
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultRepositoryAPI.class);
 
@@ -62,12 +69,12 @@ class DefaultRepositoryAPI implements RepositoryAPI, AutoCloseable {
 
     @Override
     public List<String> listRemoteBranches() throws RepositoryException {
-        return doListBranches(REFS_ORIGIN_PREFIX);
+        return doListBranches(REMOTE_BRANCH_PATTERN);
     }
 
     @Override
     public List<String> listLocalBranches() throws RepositoryException {
-        return doListBranches(REFS_LOCAL_PREFIX);
+        return doListBranches(LOCAL_BRANCH_PATTERN);
     }
 
     @Override
@@ -111,7 +118,7 @@ class DefaultRepositoryAPI implements RepositoryAPI, AutoCloseable {
 
         checkNoModifiedFile();
 
-        if(Objects.equals(branch, getCurrentBranch())){
+        if (Objects.equals(branch, getCurrentBranch())) {
             checkout(DEFAULT_BRANCH);
         }
 
@@ -127,7 +134,19 @@ class DefaultRepositoryAPI implements RepositoryAPI, AutoCloseable {
         checkNoModifiedFile();
 
         try {
-            git.pull().setCredentialsProvider(credentialsProvider).call();
+            git.fetch()
+                    .setCredentialsProvider(credentialsProvider)
+                    .setRemoveDeletedRefs(true)
+                    .call();
+
+            final PullResult result = git.pull()
+                    .setRemote("origin")
+                    .setCredentialsProvider(credentialsProvider)
+                    .call();
+
+            if (!result.isSuccessful()) {
+                throw new IllegalStateException("The pull has not been successful.");
+            }
         } catch (Exception e) {
             throw new RepositoryException("Error while updating local repository.", e);
         }
@@ -263,11 +282,22 @@ class DefaultRepositoryAPI implements RepositoryAPI, AutoCloseable {
         }
     }
 
-    private List<String> doListBranches(String branchPrefix) throws RepositoryException {
+    private List<String> doListBranches(Pattern branchPattern) throws RepositoryException {
         try {
             return git.branchList().setListMode(ListBranchCommand.ListMode.ALL).call().stream()
                     .map(Ref::getName)
-                    .map(name -> name.startsWith(branchPrefix) ? name.substring(branchPrefix.length()) : name)
+                    .map(name -> {
+                        final Matcher matcher = branchPattern.matcher(name);
+
+                        if (!matcher.matches()) {
+                            return null;
+                        } else if (matcher.group(1) != null) {
+                            return matcher.group(1);
+                        } else {
+                            return matcher.group(2);
+                        }
+                    })
+                    .filter(Objects::nonNull)
                     .distinct()
                     .collect(toList());
         } catch (Exception e) {

@@ -23,10 +23,6 @@ public class RepositoryManagerImpl implements RepositoryManager {
 
     public static final String DEFAULT_BRANCH = "master";
 
-    public static final String REFS_ORIGIN_PREFIX = "refs/remotes/origin/";
-
-    public static final String REFS_LOCAL_PREFIX = "refs/heads/";
-
     private final String repoUri;
     private final File localRepositoryLocation;
     private final AuthenticationManager authenticationManager;
