@@ -77,7 +77,7 @@ public class JavaTranslationBundleHandler implements TranslationBundleHandler {
                     .flatMap(
                             file -> {
                                 try { // TODO language empty
-                                    final PropertyResourceBundle resourceBundle = new PropertyResourceBundle(repositoryAPI.openFile(file));
+                                    final PropertyResourceBundle resourceBundle = new PropertyResourceBundle(repositoryAPI.openInputStream(file));
 
                                     return resourceBundle.keySet().stream()
                                             .map(key -> new ScannedBundleFileKeyDto(key, singletonMap(getLocale(file), mapToNullIfEmpty(resourceBundle.getString(key)))));
@@ -105,10 +105,10 @@ public class JavaTranslationBundleHandler implements TranslationBundleHandler {
                     continue;
                 }
 
-                final PropertiesConfiguration conf = new PropertiesConfiguration(file);
+                final PropertiesConfiguration conf = new PropertiesConfiguration(repositoryAPI.openAsTemp(file));
 
                 final Locale locale = getLocale(file);
-
+// TODO only what changed ?
                 keys.forEach(key -> conf.setProperty(key.getKey(), key.getTranslations().getOrDefault(locale, null)));
 
                 conf.save();

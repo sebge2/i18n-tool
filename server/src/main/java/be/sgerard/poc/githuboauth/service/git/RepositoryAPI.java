@@ -34,11 +34,11 @@ public interface RepositoryAPI extends AutoCloseable {
 
     Stream<File> listDirectories(File file) throws IOException;
 
-    InputStream openFile(File file) throws IOException;
+    InputStream openInputStream(File file) throws IOException;
 
-    OutputStream writeFile(File file) throws IOException;
+    File openAsTemp(File file);
 
-    File getFQNFile(File file);
+    OutputStream openOutputStream(File file) throws IOException;
 
     void revert(File file) throws RepositoryException;
 

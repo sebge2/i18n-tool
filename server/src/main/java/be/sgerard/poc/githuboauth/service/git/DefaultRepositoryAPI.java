@@ -13,6 +13,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -42,6 +44,7 @@ class DefaultRepositoryAPI implements RepositoryAPI, AutoCloseable {
     private final PullRequestManager pullRequestManager;
 
     private final List<File> modifiedFiles = new ArrayList<>();
+    private final File tempDirectory;
     private boolean closed = false;
 
     DefaultRepositoryAPI(Git git,
@@ -54,6 +57,12 @@ class DefaultRepositoryAPI implements RepositoryAPI, AutoCloseable {
         this.credentialsProvider = credentialsProvider;
         this.authenticationManager = authenticationManager;
         this.pullRequestManager = pullRequestManager;
+
+        try {
+            this.tempDirectory = Files.createTempDirectory("repo-api-").toFile();
+        } catch (IOException e) {
+            throw new RuntimeException("Cannot create temporary directory.", e);
+        }
 
         checkout(DEFAULT_BRANCH);
     }
@@ -185,7 +194,7 @@ class DefaultRepositoryAPI implements RepositoryAPI, AutoCloseable {
     }
 
     @Override
-    public InputStream openFile(File file) throws IOException {
+    public InputStream openInputStream(File file) throws IOException {
         try {
             return new FileInputStream(getFQNFile(file));
         } catch (FileNotFoundException e) {
@@ -194,7 +203,7 @@ class DefaultRepositoryAPI implements RepositoryAPI, AutoCloseable {
     }
 
     @Override
-    public OutputStream writeFile(File file) throws IOException {
+    public OutputStream openOutputStream(File file) throws IOException {
         try {
             modifiedFiles.add(file);
 
@@ -205,9 +214,17 @@ class DefaultRepositoryAPI implements RepositoryAPI, AutoCloseable {
     }
 
     @Override
-    public File getFQNFile(File file) {
-        // TODO create a temporary
-        return new File(getLocalRepositoryLocation(), file.toString());
+    public File openAsTemp(File file) {
+        try {
+            final Path target = getFQNFile(file).toPath();
+            final Path link = new File(tempDirectory, file.toString()).toPath();
+
+            Files.createDirectories(link.getParent());
+
+            return Files.createSymbolicLink(link, target).toFile();
+        } catch (IOException e) {
+            throw new RuntimeException("Cannot open file [" + file + "].", e);
+        }
     }
 
     @Override
@@ -248,6 +265,10 @@ class DefaultRepositoryAPI implements RepositoryAPI, AutoCloseable {
     public void close() {
         try {
             try {
+                if (!tempDirectory.delete()) {
+                    logger.warn("Cannot delete temporary directory [" + tempDirectory + "].");
+                }
+
                 checkNoModifiedFile();
             } finally {
                 checkout(DEFAULT_BRANCH);
@@ -303,5 +324,9 @@ class DefaultRepositoryAPI implements RepositoryAPI, AutoCloseable {
         } catch (Exception e) {
             throw new RepositoryException("Error while listing branches.", e);
         }
+    }
+
+    private File getFQNFile(File file) {
+        return new File(getLocalRepositoryLocation(), file.toString());
     }
 }
