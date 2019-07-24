@@ -60,7 +60,7 @@ public class TranslationManagerImpl implements TranslationManager {
     @Transactional(readOnly = true)
     public BundleKeysPageDto getTranslations(BundleKeysPageRequestDto searchRequest) {
         final WorkspaceEntity workspaceEntity = workspaceRepository.findById(searchRequest.getWorkspaceId())
-                .orElseThrow(() -> new ResourceNotFoundException(searchRequest.getWorkspaceId())); // TODO
+                .orElseThrow(() -> new ResourceNotFoundException(searchRequest.getWorkspaceId()));
 
         final GroupedTranslations groupedEntries = doGetTranslations(searchRequest);
 

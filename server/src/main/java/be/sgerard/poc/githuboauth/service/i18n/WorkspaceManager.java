@@ -24,8 +24,6 @@ public interface WorkspaceManager {
 
     WorkspaceEntity startReviewing(String workspaceId, String message) throws ResourceNotFoundException, LockTimeoutException, RepositoryException;
 
-    // TODO endReview()
-
     void updateTranslations(String workspaceId, Map<String, String> translations) throws ResourceNotFoundException;
 
     void deleteWorkspace(String workspaceId) throws RepositoryException, LockTimeoutException;
