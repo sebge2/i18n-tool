@@ -2,7 +2,7 @@ import {Injectable, OnDestroy} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {EventService} from "../../core/event/service/event.service";
 import {Workspace} from "../model/workspace.model";
-import {BehaviorSubject} from "rxjs";
+import {BehaviorSubject, Observable} from "rxjs";
 import {UserSession} from "../../core/auth/model/user-session.model";
 
 @Injectable({

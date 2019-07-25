@@ -1,9 +1,8 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FormControl} from "@angular/forms";
 import {Workspace} from "../../model/workspace.model";
-import {WorkspaceStatus} from "../../model/workspace-status.model";
 import {WorkspaceService} from "../../service/workspace.service";
-import {Observable, Subject, Subscription} from 'rxjs';
+import {Observable, Subject} from 'rxjs';
 import {takeUntil, tap} from "rxjs/operators";
 
 @Component({
@@ -15,8 +14,8 @@ export class WorkspaceSelectorComponent implements OnInit, OnDestroy {
 
     private static DEFAULT_BRANCH = "master";
 
-    workspaces: Observable<Workspace[]>; // Observable<Observable<Workspace>[]> TODO
-    workspaceForm = new FormControl(); // todo reactive
+    workspaces: Observable<Workspace[]>;
+    workspaceForm = new FormControl();
 
     private destroy$ = new Subject();
 
@@ -29,15 +28,16 @@ export class WorkspaceSelectorComponent implements OnInit, OnDestroy {
                 takeUntil(this.destroy$),
                 tap(
                     (workspaces: Workspace[]) => {
-                        if ((this.workspaceForm.value == null) || (workspaces.find(workspace => this.workspaceForm.value.id == workspace.id) != null)) {
-                            this.workspaceForm.setValue(
-                                workspaces
-                                    .find(workspace => WorkspaceSelectorComponent.DEFAULT_BRANCH == workspace.branch)
-                            );
+                        if (!this.workspaceForm.value || !workspaces.find(workspace => this.workspaceForm.value.id == workspace.id)) {
+                            const defaultWorkspace = workspaces.find(workspace => WorkspaceSelectorComponent.DEFAULT_BRANCH == workspace.branch);
+
+                            this.workspaceForm.setValue(defaultWorkspace);
                         }
                     }
                 )
             );
+
+        this.workspaceForm.valueChanges.subscribe((selectedWorkspace: Workspace) => console.log(selectedWorkspace))
     }
 
     ngOnDestroy(): void {
