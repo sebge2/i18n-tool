@@ -4,6 +4,7 @@ import {Workspace} from "../../model/workspace.model";
 import {WorkspaceService} from "../../service/workspace.service";
 import {Observable, Subject} from 'rxjs';
 import {takeUntil, tap} from "rxjs/operators";
+import * as _ from 'lodash';
 
 @Component({
     selector: 'app-workspace-selector',
@@ -28,11 +29,13 @@ export class WorkspaceSelectorComponent implements OnInit, OnDestroy {
                 takeUntil(this.destroy$),
                 tap(
                     (workspaces: Workspace[]) => {
-                        if (!this.workspaceForm.value || !workspaces.find(workspace => this.workspaceForm.value.id == workspace.id)) {
-                            const defaultWorkspace = workspaces.find(workspace => WorkspaceSelectorComponent.DEFAULT_BRANCH == workspace.branch);
+                        let currentWorkspace = workspaces.find(workspace => _.get(this.workspaceForm, 'value.id') === workspace.id);
 
-                            this.workspaceForm.setValue(defaultWorkspace);
+                        if (!this.workspaceForm.value || !currentWorkspace) {
+                            currentWorkspace = workspaces.find(workspace => WorkspaceSelectorComponent.DEFAULT_BRANCH == workspace.branch);
                         }
+
+                        this.workspaceForm.setValue(currentWorkspace);
                     }
                 )
             );

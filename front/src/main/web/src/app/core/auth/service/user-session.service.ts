@@ -33,7 +33,7 @@ export class UserSessionService implements OnDestroy {
             .subscribe(
                 (userSession: UserSession) => {
                     let userSessions = this._userSessions.getValue().slice();
-                    userSessions.splice(userSessions.indexOf(userSession), 1);
+                    userSessions.splice(userSessions.findIndex(currentUser => currentUser.id === userSession.id), 1);
 
                     this._userSessions.next(userSessions);
                 }
