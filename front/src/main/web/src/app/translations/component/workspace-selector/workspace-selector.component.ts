@@ -3,7 +3,8 @@ import {FormControl} from "@angular/forms";
 import {Workspace} from "../../model/workspace.model";
 import {WorkspaceStatus} from "../../model/workspace-status.model";
 import {WorkspaceService} from "../../service/workspace.service";
-import {Subscription} from 'rxjs';
+import {Observable, Subject, Subscription} from 'rxjs';
+import {takeUntil, tap} from "rxjs/operators";
 
 @Component({
     selector: 'app-workspace-selector',
@@ -14,38 +15,33 @@ export class WorkspaceSelectorComponent implements OnInit, OnDestroy {
 
     private static DEFAULT_BRANCH = "master";
 
-    private _workspaceForm = new FormControl();
-    private _workspaces: Workspace[] = [];
-    private _subscription: Subscription;
+    workspaces: Observable<Workspace[]>; // Observable<Observable<Workspace>[]> TODO
+    workspaceForm = new FormControl(); // todo reactive
+
+    private destroy$ = new Subject();
 
     constructor(private workspaceService: WorkspaceService) {
     }
 
     ngOnInit() {
-        this.workspaceService.getWorkspaces().subscribe(
-            (workpaces: Workspace[]) => {
-                this._workspaces = workpaces;
-
-                if ((this._workspaceForm.value == null) || (workpaces.find(workspace => this._workspaceForm.value.id == workspace.id) != null)) {
-                    this.workspaceForm.setValue(
-                        this.workspaces
-                            .find(workspace => WorkspaceSelectorComponent.DEFAULT_BRANCH == workspace.branch)
-                    );
-                }
-            }
-        );
+        this.workspaces = this.workspaceService.getWorkspaces()
+            .pipe(
+                takeUntil(this.destroy$),
+                tap(
+                    (workspaces: Workspace[]) => {
+                        if ((this.workspaceForm.value == null) || (workspaces.find(workspace => this.workspaceForm.value.id == workspace.id) != null)) {
+                            this.workspaceForm.setValue(
+                                workspaces
+                                    .find(workspace => WorkspaceSelectorComponent.DEFAULT_BRANCH == workspace.branch)
+                            );
+                        }
+                    }
+                )
+            );
     }
 
     ngOnDestroy(): void {
-        this._subscription.unsubscribe();
-    }
-
-    get workspaceForm(): FormControl {
-        return this._workspaceForm;
-    }
-
-    get workspaces(): Workspace[] {
-        return this._workspaces;
+        this.destroy$.complete();
     }
 
     getCssStatus(workspace: Workspace): String {

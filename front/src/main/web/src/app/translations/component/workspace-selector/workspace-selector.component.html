@@ -1,16 +1,18 @@
 <mat-form-field appearance="outline">
     <mat-label>Workspace:</mat-label>
 
-    <mat-select [formControl]="workspaceForm" required [value]="'master'">
+    <mat-select [formControl]="workspaceForm" required>
         <mat-select-trigger>
             <mat-icon *ngIf="workspaceForm.value != null" class="icon-selection">label</mat-icon> {{workspaceForm.value != null ? workspaceForm.value.branch : null}}
         </mat-select-trigger>
 
-        <mat-option *ngFor="let workspace of workspaces" [value]="workspace">
+        <mat-option *ngFor="let workspace of (workspaces | async)" [value]="workspace">
             <mat-icon>label</mat-icon>
 
             {{workspace.branch}}
 
+<!--            | async | cssStatus-->
+<!--            | async | icon-->
             <mat-icon [ngClass]="getCssStatus(workspace)">{{getIcon(workspace)}}</mat-icon>
         </mat-option>
     </mat-select>
