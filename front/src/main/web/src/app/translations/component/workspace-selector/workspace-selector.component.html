@@ -3,7 +3,8 @@
 
     <mat-select [formControl]="workspaceForm" required>
         <mat-select-trigger>
-            <mat-icon *ngIf="workspaceForm.value != null" class="icon-selection">label</mat-icon> {{workspaceForm.value != null ? workspaceForm.value.branch : null}}
+            <mat-icon *ngIf="workspaceForm.value != null" class="icon-selection">label</mat-icon>
+            {{workspaceForm.value != null ? workspaceForm.value.branch : null}}
         </mat-select-trigger>
 
         <mat-option *ngFor="let workspace of (workspaces | async)" [value]="workspace">
@@ -11,9 +12,7 @@
 
             {{workspace.branch}}
 
-<!--            | async | cssStatus-->
-<!--            | async | icon-->
-            <mat-icon [ngClass]="getCssStatus(workspace)">{{getIcon(workspace)}}</mat-icon>
+            <mat-icon [ngClass]="workspace | workspaceIconCss">{{workspace|workspaceIcon}}</mat-icon>
         </mat-option>
     </mat-select>
 </mat-form-field>

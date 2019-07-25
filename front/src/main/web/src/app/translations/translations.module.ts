@@ -5,6 +5,8 @@ import {RouterModule, Routes} from "@angular/router";
 import {MaterialModule} from "../core/ui/material.module";
 import { WorkspaceSelectorComponent } from './component/workspace-selector/workspace-selector.component';
 import {ReactiveFormsModule} from "@angular/forms";
+import { WorkspaceIconPipe } from './pipe/workspace-icon.pipe';
+import { WorkspaceIconCssPipe } from './pipe/workspace-icon-css.pipe';
 
 const appRoutes: Routes = [
     {
@@ -15,7 +17,9 @@ const appRoutes: Routes = [
 @NgModule({
     declarations: [
         TranslationsComponent,
-        WorkspaceSelectorComponent
+        WorkspaceSelectorComponent,
+        WorkspaceIconPipe,
+        WorkspaceIconCssPipe
     ],
     imports: [
         CommonModule,

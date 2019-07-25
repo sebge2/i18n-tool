@@ -44,28 +44,4 @@ export class WorkspaceSelectorComponent implements OnInit, OnDestroy {
         this.destroy$.complete();
     }
 
-    getCssStatus(workspace: Workspace): String {
-        switch (workspace.status) {
-            case WorkspaceStatus.IN_REVIEW:
-                return "icon-in-review";
-            case WorkspaceStatus.INITIALIZED:
-                return "icon-initialized";
-            case WorkspaceStatus.NOT_INITIALIZED:
-                return "icon-not-initialized";
-            default:
-                return "";
-        }
-    }
-
-    getIcon(workspace: Workspace): String {
-        switch (workspace.status) {
-            case WorkspaceStatus.IN_REVIEW:
-                return "lock";
-            case WorkspaceStatus.INITIALIZED:
-                return "check_circle";
-            case WorkspaceStatus.NOT_INITIALIZED:
-                return "warning";
-
-        }
-    }
 }
