@@ -17,6 +17,7 @@ export class WorkspaceService implements OnDestroy {
             .then(workspaces => this._workspaces.next(workspaces))
             .catch(reason => console.error("Error while retrieving workspaces.", reason));
 
+        // TODO events
     }
 
     ngOnDestroy(): void {

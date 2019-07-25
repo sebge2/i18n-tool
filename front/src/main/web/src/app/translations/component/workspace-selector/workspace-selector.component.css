@@ -1,0 +1,25 @@
+.icon-in-review {
+    color: orange;
+    float: right;
+    vertical-align: middle;
+    line-height: 45px;
+}
+
+.icon-not-initialized {
+    color: lightgrey;
+    float: right;
+    vertical-align: middle;
+    line-height: 45px;
+}
+
+.icon-initialized {
+    color: green;
+    float: right;
+    vertical-align: middle;
+    line-height: 45px;
+}
+
+.icon-selection {
+    vertical-align: middle;
+    line-height: 25px;
+}

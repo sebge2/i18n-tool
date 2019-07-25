@@ -1,8 +1,10 @@
+import {WorkspaceStatus} from './workspace-status.model';
+
 export class Workspace {
 
     readonly id: string;
     readonly branch: string;
-    readonly status: string;
+    readonly status: WorkspaceStatus;
     readonly pullRequestBranch: string;
     readonly pullRequestNumber: number;
     readonly initializationTime: number;
