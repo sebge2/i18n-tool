@@ -58,6 +58,8 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
     @Transactional
     public List<WorkspaceEntity> findWorkspaces() throws RepositoryException, LockTimeoutException {
         return repositoryManager.open(api -> {
+            api.updateLocalRepository();
+
             final List<String> availableBranches = listBranches(api);
 
             for (WorkspaceEntity workspaceEntity : workspaceRepository.findAll()) {
@@ -254,7 +256,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
     }
 
     private List<String> listBranches(RepositoryAPI api) throws RepositoryException {
-        return api.listRemoteBranches()
+        return api.listLocalBranches()
                 .stream()
                 .filter(name -> BRANCHES_TO_KEEP.matcher(name).matches())
                 .sorted((first, second) -> {

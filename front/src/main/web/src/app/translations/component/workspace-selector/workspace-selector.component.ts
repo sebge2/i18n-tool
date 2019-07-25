@@ -1,34 +1,43 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FormControl} from "@angular/forms";
 import {Workspace} from "../../model/workspace.model";
 import {WorkspaceStatus} from "../../model/workspace-status.model";
+import {WorkspaceService} from "../../service/workspace.service";
+import {Subscription} from 'rxjs';
 
 @Component({
     selector: 'app-workspace-selector',
     templateUrl: './workspace-selector.component.html',
     styleUrls: ['./workspace-selector.component.css']
 })
-export class WorkspaceSelectorComponent implements OnInit {
+export class WorkspaceSelectorComponent implements OnInit, OnDestroy {
 
     private static DEFAULT_BRANCH = "master";
 
     private _workspaceForm = new FormControl();
-    private _workspaces: Workspace[];
+    private _workspaces: Workspace[] = [];
+    private _subscription: Subscription;
 
-    constructor() {
-        this._workspaces = [
-            new Workspace(<Workspace>{'branch': 'master', 'status': WorkspaceStatus.INITIALIZED}),
-            new Workspace(<Workspace>{'branch': 'release/2019.6', 'status': WorkspaceStatus.IN_REVIEW}),
-            new Workspace(<Workspace>{'branch': 'release/2019.5', 'status': WorkspaceStatus.NOT_INITIALIZED}),
-            new Workspace(<Workspace>{'branch': 'release/2019.4', 'status': WorkspaceStatus.NOT_INITIALIZED}),
-        ];
+    constructor(private workspaceService: WorkspaceService) {
     }
 
     ngOnInit() {
-        let defaultWorkspace = this.workspaces
-            .find(workspace => WorkspaceSelectorComponent.DEFAULT_BRANCH == workspace.branch);
+        this.workspaceService.getWorkspaces().subscribe(
+            (workpaces: Workspace[]) => {
+                this._workspaces = workpaces;
 
-        this.workspaceForm.setValue(defaultWorkspace);
+                if ((this._workspaceForm.value == null) || (workpaces.find(workspace => this._workspaceForm.value.id == workspace.id) != null)) {
+                    this.workspaceForm.setValue(
+                        this.workspaces
+                            .find(workspace => WorkspaceSelectorComponent.DEFAULT_BRANCH == workspace.branch)
+                    );
+                }
+            }
+        );
+    }
+
+    ngOnDestroy(): void {
+        this._subscription.unsubscribe();
     }
 
     get workspaceForm(): FormControl {
