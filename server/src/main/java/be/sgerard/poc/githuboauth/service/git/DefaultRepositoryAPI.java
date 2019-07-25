@@ -32,7 +32,7 @@ import static java.util.stream.Collectors.toList;
  */
 class DefaultRepositoryAPI implements RepositoryAPI, AutoCloseable {
 
-    public static final Pattern REMOTE_BRANCH_PATTERN = Pattern.compile("^refs\\/remotes\\/.+\\/(.+)$");
+    public static final Pattern REMOTE_BRANCH_PATTERN = Pattern.compile("^refs\\/remotes\\/\\w+\\/(.+)$");
 
     public static final Pattern LOCAL_BRANCH_PATTERN = Pattern.compile("^(master)|refs\\/heads\\/(.+)$");
 
@@ -315,10 +315,10 @@ class DefaultRepositoryAPI implements RepositoryAPI, AutoCloseable {
 
                         if (!matcher.matches()) {
                             return null;
-                        } else if (matcher.group(1) != null) {
-                            return matcher.group(1);
-                        } else {
+                        } else if (matcher.groupCount() == 2) {
                             return matcher.group(2);
+                        } else {
+                            return matcher.group(1);
                         }
                     })
                     .filter(Objects::nonNull)
