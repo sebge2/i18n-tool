@@ -1,15 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 
 @Component({
-  selector: 'app-translations',
-  templateUrl: './translations.component.html',
-  styleUrls: ['./translations.component.css']
+    selector: 'app-translations',
+    templateUrl: './translations.component.html',
+    styleUrls: ['./translations.component.css']
 })
 export class TranslationsComponent implements OnInit {
 
-  constructor() { }
+    constructor() {
+    }
 
-  ngOnInit() {
-  }
+    ngOnInit() {
+    }
 
 }

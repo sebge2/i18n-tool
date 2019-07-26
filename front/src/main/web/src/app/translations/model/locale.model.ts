@@ -1,7 +1,8 @@
 export enum Locale {
-    FR = "flag-icon-be",
 
-    NL = "flag-icon-NL",
+    FR = "FR",
 
-    UK = "flag-icon-gb"
+    NL = "NL",
+
+    UK = "UK"
 }

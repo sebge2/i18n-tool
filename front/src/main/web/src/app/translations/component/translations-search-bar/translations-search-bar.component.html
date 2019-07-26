@@ -1,10 +1,12 @@
-<form fxLayout="column" [formGroup]="formGroup">
-    <div class="input-row" fxLayout="row" fxLayout.lt-md="column" fxLayoutGap="20px" fxLayoutGap.lt-md="0px">
-        <app-translation-locales-selector></app-translation-locales-selector>
+<!--<div class="input-row" fxLayout="row" fxLayout.lt-md="column" fxLayoutGap="20px" fxLayoutGap.lt-md="0px">-->
+<div>
+    <app-translation-locales-selector></app-translation-locales-selector>
+</div>
 
-        <mat-slide-toggle color="primary">Only show missing translations</mat-slide-toggle>
-    </div>
-    <div class="input-row" fxLayout="row" fxLayout.lt-md="column" fxLayoutGap="20px" fxLayoutGap.lt-md="0px">
-        <mat-slide-toggle color="primary">Only show updated translations</mat-slide-toggle>
-    </div>
-</form>
+<div>
+    <mat-slide-toggle color="primary">Only show missing translations</mat-slide-toggle>
+</div>
+<!--</div>-->
+<!--<div class="input-row" fxLayout="row" fxLayout.lt-md="column" fxLayoutGap="20px" fxLayoutGap.lt-md="0px">-->
+    <mat-slide-toggle color="primary">Only show updated translations</mat-slide-toggle>
+<!--</div>-->

@@ -1,0 +1,31 @@
+<mat-form-field>
+    <mat-chip-list #localesList aria-label="Locales selection" aria-orientation="horizontal">
+        <mat-chip
+                *ngFor="let locale of selectedLocales"
+                [selectable]="true"
+                [removable]="true"
+                (removed)="remove(locale)">
+            <span class="flag-icon flag-icon-fr"></span>
+            {{locale}}
+            <mat-icon matChipRemove>cancel</mat-icon>
+        </mat-chip>
+        <input
+                placeholder="Locales"
+                #localeInput
+                [formControl]="localeInputCtrl"
+                [matAutocomplete]="auto"
+                [matChipInputFor]="localesList"
+                [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                [matChipInputAddOnBlur]="true"
+                (matChipInputTokenEnd)="add($event)">
+    </mat-chip-list>
+    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
+        <mat-option *ngFor="let locale of filteredLocales | async" [value]="locale">
+            <span class="flag-icon flag-icon-fr"></span> {{locale}}
+        </mat-option>
+    </mat-autocomplete>
+</mat-form-field>
+
+<!--<span class="flag-icon flag-icon-be"></span> FR-->
+<!--<span class="flag-icon flag-icon-nl"></span> NL-->
+<!--<span class="flag-icon flag-icon-gb"></span> UK-->
