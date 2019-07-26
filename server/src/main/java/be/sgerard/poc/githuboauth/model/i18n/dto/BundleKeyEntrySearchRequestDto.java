@@ -22,8 +22,8 @@ public class BundleKeyEntrySearchRequestDto {
 
     private final String workspaceId;
     private final String keyPattern;
-    private final Collection<Locale> missingLocales;
     private final Collection<Locale> locales;
+    private final boolean onlyMissingTranslations;
     private final Boolean hasBeenUpdated;
     private final int maxKeyEntries;
     private final String lastKey;
@@ -31,8 +31,8 @@ public class BundleKeyEntrySearchRequestDto {
     private BundleKeyEntrySearchRequestDto(Builder builder) {
         workspaceId = builder.workspaceId;
         keyPattern = StringUtils.isEmpty(builder.keyPattern) ? null : builder.keyPattern;
-        missingLocales = unmodifiableCollection(builder.missingLocales);
         locales = unmodifiableCollection(builder.locales);
+        onlyMissingTranslations = builder.onlyMissingTranslations;
         hasBeenUpdated = builder.hasBeenUpdated;
         maxKeyEntries = (builder.maxKeyEntries != null) ? builder.maxKeyEntries : DEFAULT_MAX_KEYS;
         lastKey = builder.lastKey;
@@ -46,8 +46,8 @@ public class BundleKeyEntrySearchRequestDto {
         return Optional.ofNullable(keyPattern);
     }
 
-    public Collection<Locale> getMissingLocales() {
-        return missingLocales;
+    public boolean onlyMissingTranslations() {
+        return onlyMissingTranslations;
     }
 
     public Collection<Locale> getLocales() {
@@ -70,8 +70,8 @@ public class BundleKeyEntrySearchRequestDto {
 
         private final String workspaceId;
         private String keyPattern;
-        private final Collection<Locale> missingLocales = new HashSet<>();
         private final Collection<Locale> locales = new HashSet<>();
+        private boolean onlyMissingTranslations;
         private Boolean hasBeenUpdated;
         private Integer maxKeyEntries;
         private String lastKey;
@@ -85,13 +85,13 @@ public class BundleKeyEntrySearchRequestDto {
             return this;
         }
 
-        public Builder missingLocales(Collection<Locale> missingLocales) {
-            this.missingLocales.addAll(missingLocales);
+        public Builder locales(Collection<Locale> locales) {
+            this.locales.addAll(locales);
             return this;
         }
 
-        public Builder locales(Collection<Locale> locales) {
-            this.locales.addAll(locales);
+        public Builder onlyMissingTranslations(boolean onlyMissingTranslations) {
+            this.onlyMissingTranslations = onlyMissingTranslations;
             return this;
         }
 

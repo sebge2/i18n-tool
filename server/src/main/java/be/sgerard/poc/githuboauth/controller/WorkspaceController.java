@@ -97,7 +97,7 @@ public class WorkspaceController {
     @ApiOperation(value = "Returns translations of the workspace having the specified id.")
     public BundleKeysPageDto getWorkspaceTranslations(@PathVariable String id,
                                                       @RequestParam(name = "locales", required = false, defaultValue = "") List<Locale> locales,
-                                                      @RequestParam(name = "missingLocales", required = false, defaultValue = "") List<Locale> missingLocales,
+                                                      @RequestParam(name = "onlyMissingTranslations", required = false, defaultValue = "false") boolean onlyMissingTranslations,
                                                       @RequestParam(name = "hasBeenUpdated", required = false) Boolean hasBeenUpdated,
                                                       @RequestParam(name = "lastKey", required = false) String lastKey,
                                                       @RequestParam(name = "maxKeys", required = false) Integer maxKeys) {
@@ -107,7 +107,7 @@ public class WorkspaceController {
                         .lastKey(lastKey)
                         .maxKeys(maxKeys)
                         .hasBeenUpdated(hasBeenUpdated)
-                        .missingLocales(missingLocales)
+                        .onlyMissingTranslations(onlyMissingTranslations)
                         .build()
         );
     }

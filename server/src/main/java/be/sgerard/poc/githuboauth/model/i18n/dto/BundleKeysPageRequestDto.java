@@ -33,7 +33,7 @@ public class BundleKeysPageRequestDto {
     private final String keyPattern;
 
     @ApiModelProperty(notes = "Search translations for which the translations of the specified locales are missing.")
-    private final Collection<Locale> missingLocales;
+    private final boolean onlyMissingTranslations;
 
     @ApiModelProperty(notes = "Search translations only in those locales.")
     private final Collection<Locale> locales;
@@ -50,7 +50,7 @@ public class BundleKeysPageRequestDto {
     private BundleKeysPageRequestDto(Builder builder) {
         workspaceId = builder.workspaceId;
         keyPattern = StringUtils.isEmpty(builder.keyPattern) ? null : builder.keyPattern;
-        missingLocales = unmodifiableCollection(builder.missingLocales);
+        onlyMissingTranslations = builder.onlyMissingTranslations;
         locales = unmodifiableCollection(builder.locales);
         hasBeenUpdated = builder.hasBeenUpdated;
         maxKeys = (builder.maxKeys != null) ? builder.maxKeys : DEFAULT_MAX_KEYS;
@@ -65,8 +65,8 @@ public class BundleKeysPageRequestDto {
         return Optional.ofNullable(keyPattern);
     }
 
-    public Collection<Locale> getMissingLocales() {
-        return missingLocales;
+    public boolean onlyMissingTranslations() {
+        return onlyMissingTranslations;
     }
 
     public Collection<Locale> getLocales() {
@@ -89,8 +89,8 @@ public class BundleKeysPageRequestDto {
 
         private final String workspaceId;
         private String keyPattern;
-        private final Collection<Locale> missingLocales = new HashSet<>();
         private final Collection<Locale> locales = new HashSet<>();
+        private boolean onlyMissingTranslations;
         private Integer maxKeys;
         private String lastKey;
         private Boolean hasBeenUpdated;
@@ -104,13 +104,13 @@ public class BundleKeysPageRequestDto {
             return this;
         }
 
-        public Builder missingLocales(Collection<Locale> missingLocales) {
-            this.missingLocales.addAll(missingLocales);
+        public Builder locales(Collection<Locale> locales) {
+            this.locales.addAll(locales);
             return this;
         }
 
-        public Builder locales(Collection<Locale> locales) {
-            this.locales.addAll(locales);
+        public Builder onlyMissingTranslations(boolean onlyMissingTranslations) {
+            this.onlyMissingTranslations = onlyMissingTranslations;
             return this;
         }
 
@@ -137,11 +137,6 @@ public class BundleKeysPageRequestDto {
         }
 
         public BundleKeysPageRequestDto build() {
-            if (!locales.isEmpty() && !locales.containsAll(missingLocales)) {
-                throw new IllegalStateException("If some specified locales are specified (" + locales + ") and " +
-                        "also missing locales (" + missingLocales + "), those missing locales must be a subset of locales.");
-            }
-
             return new BundleKeysPageRequestDto(this);
         }
     }

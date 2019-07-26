@@ -42,19 +42,15 @@ public class BundleKeyTranslationRepositoryImpl implements BundleKeyTranslationR
         request.getLastKey()
                 .ifPresent(lastKey -> whereClause.getExpressions().add(criteriaBuilder.greaterThan(bundleKeyJoin.get(BundleKeyEntity_.id), lastKey)));
 
-        if (!request.getMissingLocales().isEmpty()) {
-            whereClause.getExpressions().add(
-                    selectEntry.get(BundleKeyTranslationEntity_.locale).in(request.getMissingLocales().stream().map(Locale::toString).toArray())
-            );
-
-            whereClause.getExpressions().add(selectEntry.get(BundleKeyTranslationEntity_.originalValue).isNull());
-            whereClause.getExpressions().add(selectEntry.get(BundleKeyTranslationEntity_.updatedValue).isNull());
-        }
-
         if (!request.getLocales().isEmpty()) {
             whereClause.getExpressions().add(
                     selectEntry.get(BundleKeyTranslationEntity_.locale).in(request.getLocales().stream().map(Locale::toString).toArray())
             );
+        }
+
+        if (request.onlyMissingTranslations()) {
+            whereClause.getExpressions().add(selectEntry.get(BundleKeyTranslationEntity_.originalValue).isNull());
+            whereClause.getExpressions().add(selectEntry.get(BundleKeyTranslationEntity_.updatedValue).isNull());
         }
 
         request.getKeyPattern()
