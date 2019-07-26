@@ -8,6 +8,7 @@ import {ReactiveFormsModule} from "@angular/forms";
 import {WorkspaceIconPipe} from './pipe/workspace-icon.pipe';
 import {WorkspaceIconCssPipe} from './pipe/workspace-icon-css.pipe';
 import {TranslationsSearchBarComponent} from './component/translations-search-bar/translations-search-bar.component';
+import {TranslationLocalesSelectorComponent} from "./component/translations-search-bar/translation-locales-selector/translation-locales-selector.component";
 
 const appRoutes: Routes = [
     {
@@ -21,7 +22,8 @@ const appRoutes: Routes = [
         WorkspaceSelectorComponent,
         WorkspaceIconPipe,
         WorkspaceIconCssPipe,
-        TranslationsSearchBarComponent
+        TranslationsSearchBarComponent,
+        TranslationLocalesSelectorComponent
     ],
     imports: [
         CommonModule,
