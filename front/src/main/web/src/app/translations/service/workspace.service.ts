@@ -3,14 +3,15 @@ import {HttpClient} from "@angular/common/http";
 import {EventService} from "../../core/event/service/event.service";
 import {Workspace} from "../model/workspace.model";
 import {BehaviorSubject, Subscription} from "rxjs";
+import {Events} from 'src/app/core/event/model.events.model';
 
 @Injectable({
     providedIn: 'root'
 })
 export class WorkspaceService implements OnDestroy {
 
-    private _connectedUserSessionObservable: Subscription;
-    private _disconnectedUserSessionObservable: Subscription;
+    private _updatedWorkspaceObservable: Subscription;
+    private _deletedWorkspaceObservable: Subscription;
 
     private _workspaces: BehaviorSubject<Workspace[]> = new BehaviorSubject<Workspace[]>([]);
 
@@ -20,14 +21,14 @@ export class WorkspaceService implements OnDestroy {
             .then(workspaces => this._workspaces.next(workspaces))
             .catch(reason => console.error("Error while retrieving workspaces.", reason));
 
-        this._connectedUserSessionObservable = this.eventService.subscribe("updated-workspace", Workspace)
+        this._updatedWorkspaceObservable = this.eventService.subscribe(Events.UPDATED_WORKSPACE, Workspace)
             .subscribe(
                 (workspace: Workspace) => {
                     this._workspaces.next(this._workspaces.getValue().map(w => workspace.id === w.id ? workspace : w));
                 }
             );
 
-        this._disconnectedUserSessionObservable = this.eventService.subscribe("deleted-workspace", Workspace)
+        this._deletedWorkspaceObservable = this.eventService.subscribe(Events.DELETED_WORKSPACE, Workspace)
             .subscribe(
                 (workspace: Workspace) => {
                     let workspaces = this._workspaces.getValue().slice();
@@ -39,8 +40,8 @@ export class WorkspaceService implements OnDestroy {
     }
 
     ngOnDestroy(): void {
-        this._connectedUserSessionObservable.unsubscribe();
-        this._disconnectedUserSessionObservable.unsubscribe();
+        this._updatedWorkspaceObservable.unsubscribe();
+        this._deletedWorkspaceObservable.unsubscribe();
     }
 
     getWorkspaces(): BehaviorSubject<Workspace[]> {
