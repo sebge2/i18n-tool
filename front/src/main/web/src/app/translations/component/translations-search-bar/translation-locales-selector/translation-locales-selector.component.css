@@ -1,3 +1,7 @@
 .mat-chip {
     justify-content: space-between;
 }
+
+.locales-list {
+    width: 100%;
+}
