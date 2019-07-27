@@ -4,5 +4,5 @@ export enum Locale {
 
     NL = "NL",
 
-    UK = "UK"
+    EN = "EN"
 }

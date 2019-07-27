@@ -14,7 +14,7 @@ import {Observable} from "rxjs";
 export class TranslationLocalesSelectorComponent implements OnInit {
 
     selectedLocales: Locale[] = [];
-    allLocales: Locale[] = [Locale.FR, Locale.NL, Locale.UK]; // TODO
+    allLocales: Locale[] = [Locale.FR, Locale.NL, Locale.EN]; // TODO
     availableLocales: Locale[] = this.allLocales.slice();
     filteredLocales: Observable<string[]>;
 
