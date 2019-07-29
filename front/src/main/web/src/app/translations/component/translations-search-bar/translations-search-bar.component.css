@@ -1,0 +1,15 @@
+.container {
+    display: flex;
+    flex-direction: column;
+}
+
+.container > * {
+    width: 100%;
+}
+
+.container button {
+    margin: 10px 0 0 0;
+}
+
+.container mat-button-toggle-group {
+}

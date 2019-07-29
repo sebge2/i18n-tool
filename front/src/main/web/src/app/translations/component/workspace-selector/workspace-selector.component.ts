@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, EventEmitter, OnDestroy, OnInit, Output} from '@angular/core';
 import {FormControl} from "@angular/forms";
 import {Workspace} from "../../model/workspace.model";
 import {WorkspaceService} from "../../service/workspace.service";
@@ -18,6 +18,9 @@ export class WorkspaceSelectorComponent implements OnInit, OnDestroy {
     workspaces: Observable<Workspace[]>;
     workspaceForm = new FormControl();
 
+    @Output('selectedWorkspace')
+    selectedWorkspace: EventEmitter<Workspace> = new EventEmitter<Workspace>();
+
     private destroy$ = new Subject();
 
     constructor(private workspaceService: WorkspaceService) {
@@ -36,11 +39,12 @@ export class WorkspaceSelectorComponent implements OnInit, OnDestroy {
                         }
 
                         this.workspaceForm.setValue(currentWorkspace);
+                        this.selectedWorkspace.emit(currentWorkspace);
                     }
                 )
             );
 
-        this.workspaceForm.valueChanges.subscribe((selectedWorkspace: Workspace) => console.log(selectedWorkspace))
+        this.workspaceForm.valueChanges.subscribe((selectedWorkspace: Workspace) => this.selectedWorkspace.emit(selectedWorkspace));
     }
 
     ngOnDestroy(): void {

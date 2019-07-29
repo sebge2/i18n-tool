@@ -256,11 +256,13 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
     }
 
     private List<String> listBranches(RepositoryAPI api) throws RepositoryException {
-        return api.listLocalBranches()
+        return api.listRemoteBranches()
                 .stream()
                 .filter(name -> BRANCHES_TO_KEEP.matcher(name).matches())
                 .sorted((first, second) -> {
-                    if (RepositoryManagerImpl.DEFAULT_BRANCH.equals(first)) {
+                    if(Objects.equals(first, second)){
+                        return 0;
+                    } else if (RepositoryManagerImpl.DEFAULT_BRANCH.equals(first)) {
                         return -1;
                     } else if (RepositoryManagerImpl.DEFAULT_BRANCH.equals(second)) {
                         return 1;

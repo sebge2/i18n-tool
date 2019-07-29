@@ -1,12 +1,36 @@
-<!--<div class="input-row" fxLayout="row" fxLayout.lt-md="column" fxLayoutGap="20px" fxLayoutGap.lt-md="0px">-->
-<!--<div>-->
-    <app-translation-locales-selector></app-translation-locales-selector>
-<!--</div>-->
+<mat-expansion-panel>
+    <mat-expansion-panel-header>
+        <mat-panel-title>
+            Search &nbsp;
+            <b>missing translations</b> &nbsp;
+            on &nbsp;
+            <b>master</b> &nbsp;
+            in &nbsp;
+            <span class="flag-icon flag-icon-fr"></span> FR, &nbsp;
+            <span class="flag-icon flag-icon-gb"></span> EN.
+        </mat-panel-title>
+        <mat-panel-description>
+        </mat-panel-description>
+    </mat-expansion-panel-header>
 
-<!--<div>-->
-<!--    <mat-slide-toggle color="primary">Only show missing translations</mat-slide-toggle>-->
-<!--</div>-->
-<!--</div>-->
-<!--<div class="input-row" fxLayout="row" fxLayout.lt-md="column" fxLayoutGap="20px" fxLayoutGap.lt-md="0px">-->
-<!--    <mat-slide-toggle color="primary">Only show updated translations</mat-slide-toggle>-->
-<!--</div>-->
+
+    <div class="container">
+        <app-workspace-selector (selectedWorkspace)="onSelectedWorkspace($event)"></app-workspace-selector>
+
+        <app-translation-locales-selector
+                (selectedLocales)="onSelectedLocales($event)"></app-translation-locales-selector>
+
+        <div>
+            <mat-button-toggle-group name="flagFilter" aria-label="" value="missing_translations">
+                <mat-button-toggle value="all">All</mat-button-toggle>
+                <mat-button-toggle value="missing_translations">Missing</mat-button-toggle>
+                <mat-button-toggle value="translations_i_have_updated">I updated it</mat-button-toggle>
+                <mat-button-toggle value="updated_translations">Someone updated it</mat-button-toggle>
+            </mat-button-toggle-group>
+        </div>
+
+        <div>
+            <button mat-raised-button><i class="fas fa-search"></i> Search</button>
+        </div>
+    </div>
+</mat-expansion-panel>
