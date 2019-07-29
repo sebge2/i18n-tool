@@ -1,7 +1,7 @@
 import {Component, EventEmitter, OnDestroy, OnInit, Output} from '@angular/core';
 import {FormControl} from "@angular/forms";
-import {Workspace} from "../../model/workspace.model";
-import {WorkspaceService} from "../../service/workspace.service";
+import {Workspace} from "../../../model/workspace.model";
+import {WorkspaceService} from "../../../service/workspace.service";
 import {Observable, Subject} from 'rxjs';
 import {takeUntil, tap} from "rxjs/operators";
 import * as _ from 'lodash';
