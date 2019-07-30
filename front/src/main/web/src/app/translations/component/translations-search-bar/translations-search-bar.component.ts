@@ -57,7 +57,7 @@ export class TranslationsSearchBarComponent implements OnInit {
         }
 
         if (this.searchRequest.workspace != null) {
-            title += " on " + this.searchRequest.workspace.branch + " branch";
+            title += " on <b>" + this.searchRequest.workspace.branch + "</b> branch";
         }
 
         if (this.searchRequest.locales.length == 0 || this.searchRequest.locales.length == ALL_LOCALES.length) {
