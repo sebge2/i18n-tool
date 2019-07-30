@@ -1,0 +1,6 @@
+<mat-button-toggle-group name="flagFilter" aria-label="" [(value)]="value">
+    <mat-button-toggle [value]="availableCriterion.ALL">All</mat-button-toggle>
+    <mat-button-toggle [value]="availableCriterion.MISSING_TRANSLATIONS">Missing</mat-button-toggle>
+    <mat-button-toggle [value]="availableCriterion.TRANSLATIONS_CURRENT_USER_UPDATED">I updated it</mat-button-toggle>
+    <mat-button-toggle [value]="availableCriterion.UPDATED_TRANSLATIONS">Someone updated it</mat-button-toggle>
+</mat-button-toggle-group>
