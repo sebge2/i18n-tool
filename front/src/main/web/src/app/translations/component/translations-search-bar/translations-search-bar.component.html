@@ -1,13 +1,7 @@
 <mat-expansion-panel>
     <mat-expansion-panel-header>
         <mat-panel-title>
-            Search &nbsp;
-            <b>missing translations</b> &nbsp;
-            on &nbsp;
-            <b>master</b> &nbsp;
-            in &nbsp;
-            <span class="flag-icon flag-icon-fr"></span> FR, &nbsp;
-            <span class="flag-icon flag-icon-gb"></span> EN.
+            <div [innerHTML]="title()"></div>
         </mat-panel-title>
         <mat-panel-description>
         </mat-panel-description>
@@ -15,10 +9,12 @@
 
 
     <div class="container">
-        <app-workspace-selector (valueChange)="onSelectedWorkspace($event)" [value]="searchRequest.workspace"></app-workspace-selector>
+        <app-workspace-selector (valueChange)="onSelectedWorkspace($event)"
+                                [value]="searchRequest.workspace"></app-workspace-selector>
 
         <app-translation-locales-selector
-                (valueChange)="onSelectedLocales($event)" [value]="searchRequest.locales"></app-translation-locales-selector>
+            (valueChange)="onSelectedLocales($event)"
+            [value]="searchRequest.locales"></app-translation-locales-selector>
 
         <div>
             <app-translation-criterion-selector [value]="searchRequest.criterion"
