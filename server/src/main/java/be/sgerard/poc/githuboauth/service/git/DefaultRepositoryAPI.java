@@ -4,6 +4,7 @@ import be.sgerard.poc.githuboauth.model.security.user.UserEntity;
 import be.sgerard.poc.githuboauth.service.i18n.file.TranslationFileUtils;
 import be.sgerard.poc.githuboauth.service.security.auth.AuthenticationManager;
 import org.apache.commons.io.FileUtils;
+import org.eclipse.jgit.api.CreateBranchCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ListBranchCommand;
 import org.eclipse.jgit.api.PullResult;
@@ -91,14 +92,29 @@ class DefaultRepositoryAPI implements RepositoryAPI, AutoCloseable {
     public void checkout(String branch) throws RepositoryException {
         checkNoModifiedFile();
 
-        if (!listLocalBranches().contains(branch)) {
+        if (listLocalBranches().contains(branch)) {
+            try {
+                git
+                    .checkout()
+                    .setName(branch)
+                    .call();
+            } catch (Exception e) {
+                throw new RepositoryException("Error while checkouting branch [" + branch + "].", e);
+            }
+        } else if (listRemoteBranches().contains(branch)) {
+            try {
+                git
+                    .checkout()
+                    .setCreateBranch(true)
+                    .setName(branch)
+                    .setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.TRACK)
+                    .setStartPoint("origin/" + branch)
+                    .call();
+            } catch (Exception e) {
+                throw new RepositoryException("Error while checkouting branch [" + branch + "].", e);
+            }
+        } else {
             throw new IllegalArgumentException("The branch [" + branch + "] does not exist.");
-        }
-
-        try {
-            git.checkout().setName(branch).call();
-        } catch (Exception e) {
-            throw new RepositoryException("Error while checkouting branch [" + branch + "].", e);
         }
     }
 
@@ -112,9 +128,9 @@ class DefaultRepositoryAPI implements RepositoryAPI, AutoCloseable {
 
         try {
             git.checkout()
-                    .setCreateBranch(true)
-                    .setName(branch)
-                    .call();
+                .setCreateBranch(true)
+                .setName(branch)
+                .call();
         } catch (GitAPIException e) {
             throw new RepositoryException("Error while creating branch [" + branch + "].", e);
         }
@@ -145,14 +161,14 @@ class DefaultRepositoryAPI implements RepositoryAPI, AutoCloseable {
 
         try {
             git.fetch()
-                    .setCredentialsProvider(credentialsProvider)
-                    .setRemoveDeletedRefs(true)
-                    .call();
+                .setCredentialsProvider(credentialsProvider)
+                .setRemoveDeletedRefs(true)
+                .call();
 
             final PullResult result = git.pull()
-                    .setRemote("origin")
-                    .setCredentialsProvider(credentialsProvider)
-                    .call();
+                .setRemote("origin")
+                .setCredentialsProvider(credentialsProvider)
+                .call();
 
             if (!result.isSuccessful()) {
                 throw new IllegalStateException("The pull has not been successful.");
@@ -166,7 +182,7 @@ class DefaultRepositoryAPI implements RepositoryAPI, AutoCloseable {
     public Stream<File> listAllFiles(File file) throws IOException {
         try {
             return TranslationFileUtils.listFiles(getFQNFile(file))
-                    .map(subFile -> removeParentFile(getLocalRepositoryLocation(), subFile));
+                .map(subFile -> removeParentFile(getLocalRepositoryLocation(), subFile));
         } catch (Exception e) {
             throw new IOException("Error while listing files of [" + file + "].", e);
         }
@@ -176,8 +192,8 @@ class DefaultRepositoryAPI implements RepositoryAPI, AutoCloseable {
     public Stream<File> listNormalFiles(File file) throws IOException {
         try {
             return TranslationFileUtils.listFiles(getFQNFile(file))
-                    .filter(File::isFile)
-                    .map(subFile -> removeParentFile(getLocalRepositoryLocation(), subFile));
+                .filter(File::isFile)
+                .map(subFile -> removeParentFile(getLocalRepositoryLocation(), subFile));
         } catch (Exception e) {
             throw new IOException("Error while listing files of [" + file + "].", e);
         }
@@ -187,8 +203,8 @@ class DefaultRepositoryAPI implements RepositoryAPI, AutoCloseable {
     public Stream<File> listDirectories(File file) throws IOException {
         try {
             return TranslationFileUtils.listFiles(getFQNFile(file))
-                    .filter(File::isDirectory)
-                    .map(subFile -> removeParentFile(getLocalRepositoryLocation(), subFile));
+                .filter(File::isDirectory)
+                .map(subFile -> removeParentFile(getLocalRepositoryLocation(), subFile));
         } catch (Exception e) {
             throw new IOException("Error while listing directories of [" + file + "].", e);
         }
@@ -247,9 +263,9 @@ class DefaultRepositoryAPI implements RepositoryAPI, AutoCloseable {
             final UserEntity currentUser = authenticationManager.getCurrentUserOrFail();
 
             git.commit()
-                    .setAuthor(currentUser.getUsername(), currentUser.getEmail())
-                    .setMessage(message)
-                    .call();
+                .setAuthor(currentUser.getUsername(), currentUser.getEmail())
+                .setMessage(message)
+                .call();
 
             git.push().setCredentialsProvider(credentialsProvider).call();
         } catch (Exception e) {
@@ -309,21 +325,21 @@ class DefaultRepositoryAPI implements RepositoryAPI, AutoCloseable {
     private List<String> doListBranches(Pattern branchPattern) throws RepositoryException {
         try {
             return git.branchList().setListMode(ListBranchCommand.ListMode.ALL).call().stream()
-                    .map(Ref::getName)
-                    .map(name -> {
-                        final Matcher matcher = branchPattern.matcher(name);
+                .map(Ref::getName)
+                .map(name -> {
+                    final Matcher matcher = branchPattern.matcher(name);
 
-                        if (!matcher.matches()) {
-                            return null;
-                        } else if (matcher.groupCount() == 2) {
-                            return matcher.group(2);
-                        } else {
-                            return matcher.group(1);
-                        }
-                    })
-                    .filter(Objects::nonNull)
-                    .distinct()
-                    .collect(toList());
+                    if (!matcher.matches()) {
+                        return null;
+                    } else if (matcher.groupCount() == 2) {
+                        return matcher.group(2);
+                    } else {
+                        return matcher.group(1);
+                    }
+                })
+                .filter(Objects::nonNull)
+                .distinct()
+                .collect(toList());
         } catch (Exception e) {
             throw new RepositoryException("Error while listing branches.", e);
         }

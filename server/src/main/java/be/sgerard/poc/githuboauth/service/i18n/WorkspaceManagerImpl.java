@@ -66,8 +66,8 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
                 switch (workspaceEntity.getStatus()) {
                     case IN_REVIEW:
                         updateReviewingWorkspace(
-                                workspaceEntity,
-                                workspaceEntity.getPullRequestNumber().map(pullRequestManager::getStatus).orElse(null)
+                            workspaceEntity,
+                            workspaceEntity.getPullRequestNumber().map(pullRequestManager::getStatus).orElse(null)
                         );
 
                         break;
@@ -198,11 +198,11 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
     @Transactional
     public void updateTranslations(String workspaceId, Map<String, String> translations) throws ResourceNotFoundException {
         final WorkspaceEntity workspace = workspaceRepository.findById(workspaceId)
-                .orElseThrow(() -> new ResourceNotFoundException(workspaceId));
+            .orElseThrow(() -> new ResourceNotFoundException(workspaceId));
 
         if (workspace.getStatus() != WorkspaceStatus.INITIALIZED) {
             throw new IllegalStateException("Cannot update translations of workspace [" + workspaceId + "], the status "
-                    + workspace.getStatus() + " does not allow it.");
+                + workspace.getStatus() + " does not allow it.");
         }
 
         translationManager.updateTranslations(workspace, translations);
@@ -233,8 +233,8 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
     @Transactional
     public void onPullRequest(GitHubPullRequestEventDto pullRequest) throws LockTimeoutException, RepositoryException {
         final WorkspaceEntity workspaceEntity = workspaceRepository
-                .findByPullRequestNumber(pullRequest.getNumber())
-                .orElse(null);
+            .findByPullRequestNumber(pullRequest.getNumber())
+            .orElse(null);
 
         if (workspaceEntity != null) {
             updateReviewingWorkspace(workspaceEntity, pullRequest.getStatus());
@@ -257,19 +257,19 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
 
     private List<String> listBranches(RepositoryAPI api) throws RepositoryException {
         return api.listRemoteBranches()
-                .stream()
-                .filter(name -> BRANCHES_TO_KEEP.matcher(name).matches())
-                .sorted((first, second) -> {
-                    if(Objects.equals(first, second)){
-                        return 0;
-                    } else if (RepositoryManagerImpl.DEFAULT_BRANCH.equals(first)) {
-                        return -1;
-                    } else if (RepositoryManagerImpl.DEFAULT_BRANCH.equals(second)) {
-                        return 1;
-                    } else {
-                        return Comparator.<String>reverseOrder().compare(first, second);
-                    }
-                })
-                .collect(toList());
+            .stream()
+            .filter(name -> BRANCHES_TO_KEEP.matcher(name).matches())
+            .sorted((first, second) -> {
+                if (Objects.equals(first, second)) {
+                    return 0;
+                } else if (RepositoryManagerImpl.DEFAULT_BRANCH.equals(first)) {
+                    return -1;
+                } else if (RepositoryManagerImpl.DEFAULT_BRANCH.equals(second)) {
+                    return 1;
+                } else {
+                    return Comparator.<String>reverseOrder().compare(first, second);
+                }
+            })
+            .collect(toList());
     }
 }

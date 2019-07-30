@@ -44,9 +44,9 @@ public class WorkspaceController {
     @ApiOperation(value = "Returns registered workspaces.")
     public List<WorkspaceDto> getWorkspaces() {
         return workspaceManager.getWorkspaces()
-                .stream()
-                .map(entity -> WorkspaceDto.builder(entity).build())
-                .collect(toList());
+            .stream()
+            .map(entity -> WorkspaceDto.builder(entity).build())
+            .collect(toList());
     }
 
     @PutMapping(path = "/workspace")
@@ -63,8 +63,8 @@ public class WorkspaceController {
     @ApiOperation(value = "Returns the workspace having the specified id.")
     public WorkspaceDto getWorkspace(@PathVariable String id) {
         return workspaceManager.getWorkspace(id)
-                .map(entity -> WorkspaceDto.builder(entity).build())
-                .orElseThrow(() -> new ResourceNotFoundException(id));
+            .map(entity -> WorkspaceDto.builder(entity).build())
+            .orElseThrow(() -> new ResourceNotFoundException(id));
     }
 
     @DeleteMapping(path = "/workspace/{id}")
@@ -76,19 +76,19 @@ public class WorkspaceController {
 
     @PutMapping(path = "/workspace/{id}")
     @ApiOperation(value = "Executes an action on the specified workspace.")
-    public Object executeWorkspaceAction(@PathVariable String id,
-                                         @ApiParam("The action to execute.") @RequestParam(name = "do") WorkspaceAction doAction,
-                                         @ApiParam("Specify the message to use for the review.")
-                                         @RequestParam(name = "message", required = false) String message) throws LockTimeoutException, RepositoryException {
+    public WorkspaceDto executeWorkspaceAction(@PathVariable String id,
+                                               @ApiParam("The action to execute.") @RequestParam(name = "do") WorkspaceAction doAction,
+                                               @ApiParam("Specify the message to use for the review.")
+                                               @RequestParam(name = "message", required = false) String message) throws LockTimeoutException, RepositoryException {
         switch (doAction) {
             case INITIALIZE:
-                return workspaceManager.initialize(id);
+                return WorkspaceDto.builder(workspaceManager.initialize(id)).build();
             case START_REVIEW:
                 if (StringUtils.isEmpty(message)) {
                     throw new IllegalArgumentException("There is no message specify. A message is needed when starting a review.");
                 }
 
-                return workspaceManager.startReviewing(id, message);
+                return WorkspaceDto.builder(workspaceManager.startReviewing(id, message)).build();
             default:
                 throw new IllegalArgumentException("Action " + doAction + " is not supported.");
         }
@@ -102,12 +102,12 @@ public class WorkspaceController {
                                                       @RequestParam(name = "lastKey", required = false) String lastKey,
                                                       @RequestParam(name = "maxKeys", required = false) Integer maxKeys) {
         return translationManager.getTranslations(
-                BundleKeysPageRequestDto.builder(id)
-                        .locales(locales)
-                        .lastKey(lastKey)
-                        .maxKeys(maxKeys)
-                        .criterion(criterion)
-                        .build()
+            BundleKeysPageRequestDto.builder(id)
+                .locales(locales)
+                .lastKey(lastKey)
+                .maxKeys(maxKeys)
+                .criterion(criterion)
+                .build()
         );
     }
 
