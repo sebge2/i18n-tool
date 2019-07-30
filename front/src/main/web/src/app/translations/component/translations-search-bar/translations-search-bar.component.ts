@@ -12,23 +12,30 @@ import {TranslationsSearchCriterion} from "../../model/translations-search-crite
 export class TranslationsSearchBarComponent implements OnInit {
 
     @Output()
-    criteria: EventEmitter<TranslationsSearchRequest> = new EventEmitter();
+    searchRequestChange: EventEmitter<TranslationsSearchRequest> = new EventEmitter();
+
+    searchRequest: TranslationsSearchRequest = new TranslationsSearchRequest();
 
     constructor() {
+        this.searchRequest.criterion = TranslationsSearchCriterion.MISSING_TRANSLATIONS;
     }
 
     ngOnInit() {
     }
 
-    onSelectedLocales(selectedLocales: Locale[]) {
-        console.log("here", selectedLocales);
+    onSelectedWorkspace(workspace: Workspace) {
+        this.searchRequest.workspace = workspace;
     }
 
-    onSelectedWorkspace(workspace: Workspace) {
-        console.log("here", workspace);
+    onSelectedLocales(locales: Locale[]) {
+        this.searchRequest.locales = locales;
     }
 
     onSelectedCriterion(criterion: TranslationsSearchCriterion) {
-        console.log("here", criterion);
+        this.searchRequest.criterion = criterion;
+    }
+
+    onSearch(){
+        this.searchRequestChange.emit(this.searchRequest);
     }
 }

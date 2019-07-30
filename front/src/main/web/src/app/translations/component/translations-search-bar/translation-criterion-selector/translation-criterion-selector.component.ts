@@ -1,4 +1,4 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {TranslationsSearchCriterion} from "../../../model/translations-search-criterion.model";
 
 @Component({
@@ -8,26 +8,17 @@ import {TranslationsSearchCriterion} from "../../../model/translations-search-cr
 })
 export class TranslationCriterionSelectorComponent implements OnInit {
 
-  @Output('valueChange') valueChange: EventEmitter<TranslationsSearchCriterion> = new EventEmitter<TranslationsSearchCriterion>();
+  @Output() valueChange: EventEmitter<TranslationsSearchCriterion> = new EventEmitter<TranslationsSearchCriterion>();
 
-  private _value: TranslationsSearchCriterion;
+  @Input()
+  value: TranslationsSearchCriterion;
 
   availableCriterion = TranslationsSearchCriterion;
 
   constructor() {
-    this.value = TranslationsSearchCriterion.MISSING_TRANSLATIONS;
   }
 
   ngOnInit() {
-  }
-
-  get value(): TranslationsSearchCriterion {
-    return this._value;
-  }
-
-  set value(criterion: TranslationsSearchCriterion) {
-    this._value = criterion;
-    this.valueChange.emit(this._value);
   }
 
 }

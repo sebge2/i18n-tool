@@ -21,11 +21,12 @@
                 (valueChange)="onSelectedLocales($event)"></app-translation-locales-selector>
 
         <div>
-            <app-translation-criterion-selector (valueChange)="onSelectedCriterion($event)"></app-translation-criterion-selector>
+            <app-translation-criterion-selector [value]="searchRequest.criterion"
+                                                (valueChange)="onSelectedCriterion($event)"></app-translation-criterion-selector>
         </div>
 
         <div>
-            <button mat-raised-button><i class="fas fa-search"></i> Search</button>
+            <button mat-raised-button (click)="onSearch()"><i class="fas fa-search"></i> Search</button>
         </div>
     </div>
 </mat-expansion-panel>

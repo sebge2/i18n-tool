@@ -6,6 +6,6 @@ export class TranslationsSearchRequest {
 
     workspace: Workspace;
     locales: Locale[];
-    criterion: TranslationsSearchCriterion;
+    criterion: TranslationsSearchCriterion = TranslationsSearchCriterion.ALL;
 
 }
