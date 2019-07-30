@@ -2,6 +2,7 @@ import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {Locale} from "../../model/locale.model";
 import {Workspace} from "../../model/workspace.model";
 import {TranslationsSearchRequest} from "../../model/translations-search-request.model";
+import {TranslationsSearchCriterion} from "../../model/translations-search-criterion.model";
 
 @Component({
     selector: 'app-translations-search-bar',
@@ -27,7 +28,7 @@ export class TranslationsSearchBarComponent implements OnInit {
         console.log("here", workspace);
     }
 
-    onSelectedCriterion(criterion: TranslationsSearchRequest) {
+    onSelectedCriterion(criterion: TranslationsSearchCriterion) {
         console.log("here", criterion);
     }
 }

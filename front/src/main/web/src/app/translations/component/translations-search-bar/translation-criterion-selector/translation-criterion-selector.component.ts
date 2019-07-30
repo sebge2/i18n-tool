@@ -8,7 +8,7 @@ import {TranslationsSearchCriterion} from "../../../model/translations-search-cr
 })
 export class TranslationCriterionSelectorComponent implements OnInit {
 
-  @Output('value') valueChange: EventEmitter<TranslationsSearchCriterion> = new EventEmitter<TranslationsSearchCriterion>();
+  @Output('valueChange') valueChange: EventEmitter<TranslationsSearchCriterion> = new EventEmitter<TranslationsSearchCriterion>();
 
   private _value: TranslationsSearchCriterion;
 

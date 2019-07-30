@@ -18,10 +18,10 @@
         <app-workspace-selector (selectedWorkspace)="onSelectedWorkspace($event)"></app-workspace-selector>
 
         <app-translation-locales-selector
-                (selectedLocales)="onSelectedLocales($event)"></app-translation-locales-selector>
+                (valueChange)="onSelectedLocales($event)"></app-translation-locales-selector>
 
         <div>
-            <app-translation-criterion-selector (value)="onSelectedCriterion($event)"></app-translation-criterion-selector>
+            <app-translation-criterion-selector (valueChange)="onSelectedCriterion($event)"></app-translation-criterion-selector>
         </div>
 
         <div>

@@ -24,8 +24,8 @@ export class TranslationLocalesSelectorComponent implements OnInit {
     @ViewChild('localeInput', {static: false}) localeInput: ElementRef<HTMLInputElement>;
     @ViewChild('auto', {static: false}) matAutocomplete;
 
-    @Output('selectedLocales')
-    emitter: EventEmitter<Locale[]> = new EventEmitter();
+    @Output()
+    valueChange: EventEmitter<Locale[]> = new EventEmitter();
 
     constructor() {
     }
@@ -40,7 +40,7 @@ export class TranslationLocalesSelectorComponent implements OnInit {
             );
 
         this.availableLocales = this.allLocales.filter(locale => this.selectedLocales.indexOf(locale) < 0);
-        this.emitter.emit(this.selectedLocales)
+        this.valueChange.emit(this.selectedLocales)
     }
 
     selected(event: MatAutocompleteSelectedEvent): void {
@@ -52,7 +52,7 @@ export class TranslationLocalesSelectorComponent implements OnInit {
         this.selectedLocales.push(selectedLocale);
         this.availableLocales.splice(this.availableLocales.indexOf(selectedLocale), 1);
 
-        this.emitter.emit(this.selectedLocales);
+        this.valueChange.emit(this.selectedLocales);
     }
 
     add(event: MatChipInputEvent): void {
@@ -73,7 +73,7 @@ export class TranslationLocalesSelectorComponent implements OnInit {
         if (index >= 0) {
             this.selectedLocales.splice(index, 1);
             this.availableLocales.push(locale);
-            this.emitter.emit(this.selectedLocales);
+            this.valueChange.emit(this.selectedLocales);
         }
     }
 
