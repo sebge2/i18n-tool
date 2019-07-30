@@ -8,7 +8,8 @@ import {TranslationsSearchCriterion} from "../../../model/translations-search-cr
 })
 export class TranslationCriterionSelectorComponent implements OnInit {
 
-  @Output() valueChange: EventEmitter<TranslationsSearchCriterion> = new EventEmitter<TranslationsSearchCriterion>();
+  @Output()
+  valueChange: EventEmitter<TranslationsSearchCriterion> = new EventEmitter<TranslationsSearchCriterion>();
 
   @Input()
   value: TranslationsSearchCriterion;
@@ -21,4 +22,8 @@ export class TranslationCriterionSelectorComponent implements OnInit {
   ngOnInit() {
   }
 
+  onChange(criterion: TranslationsSearchCriterion){
+    this.value = criterion;
+    this.valueChange.emit(this.value);
+  }
 }

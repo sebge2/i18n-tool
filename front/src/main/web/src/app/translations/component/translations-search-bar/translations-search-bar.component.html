@@ -15,10 +15,10 @@
 
 
     <div class="container">
-        <app-workspace-selector (selectedWorkspace)="onSelectedWorkspace($event)"></app-workspace-selector>
+        <app-workspace-selector (valueChange)="onSelectedWorkspace($event)" [value]="searchRequest.workspace"></app-workspace-selector>
 
         <app-translation-locales-selector
-                (valueChange)="onSelectedLocales($event)"></app-translation-locales-selector>
+                (valueChange)="onSelectedLocales($event)" [value]="searchRequest.locales"></app-translation-locales-selector>
 
         <div>
             <app-translation-criterion-selector [value]="searchRequest.criterion"

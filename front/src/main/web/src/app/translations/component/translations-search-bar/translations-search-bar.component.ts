@@ -18,6 +18,7 @@ export class TranslationsSearchBarComponent implements OnInit {
 
     constructor() {
         this.searchRequest.criterion = TranslationsSearchCriterion.MISSING_TRANSLATIONS;
+        this.searchRequest.locales = [Locale.FR, Locale.EN];
     }
 
     ngOnInit() {
@@ -35,7 +36,7 @@ export class TranslationsSearchBarComponent implements OnInit {
         this.searchRequest.criterion = criterion;
     }
 
-    onSearch(){
+    onSearch() {
         this.searchRequestChange.emit(this.searchRequest);
     }
 }

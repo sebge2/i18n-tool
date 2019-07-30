@@ -1,10 +1,10 @@
-import {Component, ElementRef, EventEmitter, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, ElementRef, EventEmitter, OnInit, Output, ViewChild, Input} from '@angular/core';
 import {ALL_LOCALES, Locale} from "../../../model/locale.model";
 import {MatAutocompleteSelectedEvent, MatChipInputEvent} from "@angular/material";
 import {FormControl} from "@angular/forms";
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import {map, startWith} from "rxjs/operators";
-import {Observable} from "rxjs";
+import {Observable} from 'rxjs';
 
 @Component({
     selector: 'app-translation-locales-selector',
@@ -13,19 +13,21 @@ import {Observable} from "rxjs";
 })
 export class TranslationLocalesSelectorComponent implements OnInit {
 
-    selectedLocales: Locale[] = [Locale.FR, Locale.EN];
+    @ViewChild('localeInput', {static: false}) localeInput: ElementRef<HTMLInputElement>;
+    @ViewChild('auto', {static: false}) matAutocomplete;
+
+    @Output()
+    valueChange: EventEmitter<Locale[]> = new EventEmitter();
+
+    @Input()
+    value: Locale[] = [];
+
     allLocales: Locale[] = ALL_LOCALES;
     availableLocales: Locale[];
     filteredLocales: Observable<string[]>;
 
     localeInputCtrl = new FormControl();
     separatorKeysCodes: number[] = [ENTER, COMMA];
-
-    @ViewChild('localeInput', {static: false}) localeInput: ElementRef<HTMLInputElement>;
-    @ViewChild('auto', {static: false}) matAutocomplete;
-
-    @Output()
-    valueChange: EventEmitter<Locale[]> = new EventEmitter();
 
     constructor() {
     }
@@ -39,8 +41,8 @@ export class TranslationLocalesSelectorComponent implements OnInit {
                 })
             );
 
-        this.availableLocales = this.allLocales.filter(locale => this.selectedLocales.indexOf(locale) < 0);
-        this.valueChange.emit(this.selectedLocales)
+        this.availableLocales = this.allLocales.filter(locale => this.value.indexOf(locale) < 0);
+        this.valueChange.emit(this.value)
     }
 
     selected(event: MatAutocompleteSelectedEvent): void {
@@ -49,10 +51,10 @@ export class TranslationLocalesSelectorComponent implements OnInit {
         this.localeInput.nativeElement.value = '';
         this.localeInputCtrl.setValue(null);
 
-        this.selectedLocales.push(selectedLocale);
+        this.value.push(selectedLocale);
         this.availableLocales.splice(this.availableLocales.indexOf(selectedLocale), 1);
 
-        this.valueChange.emit(this.selectedLocales);
+        this.valueChange.emit(this.value);
     }
 
     add(event: MatChipInputEvent): void {
@@ -68,12 +70,12 @@ export class TranslationLocalesSelectorComponent implements OnInit {
     }
 
     remove(locale: Locale): void {
-        const index = this.selectedLocales.indexOf(locale);
+        const index = this.value.indexOf(locale);
 
         if (index >= 0) {
-            this.selectedLocales.splice(index, 1);
+            this.value.splice(index, 1);
             this.availableLocales.push(locale);
-            this.valueChange.emit(this.selectedLocales);
+            this.valueChange.emit(this.value);
         }
     }
 

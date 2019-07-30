@@ -1,5 +1,4 @@
-import {Component, EventEmitter, OnDestroy, OnInit, Output} from '@angular/core';
-import {FormControl} from "@angular/forms";
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {Workspace} from "../../../model/workspace.model";
 import {WorkspaceService} from "../../../service/workspace.service";
 import {Observable, Subject} from 'rxjs';
@@ -15,11 +14,13 @@ export class WorkspaceSelectorComponent implements OnInit, OnDestroy {
 
     private static DEFAULT_BRANCH = "master";
 
-    workspaces: Observable<Workspace[]>;
-    workspaceForm = new FormControl();
+    @Output()
+    valueChange: EventEmitter<Workspace> = new EventEmitter<Workspace>();
 
-    @Output('selectedWorkspace')
-    selectedWorkspace: EventEmitter<Workspace> = new EventEmitter<Workspace>();
+    @Input()
+    value: Workspace;
+
+    workspaces: Observable<Workspace[]>;
 
     private destroy$ = new Subject();
 
@@ -32,23 +33,26 @@ export class WorkspaceSelectorComponent implements OnInit, OnDestroy {
                 takeUntil(this.destroy$),
                 tap(
                     (workspaces: Workspace[]) => {
-                        let currentWorkspace = workspaces.find(workspace => _.get(this.workspaceForm, 'value.id') === workspace.id);
+                        let currentWorkspace = workspaces.find(workspace => _.get(this.value, 'id') === workspace.id);
 
-                        if (!this.workspaceForm.value || !currentWorkspace) {
+                        if (!this.value || !currentWorkspace) {
                             currentWorkspace = workspaces.find(workspace => WorkspaceSelectorComponent.DEFAULT_BRANCH == workspace.branch);
                         }
 
-                        this.workspaceForm.setValue(currentWorkspace);
-                        this.selectedWorkspace.emit(currentWorkspace);
+                        this.value = currentWorkspace;
+                        this.valueChange.emit(this.value);
                     }
                 )
             );
-
-        this.workspaceForm.valueChanges.subscribe((selectedWorkspace: Workspace) => this.selectedWorkspace.emit(selectedWorkspace));
     }
 
     ngOnDestroy(): void {
         this.destroy$.complete();
+    }
+
+    onChange(workspace: Workspace){
+        this.value = workspace;
+        this.valueChange.emit(this.value);
     }
 
 }

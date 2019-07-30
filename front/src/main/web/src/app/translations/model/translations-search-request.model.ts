@@ -5,7 +5,7 @@ import {TranslationsSearchCriterion} from "./translations-search-criterion.model
 export class TranslationsSearchRequest {
 
     workspace: Workspace;
-    locales: Locale[];
+    locales: Locale[] = [];
     criterion: TranslationsSearchCriterion = TranslationsSearchCriterion.ALL;
 
 }
