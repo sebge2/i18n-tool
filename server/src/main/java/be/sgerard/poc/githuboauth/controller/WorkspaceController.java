@@ -2,6 +2,7 @@ package be.sgerard.poc.githuboauth.controller;
 
 import be.sgerard.poc.githuboauth.model.i18n.dto.BundleKeysPageDto;
 import be.sgerard.poc.githuboauth.model.i18n.dto.BundleKeysPageRequestDto;
+import be.sgerard.poc.githuboauth.model.i18n.dto.TranslationSearchCriterion;
 import be.sgerard.poc.githuboauth.model.i18n.dto.WorkspaceDto;
 import be.sgerard.poc.githuboauth.service.LockTimeoutException;
 import be.sgerard.poc.githuboauth.service.ResourceNotFoundException;
@@ -97,8 +98,7 @@ public class WorkspaceController {
     @ApiOperation(value = "Returns translations of the workspace having the specified id.")
     public BundleKeysPageDto getWorkspaceTranslations(@PathVariable String id,
                                                       @RequestParam(name = "locales", required = false, defaultValue = "") List<Locale> locales,
-                                                      @RequestParam(name = "onlyMissingTranslations", required = false, defaultValue = "false") boolean onlyMissingTranslations,
-                                                      @RequestParam(name = "hasBeenUpdated", required = false) Boolean hasBeenUpdated,
+                                                      @RequestParam(name = "criterion", required = false) TranslationSearchCriterion criterion,
                                                       @RequestParam(name = "lastKey", required = false) String lastKey,
                                                       @RequestParam(name = "maxKeys", required = false) Integer maxKeys) {
         return translationManager.getTranslations(
@@ -106,8 +106,7 @@ public class WorkspaceController {
                         .locales(locales)
                         .lastKey(lastKey)
                         .maxKeys(maxKeys)
-                        .hasBeenUpdated(hasBeenUpdated)
-                        .onlyMissingTranslations(onlyMissingTranslations)
+                        .criterion(criterion)
                         .build()
         );
     }

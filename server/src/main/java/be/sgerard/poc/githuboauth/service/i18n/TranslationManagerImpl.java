@@ -162,9 +162,8 @@ public class TranslationManagerImpl implements TranslationManager {
                 .searchEntries(
                         BundleKeyEntrySearchRequestDto.builder(searchRequest.getWorkspaceId())
                                 .locales(searchRequest.getLocales())
-                                .onlyMissingTranslations(searchRequest.onlyMissingTranslations())
+                                .criterion(searchRequest.getCriterion())
                                 .keyPattern(searchRequest.getKeyPattern().orElse(null))
-                                .hasBeenUpdated(searchRequest.hasBeenUpdated().orElse(null))
                                 .lastKey(searchRequest.getLastKey().orElse(null))
                                 .maxKeyEntries(searchRequest.getMaxKeys() * getRegisteredLocales().size())
                                 .build()

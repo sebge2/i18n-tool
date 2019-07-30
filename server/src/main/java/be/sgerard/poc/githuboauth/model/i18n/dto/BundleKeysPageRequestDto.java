@@ -29,17 +29,14 @@ public class BundleKeysPageRequestDto {
     @ApiModelProperty(notes = "Unique identifier of the workspace containing translations.", required = true)
     private final String workspaceId;
 
-    @ApiModelProperty(notes = "The pattern to use of the key to retrieve. Follow SQL like patterns.")
-    private final String keyPattern;
-
-    @ApiModelProperty(notes = "Search translations for which the translations of the specified locales are missing.")
-    private final boolean onlyMissingTranslations;
-
     @ApiModelProperty(notes = "Search translations only in those locales.")
     private final Collection<Locale> locales;
 
-    @ApiModelProperty(notes = "Search translations that have been updated since the initialization.")
-    private final Boolean hasBeenUpdated;
+    @ApiModelProperty(notes = "Specify the criterion that the translations must have.")
+    private final TranslationSearchCriterion criterion;
+
+    @ApiModelProperty(notes = "The pattern to use of the key to retrieve. Follow SQL like patterns.")
+    private final String keyPattern;
 
     @ApiModelProperty(notes = "The maximum number of keys for the next page.")
     private final int maxKeys;
@@ -49,10 +46,9 @@ public class BundleKeysPageRequestDto {
 
     private BundleKeysPageRequestDto(Builder builder) {
         workspaceId = builder.workspaceId;
-        keyPattern = StringUtils.isEmpty(builder.keyPattern) ? null : builder.keyPattern;
-        onlyMissingTranslations = builder.onlyMissingTranslations;
         locales = unmodifiableCollection(builder.locales);
-        hasBeenUpdated = builder.hasBeenUpdated;
+        criterion = (builder.criterion != null) ? builder.criterion : TranslationSearchCriterion.ALL;
+        keyPattern = StringUtils.isEmpty(builder.keyPattern) ? null : builder.keyPattern;
         maxKeys = (builder.maxKeys != null) ? builder.maxKeys : DEFAULT_MAX_KEYS;
         lastKey = builder.lastKey;
     }
@@ -61,20 +57,16 @@ public class BundleKeysPageRequestDto {
         return workspaceId;
     }
 
-    public Optional<String> getKeyPattern() {
-        return Optional.ofNullable(keyPattern);
-    }
-
-    public boolean onlyMissingTranslations() {
-        return onlyMissingTranslations;
-    }
-
     public Collection<Locale> getLocales() {
         return locales;
     }
 
-    public Optional<Boolean> hasBeenUpdated() {
-        return Optional.ofNullable(hasBeenUpdated);
+    public TranslationSearchCriterion getCriterion() {
+        return criterion;
+    }
+
+    public Optional<String> getKeyPattern() {
+        return Optional.ofNullable(keyPattern);
     }
 
     public int getMaxKeys() {
@@ -88,20 +80,14 @@ public class BundleKeysPageRequestDto {
     public static final class Builder {
 
         private final String workspaceId;
-        private String keyPattern;
         private final Collection<Locale> locales = new HashSet<>();
-        private boolean onlyMissingTranslations;
+        private TranslationSearchCriterion criterion;
+        private String keyPattern;
         private Integer maxKeys;
         private String lastKey;
-        private Boolean hasBeenUpdated;
 
         private Builder(String workspaceId) {
             this.workspaceId = workspaceId;
-        }
-
-        public Builder keyPattern(String keyPattern) {
-            this.keyPattern = keyPattern;
-            return this;
         }
 
         public Builder locales(Collection<Locale> locales) {
@@ -109,13 +95,13 @@ public class BundleKeysPageRequestDto {
             return this;
         }
 
-        public Builder onlyMissingTranslations(boolean onlyMissingTranslations) {
-            this.onlyMissingTranslations = onlyMissingTranslations;
+        public Builder criterion(TranslationSearchCriterion criterion) {
+            this.criterion = criterion;
             return this;
         }
 
-        public Builder hasBeenUpdated(Boolean hasBeenUpdated) {
-            this.hasBeenUpdated = hasBeenUpdated;
+        public Builder keyPattern(String keyPattern) {
+            this.keyPattern = keyPattern;
             return this;
         }
 

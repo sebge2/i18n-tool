@@ -2,6 +2,7 @@ package be.sgerard.poc.githuboauth.service.i18n.persistence;
 
 import be.sgerard.poc.githuboauth.model.i18n.dto.BundleKeyEntrySearchRequestDto;
 import be.sgerard.poc.githuboauth.model.i18n.persistence.*;
+import be.sgerard.poc.githuboauth.service.security.auth.AuthenticationManager;
 
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.*;
@@ -17,9 +18,12 @@ public class BundleKeyTranslationRepositoryImpl implements BundleKeyTranslationR
     public static final String HINT_FETCH_GRAPH = "javax.persistence.fetchgraph";
 
     private final EntityManager entityManager;
+    private final AuthenticationManager authenticationManager;
 
-    public BundleKeyTranslationRepositoryImpl(EntityManager entityManager) {
+    public BundleKeyTranslationRepositoryImpl(EntityManager entityManager,
+                                              AuthenticationManager authenticationManager) {
         this.entityManager = entityManager;
+        this.authenticationManager = authenticationManager;
     }
 
     @Override
@@ -48,23 +52,24 @@ public class BundleKeyTranslationRepositoryImpl implements BundleKeyTranslationR
             );
         }
 
-        if (request.onlyMissingTranslations()) {
-            whereClause.getExpressions().add(selectEntry.get(BundleKeyTranslationEntity_.originalValue).isNull());
-            whereClause.getExpressions().add(selectEntry.get(BundleKeyTranslationEntity_.updatedValue).isNull());
+        switch (request.getCriterion()) {
+            case MISSING_TRANSLATIONS:
+                whereClause.getExpressions().add(selectEntry.get(BundleKeyTranslationEntity_.originalValue).isNull());
+                whereClause.getExpressions().add(selectEntry.get(BundleKeyTranslationEntity_.updatedValue).isNull());
+                break;
+            case UPDATED_TRANSLATIONS:
+                whereClause.getExpressions().add(selectEntry.get(BundleKeyTranslationEntity_.updatedValue).isNotNull());
+                break;
+            case TRANSLATIONS_CURRENT_USER_UPDATED:
+                whereClause.getExpressions().add(selectEntry.get(BundleKeyTranslationEntity_.updatedValue).isNotNull());
+                whereClause.getExpressions().add(selectEntry.get(BundleKeyTranslationEntity_.lastEditor).in(authenticationManager.getCurrentUserOrFail().getId()));
+                break;
+
         }
 
         request.getKeyPattern()
                 .ifPresent(keyPattern ->
                         whereClause.getExpressions().add(criteriaBuilder.like(bundleKeyJoin.get(BundleKeyEntity_.key), keyPattern))
-                );
-
-        request.hasBeenUpdated()
-                .ifPresent(hasBeenUpdated ->
-                        whereClause.getExpressions().add(
-                                hasBeenUpdated
-                                        ? selectEntry.get(BundleKeyTranslationEntity_.updatedValue).isNotNull()
-                                        : selectEntry.get(BundleKeyTranslationEntity_.updatedValue).isNull()
-                        )
                 );
 
         if (!whereClause.getExpressions().isEmpty()) {

@@ -21,19 +21,17 @@ public class BundleKeyEntrySearchRequestDto {
     }
 
     private final String workspaceId;
-    private final String keyPattern;
     private final Collection<Locale> locales;
-    private final boolean onlyMissingTranslations;
-    private final Boolean hasBeenUpdated;
+    private final TranslationSearchCriterion criterion;
+    private final String keyPattern;
     private final int maxKeyEntries;
     private final String lastKey;
 
     private BundleKeyEntrySearchRequestDto(Builder builder) {
         workspaceId = builder.workspaceId;
-        keyPattern = StringUtils.isEmpty(builder.keyPattern) ? null : builder.keyPattern;
         locales = unmodifiableCollection(builder.locales);
-        onlyMissingTranslations = builder.onlyMissingTranslations;
-        hasBeenUpdated = builder.hasBeenUpdated;
+        criterion = builder.criterion;
+        keyPattern = StringUtils.isEmpty(builder.keyPattern) ? null : builder.keyPattern;
         maxKeyEntries = (builder.maxKeyEntries != null) ? builder.maxKeyEntries : DEFAULT_MAX_KEYS;
         lastKey = builder.lastKey;
     }
@@ -42,20 +40,16 @@ public class BundleKeyEntrySearchRequestDto {
         return workspaceId;
     }
 
-    public Optional<String> getKeyPattern() {
-        return Optional.ofNullable(keyPattern);
-    }
-
-    public boolean onlyMissingTranslations() {
-        return onlyMissingTranslations;
-    }
-
     public Collection<Locale> getLocales() {
         return locales;
     }
 
-    public Optional<Boolean> hasBeenUpdated() {
-        return Optional.ofNullable(hasBeenUpdated);
+    public TranslationSearchCriterion getCriterion() {
+        return criterion;
+    }
+
+    public Optional<String> getKeyPattern() {
+        return Optional.ofNullable(keyPattern);
     }
 
     public int getMaxKeyEntries() {
@@ -69,10 +63,9 @@ public class BundleKeyEntrySearchRequestDto {
     public static final class Builder {
 
         private final String workspaceId;
-        private String keyPattern;
         private final Collection<Locale> locales = new HashSet<>();
-        private boolean onlyMissingTranslations;
-        private Boolean hasBeenUpdated;
+        private TranslationSearchCriterion criterion;
+        private String keyPattern;
         private Integer maxKeyEntries;
         private String lastKey;
 
@@ -80,23 +73,18 @@ public class BundleKeyEntrySearchRequestDto {
             this.workspaceId = workspaceId;
         }
 
-        public Builder keyPattern(String keyPattern) {
-            this.keyPattern = keyPattern;
-            return this;
-        }
-
         public Builder locales(Collection<Locale> locales) {
             this.locales.addAll(locales);
             return this;
         }
 
-        public Builder onlyMissingTranslations(boolean onlyMissingTranslations) {
-            this.onlyMissingTranslations = onlyMissingTranslations;
+        public Builder criterion(TranslationSearchCriterion criterion) {
+            this.criterion = criterion;
             return this;
         }
 
-        public Builder hasBeenUpdated(Boolean hasBeenUpdated) {
-            this.hasBeenUpdated = hasBeenUpdated;
+        public Builder keyPattern(String keyPattern) {
+            this.keyPattern = keyPattern;
             return this;
         }
 
