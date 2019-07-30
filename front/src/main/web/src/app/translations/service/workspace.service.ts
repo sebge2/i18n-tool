@@ -24,15 +24,28 @@ export class WorkspaceService implements OnDestroy {
         this._updatedWorkspaceObservable = this.eventService.subscribe(Events.UPDATED_WORKSPACE, Workspace)
             .subscribe(
                 (workspace: Workspace) => {
-                    this._workspaces.next(this._workspaces.getValue().map(w => workspace.id === w.id ? workspace : w));
+                    const workspaces = this._workspaces.getValue().slice();
+
+                    const index = workspaces.findIndex(current => workspace.id === current.id);
+                    if (index >= 0) {
+                        workspaces[index] = workspace;
+                    } else {
+                        workspaces.push(workspace);
+                    }
+
+                    this._workspaces.next(workspaces);
                 }
             );
 
         this._deletedWorkspaceObservable = this.eventService.subscribe(Events.DELETED_WORKSPACE, Workspace)
             .subscribe(
                 (workspace: Workspace) => {
-                    let workspaces = this._workspaces.getValue().slice();
-                    workspaces.splice(workspaces.findIndex(current => workspace.id === current.id), 1);
+                    const workspaces = this._workspaces.getValue().slice();
+
+                    const index = workspaces.findIndex(current => workspace.id === current.id);
+                    if (index >= 0) {
+                        workspaces.splice(index, 1);
+                    }
 
                     this._workspaces.next(workspaces);
                 }
