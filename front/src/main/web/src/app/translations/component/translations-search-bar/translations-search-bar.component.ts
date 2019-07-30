@@ -1,7 +1,7 @@
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
-import {TranslationsSearchCriteria} from "../../model/translations-search-criteria.model";
 import {Locale} from "../../model/locale.model";
 import {Workspace} from "../../model/workspace.model";
+import {TranslationsSearchRequest} from "../../model/translations-search-request.model";
 
 @Component({
     selector: 'app-translations-search-bar',
@@ -11,7 +11,7 @@ import {Workspace} from "../../model/workspace.model";
 export class TranslationsSearchBarComponent implements OnInit {
 
     @Output()
-    criteria: EventEmitter<TranslationsSearchCriteria> = new EventEmitter();
+    criteria: EventEmitter<TranslationsSearchRequest> = new EventEmitter();
 
     constructor() {
     }
@@ -25,5 +25,9 @@ export class TranslationsSearchBarComponent implements OnInit {
 
     onSelectedWorkspace(workspace: Workspace) {
         console.log("here", workspace);
+    }
+
+    onSelectedCriterion(criterion: TranslationsSearchRequest) {
+        console.log("here", criterion);
     }
 }

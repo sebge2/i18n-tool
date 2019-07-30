@@ -10,7 +10,7 @@ import {WorkspaceIconCssPipe} from './pipe/workspace-icon-css.pipe';
 import {TranslationsSearchBarComponent} from './component/translations-search-bar/translations-search-bar.component';
 import {TranslationLocalesSelectorComponent} from "./component/translations-search-bar/translation-locales-selector/translation-locales-selector.component";
 import {LocaleIconPipe} from './pipe/locale-icon.pipe';
-import { TranslationFlagSelectorComponent } from './component/translations-search-bar/translation-flag-selector/translation-flag-selector.component';
+import {TranslationCriterionSelectorComponent} from './component/translations-search-bar/translation-flag-selector/translation-criterion-selector.component';
 
 const appRoutes: Routes = [
     {
@@ -26,7 +26,7 @@ const appRoutes: Routes = [
         WorkspaceIconCssPipe,
         TranslationsSearchBarComponent,
         TranslationLocalesSelectorComponent,
-        TranslationFlagSelectorComponent,
+        TranslationCriterionSelectorComponent,
         LocaleIconPipe
     ],
     imports: [

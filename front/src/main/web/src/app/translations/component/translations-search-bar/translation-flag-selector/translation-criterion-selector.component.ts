@@ -1,5 +1,5 @@
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
-import {TranslationsSearchCriterion} from "../../../model/translation-search-criterion.model";
+import {TranslationsSearchCriterion} from "../../../model/translations-search-criterion.model";
 
 @Component({
   selector: 'app-translation-criterion-selector',
