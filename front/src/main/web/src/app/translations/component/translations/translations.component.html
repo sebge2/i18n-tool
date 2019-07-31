@@ -5,18 +5,8 @@
     <img src="assets/scanning.gif" alt="Initializing workspace"/>
 </div>
 
-<div *ngIf="isRepositoryNotInitialized()" class="container">
-    <div>no workspace please initialize</div>
-</div>
-
-<div *ngIf="isWorkspaceInitialized()" class="container">
-    <div>initialized</div>
-
-    {{searchRequest.workspace != null ? searchRequest.workspace.branch : null}}
-</div>
-
-<div *ngIf="isWorkspaceInReview()" class="container">
-    <div>in review</div>
+<div *ngIf="!isWorkspaceNotInitialized()" class="container">
+    <app-translations-table [searchRequest]="searchRequest"></app-translations-table>
 </div>
 
 <!--

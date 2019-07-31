@@ -11,6 +11,7 @@ import {TranslationsSearchBarComponent} from './component/translations-search-ba
 import {TranslationLocalesSelectorComponent} from "./component/translations-search-bar/translation-locales-selector/translation-locales-selector.component";
 import {LocaleIconPipe} from './pipe/locale-icon.pipe';
 import {TranslationCriterionSelectorComponent} from './component/translations-search-bar/translation-criterion-selector/translation-criterion-selector.component';
+import { TranslationsTableComponent } from './component/translations-table/translations-table.component';
 
 const appRoutes: Routes = [
     {
@@ -27,6 +28,7 @@ const appRoutes: Routes = [
         TranslationsSearchBarComponent,
         TranslationLocalesSelectorComponent,
         TranslationCriterionSelectorComponent,
+        TranslationsTableComponent,
         LocaleIconPipe
     ],
     imports: [
