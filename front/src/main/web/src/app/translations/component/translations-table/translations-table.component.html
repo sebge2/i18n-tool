@@ -1,3 +1,6 @@
-<p>translations-table works!</p>
+<ng-template [ngIf]="bundleKeysPage != null">
+    <div *ngFor="let file of bundleKeysPage.files">
+        {{file.name}} => {{file.location}}
+    </div>
+</ng-template>
 
-{{searchRequest.workspace != null ? searchRequest.workspace.branch : null}}
