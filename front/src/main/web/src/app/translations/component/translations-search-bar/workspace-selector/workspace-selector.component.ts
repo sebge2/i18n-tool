@@ -17,7 +17,6 @@ export class WorkspaceSelectorComponent implements OnInit, OnDestroy {
     @Output()
     valueChange: EventEmitter<Workspace> = new EventEmitter<Workspace>();
 
-    @Input()
     value: Workspace;
 
     workspaces: Observable<Workspace[]>;

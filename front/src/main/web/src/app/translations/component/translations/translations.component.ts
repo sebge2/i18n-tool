@@ -37,7 +37,7 @@ export class TranslationsComponent implements OnInit {
     onSearchRequestChange(searchRequest: TranslationsSearchRequest) {
         this.searchRequest = searchRequest;
 
-        if(this.isWorkspaceNotInitialized()){
+        if (this.isWorkspaceNotInitialized()) {
             this.workspaceService.initialize(this.searchRequest.workspace);
         }
     }

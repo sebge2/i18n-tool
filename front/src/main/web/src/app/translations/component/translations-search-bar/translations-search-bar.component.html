@@ -9,16 +9,12 @@
 
 
     <div class="container">
-        <app-workspace-selector (valueChange)="onSelectedWorkspace($event)"
-                                [value]="searchRequest.workspace"></app-workspace-selector>
+        <app-workspace-selector (valueChange)="onSelectedWorkspace($event)"></app-workspace-selector>
 
-        <app-translation-locales-selector
-            (valueChange)="onSelectedLocales($event)"
-            [value]="searchRequest.locales"></app-translation-locales-selector>
+        <app-translation-locales-selector (valueChange)="onSelectedLocales($event)"></app-translation-locales-selector>
 
         <div>
-            <app-translation-criterion-selector [value]="searchRequest.criterion"
-                                                (valueChange)="onSelectedCriterion($event)"></app-translation-criterion-selector>
+            <app-translation-criterion-selector (valueChange)="onSelectedCriterion($event)"></app-translation-criterion-selector>
         </div>
 
         <div>

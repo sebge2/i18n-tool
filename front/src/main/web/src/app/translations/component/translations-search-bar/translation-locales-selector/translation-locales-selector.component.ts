@@ -19,7 +19,6 @@ export class TranslationLocalesSelectorComponent implements OnInit {
     @Output()
     valueChange: EventEmitter<Locale[]> = new EventEmitter();
 
-    @Input()
     value: Locale[] = [];
 
     allLocales: Locale[] = ALL_LOCALES;
@@ -30,6 +29,7 @@ export class TranslationLocalesSelectorComponent implements OnInit {
     separatorKeysCodes: number[] = [ENTER, COMMA];
 
     constructor() {
+        this.value = [Locale.FR, Locale.EN];
     }
 
     ngOnInit() {
@@ -42,7 +42,7 @@ export class TranslationLocalesSelectorComponent implements OnInit {
             );
 
         this.availableLocales = this.allLocales.filter(locale => this.value.indexOf(locale) < 0);
-        this.valueChange.emit(this.value)
+        this.valueChange.emit(this.value.slice())
     }
 
     selected(event: MatAutocompleteSelectedEvent): void {
@@ -54,7 +54,7 @@ export class TranslationLocalesSelectorComponent implements OnInit {
         this.value.push(selectedLocale);
         this.availableLocales.splice(this.availableLocales.indexOf(selectedLocale), 1);
 
-        this.valueChange.emit(this.value);
+        this.valueChange.emit(this.value.slice());
     }
 
     add(event: MatChipInputEvent): void {
@@ -75,7 +75,7 @@ export class TranslationLocalesSelectorComponent implements OnInit {
         if (index >= 0) {
             this.value.splice(index, 1);
             this.availableLocales.push(locale);
-            this.valueChange.emit(this.value);
+            this.valueChange.emit(this.value.slice());
         }
     }
 

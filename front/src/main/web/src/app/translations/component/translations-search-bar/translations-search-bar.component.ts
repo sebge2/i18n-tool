@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {AfterViewInit, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {ALL_LOCALES, Locale} from "../../model/locale.model";
 import {Workspace} from "../../model/workspace.model";
 import {TranslationsSearchRequest} from "../../model/translations-search-request.model";
@@ -11,32 +11,51 @@ import {LocaleIconPipe} from "../../pipe/locale-icon.pipe";
     styleUrls: ['./translations-search-bar.component.css'],
     providers: [LocaleIconPipe]
 })
-export class TranslationsSearchBarComponent implements OnInit {
+export class TranslationsSearchBarComponent implements OnInit, AfterViewInit {
 
     @Output()
     searchRequestChange: EventEmitter<TranslationsSearchRequest> = new EventEmitter();
 
-    @Input()
-    searchRequest: TranslationsSearchRequest = new TranslationsSearchRequest();
+    searchRequest: TranslationsSearchRequest;
 
     constructor(private localeIconPipe: LocaleIconPipe) {
-        this.searchRequest.criterion = TranslationsSearchCriterion.MISSING_TRANSLATIONS;
-        this.searchRequest.locales = [Locale.FR, Locale.EN];
     }
 
     ngOnInit() {
+        this.searchRequest = new TranslationsSearchRequest();
+    }
+
+    ngAfterViewInit(): void {
     }
 
     onSelectedWorkspace(workspace: Workspace) {
+        const notFullyLoaded = !this.isFullyLoaded();
+
         this.searchRequest.workspace = workspace;
+
+        if(notFullyLoaded && this.isFullyLoaded()){
+            this.onSearch();
+        }
     }
 
     onSelectedLocales(locales: Locale[]) {
+        const notFullyLoaded = !this.isFullyLoaded();
+
         this.searchRequest.locales = locales;
+
+        if(notFullyLoaded && this.isFullyLoaded()){
+            this.onSearch();
+        }
     }
 
     onSelectedCriterion(criterion: TranslationsSearchCriterion) {
+        const notFullyLoaded = !this.isFullyLoaded();
+
         this.searchRequest.criterion = criterion;
+
+        if(notFullyLoaded && this.isFullyLoaded()){
+            this.onSearch();
+        }
     }
 
     title(): String {
@@ -81,6 +100,10 @@ export class TranslationsSearchBarComponent implements OnInit {
     }
 
     onSearch() {
-        this.searchRequestChange.emit(this.searchRequest);
+        this.searchRequestChange.emit(new TranslationsSearchRequest(this.searchRequest));
+    }
+
+    private isFullyLoaded() {
+        return !(this.searchRequest.workspace == null || this.searchRequest.locales == null || this.searchRequest.criterion == null);
     }
 }
