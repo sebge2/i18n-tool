@@ -60,4 +60,9 @@ export class WorkspaceService implements OnDestroy {
     getWorkspaces(): BehaviorSubject<Workspace[]> {
         return this._workspaces;
     }
+
+    initialize(workspace: Workspace) {
+        this.httpClient.put('/api/workspace/' + workspace.id, null, {params: {do: 'INITIALIZE'}}).toPromise()
+            .catch(reason => console.error("Error while initializing workspace.", reason));
+    }
 }

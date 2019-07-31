@@ -1,4 +1,4 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {ALL_LOCALES, Locale} from "../../model/locale.model";
 import {Workspace} from "../../model/workspace.model";
 import {TranslationsSearchRequest} from "../../model/translations-search-request.model";
@@ -16,6 +16,7 @@ export class TranslationsSearchBarComponent implements OnInit {
     @Output()
     searchRequestChange: EventEmitter<TranslationsSearchRequest> = new EventEmitter();
 
+    @Input()
     searchRequest: TranslationsSearchRequest = new TranslationsSearchRequest();
 
     constructor(private localeIconPipe: LocaleIconPipe) {

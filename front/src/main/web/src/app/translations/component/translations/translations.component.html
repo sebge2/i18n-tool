@@ -1,5 +1,20 @@
-<app-translations-search-bar></app-translations-search-bar>
+<app-translations-search-bar [searchRequest]="searchRequest" (searchRequestChange)="onSearchRequestChange($event)"></app-translations-search-bar>
 
+<ng-template [ngIf]="isRepositoryNotInitialized()">
+    <div>no workspace please initialize</div>
+</ng-template>
+
+<ng-template [ngIf]="isWorkspaceNotInitialized()">
+    <div>not init</div>
+</ng-template>
+
+<ng-template [ngIf]="isWorkspaceInitialized()">
+    <div>initialized</div>
+</ng-template>
+
+<ng-template [ngIf]="isWorkspaceInReview()">
+    <div>in review</div>
+</ng-template>
 
 <!--
 https://stackblitz.com/edit/angular-mattable-with-groupheader?file=app/table-basic-example.html
