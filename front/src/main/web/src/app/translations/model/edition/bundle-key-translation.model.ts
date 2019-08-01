@@ -15,4 +15,8 @@ export class BundleKeyTranslation {
         this.originalValue = bundleKeyTranslation.originalValue;
         this.updatedValue = bundleKeyTranslation.updatedValue;
     }
+
+    currentValue(): String {
+        return this.updatedValue != null ? this.updatedValue : this.originalValue;
+    }
 }
