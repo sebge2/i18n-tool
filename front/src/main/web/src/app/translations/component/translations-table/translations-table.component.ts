@@ -10,10 +10,10 @@ import {ALL_LOCALES} from "../../model/locale.model";
     templateUrl: './translations-table.component.html',
     styleUrls: ['./translations-table.component.css']
 })
-export class TranslationsTableComponent implements OnInit, OnChanges {
+export class TranslationsTableComponent implements OnInit {
 
     @Input()
-    searchRequest: TranslationsSearchRequest = new TranslationsSearchRequest();
+    private _searchRequest: TranslationsSearchRequest = new TranslationsSearchRequest();
 
     columns = [];
     displayedColumns: string[] = [];
@@ -40,7 +40,14 @@ export class TranslationsTableComponent implements OnInit, OnChanges {
     ngOnInit() {
     }
 
-    ngOnChanges(changes: SimpleChanges): void {
+    get searchRequest(): TranslationsSearchRequest {
+        return this._searchRequest;
+    }
+
+    @Input()
+    set searchRequest(value: TranslationsSearchRequest) {
+        this._searchRequest = value;
+
         if (this.searchRequest != null && this.searchRequest.workspace != null) {
             this.translationsService
                 .getTranslations(this.searchRequest)
