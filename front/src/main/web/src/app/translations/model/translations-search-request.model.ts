@@ -1,4 +1,4 @@
-import {Locale} from "./locale.model";
+import {ALL_LOCALES, Locale} from "./locale.model";
 import {Workspace} from "./workspace.model";
 import {TranslationsSearchCriterion} from "./translations-search-criterion.model";
 
@@ -14,5 +14,9 @@ export class TranslationsSearchRequest {
             this.locales = (searchRequest.locales != null) ? searchRequest.locales.slice() : [];
             this.criterion = searchRequest.criterion;
         }
+    }
+
+    usedLocales(): Locale[] {
+        return this.locales.length == 0 ? ALL_LOCALES : this.locales;
     }
 }

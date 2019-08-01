@@ -2,8 +2,12 @@
     <div class="mat-app-background">
         <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
             <ng-container *ngFor="let column of columns" [matColumnDef]="column.columnDef">
-                <th mat-header-cell  *matHeaderCellDef>{{ column.header }}</th>
-                <td mat-cell  *matCellDef="let row" style="text-align: left">{{ column.cell(row) }}</td>
+                <th mat-header-cell *matHeaderCellDef><span [class]="column.header | localeIcon"></span> {{column.header }}</th>
+                <td mat-cell *matCellDef="let row" style="text-align: left">
+                    <mat-form-field>
+                        <input matInput [value]="column.cell(row)" readonly="true">
+                    </mat-form-field>
+                </td>
             </ng-container>
 
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
