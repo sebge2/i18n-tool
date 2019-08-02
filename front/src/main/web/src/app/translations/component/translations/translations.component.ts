@@ -11,7 +11,6 @@ import {WorkspaceService} from "../../service/workspace.service";
 export class TranslationsComponent implements OnInit {
 
     searchRequest: TranslationsSearchRequest = new TranslationsSearchRequest();
-    expanded: Boolean = false;
 
     constructor(private workspaceService: WorkspaceService) {
     }
@@ -37,9 +36,6 @@ export class TranslationsComponent implements OnInit {
 
     onSearchRequestChange(searchRequest: TranslationsSearchRequest) {
         this.searchRequest = searchRequest;
-        this.expanded = false;
-
-        console.log(this.expanded);
 
         if (this.isWorkspaceNotInitialized()) {
             this.workspaceService.initialize(this.searchRequest.workspace);

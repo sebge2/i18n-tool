@@ -30,7 +30,7 @@ export class TranslationsService {
             params = params.set("maxKeys", String(maxKeys));
         }
 
-        for (const locale of searchRequest.locales) {
+        for (const locale of searchRequest.usedLocales()) {
             params = params.append("locales", locale);
         }
 

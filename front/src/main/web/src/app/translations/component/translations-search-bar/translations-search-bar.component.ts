@@ -16,11 +16,6 @@ export class TranslationsSearchBarComponent implements OnInit, AfterViewInit {
     @Output()
     searchRequestChange: EventEmitter<TranslationsSearchRequest> = new EventEmitter();
 
-    @Output()
-    expandedChange: EventEmitter<Boolean> = new EventEmitter();
-
-    private _expanded: Boolean;
-
     searchRequest: TranslationsSearchRequest;
 
     constructor(private localeIconPipe: LocaleIconPipe) {
@@ -105,19 +100,7 @@ export class TranslationsSearchBarComponent implements OnInit, AfterViewInit {
     }
 
     onSearch() {
-        console.log(this._expanded);
         this.searchRequestChange.emit(new TranslationsSearchRequest(this.searchRequest));
-    }
-
-
-    get expanded(): Boolean {
-        return this._expanded;
-    }
-
-    @Input()
-    set expanded(value: Boolean) {
-        console.log("expanded");
-        this._expanded = value;
     }
 
     private isFullyLoaded() {
