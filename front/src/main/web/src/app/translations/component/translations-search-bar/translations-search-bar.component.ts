@@ -19,10 +19,10 @@ export class TranslationsSearchBarComponent implements OnInit, AfterViewInit {
     searchRequest: TranslationsSearchRequest;
 
     constructor(private localeIconPipe: LocaleIconPipe) {
+        this.searchRequest = new TranslationsSearchRequest();
     }
 
     ngOnInit() {
-        this.searchRequest = new TranslationsSearchRequest();
     }
 
     ngAfterViewInit(): void {

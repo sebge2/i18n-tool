@@ -16,10 +16,11 @@ export class TranslationCriterionSelectorComponent implements OnInit {
     availableCriterion = TranslationsSearchCriterion;
 
     constructor() {
-        this.value = TranslationsSearchCriterion.MISSING_TRANSLATIONS;
     }
 
     ngOnInit() {
+        this.value = TranslationsSearchCriterion.MISSING_TRANSLATIONS;
+        this.valueChange.emit(this.value);
     }
 
     onChange(criterion: TranslationsSearchCriterion) {
