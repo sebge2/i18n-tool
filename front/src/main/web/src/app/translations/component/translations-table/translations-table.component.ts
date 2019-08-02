@@ -71,7 +71,7 @@ export class TranslationsTableComponent implements OnInit {
                 {
                     columnDef: locale.toString(),
                     header: locale,
-                    cell: (bundleKey: BundleKey) => `${bundleKey.findTranslation(locale).currentValue()}`
+                    cell: (bundleKey: BundleKey) => bundleKey.findTranslation(locale).currentValue()
                 }
             );
         }
