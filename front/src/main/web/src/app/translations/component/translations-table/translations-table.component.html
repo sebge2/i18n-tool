@@ -2,11 +2,18 @@
     <div class="mat-app-background">
         <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
             <ng-container *ngFor="let column of columns" [matColumnDef]="column.columnDef">
-                <th mat-header-cell *matHeaderCellDef><span [class]="column.header | localeIcon"></span> {{column.header }}</th>
+                <th mat-header-cell *matHeaderCellDef><span
+                    [class]="column.header | localeIcon"></span> {{column.header }}</th>
                 <td mat-cell *matCellDef="let row" style="text-align: left">
-                    <mat-form-field>
-                        <input matInput [value]="column.cell(row)" readonly="true">
-                    </mat-form-field>
+                    <ng-template [ngIf]="column.isTranslation(row)">
+                        <app-translation-editing-cell [value]="column.cell(row)"></app-translation-editing-cell>
+                    </ng-template>
+                    <ng-template [ngIf]="column.isHeader(row)">
+                        {{column.cell(row)}}
+                    </ng-template>
+                    <ng-template [ngIf]="column.isEmpty(row)">
+                        /
+                    </ng-template>
                 </td>
             </ng-container>
 
@@ -15,7 +22,7 @@
 
             <ng-container matColumnDef="groupHeader">
                 <td colspan="999" mat-cell *matCellDef="let bundleFile" style="text-align: left;">
-                    {{bundleFile.location}} <strong>{{bundleFile.name}}</strong>
+                    <i class="far fa-file"></i> {{bundleFile.location}} <strong>{{bundleFile.name}}</strong>
                 </td>
             </ng-container>
 
