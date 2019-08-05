@@ -121,7 +121,7 @@ public class WorkspaceController {
     @GetMapping(path = "/workspace/registered-locale")
     @ApiOperation(value = "Returns all locales that have been used so far.")
     public Collection<String> getRegisteredLocales() {
-        return translationManager.getRegisteredLocales().stream().map(Locale::toString).collect(toSet());
+        return translationManager.getLocales().stream().map(Locale::toString).collect(toSet());
     }
 
     public enum WorkspaceListAction {

@@ -7,6 +7,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 
 import static java.util.stream.Collectors.toSet;
 
@@ -25,7 +26,16 @@ public class ScannedBundleFileDto {
                 final List<File> files = new ArrayList<>(first.getFiles());
                 files.addAll(second.getFiles());
 
-                return new ScannedBundleFileDto(first.getName(), BundleType.JAVA, first.getLocationDirectory(), files);
+                final List<Locale> locales = new ArrayList<>(first.getLocales());
+                locales.addAll(second.getLocales());
+
+                return new ScannedBundleFileDto(
+                    first.getName(),
+                    BundleType.JAVA,
+                    first.getLocationDirectory(),
+                    locales,
+                    files
+                );
             }
         }
     }
@@ -33,24 +43,28 @@ public class ScannedBundleFileDto {
     private final String name;
     private final BundleType type;
     private final File locationDirectory;
+    private final Collection<Locale> locales;
     private final Collection<File> files;
 
     public ScannedBundleFileDto(String name,
                                 BundleType type,
                                 File locationDirectory,
+                                Collection<Locale> locales,
                                 Collection<File> files) {
         this.name = name;
         this.type = type;
         this.locationDirectory = locationDirectory;
+        this.locales = locales;
         this.files = files;
     }
 
     public ScannedBundleFileDto(BundleFileEntity entity) {
         this(
-                entity.getName(),
-                entity.getType(),
-                new File(entity.getLocation()),
-                entity.getFiles().stream().map(File::new).collect(toSet())
+            entity.getName(),
+            entity.getType(),
+            new File(entity.getLocation()),
+            entity.getLocales(),
+            entity.getFiles().stream().map(File::new).collect(toSet())
         );
     }
 
@@ -64,6 +78,10 @@ public class ScannedBundleFileDto {
 
     public File getLocationDirectory() {
         return locationDirectory;
+    }
+
+    public Collection<Locale> getLocales() {
+        return locales;
     }
 
     public Collection<File> getFiles() {

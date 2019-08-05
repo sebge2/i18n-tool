@@ -1,5 +1,6 @@
 package be.sgerard.poc.githuboauth.service.i18n;
 
+import be.sgerard.poc.githuboauth.configuration.AppProperties;
 import be.sgerard.poc.githuboauth.controller.AuthenticationController;
 import be.sgerard.poc.githuboauth.model.i18n.dto.*;
 import be.sgerard.poc.githuboauth.model.i18n.event.TranslationsUpdateEventDto;
@@ -36,6 +37,7 @@ import static java.util.stream.Collectors.toMap;
 @Service
 public class TranslationManagerImpl implements TranslationManager {
 
+    private final AppProperties properties;
     private final WorkspaceRepository workspaceRepository;
     private final BundleKeyTranslationRepository keyEntryRepository;
     private final AuthenticationController authenticationManager;
@@ -43,11 +45,13 @@ public class TranslationManagerImpl implements TranslationManager {
     private final TranslationBundleWalker walker;
     private final List<TranslationBundleHandler> handlers;
 
-    public TranslationManagerImpl(WorkspaceRepository workspaceRepository,
+    public TranslationManagerImpl(AppProperties properties,
+                                  WorkspaceRepository workspaceRepository,
                                   BundleKeyTranslationRepository keyEntryRepository,
                                   AuthenticationController authenticationManager,
                                   EventService eventService,
                                   List<TranslationBundleHandler> handlers) {
+        this.properties = properties;
         this.workspaceRepository = workspaceRepository;
         this.keyEntryRepository = keyEntryRepository;
         this.authenticationManager = authenticationManager;
@@ -60,54 +64,54 @@ public class TranslationManagerImpl implements TranslationManager {
     @Transactional(readOnly = true)
     public BundleKeysPageDto getTranslations(BundleKeysPageRequestDto searchRequest) {
         final WorkspaceEntity workspaceEntity = workspaceRepository.findById(searchRequest.getWorkspaceId())
-                .orElseThrow(() -> new ResourceNotFoundException(searchRequest.getWorkspaceId()));
+            .orElseThrow(() -> new ResourceNotFoundException(searchRequest.getWorkspaceId()));
 
         final GroupedTranslations groupedEntries = doGetTranslations(searchRequest);
 
         return BundleKeysPageDto.builder()
-                .workspaceId(workspaceEntity.getId())
-                .files(
-                        groupedEntries.getGroups().entrySet().stream()
-                                .map(file ->
-                                        BundleFileDto.builder()
-                                                .id(file.getKey().getId())
-                                                .name(file.getKey().getName())
-                                                .location(file.getKey().getLocation())
-                                                .keys(
-                                                        file.getValue().entrySet().stream()
-                                                                .map(key ->
-                                                                        BundleKeyDto.builder()
-                                                                                .id(key.getKey().getId())
-                                                                                .key(key.getKey().getKey())
-                                                                                .translations(
-                                                                                        key.getValue().stream()
-                                                                                                .map(keyEntry ->
-                                                                                                        BundleKeyTranslationDto.builder()
-                                                                                                                .id(keyEntry.getId())
-                                                                                                                .locale(keyEntry.getLocale())
-                                                                                                                .originalValue(keyEntry.getOriginalValue().orElse(null))
-                                                                                                                .updatedValue(keyEntry.getUpdatedValue().orElse(null))
-                                                                                                                .lastEditor(keyEntry.getLastEditor().orElse(null))
-                                                                                                                .build()
-                                                                                                )
-                                                                                                .collect(toList())
-                                                                                )
-                                                                                .build()
-                                                                )
-                                                                .collect(toList())
-                                                )
-                                                .build()
-                                )
-                                .collect(toList())
-                )
-                .lastKey(groupedEntries.getLastKey().orElse(null))
-                .build();
+            .workspaceId(workspaceEntity.getId())
+            .files(
+                groupedEntries.getGroups().entrySet().stream()
+                    .map(file ->
+                        BundleFileDto.builder()
+                            .id(file.getKey().getId())
+                            .name(file.getKey().getName())
+                            .location(file.getKey().getLocation())
+                            .keys(
+                                file.getValue().entrySet().stream()
+                                    .map(key ->
+                                        BundleKeyDto.builder()
+                                            .id(key.getKey().getId())
+                                            .key(key.getKey().getKey())
+                                            .translations(
+                                                key.getValue().stream()
+                                                    .map(keyEntry ->
+                                                        BundleKeyTranslationDto.builder()
+                                                            .id(keyEntry.getId())
+                                                            .locale(keyEntry.getLocale())
+                                                            .originalValue(keyEntry.getOriginalValue().orElse(null))
+                                                            .updatedValue(keyEntry.getUpdatedValue().orElse(null))
+                                                            .lastEditor(keyEntry.getLastEditor().orElse(null))
+                                                            .build()
+                                                    )
+                                                    .collect(toList())
+                                            )
+                                            .build()
+                                    )
+                                    .collect(toList())
+                            )
+                            .build()
+                    )
+                    .collect(toList())
+            )
+            .lastKey(groupedEntries.getLastKey().orElse(null))
+            .build();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Collection<Locale> getRegisteredLocales() {
-        return keyEntryRepository.findAllLocales().stream().map(Locale::forLanguageTag).collect(toList());
+    public Collection<Locale> getLocales() {
+        return properties.getLocales();
     }
 
     @Override
@@ -134,7 +138,7 @@ public class TranslationManagerImpl implements TranslationManager {
         final List<BundleKeyTranslationDto> updatedEntries = new ArrayList<>();
         for (Map.Entry<String, String> updateEntry : translations.entrySet()) {
             final BundleKeyTranslationEntity entry = keyEntryRepository.findById(updateEntry.getKey())
-                    .orElseThrow(() -> new ResourceNotFoundException(updateEntry.getKey()));
+                .orElseThrow(() -> new ResourceNotFoundException(updateEntry.getKey()));
 
             if (!Objects.equals(workspace.getId(), entry.getBundleKey().getBundleFile().getWorkspace().getId())) {
                 throw new IllegalArgumentException("The entry [" + entry.getId() + "] does not belong to the workspace [" + workspace.getId() + "].");
@@ -146,12 +150,12 @@ public class TranslationManagerImpl implements TranslationManager {
         }
 
         eventService.broadcastEvent(
-                EVENT_UPDATED_TRANSLATIONS,
-                new TranslationsUpdateEventDto(
-                        WorkspaceDto.builder(workspace).build(),
-                        currentUser,
-                        updatedEntries
-                )
+            EVENT_UPDATED_TRANSLATIONS,
+            new TranslationsUpdateEventDto(
+                WorkspaceDto.builder(workspace).build(),
+                currentUser,
+                updatedEntries
+            )
         );
     }
 
@@ -159,31 +163,31 @@ public class TranslationManagerImpl implements TranslationManager {
         final GroupedTranslations groupedTranslations = new GroupedTranslations();
 
         keyEntryRepository
-                .searchEntries(
-                        BundleKeyEntrySearchRequestDto.builder(searchRequest.getWorkspaceId())
-                                .locales(searchRequest.getLocales())
-                                .criterion(searchRequest.getCriterion())
-                                .keyPattern(searchRequest.getKeyPattern().orElse(null))
-                                .lastKey(searchRequest.getLastKey().orElse(null))
-                                .maxKeyEntries(searchRequest.getMaxKeys() * getRegisteredLocales().size())
-                                .build()
-                )
-                .filter(entryEntity -> groupedTranslations.getNumberEntries() <= searchRequest.getMaxKeys())
-                .forEach(entryEntity -> {
-                    final BundleKeyEntity bundleKey = entryEntity.getBundleKey();
-                    final BundleFileEntity bundleFile = bundleKey.getBundleFile();
+            .searchEntries(
+                BundleKeyEntrySearchRequestDto.builder(searchRequest.getWorkspaceId())
+                    .locales(searchRequest.getLocales())
+                    .criterion(searchRequest.getCriterion())
+                    .keyPattern(searchRequest.getKeyPattern().orElse(null))
+                    .lastKey(searchRequest.getLastKey().orElse(null))
+                    .maxKeyEntries(searchRequest.getMaxKeys() * getLocales().size())
+                    .build()
+            )
+            .filter(entryEntity -> groupedTranslations.getNumberEntries() <= searchRequest.getMaxKeys())
+            .forEach(entryEntity -> {
+                final BundleKeyEntity bundleKey = entryEntity.getBundleKey();
+                final BundleFileEntity bundleFile = bundleKey.getBundleFile();
 
-                    groupedTranslations.getGroups().putIfAbsent(bundleFile, new LinkedHashMap<>());
+                groupedTranslations.getGroups().putIfAbsent(bundleFile, new LinkedHashMap<>());
 
-                    if (!groupedTranslations.getGroups().get(bundleFile).containsKey(bundleKey)) {
-                        groupedTranslations.incrementNumberEntries();
-                        groupedTranslations.setLastKey(bundleKey.getId());
+                if (!groupedTranslations.getGroups().get(bundleFile).containsKey(bundleKey)) {
+                    groupedTranslations.incrementNumberEntries();
+                    groupedTranslations.setLastKey(bundleKey.getId());
 
-                        groupedTranslations.getGroups().get(bundleFile).putIfAbsent(bundleKey, new ArrayList<>());
-                    }
+                    groupedTranslations.getGroups().get(bundleFile).putIfAbsent(bundleKey, new ArrayList<>());
+                }
 
-                    groupedTranslations.getGroups().get(bundleFile).get(bundleKey).add(entryEntity);
-                });
+                groupedTranslations.getGroups().get(bundleFile).get(bundleKey).add(entryEntity);
+            });
 
         return groupedTranslations;
     }
@@ -203,38 +207,39 @@ public class TranslationManagerImpl implements TranslationManager {
                                ScannedBundleFileDto bundleFile,
                                Collection<ScannedBundleFileKeyDto> keys) {
         final BundleFileEntity bundleFileEntity =
-                new BundleFileEntity(
-                        workspaceEntity,
-                        bundleFile.getName(),
-                        bundleFile.getLocationDirectory().toString(),
-                        bundleFile.getType(),
-                        bundleFile.getFiles().stream().map(File::toString).collect(toList())
-                );
+            new BundleFileEntity(
+                workspaceEntity,
+                bundleFile.getName(),
+                bundleFile.getLocationDirectory().toString(),
+                bundleFile.getType(),
+                bundleFile.getLocales(),
+                bundleFile.getFiles().stream().map(File::toString).collect(toList())
+            );
 
         keys.forEach(
-                entry -> {
-                    final BundleKeyEntity keyEntity = new BundleKeyEntity(bundleFileEntity, entry.getKey());
+            entry -> {
+                final BundleKeyEntity keyEntity = new BundleKeyEntity(bundleFileEntity, entry.getKey());
 
-                    for (Map.Entry<Locale, String> translationEntry : entry.getTranslations().entrySet()) {
-                        new BundleKeyTranslationEntity(keyEntity, translationEntry.getKey().toLanguageTag(), translationEntry.getValue());
-                    }
-                });
+                for (Locale locale : getLocales()) {
+                    new BundleKeyTranslationEntity(keyEntity, locale.toLanguageTag(), mapToNullIfEmpty(entry.getTranslations().get(locale)));
+                }
+            });
     }
 
     private Collection<ScannedBundleFileKeyDto> getTranslations(BundleFileEntity file) {
         return file.getKeys().stream()
-                .map(
-                        keyEntity ->
-                                new ScannedBundleFileKeyDto(
-                                        keyEntity.getKey(),
-                                        keyEntity.getTranslations().stream()
-                                                .map(keyEntryEntity ->
-                                                        Pair.of(keyEntryEntity.getJavaLocale(), keyEntryEntity.getValue().orElse(null))
-                                                )
-                                                .collect(toMap(Pair::getKey, Pair::getValue))
-                                )
-                )
-                .collect(toList());
+            .map(
+                keyEntity ->
+                    new ScannedBundleFileKeyDto(
+                        keyEntity.getKey(),
+                        keyEntity.getTranslations().stream()
+                            .map(keyEntryEntity ->
+                                Pair.of(keyEntryEntity.getJavaLocale(), keyEntryEntity.getValue().orElse(null))
+                            )
+                            .collect(toMap(Pair::getKey, Pair::getValue))
+                    )
+            )
+            .collect(toList());
     }
 
     private static final class GroupedTranslations {

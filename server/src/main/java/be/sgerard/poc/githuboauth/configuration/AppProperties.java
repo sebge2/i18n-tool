@@ -3,10 +3,14 @@ package be.sgerard.poc.githuboauth.configuration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import static java.util.Collections.emptyList;
+import static java.util.Collections.emptySet;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 
 /**
  * @author Sebastien Gerard
@@ -20,6 +24,7 @@ public class AppProperties {
     private int lockTimeoutInS = 120;
     private String javaTranslationBundleIgnoredPaths;
     private String gitHubWebhookSecret = "";
+    private Set<Locale> locales = emptySet();
 
     public AppProperties() {
     }
@@ -84,5 +89,13 @@ public class AppProperties {
 
     public void setGitHubWebhookSecret(String gitHubWebhookSecret) {
         this.gitHubWebhookSecret = gitHubWebhookSecret;
+    }
+
+    public Set<Locale> getLocales() {
+        return locales;
+    }
+
+    public void setLocales(Set<String> locales) {
+        this.locales = locales.stream().map(Locale::forLanguageTag).collect(toSet());
     }
 }

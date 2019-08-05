@@ -28,3 +28,7 @@ poc:
   lock-timeout-in-s: 120
   java-translation-bundle-ignored-paths: "**/src/main/java,**/src/test,.git,.idea,**/target/classes,/front/,**/target/test-classes"
   git-hub-webhook-secret: ${GIT_HUB_WEBHOOK_SECRET}
+  locales:
+      - en
+      - fr
+      - nl

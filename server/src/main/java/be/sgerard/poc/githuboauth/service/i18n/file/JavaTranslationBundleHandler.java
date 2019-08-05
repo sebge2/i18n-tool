@@ -58,7 +58,13 @@ public class JavaTranslationBundleHandler implements TranslationBundleHandler {
                             final Matcher matcher = BUNDLE_PATTERN.matcher(file.getName());
 
                             if (matcher.matches()) {
-                                return new ScannedBundleFileDto(matcher.group(1), BundleType.JAVA, directory, singletonList(file));
+                                return new ScannedBundleFileDto(
+                                    matcher.group(1),
+                                    BundleType.JAVA,
+                                    directory,
+                                    singletonList(Locale.forLanguageTag(matcher.group(2))),
+                                    singletonList(file)
+                                );
                             } else {
                                 return null;
                             }

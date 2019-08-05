@@ -16,7 +16,7 @@ import java.util.Map;
  */
 public interface TranslationManager {
 
-    Collection<Locale> getRegisteredLocales();
+    Collection<Locale> getLocales();
 
     void readTranslations(WorkspaceEntity workspaceEntity, RepositoryAPI api) throws IOException;
 

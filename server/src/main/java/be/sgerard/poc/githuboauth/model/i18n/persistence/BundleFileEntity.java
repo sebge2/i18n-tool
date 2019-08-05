@@ -41,6 +41,9 @@ public class BundleFileEntity {
     @ElementCollection
     private Set<String> files = new HashSet<>();
 
+    @ElementCollection
+    private Set<Locale> locales = new HashSet<>();
+
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
     private Collection<BundleKeyEntity> keys = new HashSet<>();
 
@@ -54,7 +57,8 @@ public class BundleFileEntity {
                             String name,
                             String location,
                             BundleType type,
-                            List<String> files) {
+                            Collection<Locale> locales,
+                            Collection<String> files) {
         this.id = UUID.randomUUID().toString();
 
         this.workspace = workspace;
@@ -63,6 +67,8 @@ public class BundleFileEntity {
         this.name = name;
         this.location = location;
         this.type = type;
+
+        this.locales.addAll(locales);
         this.files.addAll(files);
     }
 
@@ -116,6 +122,14 @@ public class BundleFileEntity {
 
     public Set<String> getFiles() {
         return files;
+    }
+
+    public Set<Locale> getLocales() {
+        return locales;
+    }
+
+    public void setLocales(Set<Locale> locales) {
+        this.locales = locales;
     }
 
     public int getVersion() {
