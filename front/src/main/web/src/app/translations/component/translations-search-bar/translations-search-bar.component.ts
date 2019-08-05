@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {ALL_LOCALES, Locale} from "../../model/locale.model";
 import {Workspace} from "../../model/workspace.model";
 import {TranslationsSearchRequest} from "../../model/translations-search-request.model";
@@ -11,12 +11,16 @@ import {LocaleIconPipe} from "../../pipe/locale-icon.pipe";
     styleUrls: ['./translations-search-bar.component.css'],
     providers: [LocaleIconPipe]
 })
-export class TranslationsSearchBarComponent implements OnInit, AfterViewInit {
+export class TranslationsSearchBarComponent implements OnInit {
+
+    @Output()
+    expandedChange: EventEmitter<Boolean> = new EventEmitter();
 
     @Output()
     searchRequestChange: EventEmitter<TranslationsSearchRequest> = new EventEmitter();
 
     searchRequest: TranslationsSearchRequest;
+    private _expanded: boolean;
 
     constructor(private localeIconPipe: LocaleIconPipe) {
         this.searchRequest = new TranslationsSearchRequest();
@@ -25,7 +29,14 @@ export class TranslationsSearchBarComponent implements OnInit, AfterViewInit {
     ngOnInit() {
     }
 
-    ngAfterViewInit(): void {
+    get expanded(): boolean {
+        return this._expanded;
+    }
+
+    @Input()
+    set expanded(value: boolean) {
+        this._expanded = value;
+        this.expandedChange.emit(this.expanded);
     }
 
     onSelectedWorkspace(workspace: Workspace) {
@@ -33,7 +44,7 @@ export class TranslationsSearchBarComponent implements OnInit, AfterViewInit {
 
         this.searchRequest.workspace = workspace;
 
-        if(notFullyLoaded && this.isFullyLoaded()){
+        if (notFullyLoaded && this.isFullyLoaded()) {
             this.onSearch();
         }
     }
@@ -43,7 +54,7 @@ export class TranslationsSearchBarComponent implements OnInit, AfterViewInit {
 
         this.searchRequest.locales = locales;
 
-        if(notFullyLoaded && this.isFullyLoaded()){
+        if (notFullyLoaded && this.isFullyLoaded()) {
             this.onSearch();
         }
     }
@@ -53,7 +64,7 @@ export class TranslationsSearchBarComponent implements OnInit, AfterViewInit {
 
         this.searchRequest.criterion = criterion;
 
-        if(notFullyLoaded && this.isFullyLoaded()){
+        if (notFullyLoaded && this.isFullyLoaded()) {
             this.onSearch();
         }
     }

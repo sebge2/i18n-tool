@@ -11,11 +11,20 @@ import {WorkspaceService} from "../../service/workspace.service";
 export class TranslationsComponent implements OnInit {
 
     searchRequest: TranslationsSearchRequest = new TranslationsSearchRequest();
+    private _expanded: boolean = false;
 
     constructor(private workspaceService: WorkspaceService) {
     }
 
     ngOnInit() {
+    }
+
+    get expanded(): boolean {
+        return this._expanded;
+    }
+
+    set expanded(value: boolean) {
+        this._expanded = value;
     }
 
     isRepositoryNotInitialized(): boolean {
@@ -36,6 +45,8 @@ export class TranslationsComponent implements OnInit {
 
     onSearchRequestChange(searchRequest: TranslationsSearchRequest) {
         this.searchRequest = searchRequest;
+
+        this._expanded = false;
 
         if (this.isWorkspaceNotInitialized()) {
             this.workspaceService.initialize(this.searchRequest.workspace);
