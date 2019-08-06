@@ -20,6 +20,7 @@ export class TranslationsSearchBarComponent implements OnInit {
     searchRequestChange: EventEmitter<TranslationsSearchRequest> = new EventEmitter();
 
     searchRequest: TranslationsSearchRequest;
+
     private _expanded: boolean;
 
     constructor(private localeIconPipe: LocaleIconPipe) {

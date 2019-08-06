@@ -1,4 +1,15 @@
 textarea {
-    overflow:hidden;
+    overflow: hidden;
 }
 
+.mat-form-field textarea {
+    padding-left: 5px;
+}
+
+.textarea {
+    border-left: solid 3px;
+}
+
+.info {
+    margin-left: 10px;
+}

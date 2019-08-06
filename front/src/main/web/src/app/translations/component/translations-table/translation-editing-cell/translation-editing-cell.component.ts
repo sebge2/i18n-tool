@@ -9,12 +9,12 @@ import {BundleKeyTranslation} from "../../../model/edition/bundle-key-translatio
 export class TranslationEditingCellComponent implements OnInit {
 
     @Output()
-    valueChange : EventEmitter<BundleKeyTranslation> = new EventEmitter<BundleKeyTranslation>();
+    valueChange: EventEmitter<BundleKeyTranslation> = new EventEmitter<BundleKeyTranslation>();
 
     @Input()
     value: BundleKeyTranslation;
 
-    private _textValue : String;
+    private _textValue: String;
 
     constructor() {
     }
@@ -32,5 +32,13 @@ export class TranslationEditingCellComponent implements OnInit {
 
         this.value.updatedValue = value;
         this.valueChange.emit(this.value);
+    }
+
+    editionStyle(): any {
+        if (this.value.updatedValue) {
+            return {'border-color': 'red'};
+        } else {
+            return {'border-color': 'transparent'};
+        }
     }
 }
