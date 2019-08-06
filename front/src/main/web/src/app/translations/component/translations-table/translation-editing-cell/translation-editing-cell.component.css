@@ -10,6 +10,15 @@ textarea {
     border-left: solid 3px;
 }
 
+@keyframes editing {
+    from {
+        border-left-style: solid;
+    }
+    to {
+        border-left-style: dotted;
+    }
+}
+
 .info {
-    margin-left: 10px;
+    margin-left: 15px;
 }

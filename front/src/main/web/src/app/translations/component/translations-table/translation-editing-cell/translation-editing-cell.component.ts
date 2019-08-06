@@ -37,6 +37,7 @@ export class TranslationEditingCellComponent implements OnInit {
     editionStyle(): any {
         if (this.value.updatedValue) {
             return {'border-color': 'red'};
+            // return {'border-color': 'red', 'animation': 'editing .8s steps(100) infinite'};
         } else {
             return {'border-color': 'transparent'};
         }
