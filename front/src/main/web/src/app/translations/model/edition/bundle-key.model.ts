@@ -19,13 +19,7 @@ export class BundleKey {
         if (index >= 0) {
             return this.translations[index];
         } else {
-            return new BundleKeyTranslation(<BundleKeyTranslation>{
-                id: null,
-                locale: locale,
-                originalValue: null,
-                updatedValue: null,
-                lastEditor: null
-            });
+            return null;
         }
     }
 }
