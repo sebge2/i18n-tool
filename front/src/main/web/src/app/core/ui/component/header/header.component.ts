@@ -37,9 +37,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
             user => this._currentUser = user
         );
 
-        this._userSessionsSubscription = this.userSessionService.getCurrentUserSessions().subscribe(
-            userSessions => console.log("updated sessions", userSessions)
-        );
+        // this._userSessionsSubscription = this.userSessionService.getCurrentUserSessions().subscribe(
+        //     userSessions => console.log("updated sessions", userSessions) TODO
+        // );
     }
 
     ngOnDestroy(): void {
