@@ -2,7 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {TranslationsSearchRequest} from "../../model/translations-search-request.model";
 import {TranslationsService} from '../../service/translations.service';
 import {BundleKeysPage} from "../../model/edition/bundle-keys-page.model";
-import {AbstractControl, FormArray, FormBuilder, FormGroup} from "@angular/forms";
+import {AbstractControl, FormArray, FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {auditTime} from "rxjs/operators";
 import {Locale} from "../../model/locale.model";
 import {BundleKey} from "../../model/edition/bundle-key.model";
@@ -31,7 +31,7 @@ export class TranslationsTableComponent implements OnInit {
 
     ngOnInit() {
         this.form.valueChanges
-            .pipe(auditTime(5000))
+            .pipe(auditTime(2000))
             .subscribe((formData: AbstractControl[]) => {
                 const updatedTranslations: Map<string, string> = new Map<string, string>();
 
@@ -40,7 +40,7 @@ export class TranslationsTableComponent implements OnInit {
                     .filter(bundleKeyFormArray => bundleKeyFormArray.dirty)
                     .map((bundleKeyFormArray: FormArray) =>
                         bundleKeyFormArray.controls
-                            .filter(bundleKeyControl => bundleKeyControl.dirty)
+                            .filter(bundleKeyControl => bundleKeyControl.dirty && bundleKeyControl.valid)
                             .map(
                                 (formGroup: FormGroup) => {
                                     updatedTranslations.set(formGroup.value.translation.id, formGroup.value.value);
@@ -52,7 +52,7 @@ export class TranslationsTableComponent implements OnInit {
                 // TODO only if focus lost
                 this.translationsService
                     .updateTranslations(this._searchRequest.workspace.id, updatedTranslations)
-                    /*.catch(result => this.form.markAsDirty()) TODO fix this*/;
+                /*.catch(result => this.form.markAsDirty()) TODO fix this*/;
             });
     }
 
@@ -70,7 +70,7 @@ export class TranslationsTableComponent implements OnInit {
                 .toPromise()
                 .then(
                     (page: BundleKeysPage) => {
-                        this.form.clear();
+                        this.form.clear(); // TODO not cleared
 
                         this.updateColumnDefinitions();
                         this.updateForm(page);
@@ -89,7 +89,7 @@ export class TranslationsTableComponent implements OnInit {
                 this.formBuilder.group({file})
             );
 
-            for (const key: BundleKey of file.keys) {
+            for (const key of file.keys) {
                 const keyFormArray = this.formBuilder.array([]);
 
                 this.form.push(keyFormArray);
@@ -100,12 +100,14 @@ export class TranslationsTableComponent implements OnInit {
 
                 for (let i = 0; i < this._searchRequest.usedLocales().length; i++) {
                     const translation: BundleKeyTranslation = key.findTranslation(this._searchRequest.usedLocales()[i]);
-                    keyFormArray.push(
-                        this.formBuilder.group({
-                            translation,
-                            value: [translation.currentValue()]
-                        })
+                    const formGroup = this.formBuilder.group({translation});
+
+                    formGroup.addControl(
+                        'value',
+                        this.formBuilder.control((translation != null) ? translation.currentValue() : null, [Validators.required])
                     );
+
+                    keyFormArray.push(formGroup);
                 }
             }
         }
