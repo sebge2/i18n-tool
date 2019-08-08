@@ -1,10 +1,11 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {TranslationsSearchRequest} from "../../model/translations-search-request.model";
 import {TranslationsService} from '../../service/translations.service';
-import {BundleFile} from "../../model/edition/bundle-file.model";
-import {BundleKey} from '../../model/edition/bundle-key.model';
 import {BundleKeysPage} from "../../model/edition/bundle-keys-page.model";
-import {BundleKeyTranslation} from "../../model/edition/bundle-key-translation.model";
+import {FormArray, FormBuilder, FormGroup} from "@angular/forms";
+import {auditTime} from "rxjs/operators";
+import {Locale} from "../../model/locale.model";
+import {BundleKey} from "../../model/edition/bundle-key.model";
 
 @Component({
     selector: 'app-translations-table',
@@ -16,14 +17,24 @@ export class TranslationsTableComponent implements OnInit {
     @Input()
     private _searchRequest: TranslationsSearchRequest = new TranslationsSearchRequest();
 
-    columns: ColumnDefinition[] = [];
+    columnDefinitions: ColumnDefinition[] = [];
     displayedColumns: string[] = [];
-    dataSource: (BundleFile | BundleKey)[] = [];
+    form: FormArray;
 
-    constructor(private translationsService: TranslationsService) {
+    constructor(private translationsService: TranslationsService,
+                private formBuilder: FormBuilder) {
+        this.form = formBuilder.array([]);
     }
 
     ngOnInit() {
+        this.form.valueChanges
+            .pipe(
+                auditTime(2000)
+            )
+            .subscribe((formData: FormData) => {
+                // TODO
+                console.log(formData);
+            });
     }
 
     get searchRequest(): TranslationsSearchRequest {
@@ -38,86 +49,110 @@ export class TranslationsTableComponent implements OnInit {
             this.translationsService
                 .getTranslations(this.searchRequest)
                 .toPromise()
-                .then((page: BundleKeysPage) => {
-                    this.updateDataSource(page);
-                    this.updateColumns();
-                });
+                .then(
+                    (page: BundleKeysPage) => {
+                        this.form.clear();
+
+                        this.updateColumnDefinitions();
+                        this.updateForm(page);
+                    }
+                );
         }
     }
 
     isBundleFile(index, item): boolean {
-        return item instanceof BundleFile;
+        return item instanceof FormGroup;
     }
 
-    private updateDataSource(page: BundleKeysPage) {
-        this.dataSource = [];
+    private updateForm(page: BundleKeysPage) {
         for (const file of page.files) {
-            this.dataSource.push(file);
+            this.form.push(
+                this.formBuilder.group({file})
+            );
 
             for (const key of file.keys) {
-                this.dataSource.push(key);
+                const keyFormArray = this.formBuilder.array([]);
+
+                this.form.push(keyFormArray);
+
+                keyFormArray.push(
+                    this.formBuilder.group({key})
+                );
+
+                for (const translation of key.translations) {
+                    keyFormArray.push(
+                        this.formBuilder.group({
+                            translation,
+                            value: [translation.currentValue()]
+                        })
+                    );
+                }
             }
         }
     }
 
-    private updateColumns() {
-        this.columns = [];
-        this.columns.push(
+    private updateColumnDefinitions() {
+        this.columnDefinitions = [];
+        this.columnDefinitions.push(
             new ColumnDefinition(
                 'key',
                 'Key',
-                (bundleKey: BundleKey) => `${bundleKey.key}`,
-                (bundleKey: BundleKey) => CellType.HEADER
+                (formArray: FormArray) => `${formArray.controls[0].value.key.key}`,
+                (formArray: FormArray) => CellType.KEY
             )
         );
 
-        for (const locale of this._searchRequest.usedLocales()) {
-            this.columns.push(
+        for (let i = 0; i < this._searchRequest.usedLocales().length; i++) {
+            const locale: Locale = this._searchRequest.usedLocales()[i];
+
+            this.columnDefinitions.push(
                 new ColumnDefinition(
                     locale.toString(),
                     locale,
-                    (bundleKey: BundleKey) => bundleKey.findTranslation(locale),
-                    (bundleKey: BundleKey) => bundleKey.findTranslation(locale) != null ? CellType.TRANSLATION : CellType.EMPTY
+                    (formArray: FormArray) => <FormGroup>formArray.controls[i+1],
+                    (formArray: FormArray) =>
+                        (<BundleKey>(<FormGroup>formArray.controls[0]).value.key).findTranslation(locale) != null
+                            ? CellType.TRANSLATION : CellType.EMPTY
                 )
             );
         }
 
-        this.displayedColumns = this.columns.map(column => column.columnDef);
+        this.displayedColumns = this.columnDefinitions.map(column => column.columnDef);
     }
 }
 
 export class ColumnDefinition {
     columnDef: string;
     header: string;
-    cell: (BundleKey) => BundleKeyTranslation | string;
-    cellType: (BundleKey) => CellType;
+    cell: (FormArray) => (FormGroup | string);
+    cellType: (FormArray) => CellType;
 
     constructor(columnDef: string,
                 header: string,
-                cell: (BundleKey) => (BundleKeyTranslation | string),
-                cellType: (BundleKey) => CellType) {
+                cell: (FormArray) => (FormGroup | string),
+                cellType: (FormArray) => CellType) {
         this.columnDef = columnDef;
         this.header = header;
         this.cell = cell;
         this.cellType = cellType;
     }
 
-    isEmpty(bundleKey: BundleKey): boolean {
-        return this.cellType(bundleKey) == CellType.EMPTY;
+    isEmpty(formArray: FormArray): boolean {
+        return this.cellType(formArray) == CellType.EMPTY;
     }
 
-    isTranslation(bundleKey: BundleKey): boolean {
-        return this.cellType(bundleKey) == CellType.TRANSLATION;
+    isTranslation(formArray: FormArray): boolean {
+        return this.cellType(formArray) == CellType.TRANSLATION;
     }
 
-    isHeader(bundleKey: BundleKey): boolean {
-        return this.cellType(bundleKey) == CellType.HEADER;
+    isKey(formArray: FormArray): boolean {
+        return this.cellType(formArray) == CellType.KEY;
     }
 }
 
 export enum CellType {
 
-    HEADER = "header",
+    KEY = "key",
 
     TRANSLATION = "translation",
 

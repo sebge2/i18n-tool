@@ -1,5 +1,6 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {BundleKeyTranslation} from "../../../model/edition/bundle-key-translation.model";
+import {FormGroup} from "@angular/forms";
 
 @Component({
     selector: 'app-translation-editing-cell',
@@ -8,34 +9,32 @@ import {BundleKeyTranslation} from "../../../model/edition/bundle-key-translatio
 })
 export class TranslationEditingCellComponent implements OnInit {
 
-    @Output()
-    valueChange: EventEmitter<BundleKeyTranslation> = new EventEmitter<BundleKeyTranslation>();
-
     @Input()
-    value: BundleKeyTranslation;
+    formGroup: FormGroup;
 
-    private _textValue: String;
+    editionStyle: any = {};
 
     constructor() {
     }
 
     ngOnInit() {
-        this._textValue = this.value.currentValue();
+        this.update(<BundleKeyTranslation>this.formGroup.value.translation);
+
+        this.formGroup.valueChanges.subscribe(
+            (formGroup: FormGroup) => {
+                // this.update(translation);
+
+                this.editionStyle = {'border-color': 'red'};
+            }
+        )
     }
 
-    get textValue(): String {
-        return this._textValue;
+    private update(translation: BundleKeyTranslation) {
+        this.editionStyle = this.updateEditionStyle(translation);
     }
 
-    set textValue(value: String) {
-        this._textValue = value;
-
-        this.value.updatedValue = value;
-        this.valueChange.emit(this.value);
-    }
-
-    editionStyle(): any {
-        if (this.value.updatedValue) {
+    private updateEditionStyle(translation: BundleKeyTranslation): any {
+        if (translation.updatedValue) {
             return {'border-color': 'red'};
             // return {'border-color': 'red', 'animation': 'editing .8s steps(100) infinite'};
         } else {
