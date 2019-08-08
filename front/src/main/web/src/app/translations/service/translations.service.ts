@@ -42,4 +42,18 @@ export class TranslationsService {
             .pipe(map(page => new BundleKeysPage(page)));
     }
 
+    updateTranslations(workspaceId: string, translations: Map<string, string>): Promise<any> {
+        if (translations.size == 0) {
+            return;
+        }
+
+        const payload = {};
+        translations.forEach((value, key) => payload[key] = value);
+
+        return this.httpClient
+            .patch('/api/workspace/' + workspaceId + '/translation', payload, {headers: {'content-type': 'application/json'}})
+            .toPromise()
+            .catch(reason => console.error("Error while initializing workspace.", reason));
+    }
+
 }

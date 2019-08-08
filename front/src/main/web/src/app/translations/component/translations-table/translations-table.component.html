@@ -6,7 +6,7 @@
 
                 <ng-container matColumnDef="groupHeader">
                     <td [attr.colspan]="displayedColumns.length" mat-cell *matCellDef="let bundleFileGroup" style="text-align: left;">
-                        <i class="far fa-file"></i> {{bundleFileGroup.value.location}} <strong>{{bundleFileGroup.value.name}}</strong>
+                        <i class="far fa-file"></i> {{bundleFileGroup.value.file.location}} <strong>{{bundleFileGroup.value.file.name}}</strong>
                     </td>
                 </ng-container>
                 <tr mat-row *matRowDef="let row; columns: ['groupHeader']; when: isBundleFile"></tr>

@@ -2,7 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {TranslationsSearchRequest} from "../../model/translations-search-request.model";
 import {TranslationsService} from '../../service/translations.service';
 import {BundleKeysPage} from "../../model/edition/bundle-keys-page.model";
-import {FormArray, FormBuilder, FormGroup} from "@angular/forms";
+import {AbstractControl, FormArray, FormBuilder, FormGroup} from "@angular/forms";
 import {auditTime} from "rxjs/operators";
 import {Locale} from "../../model/locale.model";
 import {BundleKey} from "../../model/edition/bundle-key.model";
@@ -28,12 +28,20 @@ export class TranslationsTableComponent implements OnInit {
 
     ngOnInit() {
         this.form.valueChanges
-            .pipe(
-                auditTime(2000)
-            )
-            .subscribe((formData: FormData) => {
-                // TODO
-                console.log(formData);
+            .pipe(auditTime(5000))
+            .subscribe((formData: AbstractControl[]) => {
+                const updatedTranslations: Map<string, string> = new Map<string, string>();
+
+                this.form.controls
+                    .filter(control => control instanceof FormArray)
+                    .filter(bundleKeyFormArray => bundleKeyFormArray.dirty)
+                    .map((bundleKeyFormArray: FormArray) =>
+                        bundleKeyFormArray.controls
+                            .filter(bundleKeyControl => bundleKeyControl.dirty)
+                            .map((formGroup: FormGroup) => updatedTranslations.set(formGroup.value.translation.id, formGroup.value.value))
+                    );
+
+                this.translationsService.updateTranslations(this._searchRequest.workspace.id, updatedTranslations);
             });
     }
 
@@ -109,7 +117,7 @@ export class TranslationsTableComponent implements OnInit {
                 new ColumnDefinition(
                     locale.toString(),
                     locale,
-                    (formArray: FormArray) => <FormGroup>formArray.controls[i+1],
+                    (formArray: FormArray) => <FormGroup>formArray.controls[i + 1],
                     (formArray: FormArray) =>
                         (<BundleKey>(<FormGroup>formArray.controls[0]).value.key).findTranslation(locale) != null
                             ? CellType.TRANSLATION : CellType.EMPTY
