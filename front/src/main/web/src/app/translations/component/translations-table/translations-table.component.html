@@ -1,23 +1,30 @@
 <ng-template [ngIf]="form.controls.length > 0">
     <div class="mat-app-background">
+        <div *ngIf="form.dirty" style="text-align: right;">
+            <i class="fas fa-exclamation"></i> Your changes are not saved yet
+        </div>
         <form [formGroup]="form">
             <table mat-table [dataSource]="form.controls" class="mat-elevation-z8">
                 <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
 
                 <ng-container matColumnDef="groupHeader">
-                    <td [attr.colspan]="displayedColumns.length" mat-cell *matCellDef="let bundleFileGroup" style="text-align: left;">
-                        <i class="far fa-file"></i> {{bundleFileGroup.value.file.location}} <strong>{{bundleFileGroup.value.file.name}}</strong>
+                    <td [attr.colspan]="displayedColumns.length" mat-cell *matCellDef="let bundleFileGroup"
+                        style="text-align: left;">
+                        <i class="far fa-file"></i> {{bundleFileGroup.value.file.location}}
+                        <strong>{{bundleFileGroup.value.file.name}}</strong>
                     </td>
                 </ng-container>
                 <tr mat-row *matRowDef="let row; columns: ['groupHeader']; when: isBundleFile"></tr>
 
-                <ng-container *ngFor="let columnDefinition of columnDefinitions" [matColumnDef]="columnDefinition.columnDef">
+                <ng-container *ngFor="let columnDefinition of columnDefinitions"
+                              [matColumnDef]="columnDefinition.columnDef">
                     <th mat-header-cell *matHeaderCellDef>
                         <span [class]="columnDefinition.header | localeIcon"></span> {{columnDefinition.header }}
                     </th>
                     <td mat-cell *matCellDef="let rowFormArray" style="text-align: left">
                         <ng-template [ngIf]="columnDefinition.isTranslation(rowFormArray)">
-                            <app-translation-editing-cell [formGroup]="columnDefinition.cell(rowFormArray)"></app-translation-editing-cell>
+                            <app-translation-editing-cell
+                                [formGroup]="columnDefinition.cell(rowFormArray)"></app-translation-editing-cell>
                         </ng-template>
                         <ng-template [ngIf]="columnDefinition.isKey(rowFormArray)">
                             {{columnDefinition.cell(rowFormArray)}}

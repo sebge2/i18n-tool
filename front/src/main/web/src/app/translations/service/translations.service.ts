@@ -44,7 +44,7 @@ export class TranslationsService {
 
     updateTranslations(workspaceId: string, translations: Map<string, string>): Promise<any> {
         if (translations.size == 0) {
-            return;
+            return Promise.resolve();
         }
 
         const payload = {};

@@ -6,6 +6,9 @@ import {AbstractControl, FormArray, FormBuilder, FormGroup} from "@angular/forms
 import {auditTime} from "rxjs/operators";
 import {Locale} from "../../model/locale.model";
 import {BundleKey} from "../../model/edition/bundle-key.model";
+import {BundleKeyTranslation} from "../../model/edition/bundle-key-translation.model";
+import {ColumnDefinition} from "../../model/table/column-definition.model";
+import {CellType} from "../../model/table/cell-type.model";
 
 @Component({
     selector: 'app-translations-table',
@@ -38,10 +41,18 @@ export class TranslationsTableComponent implements OnInit {
                     .map((bundleKeyFormArray: FormArray) =>
                         bundleKeyFormArray.controls
                             .filter(bundleKeyControl => bundleKeyControl.dirty)
-                            .map((formGroup: FormGroup) => updatedTranslations.set(formGroup.value.translation.id, formGroup.value.value))
+                            .map(
+                                (formGroup: FormGroup) => {
+                                    updatedTranslations.set(formGroup.value.translation.id, formGroup.value.value);
+                                    formGroup.get("value").reset(formGroup.value.value);
+                                }
+                            )
                     );
 
-                this.translationsService.updateTranslations(this._searchRequest.workspace.id, updatedTranslations);
+                // TODO only if focus lost
+                this.translationsService
+                    .updateTranslations(this._searchRequest.workspace.id, updatedTranslations)
+                    /*.catch(result => this.form.markAsDirty()) TODO fix this*/;
             });
     }
 
@@ -78,7 +89,7 @@ export class TranslationsTableComponent implements OnInit {
                 this.formBuilder.group({file})
             );
 
-            for (const key of file.keys) {
+            for (const key: BundleKey of file.keys) {
                 const keyFormArray = this.formBuilder.array([]);
 
                 this.form.push(keyFormArray);
@@ -87,7 +98,8 @@ export class TranslationsTableComponent implements OnInit {
                     this.formBuilder.group({key})
                 );
 
-                for (const translation of key.translations) {
+                for (let i = 0; i < this._searchRequest.usedLocales().length; i++) {
+                    const translation: BundleKeyTranslation = key.findTranslation(this._searchRequest.usedLocales()[i]);
                     keyFormArray.push(
                         this.formBuilder.group({
                             translation,
@@ -127,42 +139,4 @@ export class TranslationsTableComponent implements OnInit {
 
         this.displayedColumns = this.columnDefinitions.map(column => column.columnDef);
     }
-}
-
-export class ColumnDefinition {
-    columnDef: string;
-    header: string;
-    cell: (FormArray) => (FormGroup | string);
-    cellType: (FormArray) => CellType;
-
-    constructor(columnDef: string,
-                header: string,
-                cell: (FormArray) => (FormGroup | string),
-                cellType: (FormArray) => CellType) {
-        this.columnDef = columnDef;
-        this.header = header;
-        this.cell = cell;
-        this.cellType = cellType;
-    }
-
-    isEmpty(formArray: FormArray): boolean {
-        return this.cellType(formArray) == CellType.EMPTY;
-    }
-
-    isTranslation(formArray: FormArray): boolean {
-        return this.cellType(formArray) == CellType.TRANSLATION;
-    }
-
-    isKey(formArray: FormArray): boolean {
-        return this.cellType(formArray) == CellType.KEY;
-    }
-}
-
-export enum CellType {
-
-    KEY = "key",
-
-    TRANSLATION = "translation",
-
-    EMPTY = "empty"
 }
