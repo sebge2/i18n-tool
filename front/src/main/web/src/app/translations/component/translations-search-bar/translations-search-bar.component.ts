@@ -17,7 +17,13 @@ export class TranslationsSearchBarComponent implements OnInit {
     expandedChange: EventEmitter<Boolean> = new EventEmitter();
 
     @Output()
-    searchRequestChange: EventEmitter<TranslationsSearchRequest> = new EventEmitter();
+    requestChange: EventEmitter<TranslationsSearchRequest> = new EventEmitter();
+
+    @Output()
+    requestInitChange: EventEmitter<TranslationsSearchRequest> = new EventEmitter();
+
+    @Output()
+    onSearchChange: EventEmitter<TranslationsSearchRequest> = new EventEmitter();
 
     searchRequest: TranslationsSearchRequest;
 
@@ -47,31 +53,49 @@ export class TranslationsSearchBarComponent implements OnInit {
                 this.searchRequest.workspace = workspace;
 
                 if (notFullyLoaded && this.isFullyLoaded()) {
-                    this.onSearch();
+                    this.requestInitChange.emit(this.searchRequest);
                 }
+
+                this.requestChange.emit(this.searchRequest);
             },
             0
         );
     }
 
     onSelectedLocales(locales: Locale[]) {
-        const notFullyLoaded = !this.isFullyLoaded();
+        setTimeout(() => {
+                const notFullyLoaded = !this.isFullyLoaded();
 
-        this.searchRequest.locales = locales;
+                this.searchRequest.locales = locales;
 
-        if (notFullyLoaded && this.isFullyLoaded()) {
-            this.onSearch();
-        }
+                if (notFullyLoaded && this.isFullyLoaded()) {
+                    this.requestInitChange.emit(this.searchRequest);
+                }
+
+                this.requestChange.emit(this.searchRequest);
+            },
+            0
+        );
     }
 
     onSelectedCriterion(criterion: TranslationsSearchCriterion) {
-        const notFullyLoaded = !this.isFullyLoaded();
+        setTimeout(() => {
+                const notFullyLoaded = !this.isFullyLoaded();
 
-        this.searchRequest.criterion = criterion;
+                this.searchRequest.criterion = criterion;
 
-        if (notFullyLoaded && this.isFullyLoaded()) {
-            this.onSearch();
-        }
+                if (notFullyLoaded && this.isFullyLoaded()) {
+                    this.requestInitChange.emit(this.searchRequest);
+                }
+
+                this.requestChange.emit(this.searchRequest);
+            },
+            0
+        );
+    }
+
+    onSearch() {
+        this.onSearchChange.emit(new TranslationsSearchRequest(this.searchRequest));
     }
 
     title(): String {
@@ -113,10 +137,6 @@ export class TranslationsSearchBarComponent implements OnInit {
         }
 
         return title + ".";
-    }
-
-    onSearch() {
-        this.searchRequestChange.emit(new TranslationsSearchRequest(this.searchRequest));
     }
 
     private isFullyLoaded() {

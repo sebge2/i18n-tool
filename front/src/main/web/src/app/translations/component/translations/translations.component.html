@@ -1,4 +1,9 @@
-<app-translations-search-bar (searchRequestChange)="onSearchRequestChange($event)" [(expanded)]="expanded"></app-translations-search-bar>
+<app-translations-search-bar
+    (onSearchChange)="onSearch($event)"
+    (requestInitChange)="onRequestInitialized($event)"
+    (requestChange)="onRequestChange($event)"
+    [(expanded)]="expanded">
+</app-translations-search-bar>
 
 <div *ngIf="isWorkspaceNotInitialized()" class="container">
     <p>The workspace is initializing, please wait.</p>

@@ -1,7 +1,7 @@
 import {Component, EventEmitter, OnDestroy, OnInit, Output} from '@angular/core';
 import {Workspace} from "../../../model/workspace.model";
 import {WorkspaceService} from "../../../service/workspace.service";
-import {Observable, Subject} from 'rxjs';
+import {BehaviorSubject, forkJoin, Observable, ReplaySubject, Subject} from 'rxjs';
 import {takeUntil, tap} from "rxjs/operators";
 import * as _ from 'lodash';
 
@@ -20,6 +20,8 @@ export class WorkspaceSelectorComponent implements OnInit, OnDestroy {
     value: Promise<Workspace> = new Promise<Workspace>(() => {
     });
 
+    private lastValue: Workspace;
+
     workspaces: Observable<Workspace[]>;
 
     private destroy$ = new Subject();
@@ -35,14 +37,15 @@ export class WorkspaceSelectorComponent implements OnInit, OnDestroy {
                         takeUntil(this.destroy$),
                         tap(
                             (workspaces: Workspace[]) => {
-                                let currentWorkspace = workspaces.find(workspace => _.get(this.value, 'id') === workspace.id);
+                                let currentWorkspace = workspaces.find(workspace => _.get(this.lastValue, 'id') === workspace.id);
 
                                 if (!this.value || !currentWorkspace) {
                                     currentWorkspace = workspaces.find(workspace => WorkspaceSelectorComponent.DEFAULT_BRANCH == workspace.branch);
                                 }
 
-                                this.value = Promise.resolve(currentWorkspace);
-                                this.valueChange.emit(currentWorkspace);
+                                this.lastValue = currentWorkspace;
+                                this.value = Promise.resolve(this.lastValue);
+                                this.valueChange.emit(this.lastValue);
                             }
                         )
                     );
@@ -55,8 +58,10 @@ export class WorkspaceSelectorComponent implements OnInit, OnDestroy {
     }
 
     onChange(workspace: Workspace) {
-        this.value = Promise.resolve(workspace);
-        this.valueChange.emit(workspace);
+        this.lastValue = workspace;
+
+        this.value = Promise.resolve(this.lastValue);
+        this.valueChange.emit(this.lastValue);
     }
 
 }

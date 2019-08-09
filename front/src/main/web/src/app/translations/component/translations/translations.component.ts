@@ -43,8 +43,8 @@ export class TranslationsComponent implements OnInit {
         return (this.searchRequest != null) && (this.searchRequest.workspace != null) && (this.searchRequest.workspace.status == WorkspaceStatus.IN_REVIEW);
     }
 
-    onSearchRequestChange(searchRequest: TranslationsSearchRequest) {
-        this.searchRequest = searchRequest;
+    onSearch(searchRequest: TranslationsSearchRequest) {
+        this.searchRequest = new TranslationsSearchRequest(searchRequest);
 
         this._expanded = false;
 
@@ -52,4 +52,15 @@ export class TranslationsComponent implements OnInit {
             this.workspaceService.initialize(this.searchRequest.workspace);
         }
     }
+
+    onRequestInitialized(searchRequest: TranslationsSearchRequest) {
+        this.onSearch(searchRequest);
+    }
+
+    onRequestChange(searchRequest: TranslationsSearchRequest) {
+        if (this.searchRequest.workspace && searchRequest.workspace && this.searchRequest.workspace.id == searchRequest.workspace.id) {
+            this.searchRequest.workspace = searchRequest.workspace;
+        }
+    }
+
 }
