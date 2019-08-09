@@ -1,10 +1,10 @@
 <mat-form-field >
     <mat-label>Workspace:</mat-label>
 
-    <mat-select [value]="value" (selectionChange)="onChange($event.value)" required>
+    <mat-select [value]="value | async" (selectionChange)="onChange($event.value)" required>
         <mat-select-trigger>
-            <mat-icon *ngIf="value != null" class="icon-selection">label</mat-icon>
-            {{value != null ? value.branch : null}}
+            <mat-icon *ngIf="(value | async)" class="icon-selection">label</mat-icon>
+            {{(value | async)?.branch}}
         </mat-select-trigger>
 
         <mat-option *ngFor="let workspace of (workspaces | async)" [value]="workspace">

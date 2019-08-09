@@ -144,8 +144,13 @@ public class TranslationManagerImpl implements TranslationManager {
                 throw new IllegalArgumentException("The entry [" + entry.getId() + "] does not belong to the workspace [" + workspace.getId() + "].");
             }
 
-            entry.setLastEditor(currentUser.getId());
             entry.setUpdatedValue(mapToNullIfEmpty(updateEntry.getValue()));
+
+            if (Objects.equals(entry.getOriginalValue(), entry.getUpdatedValue())) {
+                entry.setUpdatedValue(null);
+            }
+
+            entry.setLastEditor(entry.getUpdatedValue().isEmpty() ? null : currentUser.getId());
             updatedEntries.add(BundleKeyTranslationDto.builder().build());
         }
 

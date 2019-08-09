@@ -41,13 +41,17 @@ export class TranslationsSearchBarComponent implements OnInit {
     }
 
     onSelectedWorkspace(workspace: Workspace) {
-        const notFullyLoaded = !this.isFullyLoaded();
+        setTimeout(() => {
+                const notFullyLoaded = !this.isFullyLoaded();
 
-        this.searchRequest.workspace = workspace;
+                this.searchRequest.workspace = workspace;
 
-        if (notFullyLoaded && this.isFullyLoaded()) {
-            this.onSearch();
-        }
+                if (notFullyLoaded && this.isFullyLoaded()) {
+                    this.onSearch();
+                }
+            },
+            0
+        );
     }
 
     onSelectedLocales(locales: Locale[]) {

@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, OnDestroy, OnInit, Output} from '@angular/core';
 import {Workspace} from "../../../model/workspace.model";
 import {WorkspaceService} from "../../../service/workspace.service";
 import {Observable, Subject} from 'rxjs';
@@ -17,7 +17,8 @@ export class WorkspaceSelectorComponent implements OnInit, OnDestroy {
     @Output()
     valueChange: EventEmitter<Workspace> = new EventEmitter<Workspace>();
 
-    value: Workspace;
+    value: Promise<Workspace> = new Promise<Workspace>(() => {
+    });
 
     workspaces: Observable<Workspace[]>;
 
@@ -27,31 +28,35 @@ export class WorkspaceSelectorComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.workspaces = this.workspaceService.getWorkspaces()
-            .pipe(
-                takeUntil(this.destroy$),
-                tap(
-                    (workspaces: Workspace[]) => {
-                        let currentWorkspace = workspaces.find(workspace => _.get(this.value, 'id') === workspace.id);
+        setTimeout(
+            () => {
+                this.workspaces = this.workspaceService.getWorkspaces()
+                    .pipe(
+                        takeUntil(this.destroy$),
+                        tap(
+                            (workspaces: Workspace[]) => {
+                                let currentWorkspace = workspaces.find(workspace => _.get(this.value, 'id') === workspace.id);
 
-                        if (!this.value || !currentWorkspace) {
-                            currentWorkspace = workspaces.find(workspace => WorkspaceSelectorComponent.DEFAULT_BRANCH == workspace.branch);
-                        }
+                                if (!this.value || !currentWorkspace) {
+                                    currentWorkspace = workspaces.find(workspace => WorkspaceSelectorComponent.DEFAULT_BRANCH == workspace.branch);
+                                }
 
-                        this.value = currentWorkspace;
-                        this.valueChange.emit(this.value);
-                    }
-                )
-            );
+                                this.value = Promise.resolve(currentWorkspace);
+                                this.valueChange.emit(currentWorkspace);
+                            }
+                        )
+                    );
+            },
+            0);
     }
 
     ngOnDestroy(): void {
         this.destroy$.complete();
     }
 
-    onChange(workspace: Workspace){
-        this.value = workspace;
-        this.valueChange.emit(this.value);
+    onChange(workspace: Workspace) {
+        this.value = Promise.resolve(workspace);
+        this.valueChange.emit(workspace);
     }
 
 }
