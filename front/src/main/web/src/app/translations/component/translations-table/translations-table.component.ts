@@ -70,7 +70,7 @@ export class TranslationsTableComponent implements OnInit {
                 .toPromise()
                 .then(
                     (page: BundleKeysPage) => {
-                        this.form.clear(); // TODO not cleared
+                        this.form = this.formBuilder.array([]);
 
                         this.updateColumnDefinitions();
                         this.updateForm(page);
