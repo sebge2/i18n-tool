@@ -9,7 +9,6 @@ import {BundleKey} from "../../model/edition/bundle-key.model";
 import {BundleKeyTranslation} from "../../model/edition/bundle-key-translation.model";
 import {ColumnDefinition} from "../../model/table/column-definition.model";
 import {CellType} from "../../model/table/cell-type.model";
-import {WorkspaceStatus} from "../../model/workspace-status.model";
 
 @Component({
     selector: 'app-translations-table',
@@ -31,6 +30,44 @@ export class TranslationsTableComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.subscribe();
+    }
+
+    get searchRequest(): TranslationsSearchRequest {
+        return this._searchRequest;
+    }
+
+    @Input()
+    set searchRequest(value: TranslationsSearchRequest) {
+        this._searchRequest = value;
+
+        if (this.searchRequest && this.searchRequest.isValid()) {
+            this.translationsService
+                .getTranslations(this.searchRequest)
+                .toPromise()
+                .then(
+                    (page: BundleKeysPage) => {
+                        this.form = this.formBuilder.array([]); // TODO better for clearing ? remove this.subscribe() too
+
+                        // // TODO
+                        // if(this.searchRequest.workspace.status == WorkspaceStatus.IN_REVIEW){
+                        //     this.form.disable();
+                        // }
+
+                        this.updateColumnDefinitions();
+                        this.updateForm(page);
+                        this.subscribe();
+                    }
+                );
+        }
+    }
+
+    isBundleFile(index, item): boolean {
+        return item instanceof FormGroup;
+    }
+
+    private subscribe() {
+// TODO subscription
         this.form.valueChanges
             .pipe(auditTime(2000))
             .subscribe((formData: AbstractControl[]) => {
@@ -55,38 +92,6 @@ export class TranslationsTableComponent implements OnInit {
                     .updateTranslations(this._searchRequest.workspace.id, updatedTranslations)
                 /*.catch(result => this.form.markAsDirty()) TODO fix this*/;
             });
-    }
-
-    get searchRequest(): TranslationsSearchRequest {
-        return this._searchRequest;
-    }
-
-    @Input()
-    set searchRequest(value: TranslationsSearchRequest) {
-        this._searchRequest = value;
-
-        if (this.searchRequest && this.searchRequest.isValid()) {
-            this.translationsService
-                .getTranslations(this.searchRequest)
-                .toPromise()
-                .then(
-                    (page: BundleKeysPage) => {
-                        this.form = this.formBuilder.array([]);
-
-                        // TODO
-                        if(this.searchRequest.workspace.status == WorkspaceStatus.IN_REVIEW){
-                            this.form.disable();
-                        }
-
-                        this.updateColumnDefinitions();
-                        this.updateForm(page);
-                    }
-                );
-        }
-    }
-
-    isBundleFile(index, item): boolean {
-        return item instanceof FormGroup;
     }
 
     private updateForm(page: BundleKeysPage) {
