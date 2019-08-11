@@ -19,4 +19,8 @@ export class TranslationsSearchRequest {
     usedLocales(): Locale[] {
         return this.locales.length == 0 ? ALL_LOCALES : this.locales;
     }
+
+    isValid(): boolean {
+        return (this.workspace != null) && (this.locales != null) && (this.criterion != null);
+    }
 }

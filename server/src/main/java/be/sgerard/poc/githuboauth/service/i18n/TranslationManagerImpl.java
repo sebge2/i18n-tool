@@ -241,7 +241,7 @@ public class TranslationManagerImpl implements TranslationManager {
                             .map(keyEntryEntity ->
                                 Pair.of(keyEntryEntity.getJavaLocale(), keyEntryEntity.getValue().orElse(null))
                             )
-                            .collect(toMap(Pair::getKey, Pair::getValue))
+                            .collect(HashMap::new, (m,v)->m.put(v.getKey(), v.getValue()), HashMap::putAll)
                     )
             )
             .collect(toList());

@@ -27,10 +27,6 @@ export class TranslationsComponent implements OnInit {
         this._expanded = value;
     }
 
-    isRepositoryNotInitialized(): boolean {
-        return (this.searchRequest != null) && (this.searchRequest.workspace == null);
-    }
-
     isWorkspaceNotInitialized(): boolean {
         return (this.searchRequest != null) && (this.searchRequest.workspace != null) && (this.searchRequest.workspace.status == WorkspaceStatus.NOT_INITIALIZED);
     }
@@ -59,7 +55,13 @@ export class TranslationsComponent implements OnInit {
 
     onRequestChange(searchRequest: TranslationsSearchRequest) {
         if (this.searchRequest.workspace && searchRequest.workspace && this.searchRequest.workspace.id == searchRequest.workspace.id) {
+            const launchSearch = this.searchRequest.workspace.status == WorkspaceStatus.NOT_INITIALIZED && searchRequest.workspace.status != WorkspaceStatus.NOT_INITIALIZED;
+
             this.searchRequest.workspace = searchRequest.workspace;
+
+            if (launchSearch) {
+                this.onSearch(searchRequest);
+            }
         }
     }
 

@@ -1,4 +1,4 @@
-<ng-template [ngIf]="form.controls.length > 0">
+<ng-template [ngIf]="form.controls.length > 0" [ngIfElse]="noResult">
     <div class="mat-app-background">
         <div *ngIf="form.dirty" style="text-align: right;">
             <i class="fas fa-exclamation"></i> Your changes are not saved yet
@@ -36,6 +36,15 @@
                 </ng-container>
                 <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
             </table>
+
+            <div style="text-align: right; margin-top: 10px;">
+                <button mat-flat-button color="primary">Publish and ask a review</button>
+            </div>
         </form>
+    </div>
+</ng-template>
+<ng-template #noResult>
+    <div style="text-align: center">
+        There are no result, please modify your criteria.
     </div>
 </ng-template>
