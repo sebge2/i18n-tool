@@ -187,6 +187,8 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
 
                 workspaceEntity.setStatus(WorkspaceStatus.IN_REVIEW);
 
+                eventService.broadcastEvent(EVENT_UPDATED_WORKSPACE, WorkspaceDto.builder(workspaceEntity).build());
+
                 return workspaceEntity;
             } catch (IOException e) {
                 throw new RepositoryException("Error while writing translation files.", e);
