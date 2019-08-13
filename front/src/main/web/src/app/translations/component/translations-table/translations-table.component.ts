@@ -11,6 +11,7 @@ import {ColumnDefinition} from "../../model/table/column-definition.model";
 import {CellType} from "../../model/table/cell-type.model";
 import {TranslationsStartReviewComponent, StartReviewDialogModel} from "./translations-start-review/translations-start-review.component";
 import {MatDialog} from "@angular/material";
+import {WorkspaceService} from "../../service/workspace.service";
 
 @Component({
     selector: 'app-translations-table',
@@ -27,6 +28,7 @@ export class TranslationsTableComponent implements OnInit {
     form: FormArray;
 
     constructor(private translationsService: TranslationsService,
+                private workspaceService: WorkspaceService,
                 private formBuilder: FormBuilder,
                 private dialog: MatDialog) {
         this.form = formBuilder.array([]);
@@ -78,7 +80,7 @@ export class TranslationsTableComponent implements OnInit {
             .afterClosed()
             .subscribe((result: StartReviewDialogModel) => {
                 if(result){
-                    console.log('The dialog was closed', result.comment);
+                    this.workspaceService.startReview(this.searchRequest.workspace, result.comment);
                 }
             });
     }

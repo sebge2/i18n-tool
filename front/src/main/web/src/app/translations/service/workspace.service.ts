@@ -61,8 +61,34 @@ export class WorkspaceService implements OnDestroy {
         return this._workspaces;
     }
 
-    initialize(workspace: Workspace) {
-        this.httpClient.put('/api/workspace/' + workspace.id, null, {params: {do: 'INITIALIZE'}}).toPromise()
+    initialize(workspace: Workspace): Promise<any> {
+        return this.httpClient
+            .put(
+                '/api/workspace/' + workspace.id,
+                null,
+                {
+                    params: {
+                        do: 'INITIALIZE'
+                    }
+                }
+            )
+            .toPromise()
             .catch(reason => console.error("Error while initializing workspace.", reason));
+    }
+
+    startReview(workspace: Workspace, comment: string): Promise<any> {
+        return this.httpClient
+            .put(
+                '/api/workspace/' + workspace.id,
+                null,
+                {
+                    params: {
+                        do: 'START_REVIEW',
+                        message: comment
+                    }
+                }
+            )
+            .toPromise()
+            .catch(reason => console.error("Error while starting review.", reason));
     }
 }
