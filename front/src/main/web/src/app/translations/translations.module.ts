@@ -13,6 +13,7 @@ import {LocaleIconPipe} from './pipe/locale-icon.pipe';
 import {TranslationCriterionSelectorComponent} from './component/translations-search-bar/translation-criterion-selector/translation-criterion-selector.component';
 import {TranslationsTableComponent} from './component/translations-table/translations-table.component';
 import { TranslationEditingCellComponent } from './component/translations-table/translation-editing-cell/translation-editing-cell.component';
+import { TranslationsStartReviewComponent } from './component/translations-table/translations-start-review/translations-start-review.component';
 
 const appRoutes: Routes = [
     {
@@ -31,7 +32,11 @@ const appRoutes: Routes = [
         TranslationCriterionSelectorComponent,
         TranslationsTableComponent,
         TranslationEditingCellComponent,
+        TranslationsStartReviewComponent,
         LocaleIconPipe
+    ],
+    entryComponents: [
+        TranslationsStartReviewComponent
     ],
     imports: [
         CommonModule,
