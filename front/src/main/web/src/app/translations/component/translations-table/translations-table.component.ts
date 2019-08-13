@@ -9,6 +9,8 @@ import {BundleKey} from "../../model/edition/bundle-key.model";
 import {BundleKeyTranslation} from "../../model/edition/bundle-key-translation.model";
 import {ColumnDefinition} from "../../model/table/column-definition.model";
 import {CellType} from "../../model/table/cell-type.model";
+import {TranslationsStartReviewComponent, StartReviewDialogModel} from "./translations-start-review/translations-start-review.component";
+import {MatDialog} from "@angular/material";
 
 @Component({
     selector: 'app-translations-table',
@@ -25,7 +27,8 @@ export class TranslationsTableComponent implements OnInit {
     form: FormArray;
 
     constructor(private translationsService: TranslationsService,
-                private formBuilder: FormBuilder) {
+                private formBuilder: FormBuilder,
+                private dialog: MatDialog) {
         this.form = formBuilder.array([]);
     }
 
@@ -66,8 +69,22 @@ export class TranslationsTableComponent implements OnInit {
         return item instanceof FormGroup;
     }
 
+    openStartReviewDialog(): void {
+        this.dialog
+            .open(TranslationsStartReviewComponent, {
+                width: '250px',
+                data: <StartReviewDialogModel> {comment: ""}
+            })
+            .afterClosed()
+            .subscribe((result: StartReviewDialogModel) => {
+                if(result){
+                    console.log('The dialog was closed', result.comment);
+                }
+            });
+    }
+
     private subscribe() {
-// TODO subscription
+        // TODO subscription
         this.form.valueChanges
             .pipe(auditTime(2000))
             .subscribe((formData: AbstractControl[]) => {
