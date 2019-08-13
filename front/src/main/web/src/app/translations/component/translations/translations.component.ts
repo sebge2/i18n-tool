@@ -2,6 +2,11 @@ import {Component, OnInit} from '@angular/core';
 import {TranslationsSearchRequest} from "../../model/translations-search-request.model";
 import {WorkspaceStatus} from "../../model/workspace-status.model";
 import {WorkspaceService} from "../../service/workspace.service";
+import {
+    StartReviewDialogModel,
+    TranslationsStartReviewComponent
+} from "../translations-start-review/translations-start-review.component";
+import {MatDialog} from "@angular/material";
 
 @Component({
     selector: 'app-translations',
@@ -11,9 +16,11 @@ import {WorkspaceService} from "../../service/workspace.service";
 export class TranslationsComponent implements OnInit {
 
     searchRequest: TranslationsSearchRequest = new TranslationsSearchRequest();
+
     private _expanded: boolean = false;
 
-    constructor(private workspaceService: WorkspaceService) {
+    constructor(private workspaceService: WorkspaceService,
+                private dialog: MatDialog) {
     }
 
     ngOnInit() {
@@ -63,6 +70,20 @@ export class TranslationsComponent implements OnInit {
                 this.onSearch(searchRequest);
             }
         }
+    }
+
+    openStartReviewDialog(): void {
+        this.dialog
+            .open(TranslationsStartReviewComponent, {
+                width: '250px',
+                data: <StartReviewDialogModel> {comment: ""}
+            })
+            .afterClosed()
+            .subscribe((result: StartReviewDialogModel) => {
+                if(result){
+                    this.workspaceService.startReview(this.searchRequest.workspace, result.comment);
+                }
+            });
     }
 
 }

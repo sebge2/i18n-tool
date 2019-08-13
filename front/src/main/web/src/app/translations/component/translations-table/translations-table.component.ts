@@ -9,9 +9,6 @@ import {BundleKey} from "../../model/edition/bundle-key.model";
 import {BundleKeyTranslation} from "../../model/edition/bundle-key-translation.model";
 import {ColumnDefinition} from "../../model/table/column-definition.model";
 import {CellType} from "../../model/table/cell-type.model";
-import {TranslationsStartReviewComponent, StartReviewDialogModel} from "./translations-start-review/translations-start-review.component";
-import {MatDialog} from "@angular/material";
-import {WorkspaceService} from "../../service/workspace.service";
 
 @Component({
     selector: 'app-translations-table',
@@ -28,9 +25,7 @@ export class TranslationsTableComponent implements OnInit {
     form: FormArray;
 
     constructor(private translationsService: TranslationsService,
-                private workspaceService: WorkspaceService,
-                private formBuilder: FormBuilder,
-                private dialog: MatDialog) {
+                private formBuilder: FormBuilder) {
         this.form = formBuilder.array([]);
     }
 
@@ -69,20 +64,6 @@ export class TranslationsTableComponent implements OnInit {
 
     isBundleFile(index, item): boolean {
         return item instanceof FormGroup;
-    }
-
-    openStartReviewDialog(): void {
-        this.dialog
-            .open(TranslationsStartReviewComponent, {
-                width: '250px',
-                data: <StartReviewDialogModel> {comment: ""}
-            })
-            .afterClosed()
-            .subscribe((result: StartReviewDialogModel) => {
-                if(result){
-                    this.workspaceService.startReview(this.searchRequest.workspace, result.comment);
-                }
-            });
     }
 
     private subscribe() {

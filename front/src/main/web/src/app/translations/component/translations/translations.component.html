@@ -12,6 +12,10 @@
 
 <div *ngIf="!isWorkspaceNotInitialized()" class="container">
     <app-translations-table [searchRequest]="searchRequest"></app-translations-table>
+
+    <div style="text-align: right; margin-top: 10px;" *ngIf="isWorkspaceInitialized()">
+        <button mat-flat-button color="primary" (click)="openStartReviewDialog()">Publish and ask a review</button>
+    </div>
 </div>
 
 <!--
