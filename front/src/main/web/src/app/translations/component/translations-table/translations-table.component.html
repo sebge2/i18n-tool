@@ -4,7 +4,7 @@
             <i class="fas fa-exclamation"></i> Your changes are not saved yet
         </div>
         <form [formGroup]="form">
-            <table mat-table [dataSource]="form.controls" class="mat-elevation-z8">
+            <table mat-table [dataSource]="form.controls" class="mat-elevation-z8" #table>
                 <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
 
                 <ng-container matColumnDef="groupHeader">

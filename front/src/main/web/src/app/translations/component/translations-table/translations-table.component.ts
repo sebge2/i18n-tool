@@ -1,28 +1,36 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {TranslationsSearchRequest} from "../../model/translations-search-request.model";
 import {TranslationsService} from '../../service/translations.service';
 import {BundleKeysPage} from "../../model/edition/bundle-keys-page.model";
 import {AbstractControl, FormArray, FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {auditTime} from "rxjs/operators";
 import {Locale} from "../../model/locale.model";
 import {BundleKey} from "../../model/edition/bundle-key.model";
 import {BundleKeyTranslation} from "../../model/edition/bundle-key-translation.model";
 import {ColumnDefinition} from "../../model/table/column-definition.model";
 import {CellType} from "../../model/table/cell-type.model";
+import {MatTable} from "@angular/material";
+import {auditTime, takeUntil} from 'rxjs/operators';
+import {Subject} from "rxjs";
 
 @Component({
     selector: 'app-translations-table',
     templateUrl: './translations-table.component.html',
     styleUrls: ['./translations-table.component.css']
 })
-export class TranslationsTableComponent implements OnInit {
+export class TranslationsTableComponent implements OnInit, OnDestroy {
 
     @Input()
     private _searchRequest: TranslationsSearchRequest = new TranslationsSearchRequest();
 
+    @ViewChild('table', {static: false})
+    private table: MatTable<any>;
+
     columnDefinitions: ColumnDefinition[] = [];
     displayedColumns: string[] = [];
     form: FormArray;
+
+    private page: BundleKeysPage;
+    private destroy$ = new Subject();
 
     constructor(private translationsService: TranslationsService,
                 private formBuilder: FormBuilder) {
@@ -30,7 +38,37 @@ export class TranslationsTableComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.subscribe();
+        this.form.valueChanges
+            .pipe(
+                takeUntil(this.destroy$),
+                auditTime(2000)
+            )
+            .subscribe((formData: AbstractControl[]) => {
+                const updatedTranslations: Map<string, string> = new Map<string, string>();
+
+                this.form.controls
+                    .filter(control => control instanceof FormArray)
+                    .filter(bundleKeyFormArray => bundleKeyFormArray.dirty)
+                    .map((bundleKeyFormArray: FormArray) => {
+                            bundleKeyFormArray.controls
+                                .filter(bundleKeyControl => bundleKeyControl.dirty && bundleKeyControl.valid)
+                                .map(
+                                    (formGroup: FormGroup) => {
+                                        updatedTranslations.set(formGroup.value.translation.id, formGroup.value.value);
+                                        formGroup.get("value").reset(formGroup.value.value);
+                                    }
+                                );
+                        }
+                    );
+
+                this.translationsService
+                    .updateTranslations(this._searchRequest.workspace.id, updatedTranslations)
+                /*.catch(result => this.form.markAsDirty()) TODO fix this*/;
+            });
+    }
+
+    ngOnDestroy(): void {
+        this.destroy$.complete();
     }
 
     get searchRequest(): TranslationsSearchRequest {
@@ -47,51 +85,35 @@ export class TranslationsTableComponent implements OnInit {
                 .toPromise()
                 .then(
                     (page: BundleKeysPage) => {
-                        this.form = this.formBuilder.array([]); // TODO better for clearing ? remove this.subscribe() too
-
-                        // // TODO
-                        // if(this.searchRequest.workspace.status == WorkspaceStatus.IN_REVIEW){
-                        //     this.form.disable();
-                        // }
+                        this.page = page;
+                        this.form.clear();
 
                         this.updateColumnDefinitions();
                         this.updateForm(page);
-                        this.subscribe();
+
+                        if(this.table) {
+                            this.table.renderRows();
+                        }
                     }
                 );
         }
     }
 
-    isBundleFile(index, item): boolean {
-        return item instanceof FormGroup;
+    get readOnly(): boolean {
+        return this.form.disabled;
     }
 
-    private subscribe() {
-        // TODO subscription
-        this.form.valueChanges
-            .pipe(auditTime(2000))
-            .subscribe((formData: AbstractControl[]) => {
-                const updatedTranslations: Map<string, string> = new Map<string, string>();
+    @Input()
+    set readOnly(readonly: boolean) {
+        if (readonly) {
+            this.form.disable();
+        } else {
+            this.form.enable();
+        }
+    }
 
-                this.form.controls
-                    .filter(control => control instanceof FormArray)
-                    .filter(bundleKeyFormArray => bundleKeyFormArray.dirty)
-                    .map((bundleKeyFormArray: FormArray) =>
-                        bundleKeyFormArray.controls
-                            .filter(bundleKeyControl => bundleKeyControl.dirty && bundleKeyControl.valid)
-                            .map(
-                                (formGroup: FormGroup) => {
-                                    updatedTranslations.set(formGroup.value.translation.id, formGroup.value.value);
-                                    formGroup.get("value").reset(formGroup.value.value);
-                                }
-                            )
-                    );
-
-                // TODO only if focus lost
-                this.translationsService
-                    .updateTranslations(this._searchRequest.workspace.id, updatedTranslations)
-                /*.catch(result => this.form.markAsDirty()) TODO fix this*/;
-            });
+    isBundleFile(index, item): boolean {
+        return item instanceof FormGroup;
     }
 
     private updateForm(page: BundleKeysPage) {
@@ -103,14 +125,13 @@ export class TranslationsTableComponent implements OnInit {
             for (const key of file.keys) {
                 const keyFormArray = this.formBuilder.array([]);
 
-                this.form.push(keyFormArray);
-
                 keyFormArray.push(
                     this.formBuilder.group({key})
                 );
 
                 for (let i = 0; i < this._searchRequest.usedLocales().length; i++) {
                     const translation: BundleKeyTranslation = key.findTranslation(this._searchRequest.usedLocales()[i]);
+
                     const formGroup = this.formBuilder.group({translation});
 
                     formGroup.addControl(
@@ -120,6 +141,8 @@ export class TranslationsTableComponent implements OnInit {
 
                     keyFormArray.push(formGroup);
                 }
+
+                this.form.push(keyFormArray);
             }
         }
     }
@@ -143,9 +166,12 @@ export class TranslationsTableComponent implements OnInit {
                     locale.toString(),
                     locale,
                     (formArray: FormArray) => <FormGroup>formArray.controls[i + 1],
-                    (formArray: FormArray) =>
-                        (<BundleKey>(<FormGroup>formArray.controls[0]).value.key).findTranslation(locale) != null
-                            ? CellType.TRANSLATION : CellType.EMPTY
+                    (formArray: FormArray) => {
+                        const bundleKey = <BundleKey>(<FormGroup>formArray.controls[0]).value.key;
+
+                        return (bundleKey).findTranslation(locale) != null
+                            ? CellType.TRANSLATION : CellType.EMPTY;
+                    }
                 )
             );
         }
