@@ -18,7 +18,7 @@ export class WorkspaceService implements OnDestroy {
     constructor(private httpClient: HttpClient,
                 private eventService: EventService) {
         this.httpClient.get<Workspace[]>('/api/workspace').toPromise()
-            .then(workspaces => this._workspaces.next(workspaces))
+            .then(workspaces => this._workspaces.next(workspaces.map(workspace => new Workspace(workspace))))
             .catch(reason => console.error("Error while retrieving workspaces.", reason));
 
         this._updatedWorkspaceObservable = this.eventService.subscribe(Events.UPDATED_WORKSPACE, Workspace)

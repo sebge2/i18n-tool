@@ -5,19 +5,24 @@
     [(expanded)]="expanded">
 </app-translations-search-bar>
 
-<div *ngIf="isWorkspaceNotInitialized()" class="container">
+<div *ngIf="(searchRequest != null) && (searchRequest.workspace != null) && searchRequest.workspace.isNotInitialized()"
+     class="container">
     <p>The workspace is initializing, please wait.</p>
     <img src="assets/scanning.gif" alt="Initializing workspace"/>
 </div>
 
-<div *ngIf="!isWorkspaceNotInitialized()" class="container">
-    <app-translations-table [searchRequest]="searchRequest"></app-translations-table>
+<div
+    *ngIf="(searchRequest != null) && (searchRequest.workspace != null) && (searchRequest.workspace.isInitialized() || searchRequest.workspace.isInReview())"
+    class="container">
+    <app-translations-table [searchRequest]="searchRequest"
+                            [readOnly]="readOnlyTable || startReviewing"></app-translations-table>
 
-    <div style="text-align: right; margin-top: 10px;" *ngIf="isWorkspaceInitialized()">
-        <button mat-flat-button color="primary" (click)="openStartReviewDialog()">Publish and ask a review</button>
+    <div style="text-align: right; margin-top: 10px;"
+         *ngIf="(searchRequest != null) && (searchRequest.workspace != null) && searchRequest.workspace.isInitialized()">
+        <button mat-flat-button color="primary" (click)="openStartReviewDialog()" [disabled]="startReviewing">
+            Publish and ask a review
+
+            <i class="fa fa-spinner fa-spin" *ngIf="startReviewing"></i>
+        </button>
     </div>
 </div>
-
-<!--
-https://stackblitz.com/edit/angular-mattable-with-groupheader?file=app/table-basic-example.html
--->

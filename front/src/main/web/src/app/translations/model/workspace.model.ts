@@ -18,4 +18,16 @@ export class Workspace {
         this.initializationTime = user.initializationTime;
     }
 
+    isNotInitialized(): boolean {
+        return this.status == WorkspaceStatus.NOT_INITIALIZED;
+    }
+
+    isInitialized(): boolean {
+        return this.status == WorkspaceStatus.INITIALIZED;
+    }
+
+    isInReview(): boolean {
+        return this.status == WorkspaceStatus.IN_REVIEW;
+    }
+
 }

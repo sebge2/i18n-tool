@@ -7,6 +7,7 @@ import {
     TranslationsStartReviewComponent
 } from "../translations-start-review/translations-start-review.component";
 import {MatDialog} from "@angular/material";
+import {Workspace} from "../../model/workspace.model";
 
 @Component({
     selector: 'app-translations',
@@ -16,6 +17,8 @@ import {MatDialog} from "@angular/material";
 export class TranslationsComponent implements OnInit {
 
     searchRequest: TranslationsSearchRequest = new TranslationsSearchRequest();
+    readOnlyTable: boolean;
+    startReviewing: boolean;
 
     private _expanded: boolean = false;
 
@@ -34,26 +37,12 @@ export class TranslationsComponent implements OnInit {
         this._expanded = value;
     }
 
-    isWorkspaceNotInitialized(): boolean {
-        return (this.searchRequest != null) && (this.searchRequest.workspace != null) && (this.searchRequest.workspace.status == WorkspaceStatus.NOT_INITIALIZED);
-    }
-
-    isWorkspaceInitialized(): boolean {
-        return (this.searchRequest != null) && (this.searchRequest.workspace != null) && (this.searchRequest.workspace.status == WorkspaceStatus.INITIALIZED);
-    }
-
-    isWorkspaceInReview(): boolean {
-        return (this.searchRequest != null) && (this.searchRequest.workspace != null) && (this.searchRequest.workspace.status == WorkspaceStatus.IN_REVIEW);
-    }
-
     onSearch(searchRequest: TranslationsSearchRequest) {
         this.searchRequest = new TranslationsSearchRequest(searchRequest);
 
         this._expanded = false;
 
-        if (this.isWorkspaceNotInitialized()) {
-            this.workspaceService.initialize(this.searchRequest.workspace);
-        }
+        this.onWorkspaceUpdate(this.searchRequest.workspace);
     }
 
     onRequestInitialized(searchRequest: TranslationsSearchRequest) {
@@ -62,12 +51,14 @@ export class TranslationsComponent implements OnInit {
 
     onRequestChange(searchRequest: TranslationsSearchRequest) {
         if (this.searchRequest.workspace && searchRequest.workspace && this.searchRequest.workspace.id == searchRequest.workspace.id) {
-            const launchSearch = this.searchRequest.workspace.status == WorkspaceStatus.NOT_INITIALIZED && searchRequest.workspace.status != WorkspaceStatus.NOT_INITIALIZED;
+            const launchSearch = this.searchRequest.workspace.isNotInitialized() && !searchRequest.workspace.isNotInitialized();
 
             this.searchRequest.workspace = searchRequest.workspace;
 
             if (launchSearch) {
                 this.onSearch(searchRequest);
+            } else {
+                this.onWorkspaceUpdate(this.searchRequest.workspace);
             }
         }
     }
@@ -76,14 +67,37 @@ export class TranslationsComponent implements OnInit {
         this.dialog
             .open(TranslationsStartReviewComponent, {
                 width: '250px',
-                data: <StartReviewDialogModel> {comment: ""}
+                data: <StartReviewDialogModel>{comment: ""}
             })
             .afterClosed()
             .subscribe((result: StartReviewDialogModel) => {
-                if(result){
-                    this.workspaceService.startReview(this.searchRequest.workspace, result.comment);
+                if (result) {
+                    this.startReviewing = true;
+
+                    this.workspaceService
+                        .startReview(this.searchRequest.workspace, result.comment)
+                        .finally(() => {
+                            this.startReviewing = false;
+                        });
                 }
             });
+    }
+
+    private onWorkspaceUpdate(workspace: Workspace): void {
+        switch (workspace.status) {
+            case WorkspaceStatus.IN_REVIEW:
+                this.readOnlyTable = true;
+                break;
+            case WorkspaceStatus.NOT_INITIALIZED:
+                this.readOnlyTable = true;
+                this.workspaceService.initialize(this.searchRequest.workspace);
+                break;
+            case  WorkspaceStatus.INITIALIZED:
+                this.readOnlyTable = false;
+                break;
+            default :
+                throw Error("Workspace status not supported [" + workspace.status + "]");
+        }
     }
 
 }
