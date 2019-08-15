@@ -171,8 +171,7 @@
                                 <resource>
                                     <directory>${basedir}/src/config/aws</directory>
                                     <includes>
-                                        <include>Dockerrun.aws.json</include>
-                                        <include>ebs.config</include>
+                                        <include>**</include>
                                     </includes>
                                     <filtering>true</filtering>
                                 </resource>

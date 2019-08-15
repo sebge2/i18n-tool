@@ -11,4 +11,4 @@ COPY ${DEPENDENCY}/BOOT-INF/classes ${CONTAINER_APP_FOLDER}
 
 EXPOSE 8080
 
-CMD java -Dspring.profiles.active=container -cp ${CONTAINER_APP_FOLDER}:${CONTAINER_APP_FOLDER}/lib/* be.sgerard.poc.githuboauth.GithubOauthApplication
+CMD java -Dspring.profiles.active=container -cp ${CONTAINGIT_HUB_OAUTH_CLIENTER_APP_FOLDER}:${CONTAINER_APP_FOLDER}/lib/* be.sgerard.poc.githuboauth.GithubOauthApplication
