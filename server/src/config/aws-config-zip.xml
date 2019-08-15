@@ -15,6 +15,10 @@
             <outputDirectory>.</outputDirectory>
             <directory>${project.build.directory}/config/aws</directory>
         </fileSet>
+        <fileSet>
+            <outputDirectory>./.elasticbeanstalk</outputDirectory>
+            <directory>${project.build.directory}/config/aws/.elasticbeanstalk</directory>
+        </fileSet>
     </fileSets>
     <dependencySets>
     </dependencySets>
