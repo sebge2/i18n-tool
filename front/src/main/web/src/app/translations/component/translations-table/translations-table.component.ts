@@ -10,7 +10,7 @@ import {ColumnDefinition} from "../../model/table/column-definition.model";
 import {CellType} from "../../model/table/cell-type.model";
 import {MatTable} from "@angular/material";
 import {auditTime, takeUntil} from 'rxjs/operators';
-import {Subject} from "rxjs";
+import {BehaviorSubject, Subject} from "rxjs";
 
 @Component({
     selector: 'app-translations-table',
@@ -29,8 +29,8 @@ export class TranslationsTableComponent implements OnInit, OnDestroy {
     displayedColumns: string[] = [];
     form: FormArray;
 
-    private page: BundleKeysPage;
     private destroy$ = new Subject();
+    private _readOnly = new BehaviorSubject<boolean>(false);
 
     constructor(private translationsService: TranslationsService,
                 private formBuilder: FormBuilder) {
@@ -85,13 +85,10 @@ export class TranslationsTableComponent implements OnInit, OnDestroy {
                 .toPromise()
                 .then(
                     (page: BundleKeysPage) => {
-                        this.page = page;
-                        this.form.clear();
-
                         this.updateColumnDefinitions();
                         this.updateForm(page);
 
-                        if(this.table) {
+                        if (this.table) {
                             this.table.renderRows();
                         }
                     }
@@ -105,11 +102,7 @@ export class TranslationsTableComponent implements OnInit, OnDestroy {
 
     @Input()
     set readOnly(readonly: boolean) {
-        if (readonly) {
-            this.form.disable();
-        } else {
-            this.form.enable();
-        }
+        this._readOnly.next(readonly);
     }
 
     isBundleFile(index, item): boolean {
@@ -117,6 +110,8 @@ export class TranslationsTableComponent implements OnInit, OnDestroy {
     }
 
     private updateForm(page: BundleKeysPage) {
+        this.form.clear();
+
         for (const file of page.files) {
             this.form.push(
                 this.formBuilder.group({file})
@@ -134,10 +129,22 @@ export class TranslationsTableComponent implements OnInit, OnDestroy {
 
                     const formGroup = this.formBuilder.group({translation});
 
-                    formGroup.addControl(
-                        'value',
-                        this.formBuilder.control((translation != null) ? translation.currentValue() : null, [Validators.required])
+                    const control = this.formBuilder.control(
+                        (translation != null) ? translation.currentValue() : null,
+                        [Validators.required]
                     );
+
+                    this._readOnly
+                        .pipe(takeUntil(this.destroy$))
+                        .subscribe((readOnly: boolean) => {
+                            if (readOnly) {
+                                control.disable();
+                            } else {
+                                control.enable();
+                            }
+                        });
+
+                    formGroup.addControl('value', control);
 
                     keyFormArray.push(formGroup);
                 }
