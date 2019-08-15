@@ -166,16 +166,37 @@
                         </goals>
                         <configuration>
                             <overwrite>true</overwrite>
-                            <outputDirectory>${project.build.directory}/config</outputDirectory>
+                            <outputDirectory>${project.build.directory}/config/aws</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>${basedir}</directory>
+                                    <directory>${basedir}/src/config/aws</directory>
                                     <includes>
                                         <include>Dockerrun.aws.json</include>
+                                        <include>ebs.config</include>
                                     </includes>
                                     <filtering>true</filtering>
                                 </resource>
                             </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>create-aws-config-zip</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <finalName>aws-config</finalName>
+                            <appendAssemblyId>false</appendAssemblyId>
+                            <descriptors>
+                                <descriptor>src/config/aws-config-zip.xml</descriptor>
+                            </descriptors>
                         </configuration>
                     </execution>
                 </executions>
