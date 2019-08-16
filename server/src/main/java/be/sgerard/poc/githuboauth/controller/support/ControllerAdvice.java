@@ -25,21 +25,37 @@ public class ControllerAdvice {
 
     @ExceptionHandler(value = ResourceNotFoundException.class)
     public Object handleResourceNotFoundException(ResourceNotFoundException exception) {
+        if (logger.isDebugEnabled()) {
+            logger.debug(exception.getMessage(), exception);
+        }
+
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(value = IllegalArgumentException.class)
     public Object handleIllegalArgumentException(IllegalArgumentException exception) {
+        if (logger.isDebugEnabled()) {
+            logger.debug(exception.getMessage(), exception);
+        }
+
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(value = IllegalStateException.class)
     public Object handleIllegalStateException(IllegalStateException exception) {
+        if (logger.isDebugEnabled()) {
+            logger.debug(exception.getMessage(), exception);
+        }
+
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(value = RepositoryException.class)
     public Object handleRepositoryException(RepositoryException exception) {
+        if (logger.isWarnEnabled()) {
+            logger.warn(exception.getMessage(), exception);
+        }
+
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
