@@ -60,6 +60,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .anyRequest()
                 .hasAnyAuthority(ROLE_REPO_MEMBER, ROLE_USER)
+                .and().logout().logoutSuccessUrl("/logout/success").permitAll()
                 .and().csrf().disable();
     }
 
