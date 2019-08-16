@@ -1,7 +1,4 @@
 spring:
-  jpa:
-    hibernate:
-      ddl-auto: update
   datasource:
     url: jdbc:h2:file:/tmp/h2-db;DB_CLOSE_ON_EXIT=FALSE;
 poc:
