@@ -12,7 +12,8 @@ security:
 spring:
   main:
     banner-mode: "OFF"
-
+  jpa:
+      open-in-view: false
 logging:
   config: "classpath:logback.xml"
 

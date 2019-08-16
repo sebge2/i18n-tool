@@ -1,6 +1,8 @@
 package be.sgerard.poc.githuboauth.controller.support;
 
+import be.sgerard.poc.githuboauth.service.LockTimeoutException;
 import be.sgerard.poc.githuboauth.service.ResourceNotFoundException;
+import be.sgerard.poc.githuboauth.service.git.RepositoryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -24,6 +26,26 @@ public class ControllerAdvice {
     @ExceptionHandler(value = ResourceNotFoundException.class)
     public Object handleResourceNotFoundException(ResourceNotFoundException exception) {
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(value = IllegalArgumentException.class)
+    public Object handleIllegalArgumentException(IllegalArgumentException exception) {
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = IllegalStateException.class)
+    public Object handleIllegalStateException(IllegalStateException exception) {
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(value = RepositoryException.class)
+    public Object handleRepositoryException(RepositoryException exception) {
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(value = LockTimeoutException.class)
+    public Object handleLockTimeoutException(LockTimeoutException exception) {
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(value = BadCredentialsException.class)
