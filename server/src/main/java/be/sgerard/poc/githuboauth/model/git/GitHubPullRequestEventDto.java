@@ -21,7 +21,7 @@ public class GitHubPullRequestEventDto {
 
         this.id = Objects.toString(pullRequestProperties.get("id"));
         this.number = Integer.valueOf(Objects.toString(pullRequestProperties.get("number")));
-        this.status = PullRequestStatus.valueOf(Objects.toString(pullRequestProperties.get("state")));
+        this.status = PullRequestStatus.fromString(Objects.toString(pullRequestProperties.get("state")));
         this.allProperties = allProperties;
     }
 

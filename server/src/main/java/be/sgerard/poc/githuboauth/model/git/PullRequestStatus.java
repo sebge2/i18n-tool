@@ -30,6 +30,7 @@ public enum PullRequestStatus {
                 return type;
             }
         }
-        return null;
+
+        throw new IllegalArgumentException("There is no status [" + status + "].");
     }
 }
