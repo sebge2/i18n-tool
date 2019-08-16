@@ -14,6 +14,8 @@ spring:
     banner-mode: "OFF"
   jpa:
       open-in-view: false
+      hibernate:
+          ddl-auto: update
 logging:
   config: "classpath:logback.xml"
 
@@ -33,3 +35,4 @@ poc:
       - en
       - fr
       - nl
+
