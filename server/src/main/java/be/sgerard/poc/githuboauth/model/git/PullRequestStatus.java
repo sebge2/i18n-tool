@@ -24,9 +24,9 @@ public enum PullRequestStatus {
     }
 
     @JsonCreator
-    public static PullRequestStatus fromString(String key) {
+    public static PullRequestStatus fromString(String status) {
         for (PullRequestStatus type : PullRequestStatus.values()) {
-            if (type.name().equalsIgnoreCase(key)) {
+            if (type.name().equalsIgnoreCase(status)) {
                 return type;
             }
         }
