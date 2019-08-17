@@ -41,7 +41,6 @@ class DefaultRepositoryAPI implements RepositoryAPI, AutoCloseable {
 
     private final Git git;
     private final File localRepositoryLocation;
-    private final UsernamePasswordCredentialsProvider credentialsProvider;
     private final AuthenticationManager authenticationManager;
     private final PullRequestManager pullRequestManager;
 
@@ -51,12 +50,10 @@ class DefaultRepositoryAPI implements RepositoryAPI, AutoCloseable {
 
     DefaultRepositoryAPI(Git git,
                          File localRepositoryLocation,
-                         UsernamePasswordCredentialsProvider credentialsProvider,
                          AuthenticationManager authenticationManager,
                          PullRequestManager pullRequestManager) {
         this.git = git;
         this.localRepositoryLocation = localRepositoryLocation;
-        this.credentialsProvider = credentialsProvider;
         this.authenticationManager = authenticationManager;
         this.pullRequestManager = pullRequestManager;
 
@@ -161,13 +158,13 @@ class DefaultRepositoryAPI implements RepositoryAPI, AutoCloseable {
 
         try {
             git.fetch()
-                .setCredentialsProvider(credentialsProvider)
+                .setCredentialsProvider(createProvider())
                 .setRemoveDeletedRefs(true)
                 .call();
 
             final PullResult result = git.pull()
                 .setRemote("origin")
-                .setCredentialsProvider(credentialsProvider)
+                .setCredentialsProvider(createProvider())
                 .call();
 
             if (!result.isSuccessful()) {
@@ -267,7 +264,7 @@ class DefaultRepositoryAPI implements RepositoryAPI, AutoCloseable {
                 .setMessage(message)
                 .call();
 
-            git.push().setCredentialsProvider(credentialsProvider).call();
+            git.push().setCredentialsProvider(createProvider()).call();
         } catch (Exception e) {
             throw new RepositoryException("Error while committing.", e);
         }
@@ -347,5 +344,9 @@ class DefaultRepositoryAPI implements RepositoryAPI, AutoCloseable {
 
     private File getFQNFile(File file) {
         return new File(getLocalRepositoryLocation(), file.toString());
+    }
+
+    private UsernamePasswordCredentialsProvider createProvider() {
+        return new UsernamePasswordCredentialsProvider(authenticationManager.getAuthToken(), "");
     }
 }

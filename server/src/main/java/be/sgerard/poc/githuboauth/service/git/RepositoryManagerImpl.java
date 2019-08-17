@@ -109,7 +109,6 @@ public class RepositoryManagerImpl implements RepositoryManager {
         final DefaultRepositoryAPI delegate = new DefaultRepositoryAPI(
                 getGit(),
                 localRepositoryLocation,
-                createProvider(),
                 authenticationManager,
                 pullRequestManager
         );
