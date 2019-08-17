@@ -183,8 +183,9 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
 
                 api.commitAll(message);
 
-                api.getPullRequestManager().createRequest(message, pullRequestBranch, workspaceEntity.getBranch());
+                final int requestNumber = api.getPullRequestManager().createRequest(message, pullRequestBranch, workspaceEntity.getBranch());
 
+                workspaceEntity.setPullRequestNumber(requestNumber);
                 workspaceEntity.setStatus(WorkspaceStatus.IN_REVIEW);
 
                 eventService.broadcastEvent(EVENT_UPDATED_WORKSPACE, WorkspaceDto.builder(workspaceEntity).build());
