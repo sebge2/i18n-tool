@@ -2,7 +2,6 @@ package be.sgerard.poc.githuboauth.service.git;
 
 import be.sgerard.poc.githuboauth.configuration.AppProperties;
 import be.sgerard.poc.githuboauth.model.git.GitHubPullRequestEventDto;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.codec.digest.HmacAlgorithms;
 import org.apache.commons.codec.digest.HmacUtils;
@@ -17,7 +16,6 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -61,9 +59,7 @@ public class GitHubWebHookService {
         }
 
         if (Objects.equals(PULL_REQUEST_EVENT, eventType)) {
-            final Map<String, Object> properties = readPayload(requestEntity);
-
-            final GitHubPullRequestEventDto event = new GitHubPullRequestEventDto(properties); // TODO improve this
+            final GitHubPullRequestEventDto event = readPayload(requestEntity);
 
             for (WebHookCallback callback : callbacks) {
                 callback.onPullRequest(event);
@@ -108,10 +104,9 @@ public class GitHubWebHookService {
         return MessageDigest.isEqual(signature.getBytes(), String.format("sha1=%s", new HmacUtils(HmacAlgorithms.HMAC_SHA_1, secretKey).hmacHex(requestEntity.getBody())).getBytes());
     }
 
-    private Map<String, Object> readPayload(RequestEntity<String> requestEntity) {
+    private GitHubPullRequestEventDto readPayload(RequestEntity<String> requestEntity) {
         try {
-            return objectMapper.readValue(requestEntity.getBody(), new TypeReference<Map<String, Object>>() {
-            });
+            return objectMapper.readValue(requestEntity.getBody(), GitHubPullRequestEventDto.class);
         } catch (IOException e) {
             throw new IllegalArgumentException("Unable to parse response.", e);
         }
