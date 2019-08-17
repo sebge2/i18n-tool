@@ -219,6 +219,8 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
             final String pullRequestBranch = workspaceEntity.getPullRequestBranch().orElse(null);
             if (pullRequestBranch != null) {
                 repositoryManager.open(api -> {
+                    logger.info("The branch {} has been removed.", pullRequestBranch);
+
                     api.removeBranch(pullRequestBranch);
                 });
             }
@@ -240,14 +242,18 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
 
         if (workspaceEntity != null) {
             updateReviewingWorkspace(workspaceEntity, pullRequest.getStatus());
+        } else {
+            logger.info("There is no workspace associated to the pull request {}, not workspace will be updated.", pullRequest.getNumber());
         }
     }
 
     private void updateReviewingWorkspace(WorkspaceEntity workspaceEntity, PullRequestStatus status) throws LockTimeoutException, RepositoryException {
         if (workspaceEntity.getStatus() != WorkspaceStatus.IN_REVIEW) {
+            logger.info("The workspace {} is not in review. It won't be updated", workspaceEntity.getId());
+
             return;
         } else if (status == null) {
-            logger.error("There is no pull request number while the workspace [" + workspaceEntity.getId() + "] is in review.");
+            logger.error("There is no pull request number while the workspace [" + workspaceEntity.getId() + "] is in review. The workspace won't be updated");
         } else if (status.isFinished()) {
             return;
         }

@@ -63,7 +63,7 @@ public class GitHubWebHookService {
         if (Objects.equals(PULL_REQUEST_EVENT, eventType)) {
             final Map<String, Object> properties = readPayload(requestEntity);
 
-            final GitHubPullRequestEventDto event = new GitHubPullRequestEventDto(properties);
+            final GitHubPullRequestEventDto event = new GitHubPullRequestEventDto(properties); // TODO improve this
 
             for (WebHookCallback callback : callbacks) {
                 callback.onPullRequest(event);
