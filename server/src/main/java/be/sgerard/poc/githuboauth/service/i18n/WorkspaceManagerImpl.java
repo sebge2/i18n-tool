@@ -131,7 +131,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
                 logger.info("Initialing workspace {}.", workspaceId);
 
                 final Instant now = Instant.now();
-                final String pullRequestBranch = workspaceEntity.getBranch() + "_i18n_" + LocalDate.ofInstant(now, ZoneId.systemDefault()).toString() + "a";
+                final String pullRequestBranch = workspaceEntity.getBranch() + "_i18n_" + LocalDate.ofInstant(now, ZoneId.systemDefault()).toString();
 
                 workspaceEntity.setStatus(WorkspaceStatus.INITIALIZED);
                 workspaceEntity.setInitializationTime(now);
@@ -237,6 +237,11 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
     @Override
     @Transactional
     public void onPullRequest(GitHubPullRequestEventDto pullRequest) throws LockTimeoutException, RepositoryException {
+        if (!pullRequest.getStatus().isFinished()) {
+            logger.info("The pull request {} is not finished, but is {}, nothing will be performed.", pullRequest.getNumber(), pullRequest.getStatus());
+            return;
+        }
+
         final WorkspaceEntity workspaceEntity = workspaceRepository
             .findByPullRequestNumber(pullRequest.getNumber())
             .orElse(null);
