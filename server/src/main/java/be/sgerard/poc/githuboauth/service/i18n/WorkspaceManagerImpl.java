@@ -237,11 +237,6 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
     @Override
     @Transactional
     public void onPullRequest(GitHubPullRequestEventDto pullRequest) throws LockTimeoutException, RepositoryException {
-        if (!pullRequest.getStatus().isFinished()) {
-            logger.info("The pull request {} is not finished, but is {}, nothing will be performed.", pullRequest.getNumber(), pullRequest.getStatus());
-            return;
-        }
-
         final WorkspaceEntity workspaceEntity = workspaceRepository
             .findByPullRequestNumber(pullRequest.getNumber())
             .orElse(null);
@@ -256,17 +251,15 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
     private void updateReviewingWorkspace(WorkspaceEntity workspaceEntity, PullRequestStatus status) throws LockTimeoutException, RepositoryException {
         if (workspaceEntity.getStatus() != WorkspaceStatus.IN_REVIEW) {
             logger.info("The workspace {} is not in review. It won't be updated", workspaceEntity.getId());
-
-            return;
         } else if (status == null) {
             logger.error("There is no pull request number while the workspace [" + workspaceEntity.getId() + "] is in review. The workspace won't be updated");
-        } else if (status.isFinished()) {
-            return;
+        } else if (!status.isFinished()) {
+            logger.info("The pull request {} is not finished, but is {}, nothing will be performed.", workspaceEntity.getPullRequestNumber().orElse(null), status);
+        } else {
+            logger.info("The pull request is now finished, deleting the workspace {}.", workspaceEntity.getId());
+
+            deleteWorkspace(workspaceEntity.getId());
         }
-
-        logger.info("The pull request is now finished, deleting the workspace {}.", workspaceEntity.getId());
-
-        deleteWorkspace(workspaceEntity.getId());
     }
 
     private List<String> listBranches(RepositoryAPI api) throws RepositoryException {
