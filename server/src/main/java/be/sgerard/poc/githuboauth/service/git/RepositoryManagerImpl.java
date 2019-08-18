@@ -46,17 +46,17 @@ public class RepositoryManagerImpl implements RepositoryManager {
     @Override
     public void initLocalRepository() throws RepositoryException {
         try {
-            if (checkRepoInitialized()) {
+            if (isInitialized()) {
                 throw new IllegalArgumentException("The repository [" + localRepositoryLocation + "] is already initialized.");
             }
 
             this.git = Git.cloneRepository()
-                    .setCredentialsProvider(createProvider())
-                    .setURI(repoUri)
-                    .setDirectory(localRepositoryLocation)
-                    .setBranchesToClone(singletonList(DEFAULT_BRANCH))
-                    .setBranch(DEFAULT_BRANCH)
-                    .call();
+                .setCredentialsProvider(createProvider())
+                .setURI(repoUri)
+                .setDirectory(localRepositoryLocation)
+                .setBranchesToClone(singletonList(DEFAULT_BRANCH))
+                .setBranch(DEFAULT_BRANCH)
+                .call();
         } catch (GitAPIException e) {
             throw new RepositoryException("Error while initializing local repository.", e);
         }
@@ -68,6 +68,11 @@ public class RepositoryManagerImpl implements RepositoryManager {
             apiConsumer.consume(api);
             return null;
         });
+    }
+
+    @Override
+    public boolean isInitialized() {
+        return localRepositoryLocation.exists() && TranslationFileUtils.listFiles(localRepositoryLocation).count() > 0;
     }
 
     @Override
@@ -89,13 +94,9 @@ public class RepositoryManagerImpl implements RepositoryManager {
         return new UsernamePasswordCredentialsProvider(authenticationManager.getAuthToken(), "");
     }
 
-    private boolean checkRepoInitialized() {
-        return localRepositoryLocation.exists() && TranslationFileUtils.listFiles(localRepositoryLocation).count() > 0;
-    }
-
     private Git getGit() throws Exception {
         if (git == null) {
-            if (!checkRepoInitialized()) {
+            if (!isInitialized()) {
                 throw new IllegalStateException("The local repository has not been initialized. Hint: call initialize.");
             }
 
@@ -107,22 +108,22 @@ public class RepositoryManagerImpl implements RepositoryManager {
 
     private RepositoryAPI initializeAPI() throws Exception {
         final DefaultRepositoryAPI delegate = new DefaultRepositoryAPI(
-                getGit(),
-                localRepositoryLocation,
-                authenticationManager,
-                pullRequestManager
+            getGit(),
+            localRepositoryLocation,
+            authenticationManager,
+            pullRequestManager
         );
 
         return (RepositoryAPI) Proxy.newProxyInstance(
-                RepositoryAPI.class.getClassLoader(),
-                new Class<?>[]{RepositoryAPI.class},
-                (o, method, objects) -> {
-                    if (!"close".equals(method.getName()) && delegate.isClosed()) {
-                        throw new IllegalStateException("Cannot access the API once closed.");
-                    }
-
-                    return method.invoke(delegate, objects);
+            RepositoryAPI.class.getClassLoader(),
+            new Class<?>[]{RepositoryAPI.class},
+            (o, method, objects) -> {
+                if (!"close".equals(method.getName()) && delegate.isClosed()) {
+                    throw new IllegalStateException("Cannot access the API once closed.");
                 }
+
+                return method.invoke(delegate, objects);
+            }
         );
     }
 

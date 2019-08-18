@@ -31,7 +31,7 @@ public enum PullRequestStatus {
     public static PullRequestStatus fromString(String status) {
         for (PullRequestStatus type : PullRequestStatus.values()) {
             if (type.name().equalsIgnoreCase(status)) {
-                logger.error("status {} match {}", status, type);
+                logger.error("status " + status + " match " + type, new Exception().fillInStackTrace() );
                 return type;
             }
         }

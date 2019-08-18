@@ -33,6 +33,12 @@ public class RepositoryController {
         }
     }
 
+    @GetMapping(path = "/repository/initialized")
+    @ApiOperation(value = "Returns whether the repository has been initialized")
+    public boolean isInitialized() {
+        return repositoryManager.isInitialized();
+    }
+
     @GetMapping("/repository/branch")
     @ApiOperation(value = "Lists all branches found on the repository.")
     public List<String> listBranches() throws Exception {

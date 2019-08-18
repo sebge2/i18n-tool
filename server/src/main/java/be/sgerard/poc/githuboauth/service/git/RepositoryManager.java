@@ -9,6 +9,8 @@ public interface RepositoryManager {
 
     void initLocalRepository() throws RepositoryException;
 
+    boolean isInitialized();
+
     void open(ApiConsumer apiConsumer) throws RepositoryException, LockTimeoutException;
 
     <T> T open(ApiTransformer<T> apiConsumer) throws RepositoryException, LockTimeoutException;
