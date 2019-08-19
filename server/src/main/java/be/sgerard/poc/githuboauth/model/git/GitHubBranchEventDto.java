@@ -1,11 +1,14 @@
 package be.sgerard.poc.githuboauth.model.git;
 
-import org.codehaus.jackson.annotate.JsonCreator;
-import org.codehaus.jackson.annotate.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * @author Sebastien Gerard
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class GitHubBranchEventDto {
 
     public static final String REF_TYPE_BRANCH = "branch";
@@ -28,7 +31,7 @@ public class GitHubBranchEventDto {
         return ref;
     }
 
-    public boolean isBranchRelated(){
+    public boolean isBranchRelated() {
         return REF_TYPE_BRANCH.equals(getRefType());
     }
 }
