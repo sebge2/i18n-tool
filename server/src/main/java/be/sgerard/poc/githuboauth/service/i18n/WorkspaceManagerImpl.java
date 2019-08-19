@@ -240,8 +240,6 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
             logger.info("The workspace {} has been deleted.", workspaceId);
 
             repository.delete(workspaceEntity);
-
-            createWorkspace(workspaceEntity.getBranch());
         }
     }
 
@@ -274,6 +272,8 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
 
         if (entity.isPresent()) {
             deleteWorkspace(entity.get().getId());
+        } else {
+            logger.debug("There is no workspace associated to the branch {}.", branch);
         }
     }
 
@@ -288,6 +288,8 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
             logger.info("The pull request is now finished, deleting the workspace {}.", workspaceEntity.getId());
 
             deleteWorkspace(workspaceEntity.getId());
+
+            createWorkspace(workspaceEntity.getBranch());
         }
     }
 

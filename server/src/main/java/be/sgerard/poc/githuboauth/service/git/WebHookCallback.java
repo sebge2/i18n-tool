@@ -13,10 +13,7 @@ public interface WebHookCallback {
     default void onCreatedBranch(String branch) throws Exception {
     }
 
-    ;
-
     default void onDeletedBranch(String branch) throws Exception {
     }
 
-    ;
 }
