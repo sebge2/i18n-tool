@@ -36,20 +36,20 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
 
     private static final Logger logger = LoggerFactory.getLogger(WorkspaceManagerImpl.class);
 
-    private final WorkspaceRepository workspaceRepository;
+    private final WorkspaceRepository repository;
     private final RepositoryManager repositoryManager;
     private final TranslationManager translationManager;
     private final PullRequestManager pullRequestManager;
     private final EventService eventService;
 
-    public WorkspaceManagerImpl(WorkspaceRepository workspaceRepository,
+    public WorkspaceManagerImpl(WorkspaceRepository repository,
                                 RepositoryManager repositoryManager,
                                 TranslationManager translationManager,
                                 PullRequestManager pullRequestManager,
                                 EventService eventService) {
         this.repositoryManager = repositoryManager;
         this.translationManager = translationManager;
-        this.workspaceRepository = workspaceRepository;
+        this.repository = repository;
         this.pullRequestManager = pullRequestManager;
         this.eventService = eventService;
     }
@@ -62,7 +62,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
 
             final List<String> availableBranches = listBranches(api);
 
-            for (WorkspaceEntity workspaceEntity : workspaceRepository.findAll()) {
+            for (WorkspaceEntity workspaceEntity : repository.findAll()) {
                 switch (workspaceEntity.getStatus()) {
                     case IN_REVIEW:
                         updateReviewingWorkspace(
@@ -84,14 +84,10 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
 
             final List<WorkspaceEntity> foundWorkspaces = new ArrayList<>();
             for (String availableBranch : availableBranches) {
-                final WorkspaceEntity workspaceEntity = new WorkspaceEntity(availableBranch);
-
-                foundWorkspaces.add(workspaceEntity);
-
-                eventService.broadcastEvent(EVENT_UPDATED_WORKSPACE, WorkspaceDto.builder(workspaceEntity).build());
+                foundWorkspaces.add(createWorkspace(availableBranch));
             }
 
-            workspaceRepository.saveAll(foundWorkspaces);
+            repository.saveAll(foundWorkspaces);
 
             return foundWorkspaces;
         });
@@ -100,19 +96,19 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
     @Override
     @Transactional(readOnly = true)
     public List<WorkspaceEntity> getWorkspaces() {
-        return workspaceRepository.findAll();
+        return repository.findAll();
     }
 
     @Override
     @Transactional(readOnly = true)
     public Optional<WorkspaceEntity> getWorkspace(String id) {
-        return workspaceRepository.findById(id);
+        return repository.findById(id);
     }
 
     @Override
     @Transactional
     public WorkspaceEntity initialize(String workspaceId) throws LockTimeoutException, RepositoryException {
-        final WorkspaceEntity checkEntity = workspaceRepository.findById(workspaceId).orElseThrow(() -> new ResourceNotFoundException(workspaceId));
+        final WorkspaceEntity checkEntity = repository.findById(workspaceId).orElseThrow(() -> new ResourceNotFoundException(workspaceId));
 
         if (checkEntity.getStatus() == WorkspaceStatus.INITIALIZED) {
             return checkEntity;
@@ -120,7 +116,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
 
         return repositoryManager.open(api -> {
             try {
-                final WorkspaceEntity workspaceEntity = workspaceRepository.findById(workspaceId).orElseThrow(() -> new ResourceNotFoundException(workspaceId));
+                final WorkspaceEntity workspaceEntity = repository.findById(workspaceId).orElseThrow(() -> new ResourceNotFoundException(workspaceId));
 
                 if (checkEntity.getStatus() == WorkspaceStatus.INITIALIZED) {
                     return checkEntity;
@@ -157,7 +153,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
     @Override
     @Transactional
     public WorkspaceEntity startReviewing(String workspaceId, String message) throws ResourceNotFoundException, LockTimeoutException, RepositoryException {
-        final WorkspaceEntity checkEntity = workspaceRepository.findById(workspaceId).orElseThrow(() -> new ResourceNotFoundException(workspaceId));
+        final WorkspaceEntity checkEntity = repository.findById(workspaceId).orElseThrow(() -> new ResourceNotFoundException(workspaceId));
 
         if (checkEntity.getStatus() == WorkspaceStatus.IN_REVIEW) {
             return checkEntity;
@@ -165,7 +161,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
 
         return repositoryManager.open(api -> {
             try {
-                final WorkspaceEntity workspaceEntity = workspaceRepository.findById(workspaceId).orElseThrow(() -> new ResourceNotFoundException(workspaceId));
+                final WorkspaceEntity workspaceEntity = repository.findById(workspaceId).orElseThrow(() -> new ResourceNotFoundException(workspaceId));
 
                 if (workspaceEntity.getStatus() == WorkspaceStatus.IN_REVIEW) {
                     return workspaceEntity;
@@ -200,7 +196,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
     @Override
     @Transactional
     public void updateTranslations(String workspaceId, Map<String, String> translations) throws ResourceNotFoundException {
-        final WorkspaceEntity workspace = workspaceRepository.findById(workspaceId)
+        final WorkspaceEntity workspace = repository.findById(workspaceId)
             .orElseThrow(() -> new ResourceNotFoundException(workspaceId));
 
         if (workspace.getStatus() != WorkspaceStatus.INITIALIZED) {
@@ -214,7 +210,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
     @Override
     @Transactional
     public void deleteWorkspace(String workspaceId) throws RepositoryException, LockTimeoutException {
-        final WorkspaceEntity workspaceEntity = workspaceRepository.findById(workspaceId).orElse(null);
+        final WorkspaceEntity workspaceEntity = repository.findById(workspaceId).orElse(null);
 
         if (workspaceEntity != null) {
             final String pullRequestBranch = workspaceEntity.getPullRequestBranch().orElse(null);
@@ -230,14 +226,16 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
 
             logger.info("The workspace {} has been deleted.", workspaceId);
 
-            workspaceRepository.delete(workspaceEntity);
+            repository.delete(workspaceEntity);
+
+            repository.save(createWorkspace(workspaceEntity.getBranch()));
         }
     }
 
     @Override
     @Transactional
     public void onPullRequest(GitHubPullRequestEventDto pullRequest) throws LockTimeoutException, RepositoryException {
-        final WorkspaceEntity workspaceEntity = workspaceRepository
+        final WorkspaceEntity workspaceEntity = repository
             .findByPullRequestNumber(pullRequest.getNumber())
             .orElse(null);
 
@@ -278,5 +276,13 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
                 }
             })
             .collect(toList());
+    }
+
+    private WorkspaceEntity createWorkspace(String availableBranch) {
+        final WorkspaceEntity workspaceEntity = new WorkspaceEntity(availableBranch);
+
+        eventService.broadcastEvent(EVENT_UPDATED_WORKSPACE, WorkspaceDto.builder(workspaceEntity).build());
+
+        return workspaceEntity;
     }
 }
