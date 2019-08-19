@@ -42,7 +42,7 @@ public class BranchGithubWebHookEventHandler implements GithubWebHookEventHandle
         } else if (event.isBranchRelated() && Objects.equals(eventType, DELETED_EVENT)) {
             callback.onDeletedBranch(event.getRef());
         } else {
-            logger.debug("Ignore event type [" + eventType + "] for ref type [" + event.getRefType() + "].");
+            logger.info("Ignore event type [" + eventType + "] for ref type [" + event.getRefType() + "].");
         }
     }
 }
