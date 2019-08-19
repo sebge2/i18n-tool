@@ -71,6 +71,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
                         );
 
                         break;
+                    case INITIALIZED:
                     case NOT_INITIALIZED:
                         if (!availableBranches.contains(workspaceEntity.getBranch())) {
                             deleteWorkspace(workspaceEntity.getId());
@@ -96,7 +97,19 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
     @Override
     @Transactional(readOnly = true)
     public List<WorkspaceEntity> getWorkspaces() {
-        return repository.findAll();
+        return repository.findAll().stream()
+            .sorted((first, second) -> {
+                if (Objects.equals(first, second)) {
+                    return 0;
+                } else if (RepositoryManagerImpl.DEFAULT_BRANCH.equals(first.getBranch())) {
+                    return -1;
+                } else if (RepositoryManagerImpl.DEFAULT_BRANCH.equals(second.getBranch())) {
+                    return 1;
+                } else {
+                    return Comparator.<String>reverseOrder().compare(first.getBranch(), second.getBranch());
+                }
+            })
+            .collect(toList());
     }
 
     @Override
@@ -228,13 +241,13 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
 
             repository.delete(workspaceEntity);
 
-            repository.save(createWorkspace(workspaceEntity.getBranch()));
+            createWorkspace(workspaceEntity.getBranch());
         }
     }
 
     @Override
     @Transactional
-    public void onPullRequest(GitHubPullRequestEventDto event) throws LockTimeoutException, RepositoryException {
+    public void onPullRequestUpdate(GitHubPullRequestEventDto event) throws LockTimeoutException, RepositoryException {
         final WorkspaceEntity workspaceEntity = repository
             .findByPullRequestNumber(event.getNumber())
             .orElse(null);
@@ -243,6 +256,24 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
             updateReviewingWorkspace(workspaceEntity, event.getStatus());
         } else {
             logger.info("There is no workspace associated to the pull request {}, not workspace will be updated.", event.getNumber());
+        }
+    }
+
+    @Override
+    @Transactional
+    public void onCreatedBranch(String branch) {
+        if (canBeAssociatedToWorkspace(branch)) {
+            createWorkspace(branch);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void onDeletedBranch(String branch) throws Exception {
+        final Optional<WorkspaceEntity> entity = repository.findByBranch(branch);
+
+        if (entity.isPresent()) {
+            deleteWorkspace(entity.get().getId());
         }
     }
 
@@ -263,25 +294,20 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
     private List<String> listBranches(RepositoryAPI api) throws RepositoryException {
         return api.listRemoteBranches()
             .stream()
-            .filter(name -> BRANCHES_TO_KEEP.matcher(name).matches())
-            .sorted((first, second) -> {
-                if (Objects.equals(first, second)) {
-                    return 0;
-                } else if (RepositoryManagerImpl.DEFAULT_BRANCH.equals(first)) {
-                    return -1;
-                } else if (RepositoryManagerImpl.DEFAULT_BRANCH.equals(second)) {
-                    return 1;
-                } else {
-                    return Comparator.<String>reverseOrder().compare(first, second);
-                }
-            })
+            .filter(name -> canBeAssociatedToWorkspace(name))
             .collect(toList());
+    }
+
+    private boolean canBeAssociatedToWorkspace(String name) {
+        return BRANCHES_TO_KEEP.matcher(name).matches();
     }
 
     private WorkspaceEntity createWorkspace(String availableBranch) {
         final WorkspaceEntity workspaceEntity = new WorkspaceEntity(availableBranch);
 
         eventService.broadcastEvent(EVENT_UPDATED_WORKSPACE, WorkspaceDto.builder(workspaceEntity).build());
+
+        repository.save(workspaceEntity);
 
         return workspaceEntity;
     }

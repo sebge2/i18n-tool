@@ -7,6 +7,16 @@ import be.sgerard.poc.githuboauth.model.git.GitHubPullRequestEventDto;
  */
 public interface WebHookCallback {
 
-    void onPullRequest(GitHubPullRequestEventDto pullRequest) throws Exception;
+    default void onPullRequestUpdate(GitHubPullRequestEventDto event) throws Exception {
+    }
 
+    default void onCreatedBranch(String branch) throws Exception {
+    }
+
+    ;
+
+    default void onDeletedBranch(String branch) throws Exception {
+    }
+
+    ;
 }

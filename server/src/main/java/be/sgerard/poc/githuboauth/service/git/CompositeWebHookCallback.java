@@ -21,23 +21,23 @@ public class CompositeWebHookCallback implements WebHookCallback {
     }
 
     @Override
-    public void onPullRequest(GitHubPullRequestEventDto event) throws Exception {
+    public void onPullRequestUpdate(GitHubPullRequestEventDto event) throws Exception {
         for (WebHookCallback callback : callbacks) {
-            callback.onPullRequest(event);
+            callback.onPullRequestUpdate(event);
         }
     }
 
     @Override
-    public void onCreatedBranch(GitHubBranchEventDto event) throws Exception {
+    public void onCreatedBranch(String branch) throws Exception {
         for (WebHookCallback callback : callbacks) {
-            callback.onCreatedBranch(event);
+            callback.onCreatedBranch(branch);
         }
     }
 
     @Override
-    public void onDeletedBranch(GitHubBranchEventDto event) throws Exception {
+    public void onDeletedBranch(String branch) throws Exception {
         for (WebHookCallback callback : callbacks) {
-            callback.onDeletedBranch(event);
+            callback.onDeletedBranch(branch);
         }
     }
 }

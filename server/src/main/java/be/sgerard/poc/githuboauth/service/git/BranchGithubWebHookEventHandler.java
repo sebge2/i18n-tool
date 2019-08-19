@@ -38,9 +38,9 @@ public class BranchGithubWebHookEventHandler implements GithubWebHookEventHandle
         final GitHubBranchEventDto event = objectMapper.readValue(payload, GitHubBranchEventDto.class);
 
         if (event.isBranchRelated() && Objects.equals(eventType, CREATED_EVENT)) {
-            callback.onCreatedBranch(event);
+            callback.onCreatedBranch(event.getRef());
         } else if (event.isBranchRelated() && Objects.equals(eventType, DELETED_EVENT)) {
-            callback.onDeletedBranch(event);
+            callback.onDeletedBranch(event.getRef());
         } else {
             logger.debug("Ignore event type [" + eventType + "] for ref type [" + event.getRefType() + "].");
         }

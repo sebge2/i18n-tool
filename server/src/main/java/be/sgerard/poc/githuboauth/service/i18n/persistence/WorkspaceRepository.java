@@ -17,4 +17,6 @@ public interface WorkspaceRepository extends CrudRepository<WorkspaceEntity, Str
 
     Optional<WorkspaceEntity> findByPullRequestNumber(int requestNumber);
 
+    Optional<WorkspaceEntity> findByBranch(String branch);
+
 }
