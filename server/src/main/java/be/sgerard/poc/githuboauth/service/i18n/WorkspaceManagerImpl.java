@@ -234,15 +234,15 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
 
     @Override
     @Transactional
-    public void onPullRequest(GitHubPullRequestEventDto pullRequest) throws LockTimeoutException, RepositoryException {
+    public void onPullRequest(GitHubPullRequestEventDto event) throws LockTimeoutException, RepositoryException {
         final WorkspaceEntity workspaceEntity = repository
-            .findByPullRequestNumber(pullRequest.getNumber())
+            .findByPullRequestNumber(event.getNumber())
             .orElse(null);
 
         if (workspaceEntity != null) {
-            updateReviewingWorkspace(workspaceEntity, pullRequest.getStatus());
+            updateReviewingWorkspace(workspaceEntity, event.getStatus());
         } else {
-            logger.info("There is no workspace associated to the pull request {}, not workspace will be updated.", pullRequest.getNumber());
+            logger.info("There is no workspace associated to the pull request {}, not workspace will be updated.", event.getNumber());
         }
     }
 

@@ -1,8 +1,6 @@
 package be.sgerard.poc.githuboauth.service.git;
 
 import be.sgerard.poc.githuboauth.configuration.AppProperties;
-import be.sgerard.poc.githuboauth.model.git.GitHubPullRequestEventDto;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.codec.digest.HmacAlgorithms;
 import org.apache.commons.codec.digest.HmacUtils;
 import org.slf4j.Logger;
@@ -13,9 +11,7 @@ import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.security.MessageDigest;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -34,18 +30,16 @@ public class GitHubWebHookService {
 
     public static final String EVENT_TYPE = "X-GitHub-Event";
 
-    public static final String PULL_REQUEST_EVENT = "pull_request";
-
-    private final ObjectMapper objectMapper;
     private final String secretKey;
-    private final List<WebHookCallback> callbacks;
+    private final GithubWebHookEventHandler eventHandler;
+    private final WebHookCallback callback;
 
-    public GitHubWebHookService(ObjectMapper objectMapper,
-                                AppProperties appProperties,
-                                List<WebHookCallback> callbacks) {
-        this.objectMapper = objectMapper;
+    public GitHubWebHookService(AppProperties appProperties,
+                                GithubWebHookEventHandler eventHandler,
+                                WebHookCallback callback) {
         this.secretKey = appProperties.getGitHubWebhookSecret();
-        this.callbacks = callbacks;
+        this.eventHandler = eventHandler;
+        this.callback = callback;
     }
 
     public ResponseEntity<?> executeWebHook(RequestEntity<String> requestEntity) throws Exception {
@@ -58,14 +52,10 @@ public class GitHubWebHookService {
             return new ResponseEntity<>("Invalid signature.", HttpStatus.UNAUTHORIZED);
         }
 
-        if (Objects.equals(PULL_REQUEST_EVENT, eventType)) {
-            final GitHubPullRequestEventDto event = readPayload(requestEntity);
-
-            for (WebHookCallback callback : callbacks) {
-                callback.onPullRequest(event);
-            }
+        if (eventHandler.support(eventType)) {
+            eventHandler.call(eventType, requestEntity.getBody(), callback);
         } else {
-            logger.info("Ignore GitHub event type [" + eventType + "].");
+            logger.debug("Ignore GitHub event type [" + eventType + "].");
         }
 
         return new ResponseEntity<>(
@@ -102,14 +92,6 @@ public class GitHubWebHookService {
 
     private boolean isPayloadSignatureValid(RequestEntity<String> requestEntity, String signature) {
         return MessageDigest.isEqual(signature.getBytes(), String.format("sha1=%s", new HmacUtils(HmacAlgorithms.HMAC_SHA_1, secretKey).hmacHex(requestEntity.getBody())).getBytes());
-    }
-
-    private GitHubPullRequestEventDto readPayload(RequestEntity<String> requestEntity) {
-        try {
-            return objectMapper.readValue(requestEntity.getBody(), GitHubPullRequestEventDto.class);
-        } catch (IOException e) {
-            throw new IllegalArgumentException("Unable to parse response.", e);
-        }
     }
 
 }
