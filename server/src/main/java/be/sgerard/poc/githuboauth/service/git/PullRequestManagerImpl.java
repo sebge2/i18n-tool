@@ -47,7 +47,7 @@ public class PullRequestManagerImpl implements PullRequestManager {
     @Override
     public PullRequestStatus getStatus(int requestNumber) throws RepositoryException {
         try {
-            return PullRequestStatus.valueOf(openRepo().pulls().get(requestNumber).json().getString("state"));
+            return PullRequestStatus.fromString(openRepo().pulls().get(requestNumber).json().getString("state"));
         } catch (IOException e) {
             throw new RepositoryException("Error while retrieving the status of the pull request " + requestNumber + ".", e);
         }
