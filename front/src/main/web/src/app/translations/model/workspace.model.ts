@@ -9,13 +9,13 @@ export class Workspace {
     readonly pullRequestNumber: number;
     readonly initializationTime: number;
 
-    constructor(user: Workspace = <Workspace>{}) {
-        this.id = user.id;
-        this.branch = user.branch;
-        this.status = user.status;
-        this.pullRequestBranch = user.pullRequestBranch;
-        this.pullRequestNumber = user.pullRequestNumber;
-        this.initializationTime = user.initializationTime;
+    constructor(workspace: Workspace = <Workspace>{}) {
+        this.id = workspace.id;
+        this.branch = workspace.branch;
+        this.status = workspace.status;
+        this.pullRequestBranch = workspace.pullRequestBranch;
+        this.pullRequestNumber = workspace.pullRequestNumber;
+        this.initializationTime = workspace.initializationTime;
     }
 
     isNotInitialized(): boolean {
