@@ -20,6 +20,10 @@ const appRoutes: Routes = [
             {
                 path: 'settings',
                 loadChildren: () => import('./../../settings/settings.module').then(m => m.SettingsModule)
+            },
+            {
+                path: 'admin',
+                loadChildren: () => import('./../../admin/admin.module').then(m => m.AdminModule)
             }
         ]
     }
