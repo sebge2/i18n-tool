@@ -15,6 +15,8 @@ public class Events {
 
     public static final String EVENT_UPDATED_TRANSLATIONS = "updated-translations";
 
+    public static final String EVENT_UPDATED_REPOSITORY = "updated-repository";
+
     public static final String QUEUE_BROADCAST = "/topic/";
 
     public static final String QUEUE_USER = "/queue/";

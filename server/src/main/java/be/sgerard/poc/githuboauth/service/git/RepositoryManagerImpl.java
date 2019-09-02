@@ -1,8 +1,10 @@
 package be.sgerard.poc.githuboauth.service.git;
 
 import be.sgerard.poc.githuboauth.configuration.AppProperties;
+import be.sgerard.poc.githuboauth.model.repository.RepositoryDescriptionDto;
 import be.sgerard.poc.githuboauth.service.LockService;
 import be.sgerard.poc.githuboauth.service.LockTimeoutException;
+import be.sgerard.poc.githuboauth.service.event.EventService;
 import be.sgerard.poc.githuboauth.service.i18n.file.TranslationFileUtils;
 import be.sgerard.poc.githuboauth.service.security.auth.AuthenticationManager;
 import org.eclipse.jgit.api.Git;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 
+import static be.sgerard.poc.githuboauth.model.event.Events.EVENT_UPDATED_REPOSITORY;
 import static java.util.Collections.singletonList;
 
 /**
@@ -28,19 +31,30 @@ public class RepositoryManagerImpl implements RepositoryManager {
     private final AuthenticationManager authenticationManager;
     private final LockService lockService;
     private final PullRequestManager pullRequestManager;
+    private final EventService eventService;
 
     private Git git;
 
     public RepositoryManagerImpl(AppProperties appProperties,
                                  AuthenticationManager authenticationManager,
                                  LockService lockService,
-                                 PullRequestManager pullRequestManager) {
+                                 PullRequestManager pullRequestManager,
+                                 EventService eventService) {
         this.repoUri = appProperties.getRepoCheckoutUri();
         this.localRepositoryLocation = new File(appProperties.getLocalRepositoryLocation());
 
         this.authenticationManager = authenticationManager;
         this.lockService = lockService;
         this.pullRequestManager = pullRequestManager;
+        this.eventService = eventService;
+    }
+
+    @Override
+    public RepositoryDescriptionDto getDescription() {
+        return new RepositoryDescriptionDto(
+            repoUri,
+            isInitialized()
+        );
     }
 
     @Override
@@ -57,6 +71,8 @@ public class RepositoryManagerImpl implements RepositoryManager {
                 .setBranchesToClone(singletonList(DEFAULT_BRANCH))
                 .setBranch(DEFAULT_BRANCH)
                 .call();
+
+            this.eventService.broadcastEvent(EVENT_UPDATED_REPOSITORY, getDescription());
         } catch (GitAPIException e) {
             throw new RepositoryException("Error while initializing local repository.", e);
         }
@@ -68,11 +84,6 @@ public class RepositoryManagerImpl implements RepositoryManager {
             apiConsumer.consume(api);
             return null;
         });
-    }
-
-    @Override
-    public boolean isInitialized() {
-        return localRepositoryLocation.exists() && TranslationFileUtils.listFiles(localRepositoryLocation).count() > 0;
     }
 
     @Override
@@ -88,6 +99,10 @@ public class RepositoryManagerImpl implements RepositoryManager {
         } catch (Exception e) {
             throw new RepositoryException("Error while listing branches.", e);
         }
+    }
+
+    private boolean isInitialized() {
+        return localRepositoryLocation.exists() && TranslationFileUtils.listFiles(localRepositoryLocation).count() > 0;
     }
 
     private UsernamePasswordCredentialsProvider createProvider() {

@@ -1,5 +1,6 @@
 package be.sgerard.poc.githuboauth.service.git;
 
+import be.sgerard.poc.githuboauth.model.repository.RepositoryDescriptionDto;
 import be.sgerard.poc.githuboauth.service.LockTimeoutException;
 
 /**
@@ -7,9 +8,9 @@ import be.sgerard.poc.githuboauth.service.LockTimeoutException;
  */
 public interface RepositoryManager {
 
-    void initLocalRepository() throws RepositoryException;
+    RepositoryDescriptionDto getDescription();
 
-    boolean isInitialized();
+    void initLocalRepository() throws RepositoryException;
 
     void open(ApiConsumer apiConsumer) throws RepositoryException, LockTimeoutException;
 

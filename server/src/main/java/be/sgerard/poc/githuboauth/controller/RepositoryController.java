@@ -1,5 +1,6 @@
 package be.sgerard.poc.githuboauth.controller;
 
+import be.sgerard.poc.githuboauth.model.repository.RepositoryDescriptionDto;
 import be.sgerard.poc.githuboauth.service.git.RepositoryAPI;
 import be.sgerard.poc.githuboauth.service.git.RepositoryException;
 import be.sgerard.poc.githuboauth.service.git.RepositoryManager;
@@ -33,10 +34,10 @@ public class RepositoryController {
         }
     }
 
-    @GetMapping(path = "/repository/initialized")
-    @ApiOperation(value = "Returns whether the repository has been initialized")
-    public boolean isInitialized() {
-        return repositoryManager.isInitialized();
+    @GetMapping(path = "/repository")
+    @ApiOperation(value = "Returns repository description.")
+    public RepositoryDescriptionDto isInitialized() {
+        return repositoryManager.getDescription();
     }
 
     @GetMapping("/repository/branch")
