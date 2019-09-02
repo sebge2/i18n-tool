@@ -1,7 +1,7 @@
 import {Component, EventEmitter, OnDestroy, OnInit, Output} from '@angular/core';
 import {Workspace} from "../../../model/workspace.model";
 import {WorkspaceService} from "../../../service/workspace.service";
-import {BehaviorSubject, forkJoin, Observable, ReplaySubject, Subject} from 'rxjs';
+import {Observable, Subject} from 'rxjs';
 import {takeUntil, tap} from "rxjs/operators";
 import * as _ from 'lodash';
 
