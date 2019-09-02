@@ -2,10 +2,11 @@ import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {RouterModule, Routes} from "@angular/router";
 import {AdminComponent} from './component/admin/admin.component';
-import { WorkspaceTableComponent } from './component/workspace-table/workspace-table.component';
+import {WorkspaceTableComponent} from './component/workspace-table/workspace-table.component';
 import {MaterialModule} from "../core/ui/material.module";
+import {FlexLayoutModule} from "@angular/flex-layout";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
-import { RepositoryInitializerComponent } from './component/repository-initializer/repository-initializer.component';
+import {RepositoryInitializerComponent} from './component/repository-initializer/repository-initializer.component';
 
 const appRoutes: Routes = [
     {path: '', pathMatch: 'full', component: AdminComponent}
@@ -18,7 +19,8 @@ const appRoutes: Routes = [
         RouterModule.forChild(appRoutes),
         MaterialModule,
         ReactiveFormsModule,
-        FormsModule
+        FormsModule,
+        FlexLayoutModule
     ],
     exports: [RouterModule]
 })
