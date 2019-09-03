@@ -1,0 +1,19 @@
+<mat-card class="card">
+    <mat-card-header>
+        <mat-card-title><i class="fas fa-hdd"></i> Repository</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+        <div
+            style="display: flex; justify-content: center; align-items: center; vertical-align: middle; margin-top: 50px;">
+            <i class="fas fa-check fa-10x" style="color: green" *ngIf="repository.isInitialized()">
+            </i>
+
+            <i class="fas fa-times-circle fa-10x" style="color: red" *ngIf="repository.isNotInitialized()">
+            </i>
+
+            <i class="fa fa-spinner fa-pulse fa-3x fa-fw fa-10x" style="color: darkorange"
+               *ngIf="repository.isInitializing()">
+            </i>
+        </div>
+    </mat-card-content>
+</mat-card>
