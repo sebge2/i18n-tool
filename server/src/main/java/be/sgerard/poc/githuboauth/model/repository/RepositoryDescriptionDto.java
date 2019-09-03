@@ -12,19 +12,19 @@ public class RepositoryDescriptionDto {
     @ApiModelProperty(notes = "URI of the remote repository.", required = true)
     private final String uri;
 
-    @ApiModelProperty(notes = "Flag indicating whether the repository is initialized.", required = true)
-    private final boolean initialized;
+    @ApiModelProperty(notes = "Current repository status.", required = true)
+    private final RepositoryStatus status;
 
-    public RepositoryDescriptionDto(String uri, boolean initialized) {
+    public RepositoryDescriptionDto(String uri, RepositoryStatus status) {
         this.uri = uri;
-        this.initialized = initialized;
+        this.status = status;
     }
 
     public String getUri() {
         return uri;
     }
 
-    public boolean isInitialized() {
-        return initialized;
+    public RepositoryStatus getStatus() {
+        return status;
     }
 }

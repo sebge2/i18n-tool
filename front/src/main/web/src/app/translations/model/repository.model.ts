@@ -2,26 +2,22 @@ import {RepositoryStatus} from "./repository-status.model";
 
 export class Repository {
 
-    private readonly _status: RepositoryStatus;
+    readonly status: RepositoryStatus;
 
     constructor(repository: Repository = <Repository>{}) {
-        this._status = repository._status;
-    }
-
-    get status(): RepositoryStatus {
-        return this._status;
+        this.status = repository.status;
     }
 
     isNotInitialized(): boolean {
-        return status == RepositoryStatus.NOT_INITIALIZED;
+        return this.status == RepositoryStatus.NOT_INITIALIZED;
     }
 
     isInitializing(): boolean {
-        return status == RepositoryStatus.INITIALIZING;
+        return this.status == RepositoryStatus.INITIALIZING;
     }
 
     isInitialized(): boolean {
-        return status == RepositoryStatus.INITIALIZED;
+        return this.status == RepositoryStatus.INITIALIZED;
     }
 
 }

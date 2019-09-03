@@ -4,6 +4,7 @@ import {EventService} from "../../core/event/service/event.service";
 import {BehaviorSubject, Subscription} from "rxjs";
 import {Repository} from "../model/repository.model";
 import {Events} from "../../core/event/model.events.model";
+import {RepositoryStatus} from "../model/repository-status.model";
 
 @Injectable({
     providedIn: 'root'
@@ -12,7 +13,7 @@ export class RepositoryService implements OnDestroy {
 
     private _repositorySubscription: Subscription;
 
-    private _repository: BehaviorSubject<Repository> = new BehaviorSubject<Repository>(new Repository(<Repository>{initialized: false}));
+    private _repository: BehaviorSubject<Repository> = new BehaviorSubject<Repository>(new Repository(<Repository>{status: RepositoryStatus.NOT_INITIALIZED}));
 
     constructor(private httpClient: HttpClient,
                 private eventService: EventService) {

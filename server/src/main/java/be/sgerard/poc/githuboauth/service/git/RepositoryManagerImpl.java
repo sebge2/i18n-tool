@@ -2,6 +2,7 @@ package be.sgerard.poc.githuboauth.service.git;
 
 import be.sgerard.poc.githuboauth.configuration.AppProperties;
 import be.sgerard.poc.githuboauth.model.repository.RepositoryDescriptionDto;
+import be.sgerard.poc.githuboauth.model.repository.RepositoryStatus;
 import be.sgerard.poc.githuboauth.service.LockService;
 import be.sgerard.poc.githuboauth.service.LockTimeoutException;
 import be.sgerard.poc.githuboauth.service.event.EventService;
@@ -53,14 +54,14 @@ public class RepositoryManagerImpl implements RepositoryManager {
     public RepositoryDescriptionDto getDescription() {
         return new RepositoryDescriptionDto(
             repoUri,
-            isInitialized()
+            getStatus()
         );
     }
 
     @Override
     public void initLocalRepository() throws RepositoryException {
         try {
-            if (isInitialized()) {
+            if (getStatus() != RepositoryStatus.INITIALIZED) {
                 throw new IllegalArgumentException("The repository [" + localRepositoryLocation + "] is already initialized.");
             }
 
@@ -101,8 +102,9 @@ public class RepositoryManagerImpl implements RepositoryManager {
         }
     }
 
-    private boolean isInitialized() {
-        return localRepositoryLocation.exists() && TranslationFileUtils.listFiles(localRepositoryLocation).count() > 0;
+    private RepositoryStatus getStatus() {
+        return (localRepositoryLocation.exists() && TranslationFileUtils.listFiles(localRepositoryLocation).count() > 0)
+            ? RepositoryStatus.INITIALIZED : RepositoryStatus.NOT_INITIALIZED;
     }
 
     private UsernamePasswordCredentialsProvider createProvider() {
@@ -111,7 +113,7 @@ public class RepositoryManagerImpl implements RepositoryManager {
 
     private Git getGit() throws Exception {
         if (git == null) {
-            if (!isInitialized()) {
+            if (getStatus() != RepositoryStatus.INITIALIZED) {
                 throw new IllegalStateException("The local repository has not been initialized. Hint: call initialize.");
             }
 
