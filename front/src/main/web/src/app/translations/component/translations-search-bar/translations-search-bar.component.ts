@@ -3,7 +3,7 @@ import {ALL_LOCALES, Locale} from "../../model/locale.model";
 import {Workspace} from "../../model/workspace.model";
 import {TranslationsSearchRequest} from "../../model/translations-search-request.model";
 import {TranslationsSearchCriterion} from "../../model/translations-search-criterion.model";
-import {LocaleIconPipe} from "../../pipe/locale-icon.pipe";
+import {LocaleIconPipe} from "../../../core/shared/pipe/locale-icon.pipe";
 
 @Component({
     selector: 'app-translations-search-bar',

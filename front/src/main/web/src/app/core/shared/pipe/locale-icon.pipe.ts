@@ -1,5 +1,5 @@
 import {Pipe, PipeTransform} from '@angular/core';
-import {Locale} from "../model/locale.model";
+import {Locale} from "../../../translations/model/locale.model";
 
 @Pipe({
     name: 'localeIcon'

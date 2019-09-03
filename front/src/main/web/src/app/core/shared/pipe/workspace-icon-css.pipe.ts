@@ -1,6 +1,6 @@
 import {Pipe, PipeTransform} from '@angular/core';
-import {Workspace} from "../model/workspace.model";
-import {WorkspaceStatus} from "../model/workspace-status.model";
+import {Workspace} from "../../../translations/model/workspace.model";
+import {WorkspaceStatus} from "../../../translations/model/workspace-status.model";
 
 @Pipe({
     name: 'workspaceIconCss'
@@ -10,11 +10,11 @@ export class WorkspaceIconCssPipe implements PipeTransform {
     transform(workspace: Workspace): any {
         switch (workspace.status) {
             case WorkspaceStatus.IN_REVIEW:
-                return "icon-in-review";
+                return "icon-workspace-in-review";
             case WorkspaceStatus.INITIALIZED:
-                return "icon-initialized";
+                return "icon-workspace-initialized";
             case WorkspaceStatus.NOT_INITIALIZED:
-                return "icon-not-initialized";
+                return "icon-workspace-not-initialized";
             default:
                 return "";
         }

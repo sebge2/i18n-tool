@@ -4,16 +4,14 @@ import {TranslationsComponent} from "./component/translations/translations.compo
 import {RouterModule, Routes} from "@angular/router";
 import {MaterialModule} from "../core/ui/material.module";
 import {WorkspaceSelectorComponent} from './component/translations-search-bar/workspace-selector/workspace-selector.component';
-import {ReactiveFormsModule, FormsModule} from "@angular/forms";
-import {WorkspaceIconPipe} from './pipe/workspace-icon.pipe';
-import {WorkspaceIconCssPipe} from './pipe/workspace-icon-css.pipe';
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {TranslationsSearchBarComponent} from './component/translations-search-bar/translations-search-bar.component';
 import {TranslationLocalesSelectorComponent} from "./component/translations-search-bar/translation-locales-selector/translation-locales-selector.component";
-import {LocaleIconPipe} from './pipe/locale-icon.pipe';
 import {TranslationCriterionSelectorComponent} from './component/translations-search-bar/translation-criterion-selector/translation-criterion-selector.component';
 import {TranslationsTableComponent} from './component/translations-table/translations-table.component';
-import { TranslationEditingCellComponent } from './component/translations-table/translation-editing-cell/translation-editing-cell.component';
-import { TranslationsStartReviewComponent } from './component/translations-start-review/translations-start-review.component';
+import {TranslationEditingCellComponent} from './component/translations-table/translation-editing-cell/translation-editing-cell.component';
+import {TranslationsStartReviewComponent} from './component/translations-start-review/translations-start-review.component';
+import {CoreSharedModule} from "../core/shared/core-shared-module";
 
 const appRoutes: Routes = [
     {
@@ -25,21 +23,20 @@ const appRoutes: Routes = [
     declarations: [
         TranslationsComponent,
         WorkspaceSelectorComponent,
-        WorkspaceIconPipe,
-        WorkspaceIconCssPipe,
         TranslationsSearchBarComponent,
         TranslationLocalesSelectorComponent,
         TranslationCriterionSelectorComponent,
         TranslationsTableComponent,
         TranslationEditingCellComponent,
-        TranslationsStartReviewComponent,
-        LocaleIconPipe
+        TranslationsStartReviewComponent
     ],
     entryComponents: [
         TranslationsStartReviewComponent
     ],
     imports: [
         CommonModule,
+        CoreSharedModule,
+
         RouterModule.forChild(appRoutes),
         MaterialModule,
         ReactiveFormsModule,

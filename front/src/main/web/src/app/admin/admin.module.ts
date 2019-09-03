@@ -7,6 +7,7 @@ import {MaterialModule} from "../core/ui/material.module";
 import {FlexLayoutModule} from "@angular/flex-layout";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {RepositoryInitializerComponent} from './component/repository-initializer/repository-initializer.component';
+import {CoreSharedModule} from "../core/shared/core-shared-module";
 
 const appRoutes: Routes = [
     {path: '', pathMatch: 'full', component: AdminComponent}
@@ -16,7 +17,10 @@ const appRoutes: Routes = [
     declarations: [AdminComponent, WorkspaceTableComponent, RepositoryInitializerComponent],
     imports: [
         CommonModule,
+        CoreSharedModule,
+
         RouterModule.forChild(appRoutes),
+
         MaterialModule,
         ReactiveFormsModule,
         FormsModule,
