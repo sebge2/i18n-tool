@@ -14,21 +14,12 @@ body {
 
 .icon-workspace-in-review {
     color: orange;
-    float: right;
-    vertical-align: middle;
-    line-height: 45px;
 }
 
 .icon-workspace-not-initialized {
     color: lightgrey;
-    float: right;
-    vertical-align: middle;
-    line-height: 45px;
 }
 
 .icon-workspace-initialized {
     color: green;
-    float: right;
-    vertical-align: middle;
-    line-height: 45px;
 }
