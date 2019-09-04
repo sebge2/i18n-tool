@@ -18,7 +18,7 @@ export class WorkspaceService implements OnDestroy {
     constructor(private httpClient: HttpClient,
                 private eventService: EventService) {
         this.httpClient.get<Workspace[]>('/api/workspace').toPromise()
-            .then(workspaces => this._workspaces.next(workspaces.map(workspace => new Workspace(workspace))))
+            .then(workspaces => this._workspaces.next(workspaces.map(workspace => new Workspace(workspace)).sort(workspaceSorter)))
             .catch(reason => console.error("Error while retrieving workspaces.", reason));
 
         this._updatedWorkspaceObservable = this.eventService.subscribe(Events.UPDATED_WORKSPACE, Workspace)
@@ -33,7 +33,7 @@ export class WorkspaceService implements OnDestroy {
                         workspaces.push(workspace);
                     }
 
-                    this._workspaces.next(workspaces);
+                    this._workspaces.next(workspaces.sort(workspaceSorter));
                 }
             );
 
@@ -47,7 +47,7 @@ export class WorkspaceService implements OnDestroy {
                         workspaces.splice(index, 1);
                     }
 
-                    this._workspaces.next(workspaces);
+                    this._workspaces.next(workspaces.sort(workspaceSorter));
                 }
             );
     }
@@ -112,5 +112,18 @@ export class WorkspaceService implements OnDestroy {
             .delete('/api/workspace/' + workspace.id)
             .toPromise()
             .catch(reason => console.error("Error while deleting.", reason));
+    }
+
+}
+
+export function workspaceSorter(first: Workspace, second: Workspace): number {
+    if (first.id === second.id) {
+        return 0;
+    } else if ("master" === first.branch) {
+        return -1;
+    } else if ("master" === second.branch) {
+        return 1;
+    } else {
+        return (first.branch < second.branch) ? -1 : 1;
     }
 }

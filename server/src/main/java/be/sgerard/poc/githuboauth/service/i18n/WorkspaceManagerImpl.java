@@ -97,19 +97,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
     @Override
     @Transactional(readOnly = true)
     public List<WorkspaceEntity> getWorkspaces() {
-        return repository.findAll().stream()
-            .sorted((first, second) -> {
-                if (Objects.equals(first, second)) {
-                    return 0;
-                } else if (RepositoryManagerImpl.DEFAULT_BRANCH.equals(first.getBranch())) {
-                    return -1;
-                } else if (RepositoryManagerImpl.DEFAULT_BRANCH.equals(second.getBranch())) {
-                    return 1;
-                } else {
-                    return Comparator.<String>reverseOrder().compare(first.getBranch(), second.getBranch());
-                }
-            })
-            .collect(toList());
+        return repository.findAll();
     }
 
     @Override
