@@ -22,6 +22,8 @@ export class WorkspaceTableComponent implements OnInit, OnDestroy {
 
     dataSource = new MatTableDataSource<Workspace>([]);
 
+    actionInProgress: boolean = false;
+
     private destroy$ = new Subject();
 
     constructor(private workspaceService: WorkspaceService,
@@ -40,6 +42,16 @@ export class WorkspaceTableComponent implements OnInit, OnDestroy {
         this.destroy$.complete();
     }
 
+    find(): void {
+        this.actionInProgress = true;
+
+        this.workspaceService
+            .find()
+            .finally(() => {
+                this.actionInProgress = false;
+            });
+    }
+
     delete(workspace: Workspace): void {
         this.dialog
             .open(ConfirmWorkspaceDeletionComponent, {
@@ -49,12 +61,12 @@ export class WorkspaceTableComponent implements OnInit, OnDestroy {
             .afterClosed()
             .subscribe((result: ConfirmDeletionDialogModel) => {
                 if (result) {
-                    // this.startReviewing = true; TODO
+                    this.actionInProgress = true;
 
                     this.workspaceService
                         .delete(result.workspace)
                         .finally(() => {
-                            // this.startReviewing = false; TODO
+                            this.actionInProgress = false;
                         });
                 }
             });

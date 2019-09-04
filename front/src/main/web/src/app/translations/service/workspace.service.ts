@@ -76,6 +76,21 @@ export class WorkspaceService implements OnDestroy {
             .catch(reason => console.error("Error while initializing workspace.", reason));
     }
 
+    find(): Promise<any> {
+        return this.httpClient
+            .put(
+                '/api/workspace/',
+                null,
+                {
+                    params: {
+                        do: 'FIND'
+                    }
+                }
+            )
+            .toPromise()
+            .catch(reason => console.error("Error while finding workspaces.", reason));
+    }
+
     startReview(workspace: Workspace, comment: string): Promise<any> {
         return this.httpClient
             .put(
