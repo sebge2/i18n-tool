@@ -1,9 +1,13 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {MatTableDataSource} from '@angular/material';
+import {MatDialog, MatTableDataSource} from '@angular/material';
 import {Workspace} from "../../../translations/model/workspace.model";
 import {WorkspaceService} from "../../../translations/service/workspace.service";
 import {Subject} from "rxjs";
 import {takeUntil} from "rxjs/operators";
+import {
+    ConfirmDeletionDialogModel,
+    ConfirmWorkspaceDeletionComponent
+} from "./confirm-deletion/confirm-workspace-deletion.component";
 
 @Component({
     selector: 'app-workspace-table',
@@ -20,7 +24,8 @@ export class WorkspaceTableComponent implements OnInit, OnDestroy {
 
     private destroy$ = new Subject();
 
-    constructor(private workspaceService: WorkspaceService) {
+    constructor(private workspaceService: WorkspaceService,
+                private dialog: MatDialog) {
     }
 
     ngOnInit(): void {
@@ -36,7 +41,23 @@ export class WorkspaceTableComponent implements OnInit, OnDestroy {
     }
 
     delete(workspace: Workspace): void {
-        alert(workspace.branch);
+        this.dialog
+            .open(ConfirmWorkspaceDeletionComponent, {
+                width: '400px',
+                data: <ConfirmDeletionDialogModel>{workspace: workspace}
+            })
+            .afterClosed()
+            .subscribe((result: ConfirmDeletionDialogModel) => {
+                if (result) {
+                    // this.startReviewing = true; TODO
+
+                    this.workspaceService
+                        .delete(result.workspace)
+                        .finally(() => {
+                            // this.startReviewing = false; TODO
+                        });
+                }
+            });
     }
 
 }

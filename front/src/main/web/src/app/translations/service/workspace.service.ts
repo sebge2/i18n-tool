@@ -91,4 +91,11 @@ export class WorkspaceService implements OnDestroy {
             .toPromise()
             .catch(reason => console.error("Error while starting review.", reason));
     }
+
+    delete(workspace: Workspace): Promise<any> {
+        return this.httpClient
+            .delete('/api/workspace/' + workspace.id)
+            .toPromise()
+            .catch(reason => console.error("Error while deleting.", reason));
+    }
 }
