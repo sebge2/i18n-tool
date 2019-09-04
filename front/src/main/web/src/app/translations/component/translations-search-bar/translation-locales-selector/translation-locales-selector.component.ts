@@ -5,6 +5,7 @@ import {FormControl} from "@angular/forms";
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import {map, startWith} from "rxjs/operators";
 import {Observable} from 'rxjs';
+import {UserSettingsService} from "../../../../settings/service/user-settings.service";
 
 @Component({
     selector: 'app-translation-locales-selector',
@@ -28,8 +29,8 @@ export class TranslationLocalesSelectorComponent implements OnInit {
     localeInputCtrl = new FormControl();
     separatorKeysCodes: number[] = [ENTER, COMMA];
 
-    constructor() {
-        this.value = [Locale.FR, Locale.EN];
+    constructor(private userSettingsService: UserSettingsService) {
+        this.value = userSettingsService.getUserLocales();
     }
 
     ngOnInit() {
