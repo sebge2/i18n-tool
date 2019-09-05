@@ -1,10 +1,10 @@
-import {Component, ElementRef, EventEmitter, OnInit, Output, ViewChild, Input} from '@angular/core';
+import {Component, ElementRef, EventEmitter, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {ALL_LOCALES, Locale} from "../../../model/locale.model";
 import {MatAutocompleteSelectedEvent, MatChipInputEvent} from "@angular/material";
 import {FormControl} from "@angular/forms";
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
-import {map, startWith} from "rxjs/operators";
-import {Observable} from 'rxjs';
+import {map, startWith, take, takeUntil} from "rxjs/operators";
+import {Observable, Subject} from 'rxjs';
 import {UserSettingsService} from "../../../../settings/service/user-settings.service";
 
 @Component({
@@ -12,7 +12,7 @@ import {UserSettingsService} from "../../../../settings/service/user-settings.se
     templateUrl: './translation-locales-selector.component.html',
     styleUrls: ['./translation-locales-selector.component.css']
 })
-export class TranslationLocalesSelectorComponent implements OnInit {
+export class TranslationLocalesSelectorComponent implements OnInit, OnDestroy {
 
     @ViewChild('localeInput', {static: false}) localeInput: ElementRef<HTMLInputElement>;
     @ViewChild('auto', {static: false}) matAutocomplete;
@@ -29,11 +29,20 @@ export class TranslationLocalesSelectorComponent implements OnInit {
     localeInputCtrl = new FormControl();
     separatorKeysCodes: number[] = [ENTER, COMMA];
 
+    private destroy$ = new Subject();
+
     constructor(private userSettingsService: UserSettingsService) {
-        this.value = userSettingsService.getUserLocales();
     }
 
     ngOnInit() {
+        this.userSettingsService
+            .getUserLocales()
+            .pipe(
+                takeUntil(this.destroy$),
+                take(1)
+            )
+            .subscribe(locales => this.value = locales);
+
         this.filteredLocales = this.localeInputCtrl.valueChanges
             .pipe(
                 startWith(null),
@@ -44,6 +53,10 @@ export class TranslationLocalesSelectorComponent implements OnInit {
 
         this.availableLocales = this.allLocales.filter(locale => this.value.indexOf(locale) < 0);
         this.valueChange.emit(this.value.slice())
+    }
+
+    ngOnDestroy(): void {
+        this.destroy$.complete();
     }
 
     selected(event: MatAutocompleteSelectedEvent): void {
