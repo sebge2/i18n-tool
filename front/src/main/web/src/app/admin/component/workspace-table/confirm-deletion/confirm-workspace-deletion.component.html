@@ -1,15 +1,17 @@
-<h1 mat-dialog-title>Confirm Erasing</h1>
+<h1 mat-dialog-title>{{'ADMIN.WORKSPACES.CONFIRM_DELETION.TITLE' | translate}}</h1>
 <form [formGroup]="form" (ngSubmit)="submit()">
     <div mat-dialog-content>
-        <p>Please confirm the <b>erasing</b> of <b>{{workspace.branch}}</b> (all modifications will be lost) .</p>
+        <p [innerHTML]="'ADMIN.WORKSPACES.CONFIRM_DELETION.EXPLAIN' | translate:{workspace:workspace.branch}"></p>
 
-        <p>Please fill the name of the workspace to confirm:</p>
+        <p>{{'ADMIN.WORKSPACES.CONFIRM_DELETION.PLEASE' | translate}}</p>
         <mat-form-field formControlName="name" ngDefaultControl>
             <input matInput cdkFocusInitial>
         </mat-form-field>
     </div>
     <div mat-dialog-actions>
-        <button mat-button type="button" (click)="onCancel()">Cancel</button>
-        <button mat-button type="submit" [style.color]="!form.valid ? '' : 'red'" (click)="submit()" [disabled]="!form.valid"><i class="fas fa-eraser"></i> Erase</button>
+        <button mat-button type="button" (click)="onCancel()">{{'SHARED.CANCEL_ACTION' | translate}}</button>
+        <button mat-button type="submit" [style.color]="!form.valid ? '' : 'red'" (click)="submit()" [disabled]="!form.valid">
+            <i class="fas fa-eraser"></i> {{'ADMIN.WORKSPACES.CONFIRM_DELETION.ERASE_ACTION' | translate}}
+        </button>
     </div>
 </form>

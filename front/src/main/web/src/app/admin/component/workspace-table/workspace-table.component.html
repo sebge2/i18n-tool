@@ -2,7 +2,7 @@
     <mat-card-header>
         <mat-card-title-group>
             <mat-card-title>
-                <i class="fas fa-tags"></i> Workspaces
+                <i class="fas fa-tags"></i> {{"SHARED.WORKSPACES_TITLE" | translate}}
                 <i class="fas fa-spinner fa-spin" *ngIf="actionInProgress"></i>
             </mat-card-title>
         </mat-card-title-group>
@@ -28,6 +28,6 @@
         </mat-table>
     </mat-card-content>
     <mat-card-actions>
-        <button mat-button (click)="find()" [disabled]="actionInProgress"><i class="fas fa-sync-alt"></i> Refresh</button>
+        <button mat-button (click)="find()" [disabled]="actionInProgress"><i class="fas fa-sync-alt"></i> {{"ADMIN.WORKSPACES.REFRESH_ACTION" | translate}}</button>
     </mat-card-actions>
 </mat-card>
