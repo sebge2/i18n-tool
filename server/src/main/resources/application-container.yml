@@ -2,4 +2,4 @@ spring:
   datasource:
     url: jdbc:h2:file:/srv/database/db;DB_CLOSE_ON_EXIT=FALSE;
 poc:
-    local-repository-location: /srv/sandbox
+    base-directory: /srv

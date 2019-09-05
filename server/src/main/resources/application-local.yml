@@ -1,5 +1,5 @@
 spring:
   datasource:
-    url: jdbc:h2:file:/tmp/h2-db;DB_CLOSE_ON_EXIT=FALSE;
+    url: jdbc:h2:file:${BASE_REPOSITORY}/database/db;DB_CLOSE_ON_EXIT=FALSE;
 poc:
-    local-repository-location: ${LOCAL_REPOSITORY}
+    base-directory: ${BASE_REPOSITORY}

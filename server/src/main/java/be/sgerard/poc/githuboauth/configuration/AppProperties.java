@@ -2,6 +2,7 @@ package be.sgerard.poc.githuboauth.configuration;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import java.io.File;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -18,7 +19,7 @@ import static java.util.stream.Collectors.toSet;
 @ConfigurationProperties(prefix = "poc")
 public class AppProperties {
 
-    private String localRepositoryLocation;
+    private String baseDirectory;
     private String repoUserName;
     private String repoName;
     private int lockTimeoutInS = 120;
@@ -29,12 +30,16 @@ public class AppProperties {
     public AppProperties() {
     }
 
-    public String getLocalRepositoryLocation() {
-        return localRepositoryLocation;
+    public String getBaseDirectory() {
+        return baseDirectory;
     }
 
-    public void setLocalRepositoryLocation(String localRepositoryLocation) {
-        this.localRepositoryLocation = localRepositoryLocation;
+    public void setBaseDirectory(String baseDirectory) {
+        this.baseDirectory = baseDirectory;
+    }
+
+    public File getRepositoryLocation(){
+        return new File(getBaseDirectory(), "sandbox");
     }
 
     public String getRepoUserName() {
