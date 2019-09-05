@@ -8,9 +8,9 @@ import be.sgerard.poc.githuboauth.service.LockTimeoutException;
  */
 public interface RepositoryManager {
 
-    RepositoryDescriptionDto getDescription();
+    RepositoryDescriptionDto getDescription() throws RepositoryException;
 
-    void initLocalRepository() throws RepositoryException;
+    boolean initLocalRepository() throws LockTimeoutException, RepositoryException;
 
     void open(ApiConsumer apiConsumer) throws RepositoryException, LockTimeoutException;
 

@@ -6,15 +6,16 @@ import be.sgerard.poc.githuboauth.model.repository.RepositoryStatus;
 import be.sgerard.poc.githuboauth.service.LockService;
 import be.sgerard.poc.githuboauth.service.LockTimeoutException;
 import be.sgerard.poc.githuboauth.service.event.EventService;
-import be.sgerard.poc.githuboauth.service.i18n.file.TranslationFileUtils;
 import be.sgerard.poc.githuboauth.service.security.auth.AuthenticationManager;
+import org.apache.commons.io.IOUtils;
 import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.springframework.cglib.proxy.Proxy;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 import static be.sgerard.poc.githuboauth.model.event.Events.EVENT_UPDATED_REPOSITORY;
 import static java.util.Collections.singletonList;
@@ -28,7 +29,8 @@ public class RepositoryManagerImpl implements RepositoryManager {
     public static final String DEFAULT_BRANCH = "master";
 
     private final String repoUri;
-    private final File localRepositoryLocation;
+    private final File repositoryLocation;
+    private final File repositoryLockFile;
     private final AuthenticationManager authenticationManager;
     private final LockService lockService;
     private final PullRequestManager pullRequestManager;
@@ -42,7 +44,9 @@ public class RepositoryManagerImpl implements RepositoryManager {
                                  PullRequestManager pullRequestManager,
                                  EventService eventService) {
         this.repoUri = appProperties.getRepoCheckoutUri();
-        this.localRepositoryLocation = new File(appProperties.getLocalRepositoryLocation());
+
+        this.repositoryLocation = appProperties.getRepositoryLocationAsFile();
+        this.repositoryLockFile = new File(appProperties.getBaseDirectoryAsFile(), "repository.lock");
 
         this.authenticationManager = authenticationManager;
         this.lockService = lockService;
@@ -59,22 +63,38 @@ public class RepositoryManagerImpl implements RepositoryManager {
     }
 
     @Override
-    public void initLocalRepository() throws RepositoryException {
+    public boolean initLocalRepository() throws LockTimeoutException, RepositoryException {
         try {
-            if (getStatus() != RepositoryStatus.INITIALIZED) {
-                throw new IllegalArgumentException("The repository [" + localRepositoryLocation + "] is already initialized.");
+            if (getStatus() != RepositoryStatus.NOT_INITIALIZED) {
+                return false;
             }
 
-            this.git = Git.cloneRepository()
-                .setCredentialsProvider(createProvider())
-                .setURI(repoUri)
-                .setDirectory(localRepositoryLocation)
-                .setBranchesToClone(singletonList(DEFAULT_BRANCH))
-                .setBranch(DEFAULT_BRANCH)
-                .call();
+            return lockService.executeInLock(() -> {
+                if (getStatus() != RepositoryStatus.NOT_INITIALIZED) {
+                    return false;
+                }
 
-            this.eventService.broadcastEvent(EVENT_UPDATED_REPOSITORY, getDescription());
-        } catch (GitAPIException e) {
+                updateLockFile(RepositoryStatus.INITIALIZING);
+
+                this.eventService.broadcastEvent(EVENT_UPDATED_REPOSITORY, getDescription());
+
+                this.git = Git.cloneRepository()
+                    .setCredentialsProvider(createProvider())
+                    .setURI(repoUri)
+                    .setDirectory(repositoryLocation)
+                    .setBranchesToClone(singletonList(DEFAULT_BRANCH))
+                    .setBranch(DEFAULT_BRANCH)
+                    .call();
+
+                updateLockFile(RepositoryStatus.INITIALIZED);
+
+                this.eventService.broadcastEvent(EVENT_UPDATED_REPOSITORY, getDescription());
+
+                return true;
+            });
+        } catch (LockTimeoutException | RepositoryException e) {
+            throw e;
+        } catch (Exception e) {
             throw new RepositoryException("Error while initializing local repository.", e);
         }
     }
@@ -102,9 +122,26 @@ public class RepositoryManagerImpl implements RepositoryManager {
         }
     }
 
-    private RepositoryStatus getStatus() {
-        return (localRepositoryLocation.exists() && TranslationFileUtils.listFiles(localRepositoryLocation).count() > 0)
-            ? RepositoryStatus.INITIALIZED : RepositoryStatus.NOT_INITIALIZED;
+    private RepositoryStatus getStatus() throws RepositoryException {
+        try {
+            if (repositoryLockFile.exists()) {
+                return RepositoryStatus.valueOf(IOUtils.toString(repositoryLockFile.toURI()));
+            } else {
+                return RepositoryStatus.NOT_INITIALIZED;
+            }
+        } catch (IOException e) {
+            throw new RepositoryException("Cannot retrieve repository status.", e);
+        }
+    }
+
+    private void updateLockFile(RepositoryStatus status) throws RepositoryException {
+        try {
+            try (FileOutputStream output = new FileOutputStream(repositoryLockFile)) {
+                IOUtils.write(status.name(), output);
+            }
+        } catch (IOException e) {
+            throw new RepositoryException("Cannot create lock file for status " + status + ".", e);
+        }
     }
 
     private UsernamePasswordCredentialsProvider createProvider() {
@@ -117,7 +154,7 @@ public class RepositoryManagerImpl implements RepositoryManager {
                 throw new IllegalStateException("The local repository has not been initialized. Hint: call initialize.");
             }
 
-            git = Git.open(localRepositoryLocation);
+            git = Git.open(repositoryLocation);
         }
 
         return git;
@@ -126,7 +163,7 @@ public class RepositoryManagerImpl implements RepositoryManager {
     private RepositoryAPI initializeAPI() throws Exception {
         final DefaultRepositoryAPI delegate = new DefaultRepositoryAPI(
             getGit(),
-            localRepositoryLocation,
+            repositoryLocation,
             authenticationManager,
             pullRequestManager
         );

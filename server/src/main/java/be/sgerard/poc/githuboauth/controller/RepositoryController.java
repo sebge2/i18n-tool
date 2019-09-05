@@ -26,7 +26,7 @@ public class RepositoryController {
 
     @PutMapping(path = "/repository")
     @ApiOperation(value = "Executes an action on the repository.")
-    public void executeRepositoryAction(@RequestParam(name = "do") RepositoryListAction doAction) throws RepositoryException {
+    public void executeRepositoryAction(@RequestParam(name = "do") RepositoryListAction doAction) throws Exception {
         switch (doAction) {
             case INITIALIZE:
                 repositoryManager.initLocalRepository();
@@ -36,7 +36,7 @@ public class RepositoryController {
 
     @GetMapping(path = "/repository")
     @ApiOperation(value = "Returns repository description.")
-    public RepositoryDescriptionDto isInitialized() {
+    public RepositoryDescriptionDto isInitialized() throws RepositoryException {
         return repositoryManager.getDescription();
     }
 

@@ -34,11 +34,15 @@ public class AppProperties {
         return baseDirectory;
     }
 
+    public File getBaseDirectoryAsFile() {
+        return new File(baseDirectory);
+    }
+
     public void setBaseDirectory(String baseDirectory) {
         this.baseDirectory = baseDirectory;
     }
 
-    public File getRepositoryLocation(){
+    public File getRepositoryLocationAsFile(){
         return new File(getBaseDirectory(), "sandbox");
     }
 
