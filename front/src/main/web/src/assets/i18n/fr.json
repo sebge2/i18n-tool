@@ -9,8 +9,8 @@
             "REFRESH_ACTION": "Rafraîchir",
             "CONFIRM_DELETION": {
                 "TITLE": "Confirmer la suppression",
-                "EXPLAIN": "",
-                "PLEASE": "",
+                "EXPLAIN": "Veuillez confirmer la <b>suppression</b> de l'espace de travail <b>{{workspace}}</b> (toutes les modifications seront perdues).",
+                "PLEASE": "Veuillez saisir le nom de l'espace de travail afin de confirmer:",
                 "ERASE_ACTION": "Supprimer"
             }
         }
