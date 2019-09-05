@@ -45,6 +45,7 @@ export class TranslationLocalesSelectorComponent implements OnInit, OnDestroy {
 
         this.filteredLocales = this.localeInputCtrl.valueChanges
             .pipe(
+                takeUntil(this.destroy$),
                 startWith(null),
                 map((localeString: string | null) => {
                     return localeString ? this.filter(localeString) : this.availableLocales;
