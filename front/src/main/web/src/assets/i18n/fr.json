@@ -1,0 +1,18 @@
+{
+    "SHARED": {
+        "REPOSITORY_TITLE": "Répertoire",
+        "WORKSPACES_TITLE": "Espace de Travail",
+        "CANCEL_ACTION": "Annuler"
+    },
+    "ADMIN": {
+        "WORKSPACES": {
+            "REFRESH_ACTION": "Rafraîchir",
+            "CONFIRM_DELETION": {
+                "TITLE": "Confirmer la suppression",
+                "EXPLAIN": "",
+                "PLEASE": "",
+                "ERASE_ACTION": "Supprimer"
+            }
+        }
+    }
+}

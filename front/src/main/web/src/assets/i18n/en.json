@@ -1,0 +1,18 @@
+{
+    "SHARED": {
+        "REPOSITORY_TITLE": "Repository",
+        "WORKSPACES_TITLE": "Workspaces",
+        "CANCEL_ACTION": "Cancel"
+    },
+    "ADMIN": {
+        "WORKSPACES": {
+            "REFRESH_ACTION": "Refresh",
+            "CONFIRM_DELETION": {
+                "TITLE": "Confirm Erasing",
+                "EXPLAIN": "Please confirm the <b>erasing</b> of <b>{{workspace}}</b> (all modifications will be lost).",
+                "PLEASE": "Please fill the name of the workspace to confirm:",
+                "ERASE_ACTION": "Erase"
+            }
+        }
+    }
+}
