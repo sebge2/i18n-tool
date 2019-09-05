@@ -5,6 +5,7 @@ import {MainMessageComponent} from './component/main-message/main-message.compon
 import {WorkspaceIconPipe} from "./pipe/workspace-icon.pipe";
 import {WorkspaceIconCssPipe} from "./pipe/workspace-icon-css.pipe";
 import {LocaleIconPipe} from "./pipe/locale-icon.pipe";
+import {TranslateModule} from "@ngx-translate/core";
 
 @NgModule({
     declarations: [
@@ -19,6 +20,7 @@ import {LocaleIconPipe} from "./pipe/locale-icon.pipe";
     ],
     exports: [
         CommonModule,
+        TranslateModule,
 
         MainMessageComponent,
         WorkspaceIconPipe,
