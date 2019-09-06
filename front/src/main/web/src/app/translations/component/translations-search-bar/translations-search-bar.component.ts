@@ -111,7 +111,7 @@ export class TranslationsSearchBarComponent implements OnInit {
                 title += ",";
             }
 
-            title += " <span class=\"" + this.localeIconPipe.transform(this.searchRequest.locales[i]) + "\"></span>" + this.searchRequest.locales[i];
+            title += " <span class=\"" + this.localeIconPipe.transform(this.searchRequest.locales[i]) + "\"></span>" + this.searchRequest.locales[i].toString().toUpperCase();
         }
 
         return title;

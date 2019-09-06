@@ -19,7 +19,7 @@
                 <ng-container *ngFor="let columnDefinition of columnDefinitions"
                               [matColumnDef]="columnDefinition.columnDef">
                     <th mat-header-cell *matHeaderCellDef>
-                        <span [class]="columnDefinition.header | localeIcon"></span> {{columnDefinition.header }}
+                        <span [class]="columnDefinition.header | localeIcon"></span> {{columnDefinition.header.toUpperCase() }}
                     </th>
                     <td mat-cell *matCellDef="let rowFormArray" style="text-align: left">
                         <ng-template [ngIf]="columnDefinition.isTranslation(rowFormArray)">
