@@ -4,12 +4,17 @@
         "WORKSPACES_TITLE": "Workspaces",
         "CANCEL_ACTION": "Cancel"
     },
+    "TRANSLATIONS": {
+        "SEARCH_BAR": {
+            "TITLE": "Search {criterion, select, ALL{for <b>all</b> translations} MISSING_TRANSLATIONS{for <b>missing</b> translations} TRANSLATIONS_CURRENT_USER_UPDATED{for translations that <b>I have updated</b>} UPDATED_TRANSLATIONS{for <b>updated</b> translations} other{}} {workspace, select, null{} other {on <b>{workspace}</b> branch}} {locales, select, true{for <b>all locales</b>} other{for locales {locales}}}"
+        }
+    },
     "ADMIN": {
         "WORKSPACES": {
             "REFRESH_ACTION": "Refresh",
             "CONFIRM_DELETION": {
                 "TITLE": "Confirm Erasing",
-                "EXPLAIN": "Please confirm the <b>erasing</b> of <b>{{workspace}}</b> (all modifications will be lost).",
+                "EXPLAIN": "Please confirm the <b>erasing</b> of <b>{workspace}</b> (all modifications will be lost).",
                 "PLEASE": "Please fill the name of the workspace to confirm:",
                 "ERASE_ACTION": "Erase"
             }

@@ -1,7 +1,7 @@
 <mat-expansion-panel [(expanded)]="expanded">
     <mat-expansion-panel-header>
         <mat-panel-title>
-            <div [innerHTML]="title()"></div>
+            <div [innerHTML]="'TRANSLATIONS.SEARCH_BAR.TITLE' | translate:{criterion: searchRequest.criterion.toString(), workspace: ((this.searchRequest.workspace != null) ? this.searchRequest.workspace.branch : null), locales: ((isSearchForAllLocales() ? true : getLocalesAsHtmlList()))}"></div>
         </mat-panel-title>
         <mat-panel-description>
         </mat-panel-description>

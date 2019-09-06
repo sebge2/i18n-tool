@@ -98,45 +98,23 @@ export class TranslationsSearchBarComponent implements OnInit {
         this.onSearchChange.emit(new TranslationsSearchRequest(this.searchRequest));
     }
 
-    title(): String {
-        let title = "Search";
+    isSearchForAllLocales(): boolean {
+        return this.searchRequest.locales.length == 0 || this.searchRequest.locales.length == ALL_LOCALES.length;
+    }
 
-        switch (this.searchRequest.criterion) {
-            case TranslationsSearchCriterion.ALL:
-                title += " for <b>all</b> translations";
-                break;
-            case TranslationsSearchCriterion.MISSING_TRANSLATIONS:
-                title += " for <b>missing</b> translations";
-                break;
-            case TranslationsSearchCriterion.TRANSLATIONS_CURRENT_USER_UPDATED:
-                title += " for translations that <b>I have updated</b>";
-                break;
-            case TranslationsSearchCriterion.UPDATED_TRANSLATIONS:
-                title += " for <b>updated</b> translations";
-                break;
-        }
-
-        if (this.searchRequest.workspace != null) {
-            title += " on <b>" + this.searchRequest.workspace.branch + "</b> branch";
-        }
-
-        if (this.searchRequest.locales.length == 0 || this.searchRequest.locales.length == ALL_LOCALES.length) {
-            title += " for <b>all locales</b>";
-        } else {
-            title += " for locales ";
-
-            for (let i = 0; i < this.searchRequest.locales.length; i++) {
-                if (i == this.searchRequest.locales.length - 1 && i > 0) {
-                    title += " and ";
-                } else if (i > 0) {
-                    title += ",";
-                }
-
-                title += " <span class=\"" + this.localeIconPipe.transform(this.searchRequest.locales[i]) + "\"></span>" + this.searchRequest.locales[i];
+    getLocalesAsHtmlList(): String {
+        let title = "";
+        for (let i = 0; i < this.searchRequest.locales.length; i++) {
+            if (i == this.searchRequest.locales.length - 1 && i > 0) {
+                title += " and ";
+            } else if (i > 0) {
+                title += ",";
             }
+
+            title += " <span class=\"" + this.localeIconPipe.transform(this.searchRequest.locales[i]) + "\"></span>" + this.searchRequest.locales[i];
         }
 
-        return title + ".";
+        return title;
     }
 
     private isFullyLoaded() {
