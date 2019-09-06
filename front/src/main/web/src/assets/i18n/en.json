@@ -2,11 +2,33 @@
     "SHARED": {
         "REPOSITORY_TITLE": "Repository",
         "WORKSPACES_TITLE": "Workspaces",
+
+        "WORKSPACE_LABEL": "Workspace:",
+        "LOCALES_LABEL" : "Locales:",
+
         "CANCEL_ACTION": "Cancel"
     },
     "TRANSLATIONS": {
+        "PLEASE_WAIT": "The workspace is initializing, please wait.",
+        "INITIALIZING_ALT": "Initializing workspace",
+        "START_REVIEW_BUTTON": "Publish and ask a review",
+
         "SEARCH_BAR": {
-            "TITLE": "Search {criterion, select, ALL{for <b>all</b> translations} MISSING_TRANSLATIONS{for <b>missing</b> translations} TRANSLATIONS_CURRENT_USER_UPDATED{for translations that <b>I have updated</b>} UPDATED_TRANSLATIONS{for <b>updated</b> translations} other{}} {workspace, select, null{} other {on <b>{workspace}</b> branch}} {locales, select, true{for <b>all locales</b>} other{for locales {locales}}}"
+            "TITLE": "Search {criterion, select, ALL{for <b>all</b> translations} MISSING_TRANSLATIONS{for <b>missing</b> translations} TRANSLATIONS_CURRENT_USER_UPDATED{for translations that <b>I have updated</b>} UPDATED_TRANSLATIONS{for <b>updated</b> translations} other{}} {workspace, select, null{} other {on <b>{workspace}</b> branch}} {locales, select, true{for <b>all locales</b>} other{for locales {locales}}}",
+            "SEARCH_BUTTON": "Search",
+            "CRITERION_ALL": "All",
+            "CRITERION_MISSING": "Missing",
+            "CRITERION_USER_UPDATED": "I have updated",
+            "CRITERION_UPDATED": "Someone updated it"
+        },
+        "TABLE": {
+            "UNSAVED": "Your changes are not saved yet",
+            "NO_RESULT": "There are no result, please modify your criteria."
+        },
+        "START_REVIEW": {
+            "TITLE": "Start a review",
+            "COMMENT": "Comment",
+            "START_ACTION": "Start"
         }
     },
     "ADMIN": {

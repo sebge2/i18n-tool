@@ -10,7 +10,7 @@
             <mat-icon matChipRemove>cancel</mat-icon>
         </mat-chip>
         <input
-                placeholder="Locales"
+                [placeholder]="'SHARED.LOCALES_LABEL' | translate"
                 #localeInput
                 [formControl]="localeInputCtrl"
                 [matAutocomplete]="auto"

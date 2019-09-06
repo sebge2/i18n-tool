@@ -7,8 +7,8 @@
 
 <div *ngIf="(searchRequest != null) && (searchRequest.workspace != null) && searchRequest.workspace.isNotInitialized()"
      class="container">
-    <p>The workspace is initializing, please wait.</p>
-    <img src="assets/scanning.gif" alt="Initializing workspace"/>
+    <p>{{'TRANSLATIONS.PLEASE_WAIT' | translate}}</p>
+    <img src="assets/scanning.gif" [alt]="'TRANSLATIONS.INITIALIZING_ALT' | translate"/>
 </div>
 
 <div
@@ -20,7 +20,7 @@
     <div style="text-align: right; margin-top: 10px;"
          *ngIf="(searchRequest != null) && (searchRequest.workspace != null) && searchRequest.workspace.isInitialized()">
         <button mat-flat-button color="primary" (click)="openStartReviewDialog()" [disabled]="startReviewing">
-            Publish and ask a review
+            {{'TRANSLATIONS.START_REVIEW_BUTTON' | translate}}
 
             <i class="fa fa-spinner fa-spin" *ngIf="startReviewing"></i>
         </button>

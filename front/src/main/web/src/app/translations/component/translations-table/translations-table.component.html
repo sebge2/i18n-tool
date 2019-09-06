@@ -1,7 +1,7 @@
 <ng-template [ngIf]="form.controls.length > 0" [ngIfElse]="noResult">
     <div class="mat-app-background">
         <div *ngIf="form.dirty" style="text-align: right;">
-            <i class="fas fa-exclamation"></i> Your changes are not saved yet
+            <i class="fas fa-exclamation"></i> {{'TRANSLATIONS.TABLE.UNSAVED' | translate}}
         </div>
         <form [formGroup]="form">
             <table mat-table [dataSource]="form.controls" class="mat-elevation-z8" #table>
@@ -24,7 +24,8 @@
                     <td mat-cell *matCellDef="let rowFormArray" style="text-align: left">
                         <ng-template [ngIf]="columnDefinition.isTranslation(rowFormArray)">
                             <app-translation-editing-cell
-                                [formGroup]="columnDefinition.cell(rowFormArray)"></app-translation-editing-cell>
+                                [formGroup]="columnDefinition.cell(rowFormArray)">
+                            </app-translation-editing-cell>
                         </ng-template>
                         <ng-template [ngIf]="columnDefinition.isKey(rowFormArray)">
                             {{columnDefinition.cell(rowFormArray)}}
@@ -41,6 +42,6 @@
 </ng-template>
 <ng-template #noResult>
     <div style="text-align: center">
-        There are no result, please modify your criteria.
+        {{'TRANSLATIONS.TABLE.NO_RESULT' | translate}}
     </div>
 </ng-template>

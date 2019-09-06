@@ -1,7 +1,7 @@
 {
     "SHARED": {
         "REPOSITORY_TITLE": "Répertoire",
-        "WORKSPACES_TITLE": "Espace de Travail",
+        "WORKSPACES_TITLE": "Espaces de Travail",
         "CANCEL_ACTION": "Annuler"
     },
     "ADMIN": {
@@ -9,7 +9,7 @@
             "REFRESH_ACTION": "Rafraîchir",
             "CONFIRM_DELETION": {
                 "TITLE": "Confirmer la suppression",
-                "EXPLAIN": "Veuillez confirmer la <b>suppression</b> de l'espace de travail <b>{{workspace}}</b> (toutes les modifications seront perdues).",
+                "EXPLAIN": "Veuillez confirmer la <b>suppression</b> de l'espace de travail <b>{workspace}</b> (toutes les modifications seront perdues).",
                 "PLEASE": "Veuillez saisir le nom de l'espace de travail afin de confirmer:",
                 "ERASE_ACTION": "Supprimer"
             }
