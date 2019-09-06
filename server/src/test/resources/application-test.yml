@@ -8,7 +8,7 @@ poc:
   repoUserName: MY_REPO_USER_NAME
   repoName: MY_REPO_NAME
   git-hub-webhook-secret: WEBHOOK_SECRET
-  local-repository-location: "${java.io.tmpdir}/repo"
+  base-directory: "${java.io.tmpdir}/git-oauth"
 
 
 spring:
