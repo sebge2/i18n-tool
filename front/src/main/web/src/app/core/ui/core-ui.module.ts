@@ -6,6 +6,7 @@ import {GlobalAuthGuard} from "./service/guard/global-auth-guard.service";
 import {MaterialModule} from './material.module';
 import {MenuComponent} from "./component/menu/menu.component";
 import {HeaderComponent} from "./component/header/header.component";
+import {ReactiveFormsModule} from "@angular/forms";
 
 const appRoutes: Routes = [
     {
@@ -41,7 +42,8 @@ const appRoutes: Routes = [
         MaterialModule
     ],
     exports: [
-        MaterialModule
+        MaterialModule,
+        ReactiveFormsModule
     ]
 })
 export class CoreUiModule {
