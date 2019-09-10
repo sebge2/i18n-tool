@@ -22,8 +22,6 @@ export class TranslationEditingCellComponent implements OnInit {
 
         this.formGroup.valueChanges.subscribe(
             (formGroup: FormGroup) => {
-                // this.update(translation);
-
                 this.editionStyle = {'border-color': 'red'};
             }
         )
