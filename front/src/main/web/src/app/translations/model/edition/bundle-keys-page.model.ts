@@ -7,8 +7,7 @@ export class BundleKeysPage {
     workspaceId: String;
 
     constructor(bundleKeysPage: BundleKeysPage = <BundleKeysPage>{}) {
+        Object.assign(this, bundleKeysPage);
         this.files = bundleKeysPage.files.map(file => new BundleFile(file));
-        this.lastKey = bundleKeysPage.lastKey;
-        this.workspaceId = bundleKeysPage.workspaceId;
     }
 }

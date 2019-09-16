@@ -5,7 +5,7 @@ export class Repository {
     readonly status: RepositoryStatus;
 
     constructor(repository: Repository = <Repository>{}) {
-        this.status = repository.status;
+        Object.assign(this, repository);
     }
 
     isNotInitialized(): boolean {

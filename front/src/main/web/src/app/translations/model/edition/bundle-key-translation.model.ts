@@ -9,11 +9,7 @@ export class BundleKeyTranslation {
     updatedValue: String;
 
     constructor(bundleKeyTranslation: BundleKeyTranslation = <BundleKeyTranslation>{}) {
-        this.id = bundleKeyTranslation.id;
-        this.lastEditor = bundleKeyTranslation.lastEditor;
-        this.locale = bundleKeyTranslation.locale;
-        this.originalValue = bundleKeyTranslation.originalValue;
-        this.updatedValue = bundleKeyTranslation.updatedValue;
+        Object.assign(this, bundleKeyTranslation);
     }
 
     currentValue(): String {
