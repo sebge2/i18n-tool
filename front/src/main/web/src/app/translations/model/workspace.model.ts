@@ -5,17 +5,9 @@ export class Workspace {
     readonly id: string;
     readonly branch: string;
     readonly status: WorkspaceStatus;
-    readonly pullRequestBranch: string;
-    readonly pullRequestNumber: number;
-    readonly initializationTime: number;
 
     constructor(workspace: Workspace = <Workspace>{}) {
-        this.id = workspace.id;
-        this.branch = workspace.branch;
-        this.status = workspace.status;
-        this.pullRequestBranch = workspace.pullRequestBranch;
-        this.pullRequestNumber = workspace.pullRequestNumber;
-        this.initializationTime = workspace.initializationTime;
+        Object.assign(this, workspace);
     }
 
     isNotInitialized(): boolean {

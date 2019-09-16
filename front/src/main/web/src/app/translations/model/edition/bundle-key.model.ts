@@ -8,8 +8,7 @@ export class BundleKey {
     translations: BundleKeyTranslation[];
 
     constructor(bundleKey: BundleKey = <BundleKey>{}) {
-        this.id = bundleKey.id;
-        this.key = bundleKey.key;
+        Object.assign(this, bundleKey);
         this.translations = bundleKey.translations.map(translation => new BundleKeyTranslation(translation));
     }
 

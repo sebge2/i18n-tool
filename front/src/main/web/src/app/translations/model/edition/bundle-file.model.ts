@@ -8,9 +8,7 @@ export class BundleFile {
     name: String;
 
     constructor(bundleFile: BundleFile = <BundleFile>{}) {
-        this.id = bundleFile.id;
+        Object.assign(this, bundleFile);
         this.keys = bundleFile.keys.map(key => new BundleKey(key));
-        this.location = bundleFile.location;
-        this.name = bundleFile.name;
     }
 }
