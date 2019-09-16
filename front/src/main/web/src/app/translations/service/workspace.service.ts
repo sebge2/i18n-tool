@@ -2,18 +2,17 @@ import {Injectable, OnDestroy} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {EventService} from "../../core/event/service/event.service";
 import {Workspace} from "../model/workspace.model";
-import {BehaviorSubject, Subscription} from "rxjs";
+import {BehaviorSubject, Subject} from "rxjs";
 import {Events} from 'src/app/core/event/model.events.model';
+import {takeUntil} from "rxjs/operators";
 
 @Injectable({
     providedIn: 'root'
 })
 export class WorkspaceService implements OnDestroy {
 
-    private _updatedWorkspaceObservable: Subscription;
-    private _deletedWorkspaceObservable: Subscription;
-
     private _workspaces: BehaviorSubject<Workspace[]> = new BehaviorSubject<Workspace[]>([]);
+    private destroy$ = new Subject();
 
     constructor(private httpClient: HttpClient,
                 private eventService: EventService) {
@@ -21,7 +20,8 @@ export class WorkspaceService implements OnDestroy {
             .then(workspaces => this._workspaces.next(workspaces.map(workspace => new Workspace(workspace)).sort(workspaceSorter)))
             .catch(reason => console.error("Error while retrieving workspaces.", reason));
 
-        this._updatedWorkspaceObservable = this.eventService.subscribe(Events.UPDATED_WORKSPACE, Workspace)
+        this.eventService.subscribe(Events.UPDATED_WORKSPACE, Workspace)
+            .pipe(takeUntil(this.destroy$))
             .subscribe(
                 (workspace: Workspace) => {
                     const workspaces = this._workspaces.getValue().slice();
@@ -37,7 +37,8 @@ export class WorkspaceService implements OnDestroy {
                 }
             );
 
-        this._deletedWorkspaceObservable = this.eventService.subscribe(Events.DELETED_WORKSPACE, Workspace)
+        this.eventService.subscribe(Events.DELETED_WORKSPACE, Workspace)
+            .pipe(takeUntil(this.destroy$))
             .subscribe(
                 (workspace: Workspace) => {
                     const workspaces = this._workspaces.getValue().slice();
@@ -53,8 +54,7 @@ export class WorkspaceService implements OnDestroy {
     }
 
     ngOnDestroy(): void {
-        this._updatedWorkspaceObservable.unsubscribe();
-        this._deletedWorkspaceObservable.unsubscribe();
+        this.destroy$.complete();
     }
 
     getWorkspaces(): BehaviorSubject<Workspace[]> {

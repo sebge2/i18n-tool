@@ -1,14 +1,78 @@
-import {TestBed} from '@angular/core/testing';
+import {getTestBed, inject, TestBed} from '@angular/core/testing';
 
 import {WorkspaceService} from './workspace.service';
-import {HttpClientModule} from "@angular/common/http";
 import {CoreEventModule} from "../../core/event/core-event.module";
+import {RepositoryService} from "./repository.service";
+import {HttpClientTestingModule, HttpTestingController} from "@angular/common/http/testing";
+import {Observable, Subject} from "rxjs";
+import {Repository} from "../model/repository.model";
+import {Events} from "../../core/event/model.events.model";
+import {EventService} from "../../core/event/service/event.service";
+import {take, toArray} from "rxjs/operators";
+import {Workspace} from "../model/workspace.model";
 
 describe('WorkspaceService', () => {
-    beforeEach(() => TestBed.configureTestingModule({imports: [HttpClientModule, CoreEventModule]}));
+    let injector: TestBed;
+    let service: RepositoryService;
+    let httpMock: HttpTestingController;
+    let eventService: MockEventService;
 
-    it('should be created', () => {
-        const service: WorkspaceService = TestBed.get(WorkspaceService);
-        expect(service).toBeTruthy();
+    class MockEventService {
+
+        readonly subject: Subject<Repository> = new Subject();
+
+        public subscribe(eventType: string, type: any): Observable<Repository> {
+            expect(eventType).toMatch(new RegExp(Events.UPDATED_WORKSPACE + '|' + Events.DELETED_WORKSPACE));
+            expect(type).toEqual(Workspace);
+
+            return this.subject;
+        }
+    }
+
+    beforeEach(() => {
+        eventService = new MockEventService();
+
+        TestBed.configureTestingModule({
+            imports: [HttpClientTestingModule, CoreEventModule],
+            providers: [
+                WorkspaceService,
+                {provide: EventService, useValue: eventService}
+            ]
+        });
+
+        injector = getTestBed();
+        service = injector.get(WorkspaceService);
+        httpMock = injector.get(HttpTestingController);
     });
+
+    it('should get workspaces',
+        inject(
+            [HttpTestingController, WorkspaceService],
+            async (
+                httpMock: HttpTestingController,
+                workspaceService: WorkspaceService
+            ) => {
+                const firstExpected: Workspace[] = [];
+                const workspaces = [
+                    new Workspace(<Workspace>{id: 'fgh', branch: 'release/2019.7'}),
+                    new Workspace(<Workspace>{id: 'def', branch: 'release/2019.6'}),
+                    new Workspace(<Workspace>{id: 'abc', branch: 'master'})
+                ];
+                const expected = [workspaces[2], workspaces[1], workspaces[0]];
+
+                const promise = workspaceService.getWorkspaces()
+                    .pipe(take(2), toArray())
+                    .toPromise()
+                    .then((actual: Workspace[][]) => {
+                        expect(actual).toEqual([firstExpected, expected]);
+                    });
+
+                httpMock.expectOne('/api/workspace').flush(workspaces);
+                httpMock.verify();
+
+                return promise;
+            }
+        )
+    );
+
 });
