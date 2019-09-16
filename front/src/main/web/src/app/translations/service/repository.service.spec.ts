@@ -6,18 +6,39 @@ import {CoreEventModule} from "../../core/event/core-event.module";
 import {Repository} from "../model/repository.model";
 import {RepositoryStatus} from "../model/repository-status.model";
 import {take, toArray} from "rxjs/operators";
+import {EventService} from "../../core/event/service/event.service";
+import {Observable, Subject} from "rxjs";
+import {Events} from "../../core/event/model.events.model";
 
 describe('RepositoryService', () => {
     let injector: TestBed;
     let service: RepositoryService;
     let httpMock: HttpTestingController;
+    let eventService: MockEventService;
 
+    class MockEventService {
+
+        readonly subject: Subject<Repository> = new Subject();
+
+        public subscribe(eventType: string, type: any): Observable<Repository> {
+            expect(eventType).toEqual(Events.UPDATED_REPOSITORY);
+            expect(type).toEqual(Repository);
+
+            return this.subject;
+        }
+    }
 
     beforeEach(() => {
+        eventService = new MockEventService();
+
         TestBed.configureTestingModule({
             imports: [HttpClientTestingModule, CoreEventModule],
-            providers: [RepositoryService]
+            providers: [
+                RepositoryService,
+                {provide: EventService, useValue: eventService}
+            ]
         });
+
         injector = getTestBed();
         service = injector.get(RepositoryService);
         httpMock = injector.get(HttpTestingController);
@@ -40,10 +61,7 @@ describe('RepositoryService', () => {
                         expect(actual).toEqual([firstExpected, secondExpected]);
                     });
 
-                const mockReq = httpMock.expectOne('/api/repository');
-
-                mockReq.flush(secondExpected);
-
+                httpMock.expectOne('/api/repository').flush(secondExpected);
                 httpMock.verify();
 
                 return promise;
@@ -61,8 +79,6 @@ describe('RepositoryService', () => {
                 const firstExpected = new Repository(<Repository>{status: RepositoryStatus.NOT_INITIALIZED});
                 const secondExpected = new Repository(<Repository>{status: RepositoryStatus.INITIALIZED});
 
-                const mockReq = httpMock.expectOne('/api/repository');
-
                 const firstPromise = repositoryService.getRepository()
                     .pipe(take(2), toArray())
                     .toPromise()
@@ -71,7 +87,7 @@ describe('RepositoryService', () => {
                         return actual;
                     });
 
-                mockReq.flush(secondExpected);
+                httpMock.expectOne('/api/repository').flush(secondExpected);
                 httpMock.verify();
 
                 await firstPromise;
@@ -89,5 +105,37 @@ describe('RepositoryService', () => {
         )
     );
 
-    // TODO subscribe and get update
+    it('should get latest updated repository',
+        inject(
+            [HttpTestingController, RepositoryService],
+            async (
+                httpMock: HttpTestingController,
+                repositoryService: RepositoryService
+            ) => {
+                const firstExpected = new Repository(<Repository>{status: RepositoryStatus.NOT_INITIALIZED});
+                const secondExpected = new Repository(<Repository>{status: RepositoryStatus.INITIALIZING});
+                const thirdExpected = new Repository(<Repository>{status: RepositoryStatus.INITIALIZED});
+
+                const promise = repositoryService.getRepository()
+                    .pipe(take(3), toArray())
+                    .toPromise()
+                    .then(actual => {
+                        expect(actual).toEqual([firstExpected, secondExpected, thirdExpected]);
+                        return actual;
+                    });
+
+                httpMock.expectOne('/api/repository').flush(secondExpected);
+                httpMock.verify();
+
+                repositoryService.getRepository()
+                    .pipe(take(2))
+                    .toPromise()
+                    .then(actual => {
+                        eventService.subject.next(thirdExpected);
+                    });
+
+                return promise;
+            }
+        )
+    );
 });
