@@ -45,12 +45,13 @@ describe('WorkspaceService', () => {
         httpMock = injector.get(HttpTestingController);
     });
 
-    it('should get workspaces',
+    it('should get ordered workspaces',
         inject(
             [HttpTestingController, WorkspaceService],
             async (
                 httpMock: HttpTestingController,
                 workspaceService: WorkspaceService
+
             ) => {
                 const firstExpected: Workspace[] = [];
                 const workspaces = [
@@ -74,5 +75,12 @@ describe('WorkspaceService', () => {
             }
         )
     );
+
+    // TODO add workflow
+    // TODO delete workflow
+    // TODO find
+    // TODO initialize
+    // TODO start review
+    // TODO delete
 
 });
