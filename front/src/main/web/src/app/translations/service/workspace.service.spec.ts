@@ -1,4 +1,4 @@
-import {getTestBed, inject, TestBed} from '@angular/core/testing';
+import {getTestBed, TestBed} from '@angular/core/testing';
 
 import {WorkspaceService} from './workspace.service';
 import {CoreEventModule} from "../../core/event/core-event.module";
@@ -45,30 +45,27 @@ describe('WorkspaceService', () => {
     });
 
     it('should get ordered workspaces',
-        inject(
-            [HttpTestingController, WorkspaceService],
-            async () => {
-                const firstExpected: Workspace[] = [];
-                const workspaces = [
-                    new Workspace(<Workspace>{id: 'fgh', branch: 'release/2019.7'}),
-                    new Workspace(<Workspace>{id: 'def', branch: 'release/2019.6'}),
-                    new Workspace(<Workspace>{id: 'abc', branch: 'master'})
-                ];
-                const expected = [workspaces[2], workspaces[1], workspaces[0]];
+        async () => {
+            const firstExpected: Workspace[] = [];
+            const workspaces = [
+                new Workspace(<Workspace>{id: 'fgh', branch: 'release/2019.7'}),
+                new Workspace(<Workspace>{id: 'def', branch: 'release/2019.6'}),
+                new Workspace(<Workspace>{id: 'abc', branch: 'master'})
+            ];
+            const expected = [workspaces[2], workspaces[1], workspaces[0]];
 
-                const promise = service.getWorkspaces()
-                    .pipe(take(2), toArray())
-                    .toPromise()
-                    .then((actual: Workspace[][]) => {
-                        expect(actual).toEqual([firstExpected, expected]);
-                    });
+            const promise = service.getWorkspaces()
+                .pipe(take(2), toArray())
+                .toPromise()
+                .then((actual: Workspace[][]) => {
+                    expect(actual).toEqual([firstExpected, expected]);
+                });
 
-                httpMock.expectOne('/api/workspace').flush(workspaces);
-                httpMock.verify();
+            httpMock.expectOne('/api/workspace').flush(workspaces);
+            httpMock.verify();
 
-                return promise;
-            }
-        )
+            return promise;
+        }
     );
 
     // TODO add workflow
