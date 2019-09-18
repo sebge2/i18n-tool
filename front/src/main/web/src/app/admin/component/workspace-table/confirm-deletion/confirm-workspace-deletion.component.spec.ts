@@ -64,7 +64,7 @@ describe('ConfirmDeletionComponent', () => {
     });
 
     it('should create', () => {
-        expect(component).toBeTruthy();
+        expect(component).toBeTruthy(); // TODO
     });
 
     it('onCancel should close the dialog', () => {
