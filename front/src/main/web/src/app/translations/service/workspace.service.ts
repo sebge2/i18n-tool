@@ -2,7 +2,7 @@ import {Injectable, OnDestroy} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {EventService} from "../../core/event/service/event.service";
 import {Workspace} from "../model/workspace.model";
-import {BehaviorSubject, Subject} from "rxjs";
+import {BehaviorSubject, Observable, Subject} from "rxjs";
 import {Events} from 'src/app/core/event/model.events.model';
 import {takeUntil} from "rxjs/operators";
 
@@ -57,7 +57,7 @@ export class WorkspaceService implements OnDestroy {
         this.destroy$.complete();
     }
 
-    getWorkspaces(): BehaviorSubject<Workspace[]> {
+    getWorkspaces(): Observable<Workspace[]> {
         return this._workspaces;
     }
 
