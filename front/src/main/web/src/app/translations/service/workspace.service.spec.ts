@@ -2,7 +2,6 @@ import {getTestBed, inject, TestBed} from '@angular/core/testing';
 
 import {WorkspaceService} from './workspace.service';
 import {CoreEventModule} from "../../core/event/core-event.module";
-import {RepositoryService} from "./repository.service";
 import {HttpClientTestingModule, HttpTestingController} from "@angular/common/http/testing";
 import {Observable, Subject} from "rxjs";
 import {Repository} from "../model/repository.model";
@@ -13,7 +12,7 @@ import {Workspace} from "../model/workspace.model";
 
 describe('WorkspaceService', () => {
     let injector: TestBed;
-    let service: RepositoryService;
+    let service: WorkspaceService;
     let httpMock: HttpTestingController;
     let eventService: MockEventService;
 
@@ -48,11 +47,7 @@ describe('WorkspaceService', () => {
     it('should get ordered workspaces',
         inject(
             [HttpTestingController, WorkspaceService],
-            async (
-                httpMock: HttpTestingController,
-                workspaceService: WorkspaceService
-
-            ) => {
+            async () => {
                 const firstExpected: Workspace[] = [];
                 const workspaces = [
                     new Workspace(<Workspace>{id: 'fgh', branch: 'release/2019.7'}),
@@ -61,7 +56,7 @@ describe('WorkspaceService', () => {
                 ];
                 const expected = [workspaces[2], workspaces[1], workspaces[0]];
 
-                const promise = workspaceService.getWorkspaces()
+                const promise = service.getWorkspaces()
                     .pipe(take(2), toArray())
                     .toPromise()
                     .then((actual: Workspace[][]) => {
