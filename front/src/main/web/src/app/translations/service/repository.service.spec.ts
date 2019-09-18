@@ -47,14 +47,11 @@ describe('RepositoryService', () => {
     it('should get repository',
         inject(
             [HttpTestingController, RepositoryService],
-            async (
-                httpMock: HttpTestingController,
-                repositoryService: RepositoryService
-            ) => {
+            async () => {
                 const firstExpected = new Repository(<Repository>{status: RepositoryStatus.NOT_INITIALIZED});
                 const secondExpected = new Repository(<Repository>{status: RepositoryStatus.INITIALIZED});
 
-                const promise = repositoryService.getRepository()
+                const promise = service.getRepository()
                     .pipe(take(2), toArray())
                     .toPromise()
                     .then((actual: Repository[]) => {
@@ -72,14 +69,11 @@ describe('RepositoryService', () => {
     it('should get latest repository',
         inject(
             [HttpTestingController, RepositoryService],
-            async (
-                httpMock: HttpTestingController,
-                repositoryService: RepositoryService
-            ) => {
+            async () => {
                 const firstExpected = new Repository(<Repository>{status: RepositoryStatus.NOT_INITIALIZED});
                 const secondExpected = new Repository(<Repository>{status: RepositoryStatus.INITIALIZED});
 
-                const firstPromise = repositoryService.getRepository()
+                const firstPromise = service.getRepository()
                     .pipe(take(2), toArray())
                     .toPromise()
                     .then(actual => {
@@ -92,7 +86,7 @@ describe('RepositoryService', () => {
 
                 await firstPromise;
 
-                const secondPromise = repositoryService.getRepository()
+                const secondPromise = service.getRepository()
                     .pipe(take(1), toArray())
                     .toPromise()
                     .then(actual => {
@@ -108,15 +102,12 @@ describe('RepositoryService', () => {
     it('should get latest updated repository',
         inject(
             [HttpTestingController, RepositoryService],
-            async (
-                httpMock: HttpTestingController,
-                repositoryService: RepositoryService
-            ) => {
+            async () => {
                 const firstExpected = new Repository(<Repository>{status: RepositoryStatus.NOT_INITIALIZED});
                 const secondExpected = new Repository(<Repository>{status: RepositoryStatus.INITIALIZING});
                 const thirdExpected = new Repository(<Repository>{status: RepositoryStatus.INITIALIZED});
 
-                const promise = repositoryService.getRepository()
+                const promise = service.getRepository()
                     .pipe(take(3), toArray())
                     .toPromise()
                     .then(actual => {
@@ -127,7 +118,7 @@ describe('RepositoryService', () => {
                 httpMock.expectOne('/api/repository').flush(secondExpected);
                 httpMock.verify();
 
-                repositoryService.getRepository()
+                service.getRepository()
                     .pipe(take(2))
                     .toPromise()
                     .then(actual => {
