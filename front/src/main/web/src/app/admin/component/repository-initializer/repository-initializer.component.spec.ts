@@ -1,37 +1,90 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {ComponentFixture, getTestBed, TestBed} from '@angular/core/testing';
 
 import {RepositoryInitializerComponent} from './repository-initializer.component';
-import {CoreSharedModule} from "../../../core/shared/core-shared-module";
-import {HttpClientModule} from "@angular/common/http";
-import {CoreEventModule} from "../../../core/event/core-event.module";
 import {TranslateModule} from "@ngx-translate/core";
+import {RepositoryService} from "../../../translations/service/repository.service";
+import {CoreSharedModule} from "../../../core/shared/core-shared-module";
 import {CoreUiModule} from "../../../core/ui/core-ui.module";
+import {BehaviorSubject, Observable, Subject} from "rxjs";
+import {Repository} from "../../../translations/model/repository.model";
+import {RepositoryStatus} from "../../../translations/model/repository-status.model";
+import {By} from "@angular/platform-browser";
+import {take} from "rxjs/operators";
 
 describe('RepositoryInitializerComponent', () => {
+    let injector: TestBed;
     let component: RepositoryInitializerComponent;
     let fixture: ComponentFixture<RepositoryInitializerComponent>;
+    let repositoryService: MockRepositoryService;
 
-    beforeEach(async(() => {
-        TestBed.configureTestingModule({
-            imports: [
-                CoreSharedModule,
-                CoreUiModule,
-                CoreEventModule,
-                HttpClientModule,
-                TranslateModule.forRoot()
-            ],
-            declarations: [RepositoryInitializerComponent]
-        })
+    class MockRepositoryService {
+
+        readonly subject: Subject<Repository> = new BehaviorSubject(new Repository(<Repository>{status: RepositoryStatus.NOT_INITIALIZED}));
+
+        public getRepository(): Observable<Repository> {
+            return this.subject;
+        }
+    }
+
+    beforeEach((() => {
+        repositoryService = new MockRepositoryService();
+
+        TestBed
+            .configureTestingModule({
+                imports: [
+                    CoreSharedModule,
+                    CoreUiModule,
+                    TranslateModule.forRoot()
+                ],
+                providers: [
+                    {provide: RepositoryService, useValue: repositoryService}
+                ],
+                declarations: [RepositoryInitializerComponent]
+            })
             .compileComponents();
-    }));
 
-    beforeEach(() => {
+        injector = getTestBed();
+
         fixture = TestBed.createComponent(RepositoryInitializerComponent);
         component = fixture.componentInstance;
-        fixture.detectChanges();
-    });
+    }));
 
-    it('should create', () => {
-        expect(component).toBeTruthy();
-    });
+    it('should display not initialized',
+        () => {
+            fixture.detectChanges();
+
+            expect(fixture.debugElement.query(By.css('.fa-times-circle'))).not.toBeNull();
+        }
+    );
+
+    it('should display initializing',
+        async () => {
+            repositoryService.subject.next(new Repository(<Repository>{status: RepositoryStatus.INITIALIZING}));
+
+            fixture.detectChanges();
+
+            return repositoryService.getRepository().pipe(take(1)).toPromise()
+                .then(repository => {
+                        expect(fixture.debugElement.query(By.css('.fa-spinner'))).not.toBeNull();
+                    }
+                );
+        }
+    );
+
+    it('should display initialized',
+        async () => {
+            const promise = repositoryService.getRepository().pipe(take(2)).toPromise();
+
+            repositoryService.subject.next(new Repository(<Repository>{status: RepositoryStatus.INITIALIZING}));
+            repositoryService.subject.next(new Repository(<Repository>{status: RepositoryStatus.INITIALIZED}));
+
+            fixture.detectChanges();
+
+            return promise
+                .then(repository => {
+                        expect(fixture.debugElement.query(By.css('.fa-check'))).not.toBeNull();
+                    }
+                );
+        }
+    );
 });
