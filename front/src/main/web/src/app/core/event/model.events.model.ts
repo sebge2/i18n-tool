@@ -4,5 +4,9 @@ export enum Events {
 
     DELETED_WORKSPACE = "deleted-workspace",
 
-    UPDATED_REPOSITORY = "updated-repository"
+    UPDATED_REPOSITORY = "updated-repository",
+
+    CONNECTED_USER_SESSION = "connected-user-session",
+
+    DISCONNECTED_USER_SESSION = "disconnected-user-session"
 }

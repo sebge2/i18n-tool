@@ -4,6 +4,7 @@ import {EventService} from "../../event/service/event.service";
 import {UserSession} from "../model/user-session.model";
 import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {takeUntil} from "rxjs/operators";
+import {Events} from '../../event/model.events.model';
 
 @Injectable({
     providedIn: 'root'
@@ -19,7 +20,7 @@ export class UserSessionService implements OnDestroy {
             .then(userSessions => this._userSessions.next(userSessions.map(userSession => new UserSession(userSession))))
             .catch(reason => console.error("Error while retrieving current sessions.", reason));
 
-        this.eventService.subscribe("connected-user-session", UserSession)
+        this.eventService.subscribe(Events.CONNECTED_USER_SESSION, UserSession)
             .pipe(takeUntil(this.destroy$))
             .subscribe(
                 (userSession: UserSession) => {
@@ -30,7 +31,7 @@ export class UserSessionService implements OnDestroy {
                 }
             );
 
-        this.eventService.subscribe("disconnected-user-session", UserSession)
+        this.eventService.subscribe(Events.DISCONNECTED_USER_SESSION, UserSession)
             .pipe(takeUntil(this.destroy$))
             .subscribe(
                 (userSession: UserSession) => {
