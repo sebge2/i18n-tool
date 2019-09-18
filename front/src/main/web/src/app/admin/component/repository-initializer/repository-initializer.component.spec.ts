@@ -9,7 +9,6 @@ import {BehaviorSubject, Observable, Subject} from "rxjs";
 import {Repository} from "../../../translations/model/repository.model";
 import {RepositoryStatus} from "../../../translations/model/repository-status.model";
 import {By} from "@angular/platform-browser";
-import {take} from "rxjs/operators";
 
 describe('RepositoryInitializerComponent', () => {
     let injector: TestBed;
@@ -62,29 +61,21 @@ describe('RepositoryInitializerComponent', () => {
             repositoryService.subject.next(new Repository(<Repository>{status: RepositoryStatus.INITIALIZING}));
 
             fixture.detectChanges();
-
-            return repositoryService.getRepository().pipe(take(1)).toPromise()
-                .then(repository => {
-                        expect(fixture.debugElement.query(By.css('.fa-spinner'))).not.toBeNull();
-                    }
-                );
+            fixture.whenStable().then(() => {
+                expect(fixture.debugElement.query(By.css('.fa-spinner'))).not.toBeNull();
+            });
         }
     );
 
     it('should display initialized',
         async () => {
-            const promise = repositoryService.getRepository().pipe(take(2)).toPromise();
-
             repositoryService.subject.next(new Repository(<Repository>{status: RepositoryStatus.INITIALIZING}));
             repositoryService.subject.next(new Repository(<Repository>{status: RepositoryStatus.INITIALIZED}));
 
             fixture.detectChanges();
-
-            return promise
-                .then(repository => {
-                        expect(fixture.debugElement.query(By.css('.fa-check'))).not.toBeNull();
-                    }
-                );
+            fixture.whenStable().then(() => {
+                expect(fixture.debugElement.query(By.css('.fa-check'))).not.toBeNull();
+            });
         }
     );
 });
