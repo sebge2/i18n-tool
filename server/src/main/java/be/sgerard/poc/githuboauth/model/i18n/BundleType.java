@@ -5,5 +5,7 @@ package be.sgerard.poc.githuboauth.model.i18n;
  */
 public enum BundleType {
 
-    JAVA
+    JAVA,
+
+    JSON_ICU
 }

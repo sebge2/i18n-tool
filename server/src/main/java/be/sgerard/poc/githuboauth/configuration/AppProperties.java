@@ -24,6 +24,7 @@ public class AppProperties {
     private String repoName;
     private int lockTimeoutInS = 120;
     private String javaTranslationBundleIgnoredPaths;
+    private String jsonIcuTranslationBundleDirs;
     private String gitHubWebhookSecret = "";
     private Set<Locale> locales = emptySet();
 
@@ -90,6 +91,20 @@ public class AppProperties {
 
     public void setJavaTranslationBundleIgnoredPaths(String javaTranslationBundleIgnoredPaths) {
         this.javaTranslationBundleIgnoredPaths = javaTranslationBundleIgnoredPaths;
+    }
+
+    public String getJsonIcuTranslationBundleDirs() {
+        return jsonIcuTranslationBundleDirs;
+    }
+
+    public List<String> getJsonIcuTranslationBundleDirsAsList() {
+        return getJsonIcuTranslationBundleDirs() != null
+                ? Stream.of(getJsonIcuTranslationBundleDirs().split(",")).map(String::trim).collect(toList())
+                : emptyList();
+    }
+
+    public void setJsonIcuTranslationBundleDirs(String jsonIcuTranslationBundleDirs) {
+        this.jsonIcuTranslationBundleDirs = jsonIcuTranslationBundleDirs;
     }
 
     public String getGitHubWebhookSecret() {
