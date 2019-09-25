@@ -19,7 +19,10 @@ import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 import static be.sgerard.i18n.model.event.Events.EVENT_DELETED_WORKSPACE;
@@ -66,8 +69,8 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
                 switch (workspaceEntity.getStatus()) {
                     case IN_REVIEW:
                         updateReviewingWorkspace(
-                            workspaceEntity,
-                            workspaceEntity.getPullRequestNumber().map(pullRequestManager::getStatus).orElse(null)
+                                workspaceEntity,
+                                workspaceEntity.getPullRequestNumber().map(pullRequestManager::getStatus).orElse(null)
                         );
 
                         break;
@@ -128,7 +131,10 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
                 logger.info("Initialing workspace {}.", workspaceId);
 
                 final Instant now = Instant.now();
-                final String pullRequestBranch = workspaceEntity.getBranch() + "_i18n_" + LocalDate.ofInstant(now, ZoneId.systemDefault()).toString();
+                final String pullRequestBranch = generateUniqueBranch(
+                        workspaceEntity.getBranch() + "_i18n_" + LocalDate.ofInstant(now, ZoneId.systemDefault()).toString(),
+                        api
+                );
 
                 workspaceEntity.setStatus(WorkspaceStatus.INITIALIZED);
                 workspaceEntity.setInitializationTime(now);
@@ -198,11 +204,11 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
     @Transactional
     public void updateTranslations(String workspaceId, Map<String, String> translations) throws ResourceNotFoundException {
         final WorkspaceEntity workspace = repository.findById(workspaceId)
-            .orElseThrow(() -> new ResourceNotFoundException(workspaceId));
+                .orElseThrow(() -> new ResourceNotFoundException(workspaceId));
 
         if (workspace.getStatus() != WorkspaceStatus.INITIALIZED) {
             throw new IllegalStateException("Cannot update translations of workspace [" + workspaceId + "], the status "
-                + workspace.getStatus() + " does not allow it.");
+                    + workspace.getStatus() + " does not allow it.");
         }
 
         translationManager.updateTranslations(workspace, translations);
@@ -235,8 +241,8 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
     @Transactional
     public void onPullRequestUpdate(GitHubPullRequestEventDto event) throws LockTimeoutException, RepositoryException {
         final WorkspaceEntity workspaceEntity = repository
-            .findByPullRequestNumber(event.getNumber())
-            .orElse(null);
+                .findByPullRequestNumber(event.getNumber())
+                .orElse(null);
 
         if (workspaceEntity != null) {
             updateReviewingWorkspace(workspaceEntity, event.getStatus());
@@ -283,9 +289,9 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
 
     private List<String> listBranches(RepositoryAPI api) throws RepositoryException {
         return api.listRemoteBranches()
-            .stream()
-            .filter(name -> canBeAssociatedToWorkspace(name))
-            .collect(toList());
+                .stream()
+                .filter(this::canBeAssociatedToWorkspace)
+                .collect(toList());
     }
 
     private boolean canBeAssociatedToWorkspace(String name) {
@@ -300,5 +306,21 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
         repository.save(workspaceEntity);
 
         return workspaceEntity;
+    }
+
+    private String generateUniqueBranch(String name, RepositoryAPI api) {
+        api.updateLocalRepository();
+
+        if (!api.listRemoteBranches().contains(name)) {
+            return name;
+        }
+
+        String generatedName;
+        int index = 0;
+        do {
+            generatedName = name + "_" + (++index);
+        } while (api.listRemoteBranches().contains(generatedName));
+
+        return generatedName;
     }
 }
