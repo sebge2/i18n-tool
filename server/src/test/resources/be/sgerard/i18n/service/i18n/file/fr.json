@@ -1,0 +1,11 @@
+{
+    "first-root": {
+        "first": "first value",
+        "second": "second value"
+    },
+    "second-root": {
+        "sub-level": {
+            "first": "another value"
+        }
+    }
+}
