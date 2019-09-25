@@ -4,11 +4,13 @@ security:
       clientId: MY_CLIENT_ID
       clientSecret: MY_CLIENT_SECRET
 
-poc:
-  repoUserName: MY_REPO_USER_NAME
-  repoName: MY_REPO_NAME
-  git-hub-webhook-secret: WEBHOOK_SECRET
-  base-directory: "${java.io.tmpdir}/git-oauth"
+be:
+  sgerard:
+    i18n:
+      repoUserName: MY_REPO_USER_NAME
+      repoName: MY_REPO_NAME
+      git-hub-webhook-secret: WEBHOOK_SECRET
+      base-directory: "${java.io.tmpdir}/git-oauth"
 
 
 spring:

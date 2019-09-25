@@ -16,7 +16,7 @@ import static java.util.stream.Collectors.toSet;
 /**
  * @author Sebastien Gerard
  */
-@ConfigurationProperties(prefix = "poc")
+@ConfigurationProperties(prefix = "be.sgerard.i18n")
 public class AppProperties {
 
     private String baseDirectory;
