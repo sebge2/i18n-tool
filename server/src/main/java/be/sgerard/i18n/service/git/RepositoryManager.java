@@ -14,7 +14,11 @@ public interface RepositoryManager {
 
     void open(ApiConsumer apiConsumer) throws RepositoryException, LockTimeoutException;
 
+    void openInNewTx(ApiConsumer apiConsumer) throws RepositoryException, LockTimeoutException;
+
     <T> T open(ApiTransformer<T> apiConsumer) throws RepositoryException, LockTimeoutException;
+
+    <T> T openInNewTx(ApiTransformer<T> apiConsumer) throws RepositoryException, LockTimeoutException;
 
     @FunctionalInterface
     interface ApiConsumer {

@@ -60,7 +60,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
     @Override
     @Transactional
     public List<WorkspaceEntity> findWorkspaces() throws RepositoryException, LockTimeoutException {
-        return repositoryManager.open(api -> {
+        return repositoryManager.openInNewTx(api -> {
             api.updateLocalRepository();
 
             final List<String> availableBranches = listBranches(api);
@@ -118,12 +118,12 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
             return checkEntity;
         }
 
-        return repositoryManager.open(api -> {
+        return repositoryManager.openInNewTx(api -> {
             try {
                 final WorkspaceEntity workspaceEntity = repository.findById(workspaceId).orElseThrow(() -> new ResourceNotFoundException(workspaceId));
 
-                if (checkEntity.getStatus() == WorkspaceStatus.INITIALIZED) {
-                    return checkEntity;
+                if (workspaceEntity.getStatus() == WorkspaceStatus.INITIALIZED) {
+                    return workspaceEntity;
                 } else if (workspaceEntity.getStatus() != WorkspaceStatus.NOT_INITIALIZED) {
                     throw new IllegalStateException("The workspace status must be available, but was " + workspaceEntity.getStatus() + ".");
                 }
@@ -166,7 +166,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
             return checkEntity;
         }
 
-        return repositoryManager.open(api -> {
+        return repositoryManager.openInNewTx(api -> {
             try {
                 final WorkspaceEntity workspaceEntity = repository.findById(workspaceId).orElseThrow(() -> new ResourceNotFoundException(workspaceId));
 

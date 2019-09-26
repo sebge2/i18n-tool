@@ -12,6 +12,11 @@ import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.springframework.cglib.proxy.Proxy;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -35,6 +40,7 @@ public class RepositoryManagerImpl implements RepositoryManager {
     private final LockService lockService;
     private final PullRequestManager pullRequestManager;
     private final EventService eventService;
+    private final TransactionTemplate transactionTemplate;
 
     private Git git;
 
@@ -42,7 +48,7 @@ public class RepositoryManagerImpl implements RepositoryManager {
                                  AuthenticationManager authenticationManager,
                                  LockService lockService,
                                  PullRequestManager pullRequestManager,
-                                 EventService eventService) {
+                                 EventService eventService, PlatformTransactionManager transactionManager) {
         this.repoUri = appProperties.getRepoCheckoutUri();
 
         this.repositoryLocation = appProperties.getRepositoryLocationAsFile();
@@ -52,13 +58,16 @@ public class RepositoryManagerImpl implements RepositoryManager {
         this.lockService = lockService;
         this.pullRequestManager = pullRequestManager;
         this.eventService = eventService;
+
+        this.transactionTemplate = new TransactionTemplate(transactionManager);
+        this.transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
     }
 
     @Override
     public RepositoryDescriptionDto getDescription() {
         return new RepositoryDescriptionDto(
-            repoUri,
-            getStatus()
+                repoUri,
+                getStatus()
         );
     }
 
@@ -79,12 +88,12 @@ public class RepositoryManagerImpl implements RepositoryManager {
                 this.eventService.broadcastEvent(EVENT_UPDATED_REPOSITORY, getDescription());
 
                 this.git = Git.cloneRepository()
-                    .setCredentialsProvider(createProvider())
-                    .setURI(repoUri)
-                    .setDirectory(repositoryLocation)
-                    .setBranchesToClone(singletonList(DEFAULT_BRANCH))
-                    .setBranch(DEFAULT_BRANCH)
-                    .call();
+                        .setCredentialsProvider(createProvider())
+                        .setURI(repoUri)
+                        .setDirectory(repositoryLocation)
+                        .setBranchesToClone(singletonList(DEFAULT_BRANCH))
+                        .setBranch(DEFAULT_BRANCH)
+                        .call();
 
                 updateLockFile(RepositoryStatus.INITIALIZED);
 
@@ -108,6 +117,16 @@ public class RepositoryManagerImpl implements RepositoryManager {
     }
 
     @Override
+    public void openInNewTx(ApiConsumer apiConsumer) throws RepositoryException, LockTimeoutException {
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+            @Override
+            protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+                open(apiConsumer);
+            }
+        });
+    }
+
+    @Override
     public <T> T open(ApiTransformer<T> apiConsumer) throws RepositoryException, LockTimeoutException {
         try {
             return lockService.executeInLock(() -> {
@@ -120,6 +139,11 @@ public class RepositoryManagerImpl implements RepositoryManager {
         } catch (Exception e) {
             throw new RepositoryException("Error while listing branches.", e);
         }
+    }
+
+    @Override
+    public <T> T openInNewTx(ApiTransformer<T> apiConsumer) throws RepositoryException, LockTimeoutException {
+        return transactionTemplate.execute(transactionStatus -> open(apiConsumer));
     }
 
     private RepositoryStatus getStatus() throws RepositoryException {
@@ -162,22 +186,22 @@ public class RepositoryManagerImpl implements RepositoryManager {
 
     private RepositoryAPI initializeAPI() throws Exception {
         final DefaultRepositoryAPI delegate = new DefaultRepositoryAPI(
-            getGit(),
-            repositoryLocation,
-            authenticationManager,
-            pullRequestManager
+                getGit(),
+                repositoryLocation,
+                authenticationManager,
+                pullRequestManager
         );
 
         return (RepositoryAPI) Proxy.newProxyInstance(
-            RepositoryAPI.class.getClassLoader(),
-            new Class<?>[]{RepositoryAPI.class},
-            (o, method, objects) -> {
-                if (!"close".equals(method.getName()) && delegate.isClosed()) {
-                    throw new IllegalStateException("Cannot access the API once closed.");
-                }
+                RepositoryAPI.class.getClassLoader(),
+                new Class<?>[]{RepositoryAPI.class},
+                (o, method, objects) -> {
+                    if (!"close".equals(method.getName()) && delegate.isClosed()) {
+                        throw new IllegalStateException("Cannot access the API once closed.");
+                    }
 
-                return method.invoke(delegate, objects);
-            }
+                    return method.invoke(delegate, objects);
+                }
         );
     }
 
