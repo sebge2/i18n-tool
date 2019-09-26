@@ -1,18 +1,42 @@
 {
-    "SHARED": {
-        "REPOSITORY_TITLE": "Répertoire",
-        "WORKSPACES_TITLE": "Espaces de Travail",
-        "CANCEL_ACTION": "Annuler"
+  "TRANSLATIONS" : {
+    "TABLE" : {
+      "NO_RESULT" : null,
+      "UNSAVED" : null
     },
-    "ADMIN": {
-        "WORKSPACES": {
-            "REFRESH_ACTION": "Rafraîchir",
-            "CONFIRM_DELETION": {
-                "TITLE": "Confirmer la suppression",
-                "EXPLAIN": "Veuillez confirmer la <b>suppression</b> de l'espace de travail <b>{workspace}</b> (toutes les modifications seront perdues).",
-                "PLEASE": "Veuillez saisir le nom de l'espace de travail afin de confirmer:",
-                "ERASE_ACTION": "Supprimer"
-            }
-        }
+    "START_REVIEW_BUTTON" : null,
+    "START_REVIEW" : {
+      "COMMENT" : null,
+      "TITLE" : "Démarrer une révision",
+      "START_ACTION" : null
+    },
+    "SEARCH_BAR" : {
+      "CRITERION_MISSING" : null,
+      "TITLE" : null,
+      "CRITERION_USER_UPDATED" : null,
+      "CRITERION_ALL" : null,
+      "SEARCH_BUTTON" : null,
+      "CRITERION_UPDATED" : null
+    },
+    "PLEASE_WAIT" : null,
+    "INITIALIZING_ALT" : null
+  },
+  "SHARED" : {
+    "WORKSPACES_TITLE" : "Espaces de Travail",
+    "WORKSPACE_LABEL" : "Espace de travail :",
+    "CANCEL_ACTION" : "Annuler",
+    "LOCALES_LABEL" : null,
+    "REPOSITORY_TITLE" : "Répertoire"
+  },
+  "ADMIN" : {
+    "WORKSPACES" : {
+      "CONFIRM_DELETION" : {
+        "EXPLAIN" : "Veuillez confirmer la <b>suppression</b> de l'espace de travail <b>{workspace}</b> (toutes les modifications seront perdues).",
+        "PLEASE" : "Veuillez saisir le nom de l'espace de travail afin de confirmer:",
+        "ERASE_ACTION" : "Supprimer",
+        "TITLE" : "Confirmer la suppression"
+      },
+      "REFRESH_ACTION" : "Rafraîchir"
     }
+  }
 }
