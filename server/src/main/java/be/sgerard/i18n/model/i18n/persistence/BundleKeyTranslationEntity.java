@@ -51,13 +51,13 @@ public class BundleKeyTranslationEntity {
     @Column(nullable = false)
     private String locale;
 
-    @Column
+    @Column(columnDefinition = "TEXT")
     private String originalValue;
 
-    @Column
+    @Column(columnDefinition = "TEXT")
     private String updatedValue;
 
-    @Column
+    @Column(length = 1000)
     private String lastEditor;
 
     @Version

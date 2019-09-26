@@ -24,7 +24,7 @@ public class BundleKeyEntity {
     private String id;
 
     @NotNull
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String key;
 
     @ManyToOne

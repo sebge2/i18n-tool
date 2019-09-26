@@ -32,13 +32,13 @@ public class JsonICUTranslationBundleHandler implements TranslationBundleHandler
 
     private static final Pattern BUNDLE_PATTERN = Pattern.compile("^(.*)\\.json$");
 
-    private final List<String> pathToIgnores;
+    private final List<String> pathsToScan;
     private final AntPathMatcher antPathMatcher;
     private final ObjectMapper objectMapper;
 
     @Autowired
     public JsonICUTranslationBundleHandler(AppProperties appProperties, ObjectMapper objectMapper) {
-        this.pathToIgnores = appProperties.getJsonIcuTranslationBundleDirsAsList();
+        this.pathsToScan = appProperties.getJsonIcuTranslationBundleDirsAsList();
         this.objectMapper = objectMapper;
         this.antPathMatcher = new AntPathMatcher();
     }
@@ -54,11 +54,15 @@ public class JsonICUTranslationBundleHandler implements TranslationBundleHandler
 
     @Override
     public boolean continueScanning(File directory) {
-        return pathToIgnores.stream().anyMatch(dirPathPattern -> antPathMatcher.match(dirPathPattern, directory.toPath().toString()));
+        return true;
     }
 
     @Override
     public Stream<ScannedBundleFileDto> scanBundles(File directory, RepositoryAPI repositoryAPI) throws IOException {
+        if (pathsToScan.stream().noneMatch(dirPathPattern -> antPathMatcher.match(dirPathPattern, directory.toPath().toString()))) {
+            return Stream.empty();
+        }
+
         return repositoryAPI.listNormalFiles(directory)
                 .map(
                         file -> {

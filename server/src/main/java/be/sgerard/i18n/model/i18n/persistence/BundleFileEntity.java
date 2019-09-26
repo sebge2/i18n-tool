@@ -27,11 +27,11 @@ public class BundleFileEntity {
     private WorkspaceEntity workspace;
 
     @NotNull
-    @Column(nullable = false)
+    @Column(nullable = false, length = 1000)
     private String name;
 
     @NotNull
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String location;
 
     @NotNull
