@@ -130,6 +130,8 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
 
                 logger.info("Initialing workspace {}.", workspaceId);
 
+                api.updateLocalRepository();
+
                 final Instant now = Instant.now();
                 final String pullRequestBranch = generateUniqueBranch(
                         workspaceEntity.getBranch() + "_i18n_" + LocalDate.ofInstant(now, ZoneId.systemDefault()).toString(),
@@ -141,8 +143,6 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
                 workspaceEntity.setPullRequestBranch(pullRequestBranch);
 
                 api.checkout(workspaceEntity.getBranch());
-
-                api.updateLocalRepository();
 
                 api.createBranch(pullRequestBranch);
 
@@ -309,9 +309,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
     }
 
     private String generateUniqueBranch(String name, RepositoryAPI api) {
-        api.updateLocalRepository();
-
-        if (!api.listRemoteBranches().contains(name)) {
+        if (!api.listRemoteBranches().contains(name) && !api.listLocalBranches().contains(name)) {
             return name;
         }
 
@@ -319,7 +317,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
         int index = 0;
         do {
             generatedName = name + "_" + (++index);
-        } while (api.listRemoteBranches().contains(generatedName));
+        } while (api.listRemoteBranches().contains(generatedName) || api.listLocalBranches().contains(generatedName));
 
         return generatedName;
     }
