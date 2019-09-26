@@ -1,42 +1,42 @@
 {
   "TRANSLATIONS" : {
-    "TABLE" : {
-      "NO_RESULT" : "There are no result, please modify your criteria.",
-      "UNSAVED" : "Your changes are not saved yet"
-    },
-    "START_REVIEW_BUTTON" : "Publish and ask a review",
-    "START_REVIEW" : {
-      "COMMENT" : "Comment",
-      "TITLE" : "Start a review",
-      "START_ACTION" : "Start"
-    },
+    "INITIALIZING_ALT" : "Initializing workspace",
+    "PLEASE_WAIT" : "The workspace is initializing, please wait.",
     "SEARCH_BAR" : {
+      "CRITERION_USER_UPDATED" : "I have updated",
+      "SEARCH_BUTTON" : "Search",
       "CRITERION_MISSING" : "Missing",
       "TITLE" : "Search {criterion, select, ALL{for <b>all</b> translations} MISSING_TRANSLATIONS{for <b>missing</b> translations} TRANSLATIONS_CURRENT_USER_UPDATED{for translations that <b>I have updated</b>} UPDATED_TRANSLATIONS{for <b>updated</b> translations} other{}} {workspace, select, null{} other {on <b>{workspace}</b> branch}} {locales, select, true{for <b>all locales</b>} other{for locales {locales}}}",
-      "CRITERION_USER_UPDATED" : "I have updated",
       "CRITERION_ALL" : "All",
-      "SEARCH_BUTTON" : "Search",
       "CRITERION_UPDATED" : "Someone updated it"
     },
-    "PLEASE_WAIT" : "The workspace is initializing, please wait.",
-    "INITIALIZING_ALT" : "Initializing workspace"
-  },
-  "SHARED" : {
-    "WORKSPACES_TITLE" : "Workspaces",
-    "WORKSPACE_LABEL" : "Workspace:",
-    "CANCEL_ACTION" : "Cancel",
-    "LOCALES_LABEL" : "Locales:",
-    "REPOSITORY_TITLE" : "Repository"
+    "START_REVIEW" : {
+      "TITLE" : "Start a review",
+      "START_ACTION" : "Start",
+      "COMMENT" : "Comment"
+    },
+    "TABLE" : {
+      "UNSAVED" : "Your changes are not saved yet",
+      "NO_RESULT" : "There are no result, please modify your criteria."
+    },
+    "START_REVIEW_BUTTON" : "Publish and ask a review"
   },
   "ADMIN" : {
     "WORKSPACES" : {
       "CONFIRM_DELETION" : {
         "EXPLAIN" : "Please confirm the <b>erasing</b> of <b>{workspace}</b> (all modifications will be lost).",
         "PLEASE" : "Please fill the name of the workspace to confirm:",
-        "ERASE_ACTION" : "Erase",
-        "TITLE" : "Confirm Erasing"
+        "TITLE" : "Confirm Erasing",
+        "ERASE_ACTION" : "Erase"
       },
       "REFRESH_ACTION" : "Refresh"
     }
+  },
+  "SHARED" : {
+    "WORKSPACE_LABEL" : "Workspace:",
+    "CANCEL_ACTION" : "Cancel",
+    "WORKSPACES_TITLE" : "Workspaces",
+    "LOCALES_LABEL" : "Locales:",
+    "REPOSITORY_TITLE" : "Repository"
   }
 }
