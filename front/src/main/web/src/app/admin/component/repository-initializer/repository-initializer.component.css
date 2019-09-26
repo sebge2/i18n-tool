@@ -14,3 +14,11 @@
 .full-height {
     height: 100%;
 }
+
+.button {
+    display: flex;
+    justify-content: center;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: -50px !important;
+}

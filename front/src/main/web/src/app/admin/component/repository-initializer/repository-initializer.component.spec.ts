@@ -23,6 +23,10 @@ describe('RepositoryInitializerComponent', () => {
         public getRepository(): Observable<Repository> {
             return this.subject;
         }
+
+        public initialize(): Promise<any> {
+            return Promise.resolve();
+        }
     }
 
     beforeEach((() => {
@@ -53,6 +57,22 @@ describe('RepositoryInitializerComponent', () => {
             fixture.detectChanges();
 
             expect(fixture.debugElement.query(By.css('.fa-times-circle'))).not.toBeNull();
+        }
+    );
+
+    it('should display button',
+        () => {
+            spyOn(repositoryService, 'initialize').and.returnValue(Promise.resolve());
+
+            fixture.detectChanges();
+
+            const button = fixture.debugElement.nativeElement.querySelector('#button');
+
+            expect(button).not.toBeNull();
+
+            button.click();
+
+            expect(repositoryService.initialize).toHaveBeenCalled();
         }
     );
 

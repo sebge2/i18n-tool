@@ -120,4 +120,12 @@ describe('RepositoryService', () => {
             return promise;
         }
     );
+
+    it('should initialize repository',
+        () => {
+            service.initialize();
+
+            expect(httpMock.expectOne('/api/repository').request.method).toBe('GET');
+        }
+    );
 });

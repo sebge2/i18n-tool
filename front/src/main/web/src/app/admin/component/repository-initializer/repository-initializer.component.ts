@@ -29,4 +29,8 @@ export class RepositoryInitializerComponent implements OnInit, OnDestroy {
     ngOnDestroy(): void {
         this.destroy$.complete();
     }
+
+    initialize(){
+        this.repositoryService.initialize();
+    }
 }

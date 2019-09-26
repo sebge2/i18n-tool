@@ -39,4 +39,19 @@ export class RepositoryService implements OnDestroy {
     getRepository(): Observable<Repository> {
         return this._repository;
     }
+
+    initialize(): Promise<any> {
+        return this.httpClient
+            .put(
+                '/api/repository',
+                null,
+                {
+                    params: {
+                        do: 'INITIALIZE'
+                    }
+                }
+            )
+            .toPromise()
+            .catch(reason => console.error("Error while initializing repository.", reason));
+    }
 }
