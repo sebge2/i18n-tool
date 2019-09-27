@@ -59,11 +59,11 @@ public class JavaTranslationBundleHandler implements TranslationBundleHandler {
 
                             if (matcher.matches()) {
                                 return new ScannedBundleFileDto(
-                                    matcher.group(1),
-                                    BundleType.JAVA,
-                                    directory,
-                                    singletonList(Locale.forLanguageTag(matcher.group(2))),
-                                    singletonList(file)
+                                        matcher.group(1),
+                                        BundleType.JAVA,
+                                        directory,
+                                        singletonList(Locale.forLanguageTag(matcher.group(2))),
+                                        singletonList(file)
                                 );
                             } else {
                                 return null;
@@ -77,23 +77,25 @@ public class JavaTranslationBundleHandler implements TranslationBundleHandler {
     }
 
     @Override
-    public Collection<ScannedBundleFileKeyDto> scanKeys(ScannedBundleFileDto bundleFile, RepositoryAPI repositoryAPI) throws IOException {
+    public List<ScannedBundleFileKeyDto> scanKeys(ScannedBundleFileDto bundleFile, RepositoryAPI repositoryAPI) throws IOException {
         try {
-            return bundleFile.getFiles().stream()
-                    .flatMap(
-                            file -> {
-                                try { // TODO language empty
-                                    final PropertyResourceBundle resourceBundle = new PropertyResourceBundle(repositoryAPI.openInputStream(file));
+            return new ArrayList<>(
+                    bundleFile.getFiles().stream()
+                            .flatMap(
+                                    file -> {
+                                        try { // TODO language empty
+                                            final PropertyResourceBundle resourceBundle = new PropertyResourceBundle(repositoryAPI.openInputStream(file));
 
-                                    return resourceBundle.keySet().stream()
-                                            .map(key -> new ScannedBundleFileKeyDto(key, singletonMap(getLocale(file), mapToNullIfEmpty(resourceBundle.getString(key)))));
-                                } catch (IOException e) {
-                                    throw new WrappedIOException(e);
-                                }
-                            }
-                    )
-                    .collect(groupingBy(ScannedBundleFileKeyDto::getKey, reducing(null, ScannedBundleFileKeyDto::merge)))
-                    .values();
+                                            return resourceBundle.keySet().stream()
+                                                    .map(key -> new ScannedBundleFileKeyDto(key, singletonMap(getLocale(file), mapToNullIfEmpty(resourceBundle.getString(key)))));
+                                        } catch (IOException e) {
+                                            throw new WrappedIOException(e);
+                                        }
+                                    }
+                            )
+                            .collect(groupingBy(ScannedBundleFileKeyDto::getKey, reducing(null, ScannedBundleFileKeyDto::merge)))
+                            .values()
+            );
         } catch (WrappedIOException e) {
             throw e.getCause();
         }
@@ -101,7 +103,7 @@ public class JavaTranslationBundleHandler implements TranslationBundleHandler {
 
     @Override
     public void updateBundle(ScannedBundleFileDto bundleFile,
-                             Collection<ScannedBundleFileKeyDto> keys,
+                             List<ScannedBundleFileKeyDto> keys,
                              RepositoryAPI repositoryAPI) throws IOException {
         try {
             for (File file : bundleFile.getFiles()) {

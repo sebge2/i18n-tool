@@ -6,7 +6,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.*;
 
-import static java.util.Collections.unmodifiableCollection;
+import static java.util.Collections.unmodifiableList;
 
 /**
  * @author Sebastien Gerard
@@ -45,7 +45,8 @@ public class BundleFileEntity {
     private Set<Locale> locales = new HashSet<>();
 
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
-    private Collection<BundleKeyEntity> keys = new HashSet<>();
+    @OrderColumn(name="key_index")
+    private List<BundleKeyEntity> keys = new ArrayList<>();
 
     @Version
     private int version;
@@ -104,8 +105,8 @@ public class BundleFileEntity {
         this.location = location;
     }
 
-    public Collection<BundleKeyEntity> getKeys() {
-        return unmodifiableCollection(keys);
+    public List<BundleKeyEntity> getKeys() {
+        return unmodifiableList(keys);
     }
 
     void addKey(BundleKeyEntity keyEntity) {

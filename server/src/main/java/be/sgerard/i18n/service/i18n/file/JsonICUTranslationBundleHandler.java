@@ -91,29 +91,31 @@ public class JsonICUTranslationBundleHandler implements TranslationBundleHandler
     }
 
     @Override
-    public Collection<ScannedBundleFileKeyDto> scanKeys(ScannedBundleFileDto bundleFile, RepositoryAPI repositoryAPI) throws IOException {
+    public List<ScannedBundleFileKeyDto> scanKeys(ScannedBundleFileDto bundleFile, RepositoryAPI repositoryAPI) throws IOException {
         try {
-            return bundleFile.getFiles().stream()
-                    .flatMap(
-                            file -> {
-                                try {
-                                    return inlineValues(readValues(repositoryAPI, file))
-                                            .entrySet().stream()
-                                            .map(entry -> new ScannedBundleFileKeyDto(entry.getKey(), singletonMap(getLocale(file), mapToNullIfEmpty(entry.getValue()))));
-                                } catch (IOException e) {
-                                    throw new WrappedIOException(e);
-                                }
-                            }
-                    )
-                    .collect(groupingBy(ScannedBundleFileKeyDto::getKey, LinkedHashMap::new, reducing(null, ScannedBundleFileKeyDto::merge)))
-                    .values();
+            return new ArrayList<>(
+                    bundleFile.getFiles().stream()
+                            .flatMap(
+                                    file -> {
+                                        try {
+                                            return inlineValues(readValues(repositoryAPI, file))
+                                                    .entrySet().stream()
+                                                    .map(entry -> new ScannedBundleFileKeyDto(entry.getKey(), singletonMap(getLocale(file), mapToNullIfEmpty(entry.getValue()))));
+                                        } catch (IOException e) {
+                                            throw new WrappedIOException(e);
+                                        }
+                                    }
+                            )
+                            .collect(groupingBy(ScannedBundleFileKeyDto::getKey, LinkedHashMap::new, reducing(null, ScannedBundleFileKeyDto::merge)))
+                            .values()
+            );
         } catch (WrappedIOException e) {
             throw e.getCause();
         }
     }
 
     @Override
-    public void updateBundle(ScannedBundleFileDto bundleFile, Collection<ScannedBundleFileKeyDto> keys, RepositoryAPI repositoryAPI) throws IOException {
+    public void updateBundle(ScannedBundleFileDto bundleFile, List<ScannedBundleFileKeyDto> keys, RepositoryAPI repositoryAPI) throws IOException {
         for (File file : bundleFile.getFiles()) {
             final Matcher matcher = BUNDLE_PATTERN.matcher(file.getName());
 
@@ -133,7 +135,7 @@ public class JsonICUTranslationBundleHandler implements TranslationBundleHandler
     }
 
     private Map<String, String> inlineValues(Map<String, Object> originalValues) {
-        return inlineValues(originalValues, "").collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        return inlineValues(originalValues, "").collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (first, second) -> first, LinkedHashMap::new));
     }
 
     @SuppressWarnings("unchecked")
@@ -165,7 +167,7 @@ public class JsonICUTranslationBundleHandler implements TranslationBundleHandler
     }
 
     @SuppressWarnings("unchecked")
-    private Map<String, Object> toMap(Collection<ScannedBundleFileKeyDto> keys, Locale locale) {
+    private Map<String, Object> toMap(List<ScannedBundleFileKeyDto> keys, Locale locale) {
         final Map<String, Object> map = new LinkedHashMap<>();
 
         keys.forEach(
