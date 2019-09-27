@@ -5,6 +5,7 @@
 body {
     font-family: Roboto, Arial, sans-serif;
     margin: 0;
+    height: 100vh;
 }
 
 .version-info {

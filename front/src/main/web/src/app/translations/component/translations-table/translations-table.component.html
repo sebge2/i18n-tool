@@ -1,5 +1,5 @@
 <ng-template [ngIf]="form.controls.length > 0" [ngIfElse]="noResult">
-    <div class="mat-app-background">
+    <div class="mat-app-background table-container">
         <div *ngIf="form.dirty" style="text-align: right;">
             <i class="fas fa-exclamation"></i> {{'TRANSLATIONS.TABLE.UNSAVED' | translate}}
         </div>
