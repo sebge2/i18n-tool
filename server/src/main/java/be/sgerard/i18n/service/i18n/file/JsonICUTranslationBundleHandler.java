@@ -6,6 +6,7 @@ import be.sgerard.i18n.model.i18n.file.ScannedBundleFileDto;
 import be.sgerard.i18n.model.i18n.file.ScannedBundleFileKeyDto;
 import be.sgerard.i18n.service.git.RepositoryAPI;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jdk8.WrappedIOException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -16,12 +17,14 @@ import java.io.IOException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static be.sgerard.i18n.service.i18n.file.TranslationFileUtils.mapToNullIfEmpty;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.reducing;
 import static org.springframework.util.StringUtils.isEmpty;
 
 /**
@@ -36,15 +39,15 @@ public class JsonICUTranslationBundleHandler implements TranslationBundleHandler
     private final AntPathMatcher antPathMatcher;
     private final ObjectMapper objectMapper;
 
-    @Autowired
     public JsonICUTranslationBundleHandler(AppProperties appProperties, ObjectMapper objectMapper) {
         this.pathsToScan = appProperties.getJsonIcuTranslationBundleDirsAsList();
         this.objectMapper = objectMapper;
         this.antPathMatcher = new AntPathMatcher();
     }
 
+    @Autowired
     public JsonICUTranslationBundleHandler(AppProperties appProperties) {
-        this(appProperties, new ObjectMapper());
+        this(appProperties, new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT));
     }
 
     @Override
@@ -111,6 +114,17 @@ public class JsonICUTranslationBundleHandler implements TranslationBundleHandler
 
     @Override
     public void updateBundle(ScannedBundleFileDto bundleFile, Collection<ScannedBundleFileKeyDto> keys, RepositoryAPI repositoryAPI) throws IOException {
+        for (File file : bundleFile.getFiles()) {
+            final Matcher matcher = BUNDLE_PATTERN.matcher(file.getName());
+
+            if (!matcher.matches()) {
+                continue;
+            }
+
+            final Locale locale = getLocale(file);
+
+            objectMapper.writeValue(repositoryAPI.openAsTemp(file), toMap(keys, locale));
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -119,7 +133,7 @@ public class JsonICUTranslationBundleHandler implements TranslationBundleHandler
     }
 
     private Map<String, String> inlineValues(Map<String, Object> originalValues) {
-        return inlineValues(originalValues, "").collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
+        return inlineValues(originalValues, "").collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     @SuppressWarnings("unchecked")
@@ -148,5 +162,28 @@ public class JsonICUTranslationBundleHandler implements TranslationBundleHandler
         }
 
         return Locale.forLanguageTag(matcher.group(1));
+    }
+
+    @SuppressWarnings("unchecked")
+    private Map<String, Object> toMap(Collection<ScannedBundleFileKeyDto> keys, Locale locale) {
+        final Map<String, Object> map = new LinkedHashMap<>();
+
+        keys.forEach(
+                key -> {
+                    Map<String, Object> currentMap = map;
+
+                    final String[] parts = key.getKey().split("\\.");
+                    for (int i = 0; i < parts.length; i++) {
+                        if (i == (parts.length - 1)) {
+                            currentMap.put(parts[i], key.getTranslations().get(locale));
+                        } else {
+                            currentMap.putIfAbsent(parts[i], new LinkedHashMap<>());
+                            currentMap = (Map<String, Object>) currentMap.get(parts[i]);
+                        }
+                    }
+                }
+        );
+
+        return map;
     }
 }

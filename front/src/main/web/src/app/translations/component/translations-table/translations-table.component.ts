@@ -109,6 +109,10 @@ export class TranslationsTableComponent implements OnInit, OnDestroy {
         return item instanceof FormGroup;
     }
 
+    isKeyHeaderColumn(columnDefinition: string): boolean {
+        return this.columnDefinitions[0].header == columnDefinition;
+    }
+
     private updateForm(page: BundleKeysPage) {
         this.form.clear();
 
@@ -159,7 +163,7 @@ export class TranslationsTableComponent implements OnInit, OnDestroy {
         this.columnDefinitions.push(
             new ColumnDefinition(
                 'key',
-                'Key',
+                'TRANSLATIONS.TABLE.KEY_HEADER',
                 (formArray: FormArray) => `${formArray.controls[0].value.key.key}`,
                 (formArray: FormArray) => CellType.KEY
             )

@@ -17,7 +17,8 @@
     },
     "TABLE" : {
       "UNSAVED" : "Your changes are not saved yet",
-      "NO_RESULT" : "There are no result, please modify your criteria."
+      "NO_RESULT" : "There are no result, please modify your criteria.",
+      "KEY_HEADER": "Key"
     },
     "START_REVIEW_BUTTON" : "Publish and ask a review"
   },

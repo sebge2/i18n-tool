@@ -31,7 +31,7 @@ public class ScannedBundleFileDto {
 
                 return new ScannedBundleFileDto(
                     first.getName(),
-                    BundleType.JAVA,
+                    first.getType(),
                     first.getLocationDirectory(),
                     locales,
                     files
