@@ -1,43 +1,43 @@
 {
   "TRANSLATIONS" : {
-    "INITIALIZING_ALT" : "Initializing workspace",
-    "PLEASE_WAIT" : "The workspace is initializing, please wait.",
+    "TABLE" : {
+      "NO_RESULT" : "There are no result, please modify your criteria.",
+      "KEY_HEADER" : "Key",
+      "UNSAVED" : "Your changes are not saved yet"
+    },
     "SEARCH_BAR" : {
-      "CRITERION_USER_UPDATED" : "I have updated",
       "SEARCH_BUTTON" : "Search",
-      "CRITERION_MISSING" : "Missing",
-      "TITLE" : "Search {criterion, select, ALL{for <b>all</b> translations} MISSING_TRANSLATIONS{for <b>missing</b> translations} TRANSLATIONS_CURRENT_USER_UPDATED{for translations that <b>I have updated</b>} UPDATED_TRANSLATIONS{for <b>updated</b> translations} other{}} {workspace, select, null{} other {on <b>{workspace}</b> branch}} {locales, select, true{for <b>all locales</b>} other{for locales {locales}}}",
+      "CRITERION_USER_UPDATED" : "I have updated",
+      "CRITERION_UPDATED" : "Someone updated it",
       "CRITERION_ALL" : "All",
-      "CRITERION_UPDATED" : "Someone updated it"
+      "CRITERION_MISSING" : "Missing",
+      "TITLE" : "Search {criterion, select, ALL{for <b>all</b> translations} MISSING_TRANSLATIONS{for <b>missing</b> translations} TRANSLATIONS_CURRENT_USER_UPDATED{for translations that <b>I have updated</b>} UPDATED_TRANSLATIONS{for <b>updated</b> translations} other{}} {workspace, select, null{} other {on <b>{workspace}</b> branch}} {locales, select, true{for <b>all locales</b>} other{for locales {locales}}}"
     },
     "START_REVIEW" : {
-      "TITLE" : "Start a review",
       "START_ACTION" : "Start",
+      "TITLE" : "Start a review",
       "COMMENT" : "Comment"
     },
-    "TABLE" : {
-      "UNSAVED" : "Your changes are not saved yet",
-      "NO_RESULT" : "There are no result, please modify your criteria.",
-      "KEY_HEADER": "Key"
-    },
-    "START_REVIEW_BUTTON" : "Publish and ask a review"
+    "START_REVIEW_BUTTON" : "Publish and ask a review",
+    "INITIALIZING_ALT" : "Initializing workspace",
+    "PLEASE_WAIT" : "The workspace is initializing, please wait."
+  },
+  "SHARED" : {
+    "CANCEL_ACTION" : "Cancel",
+    "WORKSPACE_LABEL" : "Workspace:",
+    "LOCALES_LABEL" : "Locales:",
+    "WORKSPACES_TITLE" : "Workspaces",
+    "REPOSITORY_TITLE" : "Repository"
   },
   "ADMIN" : {
     "WORKSPACES" : {
       "CONFIRM_DELETION" : {
         "EXPLAIN" : "Please confirm the <b>erasing</b> of <b>{workspace}</b> (all modifications will be lost).",
         "PLEASE" : "Please fill the name of the workspace to confirm:",
-        "TITLE" : "Confirm Erasing",
-        "ERASE_ACTION" : "Erase"
+        "ERASE_ACTION" : "Erase",
+        "TITLE" : "Confirm Erasing"
       },
       "REFRESH_ACTION" : "Refresh"
     }
-  },
-  "SHARED" : {
-    "WORKSPACE_LABEL" : "Workspace:",
-    "CANCEL_ACTION" : "Cancel",
-    "WORKSPACES_TITLE" : "Workspaces",
-    "LOCALES_LABEL" : "Locales:",
-    "REPOSITORY_TITLE" : "Repository"
   }
 }
