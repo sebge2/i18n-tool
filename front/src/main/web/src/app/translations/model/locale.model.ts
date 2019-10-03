@@ -9,7 +9,7 @@ export enum Locale {
 }
 
 export function findLocaleFromString(value: string): Locale {
-    return (<any>Locale)[value.toString().toUpperCase()];
+    return (value != null) ? (<any>Locale)[value.toString().toUpperCase()] : null;
 }
 
 export const ALL_LOCALES = Object.keys(Locale).map(key => Locale[key]);

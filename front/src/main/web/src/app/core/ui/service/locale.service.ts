@@ -1,9 +1,10 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject, combineLatest, Observable, Subject} from "rxjs";
-import {ALL_LOCALES, Locale} from "../../../translations/model/locale.model";
+import {ALL_LOCALES, findLocaleFromString, Locale} from "../../../translations/model/locale.model";
 import {TranslateService} from "@ngx-translate/core";
 import {UserSettingsService} from "../../../settings/service/user-settings.service";
 import {map} from "rxjs/operators";
+import {ActivatedRoute, Params} from "@angular/router";
 
 @Injectable({
     providedIn: 'root'
@@ -14,8 +15,8 @@ export class LocaleService {
     private _forceLocale: Subject<Locale> = new BehaviorSubject(null);
 
     constructor(private translateService: TranslateService,
-                private settingsService: UserSettingsService) {
-        this.initializeTranslationService();
+                private settingsService: UserSettingsService,
+                private route: ActivatedRoute) {
     }
 
     public initializeTranslationService() {
@@ -39,6 +40,10 @@ export class LocaleService {
                     }
                 }
             );
+
+        this.route.queryParamMap
+            .pipe(map((params: Params) => findLocaleFromString(params.get('forceLocale'))))
+            .subscribe(forceLocale => this._forceLocale.next(forceLocale));
     }
 
     get currentLocale(): Observable<Locale> {
