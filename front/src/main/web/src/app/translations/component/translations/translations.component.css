@@ -1,4 +1,5 @@
-.container {
-    margin: 30px 0 0 0;
-    text-align: center
+.start-review {
+    position: absolute;
+    top: calc(100vh - 110px);
+    right: 20px;
 }

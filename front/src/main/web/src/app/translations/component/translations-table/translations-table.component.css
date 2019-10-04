@@ -3,6 +3,13 @@ table {
 }
 
 .table-container {
-    max-height: calc(100vh - 250px);
+    position: absolute;
+    top: 90px;
+    width: calc(100% - 60px);
+    max-height: calc(100vh - 220px);
     overflow: auto;
+}
+
+.mat-column-key {
+    max-width: 300px !important;
 }

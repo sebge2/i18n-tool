@@ -17,9 +17,9 @@
     <app-translations-table [searchRequest]="searchRequest"
                             [readOnly]="readOnlyTable || startReviewing"></app-translations-table>
 
-    <div style="text-align: right; margin-top: 10px;"
+    <div class="start-review"
          *ngIf="(searchRequest != null) && (searchRequest.workspace != null) && searchRequest.workspace.isInitialized()">
-        <button mat-flat-button color="primary" (click)="openStartReviewDialog()" [disabled]="startReviewing">
+        <button  mat-flat-button color="primary" (click)="openStartReviewDialog()" [disabled]="startReviewing">
             {{'TRANSLATIONS.START_REVIEW_BUTTON' | translate}}
 
             <i class="fa fa-spinner fa-spin" *ngIf="startReviewing"></i>

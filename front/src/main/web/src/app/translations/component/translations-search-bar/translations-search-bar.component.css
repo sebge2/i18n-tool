@@ -13,3 +13,9 @@
 
 .container mat-button-toggle-group {
 }
+
+.mat-expansion-panel {
+    position: absolute;
+    z-index: 1;
+    width: calc(100% - 60px);
+}
