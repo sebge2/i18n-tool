@@ -14,11 +14,23 @@ describe('TranslationsStartReviewComponent', () => {
     let overlayContainer: OverlayContainer;
     let component: TranslationsStartReviewComponent;
     let fixture: ComponentFixture<TranslationsStartReviewComponent>;
-    const mockDialogRef = {
-        close: jasmine.createSpy('close')
-    };
+    let mockDialogRef: MockDialogRef;
+
+    class MockDialogRef {
+
+        public closed = false;
+        public data: any;
+
+        public close(data?: any): void {
+            this.closed = true;
+            this.data = data;
+        }
+
+    }
 
     beforeEach(async(() => {
+        mockDialogRef = new MockDialogRef();
+
         TestBed.configureTestingModule({
             imports: [
                 BrowserAnimationsModule,
@@ -62,12 +74,32 @@ describe('TranslationsStartReviewComponent', () => {
         fixture.detectChanges();
     });
 
-    it('should create', () => {
-        expect(component).toBeTruthy(); // TODO
+    it('onSubmit should close the dialog', () => {
+        component.form.controls.comment.setValue('my comment');
+
+        fixture.detectChanges();
+
+        const submitButton = fixture.debugElement.nativeElement.querySelector('#submit');
+
+        expect(component.form.valid).toBe(true);
+        expect(submitButton.disabled).toBe(false);
+
+        submitButton.click();
+
+        expect(mockDialogRef.closed).toBe(true);
+        expect(mockDialogRef.data).not.toBeNull();
+        expect(mockDialogRef.data.comment).toBe('my comment');
+    });
+
+    it('onSubmit should be disabled invalid form', () => {
+        component.form.get('comment').setValue("");
+
+        expect(fixture.debugElement.nativeElement.querySelector('#submit').disabled).toBe(true);
+        expect(mockDialogRef.closed).toBe(false);
     });
 
     it('onCancel should close the dialog', () => {
         component.onCancel();
-        expect(mockDialogRef.close).toHaveBeenCalled();
+        expect(mockDialogRef.closed).toBe(true);
     });
 });

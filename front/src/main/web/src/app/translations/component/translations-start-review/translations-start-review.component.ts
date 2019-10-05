@@ -9,7 +9,7 @@ import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 })
 export class TranslationsStartReviewComponent implements OnInit {
 
-    private form: FormGroup;
+    form: FormGroup;
 
     constructor(private dialogRef: MatDialogRef<TranslationsStartReviewComponent>,
                 private formBuilder: FormBuilder,
@@ -28,7 +28,7 @@ export class TranslationsStartReviewComponent implements OnInit {
         this.dialogRef.close();
     }
 
-    submit(){
+    submit() {
         this.dialogRef.close({comment: this.form.value.comment});
     }
 }

@@ -7,7 +7,7 @@
         </mat-form-field>
     </div>
     <div mat-dialog-actions>
-        <button mat-button type="button" (click)="onCancel()">{{'SHARED.CANCEL_ACTION' | translate}}</button>
-        <button mat-button type="submit" (click)="submit()" [disabled]="!form.valid"><i class="fas fa-play"></i> {{'TRANSLATIONS.START_REVIEW.START_ACTION' | translate}}</button>
+        <button mat-button id="cancel" type="button" (click)="onCancel()">{{'SHARED.CANCEL_ACTION' | translate}}</button>
+        <button mat-button id="submit" type="submit" (click)="submit()" [disabled]="!form.valid"><i class="fas fa-play"></i> {{'TRANSLATIONS.START_REVIEW.START_ACTION' | translate}}</button>
     </div>
 </form>
