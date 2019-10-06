@@ -18,7 +18,7 @@
     <properties>
         <java.version>11</java.version>
         <docker.repository>sebge2</docker.repository>
-        <docker.image.name>github-oauth</docker.image.name>
+        <docker.image.name>i18n-tool</docker.image.name>
         <docker.image.version>${project.version}</docker.image.version>
 
         <jcabi-github.version>0.41</jcabi-github.version>

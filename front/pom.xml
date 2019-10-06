@@ -27,14 +27,14 @@
                 </configuration>
                 <executions>
                     <execution>
-                        <id>install node and npm</id>
+                        <id>initialize</id>
                         <phase>initialize</phase>
                         <goals>
                             <goal>install-node-and-npm</goal>
                         </goals>
                     </execution>
                     <execution>
-                        <id>npm install</id>
+                        <id>install</id>
                         <phase>compile</phase>
                         <goals>
                             <goal>npm</goal>
@@ -44,7 +44,7 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <id>npm run build</id>
+                        <id>build</id>
                         <phase>compile</phase>
                         <goals>
                             <goal>npm</goal>
@@ -54,13 +54,33 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <id>npm run test</id>
+                        <id>test</id>
                         <phase>test</phase>
                         <goals>
                             <goal>npm</goal>
                         </goals>
                         <configuration>
                             <arguments>run test</arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>test-e2e-complete</id>
+                        <phase>none</phase>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>run e2e -- --suite complete</arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>test-e2e-smoke</id>
+                        <phase>none</phase>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>run e2e -- --suite smoke</arguments>
                         </configuration>
                     </execution>
                 </executions>
