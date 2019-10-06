@@ -12,7 +12,6 @@ jdk:
 
 env:
   global:
-    - CHROME_VERSION='74.0.3729.6'
     - WEB_DRIVER_LOCATION='./front/src/main/web/node_modules/protractor/bin'
     - E2E_TEST_SUITE='test-e2e-complete'
 
@@ -30,7 +29,7 @@ jobs:
         - sleep 3
       install:
         - mvn initialize -pl front/
-        - $WEB_DRIVER_LOCATION/webdriver-manager update &&  $WEB_DRIVER_LOCATION/webdriver-manager start --versions.chrome=$CHROME_VERSION --detach  &
+        - $WEB_DRIVER_LOCATION/webdriver-manager update &&  $WEB_DRIVER_LOCATION/webdriver-manager start --detach  &
       script: mvn com.github.eirslett:frontend-maven-plugin:npm@$E2E_TEST_SUITE -pl front/
 #    - stage: deploy
 #      deploy:
