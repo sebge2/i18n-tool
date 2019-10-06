@@ -14,6 +14,7 @@ env:
   global:
     - WEB_DRIVER_LOCATION='./front/src/main/web/node_modules/protractor/bin'
     - E2E_TEST_SUITE='test-e2e-complete'
+    - DOCKER_IMAGE_VERSION='travis.$TRAVIS_BRANCH.$TRAVIS_BUILD_NUMBER'
 
 addons:
   chrome: stable
@@ -21,7 +22,10 @@ addons:
 jobs:
   include:
     - stage: Compile and Unit Tests
-      script: mvn clean install
+      before_script:
+        - echo '$DOCKER_PASSWORD' | docker login -u '$DOCKER_USERNAME' --password-stdin
+      script: mvn clean deploy -Ddocker.image.version=$DOCKER_IMAGE_VERSION
+      # TODO remove image if failed
     - stage: E2E-test
       before_script:
         - "export DISPLAY=:99.0"
@@ -31,12 +35,6 @@ jobs:
         - mvn initialize -pl front/
         - $WEB_DRIVER_LOCATION/webdriver-manager update &&  $WEB_DRIVER_LOCATION/webdriver-manager start --detach  &
       script: mvn com.github.eirslett:frontend-maven-plugin:npm@$E2E_TEST_SUITE -pl front/
-#    - stage: deploy
-#      deploy:
-#      - provider: script
-#        script:: "echo '$DOCKER_PASSWORD' | docker login -u '$DOCKER_USERNAME' --password-stdin && mvn com.spotify:dockerfile-maven-plugin:push -pl server"
-#        after_failure: ''
-#        skip_cleanup: true
 
 #  - provider: elasticbeanstalk
 #    region: "eu-central-1"
