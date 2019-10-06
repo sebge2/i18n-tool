@@ -22,9 +22,9 @@ jobs:
 #      script: mvn clean install
     - stage: E2E-test
       install:
-        - mvn com.github.eirslett:frontend-maven-plugin:npm@'initialize' -pl front/
+        - mvn initialize -pl front/
 #        - npm install -g protractor
-        - $WEB_DRIVER_LOCATION/webdriver-manager update &&  $WEB_DRIVER_LOCATION/webdriver-manager start --versions.chrome=$CHROME_VERSION  &
+        - $WEB_DRIVER_LOCATION/webdriver-manager update &&  $WEB_DRIVER_LOCATION/webdriver-manager start --versions.chrome=$CHROME_VERSION --detach  &
       script: mvn com.github.eirslett:frontend-maven-plugin:npm@'$E2E_TEST_SUITE' -pl front/
 #    - stage: deploy
 #      deploy:

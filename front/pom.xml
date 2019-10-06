@@ -35,7 +35,7 @@
                     </execution>
                     <execution>
                         <id>install</id>
-                        <phase>compile</phase>
+                        <phase>initialize</phase>
                         <goals>
                             <goal>npm</goal>
                         </goals>
