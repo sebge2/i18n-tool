@@ -16,6 +16,9 @@ env:
     - WEB_DRIVER_LOCATION='./front/src/main/web/node_modules/protractor/bin'
     - E2E_TEST_SUITE='test-e2e-complete'
 
+addons:
+  chrome: stable
+
 jobs:
   include:
 #    - stage: Compile and Unit Tests
