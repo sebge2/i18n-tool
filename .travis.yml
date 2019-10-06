@@ -1,4 +1,4 @@
-#language: java
+language: java
 
 services:
   - docker
@@ -15,21 +15,26 @@ env:
     - WEB_DRIVER_LOCATION='./front/src/main/web/node_modules/protractor/bin'
     - E2E_TEST_SUITE='test-e2e-complete'
     - DOCKER_IMAGE_VERSION='travis.$TRAVIS_BRANCH.$TRAVIS_BUILD_NUMBER'
+    - DOCKER_PASSWORD=$DOCKER_PASSWORD
+    - DOCKER_PASSWORD=$DOCKER_PASSWORD
 
 addons:
   chrome: stable
 
+install: /bin/true
+
 jobs:
   include:
     - stage: Compile and Unit Tests
-      script: echo '$DOCKER_PASSWORD' | docker login -u '$DOCKER_USERNAME' --password-stdin && mvn clean deploy -Ddocker.image.version=$DOCKER_IMAGE_VERSION
+      script:
+        - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+        - mvn clean deploy -Ddocker.image.version=$DOCKER_IMAGE_VERSION
       # TODO remove image if failed
     - stage: E2E-test
       before_script:
         - "export DISPLAY=:99.0"
         - "sh -e /etc/init.d/xvfb start"
         - sleep 3
-      install:
         - mvn initialize -pl front/
         - $WEB_DRIVER_LOCATION/webdriver-manager update &&  $WEB_DRIVER_LOCATION/webdriver-manager start --detach  &
       script: mvn com.github.eirslett:frontend-maven-plugin:npm@$E2E_TEST_SUITE -pl front/
