@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/sebge2emasphere/github-oauth.svg?branch=master)](https://travis-ci.org/sebge2emasphere/github-oauth)
+[![Build Status](https://travis-ci.org/sebge2/github-oauth.svg?branch=master)](https://travis-ci.org/sebge2/github-oauth)
 
-# github-oauth
-Test authenticating user on github and allow modification on git
+# I18n Tool
+Tool allowing to translate keys in different language.
