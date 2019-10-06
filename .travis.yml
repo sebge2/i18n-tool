@@ -11,9 +11,10 @@ jdk:
   - oraclejdk11
 
 env:
-  - CHROME_VERSION='74.0.3729.6'
-  - WEB_DRIVER_LOCATION='./front/src/main/web/node_modules/protractor/bin/'
-  - E2E_TEST_SUITE='test-e2e-complete'
+  global:
+    - CHROME_VERSION='74.0.3729.6'
+    - WEB_DRIVER_LOCATION='./front/src/main/web/node_modules/protractor/bin/'
+    - E2E_TEST_SUITE='test-e2e-complete'
 
 jobs:
   include:
