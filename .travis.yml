@@ -21,13 +21,14 @@ jobs:
     - stage: compile and unit tests
       script: mvn clean install
     - stage: e2e-test
-      install: $WEB_DRIVER_LOCATION/webdriver-manager update &&  $WEB_DRIVER_LOCATION/webdriver-manager start --versions.chrome=$CHROME_VERSION  &
+      install: mvn com.github.eirslett:frontend-maven-plugin:npm@'initialize' -pl front/ && $WEB_DRIVER_LOCATION/webdriver-manager update &&  $WEB_DRIVER_LOCATION/webdriver-manager start --versions.chrome=$CHROME_VERSION  &
       script: mvn com.github.eirslett:frontend-maven-plugin:npm@'$E2E_TEST_SUITE' -pl front/
-    - stage: deploy
-      deploy:
-      - provider: script
-        script: "echo '$DOCKER_PASSWORD' | docker login -u '$DOCKER_USERNAME' --password-stdin && mvn com.spotify:dockerfile-maven-plugin:push -pl server"
-        skip_cleanup: true
+#    - stage: deploy
+#      deploy:
+#      - provider: script
+#        script:: "echo '$DOCKER_PASSWORD' | docker login -u '$DOCKER_USERNAME' --password-stdin && mvn com.spotify:dockerfile-maven-plugin:push -pl server"
+#        after_failure: ''
+#        skip_cleanup: true
 
 #deploy:
 
