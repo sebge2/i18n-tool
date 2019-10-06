@@ -21,6 +21,10 @@ jobs:
 #    - stage: Compile and Unit Tests
 #      script: mvn clean install
     - stage: E2E-test
+      before_script:
+        - "export DISPLAY=:99.0"
+        - "sh -e /etc/init.d/xvfb start"
+        - sleep 3 # give xvfb some time to start
       install:
         - mvn initialize -pl front/
         - $WEB_DRIVER_LOCATION/webdriver-manager update &&  $WEB_DRIVER_LOCATION/webdriver-manager start --versions.chrome=$CHROME_VERSION --detach  &
