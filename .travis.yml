@@ -22,9 +22,7 @@ addons:
 jobs:
   include:
     - stage: Compile and Unit Tests
-      before_script:
-        - echo '$DOCKER_PASSWORD' | docker login -u '$DOCKER_USERNAME' --password-stdin
-      script: mvn clean deploy -Ddocker.image.version=$DOCKER_IMAGE_VERSION
+      script: "echo '$DOCKER_PASSWORD' | docker login -u '$DOCKER_USERNAME' --password-stdin && mvn clean deploy -Ddocker.image.version=$DOCKER_IMAGE_VERSION"
       # TODO remove image if failed
     - stage: E2E-test
       before_script:
