@@ -1,4 +1,4 @@
-language: java
+#language: java
 
 services:
   - docker
@@ -25,6 +25,8 @@ env:
 stages:
   - Compile and Unit Tests
   - E2E-test
+
+#install: /bin/true
 
 jobs:
   include:
