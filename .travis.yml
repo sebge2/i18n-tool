@@ -10,6 +10,9 @@ branches:
 jdk:
   - oraclejdk11
 
+addons:
+  chrome: stable
+
 env:
   global:
     - WEB_DRIVER_LOCATION='./front/src/main/web/node_modules/protractor/bin'
@@ -19,10 +22,9 @@ env:
     - DOCKER_PASSWORD=$DOCKER_PASSWORD
     - MVN_OPTS='-B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN'
 
-addons:
-  chrome: stable
-
-install: /bin/true
+stages:
+  - Compile and Unit Tests
+  - E2E-test
 
 jobs:
   include:
@@ -30,7 +32,6 @@ jobs:
       script:
         - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
         - mvn clean deploy -Ddocker.image.version=$DOCKER_IMAGE_VERSION $MVN_OPTS
-      # TODO remove image if failed
     - stage: E2E-test
       before_script:
         - export DISPLAY=:99.0
@@ -39,6 +40,8 @@ jobs:
         - mvn initialize $MVN_OPTS -pl front/
         - $WEB_DRIVER_LOCATION/webdriver-manager update &&  $WEB_DRIVER_LOCATION/webdriver-manager start --detach  &
       script: mvn com.github.eirslett:frontend-maven-plugin:npm@$E2E_TEST_SUITE $MVN_OPTS -pl front/
+      # TODO remove image if failed
+      after_failure: /bin/true
 
 #  - provider: elasticbeanstalk
 #    region: "eu-central-1"
