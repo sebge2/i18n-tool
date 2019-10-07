@@ -14,7 +14,7 @@ env:
   global:
     - WEB_DRIVER_LOCATION='./front/src/main/web/node_modules/protractor/bin'
     - E2E_TEST_SUITE='test-e2e-complete'
-    - DOCKER_IMAGE_VERSION='travis.$TRAVIS_BRANCH.$TRAVIS_BUILD_NUMBER'
+    - DOCKER_IMAGE_VERSION=travis
     - DOCKER_PASSWORD=$DOCKER_PASSWORD
     - DOCKER_PASSWORD=$DOCKER_PASSWORD
     - MVN_OPTS='-B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN'
