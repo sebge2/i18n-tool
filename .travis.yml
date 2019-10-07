@@ -17,7 +17,7 @@ env:
     - DOCKER_IMAGE_VERSION='travis.$TRAVIS_BRANCH.$TRAVIS_BUILD_NUMBER'
     - DOCKER_PASSWORD=$DOCKER_PASSWORD
     - DOCKER_PASSWORD=$DOCKER_PASSWORD
-    - MVN_OPTS='-B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN --quiet'
+    - MVN_OPTS='-B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN'
 
 addons:
   chrome: stable
