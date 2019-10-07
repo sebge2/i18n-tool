@@ -17,6 +17,7 @@ env:
     - DOCKER_IMAGE_VERSION='travis.$TRAVIS_BRANCH.$TRAVIS_BUILD_NUMBER'
     - DOCKER_PASSWORD=$DOCKER_PASSWORD
     - DOCKER_PASSWORD=$DOCKER_PASSWORD
+    - MAVEN_OPTS='--no-transfer-progress'
 
 addons:
   chrome: stable
