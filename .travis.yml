@@ -42,8 +42,8 @@ jobs:
       script:
         - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
         - mvn clean install $MVN_OPTS
-        - docker tag $DOCKER_ORGANIZATION/$DOCKER_IMAGE:DOCKER_IMAGE_VERSION $DOCKER_ORGANIZATION/$DOCKER_IMAGE:DOCKER_IMAGE_TMP_VERSION
-        - docker push $DOCKER_ORGANIZATION/$DOCKER_IMAGE:DOCKER_IMAGE_TMP_VERSION
+        - docker tag $DOCKER_ORGANIZATION/$DOCKER_IMAGE:$DOCKER_IMAGE_VERSION $DOCKER_ORGANIZATION/$DOCKER_IMAGE:$DOCKER_IMAGE_TMP_VERSION
+        - docker push $DOCKER_ORGANIZATION/$DOCKER_IMAGE:$DOCKER_IMAGE_TMP_VERSION
     - stage: E2E-test
       before_script:
         - export DISPLAY=:99.0
@@ -55,8 +55,8 @@ jobs:
       script: mvn com.github.eirslett:frontend-maven-plugin:npm@$E2E_TEST_SUITE $MVN_OPTS -pl front/
       after_failure: curl -u $DOCKER_USERNAME:$DOCKER_PASSWORD -X "DELETE" https://cloud.docker.com/v2/repositories/$DOCKER_ORGANIZATION/$DOCKER_IMAGE/tags/$DOCKER_IMAGE_TMP_VERSION/
       after_success:
-        - docker tag $DOCKER_ORGANIZATION/$DOCKER_IMAGE:DOCKER_IMAGE_TMP_VERSION $DOCKER_ORGANIZATION/$DOCKER_IMAGE:DOCKER_IMAGE_VERSION
-        - docker push $DOCKER_ORGANIZATION/$DOCKER_IMAGE:DOCKER_IMAGE_VERSION
+        - docker tag $DOCKER_ORGANIZATION/$DOCKER_IMAGE:$DOCKER_IMAGE_TMP_VERSION $DOCKER_ORGANIZATION/$DOCKER_IMAGE:$DOCKER_IMAGE_VERSION
+        - docker push $DOCKER_ORGANIZATION/$DOCKER_IMAGE:$DOCKER_IMAGE_VERSION
 
 #deploy:
 #  - provider: elasticbeanstalk
