@@ -1,5 +1,6 @@
 services:
   - docker
+  - xvfb
 
 branches:
   only:
