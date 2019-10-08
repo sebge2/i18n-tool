@@ -15,10 +15,16 @@ env:
   global:
     - WEB_DRIVER_LOCATION='./front/src/main/web/node_modules/protractor/bin'
     - E2E_TEST_SUITE='test-e2e-complete'
-    - DOCKER_IMAGE_VERSION=travis
+
+    - DOCKER_IMAGE=$(mvn help:evaluate -Dexpression=docker.image.name -q -DforceStdout 2> /dev/null)
+    - DOCKER_IMAGE_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout 2> /dev/null)
+    - DOCKER_IMAGE_TMP_VERSION=travis
+    - DOCKER_USERNAME=$DOCKER_USERNAME
+    - DOCKER_ORGANIZATION=$DOCKER_USERNAME
     - DOCKER_PASSWORD=$DOCKER_PASSWORD
-    - DOCKER_PASSWORD=$DOCKER_PASSWORD
+
     - MVN_OPTS='-B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN'
+
     - SERVER_PORT=$E2E_SERVER_PORT
     - GIT_HUB_OAUTH_CLIENT=$E2E_GIT_HUB_OAUTH_CLIENT
     - GIT_HUB_OAUTH_SECRET=$E2E_GIT_HUB_OAUTH_SECRET
@@ -35,7 +41,9 @@ jobs:
     - stage: Compile and Unit Tests
       script:
         - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-        - mvn clean deploy -Ddocker.image.version=$DOCKER_IMAGE_VERSION $MVN_OPTS
+        - mvn clean install $MVN_OPTS
+        - docker tag $DOCKER_ORGANIZATION/$DOCKER_IMAGE:DOCKER_IMAGE_VERSION $DOCKER_ORGANIZATION/$DOCKER_IMAGE:DOCKER_IMAGE_TMP_VERSION
+        - docker push $DOCKER_ORGANIZATION/$DOCKER_IMAGE:DOCKER_IMAGE_TMP_VERSION
     - stage: E2E-test
       before_script:
         - export DISPLAY=:99.0
@@ -45,8 +53,10 @@ jobs:
         - $WEB_DRIVER_LOCATION/webdriver-manager update &&  $WEB_DRIVER_LOCATION/webdriver-manager start --detach  &
         - docker-compose up -d
       script: mvn com.github.eirslett:frontend-maven-plugin:npm@$E2E_TEST_SUITE $MVN_OPTS -pl front/
-      # TODO remove image if failed
-      after_failure: /bin/true
+      after_failure: curl -u $DOCKER_USERNAME:$DOCKER_PASSWORD -X "DELETE" https://cloud.docker.com/v2/repositories/$DOCKER_ORGANIZATION/$DOCKER_IMAGE/tags/$DOCKER_IMAGE_TMP_VERSION/
+      after_success:
+        - docker tag $DOCKER_ORGANIZATION/$DOCKER_IMAGE:DOCKER_IMAGE_TMP_VERSION $DOCKER_ORGANIZATION/$DOCKER_IMAGE:DOCKER_IMAGE_VERSION
+        - docker push $DOCKER_ORGANIZATION/$DOCKER_IMAGE:DOCKER_IMAGE_VERSION
 
 #deploy:
 #  - provider: elasticbeanstalk
