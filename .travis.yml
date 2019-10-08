@@ -1,5 +1,3 @@
-#language: java
-
 services:
   - docker
 
@@ -21,12 +19,16 @@ env:
     - DOCKER_PASSWORD=$DOCKER_PASSWORD
     - DOCKER_PASSWORD=$DOCKER_PASSWORD
     - MVN_OPTS='-B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN'
+    - SERVER_PORT=$E2E_SERVER_PORT
+    - GIT_HUB_OAUTH_CLIENT=$E2E_GIT_HUB_OAUTH_CLIENT
+    - GIT_HUB_OAUTH_SECRET=$E2E_GIT_HUB_OAUTH_SECRET
+    - GIT_HUB_REPO_USER_NAME=$E2E_GIT_HUB_REPO_USER_NAME
+    - GIT_HUB_REPO_NAME=$E2E_GIT_HUB_REPO_NAME
+    - GIT_HUB_WEBHOOK_SECRET=$E2E_GIT_HUB_WEBHOOK_SECRET
 
 stages:
   - Compile and Unit Tests
   - E2E-test
-
-#install: /bin/true
 
 jobs:
   include:
@@ -41,10 +43,12 @@ jobs:
         - sleep 3
         - mvn initialize $MVN_OPTS -pl front/
         - $WEB_DRIVER_LOCATION/webdriver-manager update &&  $WEB_DRIVER_LOCATION/webdriver-manager start --detach  &
+        - docker-compose up -d
       script: mvn com.github.eirslett:frontend-maven-plugin:npm@$E2E_TEST_SUITE $MVN_OPTS -pl front/
       # TODO remove image if failed
       after_failure: /bin/true
 
+#deploy:
 #  - provider: elasticbeanstalk
 #    region: "eu-central-1"
 #    app: "github-oauth"
