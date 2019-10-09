@@ -2,7 +2,7 @@ var isHeadless = !process.argv.includes('--no-headless');
 
 exports.config = {
     seleniumAddress: 'http://localhost:4444/wd/hub',
-    baseURL: 'http://localhost:8080/',
+    baseUrl: 'http://localhost:8080/',
     framework: 'jasmine',
 
     specs: ['**/*.spec.js'],
@@ -23,5 +23,16 @@ exports.config = {
                 '--disable-dev-shm-usage'
             ].filter(Boolean)
         }
+    },
+
+    onPrepare: async() => {
+        browser.waitForAngularEnabled(false);
+
+        await browser.get(browser.baseUrl);
+        await element(by.id('login_field')).sendKeys('sebge2-test-user');
+        await element(by.id('password')).sendKeys('SngDkVV6X9ML5cNeehWGgaf');
+        await element(by.name('commit')).click();
+
+        browser.waitForAngularEnabled(true);
     }
 };
