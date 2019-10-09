@@ -1,3 +1,5 @@
+var isHeadless = !process.argv.includes('--no-headless');
+
 exports.config = {
     seleniumAddress: 'http://localhost:4444/wd/hub',
     baseURL: 'http://localhost:8080/',
@@ -13,7 +15,13 @@ exports.config = {
     capabilities: {
         browserName: 'chrome',
         chromeOptions: {
-            args: ['--headless', '--disable-gpu', '--no-sandbox', '--disable-extensions', '--disable-dev-shm-usage']
+            args: [
+                isHeadless && '--headless',
+                '--disable-gpu',
+                '--no-sandbox',
+                '--disable-extensions',
+                '--disable-dev-shm-usage'
+            ].filter(Boolean)
         }
     }
 };
