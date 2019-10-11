@@ -111,7 +111,7 @@
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
             "protractorConfig": "e2e/protractor.conf.js",
-            "devServerTarget": "i18n-tool:serve"
+            "devServerTarget": ""
           },
           "configurations": {
             "production": {
