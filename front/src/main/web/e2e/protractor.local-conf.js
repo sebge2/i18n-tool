@@ -1,7 +1,7 @@
 var HtmlScreenshotReporter = require('protractor-jasmine2-screenshot-reporter');
 
 var screenshotReporter = new HtmlScreenshotReporter({
-    dest: process.cwd() + '/../../../target/screenshots',
+    dest: process.cwd() + '/../../../../target/screenshots',
     filename: 'e2e-test-report.html'
 });
 
@@ -21,7 +21,6 @@ exports.config = {
         browserName: 'chrome',
         chromeOptions: {
             args: [
-                '--headless',
                 '--disable-gpu',
                 '--no-sandbox',
                 '--disable-extensions',
