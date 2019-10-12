@@ -10,33 +10,52 @@ import {TranslateModule} from "@ngx-translate/core";
 import {HttpClientModule} from "@angular/common/http";
 import {CoreEventModule} from "../../../core/event/core-event.module";
 import {CoreUiModule} from "../../../core/ui/core-ui.module";
+import {BehaviorSubject} from "rxjs";
+import {WorkspaceService} from "../../service/workspace.service";
+import {Workspace} from "../../model/workspace.model";
 
 describe('TranslationsSearchBarComponent', () => {
     let component: TranslationsSearchBarComponent;
     let fixture: ComponentFixture<TranslationsSearchBarComponent>;
+    let workspaceService: WorkspaceService;
+    let workspaces: BehaviorSubject<Workspace[]>;
 
     beforeEach(async(() => {
-        TestBed.configureTestingModule({
-            imports: [
-                BrowserAnimationsModule,
-                CoreSharedModule,
-                CoreUiModule,
-                CoreEventModule,
-                TranslateModule.forRoot(),
-                HttpClientModule
-            ],
-            declarations: [TranslationsSearchBarComponent, WorkspaceSelectorComponent, TranslationLocalesSelectorComponent, TranslationCriterionSelectorComponent]
-        })
-            .compileComponents();
-    }));
+        workspaceService = jasmine.createSpyObj('workspaceService', ['getWorkspaces']);
 
-    beforeEach(() => {
+        workspaces = new BehaviorSubject([]);
+
+        workspaceService.getWorkspaces = jasmine.createSpy().and.returnValue(workspaces);
+
+        TestBed
+            .configureTestingModule({
+                imports: [
+                    BrowserAnimationsModule,
+                    CoreSharedModule,
+                    CoreUiModule,
+                    CoreEventModule,
+                    TranslateModule.forRoot(),
+                    HttpClientModule
+                ],
+                providers: [
+                    {provide: WorkspaceService, useValue: workspaceService}
+                ],
+                declarations: [
+                    TranslationsSearchBarComponent,
+                    WorkspaceSelectorComponent,
+                    TranslationLocalesSelectorComponent,
+                    TranslationCriterionSelectorComponent
+                ]
+            })
+            .compileComponents();
+
         fixture = TestBed.createComponent(TranslationsSearchBarComponent);
         component = fixture.componentInstance;
-        fixture.detectChanges();
-    });
+    }));
 
     it('should create', () => {
+        fixture.detectChanges();
+
         expect(component).toBeTruthy(); // TODO
     });
 });

@@ -4,7 +4,6 @@ import {MatSidenav} from '@angular/material';
 import {ScreenService} from '../../service/screen.service';
 import {User} from "../../../auth/model/user.model";
 import {AuthenticationService} from "../../../auth/service/authentication.service";
-import {UserSessionService} from "../../../auth/service/user-session.service";
 
 @Component({
     selector: 'app-header',
@@ -21,11 +20,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private _smallSizeSubscription: Subscription;
     private _smallSize: boolean;
 
-    private _userSessionsSubscription: Subscription;
-
     constructor(private authService: AuthenticationService,
-                private mediaService: ScreenService,
-                private userSessionService: UserSessionService) {
+                private mediaService: ScreenService) {
         this._smallSizeSubscription = mediaService.smallSize
             .subscribe(
                 smallSize => this._smallSize = smallSize
@@ -36,16 +32,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
         this.currentUserSubscription = this.authService.currentUser.subscribe(
             user => this._currentUser = user
         );
-
-        // this._userSessionsSubscription = this.userSessionService.getCurrentUserSessions().subscribe(
-        //     userSessions => console.log("updated sessions", userSessions) TODO
-        // );
     }
 
     ngOnDestroy(): void {
         this.currentUserSubscription.unsubscribe();
         this._smallSizeSubscription.unsubscribe();
-        // this._userSessionsSubscription.unsubscribe();
     }
 
     get currentUser(): User {
