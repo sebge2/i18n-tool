@@ -18,7 +18,7 @@ public interface AuthenticationManager {
 
     UserEntity getUserFromPrincipal(Principal principal);
 
-    String getAuthToken() throws AccessDeniedException;
+    String getGitToken() throws AccessDeniedException;
 
     Collection<String> getCurrentUserRoles() throws AccessDeniedException;
 }

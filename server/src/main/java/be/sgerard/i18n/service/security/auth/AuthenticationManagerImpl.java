@@ -61,7 +61,7 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
     }
 
     @Override
-    public String getAuthToken() throws AccessDeniedException {
+    public String getGitToken() throws AccessDeniedException {
         return context.getAccessToken().getValue();
     }
 
