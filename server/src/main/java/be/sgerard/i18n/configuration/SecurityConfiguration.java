@@ -1,5 +1,6 @@
 package be.sgerard.i18n.configuration;
 
+import be.sgerard.i18n.service.security.UserRole;
 import be.sgerard.i18n.service.security.auth.GitHubAuthoritiesExtractor;
 import be.sgerard.i18n.service.security.auth.GitHubPrincipalExtractor;
 import be.sgerard.i18n.service.security.user.UserManager;
@@ -18,10 +19,6 @@ import org.springframework.security.oauth2.client.OAuth2ClientContext;
 @Configuration
 @EnableOAuth2Sso
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
-
-    public static final String ROLE_REPO_MEMBER = "REPO_MEMBER";
-
-    public static final String ROLE_USER = "USER";
 
     private final OAuth2ClientContext context;
     private final AppProperties appProperties;
@@ -59,7 +56,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 )
                 .permitAll()
                 .anyRequest()
-                .hasAnyAuthority(ROLE_REPO_MEMBER, ROLE_USER)
+                .hasAnyAuthority(UserRole.REPO_MEMBER.name(), UserRole.USER.name())
                 .and().logout().logoutSuccessUrl("/logout/success").permitAll()
                 .and().csrf().disable();
     }
