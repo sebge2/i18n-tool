@@ -13,41 +13,55 @@ import {HttpClientModule} from "@angular/common/http";
 import {CoreEventModule} from "../../../core/event/core-event.module";
 import {CoreUiModule} from "../../../core/ui/core-ui.module";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
+import {BehaviorSubject} from "rxjs";
+import {WorkspaceService} from "../../service/workspace.service";
+import {Workspace} from "../../model/workspace.model";
 
 describe('TranslationsComponent', () => {
     let component: TranslationsComponent;
     let fixture: ComponentFixture<TranslationsComponent>;
+    let workspaceService: WorkspaceService;
+    let workspaces: BehaviorSubject<Workspace[]>;
 
     beforeEach(async(() => {
-        TestBed.configureTestingModule({
-            imports: [
-                TranslateModule.forRoot(),
-                BrowserAnimationsModule,
-                CoreUiModule,
-                CoreSharedModule,
-                CoreEventModule,
-                HttpClientModule
-            ],
-            declarations: [
-                TranslationsComponent,
-                TranslationsSearchBarComponent,
-                TranslationsTableComponent,
-                WorkspaceSelectorComponent,
-                TranslationLocalesSelectorComponent,
-                TranslationCriterionSelectorComponent,
-                TranslationEditingCellComponent,
-            ]
-        })
-            .compileComponents();
-    }));
+        workspaceService = jasmine.createSpyObj('workspaceService', ['getWorkspaces']);
 
-    beforeEach(() => {
+        workspaces = new BehaviorSubject([]);
+
+        workspaceService.getWorkspaces = jasmine.createSpy().and.returnValue(workspaces);
+
+        TestBed
+            .configureTestingModule({
+                imports: [
+                    TranslateModule.forRoot(),
+                    BrowserAnimationsModule,
+                    CoreUiModule,
+                    CoreSharedModule,
+                    CoreEventModule,
+                    HttpClientModule
+                ],
+                providers: [
+                    {provide: WorkspaceService, useValue: workspaceService}
+                ],
+                declarations: [
+                    TranslationsComponent,
+                    TranslationsSearchBarComponent,
+                    TranslationsTableComponent,
+                    WorkspaceSelectorComponent,
+                    TranslationLocalesSelectorComponent,
+                    TranslationCriterionSelectorComponent,
+                    TranslationEditingCellComponent,
+                ]
+            })
+            .compileComponents();
+
         fixture = TestBed.createComponent(TranslationsComponent);
         component = fixture.componentInstance;
-        fixture.detectChanges();
-    });
+    }));
 
     it('should create', () => {
+        fixture.detectChanges();
+
         expect(component).toBeTruthy(); // TODO
     });
 });
