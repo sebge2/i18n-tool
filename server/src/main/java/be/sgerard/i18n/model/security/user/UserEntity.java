@@ -13,7 +13,7 @@ import javax.validation.constraints.NotNull;
         }
 )
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-public class UserEntity {
+public abstract class UserEntity {
 
     @Id
     private String id;
