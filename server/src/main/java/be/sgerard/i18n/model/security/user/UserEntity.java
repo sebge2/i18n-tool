@@ -2,17 +2,14 @@ package be.sgerard.i18n.model.security.user;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Sebastien Gerard
  */
 @Entity(name = "user")
-@Table(
-        uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"externalId"})
-        }
-)
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@Inheritance(strategy = InheritanceType.JOINED)
 public abstract class UserEntity {
 
     @Id
@@ -29,7 +26,8 @@ public abstract class UserEntity {
     @Column
     private String avatarUrl;
 
-    // TODO connection
+    @ElementCollection
+    private List<String> roles = new ArrayList<>();
 
     @Version
     private int version;
@@ -67,6 +65,14 @@ public abstract class UserEntity {
 
     public void setAvatarUrl(String avatarUrl) {
         this.avatarUrl = avatarUrl;
+    }
+
+    public List<String> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<String> roles) {
+        this.roles = roles;
     }
 
     public int getVersion() {

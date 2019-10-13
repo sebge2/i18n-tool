@@ -2,6 +2,8 @@ package be.sgerard.i18n.model.security.user;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
@@ -9,6 +11,11 @@ import java.util.UUID;
  * @author Sebastien Gerard
  */
 @Entity(name = "external_user")
+@Table(
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"externalId"})
+        }
+)
 public class ExternalUserEntity extends UserEntity {
 
     @NotNull
