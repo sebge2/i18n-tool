@@ -11,6 +11,7 @@ import {CellType} from "../../model/table/cell-type.model";
 import {MatTable} from "@angular/material";
 import {auditTime, takeUntil} from 'rxjs/operators';
 import {BehaviorSubject, Subject} from "rxjs";
+import {NotificationService} from "../../../core/notification/service/notification.service";
 
 @Component({
     selector: 'app-translations-table',
@@ -33,6 +34,7 @@ export class TranslationsTableComponent implements OnInit, OnDestroy {
     private _readOnly = new BehaviorSubject<boolean>(false);
 
     constructor(private translationsService: TranslationsService,
+                private notificationService: NotificationService,
                 private formBuilder: FormBuilder) {
         this.form = formBuilder.array([]);
     }
@@ -63,7 +65,10 @@ export class TranslationsTableComponent implements OnInit, OnDestroy {
 
                 this.translationsService
                     .updateTranslations(this._searchRequest.workspace.id, updatedTranslations)
-                /*.catch(result => this.form.markAsDirty()) TODO fix this*/;
+                    .catch(result => {
+                        this.notificationService.displayErrorMessage(result);
+                        this.form.markAsDirty();
+                    });
             });
     }
 
