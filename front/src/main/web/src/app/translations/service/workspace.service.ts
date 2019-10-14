@@ -5,6 +5,7 @@ import {Workspace} from "../model/workspace.model";
 import {BehaviorSubject, Observable, Subject} from "rxjs";
 import {Events} from 'src/app/core/event/model.events.model';
 import {takeUntil} from "rxjs/operators";
+import {NotificationService} from "../../core/notification/service/notification.service";
 
 @Injectable({
     providedIn: 'root'
@@ -15,10 +16,11 @@ export class WorkspaceService implements OnDestroy {
     private destroy$ = new Subject();
 
     constructor(private httpClient: HttpClient,
-                private eventService: EventService) {
+                private eventService: EventService,
+                private notificationService: NotificationService) {
         this.httpClient.get<Workspace[]>('/api/workspace').toPromise()
             .then(workspaces => this._workspaces.next(workspaces.map(workspace => new Workspace(workspace)).sort(workspaceSorter)))
-            .catch(reason => console.error("Error while retrieving workspaces.", reason));
+            .catch(reason => this.notificationService.displayErrorMessage("Error while retrieving workspaces.", reason));
 
         this.eventService.subscribe(Events.UPDATED_WORKSPACE, Workspace)
             .pipe(takeUntil(this.destroy$))
@@ -73,7 +75,7 @@ export class WorkspaceService implements OnDestroy {
                 }
             )
             .toPromise()
-            .catch(reason => console.error("Error while initializing workspace.", reason));
+            .catch(reason => this.notificationService.displayErrorMessage("Error while initializing workspace.", reason));
     }
 
     find(): Promise<any> {
@@ -88,7 +90,7 @@ export class WorkspaceService implements OnDestroy {
                 }
             )
             .toPromise()
-            .catch(reason => console.error("Error while finding workspaces.", reason));
+            .catch(reason => this.notificationService.displayErrorMessage("Error while finding workspaces. ", reason));
     }
 
     startReview(workspace: Workspace, comment: string): Promise<any> {
@@ -104,14 +106,14 @@ export class WorkspaceService implements OnDestroy {
                 }
             )
             .toPromise()
-            .catch(reason => console.error("Error while starting review.", reason));
+            .catch(reason => this.notificationService.displayErrorMessage("Error while starting review.", reason));
     }
 
     delete(workspace: Workspace): Promise<any> {
         return this.httpClient
             .delete('/api/workspace/' + workspace.id)
             .toPromise()
-            .catch(reason => console.error("Error while deleting.", reason));
+            .catch(reason => this.notificationService.displayErrorMessage("Error while deleting.", reason));
     }
 
 }

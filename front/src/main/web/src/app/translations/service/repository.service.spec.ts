@@ -9,12 +9,14 @@ import {take, toArray} from "rxjs/operators";
 import {EventService} from "../../core/event/service/event.service";
 import {Observable, Subject} from "rxjs";
 import {Events} from "../../core/event/model.events.model";
+import {NotificationService} from "../../core/notification/service/notification.service";
 
 describe('RepositoryService', () => {
     let injector: TestBed;
     let service: RepositoryService;
     let httpMock: HttpTestingController;
     let eventService: MockEventService;
+    let notificationService: NotificationService;
 
     class MockEventService {
 
@@ -30,12 +32,14 @@ describe('RepositoryService', () => {
 
     beforeEach(() => {
         eventService = new MockEventService();
+        notificationService = jasmine.createSpyObj('notificationService', ['displayErrorMessage']);
 
         TestBed.configureTestingModule({
             imports: [HttpClientTestingModule, CoreEventModule],
             providers: [
                 RepositoryService,
-                {provide: EventService, useValue: eventService}
+                {provide: EventService, useValue: eventService},
+                {provide: NotificationService, useValue: notificationService}
             ]
         });
 

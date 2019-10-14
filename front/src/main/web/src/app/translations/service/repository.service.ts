@@ -6,6 +6,7 @@ import {Repository} from "../model/repository.model";
 import {Events} from "../../core/event/model.events.model";
 import {RepositoryStatus} from "../model/repository-status.model";
 import {takeUntil} from "rxjs/operators";
+import {NotificationService} from "../../core/notification/service/notification.service";
 
 @Injectable({
     providedIn: 'root'
@@ -16,12 +17,13 @@ export class RepositoryService implements OnDestroy {
     private destroy$ = new Subject();
 
     constructor(private httpClient: HttpClient,
-                private eventService: EventService) {
+                private eventService: EventService,
+                private notificationService: NotificationService) {
         this.httpClient.get<Repository>('/api/repository')
             .pipe(takeUntil(this.destroy$))
             .toPromise()
             .then(repository => this._repository.next(new Repository(repository)))
-            .catch(reason => console.error("Error while retrieving the repository.", reason));
+            .catch(reason => this.notificationService.displayErrorMessage("Error while retrieving the repository.", reason));
 
         this.eventService.subscribe(Events.UPDATED_REPOSITORY, Repository)
             .pipe(takeUntil(this.destroy$))
@@ -52,6 +54,6 @@ export class RepositoryService implements OnDestroy {
                 }
             )
             .toPromise()
-            .catch(reason => console.error("Error while initializing repository.", reason));
+            .catch(reason => this.notificationService.displayErrorMessage("Error while initializing repository.", reason));
     }
 }

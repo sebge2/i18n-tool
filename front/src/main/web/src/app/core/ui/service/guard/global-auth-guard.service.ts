@@ -3,6 +3,7 @@ import {ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot} from '
 import {Observable} from 'rxjs';
 import {AuthenticationService} from "../../../auth/service/authentication.service";
 import {HttpErrorResponse} from "@angular/common/http";
+import {NotificationService} from "../../../notification/service/notification.service";
 
 @Injectable({
     providedIn: 'root'
@@ -10,7 +11,8 @@ import {HttpErrorResponse} from "@angular/common/http";
 export class GlobalAuthGuard implements CanActivate {
 
     constructor(private router: Router,
-                private authenticationService: AuthenticationService) {
+                private authenticationService: AuthenticationService,
+                private notificationService: NotificationService) {
     }
 
     canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
@@ -27,7 +29,7 @@ export class GlobalAuthGuard implements CanActivate {
                 if (reason.status == 404) {
                     window.location.href = '/login';
                 }else {
-                    console.error("Error while retrieving current user.", reason);
+                    this.notificationService.displayErrorMessage("Error while retrieving current user.", reason.message);
                 }
 
                 return false;

@@ -4,13 +4,15 @@ import {TranslationsSearchRequest} from "../model/translations-search-request.mo
 import {BundleKeysPage} from "../model/edition/bundle-keys-page.model";
 import {map} from "rxjs/operators";
 import {Observable} from "rxjs";
+import {NotificationService} from "../../core/notification/service/notification.service";
 
 @Injectable({
     providedIn: 'root'
 })
 export class TranslationsService {
 
-    constructor(private httpClient: HttpClient) {
+    constructor(private httpClient: HttpClient,
+                private notificationService: NotificationService) {
     }
 
     getTranslations(searchRequest: TranslationsSearchRequest,
@@ -53,7 +55,7 @@ export class TranslationsService {
         return this.httpClient
             .patch('/api/workspace/' + workspaceId + '/translation', payload, {headers: {'content-type': 'application/json'}})
             .toPromise()
-            .catch(reason => console.error("Error while initializing workspace.", reason));
+            .catch(reason => this.notificationService.displayErrorMessage("Error while initializing workspace.", reason));
     }
 
 }
