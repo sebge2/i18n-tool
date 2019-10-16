@@ -1,14 +1,3 @@
-security:
-  oauth2:
-    client:
-      clientId: ${GIT_HUB_OAUTH_CLIENT}
-      clientSecret: ${GIT_HUB_OAUTH_SECRET}
-      accessTokenUri: https://github.com/login/oauth/access_token
-      userAuthorizationUri: https://github.com/login/oauth/authorize
-      scope: repo
-    resource:
-      userInfoUri: https://api.github.com/user
-
 spring:
   main:
     banner-mode: "OFF"
@@ -16,6 +5,14 @@ spring:
       open-in-view: false
       hibernate:
           ddl-auto: update
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            client-id: ${GIT_HUB_OAUTH_CLIENT}
+            client-secret: ${GIT_HUB_OAUTH_SECRET}
+            redirect-uri-template: "{baseUrl}/auth/oauth2/code/{registrationId}"
 logging:
   config: "classpath:logback.xml"
 
