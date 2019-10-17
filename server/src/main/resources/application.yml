@@ -12,6 +12,7 @@ spring:
           github:
             client-id: ${GIT_HUB_OAUTH_CLIENT}
             client-secret: ${GIT_HUB_OAUTH_SECRET}
+            scope: repo
             redirect-uri-template: "{baseUrl}/auth/oauth2/code/{registrationId}"
 logging:
   config: "classpath:logback.xml"
