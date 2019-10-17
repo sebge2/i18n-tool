@@ -43,7 +43,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 )
                 .permitAll()
                 .anyRequest()
-                .hasAnyAuthority(UserRole.USER.name())
+                .hasAnyRole(UserRole.USER.name())
 
                 .and().logout().logoutSuccessUrl("/logout/success").permitAll().and()
 

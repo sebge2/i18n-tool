@@ -83,21 +83,27 @@ public class RepositoryManagerImpl implements RepositoryManager {
                     return false;
                 }
 
-                updateLockFile(RepositoryStatus.INITIALIZING);
+                try {
+                    updateLockFile(RepositoryStatus.INITIALIZING);
 
-                this.eventService.broadcastEvent(EVENT_UPDATED_REPOSITORY, getDescription());
+                    this.eventService.broadcastEvent(EVENT_UPDATED_REPOSITORY, getDescription());
 
-                this.git = Git.cloneRepository()
-                        .setCredentialsProvider(createProvider())
-                        .setURI(repoUri)
-                        .setDirectory(repositoryLocation)
-                        .setBranchesToClone(singletonList(DEFAULT_BRANCH))
-                        .setBranch(DEFAULT_BRANCH)
-                        .call();
+                    this.git = Git.cloneRepository()
+                            .setCredentialsProvider(createProvider())
+                            .setURI(repoUri)
+                            .setDirectory(repositoryLocation)
+                            .setBranchesToClone(singletonList(DEFAULT_BRANCH))
+                            .setBranch(DEFAULT_BRANCH)
+                            .call();
 
-                updateLockFile(RepositoryStatus.INITIALIZED);
+                    updateLockFile(RepositoryStatus.INITIALIZED);
 
-                this.eventService.broadcastEvent(EVENT_UPDATED_REPOSITORY, getDescription());
+                    this.eventService.broadcastEvent(EVENT_UPDATED_REPOSITORY, getDescription());
+                } catch (Exception e) {
+                    updateLockFile(RepositoryStatus.NOT_INITIALIZED);
+
+                    throw e;
+                }
 
                 return true;
             });
