@@ -20,5 +20,5 @@ public interface AuthenticationManager {
 
     String getGitHubToken() throws AccessDeniedException;
 
-    Collection<String> getCurrentUserAuthorities() throws AccessDeniedException;
+    Collection<String> getCurrentUserRoles() throws AccessDeniedException;
 }
