@@ -1,17 +1,14 @@
 package be.sgerard.i18n.configuration;
 
 import be.sgerard.i18n.service.security.UserRole;
-import be.sgerard.i18n.service.security.auth.GitHubAuthoritiesExtractor;
-import be.sgerard.i18n.service.security.auth.GitHubPrincipalExtractor;
-import be.sgerard.i18n.service.security.user.UserManager;
+import be.sgerard.i18n.service.security.auth.ExternalOAuthUserService;
 import org.springframework.boot.autoconfigure.security.oauth2.client.EnableOAuth2Sso;
-import org.springframework.boot.autoconfigure.security.oauth2.resource.AuthoritiesExtractor;
-import org.springframework.boot.autoconfigure.security.oauth2.resource.PrincipalExtractor;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.oauth2.client.OAuth2ClientContext;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
  * @author Sebastien Gerard
@@ -20,45 +17,55 @@ import org.springframework.security.oauth2.client.OAuth2ClientContext;
 @EnableOAuth2Sso
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-    private final OAuth2ClientContext context;
-    private final AppProperties appProperties;
-    private final UserManager userManager;
+    private final PasswordEncoder passwordEncoder;
+    private final ExternalOAuthUserService externalOAuthUserService;
+    private final UserDetailsService userDetailsService;
 
-    public SecurityConfiguration(OAuth2ClientContext context,
-                                 AppProperties appProperties,
-                                 UserManager userManager) {
-        this.context = context;
-        this.appProperties = appProperties;
-        this.userManager = userManager;
-    }
-
-    @Bean
-    public AuthoritiesExtractor authoritiesExtractor() {
-        return new GitHubAuthoritiesExtractor(context, appProperties);
-    }
-
-    @Bean
-    public PrincipalExtractor principalExtractor() {
-        return new GitHubPrincipalExtractor(userManager);
+    public SecurityConfiguration(PasswordEncoder passwordEncoder,
+                                 ExternalOAuthUserService externalOAuthUserService,
+                                 UserDetailsService userDetailsService) {
+        this.passwordEncoder = passwordEncoder;
+        this.externalOAuthUserService = externalOAuthUserService;
+        this.userDetailsService = userDetailsService;
     }
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
-        http.antMatcher("/**")
+        http
+                .antMatcher("/**")
                 .authorizeRequests()
                 .antMatchers(
                         "/",
                         "/*",
-                        "/login",
+                        "/auth/**",
                         "/api/authentication/authenticated",
-                        "/api/authentication/user",
-                        "/api/git-hub/**"
+                        "/api/authentication/user"
                 )
                 .permitAll()
                 .anyRequest()
-                .hasAnyAuthority(UserRole.REPO_MEMBER.name(), UserRole.USER.name())
-                .and().logout().logoutSuccessUrl("/logout/success").permitAll()
-                .and().csrf().disable();
+                .hasAnyAuthority(UserRole.USER.name())
+
+                .and().logout().logoutSuccessUrl("/logout/success").permitAll().and()
+
+                .csrf().disable()
+
+                .httpBasic().realmName("I18n Tool").and()
+
+                .formLogin()
+                .loginPage("/login")
+                .loginProcessingUrl("/auth/login-password").and()
+
+                .oauth2Login()
+                .authorizationEndpoint().baseUri("/auth/oauth2/authorize-client").and()
+                .redirectionEndpoint().baseUri("/auth/oauth2/code/*").and()
+
+                .userInfoEndpoint().userService(externalOAuthUserService);
     }
 
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth
+                .userDetailsService(userDetailsService)
+                .passwordEncoder(passwordEncoder);
+    }
 }
