@@ -1,10 +1,13 @@
 package be.sgerard.i18n.service.security.auth;
 
+import be.sgerard.i18n.model.security.auth.AuthenticatedUser;
+import be.sgerard.i18n.model.security.auth.ExternalOAuth2AuthenticatedUser;
+import be.sgerard.i18n.model.security.user.ExternalUserDto;
+import be.sgerard.i18n.model.security.user.ExternalUserEntity;
 import be.sgerard.i18n.model.security.user.UserEntity;
 import org.springframework.security.access.AccessDeniedException;
 
 import java.security.Principal;
-import java.util.Collection;
 import java.util.Optional;
 
 /**
@@ -12,13 +15,17 @@ import java.util.Optional;
  */
 public interface AuthenticationManager {
 
-    Optional<UserEntity> getCurrentUser();
+    ExternalOAuth2AuthenticatedUser initAuthenticatedUser(ExternalUserEntity currentUser, ExternalUserDto externalUserDto);
+
+    Optional<AuthenticatedUser> getCurrentAuthenticatedUser();
+
+    default AuthenticatedUser getCurrentAuthenticatedUserOrFail() throws AccessDeniedException{
+        return getCurrentAuthenticatedUser()
+                .orElseThrow(() -> new AccessDeniedException("Please authenticate."));
+    }
 
     UserEntity getCurrentUserOrFail() throws AccessDeniedException;
 
     UserEntity getUserFromPrincipal(Principal principal);
 
-    String getGitHubToken() throws AccessDeniedException;
-
-    Collection<String> getCurrentUserRoles() throws AccessDeniedException;
 }

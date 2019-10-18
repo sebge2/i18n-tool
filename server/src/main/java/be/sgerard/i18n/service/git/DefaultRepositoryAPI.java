@@ -347,6 +347,6 @@ class DefaultRepositoryAPI implements RepositoryAPI, AutoCloseable {
     }
 
     private UsernamePasswordCredentialsProvider createProvider() {
-        return new UsernamePasswordCredentialsProvider(authenticationManager.getGitHubToken(), "");
+        return new UsernamePasswordCredentialsProvider(authenticationManager.getCurrentAuthenticatedUserOrFail().getGitHubTokenOrFail(), "");
     }
 }

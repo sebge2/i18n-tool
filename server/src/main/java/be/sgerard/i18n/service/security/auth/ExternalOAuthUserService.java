@@ -8,6 +8,7 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -30,6 +31,7 @@ public class ExternalOAuthUserService extends DefaultOAuth2UserService {
     }
 
     @Override
+    @Transactional
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         final OAuth2User oAuth2User = super.loadUser(userRequest);
 
@@ -42,6 +44,6 @@ public class ExternalOAuthUserService extends DefaultOAuth2UserService {
 
         final ExternalUserEntity currentUser = userManager.createOrUpdateUser(externalUserDto);
 
-        return authenticationManager.loadAuthenticatedUser(currentUser, externalUserDto);
+        return authenticationManager.initAuthenticatedUser(currentUser, externalUserDto);
     }
 }

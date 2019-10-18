@@ -1,5 +1,7 @@
 package be.sgerard.i18n.model.security.user;
 
+import be.sgerard.i18n.service.security.UserRole;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
@@ -26,8 +28,9 @@ public abstract class UserEntity {
     @Column
     private String avatarUrl;
 
-    @ElementCollection
-    private List<String> roles = new ArrayList<>();
+    @ElementCollection(fetch = FetchType.EAGER)
+    @Enumerated(EnumType.STRING)
+    private List<UserRole> roles = new ArrayList<>();
 
     @Version
     private int version;
@@ -67,11 +70,11 @@ public abstract class UserEntity {
         this.avatarUrl = avatarUrl;
     }
 
-    public List<String> getRoles() {
+    public List<UserRole> getRoles() {
         return roles;
     }
 
-    public void setRoles(List<String> roles) {
+    public void setRoles(List<UserRole> roles) {
         this.roles = roles;
     }
 
