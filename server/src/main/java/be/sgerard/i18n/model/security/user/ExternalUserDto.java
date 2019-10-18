@@ -1,5 +1,7 @@
 package be.sgerard.i18n.model.security.user;
 
+import java.util.Optional;
+
 /**
  * @author Sebastien Gerard
  */
@@ -13,14 +15,14 @@ public class ExternalUserDto {
     private final String username;
     private final String email;
     private final String avatarUrl;
-    private final boolean repositoryMember;
+    private final String gitHubToken;
 
     private ExternalUserDto(Builder builder) {
         externalId = builder.externalId;
         username = builder.username;
         email = builder.email;
         avatarUrl = builder.avatarUrl;
-        repositoryMember = builder.repositoryMember;
+        gitHubToken = builder.gitHubToken;
     }
 
     public String getExternalId() {
@@ -39,8 +41,8 @@ public class ExternalUserDto {
         return avatarUrl;
     }
 
-    public boolean isRepositoryMember() {
-        return repositoryMember;
+    public Optional<String> getGitHubToken() {
+        return Optional.ofNullable(gitHubToken);
     }
 
     @Override
@@ -54,7 +56,7 @@ public class ExternalUserDto {
         private String username;
         private String email;
         private String avatarUrl;
-        private boolean repositoryMember;
+        private String gitHubToken;
 
         private Builder() {
         }
@@ -79,8 +81,8 @@ public class ExternalUserDto {
             return this;
         }
 
-        public Builder repositoryMember(boolean repositoryMember) {
-            this.repositoryMember = repositoryMember;
+        public Builder gitHubToken(String gitHubToken) {
+            this.gitHubToken = gitHubToken;
             return this;
         }
 
