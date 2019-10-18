@@ -36,6 +36,7 @@ import {
     MatTooltipModule,
     MatTreeModule,
 } from '@angular/material';
+import {MatProgressButtonsModule} from 'mat-progress-buttons';
 
 @NgModule({
     exports: [
@@ -73,7 +74,8 @@ import {
         MatTabsModule,
         MatToolbarModule,
         MatTooltipModule,
-        MatTreeModule
+        MatTreeModule,
+        MatProgressButtonsModule
     ],
     declarations: []
 })

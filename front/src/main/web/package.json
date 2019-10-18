@@ -30,6 +30,7 @@
     "core-js": "^2.5.4",
     "flag-icon-css": "^3.3.0",
     "lodash": "^4.17.15",
+    "mat-progress-buttons": "^8.0.7",
     "messageformat": "^2.3.0",
     "ngx-flag-icon-css": "^1.0.1",
     "ngx-translate-messageformat-compiler": "^4.5.0",
