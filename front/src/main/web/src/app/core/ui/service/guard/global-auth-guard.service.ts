@@ -19,7 +19,7 @@ export class GlobalAuthGuard implements CanActivate {
         return this.authenticationService.currentUser
             .toPromise()
             .then(user => {
-                if (user.roles.includes("USER") && user.roles.includes("REPO_MEMBER")) {
+                if (user.roles.includes("MEMBER_OF_ORGANIZATION")) {
                     return true;
                 } else {
                     return this.router.navigate(['/error', '403'], {});

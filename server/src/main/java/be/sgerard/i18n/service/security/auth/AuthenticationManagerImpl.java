@@ -11,6 +11,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
@@ -67,12 +68,15 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
 
     @Override
     public UserEntity getUserFromPrincipal(Principal principal) {
-        if (!(principal instanceof AuthenticatedUser)) {
+        final AuthenticatedUser authenticatedUser;
+        if (principal instanceof OAuth2AuthenticationToken && ((OAuth2AuthenticationToken) principal).getPrincipal() instanceof AuthenticatedUser) {
+            authenticatedUser = (AuthenticatedUser) ((OAuth2AuthenticationToken) principal).getPrincipal();
+        } else {
             throw new IllegalArgumentException("The principal is not of the expected format. " +
                     "Hint: are you sure the authentication is valid?");
         }
 
-        return getUserFromAuthentication((AuthenticatedUser) principal)
+        return getUserFromAuthentication(authenticatedUser)
                 .orElseThrow(() -> new IllegalStateException("There is no user for principal [" + principal + "]."));
     }
 
