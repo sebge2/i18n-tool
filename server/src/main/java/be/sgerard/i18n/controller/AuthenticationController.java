@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import static java.util.stream.Collectors.toList;
+
 /**
  * @author Sebastien Gerard
  */
@@ -40,7 +42,7 @@ public class AuthenticationController {
                 .orElseThrow(() -> new ResourceNotFoundException("There is no registered user."));
 
         return UserDto.builder(currentUser)
-                .roles(authenticatedUser.getRoles())
+                .roles(authenticatedUser.getRoles().stream().map(Enum::name).collect(toList()))
                 .build();
     }
 }

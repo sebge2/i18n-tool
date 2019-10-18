@@ -1,6 +1,10 @@
 package be.sgerard.i18n.model.security.user;
 
-import java.util.Optional;
+import be.sgerard.i18n.service.security.UserRole;
+
+import java.util.*;
+
+import static java.util.Arrays.asList;
 
 /**
  * @author Sebastien Gerard
@@ -16,6 +20,7 @@ public class ExternalUserDto {
     private final String email;
     private final String avatarUrl;
     private final String gitHubToken;
+    private final Collection<UserRole> roles;
 
     private ExternalUserDto(Builder builder) {
         externalId = builder.externalId;
@@ -23,6 +28,7 @@ public class ExternalUserDto {
         email = builder.email;
         avatarUrl = builder.avatarUrl;
         gitHubToken = builder.gitHubToken;
+        roles = Collections.unmodifiableSet(builder.roles);
     }
 
     public String getExternalId() {
@@ -45,6 +51,10 @@ public class ExternalUserDto {
         return Optional.ofNullable(gitHubToken);
     }
 
+    public Collection<UserRole> getRoles() {
+        return roles;
+    }
+
     @Override
     public String toString() {
         return "ExternalUser(" + username + ", " + email + ')';
@@ -57,6 +67,7 @@ public class ExternalUserDto {
         private String email;
         private String avatarUrl;
         private String gitHubToken;
+        private final Set<UserRole> roles = new HashSet<>();
 
         private Builder() {
         }
@@ -83,6 +94,11 @@ public class ExternalUserDto {
 
         public Builder gitHubToken(String gitHubToken) {
             this.gitHubToken = gitHubToken;
+            return this;
+        }
+
+        public Builder roles(UserRole... roles) {
+            this.roles.addAll(asList(roles));
             return this;
         }
 

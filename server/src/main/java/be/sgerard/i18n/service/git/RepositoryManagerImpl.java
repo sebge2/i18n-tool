@@ -175,7 +175,7 @@ public class RepositoryManagerImpl implements RepositoryManager {
     }
 
     private UsernamePasswordCredentialsProvider createProvider() {
-        return new UsernamePasswordCredentialsProvider(authenticationManager.getGitHubToken(), "");
+        return new UsernamePasswordCredentialsProvider(authenticationManager.getCurrentAuthenticatedUserOrFail().getGitHubTokenOrFail(), "");
     }
 
     private Git getGit() throws Exception {

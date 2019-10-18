@@ -8,9 +8,9 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
  */
 public enum UserRole {
 
-    REPO_MEMBER,
+    MEMBER_OF_ORGANIZATION,
 
-    USER,
+    REPO_MEMBER,
 
     ADMIN;
 

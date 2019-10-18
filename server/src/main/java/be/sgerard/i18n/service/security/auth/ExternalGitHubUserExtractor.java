@@ -2,6 +2,7 @@ package be.sgerard.i18n.service.security.auth;
 
 import be.sgerard.i18n.configuration.AppProperties;
 import be.sgerard.i18n.model.security.user.ExternalUserDto;
+import be.sgerard.i18n.service.security.UserRole;
 import com.jcabi.github.Coordinates;
 import com.jcabi.github.RtGithub;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -44,16 +45,13 @@ public class ExternalGitHubUserExtractor implements ExternalUserExtractor {
 
         final boolean repoMember = isRepoMember(tokenValue);
 
-        if (!repoMember) {
-            throw new BadCredentialsException("The user is not allowed to access this application.");
-        }
-
         return ExternalUserDto.builder()
                 .externalId(Objects.toString(oAuth2User.getAttributes().get(EXTERNAL_ID)))
                 .username(Objects.toString(oAuth2User.getAttributes().get(LOGIN)))
                 .email(Objects.toString(oAuth2User.getAttributes().get(EMAIL)))
                 .avatarUrl(Objects.toString(oAuth2User.getAttributes().get(AVATAR_URL)))
-                .gitHubToken(tokenValue)
+                .gitHubToken(repoMember ? tokenValue : null)
+                .roles(repoMember ? new UserRole[]{UserRole.MEMBER_OF_ORGANIZATION} : new UserRole[0])
                 .build();
     }
 
