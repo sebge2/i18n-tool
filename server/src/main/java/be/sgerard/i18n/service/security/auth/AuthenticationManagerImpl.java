@@ -14,8 +14,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+
+import static java.util.stream.Collectors.toSet;
 
 /**
  * @author Sebastien Gerard
@@ -31,11 +34,10 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
 
     @Override
     public ExternalOAuth2AuthenticatedUser initAuthenticatedUser(ExternalUserEntity currentUser, ExternalUserDto externalUserDto) {
-        final Set<GrantedAuthority> authorities =
-                currentUser.getRoles().stream().map(UserRole::toAuthority).collect(java.util.stream.Collectors.toSet());
+        final Set<GrantedAuthority> authorities = new HashSet<>();
 
-        authorities.add(UserRole.USER.toAuthority());
-        externalUserDto.getGitHubToken().ifPresent(token -> authorities.add(UserRole.REPO_MEMBER.toAuthority()));
+        authorities.addAll(currentUser.getRoles().stream().map(UserRole::toAuthority).collect(toSet()));
+        authorities.addAll(externalUserDto.getRoles().stream().map(UserRole::toAuthority).collect(toSet()));
 
         return new ExternalOAuth2AuthenticatedUser(currentUser.getId(), externalUserDto.getGitHubToken().orElse(null), authorities);
     }
@@ -57,7 +59,7 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
 
         if (authentication.getPrincipal() instanceof AuthenticatedUser) {
             return getUserFromAuthentication((AuthenticatedUser) authentication.getPrincipal())
-                    .orElseThrow(()-> new AccessDeniedException("Please authenticate."));
+                    .orElseThrow(() -> new AccessDeniedException("Please authenticate."));
         } else {
             throw new AccessDeniedException("Please authenticate.");
         }
