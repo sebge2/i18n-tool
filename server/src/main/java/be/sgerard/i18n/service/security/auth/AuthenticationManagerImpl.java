@@ -2,8 +2,10 @@ package be.sgerard.i18n.service.security.auth;
 
 import be.sgerard.i18n.model.security.auth.AuthenticatedUser;
 import be.sgerard.i18n.model.security.auth.ExternalOAuth2AuthenticatedUser;
+import be.sgerard.i18n.model.security.auth.InternalAuthenticatedUser;
 import be.sgerard.i18n.model.security.user.ExternalUserDto;
 import be.sgerard.i18n.model.security.user.ExternalUserEntity;
+import be.sgerard.i18n.model.security.user.InternalUserEntity;
 import be.sgerard.i18n.model.security.user.UserEntity;
 import be.sgerard.i18n.service.security.UserRole;
 import be.sgerard.i18n.service.security.user.UserManager;
@@ -41,6 +43,17 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
         authorities.addAll(externalUserDto.getRoles().stream().map(UserRole::toAuthority).collect(toSet()));
 
         return new ExternalOAuth2AuthenticatedUser(currentUser.getId(), externalUserDto.getGitHubToken().orElse(null), authorities);
+    }
+
+    @Override
+    public InternalAuthenticatedUser initAuthenticatedUser(InternalUserEntity currentUser) {
+        return new InternalAuthenticatedUser(
+                currentUser.getId(),
+                currentUser.getUsername(),
+                currentUser.getPassword(),
+                null,
+                currentUser.getRoles().stream().map(UserRole::toAuthority).collect(toSet())
+        );
     }
 
     @Override

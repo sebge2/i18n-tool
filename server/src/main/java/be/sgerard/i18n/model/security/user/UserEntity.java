@@ -21,8 +21,7 @@ public abstract class UserEntity {
     @Column(nullable = false)
     private String username;
 
-    @NotNull
-    @Column(nullable = false)
+    @Column
     private String email;
 
     @Column

@@ -2,10 +2,9 @@ package be.sgerard.i18n.model.security.auth;
 
 import be.sgerard.i18n.service.security.UserRole;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
+import org.springframework.security.core.userdetails.User;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
@@ -13,17 +12,17 @@ import static java.util.stream.Collectors.toList;
 /**
  * @author Sebastien Gerard
  */
-public final class ExternalOAuth2AuthenticatedUser extends DefaultOAuth2User implements AuthenticatedUser {
-
-    public static final String NAME_ATTRIBUTE = "principal_id";
+public class InternalAuthenticatedUser extends User implements AuthenticatedUser {
 
     private final String userId;
     private final String gitHubToken;
 
-    public ExternalOAuth2AuthenticatedUser(String userId,
-                                           String gitHubToken,
-                                           Collection<GrantedAuthority> authorities) {
-        super(authorities, Collections.singletonMap(NAME_ATTRIBUTE, userId), NAME_ATTRIBUTE);
+    public InternalAuthenticatedUser(String userId,
+                                     String username,
+                                     String password,
+                                     String gitHubToken,
+                                     Collection<GrantedAuthority> authorities) {
+        super(username, password, authorities);
 
         this.userId = userId;
         this.gitHubToken = gitHubToken;
@@ -36,7 +35,7 @@ public final class ExternalOAuth2AuthenticatedUser extends DefaultOAuth2User imp
 
     @Override
     public String getName() {
-        return getUserId();
+        return getUsername();
     }
 
     @Override
