@@ -1,6 +1,7 @@
 package be.sgerard.i18n.service.security.user;
 
 import be.sgerard.i18n.model.security.user.ExternalUserDto;
+import be.sgerard.i18n.model.security.user.ExternalUserEntity;
 import be.sgerard.i18n.model.security.user.InternalUserEntity;
 import be.sgerard.i18n.model.security.user.UserEntity;
 
@@ -15,6 +16,6 @@ public interface UserManager {
 
     Optional<InternalUserEntity> getUserByName(String username);
 
-    UserEntity createOrUpdateUser(ExternalUserDto externalUser);
+    ExternalUserEntity createOrUpdateUser(ExternalUserDto externalUser);
 
 }

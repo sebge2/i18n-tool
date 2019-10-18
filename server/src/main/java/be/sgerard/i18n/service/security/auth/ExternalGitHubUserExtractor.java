@@ -39,17 +39,19 @@ public class ExternalGitHubUserExtractor implements ExternalUserExtractor {
 
     @Override
     public ExternalUserDto loadUser(OAuth2UserRequest userRequest, OAuth2User oAuth2User) {
+        final String tokenValue = userRequest.getAccessToken().getTokenValue();
+
         return ExternalUserDto.builder()
                 .externalId(Objects.toString(oAuth2User.getAttributes().get(EXTERNAL_ID)))
                 .username(Objects.toString(oAuth2User.getAttributes().get(LOGIN)))
                 .email(Objects.toString(oAuth2User.getAttributes().get(EMAIL)))
                 .avatarUrl(Objects.toString(oAuth2User.getAttributes().get(AVATAR_URL)))
-                .repositoryMember(isRepoMember(userRequest))
+                .gitHubToken(isRepoMember(tokenValue) ? tokenValue : null)
                 .build();
     }
 
-    private boolean isRepoMember(OAuth2UserRequest userRequest) {
-        final RtGithub github = new RtGithub(userRequest.getAccessToken().getTokenValue());
+    private boolean isRepoMember(String tokenValue) {
+        final RtGithub github = new RtGithub(tokenValue);
 
         try {
             return github.repos().get(new Coordinates.Simple(repository)).branches().iterate().iterator().hasNext();
