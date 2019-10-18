@@ -4,6 +4,7 @@ import be.sgerard.i18n.configuration.AppProperties;
 import be.sgerard.i18n.model.security.user.ExternalUserDto;
 import com.jcabi.github.Coordinates;
 import com.jcabi.github.RtGithub;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Component;
@@ -38,15 +39,21 @@ public class ExternalGitHubUserExtractor implements ExternalUserExtractor {
     }
 
     @Override
-    public ExternalUserDto loadUser(OAuth2UserRequest userRequest, OAuth2User oAuth2User) {
+    public ExternalUserDto loadUser(OAuth2UserRequest userRequest, OAuth2User oAuth2User) throws BadCredentialsException {
         final String tokenValue = userRequest.getAccessToken().getTokenValue();
+
+        final boolean repoMember = isRepoMember(tokenValue);
+
+        if (!repoMember) {
+            throw new BadCredentialsException("The user is not allowed to access this application.");
+        }
 
         return ExternalUserDto.builder()
                 .externalId(Objects.toString(oAuth2User.getAttributes().get(EXTERNAL_ID)))
                 .username(Objects.toString(oAuth2User.getAttributes().get(LOGIN)))
                 .email(Objects.toString(oAuth2User.getAttributes().get(EMAIL)))
                 .avatarUrl(Objects.toString(oAuth2User.getAttributes().get(AVATAR_URL)))
-                .gitHubToken(isRepoMember(tokenValue) ? tokenValue : null)
+                .gitHubToken(tokenValue)
                 .build();
     }
 
