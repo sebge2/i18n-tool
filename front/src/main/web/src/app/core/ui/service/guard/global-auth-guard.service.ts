@@ -11,28 +11,22 @@ import {NotificationService} from "../../../notification/service/notification.se
 export class GlobalAuthGuard implements CanActivate {
 
     constructor(private router: Router,
-                private authenticationService: AuthenticationService,
-                private notificationService: NotificationService) {
+                private authenticationService: AuthenticationService) {
     }
 
     canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
         return this.authenticationService.currentUser
-            .toPromise()
-            .then(user => {
-                if (user.roles.includes("MEMBER_OF_ORGANIZATION")) {
-                    return true;
-                } else {
-                    return this.router.navigate(['/error', '403'], {});
-                }
-            })
-            .catch((reason: HttpErrorResponse) => {
-                if (reason.status == 404) {
-                    window.location.href = '/login';
-                }else {
-                    this.notificationService.displayErrorMessage("Error while retrieving current user.", reason.message);
-                }
-
-                return false;
-            });
+            .pipe(
+                map((user: User) => {
+                        if (user == null) {
+                            this.router.navigate(['/login'], {});
+                        } else if (user.hasRole("MEMBER_OF_ORGANIZATION")) {
+                            return true;
+                        } else {
+                            this.router.navigate(['/error', '403'], {});
+                        }
+                    }
+                )
+            );
     }
 }

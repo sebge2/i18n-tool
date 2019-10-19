@@ -20,7 +20,7 @@ export class AuthenticationService implements OnDestroy {
             .pipe(map(user => new User(user)))
             .subscribe(
                 user => {
-                    console.debug('There is a current user, send next user.', user);
+                    console.debug('There is an existing authenticated user, send next user.', user);
                     this._user.next(user)
                 },
                 (result: HttpResponse<any>) => {
@@ -122,5 +122,9 @@ export class AuthenticationService implements OnDestroy {
                     }
                 )
             );
+    }
+
+    logout(): void {
+// TODO
     }
 }

@@ -20,7 +20,8 @@ const appRoutes: Routes = [
     },
     {
         path: 'login',
-        component: LoginComponent
+        component: LoginComponent,
+        canActivate: [LoginGuard],
     }
 ];
 
@@ -31,7 +32,7 @@ const appRoutes: Routes = [
         LoginUserPasswordComponent,
         LoginAuthKeyComponent,
         LoginProviderComponent
-    ], // TODO guard
+    ],
     imports: [
         HttpClientModule,
         RouterModule.forChild(appRoutes),
