@@ -2,8 +2,8 @@ import {Injectable} from '@angular/core';
 import {ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot} from '@angular/router';
 import {Observable} from 'rxjs';
 import {AuthenticationService} from "../../../auth/service/authentication.service";
-import {HttpErrorResponse} from "@angular/common/http";
-import {NotificationService} from "../../../notification/service/notification.service";
+import {map} from "rxjs/operators";
+import {User} from "../../../auth/model/user.model";
 
 @Injectable({
     providedIn: 'root'
@@ -20,6 +20,7 @@ export class GlobalAuthGuard implements CanActivate {
                 map((user: User) => {
                         if (user == null) {
                             this.router.navigate(['/login'], {});
+                            return false;
                         } else if (user.hasRole("MEMBER_OF_ORGANIZATION")) {
                             return true;
                         } else {

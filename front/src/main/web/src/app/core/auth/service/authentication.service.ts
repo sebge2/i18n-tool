@@ -1,8 +1,8 @@
 import {Injectable, OnDestroy} from '@angular/core';
 import {HttpClient, HttpResponse} from "@angular/common/http";
-import {Observable, of, Subject} from "rxjs";
+import {BehaviorSubject, Observable, of, Subject, throwError} from "rxjs";
 import {User} from "../model/user.model";
-import {catchError, map, tap} from "rxjs/operators";
+import {catchError, map, skip, tap} from "rxjs/operators";
 import {NotificationService} from "../../notification/service/notification.service";
 import {AuthenticationErrorType} from "../model/authentication-error-type.model";
 
@@ -11,7 +11,7 @@ import {AuthenticationErrorType} from "../model/authentication-error-type.model"
 })
 export class AuthenticationService implements OnDestroy {
 
-    private _user: Subject<User> = new Subject<User>();
+    private _user: Subject<User> = new BehaviorSubject<User>(null);
     private destroy$ = new Subject();
 
     constructor(private httpClient: HttpClient,
@@ -41,7 +41,8 @@ export class AuthenticationService implements OnDestroy {
     }
 
     get currentUser(): Observable<User> {
-        return this._user;
+        return this._user
+            .pipe(skip(1));
     }
 
     authenticateWithUserPassword(username: string, password: string): Observable<User> {
@@ -103,12 +104,12 @@ export class AuthenticationService implements OnDestroy {
                 ),
                 catchError((result: HttpResponse<any>) => {
                         if (result.status == 401) {
-                            return of(AuthenticationErrorType.WRONG_CREDENTIALS);
+                            return throwError(AuthenticationErrorType.WRONG_CREDENTIALS);
                         } else {
                             console.error('Error while authenticating user.', result);
                             this.notificationService.displayErrorMessage('Error while authenticating user.');
 
-                            return of(AuthenticationErrorType.AUTHENTICATION_SYSTEM_ERROR);
+                            return throwError(AuthenticationErrorType.AUTHENTICATION_SYSTEM_ERROR);
                         }
                     }
                 ),
