@@ -25,8 +25,6 @@ export class NotificationService {
             text += cause;
         }
 
-        console.log(text);
-
         this.snackBar.openFromComponent(ErrorNotificationComponent, {
             duration: 10000,
             data: {message: text}

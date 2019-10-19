@@ -23,7 +23,10 @@ export class RepositoryService implements OnDestroy {
             .pipe(takeUntil(this.destroy$))
             .toPromise()
             .then(repository => this._repository.next(new Repository(repository)))
-            .catch(reason => this.notificationService.displayErrorMessage("Error while retrieving the repository.", reason));
+            .catch(reason => {
+                console.error("Error while retrieving the repository.", reason);
+                this.notificationService.displayErrorMessage("Error while retrieving the repository.");
+            });
 
         this.eventService.subscribe(Events.UPDATED_REPOSITORY, Repository)
             .pipe(takeUntil(this.destroy$))
@@ -54,6 +57,9 @@ export class RepositoryService implements OnDestroy {
                 }
             )
             .toPromise()
-            .catch(reason => this.notificationService.displayErrorMessage("Error while initializing repository.", reason));
+            .catch(reason => {
+                console.error("Error while initializing the repository.", reason);
+                this.notificationService.displayErrorMessage("Error while initializing the repository.");
+            });
     }
 }
