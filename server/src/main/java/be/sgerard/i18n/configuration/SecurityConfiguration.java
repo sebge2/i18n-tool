@@ -1,15 +1,16 @@
 package be.sgerard.i18n.configuration;
 
 import be.sgerard.i18n.service.security.UserRole;
-import be.sgerard.i18n.service.security.auth.ExternalOAuthUserService;
+import be.sgerard.i18n.service.security.auth.ExternalUserService;
+import be.sgerard.i18n.service.security.auth.InternalUserDetailsService;
 import org.springframework.boot.autoconfigure.security.oauth2.client.EnableOAuth2Sso;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
@@ -20,23 +21,34 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private final PasswordEncoder passwordEncoder;
-    private final ExternalOAuthUserService externalOAuthUserService;
-    private final UserDetailsService userDetailsService;
+    private final ExternalUserService externalUserService;
+    private final InternalUserDetailsService internalUserDetailsService;
 
     public SecurityConfiguration(PasswordEncoder passwordEncoder,
-                                 ExternalOAuthUserService externalOAuthUserService,
-                                 UserDetailsService userDetailsService) {
+                                 ExternalUserService externalUserService,
+                                 InternalUserDetailsService internalUserDetailsService) {
         this.passwordEncoder = passwordEncoder;
-        this.externalOAuthUserService = externalOAuthUserService;
-        this.userDetailsService = userDetailsService;
+
+        this.externalUserService = externalUserService;
+        this.internalUserDetailsService = internalUserDetailsService;
     }
 
     @Bean
-    public DaoAuthenticationProvider daoAuthenticationProvider(){
+    public AuthenticationProvider internalUserAuthenticationProvider() {
         final DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
 
         daoAuthenticationProvider.setPasswordEncoder(passwordEncoder);
-        daoAuthenticationProvider.setUserDetailsService(userDetailsService);
+        daoAuthenticationProvider.setUserDetailsService(internalUserDetailsService);
+
+        return daoAuthenticationProvider;
+    }
+
+    @Bean
+    public AuthenticationProvider externalUserAuthenticationProvider() {
+        final DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
+
+        daoAuthenticationProvider.setUserDetailsService(externalUserService);
+        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder);
 
         return daoAuthenticationProvider;
     }
@@ -57,7 +69,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .anyRequest()
                 .hasAnyRole(UserRole.MEMBER_OF_ORGANIZATION.name())
 
-                .and().logout().logoutSuccessUrl("/logout/success").permitAll().and()
+                .and().logout().logoutUrl("/auth/logout").logoutSuccessUrl("/logout/success").permitAll().and()
 
                 .csrf().disable()
 
@@ -67,14 +79,12 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .authorizationEndpoint().baseUri("/auth/oauth2/authorize-client").and()
                 .redirectionEndpoint().baseUri("/auth/oauth2/code/*").and()
 
-                .userInfoEndpoint().userService(externalOAuthUserService);
+                .userInfoEndpoint().userService(externalUserService);
     }
 
     @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth
-                .authenticationProvider(daoAuthenticationProvider())
-                .userDetailsService(userDetailsService)
-                .passwordEncoder(passwordEncoder);
+    protected void configure(AuthenticationManagerBuilder auth) {
+        auth.authenticationProvider(internalUserAuthenticationProvider());
+        auth.authenticationProvider(externalUserAuthenticationProvider());
     }
 }

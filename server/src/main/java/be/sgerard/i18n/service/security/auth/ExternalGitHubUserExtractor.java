@@ -5,11 +5,16 @@ import be.sgerard.i18n.model.security.user.ExternalUserDto;
 import be.sgerard.i18n.service.security.UserRole;
 import com.jcabi.github.Coordinates;
 import com.jcabi.github.RtGithub;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -28,6 +33,8 @@ public class ExternalGitHubUserExtractor implements ExternalUserExtractor {
 
     public static final String GIT_HUB = "GitHub";
 
+    private static final Logger logger = LoggerFactory.getLogger(ExternalGitHubUserExtractor.class);
+
     private final String repository;
 
     public ExternalGitHubUserExtractor(AppProperties appProperties) {
@@ -41,15 +48,31 @@ public class ExternalGitHubUserExtractor implements ExternalUserExtractor {
 
     @Override
     public ExternalUserDto loadUser(OAuth2UserRequest userRequest, OAuth2User oAuth2User) throws BadCredentialsException {
-        final String tokenValue = userRequest.getAccessToken().getTokenValue();
+        return loadUser(userRequest.getAccessToken().getTokenValue(), oAuth2User.getAttributes());
+    }
 
+    public ExternalUserDto loadUser(String tokenValue) throws UsernameNotFoundException {
+        try {
+            return loadUser(tokenValue, new RtGithub(tokenValue).users().self().json());
+        } catch (Exception e) {
+            logger.info("Error while connecting GitHub.", e);
+
+            throw new AuthenticationServiceException("Cannot authenticate with the specified AuthKey.");
+        } catch (AssertionError error) {
+            logger.debug("Authentication failure.", error);
+
+            throw new UsernameNotFoundException("Cannot authenticate with the specified AuthKey.");
+        }
+    }
+
+    private ExternalUserDto loadUser(String tokenValue, Map<String, ?> attributes) {
         final boolean repoMember = isRepoMember(tokenValue);
 
         return ExternalUserDto.builder()
-                .externalId(Objects.toString(oAuth2User.getAttributes().get(EXTERNAL_ID)))
-                .username(Objects.toString(oAuth2User.getAttributes().get(LOGIN)))
-                .email(Objects.toString(oAuth2User.getAttributes().get(EMAIL)))
-                .avatarUrl(Objects.toString(oAuth2User.getAttributes().get(AVATAR_URL)))
+                .externalId(Objects.toString(attributes.get(EXTERNAL_ID)))
+                .username(Objects.toString(attributes.get(LOGIN)))
+                .email(Objects.toString(attributes.get(EMAIL)))
+                .avatarUrl(Objects.toString(attributes.get(AVATAR_URL)))
                 .gitHubToken(repoMember ? tokenValue : null)
                 .roles(repoMember ? new UserRole[]{UserRole.MEMBER_OF_ORGANIZATION} : new UserRole[0])
                 .build();

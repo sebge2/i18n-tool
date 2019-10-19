@@ -1,6 +1,7 @@
 package be.sgerard.i18n.service.security.auth;
 
 import be.sgerard.i18n.model.security.auth.AuthenticatedUser;
+import be.sgerard.i18n.model.security.auth.ExternalKeyAuthenticatedUser;
 import be.sgerard.i18n.model.security.auth.ExternalOAuth2AuthenticatedUser;
 import be.sgerard.i18n.model.security.auth.InternalAuthenticatedUser;
 import be.sgerard.i18n.model.security.user.ExternalUserDto;
@@ -13,6 +14,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Service;
 
@@ -30,13 +32,15 @@ import static java.util.stream.Collectors.toSet;
 public class AuthenticationManagerImpl implements AuthenticationManager {
 
     private final UserManager userManager;
+    private final PasswordEncoder passwordEncoder;
 
-    public AuthenticationManagerImpl(UserManager userManager) {
+    public AuthenticationManagerImpl(UserManager userManager, PasswordEncoder passwordEncoder) {
         this.userManager = userManager;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
-    public ExternalOAuth2AuthenticatedUser initAuthenticatedUser(ExternalUserEntity currentUser, ExternalUserDto externalUserDto) {
+    public ExternalOAuth2AuthenticatedUser initExternalOAuthUser(ExternalUserEntity currentUser, ExternalUserDto externalUserDto) {
         final Set<GrantedAuthority> authorities = new HashSet<>();
 
         authorities.addAll(currentUser.getRoles().stream().map(UserRole::toAuthority).collect(toSet()));
@@ -46,7 +50,17 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
     }
 
     @Override
-    public InternalAuthenticatedUser initAuthenticatedUser(InternalUserEntity currentUser) {
+    public ExternalKeyAuthenticatedUser initExternalKeyUser(ExternalUserEntity currentUser, ExternalUserDto externalUserDto) {
+        final Set<GrantedAuthority> authorities = new HashSet<>();
+
+        authorities.addAll(currentUser.getRoles().stream().map(UserRole::toAuthority).collect(toSet()));
+        authorities.addAll(externalUserDto.getRoles().stream().map(UserRole::toAuthority).collect(toSet()));
+
+        return new ExternalKeyAuthenticatedUser(currentUser.getId(), passwordEncoder.encode(""), externalUserDto.getGitHubToken().orElse(null), authorities);
+    }
+
+    @Override
+    public InternalAuthenticatedUser initInternalUser(InternalUserEntity currentUser) {
         return new InternalAuthenticatedUser(
                 currentUser.getId(),
                 currentUser.getUsername(),

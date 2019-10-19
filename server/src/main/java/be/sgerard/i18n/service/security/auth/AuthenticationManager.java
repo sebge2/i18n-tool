@@ -1,6 +1,7 @@
 package be.sgerard.i18n.service.security.auth;
 
 import be.sgerard.i18n.model.security.auth.AuthenticatedUser;
+import be.sgerard.i18n.model.security.auth.ExternalKeyAuthenticatedUser;
 import be.sgerard.i18n.model.security.auth.ExternalOAuth2AuthenticatedUser;
 import be.sgerard.i18n.model.security.auth.InternalAuthenticatedUser;
 import be.sgerard.i18n.model.security.user.ExternalUserDto;
@@ -17,13 +18,15 @@ import java.util.Optional;
  */
 public interface AuthenticationManager {
 
-    ExternalOAuth2AuthenticatedUser initAuthenticatedUser(ExternalUserEntity currentUser, ExternalUserDto externalUserDto);
+    ExternalOAuth2AuthenticatedUser initExternalOAuthUser(ExternalUserEntity currentUser, ExternalUserDto externalUserDto);
 
-    InternalAuthenticatedUser initAuthenticatedUser(InternalUserEntity currentUser);
+    ExternalKeyAuthenticatedUser initExternalKeyUser(ExternalUserEntity currentUser, ExternalUserDto externalUserDto);
+
+    InternalAuthenticatedUser initInternalUser(InternalUserEntity currentUser);
 
     Optional<AuthenticatedUser> getCurrentAuthenticatedUser();
 
-    default AuthenticatedUser getCurrentAuthenticatedUserOrFail() throws AccessDeniedException{
+    default AuthenticatedUser getCurrentAuthenticatedUserOrFail() throws AccessDeniedException {
         return getCurrentAuthenticatedUser()
                 .orElseThrow(() -> new AccessDeniedException("Please authenticate."));
     }

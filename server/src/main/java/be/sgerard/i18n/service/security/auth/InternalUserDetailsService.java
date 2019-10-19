@@ -27,7 +27,7 @@ public class InternalUserDetailsService implements UserDetailsService {
                 .getUserByName(username)
                 .orElseThrow(() -> new UsernameNotFoundException("There is no user [" + username + "]."));
 
-        return authenticationManager.initAuthenticatedUser(user);
+        return authenticationManager.initInternalUser(user);
     }
 
 }
