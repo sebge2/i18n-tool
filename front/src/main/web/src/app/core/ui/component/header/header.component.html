@@ -7,10 +7,6 @@
 
   <span class="spacer"></span>
 
-<!--    <div class="image-cropper">-->
-<!--        <img [src]="getUrl()" alt="avatar" class="profile-pic">-->
-<!--    </div>-->
-
   <div *ngIf="currentUser != null">
     <button mat-button [matMenuTriggerFor]="loginMenu">
       <img [src]="getUrl()" class="img-rounded profile-img" alt="{{getDisplayName()}}">
@@ -24,7 +20,7 @@
 
     <mat-menu #loginMenu="matMenu">
       <button mat-menu-item>
-        <a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        <a href="/auth/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
       </button>
     </mat-menu>
   </div>
