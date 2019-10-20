@@ -1,0 +1,43 @@
+import {Injectable} from '@angular/core';
+import {
+    ActivatedRoute,
+    ActivatedRouteSnapshot,
+    CanActivate,
+    Router,
+    RouterStateSnapshot,
+    UrlTree
+} from '@angular/router';
+import {Observable} from 'rxjs';
+import {AuthenticationService} from "../authentication.service";
+import {map} from "rxjs/operators";
+import {User} from '../../model/user.model';
+
+@Injectable({
+    providedIn: 'root'
+})
+export class LoginGuard implements CanActivate {
+
+    constructor(private router: Router,
+                private activatedRoute: ActivatedRoute,
+                private authenticationService: AuthenticationService) {
+    }
+
+    canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
+        return this.authenticationService.currentUser
+            .pipe(
+                map((user: User) => {
+                        if (user != null) {
+                            console.debug('There is a connected user, go to homepage instead.', user);
+
+                            this.router.navigate(['/translations'], {relativeTo: this.activatedRoute});
+
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
+                )
+            );
+    }
+
+}

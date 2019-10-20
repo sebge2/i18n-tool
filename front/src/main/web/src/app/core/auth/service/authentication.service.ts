@@ -1,8 +1,8 @@
 import {Injectable, OnDestroy} from '@angular/core';
 import {HttpClient, HttpResponse} from "@angular/common/http";
-import {BehaviorSubject, Observable, of, Subject, throwError} from "rxjs";
+import {BehaviorSubject, Observable, Subject, throwError} from "rxjs";
 import {User} from "../model/user.model";
-import {catchError, map, skip, tap} from "rxjs/operators";
+import {catchError, map, skipWhile, tap} from "rxjs/operators";
 import {NotificationService} from "../../notification/service/notification.service";
 import {AuthenticationErrorType} from "../model/authentication-error-type.model";
 
@@ -12,17 +12,23 @@ import {AuthenticationErrorType} from "../model/authentication-error-type.model"
 export class AuthenticationService implements OnDestroy {
 
     private _user: Subject<User> = new BehaviorSubject<User>(null);
+    private initialized: boolean = false;
     private destroy$ = new Subject();
 
     constructor(private httpClient: HttpClient,
                 private notificationService: NotificationService) {
         this.httpClient.get<User>('/api/authentication/user')
             .pipe(map(user => new User(user)))
-            .subscribe(
+            .toPromise()
+            .then(
                 user => {
                     console.debug('There is an existing authenticated user, send next user.', user);
+
+                    this.initialized = true;
                     this._user.next(user)
-                },
+                }
+            )
+            .catch(
                 (result: HttpResponse<any>) => {
                     if (result.status != 404) {
                         console.error('Error while retrieving current user.', result);
@@ -31,6 +37,7 @@ export class AuthenticationService implements OnDestroy {
                         console.debug('There is no current user, send next user null.');
                     }
 
+                    this.initialized = true;
                     this._user.next(null);
                 }
             );
@@ -41,8 +48,7 @@ export class AuthenticationService implements OnDestroy {
     }
 
     get currentUser(): Observable<User> {
-        return this._user
-            .pipe(skip(1));
+        return this._user.pipe(skipWhile(val => !this.initialized));
     }
 
     authenticateWithUserPassword(username: string, password: string): Observable<User> {
@@ -64,12 +70,12 @@ export class AuthenticationService implements OnDestroy {
                 ),
                 catchError((result: HttpResponse<any>) => {
                         if (result.status == 401) {
-                            return of(AuthenticationErrorType.WRONG_CREDENTIALS);
+                            return throwError(AuthenticationErrorType.WRONG_CREDENTIALS);
                         } else {
                             console.error('Error while authenticating user.', result);
                             this.notificationService.displayErrorMessage('Error while authenticating user.');
 
-                            return of(AuthenticationErrorType.AUTHENTICATION_SYSTEM_ERROR);
+                            return throwError(AuthenticationErrorType.AUTHENTICATION_SYSTEM_ERROR);
                         }
                     }
                 ),
