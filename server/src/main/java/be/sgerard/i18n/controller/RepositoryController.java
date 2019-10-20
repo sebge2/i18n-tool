@@ -6,6 +6,7 @@ import be.sgerard.i18n.service.git.RepositoryException;
 import be.sgerard.i18n.service.git.RepositoryManager;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,7 +27,9 @@ public class RepositoryController {
 
     @PutMapping(path = "/repository")
     @ApiOperation(value = "Executes an action on the repository.")
-    public void executeRepositoryAction(@RequestParam(name = "do") RepositoryListAction doAction) throws Exception {
+    @PreAuthorize("hasRole('ADMIN')")
+    @SuppressWarnings("SwitchStatementWithTooFewBranches")
+    public void executeRepositoryAction(@RequestParam(name = "do") RepositoryListAction doAction) {
         switch (doAction) {
             case INITIALIZE:
                 repositoryManager.initLocalRepository();
@@ -42,7 +45,7 @@ public class RepositoryController {
 
     @GetMapping("/repository/branch")
     @ApiOperation(value = "Lists all branches found on the repository.")
-    public List<String> listBranches() throws Exception {
+    public List<String> listBranches() {
         return repositoryManager.open(RepositoryAPI::listRemoteBranches);
     }
 

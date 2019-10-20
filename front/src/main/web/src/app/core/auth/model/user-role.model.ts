@@ -1,0 +1,9 @@
+export enum UserRole {
+
+    MEMBER_OF_ORGANIZATION = "MEMBER_OF_ORGANIZATION",
+
+    REPO_MEMBER = "REPO_MEMBER",
+
+    ADMIN = "ADMIN"
+
+}

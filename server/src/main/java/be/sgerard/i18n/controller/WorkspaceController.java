@@ -13,6 +13,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -51,6 +52,8 @@ public class WorkspaceController {
 
     @PutMapping(path = "/workspace")
     @ApiOperation(value = "Executes an action on workspaces.")
+    @PreAuthorize("hasRole('REPO_MEMBER')")
+    @SuppressWarnings("SwitchStatementWithTooFewBranches")
     public void executeWorkspacesAction(@ApiParam("The action to execute.") @RequestParam(name = "do") WorkspaceListAction doAction) throws LockTimeoutException, RepositoryException {
         switch (doAction) {
             case FIND:
@@ -70,12 +73,14 @@ public class WorkspaceController {
     @DeleteMapping(path = "/workspace/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @ApiOperation(value = "Deletes the workspace having the specified id.")
+    @PreAuthorize("hasRole('ADMIN')")
     public void deleteWorkspace(@PathVariable String id) throws LockTimeoutException, RepositoryException {
         workspaceManager.deleteWorkspace(id);
     }
 
     @PutMapping(path = "/workspace/{id}")
     @ApiOperation(value = "Executes an action on the specified workspace.")
+    @PreAuthorize("hasRole('REPO_MEMBER')")
     public WorkspaceDto executeWorkspaceAction(@PathVariable String id,
                                                @ApiParam("The action to execute.") @RequestParam(name = "do") WorkspaceAction doAction,
                                                @ApiParam("Specify the message to use for the review.")
