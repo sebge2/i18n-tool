@@ -13,6 +13,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import javax.servlet.http.HttpServletResponse;
+
 /**
  * @author Sebastien Gerard
  */
@@ -69,7 +71,12 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .anyRequest()
                 .hasAnyRole(UserRole.MEMBER_OF_ORGANIZATION.name())
 
-                .and().logout().logoutUrl("/auth/logout").logoutSuccessUrl("/logout/success").permitAll().and()
+                .and().logout()
+                .logoutUrl("/auth/logout")
+                .logoutSuccessHandler((httpServletRequest, httpServletResponse, authentication) -> {
+                    httpServletResponse.setStatus(HttpServletResponse.SC_OK);
+                })
+                .permitAll().and()
 
                 .csrf().disable()
 

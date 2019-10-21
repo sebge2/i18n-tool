@@ -131,7 +131,22 @@ export class AuthenticationService implements OnDestroy {
             );
     }
 
-    logout(): void {
-// TODO
+    logout(): Observable<any> {
+        return this.httpClient
+            .get('/auth/logout')
+            .pipe(
+                map(
+                    (result: any) => {
+                        return null;
+                    }
+                ),
+                catchError((result: HttpResponse<any>) => {
+                        console.error('Error while login out user.', result);
+                        this.notificationService.displayErrorMessage('Error while login out user.');
+
+                        return throwError(AuthenticationErrorType.AUTHENTICATION_SYSTEM_ERROR);
+                    }
+                )
+            );
     }
 }

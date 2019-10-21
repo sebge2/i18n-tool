@@ -73,6 +73,7 @@ public class UserManagerImpl implements UserManager {
             final InternalUserEntity adminEntity = new InternalUserEntity(DEFAULT_ADMIN_USER);
             adminEntity.setPassword(passwordEncoder.encode(password));
             adminEntity.setRoles(asList(UserRole.MEMBER_OF_ORGANIZATION, UserRole.ADMIN));
+            adminEntity.setAvatarUrl("/assets/admin-icon.png");
 
             System.out.println("====================================================");
             System.out.println("Admin password: " + password);

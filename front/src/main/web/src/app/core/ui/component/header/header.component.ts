@@ -1,9 +1,10 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
-import {Subscription} from 'rxjs';
+import {Subject} from 'rxjs';
 import {MatSidenav} from '@angular/material';
 import {ScreenService} from '../../service/screen.service';
 import {User} from "../../../auth/model/user.model";
 import {AuthenticationService} from "../../../auth/service/authentication.service";
+import {takeUntil} from "rxjs/operators";
 
 @Component({
     selector: 'app-header',
@@ -15,28 +16,32 @@ export class HeaderComponent implements OnInit, OnDestroy {
     @Input() sideBar: MatSidenav;
 
     private _currentUser: User = null;
-    private currentUserSubscription: Subscription;
+    private destroy$ = new Subject();
 
-    private _smallSizeSubscription: Subscription;
     private _smallSize: boolean;
 
     constructor(private authService: AuthenticationService,
                 private mediaService: ScreenService) {
-        this._smallSizeSubscription = mediaService.smallSize
-            .subscribe(
-                smallSize => this._smallSize = smallSize
-            );
     }
 
     ngOnInit() {
-        this.currentUserSubscription = this.authService.currentUser.subscribe(
-            user => this._currentUser = user
-        );
+        this.mediaService.smallSize
+            .pipe(takeUntil(this.destroy$))
+            .subscribe(
+                smallSize => this._smallSize = smallSize
+            );
+
+        this.authService.currentUser
+            .pipe(takeUntil(this.destroy$))
+            .subscribe(
+                user => {
+                    this._currentUser = user;
+                }
+            );
     }
 
     ngOnDestroy(): void {
-        this.currentUserSubscription.unsubscribe();
-        this._smallSizeSubscription.unsubscribe();
+        this.destroy$.complete();
     }
 
     get currentUser(): User {
