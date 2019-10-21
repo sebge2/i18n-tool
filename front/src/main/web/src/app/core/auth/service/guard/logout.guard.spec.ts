@@ -1,11 +1,11 @@
 import {inject, TestBed} from '@angular/core/testing';
 
-import {GlobalAuthGuard} from './global-auth-guard.service';
-import {RouterModule} from "@angular/router";
+import {LogoutGuard} from './logout.guard';
 import {HttpClientModule} from "@angular/common/http";
-import {CoreUiModule} from "../../core-ui.module";
+import {RouterModule} from "@angular/router";
+import {CoreUiModule} from "../../../ui/core-ui.module";
 
-describe('GlobalAuthGuard', () => {
+describe('LogoutGuard', () => {
     beforeEach(() => {
         TestBed.configureTestingModule({
             imports: [
@@ -13,11 +13,11 @@ describe('GlobalAuthGuard', () => {
                 RouterModule.forRoot([]),
                 CoreUiModule
             ],
-            providers: [GlobalAuthGuard]
+            providers: [LogoutGuard]
         });
     });
 
-    it('should ...', inject([GlobalAuthGuard], (guard: GlobalAuthGuard) => {
+    it('should ...', inject([LogoutGuard], (guard: LogoutGuard) => {
         expect(guard).toBeTruthy();
     }));
 });

@@ -7,6 +7,7 @@ import {MaterialModule} from './material.module';
 import {MenuComponent} from "./component/menu/menu.component";
 import {HeaderComponent} from "./component/header/header.component";
 import {ReactiveFormsModule} from "@angular/forms";
+import {FlexLayoutModule} from "@angular/flex-layout";
 
 const appRoutes: Routes = [
     {
@@ -43,7 +44,8 @@ const appRoutes: Routes = [
     ],
     exports: [
         MaterialModule,
-        ReactiveFormsModule
+        ReactiveFormsModule,
+        FlexLayoutModule
     ]
 })
 export class CoreUiModule {
