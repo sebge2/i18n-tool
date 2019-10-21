@@ -1,0 +1,13 @@
+.providers {
+    text-align: center;
+}
+
+:host /deep/ svg {
+    width: 100px !important;
+    height: auto !important;
+    transition: ease .3s;
+}
+
+:host /deep/ svg:hover {
+    fill: gray;
+}

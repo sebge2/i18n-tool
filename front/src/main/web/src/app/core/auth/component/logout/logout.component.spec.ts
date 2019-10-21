@@ -1,25 +1,31 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { LogoutComponent } from './logout.component';
+import {LogoutComponent} from './logout.component';
+import {HttpClientModule} from "@angular/common/http";
+import {CoreUiModule} from "../../../ui/core-ui.module";
 
 describe('LogoutComponent', () => {
-  let component: LogoutComponent;
-  let fixture: ComponentFixture<LogoutComponent>;
+    let component: LogoutComponent;
+    let fixture: ComponentFixture<LogoutComponent>;
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ LogoutComponent ]
-    })
-    .compileComponents();
-  }));
+    beforeEach(async(() => {
+        TestBed
+            .configureTestingModule({
+                imports: [
+                    CoreUiModule,
+                    HttpClientModule
+                ],
+                declarations: [
+                    LogoutComponent
+                ]
+            })
+            .compileComponents();
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(LogoutComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+        fixture = TestBed.createComponent(LogoutComponent);
+        component = fixture.componentInstance;
+    }));
 
-  it('should create', () => {
-    expect(component).toBeTruthy(); // TODO
-  });
+    it('should create', () => {
+        expect(component).toBeTruthy(); // TODO
+    });
 });

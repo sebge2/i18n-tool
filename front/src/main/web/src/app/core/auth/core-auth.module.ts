@@ -12,6 +12,7 @@ import {LoginProviderComponent} from './component/login/login-provider/login-pro
 import {FlexLayoutModule} from "@angular/flex-layout";
 import {LoginGuard} from "./service/guard/login.guard";
 import {LogoutGuard} from "./service/guard/logout.guard";
+import {InlineSVGModule} from "ng-inline-svg";
 
 const appRoutes: Routes = [
     {
@@ -40,7 +41,8 @@ const appRoutes: Routes = [
         CoreSharedModule,
         CoreUiModule,
         FormsModule,
-        FlexLayoutModule
+        FlexLayoutModule,
+        InlineSVGModule
     ],
     exports: []
 })

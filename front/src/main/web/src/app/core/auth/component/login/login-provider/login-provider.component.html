@@ -3,9 +3,10 @@
         <mat-card-title><i class="fas fa-cloud"></i> Providers</mat-card-title>
     </mat-card-header>
     <mat-card-content>
-        <div style="text-align: center">
+        <div class="providers">
             <a href="/auth/oauth2/authorize-client/github">
-                <img src="/assets/github-logo.svg" style="width: 100px" alt="GitHub authentication"/> <br />
+                <div aria-label="GitHub authentication" [inlineSVG]="'/assets/github-logo.svg'" class="svg_pd"
+                     [forceEvalStyles]="true"></div>
             </a>
         </div>
     </mat-card-content>
