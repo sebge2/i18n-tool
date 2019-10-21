@@ -8,12 +8,12 @@ body {
     margin: 0;
 }
 
-#errorMessage {
+#successfulMessage, #unsuccessfulMessage {
     position: relative;
     height: 100vh;
 }
 
-#errorMessage .errorMessage {
+#successfulMessage .errorMessage, #unsuccessfulMessage .errorMessage {
     position: absolute;
     left: 50%;
     top: 50%;

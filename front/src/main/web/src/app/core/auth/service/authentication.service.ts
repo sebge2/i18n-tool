@@ -82,7 +82,7 @@ export class AuthenticationService implements OnDestroy {
                 tap(
                     (value: any) => {
                         if (value instanceof User) {
-                            console.log('Authentication succeeded, send next user.', value);
+                            console.debug('Authentication succeeded, send next user.', value);
 
                             this._user.next(<User>value);
                         }
@@ -122,7 +122,16 @@ export class AuthenticationService implements OnDestroy {
                 tap(
                     (value: any) => {
                         if (value instanceof User) {
-                            console.log('Authentication succeeded, send next user.', value);
+                            console.debug('Authentication succeeded, send next user.', value);
+
+                            this._user.next(<User>value);
+                        }
+                    }
+                ),
+                tap(
+                    (value: any) => {
+                        if (value instanceof User) {
+                            console.debug('Authentication succeeded, send next user.', value);
 
                             this._user.next(<User>value);
                         }
@@ -145,6 +154,15 @@ export class AuthenticationService implements OnDestroy {
                         this.notificationService.displayErrorMessage('Error while login out user.');
 
                         return throwError(AuthenticationErrorType.AUTHENTICATION_SYSTEM_ERROR);
+                    }
+                ),
+                tap(
+                    (value: any) => {
+                        if (value == null) {
+                            console.debug('Logout succeeded, send next user.', value);
+
+                            this._user.next(null);
+                        }
                     }
                 )
             );
