@@ -9,14 +9,14 @@ import {CoreSharedModule} from "../../../shared/core-shared-module";
 import {Router} from "@angular/router";
 import {NotificationService} from "../../../notification/service/notification.service";
 import {AuthenticationService} from "../../service/authentication.service";
-import {HttpClientModule} from "@angular/common/http";
-import {InlineSVGModule} from "ng-inline-svg";
+import { TranslateService } from '@ngx-translate/core';
 
 describe('LoginComponent', () => {
     let component: LoginComponent;
     let fixture: ComponentFixture<LoginComponent>;
     let authenticationService: AuthenticationService;
     let notificationService: NotificationService;
+    let translationService: TranslateService;
     let router: Router;
 
     beforeEach(async(() => {
@@ -28,9 +28,7 @@ describe('LoginComponent', () => {
             .configureTestingModule({
                 imports: [
                     CoreUiModule,
-                    CoreSharedModule,
-                    HttpClientModule,
-                    InlineSVGModule.forRoot() // TODO
+                    CoreSharedModule
                 ],
                 declarations: [
                     LoginComponent,
@@ -41,7 +39,8 @@ describe('LoginComponent', () => {
                 providers: [
                     {provide: NotificationService, useValue: notificationService},
                     {provide: AuthenticationService, useValue: authenticationService},
-                    {provide: Router, useValue: router}
+                    {provide: Router, useValue: router},
+                    {provide: TranslateService, useValue: translationService}
                 ]
             })
             .compileComponents();

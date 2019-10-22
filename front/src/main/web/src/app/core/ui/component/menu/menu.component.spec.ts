@@ -8,20 +8,22 @@ describe('MenuComponent', () => {
     let fixture: ComponentFixture<MenuComponent>;
 
     beforeEach(async(() => {
-        TestBed.configureTestingModule({
-            imports: [MaterialModule],
-            declarations: [MenuComponent]
-        })
+        TestBed
+            .configureTestingModule({
+                imports: [
+                    MaterialModule
+                ],
+                declarations: [MenuComponent]
+            })
             .compileComponents();
-    }));
 
-    beforeEach(() => {
         fixture = TestBed.createComponent(MenuComponent);
         component = fixture.componentInstance;
-        fixture.detectChanges();
-    });
+    }));
 
     it('should create', () => {
+        fixture.detectChanges();
+
         expect(component).toBeTruthy(); // TODO
     });
 });

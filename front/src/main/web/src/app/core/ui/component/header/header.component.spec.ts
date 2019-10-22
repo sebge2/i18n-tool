@@ -6,17 +6,20 @@ import {CoreUiModule} from "../../core-ui.module";
 import {AuthenticationService} from "../../../auth/service/authentication.service";
 import {BehaviorSubject} from "rxjs";
 import {User} from "../../../auth/model/user.model";
+import {Router} from "@angular/router";
 
 describe('HeaderComponent', () => {
     let component: HeaderComponent;
     let fixture: ComponentFixture<HeaderComponent>;
     let authenticationService: AuthenticationService;
     let currentUser: BehaviorSubject<User>;
+    let router: Router;
 
     beforeEach(async(() => {
         currentUser = new BehaviorSubject<User>(null);
         authenticationService = jasmine.createSpyObj('authenticationUser', ['currentUser']);
         authenticationService.currentUser = jasmine.createSpy().and.returnValue(currentUser);
+        router = jasmine.createSpyObj('router', ['navigate']);
 
         TestBed
             .configureTestingModule({
@@ -25,7 +28,8 @@ describe('HeaderComponent', () => {
                     CoreEventModule
                 ],
                 providers: [
-                    {provide: AuthenticationService, useValue: authenticationService}
+                    {provide: AuthenticationService, useValue: authenticationService},
+                    {provide: Router, useValue: router}
                 ]
             })
             .compileComponents();

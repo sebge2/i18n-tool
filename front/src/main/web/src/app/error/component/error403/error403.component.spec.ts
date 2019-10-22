@@ -9,19 +9,23 @@ describe('Error403Component', () => {
     let fixture: ComponentFixture<Error403Component>;
 
     beforeEach(async(() => {
-        TestBed.configureTestingModule({
-            declarations: [Error403Component, ErrorMessageComponent, MainMessageComponent]
-        })
+        TestBed
+            .configureTestingModule({
+                declarations: [
+                    Error403Component,
+                    ErrorMessageComponent,
+                    MainMessageComponent
+                ]
+            })
             .compileComponents();
-    }));
 
-    beforeEach(() => {
         fixture = TestBed.createComponent(Error403Component);
         component = fixture.componentInstance;
-        fixture.detectChanges();
-    });
+    }));
 
     it('should create', () => {
+        fixture.detectChanges();
+
         expect(component).toBeTruthy(); // TODO
     });
 });

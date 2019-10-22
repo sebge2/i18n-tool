@@ -9,19 +9,23 @@ describe('Error404Component', () => {
     let fixture: ComponentFixture<Error404Component>;
 
     beforeEach(async(() => {
-        TestBed.configureTestingModule({
-            declarations: [Error404Component, ErrorMessageComponent, MainMessageComponent]
-        })
+        TestBed
+            .configureTestingModule({
+                declarations: [
+                    Error404Component,
+                    ErrorMessageComponent,
+                    MainMessageComponent
+                ]
+            })
             .compileComponents();
-    }));
 
-    beforeEach(() => {
         fixture = TestBed.createComponent(Error404Component);
         component = fixture.componentInstance;
-        fixture.detectChanges();
-    });
+    }));
 
     it('should create', () => {
+        fixture.detectChanges();
+
         expect(component).toBeTruthy(); // TODO
     });
 });
