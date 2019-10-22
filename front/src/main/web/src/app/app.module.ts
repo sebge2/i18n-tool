@@ -14,7 +14,6 @@ import {TranslateHttpLoader} from '@ngx-translate/http-loader';
 import {MESSAGE_FORMAT_CONFIG, TranslateMessageFormatCompiler} from "ngx-translate-messageformat-compiler";
 import {ALL_LOCALES} from "./translations/model/locale.model";
 import { CoreNotificationModule } from './core/notification/core-notification.module';
-import {InlineSVGModule} from "ng-inline-svg";
 
 export function HttpLoaderFactory(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -38,8 +37,6 @@ export function HttpLoaderFactory(http: HttpClient) {
                 useClass: TranslateMessageFormatCompiler
             }
         }),
-
-        InlineSVGModule.forRoot(),
 
         CoreUiModule,
         CoreAuthModule,

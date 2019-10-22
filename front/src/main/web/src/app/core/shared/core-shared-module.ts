@@ -6,7 +6,6 @@ import {WorkspaceIconPipe} from "./pipe/workspace-icon.pipe";
 import {WorkspaceIconCssPipe} from "./pipe/workspace-icon-css.pipe";
 import {LocaleIconPipe} from "./pipe/locale-icon.pipe";
 import {TranslateModule} from "@ngx-translate/core";
-import {InlineSVGModule} from "ng-inline-svg";
 
 @NgModule({
     declarations: [
@@ -22,7 +21,6 @@ import {InlineSVGModule} from "ng-inline-svg";
     exports: [
         CommonModule,
         TranslateModule,
-        InlineSVGModule,
 
         MainMessageComponent,
         WorkspaceIconPipe,
