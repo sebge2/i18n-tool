@@ -47,7 +47,7 @@ export class AuthenticationService implements OnDestroy {
         this.destroy$.complete();
     }
 
-    get currentUser(): Observable<User> {
+    currentUser(): Observable<User> {
         return this._user.pipe(skipWhile(val => !this.initialized));
     }
 

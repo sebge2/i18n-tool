@@ -16,7 +16,7 @@ export class GlobalAuthGuard implements CanActivate {
     }
 
     canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
-        return this.authenticationService.currentUser
+        return this.authenticationService.currentUser()
             .pipe(
                 map((user: User) => {
                         if (user == null) {

@@ -31,7 +31,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
                 smallSize => this._smallSize = smallSize
             );
 
-        this.authService.currentUser
+        this.authService.currentUser()
             .pipe(takeUntil(this.destroy$))
             .subscribe(
                 user => {

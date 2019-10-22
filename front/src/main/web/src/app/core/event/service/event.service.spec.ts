@@ -14,7 +14,10 @@ describe('EventService', () => {
         notificationService = jasmine.createSpyObj('notificationService', ['displayErrorMessage']);
 
         TestBed.configureTestingModule({
-            imports: [CoreEventModule, CoreUiModule]
+            imports: [
+                CoreEventModule,
+                CoreUiModule
+            ]
         });
 
         injector = getTestBed();

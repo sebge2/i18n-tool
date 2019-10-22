@@ -8,7 +8,7 @@ import {MAT_SNACK_BAR_DATA} from "@angular/material";
 describe('ErrorNotificationComponent', () => {
     let component: ErrorNotificationComponent;
     let fixture: ComponentFixture<ErrorNotificationComponent>;
-    let notificationService: NotificationService
+    let notificationService: NotificationService;
     let errorMessageData: { message: string };
 
     beforeEach(async(() => {
@@ -17,8 +17,12 @@ describe('ErrorNotificationComponent', () => {
 
         TestBed
             .configureTestingModule({
-                declarations: [ErrorNotificationComponent],
-                imports: [CoreUiModule],
+                declarations: [
+                    ErrorNotificationComponent
+                ],
+                imports: [
+                    CoreUiModule
+                ],
                 providers: [
                     {
                         provide: MAT_SNACK_BAR_DATA,

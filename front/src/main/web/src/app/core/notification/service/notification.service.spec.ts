@@ -1,7 +1,6 @@
 import {getTestBed, TestBed} from '@angular/core/testing';
 
 import {NotificationService} from './notification.service';
-import {CoreNotificationModule} from "../core-notification.module";
 import {CoreUiModule} from "../../ui/core-ui.module";
 
 describe('NotificationService', () => {
@@ -10,7 +9,9 @@ describe('NotificationService', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            imports: [CoreNotificationModule, CoreUiModule]
+            imports: [
+                CoreUiModule
+            ]
         });
 
         injector = getTestBed();
