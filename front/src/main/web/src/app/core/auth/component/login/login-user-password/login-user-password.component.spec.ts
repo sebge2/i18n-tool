@@ -4,10 +4,14 @@ import {LoginUserPasswordComponent} from './login-user-password.component';
 import {Router} from "@angular/router";
 import {CoreUiModule} from "../../../../ui/core-ui.module";
 import {HttpClientModule} from "@angular/common/http";
+import {AuthenticationService} from "../../../service/authentication.service";
+import {NotificationService} from "../../../../notification/service/notification.service";
 
 describe('LoginUserPasswordComponent', () => {
     let component: LoginUserPasswordComponent;
     let fixture: ComponentFixture<LoginUserPasswordComponent>;
+    let authenticationService: AuthenticationService;
+    let notificationService: NotificationService;
     let router: Router;
 
     beforeEach(async(() => {
@@ -16,15 +20,16 @@ describe('LoginUserPasswordComponent', () => {
         TestBed
             .configureTestingModule({
                 imports: [
-                    CoreUiModule,
-                    HttpClientModule,
+                    CoreUiModule
                 ],
                 declarations: [
                     LoginUserPasswordComponent
                 ],
                 providers: [
+                    {provide: NotificationService, useValue: notificationService},
+                    {provide: AuthenticationService, useValue: authenticationService},
                     {provide: Router, useValue: router}
-                ],
+                ]
             })
             .compileComponents();
 

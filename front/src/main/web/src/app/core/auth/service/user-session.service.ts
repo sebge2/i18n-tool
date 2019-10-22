@@ -4,7 +4,7 @@ import {EventService} from "../../event/service/event.service";
 import {UserSession} from "../model/user-session.model";
 import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {takeUntil} from "rxjs/operators";
-import {Events} from '../../event/model.events.model';
+import {Events} from '../../event/model/model.events.model';
 import {NotificationService} from "../../notification/service/notification.service";
 
 @Injectable({

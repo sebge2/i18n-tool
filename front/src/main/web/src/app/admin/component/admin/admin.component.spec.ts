@@ -5,7 +5,6 @@ import {RepositoryInitializerComponent} from "../repository-initializer/reposito
 import {WorkspaceTableComponent} from "../workspace-table/workspace-table.component";
 import {TranslateModule} from "@ngx-translate/core";
 import {CoreSharedModule} from "../../../core/shared/core-shared-module";
-import {HttpClientModule} from "@angular/common/http";
 import {CoreEventModule} from "../../../core/event/core-event.module";
 import {CoreUiModule} from "../../../core/ui/core-ui.module";
 import {RepositoryService} from "../../../translations/service/repository.service";
@@ -44,7 +43,6 @@ describe('AdminComponent', () => {
                     CoreUiModule,
                     CoreSharedModule,
                     CoreEventModule,
-                    HttpClientModule,
                     TranslateModule.forRoot()
                 ],
                 declarations: [

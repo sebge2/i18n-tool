@@ -8,7 +8,7 @@ import {RepositoryStatus} from "../model/repository-status.model";
 import {take, toArray} from "rxjs/operators";
 import {EventService} from "../../core/event/service/event.service";
 import {Observable, Subject} from "rxjs";
-import {Events} from "../../core/event/model.events.model";
+import {Events} from "../../core/event/model/model.events.model";
 import {NotificationService} from "../../core/notification/service/notification.service";
 
 describe('RepositoryService', () => {

@@ -6,15 +6,22 @@ import {LoginUserPasswordComponent} from "./login-user-password/login-user-passw
 import {LoginProviderComponent} from "./login-provider/login-provider.component";
 import {CoreUiModule} from "../../../ui/core-ui.module";
 import {CoreSharedModule} from "../../../shared/core-shared-module";
+import {Router} from "@angular/router";
+import {NotificationService} from "../../../notification/service/notification.service";
+import {AuthenticationService} from "../../service/authentication.service";
 import {HttpClientModule} from "@angular/common/http";
-import {Router, RouterModule} from "@angular/router";
+import {InlineSVGModule} from "ng-inline-svg";
 
 describe('LoginComponent', () => {
     let component: LoginComponent;
     let fixture: ComponentFixture<LoginComponent>;
+    let authenticationService: AuthenticationService;
+    let notificationService: NotificationService;
     let router: Router;
 
     beforeEach(async(() => {
+        authenticationService = jasmine.createSpyObj('authenticationUser', ['currentUser']);
+        notificationService = jasmine.createSpyObj('notificationService', ['displayErrorMessage']);
         router = jasmine.createSpyObj('router', ['navigate']);
 
         TestBed
@@ -22,8 +29,8 @@ describe('LoginComponent', () => {
                 imports: [
                     CoreUiModule,
                     CoreSharedModule,
-                    RouterModule,
-                    HttpClientModule
+                    HttpClientModule,
+                    InlineSVGModule.forRoot() // TODO
                 ],
                 declarations: [
                     LoginComponent,
@@ -32,8 +39,10 @@ describe('LoginComponent', () => {
                     LoginUserPasswordComponent
                 ],
                 providers: [
+                    {provide: NotificationService, useValue: notificationService},
+                    {provide: AuthenticationService, useValue: authenticationService},
                     {provide: Router, useValue: router}
-                ],
+                ]
             })
             .compileComponents();
 

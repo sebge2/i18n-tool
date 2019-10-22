@@ -4,7 +4,7 @@ import {LoginProviderComponent} from './login-provider.component';
 import {CoreUiModule} from "../../../../ui/core-ui.module";
 import {CoreSharedModule} from "../../../../shared/core-shared-module";
 import {InlineSVGModule} from "ng-inline-svg";
-import {HttpBackend, HttpClientModule} from "@angular/common/http";
+import {HttpClientModule} from "@angular/common/http";
 
 describe('LoginProviderComponent', () => {
     let component: LoginProviderComponent;
@@ -17,7 +17,7 @@ describe('LoginProviderComponent', () => {
                     CoreUiModule,
                     CoreSharedModule,
                     HttpClientModule,
-                    InlineSVGModule.forRoot()
+                    InlineSVGModule.forRoot() // TODO
                 ],
                 declarations: [
                     LoginProviderComponent

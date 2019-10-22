@@ -3,7 +3,7 @@ import {HttpClient} from "@angular/common/http";
 import {EventService} from "../../core/event/service/event.service";
 import {BehaviorSubject, Observable, Subject} from "rxjs";
 import {Repository} from "../model/repository.model";
-import {Events} from "../../core/event/model.events.model";
+import {Events} from "../../core/event/model/model.events.model";
 import {RepositoryStatus} from "../model/repository-status.model";
 import {takeUntil} from "rxjs/operators";
 import {NotificationService} from "../../core/notification/service/notification.service";

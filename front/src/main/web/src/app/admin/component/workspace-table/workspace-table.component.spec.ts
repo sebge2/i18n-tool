@@ -3,33 +3,25 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {WorkspaceTableComponent} from './workspace-table.component';
 import {TranslateModule} from "@ngx-translate/core";
 import {CoreSharedModule} from "../../../core/shared/core-shared-module";
-import {HttpClientModule} from "@angular/common/http";
 import {CoreEventModule} from "../../../core/event/core-event.module";
 import {CoreUiModule} from "../../../core/ui/core-ui.module";
-import {BehaviorSubject, Observable, Subject} from "rxjs";
+import {BehaviorSubject} from "rxjs";
 import {Workspace} from "../../../translations/model/workspace.model";
 import {WorkspaceService} from "../../../translations/service/workspace.service";
 
 describe('WorkspaceTableComponent', () => {
     let component: WorkspaceTableComponent;
     let fixture: ComponentFixture<WorkspaceTableComponent>;
-    let workspaceService: MockWorkspaceService;
-
-    class MockWorkspaceService {
-
-        readonly subject: Subject<Workspace[]> = new BehaviorSubject([]);
-
-        public getWorkspaces(): Observable<Workspace[]> {
-            return this.subject;
-        }
-
-        public find(): Promise<any> {
-            return Promise.resolve(null);
-        }
-    }
+    let workspaceService: WorkspaceService;
+    let workspaces: BehaviorSubject<Workspace[]>;
 
     beforeEach(async(() => {
-        workspaceService = new MockWorkspaceService();
+        workspaceService = jasmine.createSpyObj('workspaceService', ['getWorkspaces', 'find']);
+
+        workspaces = new BehaviorSubject<Workspace[]>([]);
+
+        workspaceService.getWorkspaces = jasmine.createSpy().and.returnValue(workspaces);
+        workspaceService.find = jasmine.createSpy().and.returnValue(Promise.resolve());
 
         TestBed
             .configureTestingModule({
@@ -37,8 +29,7 @@ describe('WorkspaceTableComponent', () => {
                     TranslateModule.forRoot(),
                     CoreUiModule,
                     CoreSharedModule,
-                    CoreEventModule,
-                    HttpClientModule
+                    CoreEventModule
                 ],
                 providers: [
                     {provide: WorkspaceService, useValue: workspaceService}
@@ -53,7 +44,7 @@ describe('WorkspaceTableComponent', () => {
 
     it('should display workspaces',
         async () => {
-            workspaceService.subject.next(
+            workspaces.next(
                 [
                     new Workspace(<Workspace>{id: 'abc', branch: 'master'}),
                     new Workspace(<Workspace>{id: 'def', branch: 'release/2019.9'})
@@ -72,7 +63,7 @@ describe('WorkspaceTableComponent', () => {
 
     it('should find when clicked',
         async () => {
-            workspaceService.subject.next(
+            workspaces.next(
                 [
                     new Workspace(<Workspace>{id: 'abc', branch: 'master'}),
                     new Workspace(<Workspace>{id: 'def', branch: 'release/2019.9'})
@@ -81,8 +72,6 @@ describe('WorkspaceTableComponent', () => {
 
             fixture.detectChanges();
             fixture.whenStable().then(() => {
-                spyOn(workspaceService, 'find').and.returnValue(Promise.resolve());
-
                 fixture.debugElement.nativeElement.querySelector('#findButton').click();
 
                 expect(workspaceService.find).toHaveBeenCalled();
