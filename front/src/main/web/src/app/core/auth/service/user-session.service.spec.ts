@@ -4,7 +4,7 @@ import {UserSessionService} from './user-session.service';
 import {CoreEventModule} from "../../event/core-event.module";
 import {HttpClientTestingModule, HttpTestingController} from "@angular/common/http/testing";
 import {Observable, Subject} from "rxjs";
-import {Events} from "../../event/model/model.events.model";
+import {Events} from "../../event/model/events.model";
 import {EventService} from "../../event/service/event.service";
 import {take, toArray} from "rxjs/operators";
 import {UserSession} from "../model/user-session.model";
