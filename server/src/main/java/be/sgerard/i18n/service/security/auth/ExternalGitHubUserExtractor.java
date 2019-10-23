@@ -74,7 +74,7 @@ public class ExternalGitHubUserExtractor implements ExternalUserExtractor {
                 .email(Objects.toString(attributes.get(EMAIL)))
                 .avatarUrl(Objects.toString(attributes.get(AVATAR_URL)))
                 .gitHubToken(repoMember ? tokenValue : null)
-                .roles(repoMember ? new UserRole[]{UserRole.MEMBER_OF_ORGANIZATION} : new UserRole[0])
+                .roles(repoMember ? new UserRole[]{UserRole.MEMBER_OF_ORGANIZATION, UserRole.MEMBER_OF_REPOSITORY} : new UserRole[0])
                 .build();
     }
 

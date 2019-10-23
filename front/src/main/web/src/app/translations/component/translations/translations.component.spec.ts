@@ -9,24 +9,34 @@ import {WorkspaceSelectorComponent} from "../translations-search-bar/workspace-s
 import {TranslationLocalesSelectorComponent} from "../translations-search-bar/translation-locales-selector/translation-locales-selector.component";
 import {TranslationCriterionSelectorComponent} from "../translations-search-bar/translation-criterion-selector/translation-criterion-selector.component";
 import {TranslationEditingCellComponent} from "../translations-table/translation-editing-cell/translation-editing-cell.component";
-import {HttpClientModule} from "@angular/common/http";
 import {CoreEventModule} from "../../../core/event/core-event.module";
 import {CoreUiModule} from "../../../core/ui/core-ui.module";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {BehaviorSubject} from "rxjs";
 import {WorkspaceService} from "../../service/workspace.service";
 import {Workspace} from "../../model/workspace.model";
+import {AuthenticationService} from "../../../core/auth/service/authentication.service";
+import {CoreAuthModule} from "../../../core/auth/core-auth.module";
+import {AuthenticatedUser} from "../../../core/auth/model/authenticated-user.model";
+import {ALL_USER_ROLES} from "../../../core/auth/model/user-role.model";
 
 describe('TranslationsComponent', () => {
     let component: TranslationsComponent;
     let fixture: ComponentFixture<TranslationsComponent>;
+
     let workspaceService: WorkspaceService;
     let workspaces: BehaviorSubject<Workspace[]>;
+
+    let user: BehaviorSubject<AuthenticatedUser> = new BehaviorSubject<AuthenticatedUser>(new AuthenticatedUser(<AuthenticatedUser>{sessionRoles: ALL_USER_ROLES}));
+    let authenticationService: AuthenticationService;
 
     beforeEach(async(() => {
         workspaceService = jasmine.createSpyObj('workspaceService', ['getWorkspaces']);
         workspaces = new BehaviorSubject([]);
         workspaceService.getWorkspaces = jasmine.createSpy().and.returnValue(workspaces);
+
+        authenticationService = jasmine.createSpyObj('authenticationUser', ['currentUser']);
+        authenticationService.currentUser = jasmine.createSpy().and.returnValue(user);
 
         TestBed
             .configureTestingModule({
@@ -34,11 +44,13 @@ describe('TranslationsComponent', () => {
                     TranslateModule.forRoot(),
                     BrowserAnimationsModule,
                     CoreUiModule,
+                    CoreAuthModule,
                     CoreSharedModule,
                     CoreEventModule
                 ],
                 providers: [
-                    {provide: WorkspaceService, useValue: workspaceService}
+                    {provide: WorkspaceService, useValue: workspaceService},
+                    {provide: AuthenticationService, useValue: authenticationService}
                 ],
                 declarations: [
                     TranslationsComponent,

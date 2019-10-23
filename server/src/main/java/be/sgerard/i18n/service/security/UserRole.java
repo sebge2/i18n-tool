@@ -10,7 +10,7 @@ public enum UserRole {
 
     MEMBER_OF_ORGANIZATION(false),
 
-    REPO_MEMBER(false),
+    MEMBER_OF_REPOSITORY(false),
 
     ADMIN(true);
 

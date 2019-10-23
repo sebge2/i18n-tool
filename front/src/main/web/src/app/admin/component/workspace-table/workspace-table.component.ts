@@ -8,6 +8,7 @@ import {
     ConfirmDeletionDialogModel,
     ConfirmWorkspaceDeletionComponent
 } from "./confirm-deletion/confirm-workspace-deletion.component";
+import {AuthenticationService} from "../../../core/auth/service/authentication.service";
 
 @Component({
     selector: 'app-workspace-table',
@@ -17,16 +18,14 @@ import {
 export class WorkspaceTableComponent implements OnInit, OnDestroy {
 
     displayedColumns = ['name', 'action'];
-
     hoveredWorkspace: Workspace;
-
     dataSource = new MatTableDataSource<Workspace>([]);
-
     actionInProgress: boolean = false;
 
     private destroy$ = new Subject();
 
     constructor(private workspaceService: WorkspaceService,
+                private authenticationService: AuthenticationService,
                 private dialog: MatDialog) {
     }
 

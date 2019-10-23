@@ -20,7 +20,10 @@ export class UserSessionService implements OnDestroy {
                 private notificationService: NotificationService) {
         this.httpClient.get<UserSession[]>('/api/user-session/current').toPromise()
             .then(userSessions => this._userSessions.next(userSessions.map(userSession => new UserSession(userSession))))
-            .catch(reason => this.notificationService.displayErrorMessage("Error while retrieving current sessions.", reason));
+            .catch(reason => {
+                console.error("Error while retrieving current sessions.", reason);
+                this.notificationService.displayErrorMessage("Error while retrieving current sessions.");
+            });
 
         this.eventService.subscribe(Events.CONNECTED_USER_SESSION, UserSession)
             .pipe(takeUntil(this.destroy$))

@@ -4,16 +4,16 @@ import {GlobalAuthGuard} from './global-auth-guard.service';
 import {CoreUiModule} from "../../core-ui.module";
 import {AuthenticationService} from "../../../auth/service/authentication.service";
 import {BehaviorSubject} from "rxjs";
-import {User} from "../../../auth/model/user.model";
 import {Router} from "@angular/router";
+import {AuthenticatedUser} from 'src/app/core/auth/model/authenticated-user.model';
 
 describe('GlobalAuthGuard', () => {
     let authenticationService: AuthenticationService;
-    let currentUser: BehaviorSubject<User>;
+    let currentUser: BehaviorSubject<AuthenticatedUser>;
     let router: Router;
 
     beforeEach(() => {
-        currentUser = new BehaviorSubject<User>(null);
+        currentUser = new BehaviorSubject<AuthenticatedUser>(null);
         authenticationService = jasmine.createSpyObj('authenticationUser', ['currentUser']);
         authenticationService.currentUser = jasmine.createSpy().and.returnValue(currentUser);
 

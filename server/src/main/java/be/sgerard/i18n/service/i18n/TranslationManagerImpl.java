@@ -26,7 +26,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-import static be.sgerard.i18n.model.event.Events.EVENT_UPDATED_TRANSLATIONS;
+import static be.sgerard.i18n.model.event.EventType.EVENT_UPDATED_TRANSLATIONS;
 import static be.sgerard.i18n.service.i18n.file.TranslationFileUtils.mapToNullIfEmpty;
 import static java.util.stream.Collectors.toList;
 
@@ -132,7 +132,7 @@ public class TranslationManagerImpl implements TranslationManager {
     @Override
     @Transactional
     public void updateTranslations(WorkspaceEntity workspace, Map<String, String> translations) throws ResourceNotFoundException {
-        final UserDto currentUser = authenticationManager.getCurrentUser();
+        final UserDto currentUser = authenticationManager.getCurrentUser().getUser();
 
         final List<BundleKeyTranslationDto> updatedEntries = new ArrayList<>();
         for (Map.Entry<String, String> updateEntry : translations.entrySet()) {

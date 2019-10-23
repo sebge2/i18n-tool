@@ -3,8 +3,8 @@ import {ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot} from '
 import {Observable} from 'rxjs';
 import {AuthenticationService} from "../../../auth/service/authentication.service";
 import {map} from "rxjs/operators";
-import {User} from "../../../auth/model/user.model";
 import {UserRole} from "../../../auth/model/user-role.model";
+import {AuthenticatedUser} from 'src/app/core/auth/model/authenticated-user.model';
 
 @Injectable({
     providedIn: 'root'
@@ -18,7 +18,7 @@ export class GlobalAuthGuard implements CanActivate {
     canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
         return this.authenticationService.currentUser()
             .pipe(
-                map((user: User) => {
+                map((user: AuthenticatedUser) => {
                         if (user == null) {
                             this.router.navigate(['/login'], {});
                             return false;

@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {RxStompService} from '@stomp/ng2-stompjs';
 import {Message} from '@stomp/stompjs';
 import {Observable} from "rxjs";
-import {map} from "rxjs/operators";
+import {map, merge} from "rxjs/operators";
 import {NotificationService} from "../../notification/service/notification.service";
 
 @Injectable({
@@ -25,7 +25,10 @@ export class EventService {
 
     public subscribe<T>(eventType: string, type: { new(raw: T): T; }): Observable<T> {
         return this.rxStompService.watch("/topic/" + eventType)
-            .pipe(map((message: Message) => new type(<T>JSON.parse(message.body))));
+            .pipe(
+                merge(this.rxStompService.watch("/user/queue/" + eventType)),
+                map((message: Message) => new type(<T>JSON.parse(message.body)))
+            );
     }
 
     public publish(eventType: string, payload: any): void {

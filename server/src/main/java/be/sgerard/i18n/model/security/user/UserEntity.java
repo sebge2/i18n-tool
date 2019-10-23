@@ -5,6 +5,7 @@ import be.sgerard.i18n.service.security.UserRole;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -27,7 +28,7 @@ public abstract class UserEntity {
     @Column
     private String avatarUrl;
 
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.LAZY)
     @Enumerated(EnumType.STRING)
     private List<UserRole> roles = new ArrayList<>();
 
@@ -73,8 +74,8 @@ public abstract class UserEntity {
         return roles;
     }
 
-    public void setRoles(List<UserRole> roles) {
-        this.roles = roles;
+    public void setRoles(Collection<UserRole> roles) {
+        this.roles = new ArrayList<>(roles);
     }
 
     public int getVersion() {

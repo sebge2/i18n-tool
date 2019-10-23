@@ -1,24 +1,27 @@
 import {Injectable, OnDestroy} from '@angular/core';
 import {HttpClient, HttpResponse} from "@angular/common/http";
 import {BehaviorSubject, Observable, Subject, throwError} from "rxjs";
-import {User} from "../model/user.model";
-import {catchError, map, skipWhile, tap} from "rxjs/operators";
+import {catchError, map, skipWhile, takeUntil, tap} from "rxjs/operators";
 import {NotificationService} from "../../notification/service/notification.service";
 import {AuthenticationErrorType} from "../model/authentication-error-type.model";
+import {EventService} from "../../event/service/event.service";
+import {Events} from "../../event/model/events.model";
+import {AuthenticatedUser} from '../model/authenticated-user.model';
 
 @Injectable({
     providedIn: 'root'
 })
 export class AuthenticationService implements OnDestroy {
 
-    private _user: Subject<User> = new BehaviorSubject<User>(null);
+    private _user: Subject<AuthenticatedUser> = new BehaviorSubject<AuthenticatedUser>(null);
     private initialized: boolean = false;
     private destroy$ = new Subject();
 
     constructor(private httpClient: HttpClient,
+                private eventService: EventService,
                 private notificationService: NotificationService) {
-        this.httpClient.get<User>('/api/authentication/user')
-            .pipe(map(user => new User(user)))
+        this.httpClient.get<AuthenticatedUser>('/api/authentication/user')
+            .pipe(map(user => new AuthenticatedUser(user)))
             .toPromise()
             .then(
                 user => {
@@ -41,17 +44,26 @@ export class AuthenticationService implements OnDestroy {
                     this._user.next(null);
                 }
             );
+
+        this.eventService.subscribe(Events.UPDATED_CURRENT_AUTHENTICATED_USER, AuthenticatedUser)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe(
+                (user: AuthenticatedUser) => {
+                    console.debug('Current authenticated user changed.', user);
+                    this._user.next(user);
+                }
+            );
     }
 
     ngOnDestroy(): void {
         this.destroy$.complete();
     }
 
-    currentUser(): Observable<User> {
+    currentUser(): Observable<AuthenticatedUser> {
         return this._user.pipe(skipWhile(val => !this.initialized));
     }
 
-    authenticateWithUserPassword(username: string, password: string): Observable<User> {
+    authenticateWithUserPassword(username: string, password: string): Observable<AuthenticatedUser> {
         return this.httpClient
             .get(
                 "/api/authentication/user",
@@ -64,8 +76,8 @@ export class AuthenticationService implements OnDestroy {
             )
             .pipe(
                 map(
-                    (user: User) => {
-                        return new User(user);
+                    (user: AuthenticatedUser) => {
+                        return new AuthenticatedUser(user);
                     }
                 ),
                 catchError((result: HttpResponse<any>) => {
@@ -81,17 +93,17 @@ export class AuthenticationService implements OnDestroy {
                 ),
                 tap(
                     (value: any) => {
-                        if (value instanceof User) {
+                        if (value instanceof AuthenticatedUser) {
                             console.debug('Authentication succeeded, send next user.', value);
 
-                            this._user.next(<User>value);
+                            this._user.next(<AuthenticatedUser>value);
                         }
                     }
                 )
             );
     }
 
-    authenticateWithGitHubAuthKey(authKey: string): Observable<User> {
+    authenticateWithGitHubAuthKey(authKey: string): Observable<AuthenticatedUser> {
         return this.httpClient
             .get(
                 "/api/authentication/user",
@@ -104,8 +116,8 @@ export class AuthenticationService implements OnDestroy {
             )
             .pipe(
                 map(
-                    (user: User) => {
-                        return new User(user);
+                    (user: AuthenticatedUser) => {
+                        return new AuthenticatedUser(user);
                     }
                 ),
                 catchError((result: HttpResponse<any>) => {
@@ -121,19 +133,19 @@ export class AuthenticationService implements OnDestroy {
                 ),
                 tap(
                     (value: any) => {
-                        if (value instanceof User) {
+                        if (value instanceof AuthenticatedUser) {
                             console.debug('Authentication succeeded, send next user.', value);
 
-                            this._user.next(<User>value);
+                            this._user.next(<AuthenticatedUser>value);
                         }
                     }
                 ),
                 tap(
                     (value: any) => {
-                        if (value instanceof User) {
+                        if (value instanceof AuthenticatedUser) {
                             console.debug('Authentication succeeded, send next user.', value);
 
-                            this._user.next(<User>value);
+                            this._user.next(<AuthenticatedUser>value);
                         }
                     }
                 )

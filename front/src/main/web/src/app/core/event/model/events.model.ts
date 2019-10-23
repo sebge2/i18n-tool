@@ -8,5 +8,7 @@ export enum Events {
 
     CONNECTED_USER_SESSION = "connected-user-session",
 
-    DISCONNECTED_USER_SESSION = "disconnected-user-session"
+    DISCONNECTED_USER_SESSION = "disconnected-user-session",
+
+    UPDATED_CURRENT_AUTHENTICATED_USER = "updated-current-authenticated-user"
 }

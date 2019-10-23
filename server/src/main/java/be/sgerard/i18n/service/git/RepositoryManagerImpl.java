@@ -22,7 +22,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import static be.sgerard.i18n.model.event.Events.EVENT_UPDATED_REPOSITORY;
+import static be.sgerard.i18n.model.event.EventType.EVENT_UPDATED_REPOSITORY;
 import static java.util.Collections.singletonList;
 
 /**
@@ -175,7 +175,7 @@ public class RepositoryManagerImpl implements RepositoryManager {
     }
 
     private UsernamePasswordCredentialsProvider createProvider() {
-        return new UsernamePasswordCredentialsProvider(authenticationManager.getCurrentAuthenticatedUserOrFail().getGitHubTokenOrFail(), "");
+        return new UsernamePasswordCredentialsProvider(authenticationManager.getCurrentUserOrFail().getGitHubTokenOrFail(), "");
     }
 
     private Git getGit() throws Exception {

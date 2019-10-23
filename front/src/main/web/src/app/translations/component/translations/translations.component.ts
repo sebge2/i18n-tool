@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {TranslationsSearchRequest} from "../../model/translations-search-request.model";
 import {WorkspaceStatus} from "../../model/workspace-status.model";
 import {WorkspaceService} from "../../service/workspace.service";
@@ -8,18 +8,21 @@ import {
 } from "../translations-start-review/translations-start-review.component";
 import {MatDialog} from "@angular/material";
 import {Workspace} from "../../model/workspace.model";
+import {Subject} from "rxjs";
 
 @Component({
     selector: 'app-translations',
     templateUrl: './translations.component.html',
     styleUrls: ['./translations.component.css']
 })
-export class TranslationsComponent implements OnInit {
+export class TranslationsComponent implements OnInit, OnDestroy {
 
     searchRequest: TranslationsSearchRequest = new TranslationsSearchRequest();
     readOnlyTable: boolean;
     startReviewing: boolean;
+    startReviewAllowed = false;
 
+    private destroy$ = new Subject();
     private _expanded: boolean = false;
 
     constructor(private workspaceService: WorkspaceService,
@@ -27,6 +30,10 @@ export class TranslationsComponent implements OnInit {
     }
 
     ngOnInit() {
+    }
+
+    ngOnDestroy(): void {
+        this.destroy$.complete();
     }
 
     get expanded(): boolean {

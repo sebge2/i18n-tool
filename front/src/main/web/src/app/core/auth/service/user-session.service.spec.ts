@@ -26,7 +26,7 @@ describe('UserSessionService', () => {
             expect(eventType).toMatch(new RegExp(Events.CONNECTED_USER_SESSION + '|' + Events.DISCONNECTED_USER_SESSION));
             expect(type).toEqual(UserSession);
 
-            if(eventType == Events.CONNECTED_USER_SESSION){
+            if (eventType == Events.CONNECTED_USER_SESSION) {
                 return this.connected;
             } else {
                 return this.disconnected;
@@ -39,9 +39,11 @@ describe('UserSessionService', () => {
         notificationService = jasmine.createSpyObj('notificationService', ['displayErrorMessage']);
 
         TestBed.configureTestingModule({
-            imports: [HttpClientTestingModule, CoreEventModule],
+            imports: [
+                HttpClientTestingModule,
+                CoreEventModule
+            ],
             providers: [
-                UserSessionService,
                 {provide: EventService, useValue: eventService},
                 {provide: NotificationService, useValue: notificationService}
             ]

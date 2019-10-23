@@ -25,8 +25,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
-import static be.sgerard.i18n.model.event.Events.EVENT_DELETED_WORKSPACE;
-import static be.sgerard.i18n.model.event.Events.EVENT_UPDATED_WORKSPACE;
+import static be.sgerard.i18n.model.event.EventType.EVENT_DELETED_WORKSPACE;
+import static be.sgerard.i18n.model.event.EventType.EVENT_UPDATED_WORKSPACE;
 import static java.util.stream.Collectors.toList;
 
 /**

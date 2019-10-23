@@ -8,12 +8,20 @@ import {CoreUiModule} from "../../../core/ui/core-ui.module";
 import {BehaviorSubject} from "rxjs";
 import {Workspace} from "../../../translations/model/workspace.model";
 import {WorkspaceService} from "../../../translations/service/workspace.service";
+import {AuthenticationService} from "../../../core/auth/service/authentication.service";
+import {CoreAuthModule} from "../../../core/auth/core-auth.module";
+import {ALL_USER_ROLES} from "../../../core/auth/model/user-role.model";
+import {AuthenticatedUser} from "../../../core/auth/model/authenticated-user.model";
 
 describe('WorkspaceTableComponent', () => {
     let component: WorkspaceTableComponent;
     let fixture: ComponentFixture<WorkspaceTableComponent>;
+
     let workspaceService: WorkspaceService;
     let workspaces: BehaviorSubject<Workspace[]>;
+
+    let user: BehaviorSubject<AuthenticatedUser> = new BehaviorSubject<AuthenticatedUser>(new AuthenticatedUser(<AuthenticatedUser>{sessionRoles: ALL_USER_ROLES}));
+    let authenticationService: AuthenticationService;
 
     beforeEach(async(() => {
         workspaceService = jasmine.createSpyObj('workspaceService', ['getWorkspaces', 'find']);
@@ -23,16 +31,21 @@ describe('WorkspaceTableComponent', () => {
         workspaceService.getWorkspaces = jasmine.createSpy().and.returnValue(workspaces);
         workspaceService.find = jasmine.createSpy().and.returnValue(Promise.resolve());
 
+        authenticationService = jasmine.createSpyObj('authenticationUser', ['currentUser']);
+        authenticationService.currentUser = jasmine.createSpy().and.returnValue(user);
+
         TestBed
             .configureTestingModule({
                 imports: [
                     TranslateModule.forRoot(),
                     CoreUiModule,
                     CoreSharedModule,
-                    CoreEventModule
+                    CoreEventModule,
+                    CoreAuthModule
                 ],
                 providers: [
-                    {provide: WorkspaceService, useValue: workspaceService}
+                    {provide: WorkspaceService, useValue: workspaceService},
+                    {provide: AuthenticationService, useValue: authenticationService}
                 ],
                 declarations: [WorkspaceTableComponent]
             })

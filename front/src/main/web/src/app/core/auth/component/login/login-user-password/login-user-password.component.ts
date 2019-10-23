@@ -1,10 +1,10 @@
 import {Component, OnInit} from '@angular/core';
 import {MatProgressButtonOptions} from 'mat-progress-buttons';
 import {AuthenticationService} from "../../../service/authentication.service";
-import {User} from "../../../model/user.model";
 import {AuthenticationErrorType} from "../../../model/authentication-error-type.model";
 import {Router} from "@angular/router";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {AuthenticatedUser} from '../../../model/authenticated-user.model';
 
 @Component({
     selector: 'app-login-user-password',
@@ -53,7 +53,7 @@ export class LoginUserPasswordComponent implements OnInit {
         this.authenticationService.authenticateWithUserPassword(this.form.get('username').value, this.form.get('password').value)
             .toPromise()
             .then(
-                (user: User) => {
+                (user: AuthenticatedUser) => {
                     this.router.navigate(['/translations']);
                 }
             )

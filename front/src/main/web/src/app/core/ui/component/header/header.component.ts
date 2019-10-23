@@ -35,7 +35,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
             .pipe(takeUntil(this.destroy$))
             .subscribe(
                 user => {
-                    this._currentUser = user;
+                    this._currentUser = (user != null) ? user.user : null;
                 }
             );
     }

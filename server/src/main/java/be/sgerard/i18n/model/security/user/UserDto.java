@@ -1,5 +1,6 @@
 package be.sgerard.i18n.model.security.user;
 
+import be.sgerard.i18n.service.security.UserRole;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -7,9 +8,11 @@ import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import java.io.Serializable;
 import java.security.Principal;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import static java.util.Collections.unmodifiableSet;
@@ -19,10 +22,20 @@ import static java.util.Collections.unmodifiableSet;
  */
 @ApiModel(description = "Description of the user.")
 @JsonDeserialize(builder = UserDto.Builder.class)
-public class UserDto implements Principal {
+public class UserDto implements Principal, Serializable {
 
     public static Builder builder() {
         return new Builder();
+    }
+
+    public static Builder builder(UserDto userDto) {
+        return builder()
+                .id(userDto.id)
+                .username(userDto.username)
+                .email(userDto.email)
+                .avatarUrl(userDto.avatarUrl)
+                .roles(userDto.roles)
+                .type(userDto.type);
     }
 
     public static Builder builder(UserEntity userEntity) {
@@ -30,7 +43,9 @@ public class UserDto implements Principal {
                 .id(userEntity.getId())
                 .username(userEntity.getUsername())
                 .email(userEntity.getEmail())
-                .avatarUrl(userEntity.getAvatarUrl());
+                .avatarUrl(userEntity.getAvatarUrl())
+                .roles(userEntity.getRoles())
+                .type(userEntity instanceof ExternalUserEntity ? Type.EXTERNAL : Type.INTERNAL);
     }
 
     @ApiModelProperty(notes = "Id of the user.")
@@ -46,7 +61,10 @@ public class UserDto implements Principal {
     private final String avatarUrl;
 
     @ApiModelProperty(notes = "User roles.")
-    private final Collection<String> roles;
+    private final Collection<UserRole> roles;
+
+    @ApiModelProperty(notes = "User type.")
+    private final Type type;
 
     private UserDto(Builder builder) {
         id = builder.id;
@@ -54,6 +72,7 @@ public class UserDto implements Principal {
         email = builder.email;
         avatarUrl = builder.avatarUrl;
         roles = unmodifiableSet(builder.roles);
+        type = builder.type;
     }
 
     @Override
@@ -78,13 +97,37 @@ public class UserDto implements Principal {
         return avatarUrl;
     }
 
-    public Collection<String> getRoles() {
+    public Collection<UserRole> getRoles() {
         return roles;
+    }
+
+    public Type getType() {
+        return type;
     }
 
     @Override
     public String toString() {
         return "User(" + username + ", " + email + ')';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        final UserDto userDto = (UserDto) o;
+
+        return id.equals(userDto.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
     @JsonPOJOBuilder(withPrefix = "")
@@ -95,7 +138,8 @@ public class UserDto implements Principal {
         private String username;
         private String email;
         private String avatarUrl;
-        private final Set<String> roles = new HashSet<>();
+        private final Set<UserRole> roles = new HashSet<>();
+        private Type type;
 
         private Builder() {
         }
@@ -120,13 +164,30 @@ public class UserDto implements Principal {
             return this;
         }
 
-        public Builder roles(Collection<String> roles) {
+        public Builder roles(Collection<UserRole> roles) {
             this.roles.addAll(roles);
+            return this;
+        }
+
+        public Builder type(Type type) {
+            this.type = type;
             return this;
         }
 
         public UserDto build() {
             return new UserDto(this);
         }
+    }
+
+    /**
+     * All possible user types.
+     */
+    @ApiModel(description = "All possible user types.")
+    public enum Type {
+
+        EXTERNAL,
+
+        INTERNAL
+
     }
 }

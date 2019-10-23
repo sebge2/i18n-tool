@@ -13,6 +13,10 @@ import {WorkspaceService} from "../../../translations/service/workspace.service"
 import {Repository} from "../../../translations/model/repository.model";
 import {RepositoryStatus} from "../../../translations/model/repository-status.model";
 import {Workspace} from "../../../translations/model/workspace.model";
+import {AuthenticationService} from "../../../core/auth/service/authentication.service";
+import {ALL_USER_ROLES} from "../../../core/auth/model/user-role.model";
+import {CoreAuthModule} from "../../../core/auth/core-auth.module";
+import {AuthenticatedUser} from "../../../core/auth/model/authenticated-user.model";
 
 describe('AdminComponent', () => {
     let component: AdminComponent;
@@ -20,12 +24,18 @@ describe('AdminComponent', () => {
     let repositoryService: RepositoryService;
     let workspaceService: WorkspaceService;
 
+    let user: BehaviorSubject<AuthenticatedUser> = new BehaviorSubject<AuthenticatedUser>(new AuthenticatedUser(<AuthenticatedUser>{sessionRoles: ALL_USER_ROLES}));
+    let authenticationService: AuthenticationService;
+
     let workspaces: BehaviorSubject<Workspace[]>;
     let repository: BehaviorSubject<Repository>;
 
     beforeEach(async(() => {
         repositoryService = jasmine.createSpyObj('repositoryService', ['getRepository']);
         workspaceService = jasmine.createSpyObj('workspaceService', ['getWorkspaces']);
+
+        authenticationService = jasmine.createSpyObj('authenticationUser', ['currentUser']);
+        authenticationService.currentUser = jasmine.createSpy().and.returnValue(user);
 
         workspaces = new BehaviorSubject([]);
         repository = new BehaviorSubject(
@@ -43,6 +53,7 @@ describe('AdminComponent', () => {
                     CoreUiModule,
                     CoreSharedModule,
                     CoreEventModule,
+                    CoreAuthModule,
                     TranslateModule.forRoot()
                 ],
                 declarations: [
@@ -52,7 +63,8 @@ describe('AdminComponent', () => {
                 ],
                 providers: [
                     {provide: RepositoryService, useValue: repositoryService},
-                    {provide: WorkspaceService, useValue: workspaceService}
+                    {provide: WorkspaceService, useValue: workspaceService},
+                    {provide: AuthenticationService, useValue: authenticationService}
                 ],
             })
             .compileComponents();

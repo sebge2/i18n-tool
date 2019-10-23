@@ -30,7 +30,7 @@ export class RepositoryInitializerComponent implements OnInit, OnDestroy {
         this.destroy$.complete();
     }
 
-    initialize(){
+    initialize() {
         this.repositoryService.initialize();
     }
 }

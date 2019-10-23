@@ -2,6 +2,7 @@ package be.sgerard.i18n.controller.support;
 
 import be.sgerard.i18n.service.LockTimeoutException;
 import be.sgerard.i18n.service.ResourceNotFoundException;
+import be.sgerard.i18n.service.ValidationException;
 import be.sgerard.i18n.service.git.RepositoryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,14 +65,19 @@ public class ControllerAdvice {
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.CONFLICT);
     }
 
+    @ExceptionHandler(value = ValidationException.class)
+    public Object handleValidationException(ValidationException exception) {
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(value = BadCredentialsException.class)
     public String handleBadCredentialsException() {
-        // TODO if the token expired
         return "forward:/login";
     }
 
     @MessageExceptionHandler
     @SendToUser("/user/event/errors")
+    @SuppressWarnings("unused")
     public String handleException(Throwable exception) {
         logger.debug("Exception occurred when processing STOMP message.", exception);
 

@@ -9,34 +9,46 @@ import {BehaviorSubject} from "rxjs";
 import {Repository} from "../../../translations/model/repository.model";
 import {RepositoryStatus} from "../../../translations/model/repository-status.model";
 import {By} from "@angular/platform-browser";
+import {CoreAuthModule} from "../../../core/auth/core-auth.module";
+import {AuthenticationService} from "../../../core/auth/service/authentication.service";
+import {ALL_USER_ROLES, UserRole} from "../../../core/auth/model/user-role.model";
+import {AuthenticatedUser} from "../../../core/auth/model/authenticated-user.model";
 
 describe('RepositoryInitializerComponent', () => {
     let component: RepositoryInitializerComponent;
     let fixture: ComponentFixture<RepositoryInitializerComponent>;
-    let repositoryService: RepositoryService;
+
     let repository: BehaviorSubject<Repository>;
+    let repositoryService: RepositoryService;
+
+    let user: BehaviorSubject<AuthenticatedUser> = new BehaviorSubject<AuthenticatedUser>(new AuthenticatedUser(<AuthenticatedUser>{sessionRoles: ALL_USER_ROLES}));
+    let authenticationService: AuthenticationService;
 
     beforeEach((() => {
-        repositoryService = jasmine.createSpyObj('repositoryService', ['getRepository', 'initialize']);
-
         repository = new BehaviorSubject(
             new Repository(<Repository>{
                 status: RepositoryStatus.NOT_INITIALIZED
             })
         );
 
+        repositoryService = jasmine.createSpyObj('repositoryService', ['getRepository', 'initialize']);
         repositoryService.getRepository = jasmine.createSpy().and.returnValue(repository);
         repositoryService.initialize = jasmine.createSpy().and.returnValue(Promise.resolve());
+
+        authenticationService = jasmine.createSpyObj('authenticationUser', ['currentUser']);
+        authenticationService.currentUser = jasmine.createSpy().and.returnValue(user);
 
         TestBed
             .configureTestingModule({
                 imports: [
                     CoreSharedModule,
                     CoreUiModule,
+                    CoreAuthModule,
                     TranslateModule.forRoot()
                 ],
                 providers: [
-                    {provide: RepositoryService, useValue: repositoryService}
+                    {provide: RepositoryService, useValue: repositoryService},
+                    {provide: AuthenticationService, useValue: authenticationService}
                 ],
                 declarations: [RepositoryInitializerComponent]
             })
@@ -55,16 +67,20 @@ describe('RepositoryInitializerComponent', () => {
     );
 
     it('should display button',
-        () => {
+        async () => {
+            user.next(new AuthenticatedUser(<AuthenticatedUser>{sessionRoles: [UserRole.ADMIN, UserRole.MEMBER_OF_REPOSITORY]}));
+
             fixture.detectChanges();
 
-            const button = fixture.debugElement.nativeElement.querySelector('#button');
+            fixture.whenStable().then(() => {
+                const button = fixture.debugElement.nativeElement.querySelector('#button');
 
-            expect(button).not.toBeNull();
+                expect(button).not.toBeNull();
 
-            button.click();
+                button.click();
 
-            expect(repositoryService.initialize).toHaveBeenCalled();
+                expect(repositoryService.initialize).toHaveBeenCalled();
+            });
         }
     );
 

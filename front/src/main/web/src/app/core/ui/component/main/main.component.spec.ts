@@ -8,16 +8,16 @@ import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {CoreUiModule} from "../../core-ui.module";
 import {AuthenticationService} from "../../../auth/service/authentication.service";
 import {BehaviorSubject} from "rxjs";
-import {User} from "../../../auth/model/user.model";
+import {AuthenticatedUser} from "../../../auth/model/authenticated-user.model";
 
 describe('MainComponent', () => {
     let component: MainComponent;
     let fixture: ComponentFixture<MainComponent>;
     let authenticationService: AuthenticationService;
-    let currentUser: BehaviorSubject<User>;
+    let currentUser: BehaviorSubject<AuthenticatedUser>;
 
     beforeEach(async(() => {
-        currentUser = new BehaviorSubject<User>(null);
+        currentUser = new BehaviorSubject<AuthenticatedUser>(null);
         authenticationService = jasmine.createSpyObj('authenticationUser', ['currentUser']);
         authenticationService.currentUser = jasmine.createSpy().and.returnValue(currentUser);
 

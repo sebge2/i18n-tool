@@ -8,8 +8,9 @@ import {LoginUserPasswordComponent} from './component/login/login-user-password/
 import {CoreSharedModule} from "../shared/core-shared-module";
 import {LoginAuthKeyComponent} from './component/login/login-auth-key/login-auth-key.component';
 import {LoginProviderComponent} from './component/login/login-provider/login-provider.component';
-import {LoginGuard} from "./service/guard/login.guard";
+import {HasRoleDirective} from "./directive/has-role.directive";
 import {LogoutGuard} from "./service/guard/logout.guard";
+import {LoginGuard} from "./service/guard/login.guard";
 
 const appRoutes: Routes = [
     {
@@ -30,15 +31,20 @@ const appRoutes: Routes = [
         LoginComponent,
         LoginUserPasswordComponent,
         LoginAuthKeyComponent,
-        LoginProviderComponent
+        LoginProviderComponent,
+
+        HasRoleDirective
     ],
     imports: [
-        HttpClientModule,
         RouterModule.forChild(appRoutes),
+        HttpClientModule,
         CoreSharedModule,
         CoreUiModule
     ],
-    exports: []
+    exports: [
+        RouterModule,
+        HasRoleDirective
+    ]
 })
 export class CoreAuthModule {
 

@@ -12,7 +12,12 @@
             <i class="fa fa-spinner fa-pulse fa-3x fa-fw fa-10x vertical-center" style="color: darkorange"
                *ngIf="repository.isInitializing()"></i>
         </div>
-        <button id="button" mat-flat-button color="primary" (click)="initialize()" class="button" *ngIf="repository.isNotInitialized()">
+        <button id="button"
+                mat-flat-button
+                color="primary"
+                (click)="initialize()"
+                class="button"
+                *hasRole="['ADMIN', 'MEMBER_OF_REPOSITORY']; additionalCondition: repository.isNotInitialized()">
             <i class="fas fa-play"></i> Initialize
         </button>
     </mat-card-content>

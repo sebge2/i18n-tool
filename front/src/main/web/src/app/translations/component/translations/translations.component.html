@@ -1,8 +1,8 @@
 <app-translations-search-bar
-    (onSearchChange)="onSearch($event)"
-    (requestInitChange)="onRequestInitialized($event)"
-    (requestChange)="onRequestChange($event)"
-    [(expanded)]="expanded">
+        (onSearchChange)="onSearch($event)"
+        (requestInitChange)="onRequestInitialized($event)"
+        (requestChange)="onRequestChange($event)"
+        [(expanded)]="expanded">
 </app-translations-search-bar>
 
 <div *ngIf="(searchRequest != null) && (searchRequest.workspace != null) && searchRequest.workspace.isNotInitialized()"
@@ -12,14 +12,14 @@
 </div>
 
 <div
-    *ngIf="(searchRequest != null) && (searchRequest.workspace != null) && (searchRequest.workspace.isInitialized() || searchRequest.workspace.isInReview())"
-    class="container">
+        *ngIf="(searchRequest != null) && (searchRequest.workspace != null) && (searchRequest.workspace.isInitialized() || searchRequest.workspace.isInReview())"
+        class="container">
     <app-translations-table [searchRequest]="searchRequest"
                             [readOnly]="readOnlyTable || startReviewing"></app-translations-table>
 
     <div class="start-review"
-         *ngIf="(searchRequest != null) && (searchRequest.workspace != null) && searchRequest.workspace.isInitialized()">
-        <button  mat-flat-button color="primary" (click)="openStartReviewDialog()" [disabled]="startReviewing">
+         *hasRole="['MEMBER_OF_REPOSITORY']; additionalCondition: (searchRequest != null) && (searchRequest.workspace != null) && searchRequest.workspace.isInitialized()">
+        <button mat-flat-button color="primary" (click)="openStartReviewDialog()" [disabled]="startReviewing">
             {{'TRANSLATIONS.START_REVIEW_BUTTON' | translate}}
 
             <i class="fa fa-spinner fa-spin" *ngIf="startReviewing"></i>

@@ -28,14 +28,14 @@ public class PullRequestController {
 
     @GetMapping("/pull-request")
     @ApiOperation(value = "List all pull requests.")
-    @PreAuthorize("hasRole('REPO_MEMBER')")
+    @PreAuthorize("hasRole('MEMBER_OF_REPOSITORY')")
     public List<Integer> listRequests() {
         return pullRequestManager.listRequests();
     }
 
     @GetMapping("/pull-request/{number}/status")
     @ApiOperation(value = "Returns the status of the specified pull request.")
-    @PreAuthorize("hasRole('REPO_MEMBER')")
+    @PreAuthorize("hasRole('MEMBER_OF_REPOSITORY')")
     public PullRequestStatus getStatus(@PathVariable int number) {
         return pullRequestManager.getStatus(number);
     }

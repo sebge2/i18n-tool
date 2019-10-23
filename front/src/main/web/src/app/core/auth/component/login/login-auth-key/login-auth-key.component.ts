@@ -1,11 +1,11 @@
 import {Component, OnInit} from '@angular/core';
 import {MatProgressButtonOptions} from 'mat-progress-buttons';
 import {AuthenticationService} from "../../../service/authentication.service";
-import {User} from "../../../model/user.model";
 import {AuthenticationErrorType} from "../../../model/authentication-error-type.model";
 import {Router} from "@angular/router";
 import {NotificationService} from "../../../../notification/service/notification.service";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {AuthenticatedUser} from '../../../model/authenticated-user.model';
 
 @Component({
     selector: 'app-login-auth-key',
@@ -54,7 +54,7 @@ export class LoginAuthKeyComponent implements OnInit {
         this.authenticationService.authenticateWithGitHubAuthKey(this.form.get('authkey').value)
             .toPromise()
             .then(
-                (user: User) => {
+                (user: AuthenticatedUser) => {
                     this.router.navigate(['/translations']);
                 }
             )

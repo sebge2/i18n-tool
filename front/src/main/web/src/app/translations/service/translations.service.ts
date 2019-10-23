@@ -55,7 +55,10 @@ export class TranslationsService {
         return this.httpClient
             .patch('/api/workspace/' + workspaceId + '/translation', payload, {headers: {'content-type': 'application/json'}})
             .toPromise()
-            .catch(reason => this.notificationService.displayErrorMessage("Error while initializing workspace.", reason));
+            .catch(reason => {
+                console.error("Error while updating translations.", reason);
+                this.notificationService.displayErrorMessage("Error while updating translations.")
+            });
     }
 
 }

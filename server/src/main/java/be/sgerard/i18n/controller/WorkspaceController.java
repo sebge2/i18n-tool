@@ -52,7 +52,7 @@ public class WorkspaceController {
 
     @PutMapping(path = "/workspace")
     @ApiOperation(value = "Executes an action on workspaces.")
-    @PreAuthorize("hasRole('REPO_MEMBER')")
+    @PreAuthorize("hasRole('ADMIN') and hasRole('MEMBER_OF_REPOSITORY')")
     @SuppressWarnings("SwitchStatementWithTooFewBranches")
     public void executeWorkspacesAction(@ApiParam("The action to execute.") @RequestParam(name = "do") WorkspaceListAction doAction) throws LockTimeoutException, RepositoryException {
         switch (doAction) {
@@ -73,14 +73,14 @@ public class WorkspaceController {
     @DeleteMapping(path = "/workspace/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @ApiOperation(value = "Deletes the workspace having the specified id.")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') and hasRole('MEMBER_OF_REPOSITORY')")
     public void deleteWorkspace(@PathVariable String id) throws LockTimeoutException, RepositoryException {
         workspaceManager.deleteWorkspace(id);
     }
 
     @PutMapping(path = "/workspace/{id}")
     @ApiOperation(value = "Executes an action on the specified workspace.")
-    @PreAuthorize("hasRole('REPO_MEMBER')")
+    @PreAuthorize("hasRole('ADMIN') and hasRole('MEMBER_OF_REPOSITORY')")
     public WorkspaceDto executeWorkspaceAction(@PathVariable String id,
                                                @ApiParam("The action to execute.") @RequestParam(name = "do") WorkspaceAction doAction,
                                                @ApiParam("Specify the message to use for the review.")

@@ -6,7 +6,7 @@ import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBr
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
-import static be.sgerard.i18n.model.event.Events.*;
+import static be.sgerard.i18n.model.event.EventType.*;
 
 /**
  * @author Sebastien Gerard

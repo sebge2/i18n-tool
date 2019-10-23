@@ -10,7 +10,7 @@ import {CoreUiModule} from "../../../../core/ui/core-ui.module";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {TranslateModule} from "@ngx-translate/core";
 
-describe('ConfirmDeletionComponent', () => {
+describe('ConfirmWorkspaceDeletionComponent', () => {
     let dialog: MatDialog;
     let overlayContainer: OverlayContainer;
     let component: ConfirmWorkspaceDeletionComponent;

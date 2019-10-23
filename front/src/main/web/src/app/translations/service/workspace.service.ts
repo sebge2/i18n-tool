@@ -20,7 +20,10 @@ export class WorkspaceService implements OnDestroy {
                 private notificationService: NotificationService) {
         this.httpClient.get<Workspace[]>('/api/workspace').toPromise()
             .then(workspaces => this._workspaces.next(workspaces.map(workspace => new Workspace(workspace)).sort(workspaceSorter)))
-            .catch(reason => this.notificationService.displayErrorMessage("Error while retrieving workspaces.", reason));
+            .catch(reason => {
+                console.error("Error while retrieving workspaces.", reason);
+                this.notificationService.displayErrorMessage("Error while retrieving workspaces.")
+            });
 
         this.eventService.subscribe(Events.UPDATED_WORKSPACE, Workspace)
             .pipe(takeUntil(this.destroy$))
@@ -75,7 +78,10 @@ export class WorkspaceService implements OnDestroy {
                 }
             )
             .toPromise()
-            .catch(reason => this.notificationService.displayErrorMessage("Error while initializing workspace.", reason));
+            .catch(reason => {
+                console.error("Error while initializing workspaces.", reason);
+                this.notificationService.displayErrorMessage("Error while initializing workspace.")
+            });
     }
 
     find(): Promise<any> {
@@ -90,7 +96,10 @@ export class WorkspaceService implements OnDestroy {
                 }
             )
             .toPromise()
-            .catch(reason => this.notificationService.displayErrorMessage("Error while finding workspaces. ", reason));
+            .catch(reason => {
+                console.error("Error while finding workspaces.", reason);
+                this.notificationService.displayErrorMessage("Error while finding workspaces. ")
+            });
     }
 
     startReview(workspace: Workspace, comment: string): Promise<any> {
@@ -106,14 +115,20 @@ export class WorkspaceService implements OnDestroy {
                 }
             )
             .toPromise()
-            .catch(reason => this.notificationService.displayErrorMessage("Error while starting review.", reason));
+            .catch(reason => {
+                console.error("Error while starting review.", reason);
+                this.notificationService.displayErrorMessage("Error while starting a review.");
+            });
     }
 
     delete(workspace: Workspace): Promise<any> {
         return this.httpClient
             .delete('/api/workspace/' + workspace.id)
             .toPromise()
-            .catch(reason => this.notificationService.displayErrorMessage("Error while deleting.", reason));
+            .catch(reason => {
+                console.error("Error while deleting.", reason);
+                this.notificationService.displayErrorMessage("Error while deleting the workspace.");
+            });
     }
 
 }

@@ -27,7 +27,7 @@ public class RepositoryController {
 
     @PutMapping(path = "/repository")
     @ApiOperation(value = "Executes an action on the repository.")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') and hasRole('MEMBER_OF_REPOSITORY')")
     @SuppressWarnings("SwitchStatementWithTooFewBranches")
     public void executeRepositoryAction(@RequestParam(name = "do") RepositoryListAction doAction) {
         switch (doAction) {
@@ -45,6 +45,7 @@ public class RepositoryController {
 
     @GetMapping("/repository/branch")
     @ApiOperation(value = "Lists all branches found on the repository.")
+    @PreAuthorize("hasRole('MEMBER_OF_REPOSITORY')")
     public List<String> listBranches() {
         return repositoryManager.open(RepositoryAPI::listRemoteBranches);
     }

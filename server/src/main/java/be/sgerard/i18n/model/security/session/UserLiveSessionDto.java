@@ -13,16 +13,16 @@ import java.util.Optional;
 /**
  * @author Sebastien Gerard
  */
-@ApiModel(description = "Description of a user session.")
-@JsonDeserialize(builder = UserSessionDto.Builder.class)
-public class UserSessionDto {
+@ApiModel(description = "Description of a user live session.")
+@JsonDeserialize(builder = UserLiveSessionDto.Builder.class)
+public class UserLiveSessionDto {
 
-    public static Builder userSessionDto() {
+    public static Builder builder() {
         return new Builder();
     }
 
-    public static Builder userSessionDto(UserSessionEntity userSessionEntity) {
-        return userSessionDto()
+    public static Builder builder(UserLiveSessionEntity userSessionEntity) {
+        return builder()
                 .id(userSessionEntity.getId())
                 .user(UserDto.builder(userSessionEntity.getUser()).build())
                 .simpSessionId(userSessionEntity.getSimpSessionId())
@@ -45,7 +45,7 @@ public class UserSessionDto {
     @ApiModelProperty(notes = "Time when this session was closed.", dataType = "java.time.Instant")
     private final Instant logoutTime;
 
-    private UserSessionDto(Builder builder) {
+    private UserLiveSessionDto(Builder builder) {
         id = builder.id;
         user = builder.user;
         simpSessionId = builder.simpSessionId;
@@ -111,8 +111,8 @@ public class UserSessionDto {
             return this;
         }
 
-        public UserSessionDto build() {
-            return new UserSessionDto(this);
+        public UserLiveSessionDto build() {
+            return new UserLiveSessionDto(this);
         }
     }
 }

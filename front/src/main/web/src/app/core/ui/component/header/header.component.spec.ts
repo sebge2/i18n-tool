@@ -5,18 +5,18 @@ import {CoreEventModule} from "../../../event/core-event.module";
 import {CoreUiModule} from "../../core-ui.module";
 import {AuthenticationService} from "../../../auth/service/authentication.service";
 import {BehaviorSubject} from "rxjs";
-import {User} from "../../../auth/model/user.model";
 import {Router} from "@angular/router";
+import {AuthenticatedUser} from "../../../auth/model/authenticated-user.model";
 
 describe('HeaderComponent', () => {
     let component: HeaderComponent;
     let fixture: ComponentFixture<HeaderComponent>;
     let authenticationService: AuthenticationService;
-    let currentUser: BehaviorSubject<User>;
+    let currentUser: BehaviorSubject<AuthenticatedUser>;
     let router: Router;
 
     beforeEach(async(() => {
-        currentUser = new BehaviorSubject<User>(null);
+        currentUser = new BehaviorSubject<AuthenticatedUser>(null);
         authenticationService = jasmine.createSpyObj('authenticationUser', ['currentUser']);
         authenticationService.currentUser = jasmine.createSpy().and.returnValue(currentUser);
         router = jasmine.createSpyObj('router', ['navigate']);

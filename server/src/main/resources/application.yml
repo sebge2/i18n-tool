@@ -14,6 +14,13 @@ spring:
             client-secret: ${GIT_HUB_OAUTH_SECRET}
             scope: repo
             redirect-uri-template: "{baseUrl}/auth/oauth2/code/{registrationId}"
+  session:
+    jdbc:
+      initialize-schema: "ALWAYS"
+      schema: "classpath:org/springframework/session/jdbc/schema-@@platform@@.sql"
+      table-name: SPRING_SESSION
+    store-type: "JDBC"
+
 logging:
   config: "classpath:logback.xml"
 
@@ -36,4 +43,3 @@ be:
           - en
           - fr
           - nl
-

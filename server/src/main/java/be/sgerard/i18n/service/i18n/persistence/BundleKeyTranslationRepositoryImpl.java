@@ -62,7 +62,7 @@ public class BundleKeyTranslationRepositoryImpl implements BundleKeyTranslationR
                 break;
             case TRANSLATIONS_CURRENT_USER_UPDATED:
                 whereClause.getExpressions().add(selectEntry.get(BundleKeyTranslationEntity_.updatedValue).isNotNull());
-                whereClause.getExpressions().add(selectEntry.get(BundleKeyTranslationEntity_.lastEditor).in(authenticationManager.getCurrentUserOrFail().getId()));
+                whereClause.getExpressions().add(selectEntry.get(BundleKeyTranslationEntity_.lastEditor).in(authenticationManager.getCurrentUserOrFail().getUser().getId()));
                 break;
 
         }
