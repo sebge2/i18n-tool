@@ -10,24 +10,24 @@ describe('TranslationCriterionSelectorComponent', () => {
     let fixture: ComponentFixture<TranslationCriterionSelectorComponent>;
 
     beforeEach(async(() => {
-        TestBed.configureTestingModule({
-            imports: [
-                CoreUiModule,
-                CoreSharedModule,
-                TranslateModule.forRoot()
-            ],
-            declarations: [TranslationCriterionSelectorComponent]
-        })
+        TestBed
+            .configureTestingModule({
+                imports: [
+                    CoreUiModule,
+                    CoreSharedModule,
+                    TranslateModule.forRoot()
+                ],
+                declarations: [TranslationCriterionSelectorComponent]
+            })
             .compileComponents();
-    }));
 
-    beforeEach(() => {
         fixture = TestBed.createComponent(TranslationCriterionSelectorComponent);
         component = fixture.componentInstance;
-        fixture.detectChanges();
-    });
+    }));
 
     it('should create', () => {
+        fixture.detectChanges();
+
         expect(component).toBeTruthy(); // TODO
     });
 });

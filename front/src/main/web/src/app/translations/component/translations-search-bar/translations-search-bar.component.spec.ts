@@ -22,9 +22,7 @@ describe('TranslationsSearchBarComponent', () => {
 
     beforeEach(async(() => {
         workspaceService = jasmine.createSpyObj('workspaceService', ['getWorkspaces']);
-
         workspaces = new BehaviorSubject([]);
-
         workspaceService.getWorkspaces = jasmine.createSpy().and.returnValue(workspaces);
 
         TestBed
@@ -35,7 +33,6 @@ describe('TranslationsSearchBarComponent', () => {
                     CoreUiModule,
                     CoreEventModule,
                     TranslateModule.forRoot(),
-                    HttpClientModule
                 ],
                 providers: [
                     {provide: WorkspaceService, useValue: workspaceService}

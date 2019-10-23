@@ -11,25 +11,25 @@ describe('TranslationLocalesSelectorComponent', () => {
     let fixture: ComponentFixture<TranslationLocalesSelectorComponent>;
 
     beforeEach(async(() => {
-        TestBed.configureTestingModule({
-            imports: [
-                BrowserAnimationsModule,
-                CoreSharedModule,
-                CoreUiModule,
-                TranslateModule.forRoot()
-            ],
-            declarations: [TranslationLocalesSelectorComponent]
-        })
+        TestBed
+            .configureTestingModule({
+                imports: [
+                    BrowserAnimationsModule,
+                    CoreSharedModule,
+                    CoreUiModule,
+                    TranslateModule.forRoot()
+                ],
+                declarations: [TranslationLocalesSelectorComponent]
+            })
             .compileComponents();
-    }));
 
-    beforeEach(() => {
         fixture = TestBed.createComponent(TranslationLocalesSelectorComponent);
         component = fixture.componentInstance;
-        fixture.detectChanges();
-    });
+    }));
 
     it('should create', () => {
+        fixture.detectChanges();
+
         expect(component).toBeTruthy(); // TODO
     });
 });

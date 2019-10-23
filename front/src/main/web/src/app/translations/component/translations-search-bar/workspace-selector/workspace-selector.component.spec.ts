@@ -19,9 +19,7 @@ describe('WorkspaceSelectorComponent', () => {
 
     beforeEach(async(() => {
         workspaceService = jasmine.createSpyObj('workspaceService', ['getWorkspaces']);
-
         workspaces = new BehaviorSubject([]);
-
         workspaceService.getWorkspaces = jasmine.createSpy().and.returnValue(workspaces);
 
         TestBed
@@ -31,7 +29,6 @@ describe('WorkspaceSelectorComponent', () => {
                     CoreSharedModule,
                     CoreUiModule,
                     CoreEventModule,
-                    HttpClientModule,
                     TranslateModule.forRoot()
                 ],
                 providers: [

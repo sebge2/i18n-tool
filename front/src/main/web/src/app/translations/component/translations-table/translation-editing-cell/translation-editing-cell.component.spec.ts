@@ -12,17 +12,16 @@ describe('TranslationEditingCellComponent', () => {
     let fixture: ComponentFixture<TranslationEditingCellComponent>;
 
     beforeEach(async(() => {
-        TestBed.configureTestingModule({
-            imports: [
-                BrowserAnimationsModule,
-                CoreUiModule
-            ],
-            declarations: [TranslationEditingCellComponent]
-        })
+        TestBed
+            .configureTestingModule({
+                imports: [
+                    BrowserAnimationsModule,
+                    CoreUiModule
+                ],
+                declarations: [TranslationEditingCellComponent]
+            })
             .compileComponents();
-    }));
 
-    beforeEach(() => {
         const formBuilder = new FormBuilder();
 
         fixture = TestBed.createComponent(TranslationEditingCellComponent);
@@ -43,11 +42,11 @@ describe('TranslationEditingCellComponent', () => {
         };
         component.formGroup = formBuilder.group(controlsConfig);
         component.formGroup.setValue(controlsConfig);
-
-        fixture.detectChanges();
-    });
+    }));
 
     it('should create', () => {
+        fixture.detectChanges();
+
         expect(component).toBeTruthy(); // TODO
     });
 });
