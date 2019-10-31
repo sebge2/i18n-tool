@@ -25,6 +25,11 @@ public enum EventType {
     /**
      * @see be.sgerard.i18n.model.security.user.UserDto
      */
+    EVENT_DELETED_USER("deleted-user"),
+
+    /**
+     * @see be.sgerard.i18n.model.security.user.UserDto
+     */
     EVENT_UPDATED_CURRENT_USER("updated-current-user"),
 
     /**

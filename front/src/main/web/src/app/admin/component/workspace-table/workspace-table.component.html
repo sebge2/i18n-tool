@@ -20,7 +20,7 @@
                 <mat-cell *matCellDef="let workspace">
                     <button id="eraseButton"
                             mat-button
-                            *hasRole="['ADMIN', 'MEMBER_OF_REPOSITORY']; additionalCondition: workspace==hoveredWorkspace"
+                            *hasRole="['ADMIN', 'MEMBER_OF_REPOSITORY']; additionalCondition: workspace===hoveredWorkspace"
                             (click)="delete(workspace)"
                             [disabled]="actionInProgress">
                         <i class="fas fa-eraser"></i>
