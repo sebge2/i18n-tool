@@ -1,0 +1,24 @@
+.profile-img {
+    width: 30px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.mat-column-name {
+    width: 250px !important;
+    max-width: 250px !important;
+}
+
+.mat-column-info {
+    width: 60px !important;
+    max-width: 60px !important;
+}
+
+.mat-column-action {
+    max-width: 60px !important;
+}
+
+.mat-column-action .mat-button {
+    min-width: 30px;
+    padding: 0 5px;
+}
