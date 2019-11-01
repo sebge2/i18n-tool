@@ -1,11 +1,12 @@
 import {Injectable, OnDestroy} from '@angular/core';
-import {BehaviorSubject, Observable, Subject} from "rxjs";
+import {BehaviorSubject, Observable, Subject, throwError} from "rxjs";
 import {User} from "../model/user.model";
-import {HttpClient} from "@angular/common/http";
+import {HttpClient, HttpResponse} from "@angular/common/http";
 import {NotificationService} from "../../notification/service/notification.service";
 import {Events} from "../../event/model/events.model";
-import {takeUntil} from "rxjs/operators";
+import {catchError, map, takeUntil} from "rxjs/operators";
 import {EventService} from "../../event/service/event.service";
+import {UserUpdate} from "../model/user-update.model";
 
 @Injectable({
     providedIn: 'root'
@@ -55,6 +56,21 @@ export class UserService implements OnDestroy {
 
                     this._users.next(users);
                 }
+            );
+    }
+
+    updateUser(id: string, update: UserUpdate): Observable<User> {
+        return this.httpClient
+            .patch('/api/user/' + id, update)
+            .pipe(
+                map((user: User) => new User(user)),
+                catchError((result: HttpResponse<any>) => {
+                        console.error('Error while updating user.', result);
+                        this.notificationService.displayErrorMessage('Error while updating user.');
+
+                        return throwError(result);
+                    }
+                )
             );
     }
 

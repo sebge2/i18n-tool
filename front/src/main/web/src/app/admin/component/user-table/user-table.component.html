@@ -38,7 +38,7 @@
                 <td mat-cell *matCellDef="let user" [attr.colspan]="displayedColumns.length">
                     <div class="user-detail-row-element"
                          [@detailExpand]="user == expandedUser ? 'expanded' : 'collapsed'">
-                        <app-user-table-details></app-user-table-details>
+                        <app-user-table-details [user]="user"></app-user-table-details>
                     </div>
                 </td>
             </ng-container>
