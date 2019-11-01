@@ -12,8 +12,8 @@
             <ng-container matColumnDef="info">
                 <mat-cell *matCellDef="let user">
                     <i class="fas fa-user-shield" *ngIf="user.hasAdminRole()"></i> &nbsp;
-                    <i class="far fa-hand-point-left" *ngIf="user.isInternal()"></i>
-                    <i class="far fa-hand-point-right" *ngIf="user.isExternal()"></i>
+                    <mat-icon aria-label="Internal user" aria-hidden="false" *ngIf="user.isInternal()">home</mat-icon>
+                    <mat-icon aria-label="External user logged with a Cloud provider" aria-hidden="false" *ngIf="user.isExternal()">cloud_download</mat-icon>
                 </mat-cell>
             </ng-container>
             <ng-container matColumnDef="action">
@@ -21,8 +21,7 @@
                     <button id="editButton"
                             mat-button
                             *hasRole="['ADMIN']; additionalCondition: user===hoveredUser"
-                            (click)="expandedUser = user"
-                            [disabled]="actionInProgress">
+                            (click)="expandedUser = ((expandedUser != user) ? user : null)">
                         <i class="fas fa-edit"></i>
                     </button>
                     <button id="eraseButton"
