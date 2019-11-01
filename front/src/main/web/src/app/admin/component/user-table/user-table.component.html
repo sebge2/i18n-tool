@@ -6,7 +6,7 @@
         <mat-table #table [dataSource]="dataSource" on-mouseleave="hoveredUser=null" multiTemplateDataRows>
             <ng-container matColumnDef="name">
                 <mat-cell *matCellDef="let user">
-                    <img [src]="user.avatarUrl" class="profile-img" alt="{{user.username}}"> {{user.username}}
+                    <img [src]="getAvatarUrl(user)" class="profile-img" alt="{{user.username}}"> {{user.username}}
                 </mat-cell>
             </ng-container>
             <ng-container matColumnDef="info">

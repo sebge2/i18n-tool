@@ -6,12 +6,13 @@ tr.user-detail-row {
 }
 
 .user-detail-row-element {
-    padding: 20px;
+    padding: 10px;
     overflow: hidden;
     display: flex;
 }
 
 .mat-column-name {
+    padding-left: 10px !important;
     width: 350px !important;
     max-width: 350px !important;
 }
@@ -21,11 +22,12 @@ tr.user-detail-row {
     max-width: 60px !important;
     display:flex !important;
     justify-content:flex-end!important;
-    padding-right: 5px;
+    padding-right: 10px;
 }
 
 .mat-column-action {
     max-width: 60px !important;
+    padding-right: 10px !important;
 }
 
 .mat-column-action .mat-button {
