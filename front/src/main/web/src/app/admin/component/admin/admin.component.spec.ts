@@ -17,6 +17,10 @@ import {AuthenticationService} from "../../../core/auth/service/authentication.s
 import {ALL_USER_ROLES} from "../../../core/auth/model/user-role.model";
 import {CoreAuthModule} from "../../../core/auth/core-auth.module";
 import {AuthenticatedUser} from "../../../core/auth/model/authenticated-user.model";
+import {UserTableComponent} from "../user-table/user-table.component";
+import {UserTableDetailsComponent} from "../user-table/user-table-details/user-table-details.component";
+import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
+import {NotificationService} from "../../../core/notification/service/notification.service";
 
 describe('AdminComponent', () => {
     let component: AdminComponent;
@@ -30,12 +34,16 @@ describe('AdminComponent', () => {
     let workspaces: BehaviorSubject<Workspace[]>;
     let repository: BehaviorSubject<Repository>;
 
+    let notificationService: NotificationService;
+
     beforeEach(async(() => {
         repositoryService = jasmine.createSpyObj('repositoryService', ['getRepository']);
         workspaceService = jasmine.createSpyObj('workspaceService', ['getWorkspaces']);
 
         authenticationService = jasmine.createSpyObj('authenticationUser', ['currentUser']);
         authenticationService.currentUser = jasmine.createSpy().and.returnValue(user);
+
+        notificationService = jasmine.createSpyObj('notificationService', ['displayErrorMessage']);
 
         workspaces = new BehaviorSubject([]);
         repository = new BehaviorSubject(
@@ -54,17 +62,21 @@ describe('AdminComponent', () => {
                     CoreSharedModule,
                     CoreEventModule,
                     CoreAuthModule,
+                    BrowserAnimationsModule,
                     TranslateModule.forRoot()
                 ],
                 declarations: [
                     AdminComponent,
                     RepositoryInitializerComponent,
-                    WorkspaceTableComponent
+                    WorkspaceTableComponent,
+                    UserTableComponent,
+                    UserTableDetailsComponent
                 ],
                 providers: [
                     {provide: RepositoryService, useValue: repositoryService},
                     {provide: WorkspaceService, useValue: workspaceService},
-                    {provide: AuthenticationService, useValue: authenticationService}
+                    {provide: AuthenticationService, useValue: authenticationService},
+                    {provide: NotificationService, useValue: notificationService}
                 ],
             })
             .compileComponents();
