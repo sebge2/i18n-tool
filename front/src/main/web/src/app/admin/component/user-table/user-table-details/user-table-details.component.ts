@@ -36,6 +36,8 @@ export class UserTableDetailsComponent implements OnInit {
                 private userService: UserService) {
         this.form = this.formBuilder.group({
             id: [],
+            internal: [],
+            username: [],
             adminRole: [],
             password: [null, Validators.pattern("^$|^.{5,}$")]
         });
@@ -47,10 +49,14 @@ export class UserTableDetailsComponent implements OnInit {
     @Input()
     set user(user: User) {
         this.form.controls['id'].setValue(user.id);
+        this.form.controls['internal'].setValue(user.isInternal());
+        this.form.controls['username'].setValue(user.username);
         this.form.controls['adminRole'].setValue(user.hasAdminRole());
     }
 
     save() {
+        this.buttonOptions.active = true;
+
         const userUpdate = new UserUpdate();
 
         if (this.form.controls['adminRole'].value) {
@@ -68,6 +74,9 @@ export class UserTableDetailsComponent implements OnInit {
             .toPromise()
             .then(user => {
                 this.form.controls['password'].setValue(null);
+            })
+            .finally(() => {
+                this.buttonOptions.active = false;
             });
     }
 }

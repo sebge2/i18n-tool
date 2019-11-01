@@ -3,14 +3,14 @@
         <tr>
             <td>
                 <table cellspacing="0">
-                    <tr>
+                    <tr *ngIf="form.controls.username.value !== 'admin'">
                         <td>
                             <mat-slide-toggle formControlName="adminRole" color="primary">
                                 {{form.controls.adminRole.value ? 'User is admin' : 'User is not admin'}}
                             </mat-slide-toggle>
                         </td>
                     </tr>
-                    <tr>
+                    <tr *ngIf="form.controls.internal.value">
                         <td>
                             <mat-form-field>
                                 <input matInput
