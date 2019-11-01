@@ -9,6 +9,7 @@ import {ConfirmWorkspaceDeletionComponent} from './component/workspace-table/con
 import {CoreAuthModule} from "../core/auth/core-auth.module";
 import {CoreUiModule} from "../core/ui/core-ui.module";
 import { UserTableComponent } from './component/user-table/user-table.component';
+import { UserTableDetailsComponent } from './component/user-table/user-table-details/user-table-details.component';
 
 const appRoutes: Routes = [
     {path: '', pathMatch: 'full', component: AdminComponent}
@@ -20,7 +21,8 @@ const appRoutes: Routes = [
         WorkspaceTableComponent,
         RepositoryInitializerComponent,
         ConfirmWorkspaceDeletionComponent,
-        UserTableComponent
+        UserTableComponent,
+        UserTableDetailsComponent
     ],
     entryComponents: [
         ConfirmWorkspaceDeletionComponent
