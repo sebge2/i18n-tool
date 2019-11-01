@@ -36,8 +36,8 @@ const appRoutes: Routes = [
     imports: [
         CommonModule,
         CoreSharedModule,
-        CoreUiModule,
         CoreAuthModule,
+        CoreUiModule,
 
         RouterModule.forChild(appRoutes)
     ],
