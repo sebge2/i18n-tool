@@ -5,6 +5,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import java.io.File;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -26,6 +27,7 @@ public class AppProperties {
     private String javaTranslationBundleIgnoredPaths;
     private String jsonIcuTranslationBundleDirs;
     private String gitHubWebhookSecret = "";
+    private String defaultAdminPassword;
     private Set<Locale> locales = emptySet();
 
     public AppProperties() {
@@ -113,6 +115,14 @@ public class AppProperties {
 
     public void setGitHubWebhookSecret(String gitHubWebhookSecret) {
         this.gitHubWebhookSecret = gitHubWebhookSecret;
+    }
+
+    public Optional<String> getDefaultAdminPassword() {
+        return Optional.ofNullable(defaultAdminPassword);
+    }
+
+    public void setDefaultAdminPassword(String defaultAdminPassword) {
+        this.defaultAdminPassword = defaultAdminPassword;
     }
 
     public Set<Locale> getLocales() {

@@ -1,5 +1,6 @@
 package be.sgerard.i18n.service.security.user;
 
+import be.sgerard.i18n.configuration.AppProperties;
 import be.sgerard.i18n.model.event.EventType;
 import be.sgerard.i18n.model.security.user.*;
 import be.sgerard.i18n.model.validation.ValidationResult;
@@ -33,19 +34,22 @@ public class UserManagerImpl implements UserManager {
     private final PasswordEncoder passwordEncoder;
     private final EventService eventService;
     private final List<UserValidator> validators;
+    private final AppProperties appProperties;
 
     public UserManagerImpl(UserRepository userRepository,
                            InternalUserRepository internalUserRepository,
                            ExternalUserRepository externalUserRepository,
                            PasswordEncoder passwordEncoder,
                            EventService eventService,
-                           List<UserValidator> validators) {
+                           List<UserValidator> validators,
+                           AppProperties appProperties) {
         this.userRepository = userRepository;
         this.internalUserRepository = internalUserRepository;
         this.externalUserRepository = externalUserRepository;
         this.passwordEncoder = passwordEncoder;
         this.eventService = eventService;
         this.validators = validators;
+        this.appProperties = appProperties;
     }
 
     @Override
@@ -161,7 +165,16 @@ public class UserManagerImpl implements UserManager {
     @Transactional
     public void initializeDefaultAdmin() {
         if (!internalUserRepository.findAll().iterator().hasNext()) {
-            final String password = UUID.randomUUID().toString();
+            final String password = appProperties.getDefaultAdminPassword()
+                    .orElseGet(() -> {
+                        final String generatedPassword = UUID.randomUUID().toString();
+
+                        System.out.println("====================================================");
+                        System.out.println("Admin password: " + generatedPassword);
+                        System.out.println("====================================================");
+
+                        return generatedPassword;
+                    });
 
             createUser(
                     UserCreationDto.builder()
@@ -171,10 +184,6 @@ public class UserManagerImpl implements UserManager {
                             .avatarUrl(ADMIN_AVATAR)
                             .build()
             );
-
-            System.out.println("====================================================");
-            System.out.println("Admin password: " + password);
-            System.out.println("====================================================");
         }
     }
 }
