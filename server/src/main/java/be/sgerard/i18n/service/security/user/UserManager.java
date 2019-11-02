@@ -22,6 +22,8 @@ public interface UserManager {
 
     Optional<InternalUserEntity> getUserByName(String username);
 
+    InternalUserEntity createUser(UserCreationDto info);
+
     ExternalUserEntity createOrUpdateUser(ExternalUserDto externalUser);
 
     UserEntity updateUser(String id, UserUpdateDto userUpdate);

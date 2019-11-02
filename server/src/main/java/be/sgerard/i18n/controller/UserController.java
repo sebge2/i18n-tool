@@ -1,5 +1,6 @@
 package be.sgerard.i18n.controller;
 
+import be.sgerard.i18n.model.security.user.UserCreationDto;
 import be.sgerard.i18n.model.security.user.UserDto;
 import be.sgerard.i18n.model.security.user.UserUpdateDto;
 import be.sgerard.i18n.service.ResourceNotFoundException;
@@ -44,6 +45,14 @@ public class UserController {
         return userManager.getUserById(id)
                 .map(entity -> UserDto.builder(entity).build())
                 .orElseThrow(() -> new ResourceNotFoundException(id));
+    }
+
+    @PostMapping(path = "/user")
+    @ApiOperation(value = "Creates a new internal user.")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Transactional
+    public UserDto createUser(@RequestBody UserCreationDto creationDto) {
+        return UserDto.builder(userManager.createUser(creationDto)).build();
     }
 
     @PatchMapping(path = "/user/{id}")
