@@ -45,3 +45,4 @@ The following environment variables must be setup on Amazon Elastic Bean Stalk:
 * GIT_HUB_REPO_USER_NAME
 * GIT_HUB_REPO_NAME
 * GIT_HUB_WEBHOOK_SECRET
+* DEFAULT_ADMIN_PASSWORD (optional)
