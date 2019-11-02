@@ -25,8 +25,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Stream;
 
-import static be.sgerard.i18n.model.event.EventType.UPDATED_AUTHENTICATED_USER;
-import static be.sgerard.i18n.model.event.EventType.UPDATED_USER;
+import static be.sgerard.i18n.model.event.EventType.*;
 import static be.sgerard.i18n.service.security.auth.AuthenticationUtils.getAuthenticatedUser;
 import static be.sgerard.i18n.service.security.auth.AuthenticationUtils.updateAuthentication;
 import static java.util.stream.Collectors.toList;
@@ -52,6 +51,7 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
         this.eventService = eventService;
 
         this.eventService.addListener(new UserUpdateEventListener());
+        this.eventService.addListener(new UserDeletedEventListener());
     }
 
     @Override
@@ -150,6 +150,24 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
                             )
                             .collect(toList())
             );
+        }
+    }
+
+    private final class UserDeletedEventListener implements InternalEventListener<UserDto> {
+
+        private UserDeletedEventListener() {
+        }
+
+        @Override
+        public boolean support(EventType eventType) {
+            return eventType == DELETED_USER;
+        }
+
+        @Override
+        public void onEvent(UserDto userDto) {
+            sessionRepository.findByPrincipalName(userDto.getId()).values().stream()
+                    .map(Session.class::cast)
+                    .forEach(session -> sessionRepository.deleteById(session.getId()));
         }
     }
 

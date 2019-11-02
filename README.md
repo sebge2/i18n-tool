@@ -34,6 +34,7 @@ The following environment variables are needed by this Travis-CI build:
 * E2E_GIT_HUB_USER_PASSWORD=****
 * E2E_GIT_HUB_WEBHOOK_SECRET=****
 * E2E_SERVER_PORT=8080
+* DEFAULT_ADMIN_PASSWORD=my-admin-password
 
 ### Amazon EB Configuration
 
