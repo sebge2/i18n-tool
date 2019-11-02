@@ -22,7 +22,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import static be.sgerard.i18n.model.event.EventType.EVENT_UPDATED_REPOSITORY;
+import static be.sgerard.i18n.model.event.EventType.UPDATED_REPOSITORY;
 import static java.util.Collections.singletonList;
 
 /**
@@ -86,7 +86,7 @@ public class RepositoryManagerImpl implements RepositoryManager {
                 try {
                     updateLockFile(RepositoryStatus.INITIALIZING);
 
-                    this.eventService.broadcastEvent(EVENT_UPDATED_REPOSITORY, getDescription());
+                    this.eventService.broadcastEvent(UPDATED_REPOSITORY, getDescription());
 
                     this.git = Git.cloneRepository()
                             .setCredentialsProvider(createProvider())
@@ -98,7 +98,7 @@ public class RepositoryManagerImpl implements RepositoryManager {
 
                     updateLockFile(RepositoryStatus.INITIALIZED);
 
-                    this.eventService.broadcastEvent(EVENT_UPDATED_REPOSITORY, getDescription());
+                    this.eventService.broadcastEvent(UPDATED_REPOSITORY, getDescription());
                 } catch (Exception e) {
                     updateLockFile(RepositoryStatus.NOT_INITIALIZED);
 

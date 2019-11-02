@@ -25,8 +25,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
-import static be.sgerard.i18n.model.event.EventType.EVENT_DELETED_WORKSPACE;
-import static be.sgerard.i18n.model.event.EventType.EVENT_UPDATED_WORKSPACE;
+import static be.sgerard.i18n.model.event.EventType.DELETED_WORKSPACE;
+import static be.sgerard.i18n.model.event.EventType.UPDATED_WORKSPACE;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -148,7 +148,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
 
                 translationManager.readTranslations(workspaceEntity, api);
 
-                eventService.broadcastEvent(EVENT_UPDATED_WORKSPACE, WorkspaceDto.builder(workspaceEntity).build());
+                eventService.broadcastEvent(UPDATED_WORKSPACE, WorkspaceDto.builder(workspaceEntity).build());
 
                 return workspaceEntity;
             } catch (IOException e) {
@@ -191,7 +191,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
                 workspaceEntity.setPullRequestNumber(requestNumber);
                 workspaceEntity.setStatus(WorkspaceStatus.IN_REVIEW);
 
-                eventService.broadcastEvent(EVENT_UPDATED_WORKSPACE, WorkspaceDto.builder(workspaceEntity).build());
+                eventService.broadcastEvent(UPDATED_WORKSPACE, WorkspaceDto.builder(workspaceEntity).build());
 
                 return workspaceEntity;
             } catch (IOException e) {
@@ -229,7 +229,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
                 });
             }
 
-            eventService.broadcastEvent(EVENT_DELETED_WORKSPACE, WorkspaceDto.builder(workspaceEntity).build());
+            eventService.broadcastEvent(DELETED_WORKSPACE, WorkspaceDto.builder(workspaceEntity).build());
 
             logger.info("The workspace {} has been deleted.", workspaceId);
 
@@ -301,7 +301,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
     private WorkspaceEntity createWorkspace(String availableBranch) {
         final WorkspaceEntity workspaceEntity = new WorkspaceEntity(availableBranch);
 
-        eventService.broadcastEvent(EVENT_UPDATED_WORKSPACE, WorkspaceDto.builder(workspaceEntity).build());
+        eventService.broadcastEvent(UPDATED_WORKSPACE, WorkspaceDto.builder(workspaceEntity).build());
 
         repository.save(workspaceEntity);
 

@@ -25,8 +25,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Stream;
 
-import static be.sgerard.i18n.model.event.EventType.EVENT_UPDATED_AUTHENTICATED_USER;
-import static be.sgerard.i18n.model.event.EventType.EVENT_UPDATED_USER;
+import static be.sgerard.i18n.model.event.EventType.UPDATED_AUTHENTICATED_USER;
+import static be.sgerard.i18n.model.event.EventType.UPDATED_USER;
 import static be.sgerard.i18n.service.security.auth.AuthenticationUtils.getAuthenticatedUser;
 import static be.sgerard.i18n.service.security.auth.AuthenticationUtils.updateAuthentication;
 import static java.util.stream.Collectors.toList;
@@ -112,7 +112,7 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
 
         @Override
         public boolean support(EventType eventType) {
-            return eventType == EVENT_UPDATED_USER;
+            return eventType == UPDATED_USER;
         }
 
         @Override
@@ -137,8 +137,8 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
 
             sessionRepository.save(session);
 
-            eventService.broadcastInternally(EVENT_UPDATED_AUTHENTICATED_USER, updatedAuthenticatedUserDto);
-            eventService.sendEventToUser(UserRole.ADMIN, EVENT_UPDATED_AUTHENTICATED_USER, updatedAuthenticatedUserDto);
+            eventService.broadcastInternally(UPDATED_AUTHENTICATED_USER, updatedAuthenticatedUserDto);
+            eventService.sendEventToUser(UserRole.ADMIN, UPDATED_AUTHENTICATED_USER, updatedAuthenticatedUserDto);
         }
 
         private AuthenticatedUser updateAuthenticatedUser(AuthenticatedUser authenticatedUser, UserDto updatedUser) {

@@ -23,7 +23,7 @@ import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 import java.time.Instant;
 import java.util.Collection;
 
-import static be.sgerard.i18n.model.event.EventType.EVENT_UPDATED_CURRENT_AUTHENTICATED_USER;
+import static be.sgerard.i18n.model.event.EventType.UPDATED_CURRENT_AUTHENTICATED_USER;
 import static be.sgerard.i18n.service.security.auth.AuthenticationUtils.getAuthenticatedUserOrFail;
 
 /**
@@ -69,7 +69,7 @@ public class UserLiveSessionManagerImpl implements UserLiveSessionManager {
         repository.save(sessionEntity);
 
         // TODO restrict visible info
-        eventService.broadcastEvent(EventType.EVENT_CONNECTED_USER_SESSION, UserLiveSessionDto.builder(sessionEntity).build());
+        eventService.broadcastEvent(EventType.CONNECTED_USER_SESSION, UserLiveSessionDto.builder(sessionEntity).build());
     }
 
     @EventListener
@@ -85,7 +85,7 @@ public class UserLiveSessionManagerImpl implements UserLiveSessionManager {
             sessionEntity.setLogoutTime(Instant.now());
 
             // TODO restrict visible info
-            eventService.broadcastEvent(EventType.EVENT_DISCONNECTED_USER_SESSION, UserLiveSessionDto.builder(sessionEntity).build());
+            eventService.broadcastEvent(EventType.DISCONNECTED_USER_SESSION, UserLiveSessionDto.builder(sessionEntity).build());
         }
     }
 
@@ -103,7 +103,7 @@ public class UserLiveSessionManagerImpl implements UserLiveSessionManager {
 
         @Override
         public boolean support(EventType eventType) {
-            return eventType == EventType.EVENT_UPDATED_AUTHENTICATED_USER;
+            return eventType == EventType.UPDATED_AUTHENTICATED_USER;
         }
 
         @Override
@@ -114,7 +114,7 @@ public class UserLiveSessionManagerImpl implements UserLiveSessionManager {
 
                         eventService.sendEventToSession(
                                 liveSession.getSimpSessionId(),
-                                EVENT_UPDATED_CURRENT_AUTHENTICATED_USER,
+                                UPDATED_CURRENT_AUTHENTICATED_USER,
                                 AuthenticatedUserDto.builder()
                                         .user(UserDto.builder(liveSession.getUser()).build())
                                         .sessionRoles(liveSession.getSessionRoles())

@@ -26,7 +26,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-import static be.sgerard.i18n.model.event.EventType.EVENT_UPDATED_TRANSLATIONS;
+import static be.sgerard.i18n.model.event.EventType.UPDATED_TRANSLATIONS;
 import static be.sgerard.i18n.service.i18n.file.TranslationFileUtils.mapToNullIfEmpty;
 import static java.util.stream.Collectors.toList;
 
@@ -154,7 +154,7 @@ public class TranslationManagerImpl implements TranslationManager {
         }
 
         eventService.broadcastEvent(
-                EVENT_UPDATED_TRANSLATIONS,
+                UPDATED_TRANSLATIONS,
                 new TranslationsUpdateEventDto(
                         WorkspaceDto.builder(workspace).build(),
                         currentUser,

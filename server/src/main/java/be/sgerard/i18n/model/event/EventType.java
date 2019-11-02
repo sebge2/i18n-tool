@@ -5,42 +5,60 @@ package be.sgerard.i18n.model.event;
  */
 public enum EventType {
 
-    EVENT_CONNECTED_USER_SESSION("connected-user-session"),
+    /**
+     * @see be.sgerard.i18n.model.security.session.UserLiveSessionDto
+     */
+    CONNECTED_USER_SESSION("connected-user-session"),
 
-    EVENT_DISCONNECTED_USER_SESSION("disconnected-user-session"),
+    /**
+     * @see be.sgerard.i18n.model.security.session.UserLiveSessionDto
+     */
+    DISCONNECTED_USER_SESSION("disconnected-user-session"),
 
-    EVENT_UPDATED_WORKSPACE("updated-workspace"),
+    /**
+     * @see be.sgerard.i18n.model.i18n.dto.WorkspaceDto
+     */
+    UPDATED_WORKSPACE("updated-workspace"),
 
-    EVENT_DELETED_WORKSPACE("deleted-workspace"),
+    /**
+     * @see be.sgerard.i18n.model.i18n.dto.WorkspaceDto
+     */
+    DELETED_WORKSPACE("deleted-workspace"),
 
-    EVENT_UPDATED_TRANSLATIONS("updated-translations"),
+    /**
+     * @see be.sgerard.i18n.model.i18n.event.TranslationsUpdateEventDto
+     */
+    UPDATED_TRANSLATIONS("updated-translations"),
 
-    EVENT_UPDATED_REPOSITORY("updated-repository"),
+    /**
+     * @see be.sgerard.i18n.model.repository.RepositoryDescriptionDto
+     */
+    UPDATED_REPOSITORY("updated-repository"),
 
     /**
      * @see be.sgerard.i18n.model.security.user.UserDto
      */
-    EVENT_UPDATED_USER("updated-user"),
+    UPDATED_USER("updated-user"),
 
     /**
      * @see be.sgerard.i18n.model.security.user.UserDto
      */
-    EVENT_DELETED_USER("deleted-user"),
+    DELETED_USER("deleted-user"),
 
     /**
      * @see be.sgerard.i18n.model.security.user.UserDto
      */
-    EVENT_UPDATED_CURRENT_USER("updated-current-user"),
+    UPDATED_CURRENT_USER("updated-current-user"),
 
     /**
      * @see be.sgerard.i18n.model.security.user.AuthenticatedUserDto
      */
-    EVENT_UPDATED_AUTHENTICATED_USER("updated-authenticated-user"),
+    UPDATED_AUTHENTICATED_USER("updated-authenticated-user"),
 
     /**
      * @see be.sgerard.i18n.model.security.user.AuthenticatedUserDto
      */
-    EVENT_UPDATED_CURRENT_AUTHENTICATED_USER("updated-current-authenticated-user");
+    UPDATED_CURRENT_AUTHENTICATED_USER("updated-current-authenticated-user");
 
     public static final String QUEUE_BROADCAST = "/topic/";
 
