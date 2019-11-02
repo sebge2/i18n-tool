@@ -2,22 +2,21 @@ package be.sgerard.i18n.service.security.user;
 
 import be.sgerard.i18n.model.event.EventType;
 import be.sgerard.i18n.model.security.user.*;
-import be.sgerard.i18n.model.validation.ValidationMessage;
 import be.sgerard.i18n.model.validation.ValidationResult;
 import be.sgerard.i18n.service.ResourceNotFoundException;
 import be.sgerard.i18n.service.ValidationException;
 import be.sgerard.i18n.service.event.EventService;
 import be.sgerard.i18n.service.security.UserRole;
+import be.sgerard.i18n.service.security.user.validator.UserValidator;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
-import static java.util.Arrays.asList;
 
 /**
  * @author Sebastien Gerard
@@ -33,17 +32,20 @@ public class UserManagerImpl implements UserManager {
     private final ExternalUserRepository externalUserRepository;
     private final PasswordEncoder passwordEncoder;
     private final EventService eventService;
+    private final List<UserValidator> validators;
 
     public UserManagerImpl(UserRepository userRepository,
                            InternalUserRepository internalUserRepository,
                            ExternalUserRepository externalUserRepository,
                            PasswordEncoder passwordEncoder,
-                           EventService eventService) {
+                           EventService eventService,
+                           List<UserValidator> validators) {
         this.userRepository = userRepository;
         this.internalUserRepository = internalUserRepository;
         this.externalUserRepository = externalUserRepository;
         this.passwordEncoder = passwordEncoder;
         this.eventService = eventService;
+        this.validators = validators;
     }
 
     @Override
@@ -60,6 +62,30 @@ public class UserManagerImpl implements UserManager {
 
     @Override
     @Transactional
+    public InternalUserEntity createUser(UserCreationDto info) {
+        ValidationException.throwIfFailed(
+                validators.stream()
+                        .map(validator -> validator.validateOnCreate(info))
+                        .collect(ValidationResult.toValidationResult())
+        );
+
+        final InternalUserEntity userEntity = new InternalUserEntity(info.getUsername());
+
+        userEntity.setPassword(passwordEncoder.encode(info.getPassword()));
+        userEntity.setRoles(info.getRoles());
+        userEntity.setAvatarUrl(info.getAvatarUrl());
+        userEntity.setEmail(info.getEmail());
+
+        internalUserRepository.save(userEntity);
+
+        eventService.broadcastInternally(EventType.UPDATED_USER, UserDto.builder(userEntity).build());
+        eventService.sendEventToUser(UserRole.ADMIN, EventType.UPDATED_USER, UserDto.builder(userEntity).build());
+
+        return userEntity;
+    }
+
+    @Override
+    @Transactional
     public ExternalUserEntity createOrUpdateUser(ExternalUserDto externalUser) {
         final ExternalUserEntity userEntity = externalUserRepository.findByExternalId(externalUser.getExternalId())
                 .orElseGet(() -> new ExternalUserEntity(externalUser.getExternalId()));
@@ -70,6 +96,12 @@ public class UserManagerImpl implements UserManager {
 
         externalUserRepository.save(userEntity);
 
+        final UserDto updatedUserDto = UserDto.builder(userEntity).build();
+
+        eventService.broadcastInternally(EventType.UPDATED_USER, updatedUserDto);
+        eventService.sendEventToUser(UserRole.ADMIN, EventType.UPDATED_USER, updatedUserDto);
+        eventService.sendEventToUser(updatedUserDto, EventType.UPDATED_CURRENT_USER, updatedUserDto);
+
         return userEntity;
     }
 
@@ -78,26 +110,26 @@ public class UserManagerImpl implements UserManager {
     public UserEntity updateUser(String id, UserUpdateDto userUpdate) {
         final UserEntity userEntity = getUserById(id).orElseThrow(() -> new ResourceNotFoundException("There is no user [" + id + "]."));
 
-        validate(userUpdate, userEntity);
+        ValidationException.throwIfFailed(
+                validators.stream()
+                        .map(validator -> validator.validateOnUpdate(userUpdate, userEntity))
+                        .collect(ValidationResult.toValidationResult())
+        );
 
         if (userEntity instanceof InternalUserEntity) {
             userUpdate.getUsername().ifPresent(((InternalUserEntity) userEntity)::setUsername);
             userUpdate.getEmail().ifPresent(((InternalUserEntity) userEntity)::setEmail);
             userUpdate.getAvatarUrl().ifPresent(((InternalUserEntity) userEntity)::setAvatarUrl);
             userUpdate.getPassword().ifPresent(((InternalUserEntity) userEntity)::setPassword);
-        } else if (userEntity instanceof ExternalUserEntity) {
-
-        } else {
-            throw new UnsupportedOperationException("Unsupported user [" + userEntity + "].");
         }
 
         userUpdate.getRoles().ifPresent(userEntity::setRoles);
 
         final UserDto updatedUserDto = UserDto.builder(userEntity).build();
 
-        eventService.broadcastInternally(EventType.EVENT_UPDATED_USER, updatedUserDto);
-        eventService.sendEventToUser(UserRole.ADMIN, EventType.EVENT_UPDATED_USER, updatedUserDto);
-        eventService.sendEventToUser(userEntity, EventType.EVENT_UPDATED_CURRENT_USER, updatedUserDto);
+        eventService.broadcastInternally(EventType.UPDATED_USER, updatedUserDto);
+        eventService.sendEventToUser(UserRole.ADMIN, EventType.UPDATED_USER, updatedUserDto);
+        eventService.sendEventToUser(updatedUserDto, EventType.UPDATED_CURRENT_USER, updatedUserDto);
 
         return userEntity;
     }
@@ -105,7 +137,19 @@ public class UserManagerImpl implements UserManager {
     @Override
     @Transactional
     public void deleteUserById(String id) {
-        userRepository.deleteById(id);
+        getUserById(id).ifPresent(
+                userEntity -> {
+                    ValidationException.throwIfFailed(
+                            validators.stream()
+                                    .map(validator -> validator.validateOnDelete(userEntity))
+                                    .collect(ValidationResult.toValidationResult())
+                    );
+
+                    userRepository.delete(userEntity);
+                    eventService.broadcastInternally(EventType.DELETED_USER, UserDto.builder(userEntity).build());
+                    eventService.sendEventToUser(UserRole.ADMIN, EventType.DELETED_USER, UserDto.builder(userEntity).build());
+                }
+        );
     }
 
     @Override
@@ -119,36 +163,18 @@ public class UserManagerImpl implements UserManager {
         if (!internalUserRepository.findAll().iterator().hasNext()) {
             final String password = UUID.randomUUID().toString();
 
-            final InternalUserEntity adminEntity = new InternalUserEntity(DEFAULT_ADMIN_USER);
-            adminEntity.setPassword(passwordEncoder.encode(password));
-            adminEntity.setRoles(asList(UserRole.MEMBER_OF_ORGANIZATION, UserRole.ADMIN));
-            adminEntity.setAvatarUrl(ADMIN_AVATAR);
+            createUser(
+                    UserCreationDto.builder()
+                            .username(DEFAULT_ADMIN_USER)
+                            .password(password)
+                            .roles(UserRole.MEMBER_OF_ORGANIZATION, UserRole.ADMIN)
+                            .avatarUrl(ADMIN_AVATAR)
+                            .build()
+            );
 
             System.out.println("====================================================");
             System.out.println("Admin password: " + password);
             System.out.println("====================================================");
-
-            internalUserRepository.save(adminEntity);
         }
-    }
-
-    private void validate(UserUpdateDto userUpdate, UserEntity userEntity) {
-        final ValidationResult.Builder builder = ValidationResult.builder();
-
-        userUpdate.getRoles()
-                .ifPresent(roles -> roles.stream()
-                        .filter(role -> !role.isAssignableByEndUser())
-                        .forEach(role -> builder.messages(new ValidationMessage("ROLE_UN_ASSIGNABLE", role.name())))
-                );
-
-        if (userEntity instanceof ExternalUserEntity) {
-// TODO
-        } else if (userEntity instanceof InternalUserEntity) {
-// TODO
-        } else {
-            throw new UnsupportedOperationException("Unsupported user [" + userEntity + "].");
-        }
-
-        ValidationException.throwIfFailed(builder.build());
     }
 }
