@@ -56,7 +56,7 @@ jobs:
         - export DISPLAY=:99.0
         - export CHROME_VERSION=$(google-chrome --version | cut -d ' ' -f 3)
         - mvn initialize $MVN_OPTS -pl front/
-        - mvn com.github.eirslett:frontend-maven-plugin:npm@$'start-webdriver' $MVN_OPTS -pl front/
+        - mvn com.github.eirslett:frontend-maven-plugin:npm@$'start-webdriver' $MVN_OPTS -pl front/ &
         - export DOCKER_IMAGE_VERSION=$DOCKER_IMAGE_TMP_VERSION
         - docker-compose up -d
       script:
