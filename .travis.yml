@@ -16,7 +16,6 @@ addons:
 
 env:
   global:
-    - WEB_DRIVER_LOCATION='./front/src/main/web/node_modules/protractor/bin'
     - E2E_TEST_SUITE='test-e2e-complete'
 
     - DOCKER_IMAGE=$(mvn help:evaluate -Dexpression=docker.image.name -q -DforceStdout 2> /dev/null)
@@ -55,8 +54,9 @@ jobs:
     - stage: E2E-test
       before_script:
         - export DISPLAY=:99.0
+        - export CHROME_VERSION=$(google-chrome --version | cut -d ' ' -f 3)
         - mvn initialize $MVN_OPTS -pl front/
-        - $WEB_DRIVER_LOCATION/webdriver-manager update &&  $WEB_DRIVER_LOCATION/webdriver-manager start --detach  &
+        - mvn com.github.eirslett:frontend-maven-plugin:npm@$'start-webdriver' $MVN_OPTS -pl front/
         - export DOCKER_IMAGE_VERSION=$DOCKER_IMAGE_TMP_VERSION
         - docker-compose up -d
       script:

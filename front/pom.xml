@@ -69,6 +69,16 @@
                         </configuration>
                     </execution>
                     <execution>
+                        <id>start-webdriver</id>
+                        <phase>none</phase>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>run webdriver-start</arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>test-e2e-complete</id>
                         <phase>none</phase>
                         <goals>
