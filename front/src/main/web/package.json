@@ -9,8 +9,8 @@
     "test-local": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "webdriver-start": "webdriver-manager update --versions.chrome=$(google-chrome --version | cut -d ' ' -f 3) && webdriver-manager  start  --versions.chrome=$(google-chrome --version | cut -d ' ' -f 3)",
-    "webdriver-local-start": "webdriver-manager update --versions.chrome=$(google-chrome --version | cut -d ' ' -f 3) && webdriver-manager  start --detach --versions.chrome=$(google-chrome --version | cut -d ' ' -f 3)",
+    "webdriver-start": "webdriver-manager update --versions.chrome=$(google-chrome --version | cut -d ' ' -f 3) && webdriver-manager  start --detach --versions.chrome=$(google-chrome --version | cut -d ' ' -f 3)",
+    "webdriver-local-start": "webdriver-manager update --versions.chrome=$(google-chrome --version | cut -d ' ' -f 3) && webdriver-manager  start --versions.chrome=$(google-chrome --version | cut -d ' ' -f 3)",
     "e2e-local": "ng e2e --protractorConfig=./e2e/protractor.local-conf.js"
   },
   "private": true,
