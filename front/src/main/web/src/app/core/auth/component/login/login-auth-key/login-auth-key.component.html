@@ -8,7 +8,7 @@
                 <tr>
                     <td>
                         <mat-form-field class="auth-key-field">
-                            <input matInput placeholder="Auth. Key" formControlName="authkey" name="authKey" required>
+                            <input matInput placeholder="Auth. Key" formControlName="authkey" id="authKey" required>
                         </mat-form-field>
                         <a (click)="paste()"><i class="fas fa-paste"></i></a>
                         <mat-error *ngIf="form.errors && form.errors['authFailed']">
@@ -20,6 +20,6 @@
         </form>
     </mat-card-content>
     <mat-card-actions class="action">
-        <mat-spinner-button (btnClick)="login()" [options]="buttonOptions"></mat-spinner-button>
+        <mat-spinner-button (btnClick)="login()" [options]="buttonOptions" id="authKeyLogin"></mat-spinner-button>
     </mat-card-actions>
 </mat-card>
