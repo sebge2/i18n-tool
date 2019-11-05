@@ -30,6 +30,13 @@ springfox:
       v2:
         path: /api/api-doc
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+      base-path: /
+
 be:
   sgerard:
     i18n:
