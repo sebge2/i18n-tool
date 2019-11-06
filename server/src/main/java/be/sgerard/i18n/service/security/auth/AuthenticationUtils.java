@@ -1,6 +1,7 @@
 package be.sgerard.i18n.service.security.auth;
 
 import be.sgerard.i18n.model.security.auth.AuthenticatedUser;
+import be.sgerard.i18n.model.security.auth.ExternalOAuth2AuthenticatedUser;
 import be.sgerard.i18n.model.security.auth.InternalAuthenticatedUser;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -41,19 +42,25 @@ public final class AuthenticationUtils {
     }
 
     static Authentication updateAuthentication(Authentication authentication, AuthenticatedUser authenticatedUser) {
-            if (authentication instanceof OAuth2AuthenticationToken) {
+        if (authentication instanceof OAuth2AuthenticationToken) {
             return new OAuth2AuthenticationToken(
                     (OAuth2User) authenticatedUser,
                     authenticatedUser.getAuthorities(),
                     ((OAuth2AuthenticationToken) authentication).getAuthorizedClientRegistrationId()
             );
-        } else if (authentication instanceof UsernamePasswordAuthenticationToken) {
+        } else if ((authentication instanceof UsernamePasswordAuthenticationToken) && (authenticatedUser instanceof InternalAuthenticatedUser)) {
             return new UsernamePasswordAuthenticationToken(
                     authenticatedUser,
                     ((InternalAuthenticatedUser) authenticatedUser).getPassword(),
                     authenticatedUser.getAuthorities()
             );
-        }  else if (authentication instanceof AnonymousAuthenticationToken) {
+        } else if ((authentication instanceof UsernamePasswordAuthenticationToken) && (authenticatedUser instanceof ExternalOAuth2AuthenticatedUser)) {
+            return new UsernamePasswordAuthenticationToken(
+                    authenticatedUser,
+                    null,
+                    authenticatedUser.getAuthorities()
+            );
+        } else if (authentication instanceof AnonymousAuthenticationToken) {
             return authentication;
         } else {
             throw new UnsupportedOperationException("Unsupported authentication [" + authentication + "].");

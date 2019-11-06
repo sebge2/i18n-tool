@@ -10,11 +10,11 @@ exports.config = {
     baseUrl: 'http://localhost:8080/',
     framework: 'jasmine',
 
-    specs: ['**/*.spec.js'],
+    specs: ['**/*.spec.*'],
 
     suites: {
-        smoke: ['smoke-tests/*.spec.js'],
-        complete: ['smoke-tests/*.spec.js', 'other-tests/*.spec.js']
+        smoke: ['smoke-tests/*.spec.*'],
+        complete: ['smoke-tests/*.spec.*', 'other-tests/*.spec.*']
     },
 
     capabilities: {
@@ -37,6 +37,10 @@ exports.config = {
     },
 
     onPrepare: async() => {
+        require('ts-node').register({
+            project: require('path').join(__dirname, './tsconfig.json')
+        });
+
         jasmine.getEnv().addReporter(screenshotReporter);
     },
 
