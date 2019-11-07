@@ -9,7 +9,7 @@ export class BrowserLogs {
         return new BrowserLogs(this.logs.filter(entry => levels.indexOf(entry.level) >= 0));
     }
 
-    removeMessage(messagePattern: string): BrowserLogs {
+    removeMessages(messagePattern: string): BrowserLogs {
         return new BrowserLogs(this.logs.filter(entry => !entry.message.includes(messagePattern)));
     }
 

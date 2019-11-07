@@ -19,10 +19,10 @@ describe('Smoke Tests', function () {
             .then(logs =>
                 logs
                     .keepLevels(logging.Level.SEVERE)
-                    .removeMessage("/api/authentication/user")
-                    .removeMessage("/login")
-                    .removeMessage("/main-es2015.js")
-                    .removeMessage("/vendor-es2015.js")
+                    .removeMessages("/api/authentication/user")
+                    .removeMessages("/login")
+                    .removeMessages("/main-es2015.js")
+                    .removeMessages("/vendor-es2015.js")
                     .assertNoLog()
             );
     });
