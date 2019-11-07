@@ -14,6 +14,7 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Component;
 
+import javax.json.JsonString;
 import java.util.Map;
 import java.util.Objects;
 
@@ -69,10 +70,10 @@ public class ExternalGitHubUserExtractor implements ExternalUserExtractor {
         final boolean repoMember = isRepoMember(tokenValue);
 
         return ExternalUserDto.builder()
-                .externalId(Objects.toString(attributes.get(EXTERNAL_ID)))
-                .username(Objects.toString(attributes.get(LOGIN)))
-                .email(Objects.toString(attributes.get(EMAIL)))
-                .avatarUrl(Objects.toString(attributes.get(AVATAR_URL)))
+                .externalId(getStringAttribute(attributes, EXTERNAL_ID))
+                .username(getStringAttribute(attributes, LOGIN))
+                .email(getStringAttribute(attributes, EMAIL))
+                .avatarUrl(getStringAttribute(attributes, AVATAR_URL))
                 .gitHubToken(repoMember ? tokenValue : null)
                 .roles(repoMember ? new UserRole[]{UserRole.MEMBER_OF_ORGANIZATION, UserRole.MEMBER_OF_REPOSITORY} : new UserRole[0])
                 .build();
@@ -85,6 +86,20 @@ public class ExternalGitHubUserExtractor implements ExternalUserExtractor {
             return github.repos().get(new Coordinates.Simple(repository)).branches().iterate().iterator().hasNext();
         } catch (AssertionError e) {
             return false;
+        }
+    }
+
+    private String getStringAttribute(Map<String, ?> attributes, String key) {
+        if(attributes.containsKey(key)){
+            final Object value = attributes.get(key);
+
+            if(value instanceof JsonString){
+                return ((JsonString) value).getString();
+            } else {
+                return Objects.toString(value);
+            }
+        } else {
+            return null;
         }
     }
 }

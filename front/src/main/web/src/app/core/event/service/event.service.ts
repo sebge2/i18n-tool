@@ -4,22 +4,26 @@ import {Message} from '@stomp/stompjs';
 import {Observable} from "rxjs";
 import {map, merge} from "rxjs/operators";
 import {NotificationService} from "../../notification/service/notification.service";
+import {RxStompState} from '@stomp/rx-stomp';
 
 @Injectable({
     providedIn: 'root'
 })
 export class EventService {
 
+    private opened: boolean;
+
     constructor(private rxStompService: RxStompService,
                 private notificationService: NotificationService) {
-        rxStompService.stompErrors$.subscribe(error => {
-            console.error(error);
-            notificationService.displayErrorMessage('Error while executing STOMP command.');
-        });
-
-        rxStompService.webSocketErrors$.subscribe(error => {
-            console.error(error);
-            notificationService.displayErrorMessage('Websocket connection issue. Please check your internet connection.');
+        rxStompService.connectionState$.subscribe((event: RxStompState) => {
+            if (event == RxStompState.CLOSED) {
+                if (this.opened) {
+                    notificationService.displayErrorMessage('Connection issue to the server. Please check your internet connection.');
+                }
+                this.opened = false;
+            } else if (event == RxStompState.OPEN) {
+                this.opened = true;
+            }
         });
     }
 
