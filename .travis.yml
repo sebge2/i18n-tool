@@ -55,6 +55,7 @@ jobs:
         - docker-compose up -d
         - ./bin/wait-server-ready.sh
       script:
+        - ./bin/wait-server-ready.sh
         - mvn com.github.eirslett:frontend-maven-plugin:npm@$E2E_TEST_SUITE $MVN_OPTS -pl front/
       after_failure:
         - curl -u $DOCKER_USERNAME:$DOCKER_PASSWORD -X "DELETE" https://cloud.docker.com/v2/repositories/$DOCKER_ORGANIZATION/$DOCKER_IMAGE/tags/$DOCKER_IMAGE_TMP_VERSION/
