@@ -7,6 +7,7 @@ var screenshotReporter = new HtmlScreenshotReporter({
 
 exports.config = {
     seleniumAddress: 'http://localhost:4444/wd/hub',
+    // TODO environment variable server port
     baseUrl: 'http://localhost:8080/',
     framework: 'jasmine',
 
