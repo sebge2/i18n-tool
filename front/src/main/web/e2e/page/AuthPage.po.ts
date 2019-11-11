@@ -13,8 +13,6 @@ export class AuthPage {
     async loginWithAuthKeyIfNeeded(): Promise<AppPage> {
         return browser.getCurrentUrl()
             .then(async (currentUrl: string) => {
-                console.error('currnet url', currentUrl);
-
                 if (!currentUrl.startsWith(browser.baseUrl)) {
                     await this.appPage().browserPage().openApp();
                 }
@@ -31,7 +29,9 @@ export class AuthPage {
                     .then(async () => {
                         const currentRouteAfterLogin = await this.appPage().browserPage().getCurrentRoute();
 
+                        const logs = await this.appPage().browserPage().consolePage().getBrowserLogs();// TODO
                         if(currentRouteAfterLogin != '/translations'){
+                            console.error(logs); // TODO
                             throw new Error('Error while trying to login. Current route ' + currentRouteAfterLogin + '.');
                         }
 
