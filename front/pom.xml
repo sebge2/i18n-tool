@@ -28,9 +28,6 @@
                     <npmVersion>${npm.version}</npmVersion>
                     <workingDirectory>${project.basedir}/src/main/web</workingDirectory>
                     <installDirectory>${project.basedir}/executables/</installDirectory>
-                    <environmentVariables>
-                        <E2E_GIT_HUB_AUTH_TOKEN>${env.E2E_GIT_HUB_AUTH_TOKEN}</E2E_GIT_HUB_AUTH_TOKEN>
-                    </environmentVariables>
                 </configuration>
                 <executions>
                     <execution>
