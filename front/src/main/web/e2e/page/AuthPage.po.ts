@@ -23,10 +23,8 @@ export class AuthPage {
                     return this.appPage();
                 }
 
-                const gitHubAuthToken = process.env.GIT_HUB_AUTH_TOKEN;
-
                 return element(by.id('authKey'))
-                    .sendKeys(gitHubAuthToken)
+                    .sendKeys(process.env.E2E_GIT_HUB_AUTH_TOKEN)
                     .then(() => element(by.id('authKeyLogin')).click())
                     .then(async () => {
                         const currentRouteAfterLogin = await this.appPage().browserPage().getCurrentRoute();

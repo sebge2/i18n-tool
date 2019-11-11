@@ -26,15 +26,8 @@ The following environment variables are needed by this Travis-CI build:
 * AWS_SECRET_KEY=****
 * DOCKER_PASSWORD=****
 * DOCKER_USERNAME=****
-* E2E_GIT_HUB_OAUTH_CLIENT=****
-* E2E_GIT_HUB_OAUTH_SECRET=****
-* E2E_GIT_HUB_REPO_NAME=i18n-tool
-* E2E_GIT_HUB_REPO_USER_NAME=sebge2
-* E2E_GIT_HUB_USER=**** 
-* E2E_GIT_HUB_USER_PASSWORD=****
-* E2E_GIT_HUB_WEBHOOK_SECRET=****
 * E2E_SERVER_PORT=8080
-* DEFAULT_ADMIN_PASSWORD=my-admin-password
+* E2E_GIT_HUB_AUTH_TOKEN=****
 
 ### Amazon EB Configuration
 

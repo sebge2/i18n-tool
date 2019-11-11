@@ -27,15 +27,6 @@ env:
 
     - MVN_OPTS='-B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN'
 
-    - SERVER_PORT=$E2E_SERVER_PORT
-    - GIT_HUB_OAUTH_CLIENT=$E2E_GIT_HUB_OAUTH_CLIENT
-    - GIT_HUB_OAUTH_SECRET=$E2E_GIT_HUB_OAUTH_SECRET
-    - GIT_HUB_REPO_USER_NAME=$E2E_GIT_HUB_REPO_USER_NAME
-    - GIT_HUB_REPO_NAME=$E2E_GIT_HUB_REPO_NAME
-    - GIT_HUB_WEBHOOK_SECRET=$E2E_GIT_HUB_WEBHOOK_SECRET
-    - GIT_HUB_USER=$E2E_GIT_HUB_USER
-    - GIT_HUB_USER_PASSWORD=$E2E_GIT_HUB_USER_PASSWORD
-
 stages:
   - Compile and Unit Tests
   - E2E-test
@@ -55,6 +46,9 @@ jobs:
       before_script:
         - export DISPLAY=:99.0
         - export CHROME_VERSION=$(google-chrome --version | cut -d ' ' -f 3)
+        - export ACTIVE_SPRING_PROFILE=e2e-test
+        - export E2E_GIT_HUB_AUTH_TOKEN=$E2E_GIT_HUB_AUTH_TOKEN
+        - export SERVER_PORT=$E2E_SERVER_PORT
         - mvn initialize $MVN_OPTS -pl front/
         - mvn com.github.eirslett:frontend-maven-plugin:npm@$'start-webdriver' $MVN_OPTS -pl front/ &
         - export DOCKER_IMAGE_VERSION=$DOCKER_IMAGE_TMP_VERSION
