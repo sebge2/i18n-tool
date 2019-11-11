@@ -21,8 +21,6 @@ export class AuthPage {
 
                 let route = await this.appPage().browserPage().getCurrentRoute();
 
-                console.error('route', route);
-
                 if (route !== '/login') {
                     return this.appPage();
                 }
@@ -33,9 +31,9 @@ export class AuthPage {
                     .then(async () => {
                         const currentRouteAfterLogin = await this.appPage().browserPage().getCurrentRoute();
 
-                        console.error('after login', currentRouteAfterLogin);
-
-                        expect(currentRouteAfterLogin).toBe('/translations');
+                        if(currentRouteAfterLogin != '/translations'){
+                            throw new Error('Error while trying to login. Current route ' + currentRouteAfterLogin + '.');
+                        }
 
                         return this.appPage();
                     });
