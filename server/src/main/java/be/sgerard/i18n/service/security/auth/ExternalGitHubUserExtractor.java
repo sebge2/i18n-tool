@@ -56,11 +56,11 @@ public class ExternalGitHubUserExtractor implements ExternalUserExtractor {
         try {
             return loadUser(tokenValue, new RtGithub(tokenValue).users().self().json());
         } catch (Exception e) {
-            logger.info("Error while connecting GitHub.", e);
+            logger.error("Error while connecting GitHub.", e);
 
             throw new AuthenticationServiceException("Cannot authenticate with the specified AuthKey.");
         } catch (AssertionError error) {
-            logger.debug("Authentication failure.", error);
+            logger.error("Authentication failure.", error);
 
             throw new UsernameNotFoundException("Cannot authenticate with the specified AuthKey.");
         }
@@ -85,6 +85,8 @@ public class ExternalGitHubUserExtractor implements ExternalUserExtractor {
         try {
             return github.repos().get(new Coordinates.Simple(repository)).branches().iterate().iterator().hasNext();
         } catch (AssertionError e) {
+            // TODO
+            logger.error("error while ocnnecting to "+ repository, e);
             return false;
         }
     }
