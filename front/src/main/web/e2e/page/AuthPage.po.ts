@@ -13,11 +13,15 @@ export class AuthPage {
     async loginWithAuthKeyIfNeeded(): Promise<AppPage> {
         return browser.getCurrentUrl()
             .then(async (currentUrl: string) => {
+                console.error('currnet url', currentUrl);
+
                 if (!currentUrl.startsWith(browser.baseUrl)) {
                     await this.appPage().browserPage().openApp();
                 }
 
                 let route = await this.appPage().browserPage().getCurrentRoute();
+
+                console.error('route', route);
 
                 if (route !== '/login') {
                     return this.appPage();
@@ -28,6 +32,8 @@ export class AuthPage {
                     .then(() => element(by.id('authKeyLogin')).click())
                     .then(async () => {
                         const currentRouteAfterLogin = await this.appPage().browserPage().getCurrentRoute();
+
+                        console.error('after login', currentRouteAfterLogin);
 
                         expect(currentRouteAfterLogin).toBe('/translations');
 
