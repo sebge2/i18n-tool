@@ -43,6 +43,8 @@ exports.config = {
         });
 
         jasmine.getEnv().addReporter(screenshotReporter);
+        // TODO
+        browser.sleep(60000);
     },
 
     afterLaunch: function(exitCode) {
