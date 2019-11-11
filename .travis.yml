@@ -53,6 +53,7 @@ jobs:
         - mvn com.github.eirslett:frontend-maven-plugin:npm@$'start-webdriver' $MVN_OPTS -pl front/ &
         - export DOCKER_IMAGE_VERSION=$DOCKER_IMAGE_TMP_VERSION
         - docker-compose up -d
+        - ./bin/wait-server-ready.sh
       script:
         - mvn com.github.eirslett:frontend-maven-plugin:npm@$E2E_TEST_SUITE $MVN_OPTS -pl front/
       after_failure:
