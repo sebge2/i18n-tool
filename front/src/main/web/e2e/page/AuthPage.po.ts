@@ -24,8 +24,7 @@ export class AuthPage {
                 }
 
                 return element(by.id('authKey'))
-                    // .sendKeys(process.env.E2E_GIT_HUB_AUTH_TOKEN)
-                    .sendKeys('c4a5b8b154cf6ed389b654ce17f38088a9a04e6e')
+                    .sendKeys(process.env.E2E_GIT_HUB_AUTH_TOKEN)
                     .then(() => element(by.id('authKeyLogin')).click())
                     .then(async () => {
                         const currentRouteAfterLogin = await this.appPage().browserPage().getCurrentRoute();

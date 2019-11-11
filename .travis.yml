@@ -24,6 +24,7 @@ env:
     - DOCKER_USERNAME=$DOCKER_USERNAME
     - DOCKER_ORGANIZATION=$DOCKER_USERNAME
     - DOCKER_PASSWORD=$DOCKER_PASSWORD
+    - E2E_GIT_HUB_AUTH_TOKEN=$E2E_GIT_HUB_AUTH_TOKEN
 
     - MVN_OPTS='-B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN'
 
@@ -47,7 +48,6 @@ jobs:
         - export DISPLAY=:99.0
         - export CHROME_VERSION=$(google-chrome --version | cut -d ' ' -f 3)
         - export ACTIVE_SPRING_PROFILE=e2e-test
-        - export E2E_GIT_HUB_AUTH_TOKEN=$E2E_GIT_HUB_AUTH_TOKEN
         - export SERVER_PORT=$E2E_SERVER_PORT
         - mvn initialize $MVN_OPTS -pl front/
         - mvn com.github.eirslett:frontend-maven-plugin:npm@$'start-webdriver' $MVN_OPTS -pl front/ &
