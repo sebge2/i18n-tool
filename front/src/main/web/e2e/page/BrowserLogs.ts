@@ -14,6 +14,8 @@ export class BrowserLogs {
     }
 
     assertNoLog() {
-        expect(this.logs).toBe([]);
+        if (this.logs.length > 0) {
+            throw new Error("There are logs: [" +  this.logs.map(log => "\n" + log.message) + "\n].");
+        }
     }
 }

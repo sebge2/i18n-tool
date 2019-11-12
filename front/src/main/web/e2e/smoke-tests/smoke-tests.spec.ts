@@ -12,8 +12,8 @@ describe('Smoke Tests', function () {
             .then(page => appPage = page);
     });
 
-    afterAll(async function () {
-        appPage.browserPage()
+    afterEach(async function () {
+        await appPage.browserPage()
             .consolePage()
             .getBrowserLogs()
             .then(logs =>
@@ -30,7 +30,7 @@ describe('Smoke Tests', function () {
     it('should land on default route', function () {
     });
 
-    it('should navigate to admin', function () {
+    xit('should navigate to admin', function () {
         appPage.menuPage().clickOnAdminItem();
     });
 
