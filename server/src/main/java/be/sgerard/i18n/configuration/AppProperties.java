@@ -13,6 +13,7 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
+import static org.springframework.util.StringUtils.isEmpty;
 
 /**
  * @author Sebastien Gerard
@@ -45,7 +46,7 @@ public class AppProperties {
         this.baseDirectory = baseDirectory;
     }
 
-    public File getRepositoryLocationAsFile(){
+    public File getRepositoryLocationAsFile() {
         return new File(getBaseDirectory(), "sandbox");
     }
 
@@ -122,7 +123,7 @@ public class AppProperties {
     }
 
     public void setDefaultAdminPassword(String defaultAdminPassword) {
-        this.defaultAdminPassword = defaultAdminPassword;
+        this.defaultAdminPassword = !isEmpty(defaultAdminPassword) ? defaultAdminPassword : null;
     }
 
     public Set<Locale> getLocales() {
