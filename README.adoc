@@ -15,35 +15,63 @@ Tool scanning translation bundles in a GitHub repository. A UI editor allows to 
 
 * No existing solution on the market
 * Investigating up-to-date technologies: 
-    * Java 11+
-    * Spring 5 & Boot 2
-    * Angular 8:
-        * How to do testing with: Karma, Jasmine and Protractor
-        * How to structure code? and tests?
-        * i18n in Angular
-        * Websocket
-    * How to create a Spring Docker App
-    * Java integration with Git(Hub)
-    * How to develop a webhook?
-    * How to create an OAuth2 client with Spring?
-    * How to have a continuous integration and deployment?
+    ** Java 11+
+    ** Spring 5 & Boot 2
+    ** Angular 8:
+        *** How to do testing with: Karma, Jasmine and Protractor
+        *** How to structure code? and tests?
+        *** i18n in Angular
+        *** Websocket
+    ** How to create a Spring Docker App
+    ** Java integration with Git(Hub)
+    ** How to develop a webhook?
+    ** How to create an OAuth2 client with Spring?
+    ** How to have a continuous integration and deployment?
         * Travis-CI.com
-    * Remaining:
-        * Junit 5
-        * Reactive programming on backend side
+    ** Remaining:
+        *** Junit 5
+        *** Reactive programming on backend side
 * Start a project from scratch
 
 
 == Presentation
 
+The startup page is the login page. Every user must be authenticated.
+The external user must be part of the organization.
+
 [link=./doc/login-screen.png]
-image::./doc/login-screen.png[Login Screen,100]
+image::./doc/login-screen.png[Login Screen,150]
+
+An administrator user "_admin_" is automatically created.
+Its password can be either auto-generated (and printed out on the console),
+or specified with the environment variable _DEFAULT_ADMIN_PASSWORD_.
+
+User can also use their GitHub account to log on the application. Only users allowed to access to the
+repository are allowed.
+
+Authenticating with "auth-key" is mainly used for automated testing.
+The associated user must be able to access the current repository.
+
 
 [link=./doc/main-screen-admin.png]
 image::./doc/main-screen-admin.png[Main Screen Admin,300]
 
+The default section is "translations" allowing to search and translate keys.
+By default, the searcher looks for missing translations in users' languages.
+
+
 [link=./doc/translations-screen.png]
 image::./doc/translations-screen.png[Translations Screen,300]
+
+It's also possible to search for all translations, translations that have been updated
+by the current user (or not only by himself). A workspace is the current
+edition of a Git Branch. By default, the "master" workspace is used.
+
+Once all translations of a workspace have been filled, it
+can be reviewed. A pull-request is generated with all the changes.
+
+Once the pull-request and the associated branch is closed/merged, the workspace
+is deleted. A new workspace based on the Git branch can be created later on.
 
 [link=./doc/translations-search-screen.png]
 image::./doc/translations-search-screen.png[Translations Search Screen,300]
@@ -53,12 +81,13 @@ image::./doc/translations-search-screen.png[Translations Search Screen,300]
 === Travis Configuration
 
 The following environment variables are needed by this Travis-CI build:
-* AWS_ACCESS_KEY=****
-* AWS_SECRET_KEY=****
-* DOCKER_PASSWORD=****
-* DOCKER_USERNAME=****
+
+* AWS_ACCESS_KEY=**
+* AWS_SECRET_KEY=**
+* DOCKER_PASSWORD=**
+* DOCKER_USERNAME=**
 * E2E_SERVER_PORT=8080
-* E2E_GIT_HUB_AUTH_TOKEN=****
+* E2E_GIT_HUB_AUTH_TOKEN=**
 
 === Amazon EB Configuration
 
