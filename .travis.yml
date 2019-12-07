@@ -67,15 +67,16 @@ jobs:
         - docker push $DOCKER_ORGANIZATION/$DOCKER_IMAGE:$DOCKER_IMAGE_VERSION
         - curl -u $DOCKER_USERNAME:$DOCKER_PASSWORD -X "DELETE" https://cloud.docker.com/v2/repositories/$DOCKER_ORGANIZATION/$DOCKER_IMAGE/tags/$DOCKER_IMAGE_TMP_VERSION/
 
-deploy:
-  - provider: elasticbeanstalk
-    region: "eu-central-1"
-    app: "i18n-tool"
-    env: "i18n-tool-prod"
-    bucket_name: $AWS_BUCKET_NAME
-    bucket_path: "i18n-tool"
-    access_key_id: $AWS_ACCESS_KEY
-    secret_access_key:
-      secure: $AWS_SECRET_KEY
-    skip_cleanup: true
-    zip-file: ./server/target/aws-config.zip
+    - stage: Deploy AWS
+      deploy:
+        - provider: elasticbeanstalk
+          region: "eu-central-1"
+          app: "i18n-tool"
+          env: "i18n-tool-prod"
+          bucket_name: $AWS_BUCKET_NAME
+          bucket_path: "i18n-tool"
+          access_key_id: $AWS_ACCESS_KEY
+          secret_access_key:
+            secure: $AWS_SECRET_KEY
+          skip_cleanup: true
+          zip-file: ./server/target/aws-config.zip
