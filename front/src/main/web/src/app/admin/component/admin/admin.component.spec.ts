@@ -7,7 +7,7 @@ import {TranslateModule} from "@ngx-translate/core";
 import {CoreSharedModule} from "../../../core/shared/core-shared-module";
 import {CoreEventModule} from "../../../core/event/core-event.module";
 import {RepositoryService} from "../../../translations/service/repository.service";
-import {BehaviorSubject} from "rxjs";
+import {BehaviorSubject, Observable} from "rxjs";
 import {WorkspaceService} from "../../../translations/service/workspace.service";
 import {Repository} from "../../../translations/model/repository.model";
 import {RepositoryStatus} from "../../../translations/model/repository-status.model";
@@ -20,6 +20,8 @@ import {UserTableComponent} from "../user-table/user-table.component";
 import {UserTableDetailsComponent} from "../user-table/user-table-details/user-table-details.component";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {NotificationService} from "../../../core/notification/service/notification.service";
+import {UserService} from "../../../core/auth/service/user.service";
+import {User} from "../../../core/auth/model/user.model";
 
 describe('AdminComponent', () => {
     let component: AdminComponent;
@@ -29,6 +31,9 @@ describe('AdminComponent', () => {
 
     let user: BehaviorSubject<AuthenticatedUser> = new BehaviorSubject<AuthenticatedUser>(new AuthenticatedUser(<AuthenticatedUser>{sessionRoles: ALL_USER_ROLES}));
     let authenticationService: AuthenticationService;
+
+    let userService: UserService;
+    let users: Observable<User[]>;
 
     let workspaces: BehaviorSubject<Workspace[]>;
     let repository: BehaviorSubject<Repository>;
@@ -41,6 +46,10 @@ describe('AdminComponent', () => {
 
         authenticationService = jasmine.createSpyObj('authenticationUser', ['currentUser']);
         authenticationService.currentUser = jasmine.createSpy().and.returnValue(user);
+
+        userService = jasmine.createSpyObj('userService', ['getUsers', 'updateUser']);
+        users = new BehaviorSubject([]);
+        userService.getUsers = jasmine.createSpy().and.returnValue(users);
 
         notificationService = jasmine.createSpyObj('notificationService', ['displayErrorMessage']);
 
@@ -74,6 +83,7 @@ describe('AdminComponent', () => {
                     {provide: RepositoryService, useValue: repositoryService},
                     {provide: WorkspaceService, useValue: workspaceService},
                     {provide: AuthenticationService, useValue: authenticationService},
+                    {provide: UserService, useValue: userService},
                     {provide: NotificationService, useValue: notificationService}
                 ],
             })
