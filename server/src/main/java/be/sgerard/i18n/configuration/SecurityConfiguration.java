@@ -67,7 +67,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                         "/*",
                         "/auth/**",
                         "/api/authentication/authenticated",
-                        "/api/authentication/user"
+                        "/api/authentication/user",
+                        "/api/git-hub/**"
                 )
                 .permitAll()
                 .anyRequest()
