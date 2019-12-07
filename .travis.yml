@@ -70,10 +70,10 @@ jobs:
 deploy:
   - provider: elasticbeanstalk
     region: "eu-central-1"
-    app: "github-oauth"
-    env: "github-oauth-test"
-    bucket_name: "elasticbeanstalk-eu-central-1-712777222880"
-    bucket_path: "github-oauth"
+    app: "i18n-tool"
+    env: "i18n-tool-prod"
+    bucket_name: $AWS_BUCKET_NAME
+    bucket_path: "i18n-tool"
     access_key_id: $AWS_ACCESS_KEY
     secret_access_key:
       secure: $AWS_SECRET_KEY
