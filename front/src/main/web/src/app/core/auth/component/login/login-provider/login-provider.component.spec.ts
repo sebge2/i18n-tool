@@ -1,7 +1,6 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {LoginProviderComponent} from './login-provider.component';
-import {CoreUiModule} from "../../../../ui/core-ui.module";
 import {CoreSharedModule} from "../../../../shared/core-shared-module";
 
 describe('LoginProviderComponent', () => {
@@ -12,7 +11,6 @@ describe('LoginProviderComponent', () => {
         TestBed
             .configureTestingModule({
                 imports: [
-                    CoreUiModule,
                     CoreSharedModule
                 ],
                 declarations: [

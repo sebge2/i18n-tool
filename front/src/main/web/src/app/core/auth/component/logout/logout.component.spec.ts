@@ -1,8 +1,8 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {LogoutComponent} from './logout.component';
-import {CoreUiModule} from "../../../ui/core-ui.module";
 import {AuthenticationService} from "../../service/authentication.service";
+import {CoreSharedModule} from "../../../shared/core-shared-module";
 
 describe('LogoutComponent', () => {
     let component: LogoutComponent;
@@ -15,7 +15,7 @@ describe('LogoutComponent', () => {
         TestBed
             .configureTestingModule({
                 imports: [
-                    CoreUiModule
+                    CoreSharedModule
                 ],
                 declarations: [
                     LogoutComponent

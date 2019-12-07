@@ -1,7 +1,6 @@
 import {inject, TestBed} from '@angular/core/testing';
 
 import {GlobalAuthGuard} from './global-auth-guard.service';
-import {CoreUiModule} from "../../core-ui.module";
 import {AuthenticationService} from "../../../auth/service/authentication.service";
 import {BehaviorSubject} from "rxjs";
 import {Router} from "@angular/router";
@@ -21,9 +20,7 @@ describe('GlobalAuthGuard', () => {
 
         TestBed
             .configureTestingModule({
-                imports: [
-                    CoreUiModule
-                ],
+                imports: [],
                 providers: [
                     GlobalAuthGuard,
                     {provide: AuthenticationService, useValue: authenticationService},

@@ -3,7 +3,7 @@ import {getTestBed, TestBed} from '@angular/core/testing';
 import {EventService} from './event.service';
 import {CoreEventModule} from "../core-event.module";
 import {NotificationService} from "../../notification/service/notification.service";
-import {CoreUiModule} from "../../ui/core-ui.module";
+import {CoreSharedModule} from "../../shared/core-shared-module";
 
 describe('EventService', () => {
     let injector: TestBed;
@@ -16,7 +16,7 @@ describe('EventService', () => {
         TestBed.configureTestingModule({
             imports: [
                 CoreEventModule,
-                CoreUiModule
+                CoreSharedModule
             ]
         });
 

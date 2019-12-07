@@ -2,7 +2,6 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {UserTableComponent} from './user-table.component';
 import {CoreSharedModule} from "../../../core/shared/core-shared-module";
-import {CoreUiModule} from "../../../core/ui/core-ui.module";
 import {UserService} from "../../../core/auth/service/user.service";
 import {CoreAuthModule} from "../../../core/auth/core-auth.module";
 import {UserTableDetailsComponent} from "./user-table-details/user-table-details.component";
@@ -28,7 +27,6 @@ describe('UserTableComponent', () => {
                 imports: [
                     CoreSharedModule,
                     CoreAuthModule,
-                    CoreUiModule,
                     TranslateModule.forRoot()
                 ],
                 providers: [

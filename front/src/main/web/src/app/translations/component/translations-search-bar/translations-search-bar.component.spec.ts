@@ -7,9 +7,7 @@ import {TranslationLocalesSelectorComponent} from "./translation-locales-selecto
 import {TranslationCriterionSelectorComponent} from "./translation-criterion-selector/translation-criterion-selector.component";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {TranslateModule} from "@ngx-translate/core";
-import {HttpClientModule} from "@angular/common/http";
 import {CoreEventModule} from "../../../core/event/core-event.module";
-import {CoreUiModule} from "../../../core/ui/core-ui.module";
 import {BehaviorSubject} from "rxjs";
 import {WorkspaceService} from "../../service/workspace.service";
 import {Workspace} from "../../model/workspace.model";
@@ -30,7 +28,6 @@ describe('TranslationsSearchBarComponent', () => {
                 imports: [
                     BrowserAnimationsModule,
                     CoreSharedModule,
-                    CoreUiModule,
                     CoreEventModule,
                     TranslateModule.forRoot(),
                 ],

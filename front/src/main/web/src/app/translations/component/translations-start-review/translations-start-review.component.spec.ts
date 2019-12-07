@@ -5,7 +5,6 @@ import {TranslateModule} from "@ngx-translate/core";
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material";
 import {OverlayContainer} from "@angular/cdk/overlay";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
-import {CoreUiModule} from "../../../core/ui/core-ui.module";
 import {CoreSharedModule} from "../../../core/shared/core-shared-module";
 import {BrowserDynamicTestingModule} from "@angular/platform-browser-dynamic/testing";
 
@@ -34,7 +33,6 @@ describe('TranslationsStartReviewComponent', () => {
         TestBed.configureTestingModule({
             imports: [
                 BrowserAnimationsModule,
-                CoreUiModule,
                 CoreSharedModule,
                 TranslateModule.forRoot()
             ],

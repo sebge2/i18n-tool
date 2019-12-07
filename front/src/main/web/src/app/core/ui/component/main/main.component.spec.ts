@@ -5,10 +5,12 @@ import {CoreSharedModule} from "../../../shared/core-shared-module";
 import {RouterModule} from "@angular/router";
 import {CoreEventModule} from "../../../event/core-event.module";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
-import {CoreUiModule} from "../../core-ui.module";
 import {AuthenticationService} from "../../../auth/service/authentication.service";
 import {BehaviorSubject} from "rxjs";
 import {AuthenticatedUser} from "../../../auth/model/authenticated-user.model";
+import {HeaderComponent} from "../header/header.component";
+import {MenuComponent} from "../menu/menu.component";
+import {CoreAuthModule} from "../../../auth/core-auth.module";
 
 describe('MainComponent', () => {
     let component: MainComponent;
@@ -26,10 +28,11 @@ describe('MainComponent', () => {
                 imports: [
                     BrowserAnimationsModule,
                     CoreSharedModule,
-                    CoreUiModule,
+                    CoreAuthModule,
                     CoreEventModule,
                     RouterModule.forRoot([])
                 ],
+                declarations: [MainComponent, HeaderComponent, MenuComponent],
                 providers: [
                     {provide: AuthenticationService, useValue: authenticationService}
                 ]

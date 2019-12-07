@@ -6,7 +6,6 @@ import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material";
 import {BrowserDynamicTestingModule} from "@angular/platform-browser-dynamic/testing";
 import {Workspace} from "../../../../translations/model/workspace.model";
 import {OverlayContainer} from "@angular/cdk/overlay";
-import {CoreUiModule} from "../../../../core/ui/core-ui.module";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {TranslateModule} from "@ngx-translate/core";
 
@@ -23,7 +22,6 @@ describe('ConfirmWorkspaceDeletionComponent', () => {
         TestBed.configureTestingModule({
             imports: [
                 BrowserAnimationsModule,
-                CoreUiModule,
                 CoreSharedModule,
                 TranslateModule.forRoot()
             ],

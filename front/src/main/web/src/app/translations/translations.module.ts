@@ -10,7 +10,6 @@ import {TranslationsTableComponent} from './component/translations-table/transla
 import {TranslationEditingCellComponent} from './component/translations-table/translation-editing-cell/translation-editing-cell.component';
 import {TranslationsStartReviewComponent} from './component/translations-start-review/translations-start-review.component';
 import {CoreSharedModule} from "../core/shared/core-shared-module";
-import {CoreUiModule} from "../core/ui/core-ui.module";
 import {CoreAuthModule} from "../core/auth/core-auth.module";
 
 const appRoutes: Routes = [
@@ -37,7 +36,6 @@ const appRoutes: Routes = [
         CommonModule,
         CoreSharedModule,
         CoreAuthModule,
-        CoreUiModule,
 
         RouterModule.forChild(appRoutes)
     ],

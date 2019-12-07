@@ -4,7 +4,6 @@ import {WorkspaceTableComponent} from './workspace-table.component';
 import {TranslateModule} from "@ngx-translate/core";
 import {CoreSharedModule} from "../../../core/shared/core-shared-module";
 import {CoreEventModule} from "../../../core/event/core-event.module";
-import {CoreUiModule} from "../../../core/ui/core-ui.module";
 import {BehaviorSubject} from "rxjs";
 import {Workspace} from "../../../translations/model/workspace.model";
 import {WorkspaceService} from "../../../translations/service/workspace.service";
@@ -38,7 +37,6 @@ describe('WorkspaceTableComponent', () => {
             .configureTestingModule({
                 imports: [
                     TranslateModule.forRoot(),
-                    CoreUiModule,
                     CoreSharedModule,
                     CoreEventModule,
                     CoreAuthModule

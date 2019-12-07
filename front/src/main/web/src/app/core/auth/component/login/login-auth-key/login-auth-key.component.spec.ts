@@ -1,10 +1,10 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {LoginAuthKeyComponent} from './login-auth-key.component';
-import {CoreUiModule} from "../../../../ui/core-ui.module";
 import {Router} from "@angular/router";
 import {NotificationService} from "../../../../notification/service/notification.service";
 import {AuthenticationService} from "../../../service/authentication.service";
+import {CoreSharedModule} from "../../../../shared/core-shared-module";
 
 describe('LoginAuthKeyComponent', () => {
     let component: LoginAuthKeyComponent;
@@ -21,7 +21,7 @@ describe('LoginAuthKeyComponent', () => {
         TestBed
             .configureTestingModule({
                 imports: [
-                    CoreUiModule
+                    CoreSharedModule
                 ],
                 declarations: [
                     LoginAuthKeyComponent

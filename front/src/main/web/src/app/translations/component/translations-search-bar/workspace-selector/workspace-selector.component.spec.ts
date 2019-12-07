@@ -3,10 +3,8 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {WorkspaceSelectorComponent} from './workspace-selector.component';
 import {TranslateModule} from "@ngx-translate/core";
 import {CoreSharedModule} from "../../../../core/shared/core-shared-module";
-import {HttpClientModule} from "@angular/common/http";
 import {CoreEventModule} from "../../../../core/event/core-event.module";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
-import {CoreUiModule} from "../../../../core/ui/core-ui.module";
 import {WorkspaceService} from "../../../service/workspace.service";
 import {BehaviorSubject} from "rxjs";
 import {Workspace} from "../../../model/workspace.model";
@@ -27,7 +25,6 @@ describe('WorkspaceSelectorComponent', () => {
                 imports: [
                     BrowserAnimationsModule,
                     CoreSharedModule,
-                    CoreUiModule,
                     CoreEventModule,
                     TranslateModule.forRoot()
                 ],

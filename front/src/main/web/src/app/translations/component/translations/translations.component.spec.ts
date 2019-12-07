@@ -10,7 +10,6 @@ import {TranslationLocalesSelectorComponent} from "../translations-search-bar/tr
 import {TranslationCriterionSelectorComponent} from "../translations-search-bar/translation-criterion-selector/translation-criterion-selector.component";
 import {TranslationEditingCellComponent} from "../translations-table/translation-editing-cell/translation-editing-cell.component";
 import {CoreEventModule} from "../../../core/event/core-event.module";
-import {CoreUiModule} from "../../../core/ui/core-ui.module";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {BehaviorSubject} from "rxjs";
 import {WorkspaceService} from "../../service/workspace.service";
@@ -43,7 +42,6 @@ describe('TranslationsComponent', () => {
                 imports: [
                     TranslateModule.forRoot(),
                     BrowserAnimationsModule,
-                    CoreUiModule,
                     CoreAuthModule,
                     CoreSharedModule,
                     CoreEventModule

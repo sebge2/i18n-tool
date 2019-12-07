@@ -1,11 +1,9 @@
 import {getTestBed, TestBed} from '@angular/core/testing';
 
 import {TranslationsService} from './translations.service';
-import {HttpClientModule} from "@angular/common/http";
 import {NotificationService} from "../../core/notification/service/notification.service";
 import {HttpClientTestingModule} from "@angular/common/http/testing";
-import {CoreEventModule} from "../../core/event/core-event.module";
-import {CoreUiModule} from "../../core/ui/core-ui.module";
+import {CoreSharedModule} from "../../core/shared/core-shared-module";
 
 describe('TranslationsService', () => {
     let injector: TestBed;
@@ -17,7 +15,10 @@ describe('TranslationsService', () => {
 
         TestBed
             .configureTestingModule({
-              imports: [HttpClientTestingModule, CoreUiModule],
+                imports: [
+                    HttpClientTestingModule,
+                    CoreSharedModule
+                ]
             });
 
         injector = getTestBed();

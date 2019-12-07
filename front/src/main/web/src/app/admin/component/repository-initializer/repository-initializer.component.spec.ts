@@ -4,7 +4,6 @@ import {RepositoryInitializerComponent} from './repository-initializer.component
 import {TranslateModule} from "@ngx-translate/core";
 import {RepositoryService} from "../../../translations/service/repository.service";
 import {CoreSharedModule} from "../../../core/shared/core-shared-module";
-import {CoreUiModule} from "../../../core/ui/core-ui.module";
 import {BehaviorSubject} from "rxjs";
 import {Repository} from "../../../translations/model/repository.model";
 import {RepositoryStatus} from "../../../translations/model/repository-status.model";
@@ -42,7 +41,6 @@ describe('RepositoryInitializerComponent', () => {
             .configureTestingModule({
                 imports: [
                     CoreSharedModule,
-                    CoreUiModule,
                     CoreAuthModule,
                     TranslateModule.forRoot()
                 ],

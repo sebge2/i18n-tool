@@ -5,7 +5,7 @@ import {FormBuilder} from "@angular/forms";
 import {BundleKeyTranslation} from "../../../model/edition/bundle-key-translation.model";
 import {Locale} from "../../../model/locale.model";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
-import {CoreUiModule} from "../../../../core/ui/core-ui.module";
+import {CoreSharedModule} from "../../../../core/shared/core-shared-module";
 
 describe('TranslationEditingCellComponent', () => {
     let component: TranslationEditingCellComponent;
@@ -16,7 +16,7 @@ describe('TranslationEditingCellComponent', () => {
             .configureTestingModule({
                 imports: [
                     BrowserAnimationsModule,
-                    CoreUiModule
+                    CoreSharedModule
                 ],
                 declarations: [TranslationEditingCellComponent]
             })

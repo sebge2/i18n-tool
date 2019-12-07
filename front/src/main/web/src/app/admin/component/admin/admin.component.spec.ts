@@ -6,7 +6,6 @@ import {WorkspaceTableComponent} from "../workspace-table/workspace-table.compon
 import {TranslateModule} from "@ngx-translate/core";
 import {CoreSharedModule} from "../../../core/shared/core-shared-module";
 import {CoreEventModule} from "../../../core/event/core-event.module";
-import {CoreUiModule} from "../../../core/ui/core-ui.module";
 import {RepositoryService} from "../../../translations/service/repository.service";
 import {BehaviorSubject} from "rxjs";
 import {WorkspaceService} from "../../../translations/service/workspace.service";
@@ -58,7 +57,6 @@ describe('AdminComponent', () => {
         TestBed
             .configureTestingModule({
                 imports: [
-                    CoreUiModule,
                     CoreSharedModule,
                     CoreEventModule,
                     CoreAuthModule,

@@ -2,7 +2,6 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {UserTableDetailsComponent} from './user-table-details.component';
 import {CoreSharedModule} from "../../../../core/shared/core-shared-module";
-import {CoreUiModule} from "../../../../core/ui/core-ui.module";
 import {UserService} from "../../../../core/auth/service/user.service";
 import {TranslateModule} from "@ngx-translate/core";
 
@@ -19,7 +18,6 @@ describe('UserTableDetailsComponent', () => {
             .configureTestingModule({
                 imports: [
                     CoreSharedModule,
-                    CoreUiModule,
                     TranslateModule.forRoot()
                 ],
                 providers: [

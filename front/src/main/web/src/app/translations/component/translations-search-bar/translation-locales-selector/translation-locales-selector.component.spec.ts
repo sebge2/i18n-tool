@@ -4,7 +4,6 @@ import {TranslationLocalesSelectorComponent} from './translation-locales-selecto
 import {CoreSharedModule} from "../../../../core/shared/core-shared-module";
 import {TranslateModule} from "@ngx-translate/core";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
-import {CoreUiModule} from "../../../../core/ui/core-ui.module";
 
 describe('TranslationLocalesSelectorComponent', () => {
     let component: TranslationLocalesSelectorComponent;
@@ -16,7 +15,6 @@ describe('TranslationLocalesSelectorComponent', () => {
                 imports: [
                     BrowserAnimationsModule,
                     CoreSharedModule,
-                    CoreUiModule,
                     TranslateModule.forRoot()
                 ],
                 declarations: [TranslationLocalesSelectorComponent]

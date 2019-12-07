@@ -4,12 +4,11 @@ import {LoginComponent} from './login.component';
 import {LoginAuthKeyComponent} from "./login-auth-key/login-auth-key.component";
 import {LoginUserPasswordComponent} from "./login-user-password/login-user-password.component";
 import {LoginProviderComponent} from "./login-provider/login-provider.component";
-import {CoreUiModule} from "../../../ui/core-ui.module";
 import {CoreSharedModule} from "../../../shared/core-shared-module";
 import {Router} from "@angular/router";
 import {NotificationService} from "../../../notification/service/notification.service";
 import {AuthenticationService} from "../../service/authentication.service";
-import { TranslateService } from '@ngx-translate/core';
+import {TranslateService} from '@ngx-translate/core';
 
 describe('LoginComponent', () => {
     let component: LoginComponent;
@@ -27,7 +26,6 @@ describe('LoginComponent', () => {
         TestBed
             .configureTestingModule({
                 imports: [
-                    CoreUiModule,
                     CoreSharedModule
                 ],
                 declarations: [

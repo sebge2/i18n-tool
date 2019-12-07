@@ -2,10 +2,9 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {LoginUserPasswordComponent} from './login-user-password.component';
 import {Router} from "@angular/router";
-import {CoreUiModule} from "../../../../ui/core-ui.module";
-import {HttpClientModule} from "@angular/common/http";
 import {AuthenticationService} from "../../../service/authentication.service";
 import {NotificationService} from "../../../../notification/service/notification.service";
+import {CoreSharedModule} from "../../../../shared/core-shared-module";
 
 describe('LoginUserPasswordComponent', () => {
     let component: LoginUserPasswordComponent;
@@ -20,7 +19,7 @@ describe('LoginUserPasswordComponent', () => {
         TestBed
             .configureTestingModule({
                 imports: [
-                    CoreUiModule
+                    CoreSharedModule
                 ],
                 declarations: [
                     LoginUserPasswordComponent

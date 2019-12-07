@@ -2,7 +2,6 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {ErrorNotificationComponent} from './error-notification.component';
 import {NotificationService} from "../../service/notification.service";
-import {CoreUiModule} from "../../../ui/core-ui.module";
 import {MAT_SNACK_BAR_DATA} from "@angular/material";
 
 describe('ErrorNotificationComponent', () => {
@@ -20,9 +19,7 @@ describe('ErrorNotificationComponent', () => {
                 declarations: [
                     ErrorNotificationComponent
                 ],
-                imports: [
-                    CoreUiModule
-                ],
+                imports: [],
                 providers: [
                     {
                         provide: MAT_SNACK_BAR_DATA,

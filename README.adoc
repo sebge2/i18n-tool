@@ -92,6 +92,7 @@ The following environment variables are needed by this Travis-CI build:
 === Amazon EB Configuration
 
 The following environment variables must be setup on Amazon Elastic Bean Stalk:
+
 * SERVER_PORT
 * DOCKER_IMAGE_VERSION
 * GIT_HUB_OAUTH_CLIENT

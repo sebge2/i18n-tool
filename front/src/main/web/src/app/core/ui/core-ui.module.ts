@@ -2,11 +2,10 @@ import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {MainComponent} from './component/main/main.component';
 import {RouterModule} from "@angular/router";
-import {MaterialModule} from './material.module';
 import {MenuComponent} from "./component/menu/menu.component";
 import {HeaderComponent} from "./component/header/header.component";
-import {ReactiveFormsModule} from "@angular/forms";
-import {FlexLayoutModule} from "@angular/flex-layout";
+import {CoreAuthModule} from "../auth/core-auth.module";
+import {CoreSharedModule} from "../shared/core-shared-module";
 
 @NgModule({
     declarations: [
@@ -17,13 +16,10 @@ import {FlexLayoutModule} from "@angular/flex-layout";
     imports: [
         RouterModule,
         CommonModule,
-        MaterialModule
+        CoreSharedModule,
+        CoreAuthModule
     ],
-    exports: [
-        MaterialModule,
-        ReactiveFormsModule,
-        FlexLayoutModule
-    ]
+    exports: []
 })
 export class CoreUiModule {
 

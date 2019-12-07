@@ -2,7 +2,6 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {TranslateModule} from "@ngx-translate/core";
 import {CoreSharedModule} from "../../../core/shared/core-shared-module";
 import {TranslationEditingCellComponent} from "./translation-editing-cell/translation-editing-cell.component";
-import {CoreUiModule} from "../../../core/ui/core-ui.module";
 import {TranslationsTableComponent} from './translations-table.component';
 import {AuthenticationService} from "../../../core/auth/service/authentication.service";
 import {TranslationsService} from "../../service/translations.service";
@@ -20,7 +19,6 @@ describe('TranslationsTableComponent', () => {
         TestBed
             .configureTestingModule({
                 imports: [
-                    CoreUiModule,
                     CoreSharedModule,
                     TranslateModule.forRoot()
                 ],

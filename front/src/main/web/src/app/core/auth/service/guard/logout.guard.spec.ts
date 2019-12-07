@@ -3,7 +3,6 @@ import {inject, TestBed} from '@angular/core/testing';
 import {LogoutGuard} from './logout.guard';
 import {HttpClientModule} from "@angular/common/http";
 import {RouterModule} from "@angular/router";
-import {CoreUiModule} from "../../../ui/core-ui.module";
 import {AuthenticationService} from "../authentication.service";
 
 describe('LogoutGuard', () => {
@@ -16,8 +15,7 @@ describe('LogoutGuard', () => {
             .configureTestingModule({
                 imports: [
                     HttpClientModule,
-                    RouterModule.forRoot([]),
-                    CoreUiModule
+                    RouterModule.forRoot([])
                 ],
                 providers: [
                     LogoutGuard,

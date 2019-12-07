@@ -37,6 +37,8 @@ import {
     MatTreeModule,
 } from '@angular/material';
 import {MatProgressButtonsModule} from 'mat-progress-buttons';
+import {ReactiveFormsModule} from "@angular/forms";
+import {FlexLayoutModule} from "@angular/flex-layout";
 
 @NgModule({
     exports: [
@@ -75,10 +77,13 @@ import {MatProgressButtonsModule} from 'mat-progress-buttons';
         MatToolbarModule,
         MatTooltipModule,
         MatTreeModule,
-        MatProgressButtonsModule
+        MatProgressButtonsModule,
+
+        ReactiveFormsModule,
+        FlexLayoutModule
     ],
     declarations: []
 })
-export class MaterialModule {
+export class CoreSharedLibModule {
 
 }
