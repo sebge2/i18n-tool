@@ -8,11 +8,11 @@
   <span class="spacer"></span>
 
   <div *ngIf="currentUser != null">
-    <button mat-button [matMenuTriggerFor]="loginMenu">
+    <button id="currentUserButtonAction" mat-button [matMenuTriggerFor]="loginMenu">
       <img [src]="getUrl()" class="img-rounded profile-img" alt="{{getDisplayName()}}">
 
       <ng-template [ngIf]="!smallSize">
-        <span class="user-name">{{getDisplayName()}}</span>
+        <span class="user-name" id="currentUserName">{{getDisplayName()}}</span>
       </ng-template>
 
       <span class="fas fa-caret-down drop-down"></span>
@@ -20,7 +20,7 @@
 
     <mat-menu #loginMenu="matMenu">
       <button mat-menu-item>
-        <a routerLink="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        <a id="logoutLink" routerLink="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
       </button>
     </mat-menu>
   </div>
