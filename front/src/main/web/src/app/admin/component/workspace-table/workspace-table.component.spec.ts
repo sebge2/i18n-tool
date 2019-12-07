@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {async, ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
 
 import {WorkspaceTableComponent} from './workspace-table.component';
 import {TranslateModule} from "@ngx-translate/core";
@@ -11,6 +11,9 @@ import {AuthenticationService} from "../../../core/auth/service/authentication.s
 import {CoreAuthModule} from "../../../core/auth/core-auth.module";
 import {ALL_USER_ROLES} from "../../../core/auth/model/user-role.model";
 import {AuthenticatedUser} from "../../../core/auth/model/authenticated-user.model";
+import {By} from "@angular/platform-browser";
+import { of } from 'rxjs';
+import {delay} from "rxjs/operators";
 
 describe('WorkspaceTableComponent', () => {
     let component: WorkspaceTableComponent;
@@ -28,10 +31,10 @@ describe('WorkspaceTableComponent', () => {
         workspaces = new BehaviorSubject<Workspace[]>([]);
 
         workspaceService.getWorkspaces = jasmine.createSpy().and.returnValue(workspaces);
-        workspaceService.find = jasmine.createSpy().and.returnValue(Promise.resolve());
+        workspaceService.find = jasmine.createSpy('find').and.returnValue(of ([]).pipe(delay(1000)).toPromise());
 
         authenticationService = jasmine.createSpyObj('authenticationUser', ['currentUser']);
-        authenticationService.currentUser = jasmine.createSpy().and.returnValue(user);
+        authenticationService.currentUser = jasmine.createSpy('currentUser').and.returnValue(user);
 
         TestBed
             .configureTestingModule({
@@ -73,7 +76,7 @@ describe('WorkspaceTableComponent', () => {
         });
 
     it('should find when clicked',
-        async () => {
+        fakeAsync( () => {
             workspaces.next(
                 [
                     new Workspace(<Workspace>{id: 'abc', branch: 'master'}),
@@ -82,12 +85,25 @@ describe('WorkspaceTableComponent', () => {
             );
 
             fixture.detectChanges();
+
             fixture.whenStable().then(() => {
+                expect(fixture.debugElement.query(By.css('.fa-spin'))).toBeNull();
+
                 fixture.debugElement.nativeElement.querySelector('#findButton').click();
+
+                fixture.detectChanges();
+
+                expect(fixture.debugElement.query(By.css('.fa-spin'))).not.toBeNull();
+
+                tick(1000);
+                fixture.detectChanges();
+
+                expect(fixture.debugElement.query(By.css('.fa-spin'))).toBeNull();
 
                 expect(workspaceService.find).toHaveBeenCalled();
             });
-        });
+        }));
 
+    // TODO erase workspace not admin
     // TODO erase workspace
 });

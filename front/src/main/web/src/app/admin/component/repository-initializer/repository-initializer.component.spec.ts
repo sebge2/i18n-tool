@@ -56,15 +56,27 @@ describe('RepositoryInitializerComponent', () => {
         component = fixture.componentInstance;
     }));
 
-    it('should display not initialized',
+    it('should display not initialized with initializing button',
         () => {
             fixture.detectChanges();
 
             expect(fixture.debugElement.query(By.css('.fa-times-circle'))).not.toBeNull();
+            expect(fixture.debugElement.nativeElement.querySelector('#button')).not.toBeNull();
         }
     );
 
-    it('should display button',
+    it('should display not initialized without initializing button',
+        () => {
+            user.next(new AuthenticatedUser(<AuthenticatedUser>{sessionRoles: [UserRole.MEMBER_OF_REPOSITORY]}));
+
+            fixture.detectChanges();
+
+            expect(fixture.debugElement.query(By.css('.fa-times-circle'))).not.toBeNull();
+            expect(fixture.debugElement.nativeElement.querySelector('#button')).toBeNull();
+        }
+    );
+
+    it('should initialize repository when clicked',
         async () => {
             user.next(new AuthenticatedUser(<AuthenticatedUser>{sessionRoles: [UserRole.ADMIN, UserRole.MEMBER_OF_REPOSITORY]}));
 

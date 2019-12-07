@@ -52,6 +52,11 @@ repository are allowed.
 Authenticating with "auth-key" is mainly used for automated testing.
 The associated user must be able to access the current repository.
 
+The supported bundle file formats are:
+
+* Java properties file
+* JSON with http://userguide.icu-project.org/formatparse/messages[ICU Format]
+
 
 [link=./doc/main-screen-admin.png]
 image::./doc/main-screen-admin.png[Main Screen Admin,300]
