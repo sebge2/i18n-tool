@@ -70,7 +70,7 @@ jobs:
     - stage: Deploy AWS
       language: generic
       script:
-        - mvn assembly:single@'create-aws-config-zip' $MVN_OPTS -pl server/
+        - mvn clean install -DskipTests $MVN_OPTS
       deploy:
         - provider: elasticbeanstalk
           region: "eu-central-1"
