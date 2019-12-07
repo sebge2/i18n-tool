@@ -82,12 +82,23 @@ image::./doc/translations-search-screen.png[Translations Search Screen,300]
 
 The following environment variables are needed by this Travis-CI build:
 
-* AWS_ACCESS_KEY=**
+* AWS_ACCESS_KEY=   **
 * AWS_SECRET_KEY=**
+* AWS_BUCKET_NAME=**
 * DOCKER_PASSWORD=**
 * DOCKER_USERNAME=**
 * E2E_SERVER_PORT=8080
 * E2E_GIT_HUB_AUTH_TOKEN=**
+
+There are 4 jobs:
+
+. Build of front and back including unit tests. The docker image is build as a candidate.
+. E2E tests. The application is launched in the building container.
+. The docker image is deployed in the image registry. The candidate image is tagged as the final one.
+. The application is deployed
+
+[link=./doc/travis-ci.png]
+image::./doc/travis-ci.png[Travis-CI Build result,300]
 
 === Amazon EB Configuration
 
@@ -101,6 +112,9 @@ The following environment variables must be setup on Amazon Elastic Bean Stalk:
 * GIT_HUB_REPO_NAME
 * GIT_HUB_WEBHOOK_SECRET
 * DEFAULT_ADMIN_PASSWORD (optional)
+
+The EB environment must use an IAM role allowing to attach an EC2 volume.
+Either modify the existing role _aws-elasticbeanstalk-ec2-service-role_, or create a dedicated role. https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_examples_ec2_volumes-instance.html[AWS DOcumentation]
 
 
 == Technical Documentation
