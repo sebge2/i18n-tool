@@ -11,24 +11,23 @@ export class AuthPage {
     }
 
     async loginWithAuthKeyIfNeeded(): Promise<AppPage> {
-        return this.isLoggedIn()
-            .then(loggedIn => {
-                if (loggedIn) {
-                    return this.app;
-                }
+        const loggedIn = await this.isLoggedIn();
 
-                return this.loginWithAuthKey();
-            });
+        if (!loggedIn) {
+            await this.loginWithAuthKey();
+        }
+
+        return this.app;
     }
 
     async loginWithAdminIfNeeded(): Promise<AppPage> {
         const loggedIn = await this.isLoggedIn();
 
-        if (loggedIn) {
-            return this.app;
+        if (!loggedIn) {
+            await this.loginWithAdmin();
         }
 
-        return this.loginWithAdmin();
+        return this.app;
     }
 
     async logout(): Promise<AuthPage> {
