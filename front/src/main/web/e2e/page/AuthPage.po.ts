@@ -1,5 +1,6 @@
 import {browser, by, element} from 'protractor';
 import {AppPage} from "./AppPage.po";
+import {ExpectedConditions} from 'protractor';
 
 export class AuthPage {
 
@@ -11,6 +12,7 @@ export class AuthPage {
     }
 
     async loginWithAuthKeyIfNeeded(): Promise<AppPage> {
+        // TODO check username
         const loggedIn = await this.isLoggedIn();
 
         if (!loggedIn) {
@@ -21,6 +23,7 @@ export class AuthPage {
     }
 
     async loginWithAdminIfNeeded(): Promise<AppPage> {
+        // TODO check username
         const loggedIn = await this.isLoggedIn();
 
         if (!loggedIn) {
@@ -32,7 +35,12 @@ export class AuthPage {
 
     async logout(): Promise<AuthPage> {
         await element(by.id('currentUserButtonAction')).click();
+        await browser.wait(ExpectedConditions.visibilityOf(element(by.id('logoutLink'))), 5000);
         await element(by.id('logoutLink')).click();
+
+        expect(this.isLoggedIn()).toBeFalsy();
+
+        await element(by.id('backToHomepage')).click();
 
         return this;
     }
@@ -47,8 +55,8 @@ export class AuthPage {
         return (await element(by.id('currentUserName')).isPresent());
     }
 
-    private async loginWithAuthKey(): Promise<AppPage> {
-        await element(by.id('authKey')).sendKeys(process.env.E2E_GIT_HUB_AUTH_TOKEN);
+    async loginWithAuthKey(authKey?: string): Promise<AppPage> {
+        await element(by.id('authKey')).sendKeys(authKey ? authKey : process.env.E2E_GIT_HUB_AUTH_TOKEN);
         await element(by.id('authKeyLogin')).click();
 
         const currentRouteAfterLogin = await this.app.browser.currentRoute();
@@ -62,11 +70,18 @@ export class AuthPage {
         return this.app;
     }
 
-    private async loginWithAdmin(): Promise<AppPage> {
+    async loginWithAdmin(): Promise<AppPage> {
+        return this.loginWithUser(
+            'admin',
+            process.env.E2E_DEFAULT_ADMIN_PASSWORD ? process.env.E2E_DEFAULT_ADMIN_PASSWORD : 'adminPassword'
+        );
+    }
+
+    async loginWithUser(username: string, password: string): Promise<AppPage> {
         await browser.waitForAngularEnabled(false);
 
-        await element(by.id('username')).sendKeys('admin');
-        await element(by.id('password')).sendKeys(process.env.E2E_DEFAULT_ADMIN_PASSWORD ? process.env.E2E_DEFAULT_ADMIN_PASSWORD : 'adminPassword');
+        await element(by.id('username')).sendKeys(username);
+        await element(by.id('password')).sendKeys(password);
         await element(by.id('authUserPasswordLogin')).click();
 
         await browser.waitForAngularEnabled(true);

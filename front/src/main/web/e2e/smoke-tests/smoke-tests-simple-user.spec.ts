@@ -42,4 +42,7 @@ describe('Smoke Tests Simple User', function () {
         return app.menu.clickOnTranslationsItem();
     });
 
+    it('should navigate then logout', function () {
+        return app.auth.logout();
+    });
 });
