@@ -11,7 +11,7 @@ export class MenuPage {
     }
 
     async assertHasAdminItem(expected: boolean): Promise<MenuPage> {
-        expect(element(by.id('menuAdmin'))).toBeDefined();
+        expect(element(by.id('menuAdmin')).isPresent()).toBe(expected);
         return this;
     }
 
@@ -26,7 +26,7 @@ export class MenuPage {
     }
 
     async clickOnAdminItem(): Promise<MenuPage> {
-        this.assertHasAdminItem(true);
+        await this.assertHasAdminItem(true);
         await element(by.id('menuAdmin')).click();
         return this;
     }

@@ -32,7 +32,9 @@ export class BrowserPage {
     };
 
     async openAppRoute(route: string): Promise<AppPage> {
-        return browser.get(browser.baseUrl + route).then(() => new AppPage(this));
+        await browser.get(browser.baseUrl + route);
+
+        return new AppPage(this);
     }
 
 }

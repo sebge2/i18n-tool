@@ -6,37 +6,76 @@ export class AuthPage {
     constructor(private _appPage: AppPage) {
     }
 
-    appPage(): AppPage {
+    get app(): AppPage {
         return this._appPage;
     }
 
     async loginWithAuthKeyIfNeeded(): Promise<AppPage> {
-        return browser.getCurrentUrl()
-            .then(async (currentUrl: string) => {
-                if (!currentUrl.startsWith(browser.baseUrl)) {
-                    await this.appPage().browserPage().openApp();
+        return this.isLoggedIn()
+            .then(loggedIn => {
+                if (loggedIn) {
+                    return this.app;
                 }
 
-                let route = await this.appPage().browserPage().getCurrentRoute();
-
-                if (route !== '/login') {
-                    return this.appPage();
-                }
-
-                return element(by.id('authKey'))
-                    .sendKeys(process.env.E2E_GIT_HUB_AUTH_TOKEN)
-                    .then(() => element(by.id('authKeyLogin')).click())
-                    .then(async () => {
-                        const currentRouteAfterLogin = await this.appPage().browserPage().getCurrentRoute();
-
-                        if (currentRouteAfterLogin != '/translations') {
-                            console.error('Browser logs', await this.appPage().browserPage().consolePage().getBrowserLogs());
-
-                            throw new Error('Error while trying to login. Current route ' + currentRouteAfterLogin + '.');
-                        }
-
-                        return this.appPage();
-                    });
+                return this.loginWithAuthKey();
             });
+    }
+
+    async loginWithAdminIfNeeded(): Promise<AppPage> {
+        const loggedIn = await this.isLoggedIn();
+
+        if (loggedIn) {
+            return this.app;
+        }
+
+        return this.loginWithAdmin();
+    }
+
+    async logout(): Promise<AuthPage> {
+        await element(by.id('currentUserButtonAction')).click();
+        await element(by.id('logoutLink')).click();
+
+        return this;
+    }
+
+    private async loginWithAuthKey(): Promise<AppPage> {
+        await element(by.id('authKey')).sendKeys(process.env.E2E_GIT_HUB_AUTH_TOKEN);
+        await element(by.id('authKeyLogin')).click();
+
+        const currentRouteAfterLogin = await this.app.browser.currentRoute();
+
+        if (currentRouteAfterLogin != '/translations') {
+            console.error('Browser logs', await this.app.browser.console.getBrowserLogs());
+
+            throw new Error('Error while trying to login. Current route ' + currentRouteAfterLogin + '.');
+        }
+
+        return this.app;
+    }
+
+    async isLoggedIn(): Promise<Boolean> {
+        const currentUrl = await browser.getCurrentUrl();
+
+        if (!currentUrl.startsWith(browser.baseUrl)) {
+            await this.app.browser.openApp();
+        }
+
+        return (await element(by.id('currentUserName')).isPresent());
+    }
+
+    private async loginWithAdmin(): Promise<AppPage> {
+        await element(by.id('username')).sendKeys('admin');
+        await element(by.id('password')).sendKeys(process.env.E2E_DEFAULT_ADMIN_PASSWORD ? process.env.E2E_DEFAULT_ADMIN_PASSWORD : 'adminPassword');
+        await element(by.id('authUserPasswordLogin')).click();
+
+        const currentRouteAfterLogin = await this.app.browser.currentRoute();
+
+        if (currentRouteAfterLogin != '/translations') {
+            console.error('Browser logs', await this.app.browser.console.getBrowserLogs());
+
+            throw new Error('Error while trying to login. Current route ' + currentRouteAfterLogin + '.');
+        }
+
+        return this.app;
     }
 }
