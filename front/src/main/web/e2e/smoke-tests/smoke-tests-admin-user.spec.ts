@@ -2,19 +2,19 @@ import {BrowserPage} from '../page/BrowserPage.po';
 import {AppPage} from "../page/AppPage.po";
 import {logging} from "selenium-webdriver";
 
-describe('Smoke Tests', function () {
+describe('Smoke Tests Admin User', function () {
 
-    let appPage: AppPage;
+    let app: AppPage;
 
-    beforeAll(async function () {
-        new BrowserPage().openApp()
-            .then(page => page.authPage().loginWithAuthKeyIfNeeded())
-            .then(page => appPage = page);
+    beforeAll(function () {
+        return new BrowserPage().openApp()
+            .then(page => page.auth.loginWithAdminIfNeeded())
+            .then(page => app = page);
     });
 
-    afterEach(async function () {
-        await appPage.browserPage()
-            .consolePage()
+    afterEach(function () {
+        return app.browser
+            .console
             .getBrowserLogs()
             .then(logs =>
                 logs
@@ -30,16 +30,16 @@ describe('Smoke Tests', function () {
     it('should land on default route', function () {
     });
 
-    xit('should navigate to admin', function () {
-        appPage.menuPage().clickOnAdminItem();
+    it('should navigate to admin', function () {
+        return app.menu.clickOnAdminItem();
     });
 
     it('should navigate to settings', function () {
-        appPage.menuPage().clickOnSettingsItem();
+        return app.menu.clickOnSettingsItem();
     });
 
     it('should navigate to translations', function () {
-        appPage.menuPage().clickOnTranslationsItem();
+        return app.menu.clickOnTranslationsItem();
     });
 
 });

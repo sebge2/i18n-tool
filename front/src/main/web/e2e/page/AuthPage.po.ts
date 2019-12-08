@@ -37,6 +37,16 @@ export class AuthPage {
         return this;
     }
 
+    async isLoggedIn(): Promise<Boolean> {
+        const currentUrl = await browser.getCurrentUrl();
+
+        if (!currentUrl.startsWith(browser.baseUrl)) {
+            await this.app.browser.openApp();
+        }
+
+        return (await element(by.id('currentUserName')).isPresent());
+    }
+
     private async loginWithAuthKey(): Promise<AppPage> {
         await element(by.id('authKey')).sendKeys(process.env.E2E_GIT_HUB_AUTH_TOKEN);
         await element(by.id('authKeyLogin')).click();
@@ -52,20 +62,14 @@ export class AuthPage {
         return this.app;
     }
 
-    async isLoggedIn(): Promise<Boolean> {
-        const currentUrl = await browser.getCurrentUrl();
-
-        if (!currentUrl.startsWith(browser.baseUrl)) {
-            await this.app.browser.openApp();
-        }
-
-        return (await element(by.id('currentUserName')).isPresent());
-    }
-
     private async loginWithAdmin(): Promise<AppPage> {
+        await browser.waitForAngularEnabled(false);
+
         await element(by.id('username')).sendKeys('admin');
         await element(by.id('password')).sendKeys(process.env.E2E_DEFAULT_ADMIN_PASSWORD ? process.env.E2E_DEFAULT_ADMIN_PASSWORD : 'adminPassword');
         await element(by.id('authUserPasswordLogin')).click();
+
+        await browser.waitForAngularEnabled(true);
 
         const currentRouteAfterLogin = await this.app.browser.currentRoute();
 
