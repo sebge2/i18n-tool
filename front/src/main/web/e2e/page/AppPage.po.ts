@@ -7,15 +7,15 @@ export class AppPage {
     constructor(private _browserPage: BrowserPage) {
     }
 
-    browserPage(): BrowserPage {
+    get browser(): BrowserPage {
         return this._browserPage;
     }
 
-    authPage(): AuthPage {
+    get auth(): AuthPage {
         return new AuthPage(this);
     }
 
-    menuPage(): MenuPage {
+    get menu(): MenuPage {
         return new MenuPage(this);
     }
 }
