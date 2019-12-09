@@ -123,6 +123,22 @@ Either modify the existing role _aws-elasticbeanstalk-ec2-service-role_, or crea
 
 
 == Technical Documentation
+
+=== Unit Tests
+
+The build result provides (in _/target_) a report of the code coverage:
+
+[link=./doc/unit-test-coverage.png]
+image::./doc/unit-test-coverage.png[Report of Unit Test coverage,250]
+
+=== E2E Tests
+
+The build result provides (in _/target_) a report of all the executed tests.
+It also includes snapshots after the execution of every test:
+
+[link=./doc/e2e-test-report.png]
+image::./doc/e2e-test-report.png[Report of E2E Tests,250]
+
 === Backend Endpoints
 
 * /api/*
