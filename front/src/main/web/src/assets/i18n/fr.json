@@ -4,7 +4,8 @@
     "WORKSPACE_LABEL" : "Espace de travail :",
     "CANCEL_ACTION" : "Annuler",
     "LOCALES_LABEL" : "Langues :",
-    "REPOSITORY_TITLE" : "Répertoire"
+    "REPOSITORY_TITLE" : "Répertoire",
+    "USERS_TITLE" : "message pour la release"
   },
   "TRANSLATIONS" : {
     "SEARCH_BAR" : {
