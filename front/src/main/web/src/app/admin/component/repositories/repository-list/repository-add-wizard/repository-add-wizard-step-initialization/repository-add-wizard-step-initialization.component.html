@@ -1,0 +1,23 @@
+<div class="app-repository-add-step-init-content">
+    <div class="app-centered-single-item" *ngIf="initializationInProgress">
+        <mat-spinner></mat-spinner>
+    </div>
+
+    <div class="app-centered-container" *ngIf="repository">
+        <div class="app-centered-container-child">
+            <div class="app-centered-container-item">
+                <mat-icon style="color: green; font-size: 150px; width: 150px">check_circle</mat-icon>
+            </div>
+            <div class="app-centered-container-item">
+                <p>{{'ADMIN.REPOSITORIES.ADD_WIZARD.STEP_INITIALIZATION.INITIALIZED' | translate: {name: repository?.name} }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="unknown-error-container" *ngIf="unknownError">
+        <p>{{'ADMIN.REPOSITORIES.ADD_WIZARD.STEP_INITIALIZATION.UNKNOWN_ERROR' | translate}}</p>
+    </div>
+    <div class="unknown-error-container" *ngIf="errorMessages">
+        <p>{{'ADMIN.REPOSITORIES.ADD_WIZARD.STEP_INITIALIZATION.ERROR_TITLE' | translate}}</p>
+        <app-error-message-list [errorMessages]="errorMessages"></app-error-message-list>
+    </div>
+</div>

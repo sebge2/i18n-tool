@@ -1,0 +1,10 @@
+<div mat-dialog-title>
+    <i class="fas fa-exclamation-triangle icon"></i> <span class="snack-bar-title"> {{message}}</span>
+</div>
+
+<div mat-dialog-content>
+    <app-error-message-list [errorMessages]="errorMessages" [whiteFont]="true"></app-error-message-list>
+</div>
+<div mat-dialog-actions align="end">
+    <button mat-raised-button class="snack-bar-close" (click)="snackBarRef.dismiss()">Ok</button>
+</div>

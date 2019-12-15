@@ -8,4 +8,4 @@ export enum UserRole {
 
 }
 
-export const ALL_USER_ROLES = Object.keys(UserRole).map(key => UserRole[key]);
+export const ALL_USER_ROLES : UserRole[] = Object.keys(UserRole).map(key => UserRole[key]);

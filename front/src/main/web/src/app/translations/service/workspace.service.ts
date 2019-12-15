@@ -1,136 +1,126 @@
-import {Injectable, OnDestroy} from '@angular/core';
-import {HttpClient} from "@angular/common/http";
+import {Injectable} from '@angular/core';
 import {EventService} from "../../core/event/service/event.service";
-import {Workspace} from "../model/workspace.model";
-import {BehaviorSubject, Observable, Subject} from "rxjs";
+import {Workspace} from "../model/workspace/workspace.model";
+import {combineLatest, Observable, of} from "rxjs";
 import {Events} from 'src/app/core/event/model/events.model';
-import {takeUntil} from "rxjs/operators";
+import {catchError, distinctUntilChanged, filter, map, mergeMap, tap} from "rxjs/operators";
 import {NotificationService} from "../../core/notification/service/notification.service";
+import {WorkspaceDto, WorkspaceService as ApiWorkspaceService} from "../../api";
+import * as _ from "lodash";
+import {BundleFile} from "../model/workspace/bundle-file.model";
+import {RepositoryService} from "./repository.service";
+import {EnrichedWorkspace} from "../model/workspace/enriched-workspace.model";
+import {SynchronizedCollection} from "../../core/shared/utils/synchronized-collection";
 
 @Injectable({
     providedIn: 'root'
 })
-export class WorkspaceService implements OnDestroy {
+export class WorkspaceService {
 
-    private _workspaces: BehaviorSubject<Workspace[]> = new BehaviorSubject<Workspace[]>([]);
-    private destroy$ = new Subject();
+    private static readonly MAX_CACHED_BUNDLE_FILES = 100;
 
-    constructor(private httpClient: HttpClient,
+    private readonly _synchronizedWorkspaces$: SynchronizedCollection<WorkspaceDto, Workspace>;
+    private readonly _workspaces$: Observable<Workspace[]>;
+
+    private _cachedWorkspaceBundleFiles = new Map<string, BundleFile[]>();
+
+    constructor(private apiWorkspaceService: ApiWorkspaceService,
+                private repositoryService: RepositoryService,
                 private eventService: EventService,
                 private notificationService: NotificationService) {
-        this.httpClient.get<Workspace[]>('/api/workspace').toPromise()
-            .then(workspaces => this._workspaces.next(workspaces.map(workspace => new Workspace(workspace)).sort(workspaceSorter)))
-            .catch(reason => {
-                console.error("Error while retrieving workspaces.", reason);
-                this.notificationService.displayErrorMessage("Error while retrieving workspaces.")
-            });
 
-        this.eventService.subscribe(Events.UPDATED_WORKSPACE, Workspace)
-            .pipe(takeUntil(this.destroy$))
-            .subscribe(
-                (workspace: Workspace) => {
-                    const workspaces = this._workspaces.getValue().slice();
+        this._synchronizedWorkspaces$ = new SynchronizedCollection<WorkspaceDto, Workspace>(
+            () => this.apiWorkspaceService.findAll4(),
+            this.eventService.subscribeDto(Events.ADDED_WORKSPACE),
+            this.eventService.subscribeDto(Events.UPDATED_WORKSPACE),
+            this.eventService.subscribeDto(Events.DELETED_WORKSPACE),
+            this.eventService.reconnected(),
+            dto => Workspace.fromDto(dto),
+            ((first, second) => first.id === second.id)
+        );
 
-                    const index = workspaces.findIndex(current => workspace.id === current.id);
-                    if (index >= 0) {
-                        workspaces[index] = workspace;
-                    } else {
-                        workspaces.push(workspace);
-                    }
+        this._workspaces$ = this._synchronizedWorkspaces$
+            .collection
+            .pipe(catchError((reason) => {
+                console.error('Error while retrieving workspaces.', reason);
+                this.notificationService.displayErrorMessage('ADMIN.WORKSPACES.ERROR.GET_ALL');
+                return [];
+            }));
 
-                    this._workspaces.next(workspaces.sort(workspaceSorter));
-                }
+        this.getWorkspaces()
+            .subscribe(() => this._cachedWorkspaceBundleFiles.clear());
+    }
+
+    public getWorkspaces(): Observable<Workspace[]> {
+        return this._workspaces$;
+    }
+
+    public getRepositoryWorkspaces(repositoryId: string): Observable<Workspace[]> {
+        return this.getWorkspaces()
+            .pipe(map(workspaces => workspaces.filter(workspace => _.isEqual(workspace.repositoryId, repositoryId))));
+    }
+
+    public getWorkspace(workspaceId: string): Observable<Workspace> {
+        return this.getWorkspaces()
+            .pipe(
+                map(workspaces => _.find(workspaces, workspace => _.isEqual(workspace.id, workspaceId))),
+                filter(workspace => !!workspace),
+                distinctUntilChanged()
             );
+    }
 
-        this.eventService.subscribe(Events.DELETED_WORKSPACE, Workspace)
-            .pipe(takeUntil(this.destroy$))
-            .subscribe(
-                (workspace: Workspace) => {
-                    const workspaces = this._workspaces.getValue().slice();
+    public getWorkspaceBundleFiles(workspaceId: string): Observable<BundleFile[]> {
+        if (this._cachedWorkspaceBundleFiles.has(workspaceId)) {
+            return of(this._cachedWorkspaceBundleFiles.get(workspaceId));
+        }
 
-                    const index = workspaces.findIndex(current => workspace.id === current.id);
-                    if (index >= 0) {
-                        workspaces.splice(index, 1);
-                    }
-
-                    this._workspaces.next(workspaces.sort(workspaceSorter));
-                }
+        return this.getWorkspace(workspaceId)
+            .pipe(
+                mergeMap(_ => this.apiWorkspaceService.findWorkspaceBundleFiles(workspaceId)),
+                map(bundleFiles => bundleFiles.map(bundleFileDto => BundleFile.fromDto(bundleFileDto))),
+                tap(bundleFiles => this.cacheBundleFiles(workspaceId, bundleFiles))
             );
     }
 
-    ngOnDestroy(): void {
-        this.destroy$.complete();
+    public getWorkspaceBundleFile(workspaceId: string, bundleFiledId: string): Observable<BundleFile> {
+        return this.getWorkspaceBundleFiles(workspaceId)
+            .pipe(map(bundleFiles => bundleFiles.find(bundleFile => _.eq(bundleFile.id, bundleFiledId))));
     }
 
-    getWorkspaces(): Observable<Workspace[]> {
-        return this._workspaces;
+    public initialize(workspaceId: string): Observable<Workspace> {
+        return this.apiWorkspaceService
+            .executeAction(workspaceId, '', 'INITIALIZE')
+            .pipe(
+                map(workspace => Workspace.fromDto(workspace)),
+                tap(workspace => this._synchronizedWorkspaces$.update(workspace))
+            );
     }
 
-    initialize(workspace: Workspace): Promise<any> {
-        return this.httpClient
-            .put(
-                '/api/workspace/' + workspace.id,
-                null,
-                {
-                    params: {
-                        do: 'INITIALIZE'
-                    }
-                }
-            )
-            .toPromise()
-            .catch(reason => {
-                console.error("Error while initializing workspaces.", reason);
-                this.notificationService.displayErrorMessage("Error while initializing workspace.")
-            });
+    public synchronize(repositoryId: string): Observable<Workspace[]> {
+        return this.apiWorkspaceService
+            .synchronize(repositoryId, 'SYNCHRONIZE')
+            .pipe(
+                map(workspaces => workspaces.map(workspace => Workspace.fromDto(workspace))),
+                tap(workspaces => workspaces.forEach(workspace => this._synchronizedWorkspaces$.update(workspace)))
+            );
     }
 
-    find(): Promise<any> {
-        return this.httpClient
-            .put(
-                '/api/workspace/',
-                null,
-                {
-                    params: {
-                        do: 'FIND'
-                    }
-                }
-            )
-            .toPromise()
-            .catch(reason => {
-                console.error("Error while finding workspaces.", reason);
-                this.notificationService.displayErrorMessage("Error while finding workspaces. ")
-            });
+    public delete(workspace: Workspace): Observable<any> {
+        return this.apiWorkspaceService
+            .deleteWorkspace(workspace.id)
+            .pipe(tap(workspace => this._synchronizedWorkspaces$.delete(workspace)));
     }
 
-    startReview(workspace: Workspace, comment: string): Promise<any> {
-        return this.httpClient
-            .put(
-                '/api/workspace/' + workspace.id,
-                null,
-                {
-                    params: {
-                        do: 'START_REVIEW',
-                        message: comment
-                    }
-                }
-            )
-            .toPromise()
-            .catch(reason => {
-                console.error("Error while starting review.", reason);
-                this.notificationService.displayErrorMessage("Error while starting a review.");
-            });
-    }
+    private cacheBundleFiles(workspaceId: string, bundleFiles: BundleFile[]) {
+        let numberCachedElements = 0;
+        this._cachedWorkspaceBundleFiles.forEach((cachedWorkspace, cachedFiles) => numberCachedElements += cachedFiles.length);
 
-    delete(workspace: Workspace): Promise<any> {
-        return this.httpClient
-            .delete('/api/workspace/' + workspace.id)
-            .toPromise()
-            .catch(reason => {
-                console.error("Error while deleting.", reason);
-                this.notificationService.displayErrorMessage("Error while deleting the workspace.");
-            });
-    }
+        if (numberCachedElements >= WorkspaceService.MAX_CACHED_BUNDLE_FILES) {
+            this._cachedWorkspaceBundleFiles.clear();
+        }
 
+        this._cachedWorkspaceBundleFiles.set(workspaceId, bundleFiles);
+    }
 }
 
 export function workspaceSorter(first: Workspace, second: Workspace): number {

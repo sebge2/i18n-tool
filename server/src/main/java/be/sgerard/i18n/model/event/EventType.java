@@ -1,82 +1,123 @@
 package be.sgerard.i18n.model.event;
 
+import be.sgerard.i18n.model.repository.dto.RepositoryDto;
+import be.sgerard.i18n.model.security.session.dto.UserLiveSessionDto;
+import be.sgerard.i18n.model.security.user.dto.AuthenticatedUserDto;
+import be.sgerard.i18n.model.security.user.dto.UserDto;
+import be.sgerard.i18n.model.security.user.dto.UserPreferencesDto;
+import be.sgerard.i18n.model.workspace.dto.WorkspaceDto;
+import be.sgerard.i18n.model.i18n.dto.TranslationLocaleDto;
+import be.sgerard.i18n.model.i18n.dto.TranslationsUpdateEventDto;
+
 /**
+ * All possible kind of events.
+ *
  * @author Sebastien Gerard
  */
 public enum EventType {
 
     /**
-     * @see be.sgerard.i18n.model.security.session.UserLiveSessionDto
+     * @see UserLiveSessionDto
      */
-    CONNECTED_USER_SESSION("connected-user-session"),
+    CONNECTED_USER_SESSION,
 
     /**
-     * @see be.sgerard.i18n.model.security.session.UserLiveSessionDto
+     * @see TranslationLocaleDto
      */
-    DISCONNECTED_USER_SESSION("disconnected-user-session"),
+    ADDED_TRANSLATION_LOCALE,
 
     /**
-     * @see be.sgerard.i18n.model.i18n.dto.WorkspaceDto
+     * @see TranslationLocaleDto
      */
-    UPDATED_WORKSPACE("updated-workspace"),
+    UPDATED_TRANSLATION_LOCALE,
 
     /**
-     * @see be.sgerard.i18n.model.i18n.dto.WorkspaceDto
+     * @see TranslationLocaleDto
      */
-    DELETED_WORKSPACE("deleted-workspace"),
+    DELETED_TRANSLATION_LOCALE,
 
     /**
-     * @see be.sgerard.i18n.model.i18n.event.TranslationsUpdateEventDto
+     * @see UserLiveSessionDto
      */
-    UPDATED_TRANSLATIONS("updated-translations"),
+    DISCONNECTED_USER_SESSION,
 
     /**
-     * @see be.sgerard.i18n.model.repository.RepositoryDescriptionDto
+     * @see WorkspaceDto
      */
-    UPDATED_REPOSITORY("updated-repository"),
+    ADDED_WORKSPACE,
 
     /**
-     * @see be.sgerard.i18n.model.security.user.UserDto
+     * @see WorkspaceDto
      */
-    UPDATED_USER("updated-user"),
+    UPDATED_WORKSPACE,
 
     /**
-     * @see be.sgerard.i18n.model.security.user.UserDto
+     * @see WorkspaceDto
      */
-    DELETED_USER("deleted-user"),
+    DELETED_WORKSPACE,
 
     /**
-     * @see be.sgerard.i18n.model.security.user.UserDto
+     * @see TranslationsUpdateEventDto
      */
-    UPDATED_CURRENT_USER("updated-current-user"),
+    UPDATED_TRANSLATIONS,
 
     /**
-     * @see be.sgerard.i18n.model.security.user.AuthenticatedUserDto
+     * @see RepositoryDto
      */
-    UPDATED_AUTHENTICATED_USER("updated-authenticated-user"),
+    ADDED_REPOSITORY,
 
     /**
-     * @see be.sgerard.i18n.model.security.user.AuthenticatedUserDto
+     * @see RepositoryDto
      */
-    UPDATED_CURRENT_AUTHENTICATED_USER("updated-current-authenticated-user");
+    UPDATED_REPOSITORY,
 
-    public static final String QUEUE_BROADCAST = "/topic/";
+    /**
+     * @see RepositoryDto
+     */
+    DELETED_REPOSITORY,
 
-    public static final String QUEUE_USER = "/queue/";
+    /**
+     * @see UserDto
+     */
+    ADDED_USER,
 
-    public static final String QUEUE_APP = "/app/";
+    /**
+     * @see UserDto
+     */
+    UPDATED_USER,
 
-    private final String name;
+    /**
+     * @see UserDto
+     */
+    DELETED_USER,
 
-    EventType(String name) {
-        this.name = name;
-    }
+    /**
+     * @see UserDto
+     */
+    UPDATED_CURRENT_USER,
 
-    public String toBroadcastQueue() {
-        return QUEUE_BROADCAST + "/" + name;
-    }
+    /**
+     * @see AuthenticatedUserDto
+     */
+    UPDATED_AUTHENTICATED_USER,
 
-    public String toUserQueue() {
-        return QUEUE_USER + "/" + name;
-    }
+    /**
+     * @see AuthenticatedUserDto
+     */
+    DELETED_AUTHENTICATED_USER,
+
+    /**
+     * @see AuthenticatedUserDto
+     */
+    UPDATED_CURRENT_AUTHENTICATED_USER,
+
+    /**
+     * @see AuthenticatedUserDto
+     */
+    DELETED_CURRENT_AUTHENTICATED_USER,
+
+    /**
+     * @see UserPreferencesDto
+     */
+    UPDATED_USER_PREFERENCES;
 }

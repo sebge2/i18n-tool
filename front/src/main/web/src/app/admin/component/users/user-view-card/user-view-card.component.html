@@ -1,0 +1,87 @@
+<app-card [title]="displayName"
+          [subTitle]="externalAuthProvider | translate | titlecase"
+          [headerMatIcon]="!avatarUrl ? 'perm_identity' : null"
+          [headerImg]="avatarUrl ? avatarUrl : null"
+          [maxSizePx]="270">
+    <app-card-header-actions>
+        <app-more-actions-button [disabled]="!isMoreActionsEnabled">
+            <app-more-action-item-button>
+                <button mat-menu-item (click)="onUpdatePassword()">
+                    <mat-icon>security</mat-icon>
+                    <span>{{'ADMIN.USERS.UPDATE_PASSWORD' | translate}}</span>
+                </button>
+            </app-more-action-item-button>
+        </app-more-actions-button>
+    </app-card-header-actions>
+    <app-card-content>
+        <form [formGroup]="form" (ngSubmit)="onSave()" autocomplete="off">
+            <p>
+                <mat-form-field appearance="standard">
+                    <mat-label>{{'ADMIN.USERS.USER_NAME' | translate}}</mat-label>
+                    <input matInput formControlName="username" autocomplete="off">
+                    <mat-hint>{{'ADMIN.USERS.USER_NAME_EXAMPLE' | translate}}</mat-hint>
+                </mat-form-field>
+            </p>
+            <p>
+                <mat-form-field appearance="standard">
+                    <mat-label>{{'ADMIN.USERS.DISPLAY_NAME' | translate}}</mat-label>
+                    <input matInput formControlName="displayName" autocomplete="off">
+                    <mat-hint>{{'ADMIN.USERS.DISPLAY_NAME_EXAMPLE' | translate}}</mat-hint>
+                </mat-form-field>
+            </p>
+            <p>
+                <mat-form-field appearance="standard">
+                    <mat-label>{{'ADMIN.USERS.EMAIL' | translate}}</mat-label>
+                    <input matInput formControlName="email" type="email" autocomplete="off">
+                    <mat-hint>{{'ADMIN.USERS.EMAIL_EXAMPLE' | translate}}</mat-hint>
+                </mat-form-field>
+            </p>
+            <p>
+                <mat-form-field appearance="standard">
+                    <mat-label>{{'ADMIN.USERS.PASSWORD' | translate}}</mat-label>
+                    <input matInput formControlName="password" type="password" autocomplete="off" #passwordInput>
+                    <mat-hint>{{'ADMIN.USERS.PASSWORD_HINT' | translate}}</mat-hint>
+                    <app-generate-password-button
+                            matSuffix
+                            [length]="12"
+                            [disabled]="passwordInput.disabled"
+                            [notificationMessage]="'ADMIN.USERS.PASSWORD_COPIED'"
+                            (generatedPassword)="onGeneratedPassword($event)">
+                    </app-generate-password-button>
+                </mat-form-field>
+            </p>
+            <p>
+                <mat-form-field appearance="standard">
+                    <mat-label>{{'ADMIN.USERS.ADMIN_ROLE' | translate}}</mat-label>
+                    <mat-select formControlName="adminRole">
+                        <mat-select-trigger>
+                            <mat-icon>{{form.controls['adminRole'].value?.icon}}</mat-icon>
+                            {{form.controls['adminRole'].value?.label | translate}}
+                        </mat-select-trigger>
+                        <mat-option *ngFor="let roleOption of roleOptions" [value]="roleOption">
+                            <mat-icon>{{roleOption.icon}}</mat-icon>
+                            {{roleOption.label | translate}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </p>
+        </form>
+    </app-card-content>
+    <app-card-actions>
+        <app-form-cancel-button [form]="form"
+                                [cancelInProgress]="cancelInProgress"
+                                [disabled]="actionInProgress"
+                                (reset)="onCancel()">
+        </app-form-cancel-button>
+        <app-form-delete-button [deleteInProgress]="deleteInProgress"
+                                [disabled]="!deleteAllowed || actionInProgress"
+                                (delete)="onDelete()"
+                                [confirmationMessage]="isExistingUser() ? ('ADMIN.USERS.DELETE.CONFIRMATION_MESSAGE' | translate: {user: user.displayName, internal: user.isInternal()}) : null">
+        </app-form-delete-button>
+        <app-form-save-button [form]="form"
+                              [saveInProgress]="saveInProgress"
+                              [disabled]="actionInProgress"
+                              (save)="onSave()">
+        </app-form-save-button>
+    </app-card-actions>
+</app-card>

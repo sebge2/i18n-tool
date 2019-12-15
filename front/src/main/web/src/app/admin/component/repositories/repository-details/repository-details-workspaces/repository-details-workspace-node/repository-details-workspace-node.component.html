@@ -1,0 +1,13 @@
+<app-row-actions [actionsVisible]="!loading">
+    <app-row-actions-element>
+        <h3>{{name}} <span [class]="badgeClass">{{badgeText | translate}}</span></h3>
+    </app-row-actions-element>
+    <app-row-actions-item>
+        <app-form-delete-button (delete)="onDelete()" [deleteInProgress]="deleteInProgress">
+        </app-form-delete-button>
+        <app-init-download-button (init)="onInitialize()"
+                                  [initInProgress]="initializationInProgress"
+                                  *ngIf="initializationAllowed">
+        </app-init-download-button>
+    </app-row-actions-item>
+</app-row-actions>

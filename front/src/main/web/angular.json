@@ -13,6 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "aot": true,
             "outputPath": "../../../target/web",
             "index": "src/index.html",
             "main": "src/main.ts",
@@ -23,7 +24,10 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.css"
+              "src/css/variables.scss",
+              "src/css/styles.scss",
+              "src/css/buttons.scss",
+              "src/css/colors.scss"
             ],
             "scripts": []
           },
@@ -49,6 +53,10 @@
                   "type": "initial",
                   "maximumWarning": "2mb",
                   "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
                 }
               ]
             }
@@ -79,7 +87,10 @@
             "tsConfig": "src/tsconfig.spec.json",
             "karmaConfig": "src/karma.conf.js",
             "styles": [
-              "src/styles.css"
+              "src/css/variables.scss",
+              "src/css/styles.scss",
+              "src/css/buttons.scss",
+              "src/css/colors.scss"
             ],
             "scripts": [],
             "assets": [
@@ -131,5 +142,8 @@
       }
     }
   },
-  "defaultProject": "i18n-tool"
+  "defaultProject": "i18n-tool",
+  "cli": {
+    "analytics": "bdd512ca-b655-464f-89bc-a754bdebee6b"
+  }
 }

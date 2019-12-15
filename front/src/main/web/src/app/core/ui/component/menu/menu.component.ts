@@ -7,6 +7,8 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 })
 export class MenuComponent implements OnInit, OnDestroy {
 
+    public showAdmin: boolean = true;
+
     constructor() {
     }
 
@@ -14,5 +16,9 @@ export class MenuComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy(): void {
+    }
+
+    toggleAdmin() {
+        this.showAdmin = !this.showAdmin;
     }
 }

@@ -1,11 +1,21 @@
 <mat-nav-list>
-    <a id="menuTranslations" matSubheader routerLink="/translations">Translations</a>
+    <a mat-list-item routerLink="/translations">
+        <mat-icon mat-list-icon>translate</mat-icon>{{'MENU.TRANSLATIONS_LABEL' | translate}}
+    </a>
+    <a mat-list-item routerLink="/account">
+        <mat-icon mat-list-icon>person</mat-icon>{{'MENU.ACCOUNT_LABEL' | translate}}
+    </a>
 
-    <mat-divider></mat-divider>
+    <a mat-list-item (click)="toggleAdmin()" *hasRole="['ADMIN']">
+        <mat-icon mat-list-icon>admin_panel_settings</mat-icon>
+        {{'MENU.ADMIN_LABEL' | translate}}
 
-    <a id="menuSettings" matSubheader routerLink="/settings">Settings</a>
-
-    <mat-divider *hasRole="['ADMIN']"></mat-divider>
-
-    <a id="menuAdmin" matSubheader routerLink="/admin" *hasRole="['ADMIN']">Admin</a>
+        <mat-icon *ngIf="!showAdmin">chevron_right</mat-icon>
+        <mat-icon *ngIf="showAdmin">expand_more</mat-icon>
+    </a>
+    <mat-nav-list class="mat-nav-sub-list" *hasRole="['ADMIN']; additionalCondition: showAdmin">
+        <a mat-list-item routerLink="/admin/locales"><mat-icon mat-list-icon>language</mat-icon> {{'MENU.LOCALES_LABEL' | translate}}</a>
+        <a mat-list-item routerLink="/admin/repositories"><mat-icon mat-list-icon>description</mat-icon> {{'MENU.REPOSITORIES_LABEL' | translate}}</a>
+        <a mat-list-item routerLink="/admin/users"><mat-icon mat-list-icon>group</mat-icon> {{'MENU.USERS_LABEL' | translate}}</a>
+    </mat-nav-list>
 </mat-nav-list>

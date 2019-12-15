@@ -1,0 +1,33 @@
+<form [formGroup]="parts">
+    <mat-chip-list #workspacesList
+                   aria-orientation="horizontal"
+                   class="workspaces-list"
+                   [formControlName]="'list'">
+        <mat-chip
+                *ngFor="let workspace of value"
+                [selectable]="true"
+                [removable]="true"
+                (removed)="remove(workspace)">
+            <app-workspace-label [workspace]="workspace"></app-workspace-label>
+            <mat-icon matChipRemove>cancel</mat-icon>
+        </mat-chip>
+
+        <input
+                [placeholder]="labelKey | translate"
+                [formControlName]="'input'"
+                [matAutocomplete]="auto"
+                [matChipInputFor]="workspacesList"
+                [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                [matChipInputAddOnBlur]="true"
+                (matChipInputTokenEnd)="onTokenEnd($event)">
+    </mat-chip-list>
+    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
+        <mat-option [value]="'ALL'">
+            <span class="app-icon-check-double-solid app-workspace-selector-all-icon"></span> {{'SHARED.FIELDS.WORKSPACE_SELECTOR.ALL' | translate}}
+        </mat-option>
+
+        <mat-option *ngFor="let workspace of filteredWorkspaces$ | async" [value]="workspace">
+            <app-workspace-label [workspace]="workspace"></app-workspace-label>
+        </mat-option>
+    </mat-autocomplete>
+</form>

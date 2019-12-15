@@ -1,182 +1,116 @@
-import {Injectable, OnDestroy} from '@angular/core';
+import {Injectable} from '@angular/core';
 import {HttpClient, HttpResponse} from "@angular/common/http";
-import {BehaviorSubject, Observable, Subject, throwError} from "rxjs";
-import {catchError, map, skipWhile, takeUntil, tap} from "rxjs/operators";
-import {NotificationService} from "../../notification/service/notification.service";
+import {BehaviorSubject, Observable, Subject} from "rxjs";
+import { map, mergeMap, shareReplay, skip} from "rxjs/operators";
 import {AuthenticationErrorType} from "../model/authentication-error-type.model";
+import {AuthenticationService as ApiAuthenticationService, Configuration} from "../../../api";
 import {EventService} from "../../event/service/event.service";
 import {Events} from "../../event/model/events.model";
 import {AuthenticatedUser} from '../model/authenticated-user.model';
+import {OAuthClient} from "../model/oauth-client.model";
+import {User} from "../model/user.model";
+import {UserService} from "./user.service";
+import {Router} from "@angular/router";
 
 @Injectable({
     providedIn: 'root'
 })
-export class AuthenticationService implements OnDestroy {
+export class AuthenticationService {
 
-    private _user: Subject<AuthenticatedUser> = new BehaviorSubject<AuthenticatedUser>(null);
-    private initialized: boolean = false;
-    private destroy$ = new Subject();
+    private readonly _user$: Subject<AuthenticatedUser> = new BehaviorSubject<AuthenticatedUser>(null);
+    private readonly _userObs = this._user$.pipe(skip(1), shareReplay(1));
+    private readonly _currentUser$: Observable<User>;
 
     constructor(private httpClient: HttpClient,
+                private router: Router,
                 private eventService: EventService,
-                private notificationService: NotificationService) {
-        this.httpClient.get<AuthenticatedUser>('/api/authentication/user')
-            .pipe(map(user => new AuthenticatedUser(user)))
+                private userService: UserService,
+                private configuration: Configuration,
+                private authenticationService: ApiAuthenticationService) {
+        this.authenticationService
+            .getCurrentUser()
+            .pipe(map(userDto => AuthenticatedUser.fromDto(userDto)))
             .toPromise()
-            .then(
-                user => {
-                    console.debug('There is an existing authenticated user, send next user.', user);
+            .then(user => {
+                console.debug('There is an existing authenticated user, send next user.', user);
 
-                    this.initialized = true;
-                    this._user.next(user)
+                this._user$.next(user)
+            })
+            .catch((result: HttpResponse<any>) => {
+                if (result.status != 404) {
+                    console.error('Error while retrieving current user.', result);
+                } else {
+                    console.debug('There is no current user, send next user null.');
                 }
-            )
-            .catch(
-                (result: HttpResponse<any>) => {
-                    if (result.status != 404) {
-                        console.error('Error while retrieving current user.', result);
-                        this.notificationService.displayErrorMessage("Error while retrieving current user.");
-                    } else {
-                        console.debug('There is no current user, send next user null.');
-                    }
 
-                    this.initialized = true;
-                    this._user.next(null);
-                }
-            );
+                this._user$.next(null);
+            });
 
         this.eventService.subscribe(Events.UPDATED_CURRENT_AUTHENTICATED_USER, AuthenticatedUser)
-            .pipe(takeUntil(this.destroy$))
-            .subscribe(
-                (user: AuthenticatedUser) => {
-                    console.debug('Current authenticated user changed.', user);
-                    this._user.next(user);
+            .subscribe((user: AuthenticatedUser) => {
+                console.debug('Current authenticated user changed.', user);
+                this._user$.next(user);
+            });
+
+        this.eventService.subscribe(Events.DELETED_CURRENT_AUTHENTICATED_USER, AuthenticatedUser)
+            .subscribe(_ => {
+                console.debug('Current authenticated user removed.');
+                this._user$.next(null);
+
+                this.router.navigateByUrl('/login');
+            });
+
+        this.currentAuthenticatedUser()
+            .subscribe(currentUser => currentUser ? eventService.enabledEvents() : eventService.disableEvents());
+
+        this._currentUser$ = this.currentAuthenticatedUser()
+            .pipe(mergeMap(currentUser => currentUser ? this.userService.getCurrentUser() : null));
+    }
+
+    public currentAuthenticatedUser(): Observable<AuthenticatedUser> {
+        return this._userObs;
+    }
+
+    public currentUser(): Observable<User> {
+        return this._currentUser$;
+    }
+
+    public getSupportedOauthClients(): Observable<OAuthClient[]> {
+        return this.authenticationService
+            .getAuthenticationClients()
+            .pipe(map(clients => clients.map(client => OAuthClient[client.toUpperCase()])));
+    }
+
+    public authenticateWithUserPassword(username: string, password: string): Promise<AuthenticatedUser> {
+        this.configuration.username = username;
+        this.configuration.password = password;
+
+        return this.authenticationService
+            .getCurrentUser()
+            .pipe(map(userDto => AuthenticatedUser.fromDto(userDto)))
+            .toPromise()
+            .then(authenticatedUser => {
+                this._user$.next(authenticatedUser);
+
+                return authenticatedUser;
+            })
+            .catch((result: HttpResponse<any>) => {
+                if (result.status == 401) {
+                    throw new Error(AuthenticationErrorType.WRONG_CREDENTIALS);
+                } else {
+                    throw new Error(AuthenticationErrorType.AUTHENTICATION_SYSTEM_ERROR);
                 }
-            );
+            });
     }
 
-    ngOnDestroy(): void {
-        this.destroy$.complete();
-    }
-
-    currentUser(): Observable<AuthenticatedUser> {
-        return this._user.pipe(skipWhile(val => !this.initialized));
-    }
-
-    authenticateWithUserPassword(username: string, password: string): Observable<AuthenticatedUser> {
-        return this.httpClient
-            .get(
-                "/api/authentication/user",
-                {
-                    headers: {
-                        'Authorization': 'Basic ' + btoa(username + ':' + password),
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                }
-            )
-            .pipe(
-                map(
-                    (user: AuthenticatedUser) => {
-                        return new AuthenticatedUser(user);
-                    }
-                ),
-                catchError((result: HttpResponse<any>) => {
-                        if (result.status == 401) {
-                            return throwError(AuthenticationErrorType.WRONG_CREDENTIALS);
-                        } else {
-                            console.error('Error while authenticating user.', result);
-                            this.notificationService.displayErrorMessage('Error while authenticating user.');
-
-                            return throwError(AuthenticationErrorType.AUTHENTICATION_SYSTEM_ERROR);
-                        }
-                    }
-                ),
-                tap(
-                    (value: any) => {
-                        if (value instanceof AuthenticatedUser) {
-                            console.debug('Authentication succeeded, send next user.', value);
-
-                            this._user.next(<AuthenticatedUser>value);
-                        }
-                    }
-                )
-            );
-    }
-
-    authenticateWithGitHubAuthKey(authKey: string): Observable<AuthenticatedUser> {
-        return this.httpClient
-            .get(
-                "/api/authentication/user",
-                {
-                    headers: {
-                        'Authorization': 'Basic ' + btoa('#' + authKey + ':'),
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                }
-            )
-            .pipe(
-                map(
-                    (user: AuthenticatedUser) => {
-                        return new AuthenticatedUser(user);
-                    }
-                ),
-                catchError((result: HttpResponse<any>) => {
-                        if (result.status == 401) {
-                            return throwError(AuthenticationErrorType.WRONG_CREDENTIALS);
-                        } else {
-                            console.error('Error while authenticating user.', result);
-                            this.notificationService.displayErrorMessage('Error while authenticating user.');
-
-                            return throwError(AuthenticationErrorType.AUTHENTICATION_SYSTEM_ERROR);
-                        }
-                    }
-                ),
-                tap(
-                    (value: any) => {
-                        if (value instanceof AuthenticatedUser) {
-                            console.debug('Authentication succeeded, send next user.', value);
-
-                            this._user.next(<AuthenticatedUser>value);
-                        }
-                    }
-                ),
-                tap(
-                    (value: any) => {
-                        if (value instanceof AuthenticatedUser) {
-                            console.debug('Authentication succeeded, send next user.', value);
-
-                            this._user.next(<AuthenticatedUser>value);
-                        }
-                    }
-                )
-            );
-    }
-
-    logout(): Observable<any> {
+    public logout(): Promise<void> {
         return this.httpClient
             .get('/auth/logout')
-            .pipe(
-                map(
-                    (result: any) => {
-                        return null;
-                    }
-                ),
-                catchError((result: HttpResponse<any>) => {
-                        console.error('Error while login out user.', result);
-                        this.notificationService.displayErrorMessage('Error while login out user.');
+            .toPromise()
+            .then((_) => {
+                console.debug('Logout succeeded, send next user.');
 
-                        return throwError(AuthenticationErrorType.AUTHENTICATION_SYSTEM_ERROR);
-                    }
-                ),
-                tap(
-                    (value: any) => {
-                        if (value == null) {
-                            console.debug('Logout succeeded, send next user.', value);
-
-                            this._user.next(null);
-                        }
-                    }
-                )
-            );
+                this._user$.next(null);
+            });
     }
 }

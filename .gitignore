@@ -1,6 +1,9 @@
 .idea
 *.iml
 target
+front/executables
+front/target
+server/target
 .elasticbeanstalk/*
 !.elasticbeanstalk/*.cfg.yml
 !.elasticbeanstalk/*.global.yml

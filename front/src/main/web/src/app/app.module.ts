@@ -12,11 +12,25 @@ import {HttpClient} from "@angular/common/http";
 import {CoreSharedModule} from "./core/shared/core-shared-module";
 import {TranslateHttpLoader} from '@ngx-translate/http-loader';
 import {MESSAGE_FORMAT_CONFIG, TranslateMessageFormatCompiler} from "ngx-translate-messageformat-compiler";
-import {ALL_LOCALES} from "./translations/model/locale.model";
-import { CoreNotificationModule } from './core/notification/core-notification.module';
+import {CoreNotificationModule} from './core/notification/core-notification.module';
+import {ApiModule, Configuration, ConfigurationParameters} from "./api";
+import {ALL_LOCALES} from "./core/translation/model/tool-locale.model";
+import {CoreTranslationModule} from "./core/translation/core-translation-module";
 
 export function HttpLoaderFactory(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
+}
+
+export function configurationFactory() {
+    return new SwaggerConfiguration({
+        basePath: `${window.location.protocol}//${window.location.host}`,
+    });
+}
+
+export class SwaggerConfiguration extends Configuration {
+    constructor(configurationParameters: ConfigurationParameters = {}) {
+        super(configurationParameters);
+    }
 }
 
 @NgModule({
@@ -38,10 +52,13 @@ export function HttpLoaderFactory(http: HttpClient) {
             }
         }),
 
+        ApiModule.forRoot(configurationFactory),
+
+        CoreSharedModule,
+        CoreEventModule,
+        CoreTranslationModule,
         CoreUiModule,
         CoreAuthModule,
-        CoreEventModule,
-        CoreSharedModule,
         CoreNotificationModule
     ],
     bootstrap: [AppComponent],

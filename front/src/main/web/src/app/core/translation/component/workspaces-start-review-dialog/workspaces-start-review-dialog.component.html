@@ -1,0 +1,25 @@
+<form [formGroup]="form" (ngSubmit)="onPublish()">
+    <app-dialog [title]="'ADMIN.WORKSPACES.REVIEW.POPUP.TITLE' | translate" [dialogHeight]="'400px'" [dialogWidth]="'500px'">
+        <app-dialog-content>
+            <mat-form-field appearance="standard" class="app-start-review-list">
+                <mat-label>{{'ADMIN.WORKSPACES.REVIEW.POPUP.WORKSPACES_FIELD_LABEL' | translate}}</mat-label>
+
+                <app-form-select-field formControlName="workspaces" [availableValues]="workspaces" [itemTemplate]="itemTemplate">
+                    <ng-template #itemTemplate let-value="value">
+                        <app-workspace-label [workspace]="value"></app-workspace-label>
+                    </ng-template>
+                </app-form-select-field>
+                <mat-hint>{{'ADMIN.WORKSPACES.REVIEW.POPUP.WORKSPACES_FIELD_HINT' | translate}}</mat-hint>
+            </mat-form-field>
+
+            <mat-form-field appearance="standard" >
+                <mat-label>{{'ADMIN.WORKSPACES.REVIEW.POPUP.COMMENT_FIELD_LABEL' | translate}}</mat-label>
+                <input matInput cdkFocusInitial formControlName="comment" ngDefaultControl>
+                <mat-hint>{{'ADMIN.WORKSPACES.REVIEW.POPUP.COMMENT_FIELD_HINT' | translate}}</mat-hint>
+            </mat-form-field>
+        </app-dialog-content>
+        <app-dialog-actions>
+            <app-form-send-button [form]="form" [sendInProgress]="publishInProgress" (send)="onPublish()"></app-form-send-button>
+        </app-dialog-actions>
+    </app-dialog>
+</form>

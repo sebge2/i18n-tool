@@ -1,10 +1,10 @@
 import {Injectable} from '@angular/core';
 import {ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot} from '@angular/router';
-import {Observable} from 'rxjs';
+import {combineLatest, from, Observable, of} from 'rxjs';
 import {AuthenticationService} from "../../../auth/service/authentication.service";
-import {map} from "rxjs/operators";
+import {flatMap} from "rxjs/operators";
 import {UserRole} from "../../../auth/model/user-role.model";
-import {AuthenticatedUser} from 'src/app/core/auth/model/authenticated-user.model';
+import {ToolLocaleService} from "../../../translation/service/tool-locale.service";
 
 @Injectable({
     providedIn: 'root'
@@ -12,24 +12,21 @@ import {AuthenticatedUser} from 'src/app/core/auth/model/authenticated-user.mode
 export class GlobalAuthGuard implements CanActivate {
 
     constructor(private router: Router,
-                private authenticationService: AuthenticationService) {
+                private authService: AuthenticationService,
+                private toolLocaleService: ToolLocaleService) {
     }
 
     canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
-        return this.authenticationService.currentUser()
-            .pipe(
-                map((user: AuthenticatedUser) => {
-                        if (user == null) {
-                            this.router.navigate(['/login'], {});
-                            return false;
-                        } else if (user.hasRole(UserRole.MEMBER_OF_ORGANIZATION)) {
-                            return true;
-                        } else {
-                            this.router.navigate(['/error', '403'], {});
-                            return false;
-                        }
+        return combineLatest([this.authService.currentAuthenticatedUser(), this.toolLocaleService.getCurrentLocale()])
+            .pipe(flatMap(([user, _]) => {
+                    if (user == null) {
+                        return from(this.router.navigate(['/login'], {}));
+                    } else if (user.hasRole(UserRole.MEMBER_OF_ORGANIZATION)) {
+                        return of(true);
+                    } else {
+                        return from(this.router.navigate(['/error', '403'], {}));
                     }
-                )
-            );
+                }
+            ));
     }
 }

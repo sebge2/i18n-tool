@@ -1,5 +1,4 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {BundleKeyTranslation} from "../../../model/edition/bundle-key-translation.model";
 import {FormGroup} from "@angular/forms";
 
 @Component({
@@ -9,34 +8,29 @@ import {FormGroup} from "@angular/forms";
 })
 export class TranslationEditingCellComponent implements OnInit {
 
-    @Input()
-    formGroup: FormGroup;
-
-    editionStyle: any = {};
+    private _form: FormGroup;
 
     constructor() {
     }
 
-    ngOnInit() {
-        this.update(<BundleKeyTranslation>this.formGroup.value.translation);
-
-        this.formGroup.valueChanges.subscribe(
-            (formGroup: FormGroup) => {
-                this.editionStyle = {'border-color': 'red'};
-            }
-        )
+    public ngOnInit() {
     }
 
-    private update(translation: BundleKeyTranslation) {
-        this.editionStyle = this.updateEditionStyle(translation);
+    @Input()
+    public get form(): FormGroup {
+        return this._form;
     }
 
-    private updateEditionStyle(translation: BundleKeyTranslation): any {
-        if (translation.updatedValue) {
-            return {'border-color': 'red'};
-            // return {'border-color': 'red', 'animation': 'editing .8s steps(100) infinite'};
-        } else {
-            return {'border-color': 'transparent'};
-        }
+    public set form(form: FormGroup) {
+        this._form = form;
+    }
+
+    public onReset() {
+        this.form.controls['value'].setValue(this.originalValue);
+        this.form.markAsPristine();
+    }
+
+    public get originalValue(): string {
+        return this.form.controls['originalValue'].value;
     }
 }

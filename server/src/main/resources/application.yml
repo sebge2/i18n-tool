@@ -1,34 +1,18 @@
 spring:
   main:
     banner-mode: "OFF"
-  jpa:
-      open-in-view: false
-      hibernate:
-          ddl-auto: update
-  security:
-    oauth2:
-      client:
-        registration:
-          github:
-            client-id: ${GIT_HUB_OAUTH_CLIENT}
-            client-secret: ${GIT_HUB_OAUTH_SECRET}
-            scope: repo
-            redirect-uri-template: "{baseUrl}/auth/oauth2/code/{registrationId}"
-  session:
-    jdbc:
-      initialize-schema: "ALWAYS"
-      schema: "classpath:org/springframework/session/jdbc/schema-@@platform@@.sql"
-      table-name: SPRING_SESSION
-    store-type: "JDBC"
+  data:
+    mongodb:
+      auto-index-creation: false
 
 logging:
   config: "classpath:logback.xml"
 
-springfox:
-  documentation:
-    swagger:
-      v2:
-        path: /api/api-doc
+springdoc:
+  swagger-ui:
+    path: "/api/index.html"
+  api-docs:
+    path: "/api/api-docs"
 
 management:
   endpoints:
@@ -40,14 +24,21 @@ management:
 be:
   sgerard:
     i18n:
-      repoUserName: ${GIT_HUB_REPO_USER_NAME}
-      repoName: ${GIT_HUB_REPO_NAME}
-      lock-timeout-in-s: 120
-      java-translation-bundle-ignored-paths: "**/src/main/java,**/src/test,.git,.idea,**/target/classes,/front/,**/target/test-classes"
-      json-icu-translation-bundle-dirs: "**/src/assets/i18n"
-      git-hub-webhook-secret: ${GIT_HUB_WEBHOOK_SECRET}
-      default-admin-password: ${DEFAULT_ADMIN_PASSWORD:}
-      locales:
-          - en
-          - fr
-          - nl
+      lock:
+        timeout-in-s: 120
+      security:
+        default-admin-password: ${DEFAULT_ADMIN_PASSWORD:}
+      repository:
+        java-properties:
+          ignored-paths:
+            - "**/src/main/java"
+            - "**/src/test"
+            - ".git"
+            - ".idea"
+            - "**/target/classes"
+            - "**/target/test-classes"
+          included-paths:
+        json-icu:
+          ignored-paths:
+          included-paths:
+            - "**/src/assets/i18n"

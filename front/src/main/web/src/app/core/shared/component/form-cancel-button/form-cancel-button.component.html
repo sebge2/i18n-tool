@@ -1,0 +1,10 @@
+<button mat-icon-button
+        class="app-button"
+        color="warn"
+        [disabled]="!form.dirty || cancelInProgress || disabled"
+        (click)="onReset()">
+    <mat-icon *ngIf="cancelInProgress">
+        <mat-spinner color="warn" diameter="20"></mat-spinner>
+    </mat-icon>
+    <mat-icon *ngIf="!cancelInProgress">settings_backup_restore</mat-icon>
+</button>

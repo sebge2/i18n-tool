@@ -1,0 +1,7 @@
+<form [formGroup]="parts">
+    <mat-selection-list formControlName="values" [color]="'primary'">
+        <mat-list-option *ngFor="let value of availableValues" [value]="value">
+            <ng-container *ngTemplateOutlet="itemTemplate; context: {value: value}"></ng-container>
+        </mat-list-option>
+    </mat-selection-list>
+</form>
