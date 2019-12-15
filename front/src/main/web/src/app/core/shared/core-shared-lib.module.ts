@@ -12,6 +12,7 @@ import {
     MatDialogModule,
     MatDividerModule,
     MatExpansionModule,
+    MatFormFieldModule,
     MatGridListModule,
     MatIconModule,
     MatInputModule,
@@ -39,6 +40,8 @@ import {
 import {MatProgressButtonsModule} from 'mat-progress-buttons';
 import {ReactiveFormsModule} from "@angular/forms";
 import {FlexLayoutModule} from "@angular/flex-layout";
+import {ClipboardModule} from "ngx-clipboard";
+import {ScrollingModule} from "@angular/cdk/scrolling";
 
 @NgModule({
     exports: [
@@ -58,6 +61,7 @@ import {FlexLayoutModule} from "@angular/flex-layout";
         MatGridListModule,
         MatIconModule,
         MatInputModule,
+        MatFormFieldModule,
         MatListModule,
         MatMenuModule,
         MatNativeDateModule,
@@ -80,9 +84,10 @@ import {FlexLayoutModule} from "@angular/flex-layout";
         MatProgressButtonsModule,
 
         ReactiveFormsModule,
-        FlexLayoutModule
+        FlexLayoutModule,
+        ClipboardModule,
+        ScrollingModule,
     ],
-    declarations: []
 })
 export class CoreSharedLibModule {
 

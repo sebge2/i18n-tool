@@ -1,37 +1,76 @@
 package be.sgerard.i18n.model.security.auth;
 
-import be.sgerard.i18n.model.security.user.UserDto;
+import be.sgerard.i18n.model.security.user.dto.UserDto;
 import be.sgerard.i18n.service.security.UserRole;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticatedPrincipal;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-import static java.util.stream.Collectors.toSet;
-
 /**
+ * {@link UserDto User} authenticated, or about to be authenticated on the platform.
+ *
  * @author Sebastien Gerard
  */
 public interface AuthenticatedUser extends AuthenticatedPrincipal, Serializable {
 
+    /**
+     * {@link GrantedAuthority Authority} that every user has.
+     */
+    GrantedAuthority ROLE_USER = new SimpleGrantedAuthority("ROLE_USER");
+
+    /**
+     * Returns the unique id of the authenticated user, different from the user's id. Only related to the current
+     * authentication.
+     */
     String getId();
 
-    UserDto getUser();
+    /**
+     * Returns the id of the associated {@link be.sgerard.i18n.model.security.user.persistence.UserEntity user}.
+     */
+    String getUserId();
 
-    Optional<String> getGitHubToken();
+    /**
+     * Returns the {@link UserRole roles} attributed to the user.
+     *
+     * @see #getAuthorities()
+     */
+    Collection<UserRole> getRoles();
 
-    default String getGitHubTokenOrFail() {
-        return getGitHubToken()
-                .orElseThrow(() -> new AccessDeniedException("Cannot access to GitHub"));
-    }
-
-    Collection<UserRole> getSessionRoles();
-
+    /**
+     * Returns all the {@link GrantedAuthority authorities} of this user.
+     *
+     * @see #getRoles()
+     * @see UserRole#toAuthority()
+     */
     Collection<? extends GrantedAuthority> getAuthorities();
 
-    AuthenticatedUser updateSessionRoles(List<UserRole> roles);
+    /**
+     * Returns the {@link RepositoryCredentials credentials} to use for the specified repository.
+     */
+    <A extends RepositoryCredentials> Optional<A> getCredentials(String repository, Class<A> expectedType);
+
+    /**
+     * Returns all the available {@link RepositoryCredentials credentials}.
+     */
+    Collection<RepositoryCredentials> getRepositoryCredentials();
+
+    /**
+     * Updates {@link #getRoles() roles}.
+     */
+    AuthenticatedUser updateRoles(List<UserRole> sessionRoles);
+
+    /**
+     * Updates credentials of a repository.
+     */
+    AuthenticatedUser updateRepositoryCredentials(RepositoryCredentials repositoryCredentials);
+
+    /**
+     * Removes credentials of a repository.
+     */
+    AuthenticatedUser removeRepositoryCredentials(String repositoryId);
 }

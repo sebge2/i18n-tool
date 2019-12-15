@@ -1,17 +1,25 @@
-import {Component, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {TranslationsSearchRequest} from "../../model/translations-search-request.model";
-import {TranslationsService} from '../../service/translations.service';
-import {BundleKeysPage} from "../../model/edition/bundle-keys-page.model";
-import {AbstractControl, FormArray, FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {Locale} from "../../model/locale.model";
-import {BundleKey} from "../../model/edition/bundle-key.model";
-import {BundleKeyTranslation} from "../../model/edition/bundle-key-translation.model";
-import {ColumnDefinition} from "../../model/table/column-definition.model";
-import {CellType} from "../../model/table/cell-type.model";
-import {MatTable} from "@angular/material";
-import {auditTime, takeUntil} from 'rxjs/operators';
-import {BehaviorSubject, Subject} from "rxjs";
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {TranslationsSearchRequest} from "../../model/search/translations-search-request.model";
+import {RowType, TranslationsDataSource} from "./translations.datasource";
+import {TranslationService} from "../../service/translation.service";
+import {FormArray, FormBuilder, FormGroup} from "@angular/forms";
+import {Observable, Subject} from "rxjs";
+import {auditTime, takeUntil} from "rxjs/operators";
 import {NotificationService} from "../../../core/notification/service/notification.service";
+import {WorkspaceService} from "../../service/workspace.service";
+import {BundleFile} from "../../model/workspace/bundle-file.model";
+import * as _ from "lodash";
+import {TranslationUpdateDto} from "../../../api";
+import {Workspace} from "../../model/workspace/workspace.model";
+
+class DirtyTranslationForm {
+
+    constructor(public bundleKeyId: string,
+                public localeId: string,
+                public translation: string,
+                public translationForm: FormGroup) {
+    }
+}
 
 @Component({
     selector: 'app-translations-table',
@@ -20,178 +28,115 @@ import {NotificationService} from "../../../core/notification/service/notificati
 })
 export class TranslationsTableComponent implements OnInit, OnDestroy {
 
+    public dataSource: TranslationsDataSource;
+    public RowType = RowType;
+
+    private _searchRequest: TranslationsSearchRequest;
+    private _destroyed$ = new Subject<void>();
+
+    constructor(private _formBuilder: FormBuilder,
+                private _translationService: TranslationService,
+                private _notificationService: NotificationService,
+                private _workspaceService: WorkspaceService) {
+        this.dataSource = new TranslationsDataSource(_translationService, _notificationService, _formBuilder);
+    }
+
     @Input()
-    private _searchRequest: TranslationsSearchRequest = new TranslationsSearchRequest();
-
-    @ViewChild('table', {static: false})
-    private table: MatTable<any>;
-
-    columnDefinitions: ColumnDefinition[] = [];
-    displayedColumns: string[] = [];
-    form: FormArray;
-
-    private destroy$ = new Subject();
-    private _readOnly = new BehaviorSubject<boolean>(false);
-
-    constructor(private translationsService: TranslationsService,
-                private notificationService: NotificationService,
-                private formBuilder: FormBuilder) {
-        this.form = formBuilder.array([]);
-    }
-
-    ngOnInit() {
-        this.form.valueChanges
-            .pipe(
-                takeUntil(this.destroy$),
-                auditTime(2000)
-            )
-            .subscribe((formData: AbstractControl[]) => {
-                const updatedTranslations: Map<string, string> = new Map<string, string>();
-
-                this.form.controls
-                    .filter(control => control instanceof FormArray)
-                    .filter(bundleKeyFormArray => bundleKeyFormArray.dirty)
-                    .map((bundleKeyFormArray: FormArray) => {
-                            bundleKeyFormArray.controls
-                                .filter(bundleKeyControl => bundleKeyControl.dirty && bundleKeyControl.valid)
-                                .map(
-                                    (formGroup: FormGroup) => {
-                                        updatedTranslations.set(formGroup.value.translation.id, formGroup.value.value);
-                                        formGroup.get("value").reset(formGroup.value.value);
-                                    }
-                                );
-                        }
-                    );
-
-                this.translationsService
-                    .updateTranslations(this._searchRequest.workspace.id, updatedTranslations)
-                    .catch(result => {
-                        this.notificationService.displayErrorMessage(result);
-                        this.form.markAsDirty();
-                    });
-            });
-    }
-
-    ngOnDestroy(): void {
-        this.destroy$.complete();
-    }
-
-    get searchRequest(): TranslationsSearchRequest {
+    public get searchRequest(): TranslationsSearchRequest {
         return this._searchRequest;
     }
 
-    @Input()
-    set searchRequest(value: TranslationsSearchRequest) {
-        this._searchRequest = value;
+    public set searchRequest(request: TranslationsSearchRequest) {
+        this._searchRequest = request;
 
-        if (this.searchRequest && this.searchRequest.isValid()) {
-            this.translationsService
-                .getTranslations(this.searchRequest)
-                .toPromise()
-                .then(
-                    (page: BundleKeysPage) => {
-                        this.updateColumnDefinitions();
-                        this.updateForm(page);
-
-                        if (this.table) {
-                            this.table.renderRows();
-                        }
-                    }
-                );
-        }
+        this.dataSource.setRequest(request);
     }
 
-    get readOnly(): boolean {
-        return this.form.disabled;
-    }
-
-    @Input()
-    set readOnly(readonly: boolean) {
-        this._readOnly.next(readonly);
-    }
-
-    isBundleFile(index, item): boolean {
-        return item instanceof FormGroup;
-    }
-
-    isKeyHeaderColumn(columnDefinition: string): boolean {
-        return this.columnDefinitions[0].header == columnDefinition;
-    }
-
-    private updateForm(page: BundleKeysPage) {
-        this.form.clear();
-
-        for (const file of page.files) {
-            this.form.push(
-                this.formBuilder.group({file})
-            );
-
-            for (const key of file.keys) {
-                const keyFormArray = this.formBuilder.array([]);
-
-                keyFormArray.push(
-                    this.formBuilder.group({key})
-                );
-
-                for (let i = 0; i < this._searchRequest.usedLocales().length; i++) {
-                    const translation: BundleKeyTranslation = key.findTranslation(this._searchRequest.usedLocales()[i]);
-
-                    const formGroup = this.formBuilder.group({translation});
-
-                    const control = this.formBuilder.control(
-                        (translation != null) ? translation.currentValue() : null,
-                        [Validators.required]
-                    );
-
-                    this._readOnly
-                        .pipe(takeUntil(this.destroy$))
-                        .subscribe((readOnly: boolean) => {
-                            if (readOnly) {
-                                control.disable();
-                            } else {
-                                control.enable();
-                            }
-                        });
-
-                    formGroup.addControl('value', control);
-
-                    keyFormArray.push(formGroup);
-                }
-
-                this.form.push(keyFormArray);
-            }
-        }
-    }
-
-    private updateColumnDefinitions() {
-        this.columnDefinitions = [];
-        this.columnDefinitions.push(
-            new ColumnDefinition(
-                'key',
-                'TRANSLATIONS.TABLE.KEY_HEADER',
-                (formArray: FormArray) => `${formArray.controls[0].value.key.key}`,
-                (formArray: FormArray) => CellType.KEY
+    public ngOnInit(): void {
+        this.dataSource.form
+            .valueChanges
+            .pipe(
+                takeUntil(this._destroyed$),
+                auditTime(5000)
             )
+            .subscribe(() => {
+                const dirtyTranslations = this.findDirtyTranslations();
+
+                this._translationService
+                    .updateTranslations(
+                        dirtyTranslations.map(dirtyTranslation => <TranslationUpdateDto>{
+                            bundleKeyId: dirtyTranslation.bundleKeyId,
+                            localeId: dirtyTranslation.localeId,
+                            translation: dirtyTranslation.translation
+                        })
+                    )
+                    .toPromise()
+                    .then(() => this.updateDirtyFlags(dirtyTranslations))
+                    .catch(error => {
+                        console.error('Error while updating translations.', error);
+                        this._notificationService.displayErrorMessage('TRANSLATIONS.ERROR.UPDATE', error);
+                    })
+            });
+    }
+
+    public ngOnDestroy(): void {
+        this._destroyed$.next();
+        this._destroyed$.complete();
+    }
+
+    public trackByFn(indexInSource, index, item) {
+        return indexInSource;
+    }
+
+    public get actionInProgress(): boolean {
+        return this.dataSource.loading;
+    }
+
+    public get unsavedChanges(): boolean {
+        return this.dataSource.form.dirty;
+    }
+
+    public get spreadRowClass(): string {
+        return `app-scroller-spread-row-${this.searchRequest.locales.length}`;
+    }
+
+    public getWorkspace(rowForm: FormGroup): Observable<Workspace> {
+        return this._workspaceService.getWorkspace(this.dataSource.getWorkspace(rowForm));
+    }
+
+    public getBundleFile(rowForm: FormGroup): Observable<BundleFile> {
+        const workspace = this.dataSource.getWorkspace(rowForm);
+        const bundleFile = this.dataSource.getBundleFile(rowForm);
+
+        return this._workspaceService.getWorkspaceBundleFile(workspace, bundleFile);
+    }
+
+    private findDirtyTranslations(): DirtyTranslationForm[] {
+        return <DirtyTranslationForm[]>_.flatten(
+            this.dataSource.form.controls
+                .filter(rowForm => rowForm.dirty)
+                .map((rowForm: FormGroup) => {
+                    const translationForms = (<FormArray>((<FormGroup>rowForm).controls['translations'])).controls;
+
+                    return translationForms
+                        .filter(control => control.dirty)
+                        .map((translationForm: FormGroup) =>
+                            new DirtyTranslationForm(
+                                this.dataSource.getBundleKeyId(rowForm),
+                                this.searchRequest.locales[translationForms.indexOf(translationForm)].id,
+                                this.dataSource.getTranslationValue(translationForm),
+                                translationForm
+                            )
+                        )
+                })
         );
+    }
 
-        for (let i = 0; i < this._searchRequest.usedLocales().length; i++) {
-            const locale: Locale = this._searchRequest.usedLocales()[i];
-
-            this.columnDefinitions.push(
-                new ColumnDefinition(
-                    locale.toString(),
-                    locale,
-                    (formArray: FormArray) => <FormGroup>formArray.controls[i + 1],
-                    (formArray: FormArray) => {
-                        const bundleKey = <BundleKey>(<FormGroup>formArray.controls[0]).value.key;
-
-                        return (bundleKey).findTranslation(locale) != null
-                            ? CellType.TRANSLATION : CellType.EMPTY;
-                    }
-                )
-            );
-        }
-
-        this.displayedColumns = this.columnDefinitions.map(column => column.columnDef);
+    private updateDirtyFlags(dirtyTranslations: DirtyTranslationForm[]) {
+        dirtyTranslations.forEach(dirtyTranslation => {
+            if (_.eq(dirtyTranslation.translation, this.dataSource.getTranslationValue(dirtyTranslation.translationForm))) {
+                dirtyTranslation.translationForm.markAsPristine();
+            }
+        });
     }
 }

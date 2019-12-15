@@ -1,0 +1,9 @@
+<div class="app-row-actions">
+    <div class="app-row-actions-element">
+        <ng-content select="app-row-actions-element"></ng-content>
+    </div>
+
+    <div class="app-row-actions-items" [style.visibility]="actionsVisible ? 'visible' : 'hidden'">
+        <ng-content select="app-row-actions-item"></ng-content>
+    </div>
+</div>

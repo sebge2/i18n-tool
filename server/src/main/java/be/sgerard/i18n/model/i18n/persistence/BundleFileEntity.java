@@ -1,143 +1,97 @@
 package be.sgerard.i18n.model.i18n.persistence;
 
 import be.sgerard.i18n.model.i18n.BundleType;
+import be.sgerard.i18n.model.i18n.file.ScannedBundleFile;
+import be.sgerard.i18n.model.i18n.file.ScannedBundleFileLocation;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
+import org.springframework.data.annotation.AccessType;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.PersistenceConstructor;
 
-import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.*;
+import java.io.File;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 
-import static java.util.Collections.unmodifiableList;
+import static java.util.stream.Collectors.toList;
 
 /**
+ * Translation bundle file part of a workspace of a repository.
+ *
  * @author Sebastien Gerard
  */
-@Entity(name = "bundle_file")
-@Table(
-        uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"workspace", "location"})
-        }
-)
+@Getter
+@Setter
+@Accessors(chain = true)
 public class BundleFileEntity {
 
+    /**
+     * The unique id of this bundle.
+     */
     @Id
     private String id;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "workspace")
-    private WorkspaceEntity workspace;
-
+    /**
+     * The bundle name.
+     */
     @NotNull
-    @Column(nullable = false, length = 1000)
     private String name;
 
+    /**
+     * The path location of this bundle in the repository.
+     */
     @NotNull
-    @Column(nullable = false, columnDefinition = "TEXT")
     private String location;
 
+    /**
+     * The {@link BundleType bundle type}.
+     */
     @NotNull
-    @Enumerated(EnumType.STRING)
     private BundleType type;
 
-    @ElementCollection
-    private Set<String> files = new HashSet<>();
+    /**
+     * All the file paths of this bundle.
+     */
+    @AccessType(AccessType.Type.PROPERTY)
+    private Set<BundleFileEntryEntity> files = new HashSet<>();
 
-    @ElementCollection
-    private Set<Locale> locales = new HashSet<>();
+    /**
+     * The number of bundle keys composing this bundle.
+     */
+    private long numberKeys;
 
-    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
-    @OrderColumn(name="key_index")
-    private List<BundleKeyEntity> keys = new ArrayList<>();
-
-    @Version
-    private int version;
-
+    @PersistenceConstructor
     BundleFileEntity() {
     }
 
-    public BundleFileEntity(WorkspaceEntity workspace,
-                            String name,
+    public BundleFileEntity(String name,
                             String location,
                             BundleType type,
-                            Collection<Locale> locales,
-                            Collection<String> files) {
+                            Collection<BundleFileEntryEntity> files) {
         this.id = UUID.randomUUID().toString();
-
-        this.workspace = workspace;
-        this.workspace.addFile(this);
-
         this.name = name;
         this.location = location;
         this.type = type;
-
-        this.locales.addAll(locales);
         this.files.addAll(files);
     }
 
-    public String getId() {
-        return id;
+    public BundleFileEntity(ScannedBundleFile bundleFile) {
+        this(
+                bundleFile.getName(),
+                bundleFile.getLocationDirectory().toString(),
+                bundleFile.getType(),
+                bundleFile.getFiles().stream().map(BundleFileEntryEntity::new).collect(toList())
+        );
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public WorkspaceEntity getWorkspace() {
-        return workspace;
-    }
-
-    public void setWorkspace(WorkspaceEntity workspace) {
-        this.workspace = workspace;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
-    public List<BundleKeyEntity> getKeys() {
-        return unmodifiableList(keys);
-    }
-
-    void addKey(BundleKeyEntity keyEntity) {
-        this.keys.add(keyEntity);
-    }
-
-    public BundleType getType() {
-        return type;
-    }
-
-    public void setType(BundleType type) {
-        this.type = type;
-    }
-
-    public Set<String> getFiles() {
-        return files;
-    }
-
-    public Set<Locale> getLocales() {
-        return locales;
-    }
-
-    public void setLocales(Set<Locale> locales) {
-        this.locales = locales;
-    }
-
-    public int getVersion() {
-        return version;
-    }
-
-    public void setVersion(int version) {
-        this.version = version;
+    /**
+     * Returns the {@link ScannedBundleFileLocation location} of the scanned bundle file.
+     */
+    public ScannedBundleFileLocation toLocation() {
+        return new ScannedBundleFileLocation(new File(getLocation()), getName());
     }
 }

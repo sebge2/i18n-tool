@@ -1,145 +1,77 @@
 package be.sgerard.i18n.model.i18n.persistence;
 
-import javax.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.data.annotation.PersistenceConstructor;
+
 import javax.validation.constraints.NotNull;
-import java.util.Locale;
 import java.util.Optional;
-import java.util.UUID;
 
 /**
+ * Translation of a certain {@link BundleKeyEntity key} part of translation bundle.
+ *
  * @author Sebastien Gerard
  */
-@NamedEntityGraph(
-        name = BundleKeyTranslationEntity.GRAPH_FETCH_ENTRIES_TO_WORKSPACE,
-        attributeNodes = {
-                @NamedAttributeNode(value = "bundleKey", subgraph = "bundleKey-subgraph"),
-        },
-        subgraphs = {
-                @NamedSubgraph(
-                        name = "bundleKey-subgraph",
-                        attributeNodes = {
-                                @NamedAttributeNode(value = "bundleFile", subgraph = "workspace-subgraph")
-                        }
-                ),
-                @NamedSubgraph(
-                        name = "workspace-subgraph",
-                        attributeNodes = {
-                                @NamedAttributeNode(value = "workspace")
-                        }
-                )
-        }
-)
-@Entity(name = "bundle_key_translation")
-@Table(
-        indexes = {@Index(columnList = "locale")},
-        uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"bundle_key", "locale"})
-        }
-)
+@Getter
+@Setter
 public class BundleKeyTranslationEntity {
 
-    public static final String GRAPH_FETCH_ENTRIES_TO_WORKSPACE = "fetch-entry-with-bundles";
-
-    @Id
-    private String id;
-
-    @ManyToOne
-    @JoinColumn(name = "bundle_key")
-    private BundleKeyEntity bundleKey;
-
+    /**
+     * The {@link TranslationLocaleEntity locale} of the translation.
+     */
     @NotNull
-    @Column(nullable = false)
     private String locale;
 
-    @Column(columnDefinition = "TEXT")
+    /**
+     * The unique index of this translation has defined in the original file.
+     * <p>
+     * If the index is negative, it means that this translation was not originally defined in the file.
+     */
+    @NotNull
+    private Long index;
+
+    /**
+     * The original translation has found in the repository.
+     */
     private String originalValue;
 
-    @Column(columnDefinition = "TEXT")
-    private String updatedValue;
+    /**
+     * The entity containing modification applied on the translation.
+     */
+    private BundleKeyTranslationModificationEntity modification;
 
-    @Column(length = 1000)
-    private String lastEditor;
-
-    @Version
-    private int version;
-
+    @PersistenceConstructor
     BundleKeyTranslationEntity() {
     }
 
-    public BundleKeyTranslationEntity(BundleKeyEntity bundleKey,
-                                      String locale,
+    public BundleKeyTranslationEntity(String locale,
+                                      long index,
                                       String originalValue) {
-        this.id = UUID.randomUUID().toString();
-
-        this.bundleKey = bundleKey;
-        this.bundleKey.addTranslation(this);
-
         this.locale = locale;
+        this.index = index;
         this.originalValue = originalValue;
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public BundleKeyEntity getBundleKey() {
-        return bundleKey;
-    }
-
-    public void setBundleKey(BundleKeyEntity bundleKey) {
-        this.bundleKey = bundleKey;
-    }
-
-    public String getLocale() {
-        return locale;
-    }
-
-    public Locale getJavaLocale(){
-        return Locale.forLanguageTag(getLocale());
-    }
-
-    public void setLocale(String locale) {
-        this.locale = locale;
-    }
-
+    /**
+     * @see #originalValue
+     */
     public Optional<String> getOriginalValue() {
         return Optional.ofNullable(originalValue);
     }
 
-    public void setOriginalValue(String originalValue) {
-        this.originalValue = originalValue;
+    /**
+     * Returns {@link BundleKeyTranslationModificationEntity modification} applied to this translation.
+     */
+    public Optional<BundleKeyTranslationModificationEntity> getModification() {
+        return Optional.ofNullable(modification);
     }
 
-    public Optional<String> getUpdatedValue() {
-        return Optional.ofNullable(updatedValue);
-    }
-
-    public void setUpdatedValue(String updatedValue) {
-        this.updatedValue = updatedValue;
-    }
-
+    /**
+     * Returns the translation value that will be used at the end.
+     */
     public Optional<String> getValue() {
-        return getUpdatedValue()
+        return getModification()
+                .flatMap(BundleKeyTranslationModificationEntity::getUpdatedValue)
                 .or(this::getOriginalValue);
-    }
-
-    public Optional<String> getLastEditor() {
-        return Optional.ofNullable(lastEditor);
-    }
-
-    public void setLastEditor(String lastEditor) {
-        this.lastEditor = lastEditor;
-    }
-
-    public int getVersion() {
-        return version;
-    }
-
-    public void setVersion(int version) {
-        this.version = version;
     }
 }

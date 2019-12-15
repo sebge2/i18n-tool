@@ -1,126 +1,98 @@
 package be.sgerard.i18n.service.security.session;
 
-import be.sgerard.i18n.model.event.EventType;
-import be.sgerard.i18n.model.security.auth.AuthenticatedUser;
-import be.sgerard.i18n.model.security.session.UserLiveSessionDto;
-import be.sgerard.i18n.model.security.session.UserLiveSessionEntity;
-import be.sgerard.i18n.model.security.user.AuthenticatedUserDto;
-import be.sgerard.i18n.model.security.user.UserDto;
-import be.sgerard.i18n.model.security.user.UserEntity;
-import be.sgerard.i18n.service.event.EventService;
-import be.sgerard.i18n.service.event.InternalEventListener;
-import be.sgerard.i18n.service.security.user.UserManager;
-import org.springframework.context.event.EventListener;
-import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
-import org.springframework.messaging.support.MessageHeaderAccessor;
-import org.springframework.messaging.support.NativeMessageHeaderAccessor;
+import be.sgerard.i18n.model.security.session.persistence.UserLiveSessionEntity;
+import be.sgerard.i18n.model.security.user.persistence.UserEntity;
+import be.sgerard.i18n.repository.security.UserLiveSessionRepository;
+import be.sgerard.i18n.service.ResourceNotFoundException;
+import be.sgerard.i18n.service.security.auth.AuthenticationUserManager;
+import be.sgerard.i18n.service.security.session.listener.UserLiveSessionListener;
+import be.sgerard.i18n.service.user.UserManager;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.socket.messaging.AbstractSubProtocolEvent;
-import org.springframework.web.socket.messaging.SessionConnectedEvent;
-import org.springframework.web.socket.messaging.SessionDisconnectEvent;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.time.Instant;
-import java.util.Collection;
-
-import static be.sgerard.i18n.model.event.EventType.UPDATED_CURRENT_AUTHENTICATED_USER;
-import static be.sgerard.i18n.service.security.auth.AuthenticationUtils.getAuthenticatedUserOrFail;
 
 /**
+ * Implementation of the {@link UserLiveSessionManager user live session manager}.
+ *
  * @author Sebastien Gerard
  */
 @Service
 public class UserLiveSessionManagerImpl implements UserLiveSessionManager {
 
+    private final AuthenticationUserManager authenticationUserManager;
     private final UserManager userManager;
-    private final UserLiveSessionManagerRepository repository;
-    private final EventService eventService;
+    private final UserLiveSessionRepository repository;
+    private final UserLiveSessionListener listener;
 
-    public UserLiveSessionManagerImpl(UserManager userManager,
-                                      UserLiveSessionManagerRepository repository,
-                                      EventService eventService) {
+    public UserLiveSessionManagerImpl(AuthenticationUserManager authenticationUserManager,
+                                      UserManager userManager,
+                                      UserLiveSessionRepository repository,
+                                      UserLiveSessionListener listener) {
+        this.authenticationUserManager = authenticationUserManager;
         this.userManager = userManager;
         this.repository = repository;
-        this.eventService = eventService;
-        this.eventService.addListener(new UpdatedAuthenticationUserListener());
+        this.listener = listener;
+    }
+
+    @Override
+    public Flux<UserLiveSessionEntity> getCurrentLiveSessions() {
+        return repository.findByLogoutTimeIsNull();
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public Mono<UserLiveSessionEntity> startSession() {
+        return authenticationUserManager
+                .getCurrentUserOrDie()
+                .flatMap(authenticatedUser -> userManager.findByIdOrDie(authenticatedUser.getUserId()))
+                .flatMap(currentUser -> repository.save(new UserLiveSessionEntity(currentUser)))
+                .flatMap(session ->
+                        listener
+                                .onNewSession(session)
+                                .thenReturn(session)
+                );
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Collection<UserLiveSessionEntity> getCurrentLiveSessions() {
-        return repository.findByLogoutTimeIsNull();
+    public Mono<UserLiveSessionEntity> getSessionOrDie(String id) {
+        return repository
+                .findById(id)
+                .switchIfEmpty(Mono.error(ResourceNotFoundException.userLiveSessionNotFoundException(id)));
     }
 
-    @EventListener
+    @Override
     @Transactional
-    public void onSessionConnectedEvent(SessionConnectedEvent event) {
-        final AuthenticatedUser authenticatedUser = getAuthenticatedUserOrFail(event.getUser());
+    public Mono<Void> stopSession(UserLiveSessionEntity session) {
+        return getSessionOrDie(session.getId())
+                .flatMap(currentSession -> {
+                    if (currentSession.getLogoutTime() == null) {
+                        currentSession.setLogoutTime(Instant.now());
+                    }
 
-        final UserEntity userEntity = userManager.getUserByIdOrFail(authenticatedUser.getUser().getId());
-
-        final UserLiveSessionEntity sessionEntity = new UserLiveSessionEntity(
-                userEntity,
-                authenticatedUser.getId(),
-                getSessionId(event),
-                Instant.now(),
-                authenticatedUser.getSessionRoles()
-        );
-
-        repository.save(sessionEntity);
-
-        // TODO restrict visible info
-        eventService.broadcastEvent(EventType.CONNECTED_USER_SESSION, UserLiveSessionDto.builder(sessionEntity).build());
+                    return repository.save(currentSession);
+                })
+                .flatMap(listener::onStopSession);
     }
 
-    @EventListener
+    @Override
     @Transactional
-    public void onSessionDisconnectEvent(SessionDisconnectEvent event) {
-        final String sessionId = getSessionId(event);
-
-        final UserLiveSessionEntity sessionEntity = repository.findBySimpSessionId(sessionId)
-                .orElseThrow(() -> new IllegalStateException("There is no session with id [" + sessionId + "]."));
-
-
-        if (sessionEntity.getLogoutTime() == null) {
-            sessionEntity.setLogoutTime(Instant.now());
-
-            // TODO restrict visible info
-            eventService.broadcastEvent(EventType.DISCONNECTED_USER_SESSION, UserLiveSessionDto.builder(sessionEntity).build());
-        }
+    public Mono<Void> deleteSession(UserLiveSessionEntity session) {
+        return repository
+                .delete(session)
+                .then(listener.onDeletedSession(session));
     }
 
-    private String getSessionId(AbstractSubProtocolEvent event) {
-        final MessageHeaderAccessor accessor = NativeMessageHeaderAccessor.getAccessor(event.getMessage(), SimpMessageHeaderAccessor.class);
-
-        if (accessor == null) {
-            throw new IllegalStateException("Cannot extract session from null accessor.");
-        }
-
-        return SimpMessageHeaderAccessor.getSessionId(accessor.getMessageHeaders());
-    }
-
-    private final class UpdatedAuthenticationUserListener implements InternalEventListener<AuthenticatedUserDto> {
-
-        @Override
-        public boolean support(EventType eventType) {
-            return eventType == EventType.UPDATED_AUTHENTICATED_USER;
-        }
-
-        @Override
-        public void onEvent(AuthenticatedUserDto updatedAuthenticatedUser) {
-            repository.findByAuthenticatedUserId(updatedAuthenticatedUser.getId())
-                    .forEach(liveSession -> {
-                        liveSession.setSessionRoles(updatedAuthenticatedUser.getSessionRoles());
-
-                        eventService.sendEventToSession(
-                                liveSession.getSimpSessionId(),
-                                UPDATED_CURRENT_AUTHENTICATED_USER,
-                                AuthenticatedUserDto.builder()
-                                        .user(UserDto.builder(liveSession.getUser()).build())
-                                        .sessionRoles(liveSession.getSessionRoles())
-                                        .build()
-                        );
-                    });
-        }
+    @Override
+    @Transactional
+    public Mono<Void> deleteAll(UserEntity userEntity) {
+        return repository
+                .findByUser(userEntity)
+                .flatMap(this::deleteSession)
+                .then();
     }
 }

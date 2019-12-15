@@ -1,41 +1,46 @@
-import {Injectable} from '@angular/core';
-import {RxStompService} from '@stomp/ng2-stompjs';
-import {Message} from '@stomp/stompjs';
+import {Injectable, NgZone} from '@angular/core';
 import {Observable} from "rxjs";
-import {map, merge} from "rxjs/operators";
 import {NotificationService} from "../../notification/service/notification.service";
-import {RxStompState} from '@stomp/rx-stomp';
+import {EventObjectDto} from "../../../api";
+import {filter, map} from "rxjs/operators";
+import {ObservableEventSource} from "./observable-event-source";
+import * as _ from "lodash";
 
 @Injectable({
     providedIn: 'root'
 })
 export class EventService {
 
-    private opened: boolean;
+    private _observableEventSource$: ObservableEventSource;
 
-    constructor(private rxStompService: RxStompService,
-                private notificationService: NotificationService) {
-        rxStompService.connectionState$.subscribe((event: RxStompState) => {
-            if (event == RxStompState.CLOSED) {
-                if (this.opened) {
-                    notificationService.displayErrorMessage('Connection issue to the server. Please check your internet connection.');
-                }
-                this.opened = false;
-            } else if (event == RxStompState.OPEN) {
-                this.opened = true;
-            }
-        });
+    constructor(_zone: NgZone,
+                notificationService: NotificationService) {
+        this._observableEventSource$ = new ObservableEventSource(_zone, notificationService, './api/event', {withCredentials: true});
     }
 
-    public subscribe<T>(eventType: string, type: { new(raw: T): T; }): Observable<T> {
-        return this.rxStompService.watch("/topic/" + eventType)
+    public subscribeDto<D>(eventType: string): Observable<D> {
+        return this._observableEventSource$.source()
             .pipe(
-                merge(this.rxStompService.watch("/user/queue/" + eventType)),
-                map((message: Message) => new type(<T>JSON.parse(message.body)))
+                filter((event: EventObjectDto) => !_.isNil(event)),
+                filter((event: EventObjectDto) => event.type === eventType),
+                map((event: EventObjectDto) => <D>event.payload),
             );
     }
 
-    public publish(eventType: string, payload: any): void {
-        this.rxStompService.publish({destination: "/app/" + eventType, body: JSON.stringify(payload)});
+    public subscribe<T>(eventType: string, type: { new(raw: any): T; }): Observable<T> {
+        return this.subscribeDto(eventType)
+            .pipe(map(event => event ? new type(<T>event) : null));
+    }
+
+    public disableEvents() {
+        this._observableEventSource$.disconnect();
+    }
+
+    public enabledEvents() {
+        this._observableEventSource$.connect();
+    }
+
+    public reconnected(): Observable<void> {
+        return this._observableEventSource$.reconnected();
     }
 }

@@ -1,44 +1,283 @@
 {
-  "SHARED" : {
-    "WORKSPACES_TITLE" : "Workspaces",
-    "WORKSPACE_LABEL" : "Workspace:",
-    "CANCEL_ACTION" : "Cancel",
-    "LOCALES_LABEL" : "Locales:",
-    "REPOSITORY_TITLE" : "Repository",
-    "USERS_TITLE": "Users"
-  },
-  "TRANSLATIONS" : {
-    "SEARCH_BAR" : {
-      "SEARCH_BUTTON" : "Search",
-      "CRITERION_ALL" : "All",
-      "TITLE" : "Search {criterion, select, ALL{for <b>all</b> translations} MISSING_TRANSLATIONS{for <b>missing</b> translations} TRANSLATIONS_CURRENT_USER_UPDATED{for translations that <b>I have updated</b>} UPDATED_TRANSLATIONS{for <b>updated</b> translations} other{}} {workspace, select, null{} other {on <b>{workspace}</b> branch}} {locales, select, true{for <b>all locales</b>} other{for locales {locales}}}",
-      "CRITERION_USER_UPDATED" : "I have updated",
-      "CRITERION_UPDATED" : "Someone updated it",
-      "CRITERION_MISSING" : "Missing"
+  "SHARED": {
+    "WORKSPACES_TITLE": "Workspaces",
+    "WORKSPACE_LABEL": "Workspace:",
+    "CANCEL_ACTION": "Cancel",
+    "LOCALES_LABEL": "Locales:",
+    "REPOSITORY_TITLE": "Repository",
+    "USERS_TITLE": "Users",
+    "WIZARD": {
+      "CLOSE_ACTION": "Close",
+      "NEXT_ACTION": "Next",
+      "PREVIOUS_ACTION": "Previous"
     },
-    "PLEASE_WAIT" : "The workspace is initializing, please wait.",
-    "START_REVIEW" : {
-      "START_ACTION" : "Start",
-      "COMMENT" : "Comment",
-      "TITLE" : "Start a review"
-    },
-    "INITIALIZING_ALT" : "Initializing workspace",
-    "TABLE" : {
-      "NO_RESULT" : "There are no result, please modify your criteria.",
-      "KEY_HEADER" : "Key",
-      "UNSAVED" : "Your changes are not saved yet"
-    },
-    "START_REVIEW_BUTTON" : "Publish and ask a review"
-  },
-  "ADMIN" : {
-    "WORKSPACES" : {
-      "CONFIRM_DELETION" : {
-        "ERASE_ACTION" : "Erase",
-        "EXPLAIN" : "Please confirm the <b>erasing</b> of <b>{workspace}</b> (all modifications will be lost).",
-        "PLEASE" : "Please fill the name of the workspace to confirm:",
-        "TITLE" : "Confirm Erasing"
+    "BUTTONS": {
+      "SEARCH": {
+        "LABEL": "Search"
       },
-      "REFRESH_ACTION" : "Refresh"
+      "DELETE": {
+        "DELETE_CONFIRMATION_POPUP_TITLE": "Delete Confirmation"
+      }
+    },
+    "FIELDS": {
+      "WORKSPACE_SELECTOR": {
+        "ALL": "All Workspaces"
+      },
+      "LOCALE_SELECTOR": {
+        "ALL": "All Locales"
+      }
+    },
+    "EVENTS": {
+      "ERROR_DISCONNECTED": "Connection issue to the server. Please check your internet connection.",
+      "INFO_RECONNECTED": "Connection re-established."
+    }
+  },
+  "TRANSLATIONS": {
+    "SEARCH_BAR": {
+      "WORKSPACES_LABEL": "Workspaces",
+      "WORKSPACES_HINT": "Workspaces to look into.",
+      "LOCALES_LABEL": "Locales",
+      "LOCALES_HINT": "Locales to display.",
+      "CRITERION_LABEL": "Criterion",
+      "CRITERION_HINT": "Which kind of translations to look for?",
+      "CRITERION": {
+        "ALL": "All",
+        "USER_UPDATED": "I have updated",
+        "UPDATED": "Someone updated it",
+        "MISSING": "Missing"
+      },
+      "TITLE": "Search {criterion, select, ALL{for <b>all</b> translations} MISSING_TRANSLATIONS{for <b>missing</b> translations} TRANSLATIONS_CURRENT_USER_UPDATED{for translations that <b>I have updated</b>} UPDATED_TRANSLATIONS{for <b>updated</b> translations} other{}}{workspaces, select, true{ for <b>all workspaces</b>} null{} other { on workspaces {workspaces}}}{locales, select, true{ for <b>all locales</b>} null{} other{ for locales {locales}}}."
+    },
+    "ERROR": {
+      "SEARCH": "Error while searching for translations.",
+      "UPDATE": "Error while updating translations."
+    },
+    "TABLE": {
+      "NO_RESULT": "There are no result, please modify your criteria.",
+      "KEY_COLUMN": "Key",
+      "UNSAVED_CHANGES": "Your changes are not saved yet"
+    }
+  },
+  "PREFERENCES": {
+    "TITLE": "My Preferences",
+    "TOOL_LOCALE": {
+      "LABEL": "Tool Language",
+      "AUTO_DETECTED": "Auto-detected language"
+    },
+    "PREFERRED_LOCALES": {
+      "LABEL": "My Spoken Languages",
+      "AUTO_DETECTED": "Auto-detected languages"
+    },
+    "SAVE": "Save",
+    "ERROR": {
+      "GET": "Error while retrieving user preferences."
+    }
+  },
+  "USER": {
+    "ERROR": {
+      "GET": "Error while retrieving current user."
+    }
+  },
+  "MENU": {
+    "ACCOUNT_LABEL": "Account",
+    "ADMIN_LABEL": "Admin",
+    "LOCALES_LABEL": "Languages",
+    "REPOSITORIES_LABEL": "Repositories",
+    "USERS_LABEL": "Users",
+    "TRANSLATIONS_LABEL": "Translations"
+  },
+  "ADMIN": {
+    "LOCALES": {
+      "DISPLAY_NAME": "Display Name",
+      "DISPLAY_NAME_EXAMPLE": "Example: English.",
+      "LANGUAGE": "Language Code",
+      "LANGUAGE_EXAMPLE": "Example: en, fr.",
+      "REGION": "Region",
+      "REGION_EXAMPLE": "Example: US, GB.",
+      "VARIANTS": "Variants (space separated)",
+      "VARIANTS_EXAMPLE": "Example: de-CH-1996.",
+      "ICON": "Icon",
+      "ICON_EXAMPLE": "Example: flag-icon-fr.",
+      "DELETE": {
+        "CONFIRMATION_MESSAGE": "Please confirm the deletion of the locale <b>{locale}</b>.<br/><br/>Translations in that locale won't be available anymore."
+      },
+      "ERROR": {
+        "SAVE": "Error while saving language.",
+        "UPDATE": "Error while updating language.",
+        "DELETE": "Error while deleting language.",
+        "GET_ALL": "Error while retrieving translation locales."
+      }
+    },
+    "USERS": {
+      "USER_NAME": "Username",
+      "USER_NAME_EXAMPLE": "Example: john.doe",
+      "DISPLAY_NAME": "Display Name",
+      "DISPLAY_NAME_EXAMPLE": "Example: John Doe",
+      "EMAIL": "Email",
+      "EMAIL_EXAMPLE": "Example: john.doe@acme.com",
+      "PASSWORD": "Password",
+      "PASSWORD_HINT": "At least 6 characters.",
+      "ADMIN_ROLE": "Privilege",
+      "ROLES": {
+        "NO_PRIVILEGE": "No privilege",
+        "ADMIN_PRIVILEGE": "Administrator"
+      },
+      "UPDATE_PASSWORD": "Update Password",
+      "PASSWORD_COPIED": "The user's password has been copied to your clipboard.",
+      "DELETE": {
+        "CONFIRMATION_MESSAGE": "{internal, select, true{Please confirm the deletion of the internal user <b>{user}</b>.<br/><br/>This user won't be able to access the application anymore.} null{} other {Please confirm the deletion of the external user <b>{user}</b>.<br/><br/>This user won't be deleted from the external system. Deleting this user does not prevent him to log in the application in the future.}}"
+      },
+      "ERROR": {
+        "SAVE": "Error while saving user.",
+        "UPDATE": "Error while updating user.",
+        "DELETE": "Error while deleting user.",
+        "GET_ALL": "Error while retrieving users."
+      },
+      "USER_TYPE": {
+        "INTERNAL": "Internal"
+      }
+    },
+    "WORKSPACES": {
+      "REFRESH_ACTION": "Refresh",
+      "REVIEW": {
+        "POPUP": {
+          "TITLE": "Publish Modifications",
+          "WORKSPACES_FIELD_LABEL": "Workspaces to publish",
+          "WORKSPACES_FIELD_HINT": "Modifications of the selected workspaces will be published.",
+          "COMMENT_FIELD_LABEL": "Free Comment",
+          "COMMENT_FIELD_HINT": "Free comment that will be used to describe modifications.",
+          "UNKNOWN_ERROR": "A technical error happened, please verify the configuration and try again.",
+          "ERROR_TITLE": "The following errors happened when publishing translations:"
+        }
+      },
+      "ERROR": {
+        "GET_ALL": "Error while retrieving workspaces.",
+        "DELETE_WORKSPACE": "Error while deleting the workspace",
+        "INITIALIZE_WORKSPACE": "Error while initializing the workspace",
+        "WORKSPACES_SYNCHRONIZE": "Error while synchronizing workspaces."
+      }
+    },
+    "REPOSITORIES": {
+      "TAB_LABEL": "Repositories",
+      "ADD_WIZARD": {
+        "STEPS": {
+          "SELECTION": "Selection",
+          "CONFIGURATION": "Configuration",
+          "CREATION": "Creation",
+          "INITIALIZATION": "Initialization"
+        },
+        "STEP_TYPE": {
+          "GITHUB": "Connect to GitHub",
+          "GIT": "Connect to Git"
+        },
+        "STEP_INFO": {
+          "GITHUB": {
+            "USER_NAME": "Username",
+            "USER_NAME_HINT": "The username owner of the repository.",
+            "REPOSITORY": "Name",
+            "REPOSITORY_HINT": "The repository name on GitHub.",
+            "ACCESS_KEY": "Access key",
+            "ACCESS_KEY_HINT": "The access key used to access (read/write) the repository."
+          },
+          "GIT": {
+            "LOCATION": "Location",
+            "LOCATION_HINT": "Git URL (ex: https://example.com/gitproject.git).",
+            "NAME": "Name",
+            "NAME_HINT": "Repository name displayed in this tool."
+          }
+        },
+        "STEP_CREATION": {
+          "CREATED": "Your repository {name} has been created!",
+          "CREATED_NEXT": "You can now initialize it by clicking on \"next\", or do it later.",
+          "UNKNOWN_ERROR": "A technical error happened, please verify the configuration and try again.",
+          "ERROR_TITLE": "Error while creating your repository, please go back."
+        },
+        "STEP_INITIALIZATION": {
+          "INITIALIZED": "Your repository {name} has been initialized!",
+          "UNKNOWN_ERROR": "A technical error happened, please try again later.",
+          "ERROR_TITLE": "Error while initializing your repository, please go back."
+        }
+      },
+      "VIEW_CARD": {
+        "STATUS_LABEL": "Status:",
+        "STATUS_VALUE_LABEL": {
+          "NOT_INITIALIZED": "Not Initialized",
+          "INITIALIZING": "Initializing",
+          "INITIALIZATION_ERROR": "Initialization Error",
+          "INITIALIZED": "Initialized"
+        },
+        "WORKSPACE_LABEL": "Workspaces:",
+        "WORKSPACES_READY": "<b>{number}</b> workspaces are initialized and <b><font class=\"status-success\">ready to use</font></b>",
+        "WORKSPACES_NOT_READY": "<b><font class=\"status-warning\">no workspace</font></b> is initialized and ready to use",
+        "DEFAULT_WORKSPACE_LABEL": "Default Workspace:",
+        "PUBLISH_LABEL": "Publish:",
+        "PUBLISH_ENABLED": "<b>some modifications can be published</b>",
+        "PUBLISH_DISABLED": "no modification to publish",
+        "STATUS_DEFAULT": "<b>{name}</b> with <b>{numberBundleKeys}</b> translation key(s)",
+        "STATUS_DEFAULT_EMPTY": "<b><font class=\"status-warning\">no default workspace</font></b>",
+        "ACCESS_LABEL": "Your access:",
+        "ACCESS_ALLOWED": "You, <b>{displayName}</b>, are <b><font class=\"status-success\">allowed</font></b> to synchronize and publish",
+        "ACCESS_FORBIDDEN": "You, <b>{displayName}</b>, are <b><font class=\"status-warning\">not allowed</font></b> to synchronize and publish",
+        "ERROR": {
+          "INITIALIZE": "Error while initializing the repository."
+        }
+      },
+      "CONFIG_CARD": {
+        "CARD_TITLE": "Configuration",
+        "NAME_LABEL": "Name",
+        "NAME_HINT": "Unique name of this repository.",
+        "DEFAULT_BRANCH_LABEL": "Default Branch",
+        "DEFAULT_BRANCH_HINT": "Default branch to use when searching.",
+        "ALLOWED_BRANCHES_LABEL": "Allowed Branches",
+        "ALLOWED_BRANCHES_HINT": "Regex specifying which branches will be scanned.",
+        "LOCATION_LABEL": "Location",
+        "LOCATION_HINT": "Git URL of your repository.",
+        "ACTION_UPDATE_ACCESS_KEY": "Update Access Key",
+        "ACTION_UPDATE_WEB_HOOK_SECRET": "Update Web Hook Secret",
+        "DELETE": {
+          "CONFIRMATION_MESSAGE": "Please confirm the deletion of the repository <b>{repository}</b>.<br/><br/>The local repository and its configuration will be removed. All modifications that are not published will be lost."
+        }
+      },
+      "DETAILS_CARD": {
+        "CARD_TITLE": "Workspaces",
+        "PLEASE_INITIALIZE": "Please initialize your repository first.",
+        "WORKSPACES": {
+          "READY": "Ready",
+          "NOT_READY": "Not Ready",
+          "IN_REVIEW": "In Review"
+        },
+        "ACTIONS": {
+          "SYNCHRONIZE": "Synchronize",
+          "EXCLUSION": "Excluded/Included Files"
+        }
+      },
+      "ERROR": {
+        "GET_ALL": "Error while retrieving repositories.",
+        "UPDATE": "Error while updating the repository",
+        "DELETE": "Error while deleting the repository.",
+        "INITIALIZE": "Error while initializing the repository."
+      }
+    }
+  },
+  "ACCOUNT": {
+    "PROFILE": {
+      "LABEL": "Profile"
+    },
+    "PREFERENCES": {
+      "LABEL": "Preferences"
+    },
+    "SECURITY": {
+      "LABEL": "Security",
+      "CURRENT_PASSWORD": "Current Password",
+      "CURRENT_PASSWORD_HINT": "Please fill your current password.",
+      "NEW_PASSWORD": "New Password",
+      "NEW_PASSWORD_HINT": "At least 6 characters.",
+      "CONFIRMED_PASSWORD": "Please Confirm",
+      "CONFIRMED_PASSWORD_HINT": "Please confirm your new password."
+    },
+    "ERROR": {
+      "SAVE_PROFILE": "Error while saving profile.",
+      "SAVE_PASSWORD": "Error while saving password."
     }
   }
 }

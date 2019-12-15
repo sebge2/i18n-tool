@@ -1,0 +1,12 @@
+<button
+        mat-raised-button
+        color="primary"
+        [disabled]="!form.valid || searchInProgress || disabled"
+        (click)="onSearch()">
+    <mat-icon *ngIf="searchInProgress">
+        <mat-spinner color="warn" diameter="20"></mat-spinner>
+    </mat-icon>
+    <mat-icon *ngIf="!searchInProgress">search</mat-icon>
+
+    {{'SHARED.BUTTONS.SEARCH.LABEL' | translate}}
+</button>

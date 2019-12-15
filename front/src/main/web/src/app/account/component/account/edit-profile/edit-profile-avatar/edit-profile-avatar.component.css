@@ -1,0 +1,28 @@
+.avatar-zone {
+    height: 200px;
+    width: 200px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    position: relative;
+}
+
+.avatar-upload-button {
+    position: absolute;
+    bottom: -28px;
+    right: -28px;
+    opacity: 0;
+    transition: opacity 0.5s ease-out;
+}
+
+.avatar-upload-button .mat-icon {
+    transform: scale(1.5);
+}
+
+.avatar-zone:hover .avatar-upload-button {
+    opacity: 1;
+}
+
+.avatar-displayName {
+    text-align: center;
+}

@@ -1,7 +1,9 @@
-spring:
-  datasource:
-    url: jdbc:h2:file:${BASE_REPOSITORY}/database/db;DB_CLOSE_ON_EXIT=FALSE;
+#spring:
+#  datasource:
+#    url: jdbc:h2:file:${BASE_REPOSITORY}/database/db;DB_CLOSE_ON_EXIT=FALSE;
 be:
   sgerard:
     i18n:
       base-directory: ${BASE_REPOSITORY}
+      security:
+        default-admin-password: admin

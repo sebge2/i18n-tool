@@ -1,0 +1,27 @@
+.mat-snack-bar-container {
+    width: 800px;
+}
+
+.mat-dialog-title .icon {
+    color: red;
+}
+
+.snack-bar-title {
+    font-size: larger;
+    color: white;
+    font-weight: bold;
+}
+
+.snack-container .text {
+    color: white;
+    font-weight: bold;
+}
+
+.snack-bar-close {
+    background-color: white;
+    color: black;
+}
+
+.snack-bar-close:hover {
+    opacity: 0.9;
+}

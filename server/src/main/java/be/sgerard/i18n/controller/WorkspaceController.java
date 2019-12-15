@@ -1,143 +1,163 @@
 package be.sgerard.i18n.controller;
 
-import be.sgerard.i18n.model.i18n.dto.BundleKeysPageDto;
-import be.sgerard.i18n.model.i18n.dto.BundleKeysPageRequestDto;
-import be.sgerard.i18n.model.i18n.dto.TranslationSearchCriterion;
-import be.sgerard.i18n.model.i18n.dto.WorkspaceDto;
-import be.sgerard.i18n.service.LockTimeoutException;
-import be.sgerard.i18n.service.ResourceNotFoundException;
-import be.sgerard.i18n.service.git.RepositoryException;
-import be.sgerard.i18n.service.i18n.TranslationManager;
-import be.sgerard.i18n.service.i18n.WorkspaceManager;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import be.sgerard.i18n.model.workspace.dto.BundleFileDto;
+import be.sgerard.i18n.model.workspace.dto.WorkspaceDto;
+import be.sgerard.i18n.model.workspace.dto.WorkspacesPublishRequestDto;
+import be.sgerard.i18n.model.workspace.persistence.WorkspaceEntity;
+import be.sgerard.i18n.service.BadRequestException;
+import be.sgerard.i18n.service.workspace.WorkspaceDtoEnricher;
+import be.sgerard.i18n.service.workspace.WorkspaceManager;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
 
 /**
+ * {@link RestController Controller} handling {@link WorkspaceDto workspaces}.
+ *
  * @author Sebastien Gerard
  */
 @RestController
 @RequestMapping(path = "/api")
-@Api(value = "Controller handling workspaces.")
+@Tag(name = "Workspace", description = "Controller handling workspaces.")
 public class WorkspaceController {
 
     private final WorkspaceManager workspaceManager;
-    private final TranslationManager translationManager;
+    private final WorkspaceDtoEnricher dtoEnricher;
 
-    public WorkspaceController(WorkspaceManager workspaceManager, TranslationManager translationManager) {
+    public WorkspaceController(WorkspaceManager workspaceManager, WorkspaceDtoEnricher dtoEnricher) {
         this.workspaceManager = workspaceManager;
-        this.translationManager = translationManager;
+        this.dtoEnricher = dtoEnricher;
     }
 
-    @GetMapping("/workspace")
-    @ApiOperation(value = "Returns registered workspaces.")
-    public List<WorkspaceDto> getWorkspaces() {
-        return workspaceManager.getWorkspaces()
-            .stream()
-            .map(entity -> WorkspaceDto.builder(entity).build())
-            .collect(toList());
+    /**
+     * Finds all the {@link WorkspaceDto workspaces}.
+     */
+    @GetMapping("/repository/workspace")
+    @Operation(summary = "Returns registered workspaces.")
+    public Flux<WorkspaceDto> findAll() {
+        return workspaceManager.findAll()
+                .flatMapSequential(dtoEnricher::mapAndEnrich);
     }
 
-    @PutMapping(path = "/workspace")
-    @ApiOperation(value = "Executes an action on workspaces.")
-    @PreAuthorize("hasRole('ADMIN') and hasRole('MEMBER_OF_REPOSITORY')")
-    @SuppressWarnings("SwitchStatementWithTooFewBranches")
-    public void executeWorkspacesAction(@ApiParam("The action to execute.") @RequestParam(name = "do") WorkspaceListAction doAction) throws LockTimeoutException, RepositoryException {
-        switch (doAction) {
-            case FIND:
-                workspaceManager.findWorkspaces();
-                break;
-        }
+    /**
+     * Finds all the {@link WorkspaceDto workspaces} restricted to the specified repository.
+     */
+    @GetMapping("/repository/{id}/workspace")
+    @Operation(summary = "Returns registered workspaces.")
+    public Flux<WorkspaceDto> findAll(@PathVariable String id) {
+        return workspaceManager.findAll(id)
+                .flatMapSequential(dtoEnricher::mapAndEnrich);
     }
 
-    @GetMapping(path = "/workspace/{id}")
-    @ApiOperation(value = "Returns the workspace having the specified id.")
-    public WorkspaceDto getWorkspace(@PathVariable String id) {
-        return workspaceManager.getWorkspace(id)
-            .map(entity -> WorkspaceDto.builder(entity).build())
-            .orElseThrow(() -> new ResourceNotFoundException(id));
+    /**
+     * Returns the {@link WorkspaceDto workspace} having the specified id.
+     */
+    @GetMapping(path = "/repository/workspace/{id}")
+    @Operation(summary = "Returns the workspace having the specified id.")
+    public Mono<WorkspaceDto> findById(@PathVariable String id) {
+        return workspaceManager.findByIdOrDie(id)
+                .flatMap(dtoEnricher::mapAndEnrich);
     }
 
-    @DeleteMapping(path = "/workspace/{id}")
+    /**
+     * Returns {@link BundleFileDto bundle files} composing the specified workspace.
+     */
+    @GetMapping(path = "/repository/workspace/{id}/bundle-file")
+    @Operation(summary = "Returns bundle files composing the specified workspace.")
+    public Mono<List<BundleFileDto>> findWorkspaceBundleFiles(@PathVariable String id) {
+        return workspaceManager.findByIdOrDie(id)
+                .flatMapIterable(WorkspaceEntity::getFiles)
+                .map(bundleFile -> BundleFileDto.builder(bundleFile).build())
+                .collectList();
+    }
+
+    /**
+     * Removes the {@link WorkspaceDto workspace} having the specified id.
+     */
+    @DeleteMapping(path = "/repository/workspace/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @ApiOperation(value = "Deletes the workspace having the specified id.")
-    @PreAuthorize("hasRole('ADMIN') and hasRole('MEMBER_OF_REPOSITORY')")
-    public void deleteWorkspace(@PathVariable String id) throws LockTimeoutException, RepositoryException {
-        workspaceManager.deleteWorkspace(id);
+    @Operation(summary = "Deletes the workspace having the specified id.")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Mono<Void> deleteWorkspace(@PathVariable String id) {
+        return workspaceManager.delete(id).then();
     }
 
-    @PutMapping(path = "/workspace/{id}")
-    @ApiOperation(value = "Executes an action on the specified workspace.")
-    @PreAuthorize("hasRole('ADMIN') and hasRole('MEMBER_OF_REPOSITORY')")
-    public WorkspaceDto executeWorkspaceAction(@PathVariable String id,
-                                               @ApiParam("The action to execute.") @RequestParam(name = "do") WorkspaceAction doAction,
-                                               @ApiParam("Specify the message to use for the review.")
-                                               @RequestParam(name = "message", required = false) String message) throws LockTimeoutException, RepositoryException {
-        switch (doAction) {
-            case INITIALIZE:
-                return WorkspaceDto.builder(workspaceManager.initialize(id)).build();
-            case START_REVIEW:
-                if (StringUtils.isEmpty(message)) {
-                    throw new IllegalArgumentException("There is no message specify. A message is needed when starting a review.");
-                }
+    /**
+     * Executes an action on workspaces associated to the specified repository.
+     */
+    @PostMapping(path = "/repository/{repositoryId}/workspace/do", params = "action=SYNCHRONIZE")
+    @Operation(
+            operationId = "synchronize",
+            summary = "Executes an action on workspaces of a particular repository.",
+            parameters = @Parameter(name = "action", in = ParameterIn.QUERY, schema = @Schema(allowableValues = {"SYNCHRONIZE"}))
+    )
+    @PreAuthorize("hasRole('ADMIN')")
+    public Flux<WorkspaceDto> synchronizeRepository(@PathVariable String repositoryId) {
+        return workspaceManager.synchronize(repositoryId)
+                .flatMapSequential(dtoEnricher::mapAndEnrich);
+    }
 
-                return WorkspaceDto.builder(workspaceManager.startReviewing(id, message)).build();
-            default:
-                throw new IllegalArgumentException("Action " + doAction + " is not supported.");
+    /**
+     * Initializes the {@link WorkspaceDto workspace} having the specified id and returns it.
+     */
+    @PostMapping(path = "/repository/workspace/{id}/do", params = "action=INITIALIZE")
+    @Operation(
+            hidden = true,
+            summary = "Initializes the specified workspace.",
+            parameters = @Parameter(name = "action", in = ParameterIn.QUERY, schema = @Schema(allowableValues = {"INITIALIZE", "PUBLISH"}))
+    )
+    @PreAuthorize("hasRole('ADMIN')")
+    public Mono<WorkspaceDto> initialize(@PathVariable String id) {
+        return workspaceManager.initialize(id)
+                .flatMap(dtoEnricher::mapAndEnrich);
+    }
+
+    /**
+     * Publishes the modifications made on the specified workspace. Based on the type of repository, a review may start afterwards.
+     * If it's not the case, a new fresh workspace will be created and returned.
+     */
+    @PostMapping(path = "/repository/workspace/{id}/do", params = "action=PUBLISH")
+    @Operation(
+            operationId = "executeAction",
+            summary = "Publishes all modifications made on the specified workspace.",
+            parameters = @Parameter(name = "action", in = ParameterIn.QUERY, schema = @Schema(allowableValues = {"INITIALIZE", "PUBLISH"}))
+    )
+    public Mono<WorkspaceDto> publish(@PathVariable String id,
+                                      @Parameter(description = "Message required when publishing, it describe the changes.") @RequestParam(name = "message") String message) {
+
+        if (StringUtils.isEmpty(message)) {
+            throw BadRequestException.missingReviewMessage();
         }
+
+        return workspaceManager.publish(id, message)
+                .flatMap(dtoEnricher::mapAndEnrich);
     }
 
-    @GetMapping(path = "/workspace/{id}/translation")
-    @ApiOperation(value = "Returns translations of the workspace having the specified id.")
-    public BundleKeysPageDto getWorkspaceTranslations(@PathVariable String id,
-                                                      @RequestParam(name = "locales", required = false, defaultValue = "") List<Locale> locales,
-                                                      @RequestParam(name = "criterion", required = false) TranslationSearchCriterion criterion,
-                                                      @RequestParam(name = "lastKey", required = false) String lastKey,
-                                                      @RequestParam(name = "maxKeys", required = false) Integer maxKeys) {
-        return translationManager.getTranslations(
-            BundleKeysPageRequestDto.builder(id)
-                .locales(locales)
-                .lastKey(lastKey)
-                .maxKeys(maxKeys)
-                .criterion(criterion)
-                .build()
-        );
-    }
+    /**
+     * Publishes a list of workspaces.
+     */
+    @PostMapping(path = "/repository/workspace/do", params = "action=PUBLISH")
+    @Operation(
+            summary = "Initializes the specified workspace.",
+            parameters = @Parameter(name = "action", in = ParameterIn.QUERY, schema = @Schema(allowableValues = {"PUBLISH"}))
+    )
+    public Flux<WorkspaceDto> publish(@RequestBody WorkspacesPublishRequestDto request) {
+        if (StringUtils.isEmpty(request.getMessage())) {
+            throw BadRequestException.missingReviewMessage();
+        }
 
-    @RequestMapping(path = "/workspace/{id}/translation", method = RequestMethod.PATCH)
-    @ApiOperation(value = "Updates translations of the workspace having the specified id.")
-    public void updateTranslations(@PathVariable String id,
-                                   @RequestBody Map<String, String> translations) {
-        workspaceManager.updateTranslations(id, translations);
-    }
-
-    @GetMapping(path = "/workspace/registered-locale")
-    @ApiOperation(value = "Returns all locales that have been used so far.")
-    public Collection<String> getRegisteredLocales() {
-        return translationManager.getLocales().stream().map(Locale::toString).collect(toSet());
-    }
-
-    public enum WorkspaceListAction {
-
-        FIND
-    }
-
-    public enum WorkspaceAction {
-
-        INITIALIZE,
-
-        START_REVIEW
+        return workspaceManager
+                .publish(request)
+                .flatMap(dtoEnricher::mapAndEnrich);
     }
 }

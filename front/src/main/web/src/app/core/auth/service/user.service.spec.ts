@@ -5,6 +5,7 @@ import {HttpClientTestingModule, HttpTestingController} from "@angular/common/ht
 import {EventService} from "../../event/service/event.service";
 import {NotificationService} from "../../notification/service/notification.service";
 import {User} from "../model/user.model";
+import {UserDto} from "../../../api";
 
 describe('UserService', () => {
     let injector: TestBed;
@@ -35,7 +36,7 @@ describe('UserService', () => {
 
     xit('should get users',
         async () => {
-            const expected = [new User(<User>{id: 'id'})];
+            const expected = [User.fromDto(<UserDto>{id: 'id'})];
 
             const promise = service.getUsers()
                 .toPromise()

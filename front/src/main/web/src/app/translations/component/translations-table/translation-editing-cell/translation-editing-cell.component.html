@@ -1,5 +1,5 @@
-<mat-form-field [formGroup]="formGroup">
-    <textarea matInput rows="1" [ngStyle]="editionStyle" class="textarea" formControlName="value"></textarea>
-</mat-form-field>
+<mat-form-field [formGroup]="form">
+    <input matInput formControlName="value">
 
-<!--<i class="far fa-question-circle info"></i>-->
+    <app-form-cancel-button [form]="form" (reset)="onReset()" matSuffix></app-form-cancel-button>
+</mat-form-field>

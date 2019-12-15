@@ -1,0 +1,10 @@
+package be.sgerard.i18n.service.i18n.review;
+
+import static org.junit.Assert.*;
+
+/**
+ * @author Sebastien Gerard
+ */
+public class CompositeWorkspaceReviewHandlerTest {
+
+}
