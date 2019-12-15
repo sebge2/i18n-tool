@@ -1,5 +1,5 @@
 import {BundleKeyTranslation} from "./bundle-key-translation.model";
-import {Locale} from "../locale.model";
+import {TranslationLocale} from "../translation-locale.model";
 
 export class BundleKey {
 
@@ -12,7 +12,7 @@ export class BundleKey {
         this.translations = bundleKey.translations.map(translation => new BundleKeyTranslation(translation));
     }
 
-    findTranslation(locale: Locale): BundleKeyTranslation {
+    findTranslation(locale: TranslationLocale): BundleKeyTranslation {
         const index = this.translations.findIndex(translation => translation.locale.toString().toLocaleLowerCase() == locale.toString().toLocaleLowerCase());
 
         if (index >= 0) {

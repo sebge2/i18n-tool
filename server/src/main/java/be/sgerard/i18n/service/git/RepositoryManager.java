@@ -1,16 +1,13 @@
 package be.sgerard.i18n.service.git;
 
-import be.sgerard.i18n.model.repository.RepositoryDescriptionDto;
 import be.sgerard.i18n.service.LockTimeoutException;
+import be.sgerard.i18n.service.repository.RepositoryException;
+import be.sgerard.i18n.service.repository.git.GitAPI;
 
 /**
  * @author Sebastien Gerard
  */
 public interface RepositoryManager {
-
-    RepositoryDescriptionDto getDescription() throws RepositoryException;
-
-    boolean initLocalRepository() throws LockTimeoutException, RepositoryException;
 
     void open(ApiConsumer apiConsumer) throws RepositoryException, LockTimeoutException;
 
@@ -23,14 +20,14 @@ public interface RepositoryManager {
     @FunctionalInterface
     interface ApiConsumer {
 
-        void consume(RepositoryAPI api) throws RepositoryException, LockTimeoutException;
+        void consume(GitAPI api) throws RepositoryException, LockTimeoutException;
 
     }
 
     @FunctionalInterface
     interface ApiTransformer<T> {
 
-        T transform(RepositoryAPI api) throws RepositoryException, LockTimeoutException;
+        T transform(GitAPI api) throws RepositoryException, LockTimeoutException;
 
     }
 

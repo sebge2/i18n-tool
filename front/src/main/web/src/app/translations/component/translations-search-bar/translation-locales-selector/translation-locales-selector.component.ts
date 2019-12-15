@@ -1,11 +1,12 @@
 import {Component, ElementRef, EventEmitter, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
-import {ALL_LOCALES, Locale} from "../../../model/locale.model";
+import {Locale} from "../../../model/locale.model";
 import {MatAutocompleteSelectedEvent, MatChipInputEvent} from "@angular/material";
 import {FormControl} from "@angular/forms";
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import {map, startWith, take, takeUntil} from "rxjs/operators";
 import {Observable, Subject} from 'rxjs';
 import {UserSettingsService} from "../../../../settings/service/user-settings.service";
+import {LocalesTranslationsService} from "../../../service/locales-translations.service";
 
 @Component({
     selector: 'app-translation-locales-selector',
@@ -21,17 +22,18 @@ export class TranslationLocalesSelectorComponent implements OnInit, OnDestroy {
     valueChange: EventEmitter<Locale[]> = new EventEmitter();
 
     value: Locale[] = [];
-
-    allLocales: Locale[] = ALL_LOCALES;
+    allLocales: Locale[];
     availableLocales: Locale[];
-    filteredLocales: Observable<string[]>;
+    filteredLocales: Observable<Locale[]>;
 
     localeInputCtrl = new FormControl();
     separatorKeysCodes: number[] = [ENTER, COMMA];
 
     private destroy$ = new Subject();
 
-    constructor(private userSettingsService: UserSettingsService) {
+    constructor(private userSettingsService: UserSettingsService,
+                private localeService: LocalesTranslationsService) {
+        this.allLocales = localeService.getAvailableLocales();
     }
 
     ngOnInit() {
@@ -61,7 +63,7 @@ export class TranslationLocalesSelectorComponent implements OnInit, OnDestroy {
     }
 
     selected(event: MatAutocompleteSelectedEvent): void {
-        const selectedLocale: Locale = <Locale>event.option.viewValue;
+        const selectedLocale: Locale = <Locale><unknown>event.option.value;
 
         this.localeInput.nativeElement.value = '';
         this.localeInputCtrl.setValue(null);
@@ -94,9 +96,9 @@ export class TranslationLocalesSelectorComponent implements OnInit, OnDestroy {
         }
     }
 
-    private filter(value: string): string[] {
+    private filter(value: string): Locale[] {
         const filterValue = value.toLowerCase();
 
-        return this.availableLocales.filter(locale => locale.toLowerCase().indexOf(filterValue) === 0);
+        return this.availableLocales.filter(locale => locale.toString().toLowerCase().indexOf(filterValue) === 0);
     }
 }

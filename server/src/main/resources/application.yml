@@ -47,7 +47,3 @@ be:
       json-icu-translation-bundle-dirs: "**/src/assets/i18n"
       git-hub-webhook-secret: ${GIT_HUB_WEBHOOK_SECRET}
       default-admin-password: ${DEFAULT_ADMIN_PASSWORD:}
-      locales:
-          - en
-          - fr
-          - nl

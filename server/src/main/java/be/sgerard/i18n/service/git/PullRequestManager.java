@@ -1,6 +1,7 @@
 package be.sgerard.i18n.service.git;
 
 import be.sgerard.i18n.model.git.PullRequestStatus;
+import be.sgerard.i18n.service.repository.RepositoryException;
 
 import java.util.List;
 

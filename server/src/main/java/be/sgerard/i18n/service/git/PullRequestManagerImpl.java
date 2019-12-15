@@ -2,6 +2,7 @@ package be.sgerard.i18n.service.git;
 
 import be.sgerard.i18n.configuration.AppProperties;
 import be.sgerard.i18n.model.git.PullRequestStatus;
+import be.sgerard.i18n.service.repository.RepositoryException;
 import be.sgerard.i18n.service.security.auth.AuthenticationManager;
 import com.jcabi.github.*;
 import org.springframework.stereotype.Service;
@@ -33,7 +34,7 @@ public class PullRequestManagerImpl implements PullRequestManager {
         try {
             return openRepo().pulls().create(message, currentBranch, targetBranch).number();
         } catch (IOException e) {
-            throw new RepositoryException("Error while creating pull request from branch [" + currentBranch + "].", e);
+            throw new IllegalStateException("Error while creating pull request from branch [" + currentBranch + "].", e);
         }
     }
 
@@ -49,7 +50,7 @@ public class PullRequestManagerImpl implements PullRequestManager {
         try {
             return PullRequestStatus.fromString(openRepo().pulls().get(requestNumber).json().getString("state"));
         } catch (IOException e) {
-            throw new RepositoryException("Error while retrieving the status of the pull request " + requestNumber + ".", e);
+            throw new IllegalStateException("Error while retrieving the status of the pull request " + requestNumber + ".", e);
         }
     }
 

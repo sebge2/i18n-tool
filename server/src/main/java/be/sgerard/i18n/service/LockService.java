@@ -1,5 +1,7 @@
 package be.sgerard.i18n.service;
 
+import reactor.core.publisher.Mono;
+
 import java.util.concurrent.Callable;
 
 /**
@@ -9,7 +11,6 @@ public interface LockService {
 
     /**
      * @throws LockTimeoutException if the lock cannot be obtained
-     * @throws Exception thrown by the runnable
      */
-    <T> T executeInLock(Callable<T> runnable) throws Exception;
+    <T> Mono<T> executeInLock(Callable<Mono<T>> runnable) throws LockTimeoutException;
 }

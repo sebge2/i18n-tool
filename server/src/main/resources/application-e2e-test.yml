@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:h2:file:/tmp/git-oauth/database/db;DB_CLOSE_ON_EXIT=FALSE;
+    url: jdbc:h2:file:/tmp/i18n-tool/database/db;DB_CLOSE_ON_EXIT=FALSE;
   security:
     oauth2:
       client:
@@ -11,8 +11,6 @@ spring:
 be:
   sgerard:
     i18n:
-      base-directory: /tmp/git-oauth
-      repoUserName: sebge2
-      repoName: i18n-tool
-      git-hub-webhook-secret: webhookSecret
-      default-admin-password: adminPassword
+      base-directory: /tmp/i18n-tool
+      security:
+        default-admin-password: adminPassword

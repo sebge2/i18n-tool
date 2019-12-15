@@ -12,5 +12,7 @@ public enum RepositoryStatus {
 
     INITIALIZING,
 
-    INITIALIZED
+    INITIALIZED,
+
+    INITIALIZATION_ERROR
 }

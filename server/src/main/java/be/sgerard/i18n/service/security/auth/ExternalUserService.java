@@ -4,7 +4,7 @@ import be.sgerard.i18n.model.security.auth.ExternalKeyAuthenticatedUser;
 import be.sgerard.i18n.model.security.auth.ExternalOAuth2AuthenticatedUser;
 import be.sgerard.i18n.model.security.user.ExternalUserDto;
 import be.sgerard.i18n.model.security.user.ExternalUserEntity;
-import be.sgerard.i18n.service.security.user.UserManager;
+import be.sgerard.i18n.service.user.UserManager;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;

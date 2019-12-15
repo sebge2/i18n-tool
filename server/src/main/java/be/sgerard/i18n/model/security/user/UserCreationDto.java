@@ -24,6 +24,14 @@ public class UserCreationDto {
         return new Builder();
     }
 
+    public static Builder builder(UserDto userDto) {
+        return builder()
+                .username(userDto.getUsername())
+                .email(userDto.getEmail())
+                .avatarUrl(userDto.getAvatarUrl())
+                .roles(userDto.getRoles());
+    }
+
     private final String username;
     private final String email;
     private final String password;

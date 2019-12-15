@@ -27,6 +27,8 @@ public class ExternalUserEntity extends UserEntity {
 
     public ExternalUserEntity(String externalId) {
         setId(UUID.randomUUID().toString());
+        setPreferences(new UserPreferencesEntity(this));
+
         this.externalId = externalId;
     }
 

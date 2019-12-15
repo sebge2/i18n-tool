@@ -2,7 +2,7 @@ package be.sgerard.i18n.service.i18n.file;
 
 import be.sgerard.i18n.model.i18n.file.ScannedBundleFileDto;
 import be.sgerard.i18n.model.i18n.file.ScannedBundleFileKeyDto;
-import be.sgerard.i18n.service.git.RepositoryAPI;
+import be.sgerard.i18n.service.repository.git.GitAPI;
 import com.fasterxml.jackson.datatype.jdk8.WrappedIOException;
 
 import java.io.File;
@@ -22,12 +22,12 @@ public class TranslationBundleWalker {
         this.handlers = handlers;
     }
 
-    public void walk(RepositoryAPI browseAPI, TranslationBundleConsumer consumer) throws IOException {
+    public void walk(GitAPI browseAPI, TranslationBundleConsumer consumer) throws IOException {
         walk(new File("/"), browseAPI, consumer, handlers);
     }
 
     private void walk(File directory,
-                      RepositoryAPI browseAPI,
+                      GitAPI browseAPI,
                       TranslationBundleConsumer consumer,
                       List<TranslationBundleHandler> handlers) throws IOException {
         final List<TranslationBundleHandler> updatedHandlers = handlers.stream()

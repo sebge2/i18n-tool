@@ -37,7 +37,8 @@ public class GitHubWebHookService {
     public GitHubWebHookService(AppProperties appProperties,
                                 GithubWebHookEventHandler eventHandler,
                                 WebHookCallback callback) {
-        this.secretKey = appProperties.getGitHubWebhookSecret();
+//        this.secretKey = appProperties.getGitHubWebhookSecret(); TODO
+        this.secretKey = "";
         this.eventHandler = eventHandler;
         this.callback = callback;
     }

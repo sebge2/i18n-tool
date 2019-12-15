@@ -4,7 +4,7 @@ import be.sgerard.i18n.configuration.AppProperties;
 import be.sgerard.i18n.model.i18n.BundleType;
 import be.sgerard.i18n.model.i18n.file.ScannedBundleFileDto;
 import be.sgerard.i18n.model.i18n.file.ScannedBundleFileKeyDto;
-import be.sgerard.i18n.service.git.RepositoryAPI;
+import be.sgerard.i18n.service.repository.git.GitAPI;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -32,7 +32,7 @@ public class JsonICUTranslationBundleHandlerTest {
     public void scanBundles() throws IOException {
         final File directory = new File("/be/sgerard/i18n/service/i18n/file");
 
-        final RepositoryAPI repositoryAPI = mock(RepositoryAPI.class);
+        final GitAPI repositoryAPI = mock(GitAPI.class);
         when(repositoryAPI.listNormalFiles(directory))
                 .thenReturn(Stream.of(new File(directory, "fr.json")));
 
@@ -59,7 +59,7 @@ public class JsonICUTranslationBundleHandlerTest {
                 singletonList(new File(directory, "fr.json"))
         );
 
-        final RepositoryAPI repositoryAPI = mock(RepositoryAPI.class);
+        final GitAPI repositoryAPI = mock(GitAPI.class);
         when(repositoryAPI.openInputStream(new File(directory, "fr.json")))
                 .then(invocationOnMock -> getClass().getResourceAsStream(invocationOnMock.getArgument(0).toString()));
 

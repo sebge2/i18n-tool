@@ -75,7 +75,7 @@ public class ExternalGitHubUserExtractor implements ExternalUserExtractor {
                 .email(getStringAttribute(attributes, EMAIL))
                 .avatarUrl(getStringAttribute(attributes, AVATAR_URL))
                 .gitHubToken(repoMember ? tokenValue : null)
-                .roles(repoMember ? new UserRole[]{UserRole.MEMBER_OF_ORGANIZATION, UserRole.MEMBER_OF_REPOSITORY} : new UserRole[0])
+                .roles(repoMember ? new UserRole[]{UserRole.MEMBER_OF_ORGANIZATION} : new UserRole[0])
                 .build();
     }
 
@@ -86,7 +86,7 @@ public class ExternalGitHubUserExtractor implements ExternalUserExtractor {
             return github.repos().get(new Coordinates.Simple(repository)).branches().iterate().iterator().hasNext();
         } catch (AssertionError e) {
             // TODO
-            logger.error("error while ocnnecting to "+ repository, e);
+            logger.error("error while connecting to "+ repository, e);
             return false;
         }
     }

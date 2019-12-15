@@ -17,6 +17,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import javax.servlet.http.HttpServletResponse;
 
 /**
+ * Security configuration.
+ *
  * @author Sebastien Gerard
  */
 @Configuration

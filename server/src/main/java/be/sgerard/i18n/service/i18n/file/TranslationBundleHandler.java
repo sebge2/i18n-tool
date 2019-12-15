@@ -2,7 +2,7 @@ package be.sgerard.i18n.service.i18n.file;
 
 import be.sgerard.i18n.model.i18n.file.ScannedBundleFileDto;
 import be.sgerard.i18n.model.i18n.file.ScannedBundleFileKeyDto;
-import be.sgerard.i18n.service.git.RepositoryAPI;
+import be.sgerard.i18n.service.repository.git.GitAPI;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,12 +18,12 @@ public interface TranslationBundleHandler {
 
     boolean continueScanning(File directory);
 
-    Stream<ScannedBundleFileDto> scanBundles(File directory, RepositoryAPI repositoryAPI) throws IOException;
+    Stream<ScannedBundleFileDto> scanBundles(File directory, GitAPI repositoryAPI) throws IOException;
 
-    List<ScannedBundleFileKeyDto> scanKeys(ScannedBundleFileDto bundleFile, RepositoryAPI repositoryAPI) throws IOException;
+    List<ScannedBundleFileKeyDto> scanKeys(ScannedBundleFileDto bundleFile, GitAPI repositoryAPI) throws IOException;
 
     void updateBundle(ScannedBundleFileDto bundleFile,
                       List<ScannedBundleFileKeyDto> keys,
-                      RepositoryAPI repositoryAPI) throws IOException;
+                      GitAPI repositoryAPI) throws IOException;
 
 }

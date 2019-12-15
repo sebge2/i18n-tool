@@ -14,9 +14,11 @@ import java.util.HashSet;
 import static java.util.Collections.unmodifiableCollection;
 
 /**
+ * The current authenticated user.
+ *
  * @author Sebastien Gerard
  */
-@ApiModel(description = "Description of an authenticated user.")
+@ApiModel(value = "AuthenticatedUser", description = "Description of an authenticated user.")
 @JsonDeserialize(builder = AuthenticatedUserDto.Builder.class)
 public class AuthenticatedUserDto {
 
@@ -46,18 +48,30 @@ public class AuthenticatedUserDto {
         sessionRoles = unmodifiableCollection(builder.sessionRoles);
     }
 
+    /**
+     * Returns the unique id of the authenticated user.
+     */
     public String getId() {
         return id;
     }
 
+    /**
+     * Returns the {@link UserDto current user}.
+     */
     public UserDto getUser() {
         return user;
     }
 
+    /**
+     * Returns the current session security roles.
+     */
     public Collection<UserRole> getSessionRoles() {
         return sessionRoles;
     }
 
+    /**
+     * Builder of {@link AuthenticatedUserDto authenticated user}.
+     */
     @JsonPOJOBuilder(withPrefix = "")
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder {

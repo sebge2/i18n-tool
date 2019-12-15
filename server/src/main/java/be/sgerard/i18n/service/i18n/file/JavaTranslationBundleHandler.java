@@ -4,7 +4,7 @@ import be.sgerard.i18n.configuration.AppProperties;
 import be.sgerard.i18n.model.i18n.BundleType;
 import be.sgerard.i18n.model.i18n.file.ScannedBundleFileDto;
 import be.sgerard.i18n.model.i18n.file.ScannedBundleFileKeyDto;
-import be.sgerard.i18n.service.git.RepositoryAPI;
+import be.sgerard.i18n.service.repository.git.GitAPI;
 import com.fasterxml.jackson.datatype.jdk8.WrappedIOException;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
@@ -51,7 +51,7 @@ public class JavaTranslationBundleHandler implements TranslationBundleHandler {
     }
 
     @Override
-    public Stream<ScannedBundleFileDto> scanBundles(File directory, RepositoryAPI repositoryAPI) throws IOException {
+    public Stream<ScannedBundleFileDto> scanBundles(File directory, GitAPI repositoryAPI) throws IOException {
         return repositoryAPI.listNormalFiles(directory)
                 .map(
                         file -> {
@@ -77,7 +77,7 @@ public class JavaTranslationBundleHandler implements TranslationBundleHandler {
     }
 
     @Override
-    public List<ScannedBundleFileKeyDto> scanKeys(ScannedBundleFileDto bundleFile, RepositoryAPI repositoryAPI) throws IOException {
+    public List<ScannedBundleFileKeyDto> scanKeys(ScannedBundleFileDto bundleFile, GitAPI repositoryAPI) throws IOException {
         try {
             return new ArrayList<>(
                     bundleFile.getFiles().stream()
@@ -104,7 +104,7 @@ public class JavaTranslationBundleHandler implements TranslationBundleHandler {
     @Override
     public void updateBundle(ScannedBundleFileDto bundleFile,
                              List<ScannedBundleFileKeyDto> keys,
-                             RepositoryAPI repositoryAPI) throws IOException {
+                             GitAPI repositoryAPI) throws IOException {
         try {
             for (File file : bundleFile.getFiles()) {
                 final Matcher matcher = BUNDLE_PATTERN.matcher(file.getName());

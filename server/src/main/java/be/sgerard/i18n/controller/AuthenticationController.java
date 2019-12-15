@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
+ * Controller handling authentication.
+ *
  * @author Sebastien Gerard
  */
 @RestController
@@ -24,11 +26,14 @@ public class AuthenticationController {
         this.authenticationManager = authenticationManager;
     }
 
+    /**
+     * Retrieves the current authenticated user.
+     */
     @GetMapping("/authentication/user")
     @ApiOperation(value = "Retrieves the current authenticated user.")
     public AuthenticatedUserDto getCurrentUser() {
         final AuthenticatedUser authenticatedUser = authenticationManager.getCurrentUser()
-                .orElseThrow(() -> new ResourceNotFoundException("There is no current user."));
+                .orElseThrow(() -> ResourceNotFoundException.userNotFoundException("current"));
 
         return AuthenticatedUserDto.builder(authenticatedUser).build();
     }

@@ -21,6 +21,7 @@ public class InternalUserEntity extends UserEntity {
     public InternalUserEntity(String username) {
         setId(UUID.randomUUID().toString());
         setUsername(username);
+        setPreferences(new UserPreferencesEntity(this));
     }
 
     public String getPassword() {

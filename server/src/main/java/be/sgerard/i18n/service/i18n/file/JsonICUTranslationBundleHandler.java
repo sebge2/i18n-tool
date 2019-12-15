@@ -4,7 +4,7 @@ import be.sgerard.i18n.configuration.AppProperties;
 import be.sgerard.i18n.model.i18n.BundleType;
 import be.sgerard.i18n.model.i18n.file.ScannedBundleFileDto;
 import be.sgerard.i18n.model.i18n.file.ScannedBundleFileKeyDto;
-import be.sgerard.i18n.service.git.RepositoryAPI;
+import be.sgerard.i18n.service.repository.git.GitAPI;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jdk8.WrappedIOException;
@@ -61,7 +61,7 @@ public class JsonICUTranslationBundleHandler implements TranslationBundleHandler
     }
 
     @Override
-    public Stream<ScannedBundleFileDto> scanBundles(File directory, RepositoryAPI repositoryAPI) throws IOException {
+    public Stream<ScannedBundleFileDto> scanBundles(File directory, GitAPI repositoryAPI) throws IOException {
         if (pathsToScan.stream().noneMatch(dirPathPattern -> antPathMatcher.match(dirPathPattern, directory.toPath().toString()))) {
             return Stream.empty();
         }
@@ -91,7 +91,7 @@ public class JsonICUTranslationBundleHandler implements TranslationBundleHandler
     }
 
     @Override
-    public List<ScannedBundleFileKeyDto> scanKeys(ScannedBundleFileDto bundleFile, RepositoryAPI repositoryAPI) throws IOException {
+    public List<ScannedBundleFileKeyDto> scanKeys(ScannedBundleFileDto bundleFile, GitAPI repositoryAPI) throws IOException {
         try {
             return new ArrayList<>(
                     bundleFile.getFiles().stream()
@@ -115,7 +115,7 @@ public class JsonICUTranslationBundleHandler implements TranslationBundleHandler
     }
 
     @Override
-    public void updateBundle(ScannedBundleFileDto bundleFile, List<ScannedBundleFileKeyDto> keys, RepositoryAPI repositoryAPI) throws IOException {
+    public void updateBundle(ScannedBundleFileDto bundleFile, List<ScannedBundleFileKeyDto> keys, GitAPI repositoryAPI) throws IOException {
         for (File file : bundleFile.getFiles()) {
             final Matcher matcher = BUNDLE_PATTERN.matcher(file.getName());
 
@@ -130,7 +130,7 @@ public class JsonICUTranslationBundleHandler implements TranslationBundleHandler
     }
 
     @SuppressWarnings("unchecked")
-    private Map<String, Object> readValues(RepositoryAPI repositoryAPI, File file) throws IOException {
+    private Map<String, Object> readValues(GitAPI repositoryAPI, File file) throws IOException {
         return objectMapper.readValue(repositoryAPI.openInputStream(file), LinkedHashMap.class);
     }
 

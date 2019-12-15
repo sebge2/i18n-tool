@@ -9,6 +9,8 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 import static be.sgerard.i18n.model.event.EventType.*;
 
 /**
+ * Websocket configuration.
+ *
  * @author Sebastien Gerard
  */
 @Configuration

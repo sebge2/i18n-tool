@@ -5,11 +5,15 @@ import be.sgerard.i18n.model.git.PullRequestStatus;
 import be.sgerard.i18n.model.i18n.WorkspaceStatus;
 import be.sgerard.i18n.model.i18n.dto.WorkspaceDto;
 import be.sgerard.i18n.model.i18n.persistence.WorkspaceEntity;
+import be.sgerard.i18n.repository.i18n.WorkspaceRepository;
 import be.sgerard.i18n.service.LockTimeoutException;
 import be.sgerard.i18n.service.ResourceNotFoundException;
 import be.sgerard.i18n.service.event.EventService;
-import be.sgerard.i18n.service.git.*;
-import be.sgerard.i18n.service.i18n.persistence.WorkspaceRepository;
+import be.sgerard.i18n.service.git.PullRequestManager;
+import be.sgerard.i18n.service.git.RepositoryManager;
+import be.sgerard.i18n.service.git.WebHookCallback;
+import be.sgerard.i18n.service.repository.RepositoryException;
+import be.sgerard.i18n.service.repository.git.GitAPI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -61,7 +65,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
     @Transactional
     public List<WorkspaceEntity> findWorkspaces() throws RepositoryException, LockTimeoutException {
         return repositoryManager.openInNewTx(api -> {
-            api.updateLocalRepository();
+            api.update();
 
             final List<String> availableBranches = listBranches(api);
 
@@ -112,7 +116,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
     @Override
     @Transactional
     public WorkspaceEntity initialize(String workspaceId) throws LockTimeoutException, RepositoryException {
-        final WorkspaceEntity checkEntity = repository.findById(workspaceId).orElseThrow(() -> new ResourceNotFoundException(workspaceId));
+        final WorkspaceEntity checkEntity = repository.findById(workspaceId).orElseThrow(() -> ResourceNotFoundException.workspaceNotFoundException(workspaceId));
 
         if (checkEntity.getStatus() == WorkspaceStatus.INITIALIZED) {
             return checkEntity;
@@ -120,7 +124,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
 
         return repositoryManager.openInNewTx(api -> {
             try {
-                final WorkspaceEntity workspaceEntity = repository.findById(workspaceId).orElseThrow(() -> new ResourceNotFoundException(workspaceId));
+                final WorkspaceEntity workspaceEntity = repository.findById(workspaceId).orElseThrow(() -> ResourceNotFoundException.workspaceNotFoundException(workspaceId));
 
                 if (workspaceEntity.getStatus() == WorkspaceStatus.INITIALIZED) {
                     return workspaceEntity;
@@ -130,7 +134,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
 
                 logger.info("Initialing workspace {}.", workspaceId);
 
-                api.updateLocalRepository();
+                api.update();
 
                 final Instant now = Instant.now();
                 final String pullRequestBranch = generateUniqueBranch(
@@ -152,7 +156,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
 
                 return workspaceEntity;
             } catch (IOException e) {
-                throw new RepositoryException("Error while loading translation files.", e);
+                throw new IllegalStateException("Error while loading translation files.", e);
             }
         });
     }
@@ -160,7 +164,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
     @Override
     @Transactional
     public WorkspaceEntity startReviewing(String workspaceId, String message) throws ResourceNotFoundException, LockTimeoutException, RepositoryException {
-        final WorkspaceEntity checkEntity = repository.findById(workspaceId).orElseThrow(() -> new ResourceNotFoundException(workspaceId));
+        final WorkspaceEntity checkEntity = repository.findById(workspaceId).orElseThrow(() -> ResourceNotFoundException.workspaceNotFoundException(workspaceId));
 
         if (checkEntity.getStatus() == WorkspaceStatus.IN_REVIEW) {
             return checkEntity;
@@ -168,7 +172,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
 
         return repositoryManager.openInNewTx(api -> {
             try {
-                final WorkspaceEntity workspaceEntity = repository.findById(workspaceId).orElseThrow(() -> new ResourceNotFoundException(workspaceId));
+                final WorkspaceEntity workspaceEntity = repository.findById(workspaceId).orElseThrow(() -> ResourceNotFoundException.workspaceNotFoundException(workspaceId));
 
                 if (workspaceEntity.getStatus() == WorkspaceStatus.IN_REVIEW) {
                     return workspaceEntity;
@@ -184,9 +188,10 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
 
                 translationManager.writeTranslations(workspaceEntity, api);
 
-                api.commitAll(message);
+//                final UserDto currentUser = credentialsProvider.getCurrentUserOrFail().getUser(); TODO
+                api.commitAll(message, "", "").push();
 
-                final int requestNumber = api.getPullRequestManager().createRequest(message, pullRequestBranch, workspaceEntity.getBranch());
+                final int requestNumber = pullRequestManager.createRequest(message, pullRequestBranch, workspaceEntity.getBranch());
 
                 workspaceEntity.setPullRequestNumber(requestNumber);
                 workspaceEntity.setStatus(WorkspaceStatus.IN_REVIEW);
@@ -195,7 +200,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
 
                 return workspaceEntity;
             } catch (IOException e) {
-                throw new RepositoryException("Error while writing translation files.", e);
+                throw new IllegalStateException("Error while writing translation files.", e);
             }
         });
     }
@@ -204,7 +209,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
     @Transactional
     public void updateTranslations(String workspaceId, Map<String, String> translations) throws ResourceNotFoundException {
         final WorkspaceEntity workspace = repository.findById(workspaceId)
-                .orElseThrow(() -> new ResourceNotFoundException(workspaceId));
+                .orElseThrow(() -> ResourceNotFoundException.workspaceNotFoundException(workspaceId));
 
         if (workspace.getStatus() != WorkspaceStatus.INITIALIZED) {
             throw new IllegalStateException("Cannot update translations of workspace [" + workspaceId + "], the status "
@@ -287,7 +292,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
         }
     }
 
-    private List<String> listBranches(RepositoryAPI api) throws RepositoryException {
+    private List<String> listBranches(GitAPI api) throws RepositoryException {
         return api.listRemoteBranches()
                 .stream()
                 .filter(this::canBeAssociatedToWorkspace)
@@ -308,7 +313,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager, WebHookCallback {
         return workspaceEntity;
     }
 
-    private String generateUniqueBranch(String name, RepositoryAPI api) {
+    private String generateUniqueBranch(String name, GitAPI api) {
         if (!api.listRemoteBranches().contains(name) && !api.listLocalBranches().contains(name)) {
             return name;
         }

@@ -1,16 +1,10 @@
 package be.sgerard.i18n.service.git;
 
-import be.sgerard.i18n.configuration.AppProperties;
-import be.sgerard.i18n.model.repository.RepositoryDescriptionDto;
-import be.sgerard.i18n.model.repository.RepositoryStatus;
 import be.sgerard.i18n.service.LockService;
 import be.sgerard.i18n.service.LockTimeoutException;
 import be.sgerard.i18n.service.event.EventService;
+import be.sgerard.i18n.service.repository.RepositoryException;
 import be.sgerard.i18n.service.security.auth.AuthenticationManager;
-import org.apache.commons.io.IOUtils;
-import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
-import org.springframework.cglib.proxy.Proxy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
@@ -18,20 +12,11 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-
-import static be.sgerard.i18n.model.event.EventType.UPDATED_REPOSITORY;
-import static java.util.Collections.singletonList;
-
 /**
  * @author Sebastien Gerard
  */
-@Service
+@Service("gitRepositoryManager")
 public class RepositoryManagerImpl implements RepositoryManager {
-
-    public static final String DEFAULT_BRANCH = "master";
 
     private final String repoUri;
     private final File repositoryLocation;
@@ -48,7 +33,8 @@ public class RepositoryManagerImpl implements RepositoryManager {
                                  AuthenticationManager authenticationManager,
                                  LockService lockService,
                                  PullRequestManager pullRequestManager,
-                                 EventService eventService, PlatformTransactionManager transactionManager) {
+                                 EventService eventService,
+                                 PlatformTransactionManager transactionManager) {
         this.repoUri = appProperties.getRepoCheckoutUri();
 
         this.repositoryLocation = appProperties.getRepositoryLocationAsFile();
@@ -64,11 +50,10 @@ public class RepositoryManagerImpl implements RepositoryManager {
     }
 
     @Override
-    public RepositoryDescriptionDto getDescription() {
-        return new RepositoryDescriptionDto(
-                repoUri,
-                getStatus()
-        );
+    public RepositorySummaryDto getDescription() {
+        return RepositorySummaryDto.builder()
+                .status(getStatus())
+                .build();
     }
 
     @Override
@@ -84,17 +69,20 @@ public class RepositoryManagerImpl implements RepositoryManager {
                 }
 
                 try {
-                    updateLockFile(RepositoryStatus.INITIALIZING);
-
                     this.eventService.broadcastEvent(UPDATED_REPOSITORY, getDescription());
 
-                    this.git = Git.cloneRepository()
-                            .setCredentialsProvider(createProvider())
-                            .setURI(repoUri)
-                            .setDirectory(repositoryLocation)
-                            .setBranchesToClone(singletonList(DEFAULT_BRANCH))
-                            .setBranch(DEFAULT_BRANCH)
-                            .call();
+                    // TODO set state to initializing
+
+                    updateLockFile(RepositoryStatus.INITIALIZING);
+
+
+//                    this.git = Git.cloneRepository()
+//                            .setCredentialsProvider(createProvider())
+//                            .setURI(repoUri)
+//                            .setDirectory(repositoryLocation)
+//                            .setBranchesToClone(singletonList(DEFAULT_BRANCH))
+//                            .setBranch(DEFAULT_BRANCH)
+//                            .call();
 
                     updateLockFile(RepositoryStatus.INITIALIZED);
 
@@ -136,14 +124,14 @@ public class RepositoryManagerImpl implements RepositoryManager {
     public <T> T open(ApiTransformer<T> apiConsumer) throws RepositoryException, LockTimeoutException {
         try {
             return lockService.executeInLock(() -> {
-                try (RepositoryAPI api = initializeAPI()) {
+                try (GitAPI api = initializeAPI()) {
                     return apiConsumer.transform(api);
                 }
             });
         } catch (LockTimeoutException | RepositoryException e) {
             throw e;
         } catch (Exception e) {
-            throw new RepositoryException("Error while listing branches.", e);
+            throw RepositoryException.onBranchListing(e);
         }
     }
 
@@ -178,37 +166,38 @@ public class RepositoryManagerImpl implements RepositoryManager {
         return new UsernamePasswordCredentialsProvider(authenticationManager.getCurrentUserOrFail().getGitHubTokenOrFail(), "");
     }
 
-    private Git getGit() throws Exception {
-        if (git == null) {
-            if (getStatus() != RepositoryStatus.INITIALIZED) {
-                throw new IllegalStateException("The local repository has not been initialized. Hint: call initialize.");
-            }
+//    private Git getGit() throws Exception {
+//        if (git == null) {
+//            if (getStatus() != RepositoryStatus.INITIALIZED) {
+//                throw new IllegalStateException("The local repository has not been initialized. Hint: call initialize.");
+//            }
+//
+//            git = Git.open(repositoryLocation);
+//        }
+//
+//        return git;
+//    }
 
-            git = Git.open(repositoryLocation);
-        }
 
-        return git;
-    }
-
-    private RepositoryAPI initializeAPI() throws Exception {
-        final DefaultRepositoryAPI delegate = new DefaultRepositoryAPI(
-                getGit(),
-                repositoryLocation,
-                authenticationManager,
-                pullRequestManager
-        );
-
-        return (RepositoryAPI) Proxy.newProxyInstance(
-                RepositoryAPI.class.getClassLoader(),
-                new Class<?>[]{RepositoryAPI.class},
-                (o, method, objects) -> {
-                    if (!"close".equals(method.getName()) && delegate.isClosed()) {
-                        throw new IllegalStateException("Cannot access the API once closed.");
-                    }
-
-                    return method.invoke(delegate, objects);
-                }
-        );
+    private GitAPI initializeAPI() throws Exception {
+        return null; // TODO
+//        final DefaultGitAPI delegate = new DefaultGitAPI(
+//                getGit(),
+//                repositoryLocation,
+//                authenticationManager
+//        );
+//
+//        return (GitAPI) Proxy.newProxyInstance(
+//                GitAPI.class.getClassLoader(),
+//                new Class<?>[]{GitAPI.class},
+//                (o, method, objects) -> {
+//                    if (!"close".equals(method.getName()) && delegate.isClosed()) {
+//                        throw new IllegalStateException("Cannot access the API once closed.");
+//                    }
+//
+//                    return method.invoke(delegate, objects);
+//                }
+//        );
     }
 
 }

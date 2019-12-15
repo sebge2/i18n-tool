@@ -32,6 +32,9 @@ public abstract class UserEntity {
     @Enumerated(EnumType.STRING)
     private List<UserRole> roles = new ArrayList<>();
 
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    private UserPreferencesEntity preferences;
+
     @Version
     private int version;
 
@@ -76,6 +79,14 @@ public abstract class UserEntity {
 
     public void setRoles(Collection<UserRole> roles) {
         this.roles = new ArrayList<>(roles);
+    }
+
+    public UserPreferencesEntity getPreferences() {
+        return preferences;
+    }
+
+    public void setPreferences(UserPreferencesEntity preferences) {
+        this.preferences = preferences;
     }
 
     public int getVersion() {

@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
+ * Controller exposing the Github webhook.
+ *
  * @author Sebastien Gerard
  */
 @Controller
@@ -21,6 +23,9 @@ public class GitHubController {
         this.webHookService = webHookService;
     }
 
+    /**
+     * Webhook for Github.
+     */
     @PostMapping(path = "/git-hub/event")
     @ApiOperation(value = "GitHub Webhook notifying events on the repository. Only called by GitHub.com")
     public ResponseEntity<?> handle(RequestEntity<String> requestEntity) throws Exception {

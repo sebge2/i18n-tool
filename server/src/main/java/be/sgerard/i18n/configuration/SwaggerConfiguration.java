@@ -11,10 +11,13 @@ import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import java.time.Instant;
+import java.util.Optional;
 
 import static java.util.Collections.emptyList;
 
 /**
+ * Swagger configuration for all the REST API.
+ *
  * @author Sebastien Gerard
  */
 @Configuration
@@ -27,18 +30,19 @@ public class SwaggerConfiguration {
                 .directModelSubstitute(Instant.class, java.util.Date.class)
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("be.sgerard.i18n.controller"))
-                .paths(PathSelectors.regex("/.*"))
+                .paths(PathSelectors.any())
                 .build()
-                .apiInfo(apiInfo());
+                .apiInfo(apiInfo())
+                .genericModelSubstitutes(Optional.class);
     }
 
     private ApiInfo apiInfo() {
         return new ApiInfo(
                 "REST API",
-                "",
-                "",
+                "Web API of the i18n tool",
+                "1.0",
                 "Terms of service",
-                new Contact("Sébastien Gérard", "www.emasphere.com", "sgerard@emasphere.com"),
+                new Contact("Sébastien Gérard", "www.sgerard.be", ""),
                 null,
                 null,
                 emptyList()

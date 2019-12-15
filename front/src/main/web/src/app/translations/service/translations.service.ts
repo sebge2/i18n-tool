@@ -32,8 +32,10 @@ export class TranslationsService {
             params = params.set("maxKeys", String(maxKeys));
         }
 
-        for (const locale of searchRequest.usedLocales()) {
-            params = params.append("locales", locale);
+        if (searchRequest.locales.length > 0) {
+            for (const locale of searchRequest.locales) {
+                params = params.append("locales", locale.toString());
+            }
         }
 
         return this.httpClient

@@ -22,8 +22,8 @@ public class WorkspaceDto {
                 .id(entity.getId())
                 .branch(entity.getBranch())
                 .status(entity.getStatus())
-                .pullRequestBranch(entity.getPullRequestBranch().orElse(null))
-                .pullRequestNumber(entity.getPullRequestNumber().orElse(null))
+//                .pullRequestBranch(entity.getPullRequestBranch().orElse(null))
+//                .pullRequestNumber(entity.getPullRequestNumber().orElse(null))
                 .initializationTime(entity.getInitializationTime().orElse(null));
     }
 

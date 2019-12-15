@@ -12,6 +12,7 @@ import {MatTable} from "@angular/material";
 import {auditTime, takeUntil} from 'rxjs/operators';
 import {BehaviorSubject, Subject} from "rxjs";
 import {NotificationService} from "../../../core/notification/service/notification.service";
+import {LocalesTranslationsService} from "../../service/locales-translations.service";
 
 @Component({
     selector: 'app-translations-table',
@@ -34,6 +35,7 @@ export class TranslationsTableComponent implements OnInit, OnDestroy {
     private _readOnly = new BehaviorSubject<boolean>(false);
 
     constructor(private translationsService: TranslationsService,
+                private localesTranslationsService: LocalesTranslationsService,
                 private notificationService: NotificationService,
                 private formBuilder: FormBuilder) {
         this.form = formBuilder.array([]);
@@ -133,8 +135,8 @@ export class TranslationsTableComponent implements OnInit, OnDestroy {
                     this.formBuilder.group({key})
                 );
 
-                for (let i = 0; i < this._searchRequest.usedLocales().length; i++) {
-                    const translation: BundleKeyTranslation = key.findTranslation(this._searchRequest.usedLocales()[i]);
+                for (let i = 0; i < this.getSearchedLocales().length; i++) {
+                    const translation: BundleKeyTranslation = key.findTranslation(this.getSearchedLocales()[i]);
 
                     const formGroup = this.formBuilder.group({translation});
 
@@ -174,13 +176,13 @@ export class TranslationsTableComponent implements OnInit, OnDestroy {
             )
         );
 
-        for (let i = 0; i < this._searchRequest.usedLocales().length; i++) {
-            const locale: Locale = this._searchRequest.usedLocales()[i];
+        for (let i = 0; i < this.getSearchedLocales().length; i++) {
+            const locale: Locale = this.getSearchedLocales()[i];
 
             this.columnDefinitions.push(
                 new ColumnDefinition(
                     locale.toString(),
-                    locale,
+                    locale.toString(),
                     (formArray: FormArray) => <FormGroup>formArray.controls[i + 1],
                     (formArray: FormArray) => {
                         const bundleKey = <BundleKey>(<FormGroup>formArray.controls[0]).value.key;
@@ -193,5 +195,11 @@ export class TranslationsTableComponent implements OnInit, OnDestroy {
         }
 
         this.displayedColumns = this.columnDefinitions.map(column => column.columnDef);
+    }
+
+    private getSearchedLocales() {
+        return (this._searchRequest.locales.length == 0)
+            ? this.localesTranslationsService.getAvailableLocales()
+            : this._searchRequest.locales;
     }
 }

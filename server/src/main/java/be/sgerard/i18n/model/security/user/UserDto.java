@@ -3,6 +3,7 @@ package be.sgerard.i18n.model.security.user;
 import be.sgerard.i18n.service.security.UserRole;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import io.swagger.annotations.ApiModel;
@@ -15,12 +16,15 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableSet;
 
 /**
+ * User registered in the application, it can be external (from an OAUTH), or internal.
+ *
  * @author Sebastien Gerard
  */
-@ApiModel(description = "Description of the user.")
+@ApiModel(value = "User", description = "Description of the user.")
 @JsonDeserialize(builder = UserDto.Builder.class)
 public class UserDto implements Principal, Serializable {
 
@@ -81,26 +85,44 @@ public class UserDto implements Principal, Serializable {
         return getId();
     }
 
+    /**
+     * Returns the unique id of this user.
+     */
     public String getId() {
         return id;
     }
 
+    /**
+     * Returns the unique username.
+     */
     public String getUsername() {
         return username;
     }
 
+    /**
+     * Returns the user's email.
+     */
     public String getEmail() {
         return email;
     }
 
+    /**
+     * Returns the URL of the user avatar..
+     */
     public String getAvatarUrl() {
         return avatarUrl;
     }
 
+    /**
+     * Returns the user's security roles.
+     */
     public Collection<UserRole> getRoles() {
         return roles;
     }
 
+    /**
+     * Returns the {@link Type type} of user.
+     */
     public Type getType() {
         return type;
     }
@@ -130,6 +152,9 @@ public class UserDto implements Principal, Serializable {
         return Objects.hash(id);
     }
 
+    /**
+     * Builder of {@link UserDto user}.
+     */
     @JsonPOJOBuilder(withPrefix = "")
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder {
@@ -164,9 +189,15 @@ public class UserDto implements Principal, Serializable {
             return this;
         }
 
+        @JsonProperty("roles")
         public Builder roles(Collection<UserRole> roles) {
             this.roles.addAll(roles);
             return this;
+        }
+
+        @JsonIgnore
+        public Builder roles(UserRole... roles) {
+            return roles(asList(roles));
         }
 
         public Builder type(Type type) {

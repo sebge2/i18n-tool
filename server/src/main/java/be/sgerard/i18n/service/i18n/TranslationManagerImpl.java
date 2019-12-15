@@ -2,8 +2,9 @@ package be.sgerard.i18n.service.i18n;
 
 import be.sgerard.i18n.configuration.AppProperties;
 import be.sgerard.i18n.controller.AuthenticationController;
+import be.sgerard.i18n.model.event.EventType;
 import be.sgerard.i18n.model.i18n.dto.*;
-import be.sgerard.i18n.model.i18n.event.TranslationsUpdateEventDto;
+import be.sgerard.i18n.model.i18n.dto.TranslationsUpdateEventDto;
 import be.sgerard.i18n.model.i18n.file.ScannedBundleFileDto;
 import be.sgerard.i18n.model.i18n.file.ScannedBundleFileKeyDto;
 import be.sgerard.i18n.model.i18n.persistence.BundleFileEntity;
@@ -13,11 +14,12 @@ import be.sgerard.i18n.model.i18n.persistence.WorkspaceEntity;
 import be.sgerard.i18n.model.security.user.UserDto;
 import be.sgerard.i18n.service.ResourceNotFoundException;
 import be.sgerard.i18n.service.event.EventService;
-import be.sgerard.i18n.service.git.RepositoryAPI;
+import be.sgerard.i18n.service.event.InternalEventListener;
+import be.sgerard.i18n.service.repository.git.GitAPI;
 import be.sgerard.i18n.service.i18n.file.TranslationBundleHandler;
 import be.sgerard.i18n.service.i18n.file.TranslationBundleWalker;
-import be.sgerard.i18n.service.i18n.persistence.BundleKeyTranslationRepository;
-import be.sgerard.i18n.service.i18n.persistence.WorkspaceRepository;
+import be.sgerard.i18n.repository.i18n.BundleKeyTranslationRepository;
+import be.sgerard.i18n.repository.i18n.WorkspaceRepository;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +29,7 @@ import java.io.IOException;
 import java.util.*;
 
 import static be.sgerard.i18n.model.event.EventType.UPDATED_TRANSLATIONS;
+import static be.sgerard.i18n.model.event.EventType.UPDATED_TRANSLATION_LOCALE;
 import static be.sgerard.i18n.service.i18n.file.TranslationFileUtils.mapToNullIfEmpty;
 import static java.util.stream.Collectors.toList;
 
@@ -39,6 +42,7 @@ public class TranslationManagerImpl implements TranslationManager {
     private final AppProperties properties;
     private final WorkspaceRepository workspaceRepository;
     private final BundleKeyTranslationRepository keyEntryRepository;
+    private final TranslationLocaleManager localeManager;
     private final AuthenticationController authenticationManager;
     private final EventService eventService;
     private final TranslationBundleWalker walker;
@@ -47,12 +51,14 @@ public class TranslationManagerImpl implements TranslationManager {
     public TranslationManagerImpl(AppProperties properties,
                                   WorkspaceRepository workspaceRepository,
                                   BundleKeyTranslationRepository keyEntryRepository,
+                                  TranslationLocaleManager localeManager,
                                   AuthenticationController authenticationManager,
                                   EventService eventService,
                                   List<TranslationBundleHandler> handlers) {
         this.properties = properties;
         this.workspaceRepository = workspaceRepository;
         this.keyEntryRepository = keyEntryRepository;
+        this.localeManager = localeManager;
         this.authenticationManager = authenticationManager;
         this.eventService = eventService;
         this.walker = new TranslationBundleWalker(handlers);
@@ -63,7 +69,7 @@ public class TranslationManagerImpl implements TranslationManager {
     @Transactional(readOnly = true)
     public BundleKeysPageDto getTranslations(BundleKeysPageRequestDto searchRequest) {
         final WorkspaceEntity workspaceEntity = workspaceRepository.findById(searchRequest.getWorkspaceId())
-                .orElseThrow(() -> new ResourceNotFoundException(searchRequest.getWorkspaceId()));
+                .orElseThrow(() -> ResourceNotFoundException.workspaceNotFoundException(searchRequest.getWorkspaceId()));
 
         final GroupedTranslations groupedEntries = doGetTranslations(searchRequest);
 
@@ -108,20 +114,14 @@ public class TranslationManagerImpl implements TranslationManager {
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public Collection<Locale> getLocales() {
-        return properties.getLocales();
-    }
-
-    @Override
     @Transactional
-    public void readTranslations(WorkspaceEntity workspaceEntity, RepositoryAPI api) throws IOException {
+    public void readTranslations(WorkspaceEntity workspaceEntity, GitAPI api) throws IOException {
         walker.walk(api, (bundleFile, entries) -> onBundleFound(workspaceEntity, bundleFile, entries));
     }
 
     @Override
     @Transactional
-    public void writeTranslations(WorkspaceEntity workspaceEntity, RepositoryAPI api) throws IOException {
+    public void writeTranslations(WorkspaceEntity workspaceEntity, GitAPI api) throws IOException {
         for (BundleFileEntity file : workspaceEntity.getFiles()) {
             final ScannedBundleFileDto bundleFile = new ScannedBundleFileDto(file);
 
@@ -137,7 +137,7 @@ public class TranslationManagerImpl implements TranslationManager {
         final List<BundleKeyTranslationDto> updatedEntries = new ArrayList<>();
         for (Map.Entry<String, String> updateEntry : translations.entrySet()) {
             final BundleKeyTranslationEntity entry = keyEntryRepository.findById(updateEntry.getKey())
-                    .orElseThrow(() -> new ResourceNotFoundException(updateEntry.getKey()));
+                    .orElseThrow(() -> ResourceNotFoundException.translationNotFoundException(updateEntry.getKey()));
 
             if (!Objects.equals(workspace.getId(), entry.getBundleKey().getBundleFile().getWorkspace().getId())) {
                 throw new IllegalArgumentException("The entry [" + entry.getId() + "] does not belong to the workspace [" + workspace.getId() + "].");
@@ -163,6 +163,11 @@ public class TranslationManagerImpl implements TranslationManager {
         );
     }
 
+    private Collection<Locale> getLocales() {
+//        return properties.getLocales().keySet(); TODO
+        return new HashSet<>();
+    }
+
     private GroupedTranslations doGetTranslations(BundleKeysPageRequestDto searchRequest) {
         final GroupedTranslations groupedTranslations = new GroupedTranslations();
 
@@ -173,7 +178,7 @@ public class TranslationManagerImpl implements TranslationManager {
                                 .criterion(searchRequest.getCriterion())
                                 .keyPattern(searchRequest.getKeyPattern().orElse(null))
                                 .lastKey(searchRequest.getLastKey().orElse(null))
-                                .maxKeyEntries(searchRequest.getMaxKeys() * getLocales().size())
+                                .maxKeyEntries(searchRequest.getMaxKeys() * localeManager.findAll().size())
                                 .build()
                 )
                 .filter(entryEntity -> groupedTranslations.getNumberEntries() <= searchRequest.getMaxKeys())
@@ -273,6 +278,20 @@ public class TranslationManagerImpl implements TranslationManager {
 
         public void incrementNumberEntries() {
             numberEntries++;
+        }
+    }
+
+    // TODO
+    private static final class Listener implements InternalEventListener<TranslationLocaleDto>{
+
+        @Override
+        public boolean support(EventType eventType) {
+            return eventType == UPDATED_TRANSLATION_LOCALE;
+        }
+
+        @Override
+        public void onEvent(TranslationLocaleDto event) {
+
         }
     }
 }

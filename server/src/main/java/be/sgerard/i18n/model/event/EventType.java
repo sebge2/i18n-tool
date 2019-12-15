@@ -1,5 +1,7 @@
 package be.sgerard.i18n.model.event;
 
+import be.sgerard.i18n.model.repository.dto.RepositorySummaryDto;
+
 /**
  * @author Sebastien Gerard
  */
@@ -9,6 +11,21 @@ public enum EventType {
      * @see be.sgerard.i18n.model.security.session.UserLiveSessionDto
      */
     CONNECTED_USER_SESSION("connected-user-session"),
+
+    /**
+     * @see be.sgerard.i18n.model.i18n.dto.TranslationLocaleDto
+     */
+    ADDED_TRANSLATION_LOCALE("added-translation-locale"),
+
+    /**
+     * @see be.sgerard.i18n.model.i18n.dto.TranslationLocaleDto
+     */
+    UPDATED_TRANSLATION_LOCALE("updated-translation-locale"),
+
+    /**
+     * @see be.sgerard.i18n.model.i18n.dto.TranslationLocaleDto
+     */
+    DELETED_TRANSLATION_LOCALE("deleted-translation-locale"),
 
     /**
      * @see be.sgerard.i18n.model.security.session.UserLiveSessionDto
@@ -26,14 +43,24 @@ public enum EventType {
     DELETED_WORKSPACE("deleted-workspace"),
 
     /**
-     * @see be.sgerard.i18n.model.i18n.event.TranslationsUpdateEventDto
+     * @see be.sgerard.i18n.model.i18n.dto.TranslationsUpdateEventDto
      */
     UPDATED_TRANSLATIONS("updated-translations"),
 
     /**
-     * @see be.sgerard.i18n.model.repository.RepositoryDescriptionDto
+     * @see RepositorySummaryDto
+     */
+    ADDED_REPOSITORY("added-repository"),
+
+    /**
+     * @see RepositorySummaryDto
      */
     UPDATED_REPOSITORY("updated-repository"),
+
+    /**
+     * @see RepositorySummaryDto
+     */
+    DELETED_REPOSITORY("deleted-repository"),
 
     /**
      * @see be.sgerard.i18n.model.security.user.UserDto
@@ -58,7 +85,12 @@ public enum EventType {
     /**
      * @see be.sgerard.i18n.model.security.user.AuthenticatedUserDto
      */
-    UPDATED_CURRENT_AUTHENTICATED_USER("updated-current-authenticated-user");
+    UPDATED_CURRENT_AUTHENTICATED_USER("updated-current-authenticated-user"),
+
+    /**
+     * @see be.sgerard.i18n.model.security.user.UserPreferencesDto
+     */
+    UPDATED_USER_PREFERENCES("updated-current-user-preferences");
 
     public static final String QUEUE_BROADCAST = "/topic/";
 

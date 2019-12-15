@@ -30,6 +30,7 @@
     "@ngx-translate/http-loader": "^4.0.0",
     "@stomp/ng2-stompjs": "~7.2.0",
     "@stomp/stompjs": "~5.4.2",
+    "bcp-47": "^1.0.7",
     "core-js": "^2.5.4",
     "flag-icon-css": "^3.3.0",
     "lodash": "^4.17.15",

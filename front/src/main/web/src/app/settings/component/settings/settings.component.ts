@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {Locale} from "../../../translations/model/locale.model";
+import {TranslationLocale} from "../../../translations/model/translation-locale.model";
 
 @Component({
     selector: 'app-settings',
@@ -8,7 +8,7 @@ import {Locale} from "../../../translations/model/locale.model";
 })
 export class SettingsComponent implements OnInit {
 
-    languages: Locale[] = [];
+    languages: TranslationLocale[] = [];
 
     constructor() {
     }

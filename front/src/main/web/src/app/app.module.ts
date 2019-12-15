@@ -12,8 +12,8 @@ import {HttpClient} from "@angular/common/http";
 import {CoreSharedModule} from "./core/shared/core-shared-module";
 import {TranslateHttpLoader} from '@ngx-translate/http-loader';
 import {MESSAGE_FORMAT_CONFIG, TranslateMessageFormatCompiler} from "ngx-translate-messageformat-compiler";
-import {ALL_LOCALES} from "./translations/model/locale.model";
-import { CoreNotificationModule } from './core/notification/core-notification.module';
+import {CoreNotificationModule} from './core/notification/core-notification.module';
+import {ALL_LOCALES} from "./core/ui/service/tool-locale.service";
 
 export function HttpLoaderFactory(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');

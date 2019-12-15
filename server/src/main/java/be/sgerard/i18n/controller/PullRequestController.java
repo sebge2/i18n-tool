@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
+ * Controller handling Github pull requests.
+ *
  * @author Sebastien Gerard
  */
 @RestController
@@ -26,6 +28,9 @@ public class PullRequestController {
         this.pullRequestManager = pullRequestManager;
     }
 
+    /**
+     * Returns all the current pull requests.
+     */
     @GetMapping("/pull-request")
     @ApiOperation(value = "List all pull requests.")
     @PreAuthorize("hasRole('MEMBER_OF_REPOSITORY')")
@@ -33,6 +38,9 @@ public class PullRequestController {
         return pullRequestManager.listRequests();
     }
 
+    /**
+     * Returns the status of the pull request having the specified number.
+     */
     @GetMapping("/pull-request/{number}/status")
     @ApiOperation(value = "Returns the status of the specified pull request.")
     @PreAuthorize("hasRole('MEMBER_OF_REPOSITORY')")

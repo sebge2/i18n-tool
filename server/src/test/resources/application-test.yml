@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:opService;MVCC=TRUE;
+    url: jdbc:h2:mem:i18n
   security:
     oauth2:
       client:
@@ -12,7 +12,5 @@ spring:
 be:
   sgerard:
     i18n:
-      repoUserName: MY_REPO_USER_NAME
-      repoName: MY_REPO_NAME
+      base-directory: "${java.io.tmpdir}/i18n-tool"
       git-hub-webhook-secret: WEBHOOK_SECRET
-      base-directory: "${java.io.tmpdir}/git-oauth"

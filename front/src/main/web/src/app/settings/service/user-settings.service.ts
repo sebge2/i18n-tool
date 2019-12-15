@@ -1,34 +1,23 @@
 import {Injectable} from '@angular/core';
-import {ALL_LOCALES, Locale} from "../../translations/model/locale.model";
-import {BehaviorSubject, Observable} from "rxjs";
+import {ToolLocale} from "../../translations/model/tool-locale.model";
+import {Observable, of, Subject} from "rxjs";
 
 @Injectable({
     providedIn: 'root'
 })
 export class UserSettingsService {
 
-    private userLocales : BehaviorSubject<Locale[]> = new BehaviorSubject<Locale[]>(UserSettingsService.getBrowserLanguagePreferences());
+    private toolLocale = new Subject<ToolLocale>();
 
     constructor() {
+        // TODO
     }
 
-    getUserLocales(): Observable<Locale[]> {
-        return this.userLocales;
+    getUserLocales(): Observable<ToolLocale[]> {
+        return of([]);
     }
 
-    private static getBrowserLanguagePreferences(): Locale[] {
-        const locales = [];
-
-        for (const browserLanguage of navigator.languages) {
-            for (const locale of ALL_LOCALES) {
-                if (browserLanguage.toLocaleLowerCase().startsWith(locale.toString().toLocaleLowerCase())) {
-                    if (locales.indexOf(locale) < 0) {
-                        locales.push(locale);
-                    }
-                }
-            }
-        }
-
-        return locales;
+    getToolLocale(): Observable<ToolLocale> {
+        return this.toolLocale;
     }
 }

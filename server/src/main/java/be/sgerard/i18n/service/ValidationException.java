@@ -7,8 +7,8 @@ import be.sgerard.i18n.model.validation.ValidationResult;
  */
 public class ValidationException extends RuntimeException {
 
-    public static void throwIfFailed(ValidationResult result){
-        if(!result.isSuccessful()){
+    public static void throwIfFailed(ValidationResult result) {
+        if (!result.isSuccessful()) {
             throw new ValidationException(result);
         }
     }
