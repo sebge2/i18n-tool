@@ -1,7 +1,6 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {LoginComponent} from './login.component';
-import {LoginAuthKeyComponent} from "./login-auth-key/login-auth-key.component";
 import {LoginUserPasswordComponent} from "./login-user-password/login-user-password.component";
 import {LoginProviderComponent} from "./login-provider/login-provider.component";
 import {CoreSharedModule} from "../../../shared/core-shared-module";
@@ -31,7 +30,6 @@ describe('LoginComponent', () => {
                 declarations: [
                     LoginComponent,
                     LoginProviderComponent,
-                    LoginAuthKeyComponent,
                     LoginUserPasswordComponent
                 ],
                 providers: [

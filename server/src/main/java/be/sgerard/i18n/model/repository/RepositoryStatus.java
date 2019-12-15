@@ -1,16 +1,27 @@
 package be.sgerard.i18n.model.repository;
 
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
+ * All possible repository statuses.
+ *
  * @author Sebastien Gerard
  */
-@ApiModel(description = "All possible repository statuses.")
+@Schema(description = "All possible repository statuses.")
 public enum RepositoryStatus {
 
+    /**
+     * The repository is registered, but it's data is not fetched yet.
+     */
     NOT_INITIALIZED,
 
-    INITIALIZING,
+    /**
+     * The repository is registered, data is fetched.
+     */
+    INITIALIZED,
 
-    INITIALIZED
+    /**
+     * An error occurred while initializing the repository.
+     */
+    INITIALIZATION_ERROR
 }

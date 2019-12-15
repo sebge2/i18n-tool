@@ -1,0 +1,38 @@
+<app-dialog [dialogWidth]="'800px'" [dialogHeight]="'500px'">
+    <app-dialog-content>
+        <app-wizard [form]="form" (stepChange)="onStepChange($event)" #wizard>
+            <app-wizard-step [form]="stepTypeForm"
+                             [name]="'ADMIN.REPOSITORIES.ADD_WIZARD.STEPS.SELECTION' | translate"
+                             [editable]="stepTypeEditable"
+                             [previousVisible]="false"
+                             [nextVisible]="false">
+                <app-repository-add-wizard-step-type [form]="stepTypeForm">
+                </app-repository-add-wizard-step-type>
+            </app-wizard-step>
+
+            <app-wizard-step [form]="stepConfigForm"
+                             [name]="'ADMIN.REPOSITORIES.ADD_WIZARD.STEPS.CONFIGURATION' | translate"
+                             [editable]="stepConfigEditable">
+                <app-repository-add-wizard-step-info [form]="stepConfigForm" [repositoryType]="repositoryType">
+                </app-repository-add-wizard-step-info>
+            </app-wizard-step>
+
+            <app-wizard-step [form]="stepCreationForm"
+                             [name]="'ADMIN.REPOSITORIES.ADD_WIZARD.STEPS.CREATION' | translate"
+                             [editable]="stepCreationEditable">
+                <app-repository-add-wizard-step-creation [form]="stepCreationForm" [creationRequest]="creationRequest">
+                </app-repository-add-wizard-step-creation>
+            </app-wizard-step>
+
+            <app-wizard-step [form]="stepInitializationForm"
+                             [name]="'ADMIN.REPOSITORIES.ADD_WIZARD.STEPS.INITIALIZATION' | translate"
+                             [previousVisible]="false"
+                             [editable]="stepInitializationEditable"
+                             [nextVisible]="false">
+                <app-repository-add-wizard-step-initialization [form]="stepInitializationForm"
+                                                               [originalRepository]="createdRepository">
+                </app-repository-add-wizard-step-initialization>
+            </app-wizard-step>
+        </app-wizard>
+    </app-dialog-content>
+</app-dialog>

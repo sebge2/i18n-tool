@@ -1,91 +1,145 @@
 package be.sgerard.i18n.model.i18n.persistence;
 
-import javax.persistence.*;
+import be.sgerard.i18n.model.workspace.persistence.WorkspaceEntity;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.Singular;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.PersistenceConstructor;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import javax.validation.constraints.NotNull;
-import java.util.Collection;
-import java.util.HashSet;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
-import static java.util.Collections.unmodifiableCollection;
-
 /**
+ * Translations of a certain key part of translation bundle.
+ *
  * @author Sebastien Gerard
  */
-@Entity(name = "bundle_key")
-@Table(
-        indexes = {
-                @Index(columnList = "key"),
-                @Index(columnList = "bundle_file")
-        }
-)
+@Document("bundle_key")
+@Getter
+@Setter
 public class BundleKeyEntity {
 
+    /**
+     * The unique translation key id.
+     */
     @Id
     private String id;
 
+    /**
+     * The associated {@link WorkspaceEntity workspace}.
+     */
     @NotNull
-    @Column(nullable = false, length = 1000)
+    private String workspace;
+
+    /**
+     * The associated {@link BundleFileEntity bundle file}.
+     */
+    @NotNull
+    private String bundleFile;
+
+    /**
+     * The associated translation key.
+     */
+    @NotNull
     private String key;
 
-    @ManyToOne
-    @JoinColumn(name = "bundle_file")
-    private BundleFileEntity bundleFile;
+    /**
+     * Key used to sort all translation entities. It's composed of:
+     * <ol>
+     *     <li>the workspace,</li>
+     *     <li>the bundle file,</li>
+     *     <li>the bundle key</li>
+     * </ol>
+     */
+    @NotNull
+    @Indexed
+    private String sortingKey;
 
-    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
-    private Collection<BundleKeyTranslationEntity> translations = new HashSet<>();
+    /**
+     * All {@link BundleKeyTranslationEntity translations} mapped by their locale ids.
+     */
+    @NotNull
+    @Singular
+    private Map<String, BundleKeyTranslationEntity> translations = new HashMap<>();
 
-    @Version
-    private int version;
-
+    @PersistenceConstructor
     BundleKeyEntity() {
     }
 
-    public BundleKeyEntity(BundleFileEntity bundleFile, String key) {
+    public BundleKeyEntity(String workspace,
+                           String bundleFile,
+                           String key) {
         this.id = UUID.randomUUID().toString();
-
+        this.workspace = workspace;
         this.bundleFile = bundleFile;
-        this.bundleFile.addKey(this);
-
         this.key = key;
+        this.sortingKey = String.format("%s%s%s", workspace, bundleFile, key);
     }
 
-    public String getId() {
-        return id;
+    /**
+     * Returns whether there is a translation for the specified locale.
+     *
+     * @see TranslationLocaleEntity#getId()
+     */
+    public boolean hasTranslations(String translationLocale) {
+        return translations.containsKey(translationLocale);
     }
 
-    public void setId(String id) {
-        this.id = id;
+    /**
+     * Returns the {@link BundleKeyTranslationEntity translation} for the specified locale.
+     *
+     * @see TranslationLocaleEntity#getId()
+     */
+    public Optional<BundleKeyTranslationEntity> getTranslation(String translationLocale) {
+        return Optional
+                .ofNullable(translations.get(translationLocale));
     }
 
-    public String getKey() {
-        return key;
+    /**
+     * Returns the {@link BundleKeyTranslationEntity translation} for the specified locale.
+     *
+     * @see TranslationLocaleEntity#getId()
+     */
+    public BundleKeyTranslationEntity getTranslationOrDie(String translationLocale) {
+        return getTranslation(translationLocale)
+                .orElseThrow(() -> new IllegalStateException("There is no translation for locale [" + translationLocale + "]"));
     }
 
-    public void setKey(String key) {
-        this.key = key;
+    /**
+     * Returns the {@link BundleKeyTranslationEntity translation} for the specified locale. If there is no such translation,
+     * a new one is created.
+     *
+     * @see TranslationLocaleEntity#getId()
+     */
+    public BundleKeyTranslationEntity getTranslationOrCreate(String translationLocale) {
+        return getTranslation(translationLocale)
+                .orElseGet(() -> {
+                    final BundleKeyTranslationEntity translation = new BundleKeyTranslationEntity(translationLocale, -1, null);
+
+                    translations.put(translationLocale, translation);
+
+                    return translation;
+                });
     }
 
-    public BundleFileEntity getBundleFile() {
-        return bundleFile;
+    /**
+     * Adds a new translation to this bundle.
+     */
+    public BundleKeyEntity addTranslation(String locale, long index, String originalValue) {
+        return addTranslation(new BundleKeyTranslationEntity(locale, index, originalValue));
     }
 
-    public void setBundleFile(BundleFileEntity bundleFile) {
-        this.bundleFile = bundleFile;
-    }
-
-    public Collection<BundleKeyTranslationEntity> getTranslations() {
-        return unmodifiableCollection(translations);
-    }
-
-    void addTranslation(BundleKeyTranslationEntity entry) {
-        this.translations.add(entry);
-    }
-
-    public int getVersion() {
-        return version;
-    }
-
-    public void setVersion(int version) {
-        this.version = version;
+    /**
+     * Adds a new translation to this bundle.
+     */
+    public BundleKeyEntity addTranslation(BundleKeyTranslationEntity translation) {
+        this.translations.put(translation.getLocale(), translation);
+        return this;
     }
 }

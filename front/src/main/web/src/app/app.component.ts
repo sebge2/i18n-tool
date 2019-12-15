@@ -1,5 +1,4 @@
 import {Component} from '@angular/core';
-import {LocaleService} from "./core/ui/service/locale.service";
 
 @Component({
     selector: 'app-root',
@@ -8,7 +7,6 @@ import {LocaleService} from "./core/ui/service/locale.service";
 })
 export class AppComponent {
 
-    constructor(private localeService: LocaleService) {
-        localeService.initializeTranslationService();
+    constructor() {
     }
 }

@@ -6,3 +6,8 @@
 .app-nav-list-icon {
   margin: 0 12px 0 12px;
 }
+
+.mat-nav-sub-list {
+  margin-top: -10px;
+  margin-left: 10px;
+}

@@ -1,6 +1,4 @@
 spring:
-  datasource:
-    url: jdbc:h2:mem:opService;MVCC=TRUE;
   security:
     oauth2:
       client:
@@ -8,11 +6,28 @@ spring:
           github:
             client-id: MY_CLIENT_ID
             client-secret: MY_CLIENT_SECRET
+  data:
+    mongodb:
+      uri: "mongodb://localhost:37436/test"
+
+logging:
+  config: classpath:logback-test.xml
 
 be:
   sgerard:
     i18n:
-      repoUserName: MY_REPO_USER_NAME
-      repoName: MY_REPO_NAME
-      git-hub-webhook-secret: WEBHOOK_SECRET
-      base-directory: "${java.io.tmpdir}/git-oauth"
+      base-directory: "${java.io.tmpdir}/i18n-tool"
+      repository:
+        java-properties:
+          ignored-paths:
+            - "**/src/main/java"
+            - "**/src/test"
+            - ".git"
+            - ".idea"
+            - "**/target/classes"
+            - "**/target/test-classes"
+          included-paths:
+        json-icu:
+          ignored-paths:
+          included-paths:
+            - "**/src/assets/i18n"

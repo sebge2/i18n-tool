@@ -1,99 +1,140 @@
 package be.sgerard.i18n.configuration;
 
 import be.sgerard.i18n.service.security.UserRole;
-import be.sgerard.i18n.service.security.auth.ExternalUserService;
-import be.sgerard.i18n.service.security.auth.InternalUserDetailsService;
-import org.springframework.boot.autoconfigure.security.oauth2.client.EnableOAuth2Sso;
+import be.sgerard.i18n.service.security.auth.AuthenticationUserManager;
+import be.sgerard.i18n.service.security.auth.internal.InternalAuthenticationManager;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.context.annotation.Primary;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.DelegatingReactiveAuthenticationManager;
+import org.springframework.security.authentication.ReactiveAuthenticationManager;
+import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
+import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
+import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.authentication.OAuth2LoginReactiveAuthenticationManager;
+import org.springframework.security.oauth2.client.endpoint.WebClientReactiveAuthorizationCodeTokenResponseClient;
+import org.springframework.security.oauth2.client.registration.ReactiveClientRegistrationRepository;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
+import org.springframework.security.oauth2.client.userinfo.ReactiveOAuth2UserService;
+import org.springframework.security.oauth2.client.web.server.DefaultServerOAuth2AuthorizationRequestResolver;
+import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.security.web.server.SecurityWebFilterChain;
+import org.springframework.security.web.server.authentication.RedirectServerAuthenticationEntryPoint;
+import org.springframework.security.web.server.authentication.logout.HttpStatusReturningServerLogoutSuccessHandler;
+import org.springframework.security.web.server.context.WebSessionServerSecurityContextRepository;
+import org.springframework.security.web.server.util.matcher.PathPatternParserServerWebExchangeMatcher;
+import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatcher;
+import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers;
+import org.springframework.session.data.mongo.config.annotation.web.reactive.EnableMongoWebSession;
+import reactor.core.publisher.Mono;
 
-import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 /**
+ * Security configuration.
+ *
  * @author Sebastien Gerard
  */
 @Configuration
-@EnableOAuth2Sso
-@EnableGlobalMethodSecurity(prePostEnabled = true)
-public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+@EnableReactiveMethodSecurity
+@EnableWebFluxSecurity
+@EnableMongoWebSession
+public class SecurityConfiguration {
 
     private final PasswordEncoder passwordEncoder;
-    private final ExternalUserService externalUserService;
-    private final InternalUserDetailsService internalUserDetailsService;
+    private final ReactiveUserDetailsService internalUserDetailsService;
+    private final ReactiveOAuth2UserService<OAuth2UserRequest, OAuth2User> externalUserDetailsService;
+    private final AuthenticationUserManager authenticationUserManager;
+    private final ReactiveClientRegistrationRepository repository;
 
     public SecurityConfiguration(PasswordEncoder passwordEncoder,
-                                 ExternalUserService externalUserService,
-                                 InternalUserDetailsService internalUserDetailsService) {
+                                 ReactiveUserDetailsService internalUserDetailsService,
+                                 ReactiveOAuth2UserService<OAuth2UserRequest, OAuth2User> externalUserDetailsService,
+                                 AuthenticationUserManager authenticationUserManager,
+                                 @Autowired(required = false) ReactiveClientRegistrationRepository repository) {
         this.passwordEncoder = passwordEncoder;
 
-        this.externalUserService = externalUserService;
         this.internalUserDetailsService = internalUserDetailsService;
+        this.externalUserDetailsService = externalUserDetailsService;
+        this.authenticationUserManager = authenticationUserManager;
+        this.repository = repository;
     }
 
     @Bean
-    public AuthenticationProvider internalUserAuthenticationProvider() {
-        final DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
-
-        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder);
-        daoAuthenticationProvider.setUserDetailsService(internalUserDetailsService);
-
-        return daoAuthenticationProvider;
+    @Primary
+    public ReactiveAuthenticationManager authenticationManager(List<ReactiveAuthenticationManager> delegates) {
+        return new DelegatingReactiveAuthenticationManager(delegates);
     }
 
     @Bean
-    public AuthenticationProvider externalUserAuthenticationProvider() {
-        final DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
+    public ReactiveAuthenticationManager internalAuthenticationManager() {
+        final InternalAuthenticationManager internalAuthenticationManager =
+                new InternalAuthenticationManager(internalUserDetailsService, authenticationUserManager);
 
-        daoAuthenticationProvider.setUserDetailsService(externalUserService);
-        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder);
+        internalAuthenticationManager.setPasswordEncoder(passwordEncoder);
 
-        return daoAuthenticationProvider;
+        return internalAuthenticationManager;
     }
 
-    @Override
-    public void configure(HttpSecurity http) throws Exception {
-        http
-                .antMatcher("/**")
-                .authorizeRequests()
-                .antMatchers(
-                        "/",
-                        "/*",
-                        "/ws/*",
-                        "/auth/**",
-                        "/api/authentication/authenticated",
-                        "/api/authentication/user",
-                        "/api/git-hub/**"
-                )
-                .permitAll()
-                .anyRequest()
-                .hasAnyRole(UserRole.MEMBER_OF_ORGANIZATION.name())
+    @Bean
+    public OAuth2LoginReactiveAuthenticationManager externalAuthenticationManager() {
+        return new OAuth2LoginReactiveAuthenticationManager(
+                new WebClientReactiveAuthorizationCodeTokenResponseClient(),
+                externalUserDetailsService
+        );
+    }
 
-                .and().logout()
-                .logoutUrl("/auth/logout")
-                .logoutSuccessHandler((httpServletRequest, httpServletResponse, authentication) -> httpServletResponse.setStatus(HttpServletResponse.SC_OK))
-                .permitAll().and()
+    @Bean
+    public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
+        final ServerHttpSecurity httpSecurity = http
+                .authorizeExchange()
+                .pathMatchers("/", "/**", "/auth/**", "/api/authentication/**", "/api/git-hub/**").permitAll()
+                .anyExchange().hasAnyRole(UserRole.MEMBER_OF_ORGANIZATION.name()).and()
+
+                .logout()
+                .requiresLogout(ServerWebExchangeMatchers.pathMatchers(HttpMethod.GET, "/auth/logout"))
+                .logoutSuccessHandler(new HttpStatusReturningServerLogoutSuccessHandler(HttpStatus.OK))
+                .and()
 
                 .csrf().disable()
 
-                .httpBasic().realmName("I18n Tool").and()
+                .httpBasic()
+                .authenticationManager(internalAuthenticationManager())
+                .authenticationEntryPoint((exchange, e) -> {
+                    exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+                    return Mono.empty();
+                })
+                .and()
 
-                .oauth2Login()
-                .authorizationEndpoint().baseUri("/auth/oauth2/authorize-client").and()
-                .redirectionEndpoint().baseUri("/auth/oauth2/code/*").and()
+                .securityContextRepository(new WebSessionServerSecurityContextRepository())
 
-                .userInfoEndpoint().userService(externalUserService);
+                .formLogin(formLogin ->
+                        formLogin
+                                .authenticationEntryPoint(new RedirectServerAuthenticationEntryPoint("/login"))
+                                .requiresAuthenticationMatcher(exchange -> ServerWebExchangeMatcher.MatchResult.notMatch())
+                                .authenticationFailureHandler((webFilterExchange, exception) -> {
+                                    webFilterExchange.getExchange().getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+                                    return Mono.empty();
+                                })
+                );
+
+
+        if (repository != null) {
+            // TODO unfortunately oauth login redirect to /login if not authenticated
+            httpSecurity.oauth2Login(oAuth2Login ->
+                    oAuth2Login
+                            .authorizationRequestResolver(new DefaultServerOAuth2AuthorizationRequestResolver(repository, ServerWebExchangeMatchers.pathMatchers(("/auth/oauth2/authorize-client/{registrationId}"))))
+                            .authenticationMatcher(new PathPatternParserServerWebExchangeMatcher("/auth/oauth2/code/{registrationId}"))
+                            .authenticationManager(externalAuthenticationManager())
+            );
+        }
+
+        return httpSecurity.build();
     }
 
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) {
-        auth.authenticationProvider(internalUserAuthenticationProvider());
-        auth.authenticationProvider(externalUserAuthenticationProvider());
-    }
 }

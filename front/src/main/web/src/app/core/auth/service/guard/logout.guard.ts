@@ -23,13 +23,13 @@ export class LogoutGuard implements CanActivate {
     }
 
     canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-        return this.authenticationService.currentUser()
+        return this.authenticationService.currentAuthenticatedUser()
             .pipe(
                 map((user: AuthenticatedUser) => {
                         if (user != null) {
                             return true;
                         } else {
-                            console.debug('There is no connected user, go to login page instead.', user);
+                            console.debug('There is no connected user, go to login page instead.');
 
                             this.router.navigate(['/login']);
 

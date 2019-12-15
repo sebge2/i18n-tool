@@ -1,7 +1,0 @@
-::ng-deep .no-underline .mat-form-field-underline {
-    display: none;
-}
-
-.save-button {
-    padding-left: 40px;
-}

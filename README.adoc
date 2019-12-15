@@ -1,153 +1,140 @@
 [link=https://travis-ci.org/sebge2/i18n-tool]
-image::https://travis-ci.org/sebge2/i18n-tool.svg?branch=master[Build Status]
+image::https://img.shields.io/travis/sebge2/i18n-tool/master.svg?label=master[Build Status]
 
 = I18n Tool
-Tool scanning translation bundles in a GitHub repository. A UI editor allows to find (missing) translations and fill them.
+This tool aims to make a bridge between programmers and translators. Translators are able to find translations defined by developers via a user-friendly UI.
+
+The tool is able to checkout Git(Hub) repositories, find translations bundles and exposes them to (human) translators.
 
 
-== What is It?
-* Web App scanning translation files of a GitHub repository
-* UI for editing translations files
-* Commit & push modified translations
+== Features
+* Checkout public/private Git/GitHub repositories
+* Find translation bundles written in JSON JCU or Properties formats
+* Distinguish Administrator/Normal users
+* Commit, push and create pull-requests with new translations
+* OAuth support (Google and GitHub)
+* Internal users (not authenticated via OAuth)
 
 
 == Why?
 
-* No existing solution on the market
-* Investigating up-to-date technologies: 
-    ** Java 11+
-    ** Spring 5 & Boot 2
-    ** Angular 8:
-        *** How to do testing with: Karma, Jasmine and Protractor
-        *** How to structure code? and tests?
-        *** i18n in Angular
-        *** Websocket
-    ** How to create a Spring Docker App
-    ** Java integration with Git(Hub)
-    ** How to develop a webhook?
-    ** How to create an OAuth2 client with Spring?
-    ** How to have a continuous integration and deployment?
-        *** Travis-CI.com
-    ** Remaining:
-        *** Junit 5
-        *** Reactive programming on backend side
-* Start a project from scratch
+As a technical developer, I wanted to create a useful project which will also be an opportunity
+for me to investigate up-to-date technologies and implement them.
+
+When I searched a translation solution for my company, I didn't find anything full-filling our need.
+
+Starting a project from scratch helped me to:
+
+* Play with Java 11.
+* Play with Spring 5 & Boot 2.
+* Learn Angular 8/9:
+   ** How to structure code? tests?
+   ** How to test with: Karma, Jasmine and Protractor?
+   ** i18n in Angular.
+   ** Websocket.
+   ** Server-Sent-Event.
+* How to create a Spring Docker App?
+* Learn how to Git(Hub) in Java.
+* How to develop a webhook?
+* How to create an OAuth2 client with Spring?
+* How to have a continuous integration and deployment?
+   ** Try the platform link:https://www.travis-ci.com[Travis-CI.com]
+* Discover Junit 5.
+* Learn reactive programming on backend side with Reactor.
 
 
 == Presentation
 
-The startup page is the login page. Every user must be authenticated.
-The external user must be part of the organization.
+=== Login
+The user's journey starts with the login page. Every user must be authenticated. The user must be authenticated:
+
+* externally by GitHub: it's optional, allowed users can be restricted based on their GitHub Organization,
+* externally or Google: it's optional, allowed users can be restricted based on the domain,
+* internally by the application.
+
+Users of the two first groups are *external users* while the latest group is composed of *internal users*.
 
 [link=./doc/login-screen.png]
 image::./doc/login-screen.png[Login Screen,150]
 
 An administrator user "_admin_" is automatically created.
-Its password can be either auto-generated (and printed out on the console),
+Its password can be either auto-generated (and printed out in the console),
 or specified with the environment variable _DEFAULT_ADMIN_PASSWORD_.
 
-User can also use their GitHub account to log on the application. Only users allowed to access to the
-repository are allowed.
+=== Locales
 
-Authenticating with "auth-key" is mainly used for automated testing.
-The associated user must be able to access the current repository.
+First of all, let's setup locales supported by your application. The tool considers that you need a translation for all the configured locales. When pushing missing translations, the tool is able to create missing translation files on itself.
 
-The supported bundle file formats are:
+Language, region and variants are supported, cfr link:https://tools.ietf.org/html/bcp47#section-2.2.5[BCP-47].
+[link=./doc/locales-management.png]
+image::./doc/locales-management.png[Locales Management,250]
+
+=== Repositories
+A repository is a service storing your project files. Two types are
+supported: Git and GitHub. Git repositories are accessed by using
+credentials of the current user. While GitHub repositories can be
+accessed by an access-key, or by a user authenticated with GitHub OAuth.
+
+[link=./doc/repositories-management-list.png]
+image::./doc/repositories-management-list.png[Repositories Management,250]
+
+The tool uses a local copy of your repository and supports multiple branches.
+Every branch is associated to a _workspace_. Every time, a translation
+is updated, the workspace is updated, but changes are not directly
+committed and pushed to the repository.
+
+Once you are ready, all modifications made so far, can be published to
+the repository (you can edit translations on multiple workspaces at
+the same time). For Git repositories, modifications are pushed directly
+to associated branches. For GitHub repositories, modifications are pushed
+in dedicated branches and pull-requests are opened.
+
+[link=./doc/repositories-management-view.png]
+image::./doc/repositories-management-view.png[Repositories Management,250]
+
+=== Translation Bundle File Formats
+This tool supports the following translation bundle formats:
 
 * Java properties file
 * JSON with http://userguide.icu-project.org/formatparse/messages[ICU Format]
 
+Those are the typical formats used by Java and Angular applications.
 
-[link=./doc/main-screen-admin.png]
-image::./doc/main-screen-admin.png[Main Screen Admin,300]
-
-The default section is "translations" allowing to search and translate keys.
-By default, the searcher looks for missing translations in users' languages.
-
-
-[link=./doc/translations-screen.png]
-image::./doc/translations-screen.png[Translations Screen,300]
-
-It's also possible to search for all translations, translations that have been updated
-by the current user (or not only by himself). A workspace is the current
-edition of a Git Branch. By default, the "master" workspace is used.
-
-Once all translations of a workspace have been filled, it
-can be reviewed. A pull-request is generated with all the changes.
-
-Once the pull-request and the associated branch is closed/merged, the workspace
-is deleted. A new workspace based on the Git branch can be created later on.
+=== Searching
+When opening the _Translations_ screen, the searcher is initialized to
+search for missing translations in the user's languages for all the
+default workspace of repositories.
 
 [link=./doc/translations-search-screen.png]
 image::./doc/translations-search-screen.png[Translations Search Screen,300]
 
+It's also possible to search for all translations, or all translations that have been
+updated by the current user (or not only by himself).
 
-== Environment Setup
-=== Travis Configuration
+[link=./doc/translations-screen.png]
+image::./doc/translations-screen.png[Translations Screen,300]
 
-The following environment variables are needed by this Travis-CI build:
+Later, modifications can be published at the moment you decide.
+The publication can be performed on several workspaces at the same
+time.
 
-* AWS_ACCESS_KEY=   **
-* AWS_SECRET_KEY=**
-* AWS_BUCKET_NAME=**
-* DOCKER_PASSWORD=**
-* DOCKER_USERNAME=**
-* E2E_SERVER_PORT=8080
-* E2E_GIT_HUB_AUTH_TOKEN=**
+[link=./doc/translations-publication.png]
+image::./doc/translations-publication.png[Translations Publication,300]
 
-There are 4 jobs:
+=== Users Management
+Users can be created directly on the tool, _internal users_.
 
-. Build of front and back including unit tests. The docker image is build as a candidate.
-. E2E tests. The application is launched in the building container.
-. The docker image is deployed in the image registry. The candidate image is tagged as the final one.
-. The application is deployed
+You can use OAuth to authenticated GitHub users. For that, you have to enable
+the Spring profile "github" and either provide environment variables
+contained in that file, or provide your own _application-github.yml_ file.
+As you may notice in the pre-defined file, you can restrict users based
+on the Organization that they belong to, or based on the domain of their
+email addresses.
 
-[link=./doc/travis-ci.png]
-image::./doc/travis-ci.png[Travis-CI Build result,300]
+You can also use Google OAuth to authenticate user. The Spring profile is
+"google". In the same ways as for GitHub, you can provide environment
+variables, or provide your own _application-google.yml_ file. Allowed
+users can be restricted via the domain of their email addresses.
 
-=== Amazon EB Configuration
-
-The following environment variables must be setup on Amazon Elastic Bean Stalk:
-
-* SERVER_PORT
-* DOCKER_IMAGE_VERSION
-* GIT_HUB_OAUTH_CLIENT
-* GIT_HUB_OAUTH_SECRET
-* GIT_HUB_REPO_USER_NAME
-* GIT_HUB_REPO_NAME
-* GIT_HUB_WEBHOOK_SECRET
-* DEFAULT_ADMIN_PASSWORD (optional)
-
-The EB environment must use an IAM role allowing to attach an EC2 volume.
-Either modify the existing role _aws-elasticbeanstalk-ec2-service-role_, or create a dedicated role. https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_examples_ec2_volumes-instance.html[AWS DOcumentation]
-
-
-== Technical Documentation
-
-=== Unit Tests
-
-The build result provides (in _/target_) a report of the code coverage:
-
-[link=./doc/unit-test-coverage.png]
-image::./doc/unit-test-coverage.png[Report of Unit Test coverage,250]
-
-=== E2E Tests
-
-The build result provides (in _/target_) a report of all the executed tests.
-It also includes snapshots after the execution of every test:
-
-[link=./doc/e2e-test-report.png]
-image::./doc/e2e-test-report.png[Report of E2E Tests,250]
-
-=== Backend Endpoints
-
-* /api/*
-* /ws/*
-* /auth/*
-    * /auth/oauth2/authorize-client/{client-registration-id}
-    * /auth/oauth2/code/{code}
-    
-=== Angular Routes
-
-* /login
-* /logout/success
+[link=./doc/users-management.png]
+image::./doc/users-management.png[Users Management,300]

@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {AuthenticationService} from "../../service/authentication.service";
+import {NotificationService} from "../../../notification/service/notification.service";
 
 @Component({
     selector: 'app-logout',
@@ -8,22 +9,22 @@ import {AuthenticationService} from "../../service/authentication.service";
 })
 export class LogoutComponent implements OnInit {
 
-    private loggedOut: boolean = null;
+    loggedOut: boolean = null;
 
-    constructor(private authenticationService: AuthenticationService) {
+    constructor(private authenticationService: AuthenticationService,
+                private notificationService: NotificationService) {
     }
 
     ngOnInit() {
         this.authenticationService
             .logout()
-            .subscribe(
-                (result: any) => {
-                    this.loggedOut = true;
-                },
-                (error: any) => {
-                    this.loggedOut = false;
-                }
-            )
+            .then((_) => this.loggedOut = true)
+            .catch((error: any) => {
+                console.error('Error while login out user.', error);
+                this.notificationService.displayErrorMessage('Error while login out user.');
+
+                this.loggedOut = false;
+            });
     }
 
 }

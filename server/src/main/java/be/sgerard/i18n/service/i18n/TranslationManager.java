@@ -1,28 +1,40 @@
 package be.sgerard.i18n.service.i18n;
 
-import be.sgerard.i18n.model.i18n.dto.BundleKeysPageDto;
-import be.sgerard.i18n.model.i18n.dto.BundleKeysPageRequestDto;
-import be.sgerard.i18n.model.i18n.persistence.WorkspaceEntity;
+import be.sgerard.i18n.model.i18n.dto.TranslationUpdateDto;
+import be.sgerard.i18n.model.i18n.persistence.BundleFileEntity;
+import be.sgerard.i18n.model.i18n.persistence.BundleKeyTranslationEntity;
+import be.sgerard.i18n.model.workspace.persistence.WorkspaceEntity;
 import be.sgerard.i18n.service.ResourceNotFoundException;
-import be.sgerard.i18n.service.git.RepositoryAPI;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Locale;
-import java.util.Map;
+import java.util.List;
 
 /**
+ * Manager of translations found in bundle files.
+ *
  * @author Sebastien Gerard
  */
 public interface TranslationManager {
 
-    Collection<Locale> getLocales();
+    /**
+     * Reads all the translations of the specified {@link WorkspaceEntity workspace} using the {@link TranslationRepositoryReadApi read API}.
+     */
+    Flux<BundleFileEntity> readTranslations(WorkspaceEntity workspace, TranslationRepositoryReadApi api);
 
-    void readTranslations(WorkspaceEntity workspaceEntity, RepositoryAPI api) throws IOException;
+    /**
+     * Writes back all the translations using the specified {@link WorkspaceEntity workspace} using the
+     * {@link TranslationRepositoryWriteApi write API}.
+     */
+    Flux<BundleFileEntity> writeTranslations(WorkspaceEntity workspace, TranslationRepositoryWriteApi api);
 
-    void writeTranslations(WorkspaceEntity workspaceEntity, RepositoryAPI api) throws IOException;
+    /**
+     * Updates a translation based on the specified {@link TranslationUpdateDto update}.
+     */
+    Mono<BundleKeyTranslationEntity> updateTranslation(TranslationUpdateDto translationUpdate) throws ResourceNotFoundException;
 
-    BundleKeysPageDto getTranslations(BundleKeysPageRequestDto searchRequest) throws ResourceNotFoundException;
-
-    void updateTranslations(WorkspaceEntity workspaceEntity, Map<String, String> translations) throws ResourceNotFoundException;
+    /**
+     * Updates translations based on the specified {@link TranslationUpdateDto updates}.
+     */
+    Mono<List<BundleKeyTranslationEntity>> updateTranslations(List<TranslationUpdateDto> translationsUpdate) throws ResourceNotFoundException;
 }

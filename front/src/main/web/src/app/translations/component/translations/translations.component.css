@@ -1,5 +1,13 @@
-.start-review {
+app-translations-search-bar {
     position: absolute;
-    top: calc(100vh - 110px);
-    right: 20px;
+    z-index: 1;
+    width: calc(100% - 60px);
+    top: 20px;
+}
+
+app-translations-table {
+    height: calc(100vh - 110px);
+    width: 100%;
+    position: absolute;
+    top: 110px;
 }

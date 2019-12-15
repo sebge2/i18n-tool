@@ -1,0 +1,17 @@
+@import "variables";
+
+.status-warning {
+  color: mat-color($color-warning);
+}
+
+.status-error {
+  color: mat-color($color-error);
+}
+
+.status-success {
+  color: mat-color($color-success);
+}
+
+.status-progress {
+  color: mat-color($color-warning);
+}

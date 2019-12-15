@@ -1,32 +1,29 @@
 package be.sgerard.i18n.model.validation;
 
-import java.util.List;
-
-import static java.util.Arrays.asList;
-
+import be.sgerard.i18n.model.support.LocalizedMessageHolder;
 
 /**
+ * Validation message. The message is a key and it's used for translating the validation message in the user's locale.
+ *
  * @author Sebastien Gerard
  */
-public class ValidationMessage {
+public class ValidationMessage implements LocalizedMessageHolder {
 
     private final String messageKey;
-    private final List<String> messageParameters;
+    private final Object[] messageParameters;
 
-    public ValidationMessage(String messageKey, List<String> messageParameters) {
+    public ValidationMessage(String messageKey, Object... messageParameters) {
         this.messageKey = messageKey;
-        this.messageParameters = List.copyOf(messageParameters);
+        this.messageParameters = messageParameters;
     }
 
-    public ValidationMessage(String messageKey, String... messageParameters) {
-        this(messageKey, asList(messageParameters));
-    }
-
+    @Override
     public String getMessageKey() {
         return messageKey;
     }
 
-    public List<String> getMessageParameters() {
+    @Override
+    public Object[] getMessageParameters() {
         return messageParameters;
     }
 }

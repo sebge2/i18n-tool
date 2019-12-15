@@ -1,28 +1,6 @@
 <app-translations-search-bar
         (onSearchChange)="onSearch($event)"
-        (requestInitChange)="onRequestInitialized($event)"
-        (requestChange)="onRequestChange($event)"
         [(expanded)]="expanded">
 </app-translations-search-bar>
 
-<div *ngIf="(searchRequest != null) && (searchRequest.workspace != null) && searchRequest.workspace.isNotInitialized()"
-     class="container">
-    <p>{{'TRANSLATIONS.PLEASE_WAIT' | translate}}</p>
-    <img src="assets/scanning.gif" [alt]="'TRANSLATIONS.INITIALIZING_ALT' | translate"/>
-</div>
-
-<div
-        *ngIf="(searchRequest != null) && (searchRequest.workspace != null) && (searchRequest.workspace.isInitialized() || searchRequest.workspace.isInReview())"
-        class="container">
-    <app-translations-table [searchRequest]="searchRequest"
-                            [readOnly]="readOnlyTable || startReviewing"></app-translations-table>
-
-    <div class="start-review"
-         *hasRole="['MEMBER_OF_REPOSITORY']; additionalCondition: (searchRequest != null) && (searchRequest.workspace != null) && searchRequest.workspace.isInitialized()">
-        <button mat-flat-button color="primary" (click)="openStartReviewDialog()" [disabled]="startReviewing">
-            {{'TRANSLATIONS.START_REVIEW_BUTTON' | translate}}
-
-            <i class="fa fa-spinner fa-spin" *ngIf="startReviewing"></i>
-        </button>
-    </div>
-</div>
+<app-translations-table [searchRequest]="searchRequest"></app-translations-table>

@@ -1,52 +1,50 @@
-<ng-template [ngIf]="form.controls.length > 0" [ngIfElse]="noResult">
-    <div class="mat-app-background table-container">
-        <div *ngIf="form.dirty" style="text-align: right;">
-            <i class="fas fa-exclamation"></i> {{'TRANSLATIONS.TABLE.UNSAVED' | translate}}
+<cdk-virtual-scroll-viewport [itemSize]="20" class="app-translations-scroller-viewport" *ngIf="searchRequest">
+    <div class="app-translations-container"
+         [ngStyle]="{'grid-template-columns': '230px repeat(' + (searchRequest.locales.length) + ', 1fr)'}">
+        <div class="app-translations-header app-scroller-cell">
+            <h3><span class="app-icon-key-solid app-translations-header-icon"></span> {{'TRANSLATIONS.TABLE.KEY_COLUMN' | translate}}</h3>
         </div>
-        <form [formGroup]="form">
-            <table mat-table [dataSource]="form.controls" class="mat-elevation-z8" #table>
-                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <div *ngFor="let locale of searchRequest.locales" class="app-translations-header app-scroller-cell">
+            <h3><span [class]="locale | translationLocaleIcon" class="app-translations-header-icon"></span> {{locale.displayName}}</h3>
+        </div>
 
-                <ng-container matColumnDef="groupHeader">
-                    <td [attr.colspan]="displayedColumns.length" mat-cell *matCellDef="let bundleFileGroup"
-                        style="text-align: left;">
-                        <i class="far fa-file"></i> {{bundleFileGroup.value.file.location}}
-                        <strong>{{bundleFileGroup.value.file.name}}</strong>
-                    </td>
-                </ng-container>
-                <tr mat-row *matRowDef="let row; columns: ['groupHeader']; when: isBundleFile"></tr>
+        <ng-container *cdkVirtualFor="let rowForm of dataSource; let rowIndex = index">
+            <ng-container [ngSwitch]="dataSource.getRowType(rowForm)">
+                <div class="{{spreadRowClass}} app-scroller-cell app-translations-workspace-row"
+                     *ngSwitchCase="RowType.WORKSPACE">
+                    <app-translations-workspace-row
+                            [workspace]="getWorkspace(rowForm) | async"></app-translations-workspace-row>
+                </div>
+                <div class="{{spreadRowClass}} app-scroller-cell app-translations-bundle-file-row"
+                     *ngSwitchCase="RowType.BUNDLE_FILE">
+                    <app-translations-bundle-file-row
+                            [bundleFile]="getBundleFile(rowForm) | async"></app-translations-bundle-file-row>
+                </div>
+                <ng-container *ngSwitchCase="RowType.BUNDLE_KEY">
+                    <div class="app-translations-bundle-key-column app-scroller-cell">
+                        <div class="app-translations-bundle-key-column-inner"
+                             [matTooltip]="dataSource.getRowBundleKey(rowForm)"
+                             [matTooltipPosition]="'right'"
+                             matTooltipClass="app-translations-bundle-key-tooltip">
+                            {{dataSource.getRowBundleKey(rowForm)}}
+                        </div>
+                    </div>
 
-                <ng-container *ngFor="let columnDefinition of columnDefinitions"
-                              [matColumnDef]="columnDefinition.columnDef">
-                    <th mat-header-cell *matHeaderCellDef>
-                        <span *ngIf="!isKeyHeaderColumn(columnDefinition.header); else elseKeyHeaderColumn">
-                            <span [class]="columnDefinition.header | localeIcon"></span> {{columnDefinition.header.toUpperCase() }}
-                        </span>
-                        <ng-template #elseKeyHeaderColumn>
-                            {{columnDefinition.header | translate}}
-                        </ng-template>
-                    </th>
-                    <td mat-cell *matCellDef="let rowFormArray" style="text-align: left">
-                        <ng-template [ngIf]="columnDefinition.isTranslation(rowFormArray)">
-                            <app-translation-editing-cell
-                                    [formGroup]="columnDefinition.cell(rowFormArray)">
-                            </app-translation-editing-cell>
-                        </ng-template>
-                        <ng-template [ngIf]="columnDefinition.isKey(rowFormArray)">
-                            {{columnDefinition.cell(rowFormArray)}}
-                        </ng-template>
-                        <ng-template [ngIf]="columnDefinition.isEmpty(rowFormArray)">
-                            /
-                        </ng-template>
-                    </td>
+                    <div *ngFor="let cellForm of dataSource.getRowTranslations(rowForm); let columnIndex = index; trackBy: trackByFn.bind(this, rowIndex)"
+                         class="app-translations-translation-column app-scroller-cell">
+                        <app-translation-editing-cell [form]="cellForm"></app-translation-editing-cell>
+                    </div>
                 </ng-container>
-                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-            </table>
-        </form>
+            </ng-container>
+        </ng-container>
     </div>
-</ng-template>
-<ng-template #noResult>
-    <div style="text-align: center">
-        {{'TRANSLATIONS.TABLE.NO_RESULT' | translate}}
-    </div>
-</ng-template>
+</cdk-virtual-scroll-viewport>
+
+<div class="app-translations-loading" *ngIf="actionInProgress && !unsavedChanges">
+    <mat-spinner [diameter]="30"></mat-spinner>
+</div>
+
+<div class="app-translations-unsaved" *ngIf="unsavedChanges">
+    <span class="app-icon-exclamation-solid app-translations-unsaved-icon"></span>
+    <b>{{'TRANSLATIONS.TABLE.UNSAVED_CHANGES' | translate}}</b>
+</div>

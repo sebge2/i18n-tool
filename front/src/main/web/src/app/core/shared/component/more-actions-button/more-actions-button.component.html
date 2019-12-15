@@ -1,0 +1,13 @@
+<button mat-icon-button
+        class="app-button"
+        [matMenuTriggerFor]="menu"
+        [disabled]="actionInProgress || disabled">
+    <mat-icon *ngIf="!actionInProgress">more_vert</mat-icon>
+
+    <mat-icon *ngIf="actionInProgress">
+        <mat-spinner color="primary" diameter="20"></mat-spinner>
+    </mat-icon>
+</button>
+<mat-menu #menu="matMenu">
+    <ng-content select="app-more-action-item-button"></ng-content>
+</mat-menu>

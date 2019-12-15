@@ -1,0 +1,25 @@
+.mat-card {
+}
+
+.mat-card-title {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.mat-card-avatar {
+    width: 40px;
+    height: 40px;
+    font-size: 40px;
+}
+
+.app-card-header-img-icon {
+    background-size: cover;
+    width: 30px;
+    height: 30px;
+    font-size: 30px;
+}
+
+.card-header-actions {
+    margin-top: -10px;
+}

@@ -4,7 +4,7 @@ import {AuthenticationService} from "../../../service/authentication.service";
 import {AuthenticationErrorType} from "../../../model/authentication-error-type.model";
 import {Router} from "@angular/router";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {AuthenticatedUser} from '../../../model/authenticated-user.model';
+import {NotificationService} from "../../../../notification/service/notification.service";
 
 @Component({
     selector: 'app-login-user-password',
@@ -32,6 +32,7 @@ export class LoginUserPasswordComponent implements OnInit {
     form: FormGroup;
 
     constructor(private authenticationService: AuthenticationService,
+                private notificationService: NotificationService,
                 private formBuilder: FormBuilder,
                 private router: Router) {
     }
@@ -51,23 +52,15 @@ export class LoginUserPasswordComponent implements OnInit {
         }
 
         this.authenticationService.authenticateWithUserPassword(this.form.get('username').value, this.form.get('password').value)
-            .toPromise()
-            .then(
-                (user: AuthenticatedUser) => {
-                    this.router.navigate(['/translations']);
+            .then((_) => this.router.navigate(['/translations']))
+            .catch((error: Error) => {
+                if (error.message == AuthenticationErrorType.WRONG_CREDENTIALS) {
+                    this.form.setErrors({'authFailed': true});
+                } else if(error.message == AuthenticationErrorType.AUTHENTICATION_SYSTEM_ERROR){
+                    console.error('Error while authenticating user.', error);
+                    this.notificationService.displayErrorMessage('Error while authenticating user.');
                 }
-            )
-            .catch(
-                (errorType: AuthenticationErrorType) => {
-                    if (errorType == AuthenticationErrorType.WRONG_CREDENTIALS) {
-                        this.form.setErrors({'authFailed': true});
-                    }
-                }
-            )
-            .finally(
-                () => {
-                    this.buttonOptions.active = false;
-                }
-            );
+            })
+            .finally(() => this.buttonOptions.active = false);
     }
 }

@@ -33,7 +33,7 @@ export class HasRoleDirective implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
-        this.authenticationService.currentUser()
+        this.authenticationService.currentAuthenticatedUser()
             .pipe(takeUntil(this.destroy$))
             .subscribe(currentUser => {
                 this.currentUser = currentUser;
