@@ -3,7 +3,6 @@ package be.sgerard.i18n.service.i18n;
 import be.sgerard.i18n.model.i18n.dto.WorkspaceDto;
 import be.sgerard.i18n.model.i18n.persistence.BundleKeyTranslationEntity;
 import be.sgerard.i18n.model.i18n.persistence.WorkspaceEntity;
-import be.sgerard.i18n.service.LockTimeoutException;
 import be.sgerard.i18n.service.ResourceNotFoundException;
 import be.sgerard.i18n.service.repository.RepositoryException;
 import reactor.core.publisher.Flux;
@@ -45,17 +44,23 @@ public interface WorkspaceManager {
      * Synchronizes the current workspaces with the specified repository: missing ones are created, workspaces
      * that are no more relevant (branch does not exist anymore) are deleted.
      */
-    Flux<WorkspaceEntity> synchronize(String repositoryId) throws RepositoryException, LockTimeoutException;
+    Flux<WorkspaceEntity> synchronize(String repositoryId) throws RepositoryException;
 
     /**
      * Initializes the {@link WorkspaceEntity workspace} having the specified id and returns it.
      */
-    Mono<WorkspaceEntity> initialize(String workspaceId) throws LockTimeoutException, RepositoryException, ResourceNotFoundException;
+    Mono<WorkspaceEntity> initialize(String workspaceId) throws RepositoryException, ResourceNotFoundException;
 
     /**
      * Publishes all the modifications made on the specified workspace. Based on the type of repository, a review may start afterwards.
+     * If it's not the case, a new fresh workspace will be created and returned.
      */
-    Mono<WorkspaceEntity> publish(String workspaceId, String message) throws ResourceNotFoundException, LockTimeoutException, RepositoryException;
+    Mono<WorkspaceEntity> publish(String workspaceId, String message) throws ResourceNotFoundException, RepositoryException;
+
+    /**
+     * Terminates the review of the specified workspace. The workspace will be removed and a new fresh workspace will be created and returned.
+     */
+    Mono<WorkspaceEntity> finishReview(String workspaceId) throws ResourceNotFoundException, RepositoryException;
 
     /**
      * Updates the specified translations of the specified workspace. Translations are associated with their

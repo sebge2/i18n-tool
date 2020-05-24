@@ -67,9 +67,7 @@ public class RepositoryManagerImpl implements RepositoryManager {
     public Mono<RepositoryEntity> create(RepositoryCreationDto creationDto) {
         return handler.createRepository(creationDto)
                 .map(entity -> {
-                    final ValidationResult validationResult = listener.beforePersist(entity);
-
-                    ValidationException.throwIfFailed(validationResult);
+                    ValidationException.throwIfFailed(listener.beforePersist(entity));
 
                     return entity;
                 })
@@ -115,9 +113,7 @@ public class RepositoryManagerImpl implements RepositoryManager {
         return lockService.executeInLock(() ->
                 findByIdOrDie(patchDto.getId())
                         .map(entity -> {
-                            final ValidationResult validationResult = listener.beforeUpdate(entity, patchDto);
-
-                            ValidationException.throwIfFailed(validationResult);
+                            ValidationException.throwIfFailed(listener.beforeUpdate(entity, patchDto));
 
                             return entity;
                         })
@@ -134,9 +130,7 @@ public class RepositoryManagerImpl implements RepositoryManager {
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .map(entity -> {
-                    final ValidationResult validationResult = listener.beforeDelete(entity);
-
-                    ValidationException.throwIfFailed(validationResult);
+                    ValidationException.throwIfFailed(listener.beforeDelete(entity));
 
                     return entity;
                 })
