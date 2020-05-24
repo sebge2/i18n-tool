@@ -12,11 +12,6 @@ import reactor.core.publisher.Mono;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-import java.util.stream.Stream;
-
-import static java.util.stream.Collectors.toList;
 
 /**
  * Abstract {@link RepositoryHandler repository handler} for Git.
@@ -109,13 +104,13 @@ public abstract class BaseGitRepositoryHandler<E extends GitRepositoryEntity, C 
 
         @Override
         public Flux<String> listBranches() throws RepositoryException {
-            return null;
-//            return gitAPI
-//                    .update()
-//                    .listRemoteBranches()
-//                    .stream()
-//                    .filter(this::canBeAssociatedToWorkspace)
-//                    .collect(toList());
+            return Flux.fromStream(
+                    gitAPI
+                            .update()
+                            .listRemoteBranches()
+                            .stream()
+                            .filter(this::canBeAssociatedToWorkspace)
+            );
         }
 
         @Override
@@ -133,6 +128,9 @@ public abstract class BaseGitRepositoryHandler<E extends GitRepositoryEntity, C 
             return null;
         }
 
+        /**
+         * Returns whether the specified branch can be exposed.
+         */
         private boolean canBeAssociatedToWorkspace(String name) {
             return repository.getAllowedBranchesPattern().matcher(name).matches();
         }

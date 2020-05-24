@@ -35,6 +35,11 @@ public enum EventType {
     /**
      * @see be.sgerard.i18n.model.i18n.dto.WorkspaceDto
      */
+    ADDED_WORKSPACE("added-workspace"),
+
+    /**
+     * @see be.sgerard.i18n.model.i18n.dto.WorkspaceDto
+     */
     UPDATED_WORKSPACE("updated-workspace"),
 
     /**
