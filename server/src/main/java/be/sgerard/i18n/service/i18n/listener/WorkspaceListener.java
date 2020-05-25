@@ -22,6 +22,19 @@ public interface WorkspaceListener {
     }
 
     /**
+     * Validates before the workspace is initialized.
+     */
+    default ValidationResult beforeInitialize(WorkspaceEntity workspace) {
+        return ValidationResult.EMPTY;
+    }
+
+    /**
+     * Performs an action after the initialization of the specified workspace.
+     */
+    default void onInitialize(WorkspaceEntity workspace) {
+    }
+
+    /**
      * Validates that the review on the specified workspace can finish.
      */
     default ValidationResult beforeFinishReview(WorkspaceEntity workspace) {

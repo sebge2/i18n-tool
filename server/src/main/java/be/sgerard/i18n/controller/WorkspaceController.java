@@ -1,10 +1,13 @@
 package be.sgerard.i18n.controller;
 
 import be.sgerard.i18n.model.i18n.dto.WorkspaceDto;
+import be.sgerard.i18n.service.BadRequestException;
 import be.sgerard.i18n.service.i18n.TranslationManager;
 import be.sgerard.i18n.service.i18n.WorkspaceManager;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
@@ -29,7 +32,7 @@ public class WorkspaceController {
     }
 
     /**
-     * Finds all the {@link WorkspaceDto workspaces}.
+     * Finds all the {@link WorkspaceDto workspaces} optionally restricted to the specified repository.
      */
     @GetMapping("/workspace")
     @ApiOperation(value = "Returns registered workspaces.")
@@ -43,29 +46,36 @@ public class WorkspaceController {
         }
     }
 
+    /**
+     * Returns the {@link WorkspaceDto workspace} having the specified id.
+     */
     @GetMapping(path = "/workspace/{id}")
     @ApiOperation(value = "Returns the workspace having the specified id.")
-    public Mono<WorkspaceDto> getWorkspace(@PathVariable String id) {
+    public Mono<WorkspaceDto> findById(@PathVariable String id) {
         return workspaceManager.findByIdOrDie(id)
                 .map(entity -> WorkspaceDto.builder(entity).build());
     }
 
-//
-//
-//    @PutMapping(path = "/workspace")
-//    @ApiOperation(value = "Executes an action on workspaces.")
-//    @PreAuthorize("hasRole('ADMIN') and hasRole('MEMBER_OF_REPOSITORY')")
-//    @SuppressWarnings("SwitchStatementWithTooFewBranches")
-//    public void executeWorkspacesAction(@ApiParam("The action to execute.") @RequestParam(name = "do") WorkspaceListAction doAction) throws LockTimeoutException, RepositoryException {
-//        // TODO
-////        switch (doAction) {
-////            case FIND:
-////                workspaceManager.initialize();
-////                break;
-////        }
-//    }
-//
-//    @DeleteMapping(path = "/workspace/{id}")
+    /**
+     * Executes an action on workspaces associated to the specified repository.
+     */
+    @PostMapping(path = "/repository/{repositoryId}/workspace/do")
+    @ApiOperation(value = "Executes an action on workspaces of a particular repository.")
+    @PreAuthorize("hasRole('ADMIN')")
+    @SuppressWarnings("SwitchStatementWithTooFewBranches")
+    public Flux<WorkspaceDto> executeWorkspacesAction(@PathVariable String repositoryId,
+                                                      @ApiParam("The action to execute.") @RequestParam(name = "action") RepositionWorkspacesAction action) {
+        switch (action) {
+            case SYNCHRONIZE:
+                return workspaceManager.synchronize(repositoryId)
+                        .map(entity -> WorkspaceDto.builder(entity).build());
+            default:
+                throw BadRequestException.actionNotSupportedException(action.name());
+        }
+    }
+
+
+    //    @DeleteMapping(path = "/workspace/{id}")
 //    @ResponseStatus(HttpStatus.NO_CONTENT)
 //    @ApiOperation(value = "Deletes the workspace having the specified id.")
 //    @PreAuthorize("hasRole('ADMIN') and hasRole('MEMBER_OF_REPOSITORY')")
@@ -124,10 +134,10 @@ public class WorkspaceController {
 //        workspaceManager.updateTranslations(id, translations);
 //    }
 //
-//    public enum WorkspaceListAction {
-//
-//        FIND
-//    }
+    public enum RepositionWorkspacesAction {
+
+        SYNCHRONIZE
+    }
 //
 //    public enum WorkspaceAction {
 //

@@ -44,4 +44,17 @@ public class RepositoryTestHelper {
 
         return resultHandler.getValue();
     }
+
+    public <R extends RepositoryDto> R initializeRepository(String repositoryId, Class<R> expectedResult) throws Exception {
+        final JsonHolderResultHandler<R> resultHandler = new JsonHolderResultHandler<>(objectMapper, expectedResult);
+
+        mockMvc
+                .perform(post("/api/repository/{id}/do?action=INITIALIZE", repositoryId))
+                .andExpectStarted()
+                .andWaitResult()
+                .andExpect(status().isOk())
+                .andDo(resultHandler);
+
+        return resultHandler.getValue();
+    }
 }

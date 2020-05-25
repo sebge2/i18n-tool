@@ -5,8 +5,7 @@ import be.sgerard.i18n.model.i18n.persistence.WorkspaceEntity;
 import be.sgerard.i18n.service.event.EventService;
 import org.springframework.stereotype.Component;
 
-import static be.sgerard.i18n.model.event.EventType.ADDED_WORKSPACE;
-import static be.sgerard.i18n.model.event.EventType.DELETED_WORKSPACE;
+import static be.sgerard.i18n.model.event.EventType.*;
 
 /**
  * {@link WorkspaceListener Workspace listener} emitting events when the workspace changes.
@@ -30,6 +29,11 @@ public class EventWorkspaceListener implements WorkspaceListener {
     @Override
     public void onCreate(WorkspaceEntity workspace) {
         eventService.broadcastEvent(ADDED_WORKSPACE, WorkspaceDto.builder(workspace).build());
+    }
+
+    @Override
+    public void onInitialize(WorkspaceEntity workspace) {
+        eventService.broadcastEvent(UPDATED_WORKSPACE, WorkspaceDto.builder(workspace).build());
     }
 
     @Override
