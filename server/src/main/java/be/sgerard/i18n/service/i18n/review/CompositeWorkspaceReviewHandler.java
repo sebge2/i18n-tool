@@ -22,16 +22,25 @@ public class CompositeWorkspaceReviewHandler implements WorkspaceReviewHandler {
     }
 
     @Override
-    public boolean support(WorkspaceEntity workspaceEntity) {
+    public boolean support(WorkspaceEntity workspace) {
         return true;
     }
 
     @Override
-    public boolean isReviewFinished(WorkspaceEntity workspaceEntity) {
+    public boolean isReviewFinished(WorkspaceEntity workspace) {
         return reviewHandlers.stream()
-                .filter(handler -> handler.support(workspaceEntity))
+                .filter(handler -> handler.support(workspace))
                 .findFirst()
-                .orElseThrow(() -> new UnsupportedOperationException("Unsupported workspace [" + workspaceEntity + "]."))
-                .isReviewFinished(workspaceEntity);
+                .orElseThrow(() -> new UnsupportedOperationException("Unsupported workspace [" + workspace + "]."))
+                .isReviewFinished(workspace);
+    }
+
+    @Override
+    public boolean isReviewSupported(WorkspaceEntity workspace) {
+        return reviewHandlers.stream()
+                .filter(handler -> handler.support(workspace))
+                .findFirst()
+                .map(listener -> listener.isReviewSupported(workspace))
+                .orElse(false);
     }
 }
