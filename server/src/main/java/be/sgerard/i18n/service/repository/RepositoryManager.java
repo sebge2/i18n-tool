@@ -56,11 +56,10 @@ public interface RepositoryManager {
     /**
      * Consumes the content of the specified repository.
      */
-    default void consumeRepository(String repositoryId, RepositoryApi.ApiConsumer apiConsumer) throws RepositoryException{
-        applyOnRepository(repositoryId, (api) -> {
-            apiConsumer.consume(api);
-            return null;
-        });
+    default Mono<Void> consumeRepository(String repositoryId, RepositoryApi.ApiConsumer apiConsumer) throws RepositoryException {
+        return this
+                .applyOnRepository(repositoryId, apiConsumer::consume)
+                .then();
     }
 
     /**

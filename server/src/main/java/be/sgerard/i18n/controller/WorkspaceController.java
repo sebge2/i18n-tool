@@ -7,6 +7,7 @@ import be.sgerard.i18n.service.i18n.WorkspaceManager;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -74,42 +75,47 @@ public class WorkspaceController {
         }
     }
 
+    /**
+     * Removes the {@link WorkspaceDto workspace} having the specified id.
+     */
+    @DeleteMapping(path = "/workspace/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ApiOperation(value = "Deletes the workspace having the specified id.")
+    @PreAuthorize("hasRole('ADMIN') and hasRole('MEMBER_OF_REPOSITORY')")
+    public Mono<Void> deleteWorkspace(@PathVariable String id) {
+        return workspaceManager.delete(id);
+    }
 
-    //    @DeleteMapping(path = "/workspace/{id}")
-//    @ResponseStatus(HttpStatus.NO_CONTENT)
-//    @ApiOperation(value = "Deletes the workspace having the specified id.")
-//    @PreAuthorize("hasRole('ADMIN') and hasRole('MEMBER_OF_REPOSITORY')")
-//    public void deleteWorkspace(@PathVariable String id) throws LockTimeoutException, RepositoryException {
-//        workspaceManager.delete(id);
-//    }
+    /**
+     * Executes an action on the specified workspace.
+     */
+    @PostMapping(path = "/workspace/{id}/do")
+    @ApiOperation(value = "Executes an action on the specified workspace.")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Mono<WorkspaceDto> executeWorkspaceAction(@PathVariable String id,
+                                                     @ApiParam("The action to execute.") @RequestParam(name = "action") WorkspaceAction action/*,
+                                               @ApiParam("Specify the message to use for the review.")
+                                               @RequestParam(name = "message", required = false) String message*/) {
+        switch (action) {
+            case INITIALIZE:
+                return workspaceManager.initialize(id)
+                        .map(workspace -> WorkspaceDto.builder(workspace).build());
+
+//            case START_REVIEW:
+//                if (StringUtils.isEmpty(message)) {
+//                    throw new BadRequestException(
+//                            "There is no message specify. A message is needed when starting a review.",
+//                            "BadRequestException.start-review-no-message.message"
+//                    );
+//                }
 //
-//
-//
-//
-//    @PutMapping(path = "/workspace/{id}")
-//    @ApiOperation(value = "Executes an action on the specified workspace.")
-//    @PreAuthorize("hasRole('ADMIN') and hasRole('MEMBER_OF_REPOSITORY')")
-//    public WorkspaceDto executeWorkspaceAction(@PathVariable String id,
-//                                               @ApiParam("The action to execute.") @RequestParam(name = "do") WorkspaceAction doAction,
-//                                               @ApiParam("Specify the message to use for the review.")
-//                                               @RequestParam(name = "message", required = false) String message) throws LockTimeoutException, RepositoryException {
-////        switch (doAction) {
-////            case INITIALIZE:
-////                return WorkspaceDto.builder(workspaceManager.initialize(id)).build();
-////            case START_REVIEW:
-////                if (StringUtils.isEmpty(message)) {
-////                    throw new BadRequestException(
-////                            "There is no message specify. A message is needed when starting a review.",
-////                            "BadRequestException.start-review-no-message.message"
-////                    );
-////                }
-////
-////                return WorkspaceDto.builder(workspaceManager.publish(id, message)).build();
-////            default:
-//                throw BadRequestException.actionNotSupportedException(doAction.toString());
-////        }
-//    }
-//
+//                return WorkspaceDto.builder(workspaceManager.publish(id, message)).build();
+            default:
+                throw BadRequestException.actionNotSupportedException(action.toString());
+        }
+    }
+
+    //
 //    @GetMapping(path = "/workspace/{id}/translation")
 //    @ApiOperation(value = "Returns translations of the workspace having the specified id.")
 //    public BundleKeysPageDto getWorkspaceTranslations(@PathVariable String id,
@@ -138,11 +144,11 @@ public class WorkspaceController {
 
         SYNCHRONIZE
     }
-//
-//    public enum WorkspaceAction {
-//
-//        INITIALIZE,
-//
+
+    public enum WorkspaceAction {
+
+        INITIALIZE,
+
 //        START_REVIEW
-//    }
+    }
 }

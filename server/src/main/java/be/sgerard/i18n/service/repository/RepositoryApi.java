@@ -1,6 +1,7 @@
 package be.sgerard.i18n.service.repository;
 
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,7 +42,7 @@ public interface RepositoryApi {
         /**
          * Consumes the specified {@link RepositoryApi API}.
          */
-        void consume(RepositoryApi api) throws RepositoryException;
+        Mono<Void> consume(RepositoryApi api) throws RepositoryException;
 
     }
 
