@@ -2,6 +2,9 @@ package be.sgerard.i18n.model.i18n.dto;
 
 import be.sgerard.i18n.model.i18n.WorkspaceStatus;
 import be.sgerard.i18n.model.i18n.persistence.WorkspaceEntity;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -12,6 +15,7 @@ import io.swagger.annotations.ApiModelProperty;
  */
 @ApiModel(value = "Workspace",
         description = "A workspace is a place where users can define translations and then submit them for review. A workspace is based on a particular branch.")
+@JsonDeserialize(builder = WorkspaceDto.Builder.class)
 public class WorkspaceDto {
 
     public static Builder builder() {
@@ -65,6 +69,8 @@ public class WorkspaceDto {
     /**
      * Builder of {@link WorkspaceDto workspace DTO}.
      */
+    @JsonPOJOBuilder(withPrefix = "")
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder {
         private String id;
         private String branch;

@@ -1,6 +1,7 @@
 package be.sgerard.i18n.model.i18n.persistence;
 
 import be.sgerard.i18n.model.i18n.WorkspaceStatus;
+import be.sgerard.i18n.model.repository.persistence.RepositoryEntity;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -23,6 +24,9 @@ public class WorkspaceEntity {
     @Id
     private String id;
 
+    @ManyToOne(optional = false)
+    private RepositoryEntity repository;
+
     @NotNull
     @Column(nullable = false)
     private String branch;
@@ -41,8 +45,12 @@ public class WorkspaceEntity {
     WorkspaceEntity() {
     }
 
-    public WorkspaceEntity(String branch) {
+    public WorkspaceEntity(RepositoryEntity repository, String branch) {
         this.id = UUID.randomUUID().toString();
+
+        this.repository = repository;
+        this.repository.addWorkspace(this);
+
         this.branch = branch;
         this.status = WorkspaceStatus.NOT_INITIALIZED;
     }
@@ -59,6 +67,20 @@ public class WorkspaceEntity {
      */
     void setId(String id) {
         this.id = id;
+    }
+
+    /**
+     * Returns the associated {@link RepositoryEntity repository}.
+     */
+    public RepositoryEntity getRepository() {
+        return repository;
+    }
+
+    /**
+     * Sets the associated {@link RepositoryEntity repository}.
+     */
+    public void setRepository(RepositoryEntity repository) {
+        this.repository = repository;
     }
 
     /**

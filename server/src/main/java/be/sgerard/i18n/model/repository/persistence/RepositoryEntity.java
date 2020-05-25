@@ -1,11 +1,16 @@
 package be.sgerard.i18n.model.repository.persistence;
 
+import be.sgerard.i18n.model.i18n.persistence.WorkspaceEntity;
 import be.sgerard.i18n.model.repository.RepositoryStatus;
 import be.sgerard.i18n.model.repository.RepositoryType;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.UUID;
+
+import static java.util.Collections.unmodifiableCollection;
 
 /**
  * Repository that can be of different type. A repository contains translations.
@@ -28,6 +33,9 @@ public abstract class RepositoryEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private RepositoryStatus status = RepositoryStatus.NOT_INITIALIZED;
+
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
+    private final Collection<WorkspaceEntity> workspaces = new HashSet<>();
 
     @Version
     private int version;
@@ -91,18 +99,17 @@ public abstract class RepositoryEntity {
     }
 
     /**
-     * Returns the editing version of this entity.
+     * Returns all the {@link WorkspaceEntity workspaces} based on this repository.
      */
-    public int getVersion() {
-        return version;
+    public Collection<WorkspaceEntity> getWorkspaces() {
+        return unmodifiableCollection(workspaces);
     }
 
     /**
-     * Sets the editing version of this entity.
+     * Adds a {@link WorkspaceEntity workspace} to this repository.
      */
-    public RepositoryEntity setVersion(int version) {
-        this.version = version;
-        return this;
+    public void addWorkspace(WorkspaceEntity workspace) {
+        this.workspaces.add(workspace);
     }
 
     /**
