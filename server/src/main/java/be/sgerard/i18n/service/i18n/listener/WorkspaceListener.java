@@ -35,6 +35,13 @@ public interface WorkspaceListener {
     }
 
     /**
+     * Validates that the specified workspace can be published and eventually be in review.
+     */
+    default ValidationResult beforePublish(WorkspaceEntity workspace){
+        return ValidationResult.EMPTY;
+    }
+
+    /**
      * Validates that the review on the specified workspace can finish.
      */
     default ValidationResult beforeFinishReview(WorkspaceEntity workspace) {
@@ -46,5 +53,4 @@ public interface WorkspaceListener {
      */
     default void onDelete(WorkspaceEntity workspace) {
     }
-
 }
