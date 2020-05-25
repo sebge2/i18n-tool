@@ -40,4 +40,9 @@ public class EventWorkspaceListener implements WorkspaceListener {
     public void onDelete(WorkspaceEntity workspace) {
         eventService.broadcastEvent(DELETED_WORKSPACE, WorkspaceDto.builder(workspace).build());
     }
+
+    @Override
+    public void onReview(WorkspaceEntity workspace) {
+        eventService.broadcastEvent(UPDATED_WORKSPACE, WorkspaceDto.builder(workspace).build());
+    }
 }

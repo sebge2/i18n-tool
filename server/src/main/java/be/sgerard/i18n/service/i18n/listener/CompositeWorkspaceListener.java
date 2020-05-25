@@ -58,6 +58,13 @@ public class CompositeWorkspaceListener implements WorkspaceListener {
     }
 
     @Override
+    public void onReview(WorkspaceEntity workspace) {
+        listeners.stream()
+                .filter(listener -> listener.support(workspace))
+                .forEach(listener -> listener.onReview(workspace));
+    }
+
+    @Override
     public ValidationResult beforeFinishReview(WorkspaceEntity workspace) {
         return listeners.stream()
                 .filter(listener -> listener.support(workspace))

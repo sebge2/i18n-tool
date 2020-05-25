@@ -42,6 +42,12 @@ public interface WorkspaceListener {
     }
 
     /**
+     * Performs an action when the specified workspace starts to be in review.
+     */
+    default void onReview(WorkspaceEntity workspace){
+    }
+
+    /**
      * Validates that the review on the specified workspace can finish.
      */
     default ValidationResult beforeFinishReview(WorkspaceEntity workspace) {
