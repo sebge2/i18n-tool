@@ -120,10 +120,12 @@ public abstract class RepositoryEntity {
     /**
      * Fills the specified entity with the state of this one.
      */
-    protected void fillEntity(RepositoryEntity copy) {
-        copy.id = this.id;
-        copy.name = this.name;
-        copy.status = this.status;
-        copy.version = this.version;
+    protected <R extends RepositoryEntity> R fillEntity(R copy) {
+        ((RepositoryEntity) copy).id = this.id;
+        ((RepositoryEntity) copy).name = this.name;
+        ((RepositoryEntity) copy).status = this.status;
+        ((RepositoryEntity) copy).version = this.version;
+
+        return copy;
     }
 }

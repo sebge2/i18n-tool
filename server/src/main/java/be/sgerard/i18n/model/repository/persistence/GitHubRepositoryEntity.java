@@ -14,7 +14,7 @@ import java.util.Optional;
  */
 @Entity(name = "github_repository")
 @DiscriminatorValue(value = "GITHUB")
-public class GitHubRepositoryEntity extends GitRepositoryEntity {
+public class GitHubRepositoryEntity extends BaseGitRepositoryEntity {
 
     @Column(nullable = false)
     private String username;
@@ -113,15 +113,15 @@ public class GitHubRepositoryEntity extends GitRepositoryEntity {
 
     @Override
     public GitHubRepositoryEntity deepCopy() {
-        return new GitHubRepositoryEntity();
+        return fillEntity(new GitHubRepositoryEntity());
     }
 
     @Override
-    protected void fillEntity(RepositoryEntity copy) {
+    protected GitHubRepositoryEntity fillEntity(RepositoryEntity copy) {
         ((GitHubRepositoryEntity) copy)
                 .setAccessKey(this.accessKey)
                 .setWebHookSecret(this.webHookSecret);
 
-        super.fillEntity(copy);
+        return (GitHubRepositoryEntity) super.fillEntity(copy);
     }
 }
