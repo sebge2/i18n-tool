@@ -44,12 +44,12 @@ public interface WorkspaceManager {
      * Synchronizes the current workspaces with the specified repository: missing ones are created, workspaces
      * that are no more relevant (branch does not exist anymore) are deleted.
      */
-    Flux<WorkspaceEntity> synchronize(String repositoryId) throws RepositoryException;
+    Flux<WorkspaceEntity> synchronize(String repositoryId) throws ResourceNotFoundException, RepositoryException;
 
     /**
      * Initializes the {@link WorkspaceEntity workspace} having the specified id and returns it.
      */
-    Mono<WorkspaceEntity> initialize(String workspaceId) throws RepositoryException, ResourceNotFoundException;
+    Mono<WorkspaceEntity> initialize(String workspaceId) throws ResourceNotFoundException, RepositoryException;
 
     /**
      * Publishes all the modifications made on the specified workspace. Based on the type of repository, a review may start afterwards.

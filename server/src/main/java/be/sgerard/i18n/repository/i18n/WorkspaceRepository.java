@@ -5,18 +5,24 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Stream;
 
 /**
+ * {@link CrudRepository Repository} of {@link WorkspaceEntity workspace}.
+ *
  * @author Sebastien Gerard
  */
 @Repository
 public interface WorkspaceRepository extends CrudRepository<WorkspaceEntity, String> {
 
+    /**
+     * Finds all {@link WorkspaceEntity workspaces}.
+     */
     List<WorkspaceEntity> findAll();
 
-    Optional<WorkspaceEntity> findByPullRequestNumber(int requestNumber);
-
-    Optional<WorkspaceEntity> findByBranch(String branch);
+    /**
+     * Finds {@link WorkspaceEntity workspaces} of the specified repository.
+     */
+    Stream<WorkspaceEntity> findByRepositoryId(String repositoryId);
 
 }
