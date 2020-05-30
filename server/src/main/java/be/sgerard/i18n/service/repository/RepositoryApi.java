@@ -1,48 +1,29 @@
 package be.sgerard.i18n.service.repository;
 
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.io.File;
-import java.io.IOException;
 
 /**
  * API for accessing a repository.
  *
  * @author Sebastien Gerard
  */
-public interface RepositoryApi {
+public interface RepositoryApi extends AutoCloseable {
 
     /**
-     * Returns all the available branches.
+     * Returns whether this API access has been closed. In that case, further operation are not allowed.
      */
-    Flux<String> listBranches() throws RepositoryException;
-
-    /**
-     * Lists recursively all files (normal files and directories) at the specified location on the specified branch.
-     */
-    Flux<File> listAllFiles(String branch, File file) throws IOException;
-
-    /**
-     * Lists recursively all normal files (not directories) at the specified location on the specified branch.
-     */
-    Flux<File> listNormalFiles(String branch, File file) throws IOException;
-
-    /**
-     * Lists recursively all directories at the specified location on the specified branch.
-     */
-    Flux<File> listDirectories(String branch, File file) throws IOException;
+    boolean isClosed();
 
     /**
      * {@link FunctionalInterface Functional interface} for consuming the API.
      */
     @FunctionalInterface
-    interface ApiConsumer {
+    interface ApiConsumer<A extends RepositoryApi> {
 
         /**
          * Consumes the specified {@link RepositoryApi API}.
          */
-        Mono<Void> consume(RepositoryApi api) throws RepositoryException;
+        Mono<Void> consume(A api) throws RepositoryException;
 
     }
 
@@ -50,12 +31,12 @@ public interface RepositoryApi {
      * {@link FunctionalInterface Functional interface} for applying a function using the API.
      */
     @FunctionalInterface
-    interface ApiFunction<T> {
+    interface ApiFunction<A extends RepositoryApi, T> {
 
         /**
          * Consumes the specified {@link RepositoryApi API} and returns a value.
          */
-        T apply(RepositoryApi api) throws RepositoryException;
+        T apply(A api) throws RepositoryException;
 
     }
 }

@@ -1,10 +1,10 @@
 package be.sgerard.i18n.service.repository.git;
 
 import be.sgerard.i18n.service.ValidationException;
+import be.sgerard.i18n.service.repository.RepositoryApi;
 import be.sgerard.i18n.service.repository.RepositoryException;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
@@ -18,7 +18,7 @@ import java.util.stream.Stream;
  *
  * @author Sebastien Gerard
  */
-public interface GitAPI extends AutoCloseable {
+public interface GitRepositoryApi extends RepositoryApi {
 
     /**
      * Default Git branch.
@@ -28,17 +28,17 @@ public interface GitAPI extends AutoCloseable {
     /**
      * Initializes the local repository based on the remote repository.
      */
-    GitAPI init() throws RepositoryException;
+    GitRepositoryApi init() throws RepositoryException;
 
     /**
      * Validates that the URI and credentials are valid.
      */
-    GitAPI validateInfo() throws RepositoryException, ValidationException;
+    GitRepositoryApi validateInfo() throws RepositoryException, ValidationException;
 
     /**
      * Updates the local repository with the remote repository.
      */
-    GitAPI update() throws RepositoryException;
+    GitRepositoryApi update() throws RepositoryException;
 
     /**
      * Returns the current Git branch.
@@ -58,70 +58,65 @@ public interface GitAPI extends AutoCloseable {
     /**
      * Checkouts the specified branch.
      */
-    GitAPI checkout(String branch) throws RepositoryException;
+    GitRepositoryApi checkout(String branch) throws RepositoryException;
 
     /**
      * Creates a new branch having the specified name.
      */
-    GitAPI createBranch(String branch) throws RepositoryException;
+    GitRepositoryApi createBranch(String branch) throws RepositoryException;
 
     /**
      * Removes the branch having the specified name.
      */
-    GitAPI removeBranch(String branch) throws RepositoryException;
+    GitRepositoryApi removeBranch(String branch) throws RepositoryException;
 
     /**
      * Lists recursively all files (normal files and directories) at the specified location.
      */
-    Stream<File> listAllFiles(File file) throws IOException;
+    Stream<File> listAllFiles(File file) throws RepositoryException;
 
     /**
      * Lists recursively all normal files (not directories) at the specified location.
      */
-    Stream<File> listNormalFiles(File file) throws IOException;
+    Stream<File> listNormalFiles(File file) throws RepositoryException;
 
     /**
      * Lists recursively all directories at the specified location.
      */
-    Stream<File> listDirectories(File file) throws IOException;
+    Stream<File> listDirectories(File file) throws RepositoryException;
 
     /**
      * Opens the specified file.
      */
-    InputStream openInputStream(File file) throws IOException;
+    InputStream openInputStream(File file) throws RepositoryException;
 
     /**
      * Creates a temporary of the specified file and returns it. Once the API will be closed, the temporary file will be dropped.
      */
-    File openAsTemp(File file) throws IOException;
+    File openAsTemp(File file) throws RepositoryException;
 
     /**
      * Creates an output stream to the specified file.
      */
-    OutputStream openOutputStream(File file) throws IOException;
+    OutputStream openOutputStream(File file) throws RepositoryException;
 
     /**
      * Reverts the specified file.
      */
-    GitAPI revert(File file) throws RepositoryException;
+    GitRepositoryApi revert(File file) throws RepositoryException;
 
     /**
      * Commits all the current changes using the specified message.
      */
-    GitAPI commitAll(String message, String username, String email) throws RepositoryException;
+    GitRepositoryApi commitAll(String message, String username, String email) throws RepositoryException;
 
     /**
      * Pushes current changes to the remote repository.
      */
-    GitAPI push() throws RepositoryException;
+    GitRepositoryApi push() throws RepositoryException;
 
     /**
      * Deletes the current repository.
      */
-    GitAPI delete() throws RepositoryException;
-
-    /**
-     * Returns whether this API access has been closed. In that case, further operation are not allowed.
-     */
-    boolean isClosed();
+    GitRepositoryApi delete() throws RepositoryException;
 }
