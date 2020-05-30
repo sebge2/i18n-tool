@@ -4,13 +4,13 @@ import be.sgerard.i18n.model.repository.RepositoryStatus;
 import be.sgerard.i18n.model.repository.dto.RepositoryCreationDto;
 import be.sgerard.i18n.model.repository.dto.RepositoryPatchDto;
 import be.sgerard.i18n.model.repository.persistence.RepositoryEntity;
-import be.sgerard.i18n.model.validation.ValidationResult;
 import be.sgerard.i18n.repository.repository.RepositoryEntityRepository;
 import be.sgerard.i18n.service.LockService;
 import be.sgerard.i18n.service.LockTimeoutException;
 import be.sgerard.i18n.service.ResourceNotFoundException;
 import be.sgerard.i18n.service.ValidationException;
 import be.sgerard.i18n.service.repository.listener.RepositoryListener;
+import org.springframework.cglib.proxy.Proxy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
@@ -19,6 +19,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
 
 import static java.util.Arrays.asList;
@@ -145,11 +146,15 @@ public class RepositoryManagerImpl implements RepositoryManager {
     }
 
     @Override
-    public <T> Mono<T> applyOnRepository(String repositoryId, RepositoryApi.ApiFunction<T> apiConsumer) throws RepositoryException {
+    public <A extends RepositoryApi, T> Mono<T> applyOnRepository(String repositoryId,
+                                                                  Class<A> apiType,
+                                                                  RepositoryApi.ApiFunction<A, T> apiConsumer) throws RepositoryException {
         try {
             return lockService.executeInLock(() ->
                     findByIdOrDie(repositoryId)
                             .flatMap(handler::createAPI)
+                            .map(apiType::cast)
+                            .map(api -> wrapIntoProxy(apiType, api))
                             .map(apiConsumer::apply)
             );
         } catch (LockTimeoutException e) {
@@ -164,5 +169,34 @@ public class RepositoryManagerImpl implements RepositoryManager {
         listener.onUpdate(updated);
 
         return this.transactionTemplate.execute(transactionStatus -> Mono.just(repository.save(updated)));
+    }
+
+    /**
+     * Wraps the specified api into a proxy insuring that every call is performed until the api is
+     * {@link RepositoryApi#isClosed() closed}.
+     */
+    @SuppressWarnings("unchecked")
+    private <A extends RepositoryApi> A wrapIntoProxy(Class<A> apiType, A api) {
+        return (A) Proxy.newProxyInstance(
+                apiType.getClassLoader(),
+                new Class<?>[]{apiType},
+                (o, method, objects) -> {
+                    if (!"close".equals(method.getName()) && api.isClosed()) {
+                        throw new IllegalStateException("Cannot access the API once closed.");
+                    }
+
+                    try {
+                        final Object result = method.invoke(api, objects);
+
+                        if (result == api) {
+                            return o;
+                        }
+
+                        return result;
+                    } catch (InvocationTargetException e) {
+                        throw e.getCause();
+                    }
+                }
+        );
     }
 }

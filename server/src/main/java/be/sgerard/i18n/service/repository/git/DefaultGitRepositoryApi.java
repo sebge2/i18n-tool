@@ -17,10 +17,8 @@ import org.eclipse.jgit.transport.CredentialsProvider;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cglib.proxy.Proxy;
 
 import java.io.*;
-import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -37,21 +35,21 @@ import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 
 /**
- * Default implementation of the {@link GitAPI Git API}.
+ * Default implementation of the {@link GitRepositoryApi Git API}.
  *
  * @author Sebastien Gerard
  */
-public class DefaultGitAPI implements GitAPI, AutoCloseable {
+public class DefaultGitRepositoryApi implements GitRepositoryApi {
 
     /**
      * Pattern of a remote branch.
      */
-    public static final Pattern REMOTE_BRANCH_PATTERN = Pattern.compile("^refs\\/remotes\\/\\w+\\/(.+)$");
+    public static final Pattern REMOTE_BRANCH_PATTERN = Pattern.compile("^refs/remotes/\\w+/(.+)$");
 
     /**
      * Pattern of a local branch.
      */
-    public static final Pattern LOCAL_BRANCH_PATTERN = Pattern.compile("^(master)|refs\\/heads\\/(.+)$");
+    public static final Pattern LOCAL_BRANCH_PATTERN = Pattern.compile("^(master)|refs/heads/(.+)$");
 
     /**
      * Validation message key specifying that Git credentials are invalid.
@@ -69,35 +67,13 @@ public class DefaultGitAPI implements GitAPI, AutoCloseable {
     public static final String ERROR_ACCESSING = "validation.git.error-accessing";
 
     /**
-     * Creates a new {@link GitAPI API object} using the specified {@link Configuration configuration}.
+     * Creates a new {@link GitRepositoryApi API object} using the specified {@link Configuration configuration}.
      */
-    public static GitAPI createAPI(Configuration configuration) {
-        final DefaultGitAPI delegate = new DefaultGitAPI(configuration);
-
-        return (GitAPI) Proxy.newProxyInstance(
-                GitAPI.class.getClassLoader(),
-                new Class<?>[]{GitAPI.class},
-                (o, method, objects) -> {
-                    if (!"close".equals(method.getName()) && delegate.isClosed()) {
-                        throw new IllegalStateException("Cannot access the API once closed.");
-                    }
-
-                    try {
-                        final Object result = method.invoke(delegate, objects);
-
-                        if (result == delegate) {
-                            return o;
-                        }
-
-                        return result;
-                    } catch (InvocationTargetException e) {
-                        throw e.getCause();
-                    }
-                }
-        );
+    public static GitRepositoryApi createAPI(Configuration configuration) {
+        return new DefaultGitRepositoryApi(configuration);
     }
 
-    private static final Logger logger = LoggerFactory.getLogger(DefaultGitAPI.class);
+    private static final Logger logger = LoggerFactory.getLogger(DefaultGitRepositoryApi.class);
 
     private final URI remoteUri;
     private final File repositoryLocation;
@@ -109,7 +85,7 @@ public class DefaultGitAPI implements GitAPI, AutoCloseable {
     private final File tempDirectory;
     private boolean closed = false;
 
-    public DefaultGitAPI(Configuration configuration) {
+    public DefaultGitRepositoryApi(Configuration configuration) {
         this.remoteUri = configuration.getRemoteUri();
         this.repositoryLocation = configuration.getRepositoryLocation();
         this.credentialsProvider = configuration.toCredentialsProvider().orElse(null);
@@ -123,7 +99,7 @@ public class DefaultGitAPI implements GitAPI, AutoCloseable {
     }
 
     @Override
-    public GitAPI init() throws RepositoryException {
+    public GitRepositoryApi init() throws RepositoryException {
         try {
             if (repositoryLocation.exists()) {
                 FileUtils.cleanDirectory(repositoryLocation);
@@ -146,7 +122,7 @@ public class DefaultGitAPI implements GitAPI, AutoCloseable {
     }
 
     @Override
-    public GitAPI validateInfo() throws RepositoryException, ValidationException {
+    public GitRepositoryApi validateInfo() throws RepositoryException, ValidationException {
         try {
             Git
                     .wrap(FileRepositoryBuilder.create(FileUtils.getTempDirectory()))
@@ -202,7 +178,7 @@ public class DefaultGitAPI implements GitAPI, AutoCloseable {
     }
 
     @Override
-    public GitAPI checkout(String branch) throws RepositoryException {
+    public GitRepositoryApi checkout(String branch) throws RepositoryException {
         checkNoModifiedFile();
 
         if (listLocalBranches().contains(branch)) {
@@ -236,7 +212,7 @@ public class DefaultGitAPI implements GitAPI, AutoCloseable {
     }
 
     @Override
-    public GitAPI createBranch(String branch) throws RepositoryException {
+    public GitRepositoryApi createBranch(String branch) throws RepositoryException {
         checkNoModifiedFile();
 
         if (listRemoteBranches().contains(branch) || listLocalBranches().contains(branch)) {
@@ -256,7 +232,7 @@ public class DefaultGitAPI implements GitAPI, AutoCloseable {
     }
 
     @Override
-    public GitAPI removeBranch(String branch) throws RepositoryException {
+    public GitRepositoryApi removeBranch(String branch) throws RepositoryException {
         if (Objects.equals(branch, DEFAULT_BRANCH)) {
             throw RepositoryException.onForbiddenBranchDeletion(branch);
         }
@@ -277,7 +253,7 @@ public class DefaultGitAPI implements GitAPI, AutoCloseable {
     }
 
     @Override
-    public GitAPI update() throws RepositoryException {
+    public GitRepositoryApi update() throws RepositoryException {
         checkNoModifiedFile();
 
         try {
@@ -302,59 +278,59 @@ public class DefaultGitAPI implements GitAPI, AutoCloseable {
     }
 
     @Override
-    public Stream<File> listAllFiles(File file) throws IOException {
+    public Stream<File> listAllFiles(File file) throws RepositoryException {
         try {
             return TranslationFileUtils.listFiles(getFQNFile(file))
                     .map(subFile -> removeParentFile(repositoryLocation, subFile));
         } catch (Exception e) {
-            throw new IOException("Error while listing files of [" + file + "].", e);
+            throw RepositoryException.onFileListing(file, e);
         }
     }
 
     @Override
-    public Stream<File> listNormalFiles(File file) throws IOException {
+    public Stream<File> listNormalFiles(File file) throws RepositoryException {
         try {
             return TranslationFileUtils.listFiles(getFQNFile(file))
                     .filter(File::isFile)
                     .map(subFile -> removeParentFile(repositoryLocation, subFile));
         } catch (Exception e) {
-            throw new IOException("Error while listing files of [" + file + "].", e);
+            throw RepositoryException.onFileListing(file, e);
         }
     }
 
     @Override
-    public Stream<File> listDirectories(File file) throws IOException {
+    public Stream<File> listDirectories(File file) throws RepositoryException {
         try {
             return TranslationFileUtils.listFiles(getFQNFile(file))
                     .filter(File::isDirectory)
                     .map(subFile -> removeParentFile(repositoryLocation, subFile));
         } catch (Exception e) {
-            throw new IOException("Error while listing directories of [" + file + "].", e);
+            throw RepositoryException.onFileListing(file, e);
         }
     }
 
     @Override
-    public InputStream openInputStream(File file) throws IOException {
+    public InputStream openInputStream(File file) throws RepositoryException {
         try {
             return new FileInputStream(getFQNFile(file));
         } catch (FileNotFoundException e) {
-            throw new IOException("Error while opening file [" + file + "].", e);
+            throw RepositoryException.onFileReading(file, e);
         }
     }
 
     @Override
-    public OutputStream openOutputStream(File file) throws IOException {
+    public OutputStream openOutputStream(File file) throws RepositoryException {
         try {
             modifiedFiles.add(file);
 
             return new FileOutputStream(getFQNFile(file));
         } catch (FileNotFoundException e) {
-            throw new IOException("Error while writing file [" + file + "].", e);
+            throw RepositoryException.onFileWriting(file, e);
         }
     }
 
     @Override
-    public File openAsTemp(File file) throws IOException {
+    public File openAsTemp(File file) throws RepositoryException {
         try {
             final Path target = getFQNFile(file).toPath();
             final Path link = new File(tempDirectory, file.toString()).toPath();
@@ -363,12 +339,12 @@ public class DefaultGitAPI implements GitAPI, AutoCloseable {
 
             return Files.createSymbolicLink(link, target).toFile();
         } catch (IOException e) {
-            throw new IOException("Cannot open file [" + file + "].", e);
+            throw RepositoryException.onFileWriting(file, e);
         }
     }
 
     @Override
-    public GitAPI revert(File file) throws RepositoryException {
+    public GitRepositoryApi revert(File file) throws RepositoryException {
         try {
             openGit().checkout().addPath(file.toString()).call();
 
@@ -381,7 +357,7 @@ public class DefaultGitAPI implements GitAPI, AutoCloseable {
     }
 
     @Override
-    public GitAPI commitAll(String message, String username, String email) throws RepositoryException {
+    public GitRepositoryApi commitAll(String message, String username, String email) throws RepositoryException {
         try {
             openGit().add().addFilepattern(".").call();
 
@@ -397,7 +373,7 @@ public class DefaultGitAPI implements GitAPI, AutoCloseable {
     }
 
     @Override
-    public GitAPI push() throws RepositoryException {
+    public GitRepositoryApi push() throws RepositoryException {
         try {
             openGit().push().setCredentialsProvider(credentialsProvider).call();
             return this;
@@ -407,7 +383,7 @@ public class DefaultGitAPI implements GitAPI, AutoCloseable {
     }
 
     @Override
-    public GitAPI delete() throws RepositoryException {
+    public GitRepositoryApi delete() throws RepositoryException {
         try {
             if (repositoryLocation.exists()) {
                 FileUtils.deleteDirectory(repositoryLocation);

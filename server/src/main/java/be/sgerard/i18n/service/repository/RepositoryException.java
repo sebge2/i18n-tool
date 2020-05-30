@@ -2,6 +2,8 @@ package be.sgerard.i18n.service.repository;
 
 import be.sgerard.i18n.model.support.LocalizedMessageHolder;
 
+import java.io.File;
+
 /**
  * Exception thrown when accessing and doing actions on a repository.
  *
@@ -59,6 +61,18 @@ public class RepositoryException extends RuntimeException implements LocalizedMe
 
     public static RepositoryException onLockTimeout(Throwable cause) {
         return new RepositoryException("Error while locking the repository.", "RepositoryException.locking-timeout.message", cause);
+    }
+
+    public static RepositoryException onFileListing(File location, Throwable cause) {
+        return new RepositoryException("Error while listing files from location [" + location + "].", "RepositoryException.file-listing.message", cause);
+    }
+
+    public static RepositoryException onFileReading(File file, Throwable cause) {
+        return new RepositoryException("Error while reading [" + file + "].", "RepositoryException.file-reading.message", cause);
+    }
+
+    public static RepositoryException onFileWriting(File file, Throwable cause) {
+        return new RepositoryException("Error while writing [" + file + "].", "RepositoryException.file-writing.message", cause);
     }
 
     private final String messageKey;
