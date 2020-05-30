@@ -1,4 +1,4 @@
-package be.sgerard.i18n.service.i18n;
+package be.sgerard.i18n.service.workspace;
 
 import be.sgerard.i18n.model.i18n.dto.WorkspaceDto;
 import be.sgerard.i18n.model.i18n.persistence.BundleKeyTranslationEntity;

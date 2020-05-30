@@ -3,7 +3,7 @@ package be.sgerard.i18n.controller;
 import be.sgerard.i18n.model.i18n.dto.WorkspaceDto;
 import be.sgerard.i18n.service.BadRequestException;
 import be.sgerard.i18n.service.i18n.TranslationManager;
-import be.sgerard.i18n.service.i18n.WorkspaceManager;
+import be.sgerard.i18n.service.workspace.WorkspaceManager;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;

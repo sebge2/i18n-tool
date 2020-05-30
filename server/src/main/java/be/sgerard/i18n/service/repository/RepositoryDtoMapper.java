@@ -3,6 +3,7 @@ package be.sgerard.i18n.service.repository;
 import be.sgerard.i18n.model.repository.dto.GitHubRepositoryDto;
 import be.sgerard.i18n.model.repository.dto.GitRepositoryDto;
 import be.sgerard.i18n.model.repository.dto.RepositoryDto;
+import be.sgerard.i18n.model.repository.persistence.BaseGitRepositoryEntity;
 import be.sgerard.i18n.model.repository.persistence.GitHubRepositoryEntity;
 import be.sgerard.i18n.model.repository.persistence.GitRepositoryEntity;
 import be.sgerard.i18n.model.repository.persistence.RepositoryEntity;
@@ -42,7 +43,7 @@ public class RepositoryDtoMapper {
      * Fills the builder with the specified entity.
      */
     @SuppressWarnings("unchecked")
-    private <B extends GitRepositoryDto.BaseBuilder<?, ?>> B fillBuilder(B builder, GitRepositoryEntity repository) {
+    private <B extends GitRepositoryDto.BaseBuilder<?, ?>> B fillBuilder(B builder, BaseGitRepositoryEntity repository) {
         return (B) builder
                 .id(repository.getId())
                 .name(repository.getName())
