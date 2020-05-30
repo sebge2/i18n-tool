@@ -2,16 +2,12 @@ package be.sgerard.i18n.service.repository.git;
 
 import be.sgerard.i18n.model.repository.dto.GitRepositoryPatchDto;
 import be.sgerard.i18n.model.repository.dto.RepositoryCreationDto;
-import be.sgerard.i18n.model.repository.persistence.GitRepositoryEntity;
+import be.sgerard.i18n.model.repository.persistence.BaseGitRepositoryEntity;
 import be.sgerard.i18n.service.repository.RepositoryApi;
 import be.sgerard.i18n.service.repository.RepositoryException;
 import be.sgerard.i18n.service.repository.RepositoryHandler;
 import org.springframework.stereotype.Component;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.io.File;
-import java.io.IOException;
 
 /**
  * Abstract {@link RepositoryHandler repository handler} for Git.
@@ -19,7 +15,7 @@ import java.io.IOException;
  * @author Sebastien Gerard
  */
 @Component
-public abstract class BaseGitRepositoryHandler<E extends GitRepositoryEntity, C extends RepositoryCreationDto, P extends GitRepositoryPatchDto> implements RepositoryHandler<E, C, P> {
+public abstract class BaseGitRepositoryHandler<E extends BaseGitRepositoryEntity, C extends RepositoryCreationDto, P extends GitRepositoryPatchDto> implements RepositoryHandler<E, C, P> {
 
     /**
      * Default master branch.
@@ -30,9 +26,9 @@ public abstract class BaseGitRepositoryHandler<E extends GitRepositoryEntity, C 
     }
 
     /**
-     * Initializes the {@link DefaultGitAPI.Configuration configuration} to use to access Git.
+     * Initializes the {@link DefaultGitRepositoryApi.Configuration configuration} to use to access Git.
      */
-    protected abstract DefaultGitAPI.Configuration createConfiguration(E repository);
+    protected abstract DefaultGitRepositoryApi.Configuration createConfiguration(E repository);
 
     @Override
     public Mono<E> initializeRepository(E repository) {
@@ -58,7 +54,7 @@ public abstract class BaseGitRepositoryHandler<E extends GitRepositoryEntity, C 
 
     @Override
     public Mono<RepositoryApi> createAPI(E repository) throws RepositoryException {
-        return Mono.just(new RepositoryApiAdapter(repository, initApiFromEntity(repository)));
+        return Mono.just(initApiFromEntity(repository));
     }
 
     /**
@@ -82,58 +78,10 @@ public abstract class BaseGitRepositoryHandler<E extends GitRepositoryEntity, C 
     }
 
     /**
-     * Returns the {@link GitAPI Git API} to use for the specified repository.
+     * Returns the {@link GitRepositoryApi Git API} to use for the specified repository.
      */
-    protected GitAPI initApiFromEntity(E repository) {
-        return DefaultGitAPI
+    protected GitRepositoryApi initApiFromEntity(E repository) {
+        return DefaultGitRepositoryApi
                 .createAPI(createConfiguration(repository));
     }
-
-    /**
-     * {@link RepositoryApi Repository API} adapting the {@link GitAPI Git API}.
-     */
-    public static final class RepositoryApiAdapter implements RepositoryApi {
-
-        private final GitRepositoryEntity repository;
-        private final GitAPI gitAPI;
-
-        public RepositoryApiAdapter(GitRepositoryEntity repository, GitAPI gitAPI) {
-            this.repository = repository;
-            this.gitAPI = gitAPI;
-        }
-
-        @Override
-        public Flux<String> listBranches() throws RepositoryException {
-            return Flux.fromStream(
-                    gitAPI
-                            .update()
-                            .listRemoteBranches()
-                            .stream()
-                            .filter(this::canBeAssociatedToWorkspace)
-            );
-        }
-
-        @Override
-        public Flux<File> listAllFiles(String branch, File file) throws IOException {
-            return null;
-        }
-
-        @Override
-        public Flux<File> listNormalFiles(String branch, File file) throws IOException {
-            return null;
-        }
-
-        @Override
-        public Flux<File> listDirectories(String branch, File file) throws IOException {
-            return null;
-        }
-
-        /**
-         * Returns whether the specified branch can be exposed.
-         */
-        private boolean canBeAssociatedToWorkspace(String name) {
-            return repository.getAllowedBranchesPattern().matcher(name).matches();
-        }
-    }
-
 }
