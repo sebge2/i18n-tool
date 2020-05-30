@@ -71,6 +71,6 @@ public interface WorkspaceManager {
     /**
      * Removes the {@link WorkspaceEntity workspace} having the specified id.
      */
-    Mono<Void> delete(String id);
+    Mono<WorkspaceEntity> delete(String id);
 
 }

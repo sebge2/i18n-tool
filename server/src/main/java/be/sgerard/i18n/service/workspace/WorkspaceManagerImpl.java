@@ -8,10 +8,10 @@ import be.sgerard.i18n.service.LockTimeoutException;
 import be.sgerard.i18n.service.ResourceNotFoundException;
 import be.sgerard.i18n.service.ValidationException;
 import be.sgerard.i18n.service.i18n.TranslationManager;
-import be.sgerard.i18n.service.workspace.listener.WorkspaceListener;
-import be.sgerard.i18n.service.i18n.review.WorkspaceReviewHandler;
 import be.sgerard.i18n.service.repository.RepositoryException;
 import be.sgerard.i18n.service.repository.RepositoryManager;
+import be.sgerard.i18n.service.workspace.listener.WorkspaceListener;
+import be.sgerard.i18n.service.workspace.strategy.WorkspaceTranslationsStrategy;
 import be.sgerard.i18n.support.ReactiveUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,18 +36,18 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
     private final RepositoryManager repositoryManager;
     private final TranslationManager translationManager;
     private final WorkspaceListener listener;
-    private final WorkspaceReviewHandler reviewHandler;
+    private final WorkspaceTranslationsStrategy translationsStrategy;
 
     public WorkspaceManagerImpl(WorkspaceRepository repository,
                                 RepositoryManager repositoryManager,
                                 TranslationManager translationManager,
                                 WorkspaceListener listener,
-                                WorkspaceReviewHandler reviewHandler) {
+                                WorkspaceTranslationsStrategy translationsStrategy) {
         this.repositoryManager = repositoryManager;
         this.translationManager = translationManager;
         this.repository = repository;
         this.listener = listener;
-        this.reviewHandler = reviewHandler;
+        this.translationsStrategy = translationsStrategy;
     }
 
     @Override
@@ -73,7 +73,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
         return repositoryManager
                 .applyOnRepository(repositoryId, api ->
                         ReactiveUtils
-                                .combine(api.listBranches(), findAll(repositoryId), (branch, workspace) -> branch.compareTo(workspace.getBranch()))
+                                .combine(translationsStrategy.listBranches(), findAll(repositoryId), (branch, workspace) -> branch.compareTo(workspace.getBranch()))
                                 .flatMap(pair -> {
                                     if (pair.getRight() == null) {
                                         return repositoryManager
@@ -82,15 +82,21 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
                                     } else {
                                         switch (pair.getRight().getStatus()) {
                                             case IN_REVIEW:
-                                                if (reviewHandler.isReviewFinished(pair.getRight())) {
-                                                    return doFinishReview(pair.getRight());
+                                                if (pair.getLeft() == null) {
+                                                    return delete(pair.getRight().getId());
+                                                } else {
+                                                    return translationsStrategy
+                                                            .isReviewFinished(pair.getRight())
+                                                            .flatMap(reviewFinished ->
+                                                                    reviewFinished
+                                                                            ? doFinishReview(pair.getRight())
+                                                                            : Mono.just(pair.getRight())
+                                                            );
                                                 }
-
-                                                return Mono.just(pair.getRight());
                                             case INITIALIZED:
                                             case NOT_INITIALIZED:
                                                 if (pair.getLeft() == null) {
-                                                    return delete(pair.getRight().getId()).flatMap(v -> Mono.empty());
+                                                    return delete(pair.getRight().getId());
                                                 } else {
                                                     return Mono.just(pair.getRight());
                                                 }
@@ -107,24 +113,24 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
     @Transactional
     public Mono<WorkspaceEntity> initialize(String workspaceId) throws LockTimeoutException, RepositoryException {
         return findByIdOrDie(workspaceId)
-                .flatMap(workspace -> {
+                .map(workspace -> {
                     if (workspace.getStatus() == WorkspaceStatus.INITIALIZED) {
-                        return Mono.just(workspace);
+                        return workspace;
                     }
 
                     ValidationException.throwIfFailed(listener.beforeInitialize(workspace));
 
                     logger.info("Initialing workspace {}.", workspaceId);
 
-                    return repositoryManager
-                            .consumeRepository(workspace.getRepository().getId(), api -> translationManager.readTranslations(workspace, api))
-                            .then(Mono.fromSupplier(() -> {
-                                workspace.setStatus(WorkspaceStatus.INITIALIZED);
+                    return workspace;
+                })
+                .flatMap(translationsStrategy::onInitialize)
+                .map(workspace -> {
+                    workspace.setStatus(WorkspaceStatus.INITIALIZED);
 
-                                listener.onInitialize(workspace);
+                    listener.onInitialize(workspace);
 
-                                return workspace;
-                            }));
+                    return workspace;
                 });
     }
 
@@ -141,18 +147,20 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
 
                     logger.info("Start publishing workspace {}.", workspaceId);
 
-                    if(reviewHandler.isReviewSupported(workspace)){
-                        workspace.setStatus(WorkspaceStatus.IN_REVIEW);
+                    return translationsStrategy
+                            .onPublish(workspace)
+                            .flatMap(reviewStarted -> {
+                                if (reviewStarted) {
+                                    workspace.setStatus(WorkspaceStatus.IN_REVIEW);
 
-                        listener.onReview(workspace);
+                                    listener.onReview(workspace);
 
-                        return Mono.just(workspace);
-                    } else {
-
-
-                        return delete(workspace.getId())
-                                .thenReturn(createWorkspace(workspace.getRepository(), workspace.getBranch()));
-                    }
+                                    return Mono.just(workspace);
+                                } else {
+                                    return delete(workspace.getId())
+                                            .then(createWorkspaceIfNeeded(workspace));
+                                }
+                            });
                 });
     }
 
@@ -174,35 +182,37 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
                     + workspace.getStatus() + " does not allow it.");
         }
 
-        translationManager.updateTranslations(workspace, translations);
+        translationManager.updateTranslations(workspace, translations); // TODO
 
         return Mono.empty();
     }
 
     @Override
     @Transactional
-    public Mono<Void> delete(String workspaceId) throws RepositoryException, LockTimeoutException {
-        final WorkspaceEntity workspaceEntity = repository.findById(workspaceId).orElse(null);
+    public Mono<WorkspaceEntity> delete(String workspaceId) throws RepositoryException, LockTimeoutException {
+        return Mono.justOrEmpty(repository.findById(workspaceId))
+                .flatMap(translationsStrategy::onDelete)
+                .map(workspace -> {
+                    listener.onDelete(workspace);
 
-        if (workspaceEntity != null) {
-//            final String pullRequestBranch = workspaceEntity.getPullRequestBranch().orElse(null);
-            final String pullRequestBranch = "";
-//            if (pullRequestBranch != null) {
-//                repositoryManager.open(api -> {
-//                    logger.info("The branch {} has been removed.", pullRequestBranch);
-//
-//                    api.removeBranch(pullRequestBranch);
-//                });
-//            }
+                    logger.info("The workspace {} has been deleted.", workspaceId);
 
-            listener.onDelete(workspaceEntity);
+                    repository.delete(workspace);
 
-            logger.info("The workspace {} has been deleted.", workspaceId);
+                    return workspace;
+                });
+    }
 
-            repository.delete(workspaceEntity);
-        }
-
-        return Mono.empty();
+    /**
+     * Recreates a new {@link WorkspaceEntity workspace} based on the same branch as the specified workspace.
+     * This new workspace is created only if the branch still exists.
+     */
+    private Mono<WorkspaceEntity> createWorkspaceIfNeeded(WorkspaceEntity workspace) {
+        return translationsStrategy
+                .listBranches()
+                .hasElement(workspace.getBranch())
+                .filter(present -> present)
+                .map(present -> createWorkspace(workspace.getRepository(), workspace.getBranch()));
     }
 
     /**
@@ -229,20 +239,6 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
         logger.info("The review is now finished, deleting the workspace {} and then creates a new one.", workspace.getId());
 
         return delete(workspace.getId())
-                .thenReturn(createWorkspace(workspace.getRepository(), workspace.getBranch()));
+                .then(createWorkspaceIfNeeded(workspace));
     }
-
-//    private String generateUniqueBranch(String name, GitAPI api) {
-//        if (!api.listRemoteBranches().contains(name) && !api.listLocalBranches().contains(name)) {
-//            return name;
-//        }
-//
-//        String generatedName;
-//        int index = 0;
-//        do {
-//            generatedName = name + "_" + (++index);
-//        } while (api.listRemoteBranches().contains(generatedName) || api.listLocalBranches().contains(generatedName));
-//
-//        return generatedName;
-//    }
 }
