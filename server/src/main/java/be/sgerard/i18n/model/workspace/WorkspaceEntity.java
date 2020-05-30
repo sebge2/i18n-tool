@@ -1,6 +1,7 @@
-package be.sgerard.i18n.model.i18n.persistence;
+package be.sgerard.i18n.model.workspace;
 
 import be.sgerard.i18n.model.i18n.WorkspaceStatus;
+import be.sgerard.i18n.model.i18n.persistence.BundleFileEntity;
 import be.sgerard.i18n.model.repository.persistence.RepositoryEntity;
 
 import javax.persistence.*;

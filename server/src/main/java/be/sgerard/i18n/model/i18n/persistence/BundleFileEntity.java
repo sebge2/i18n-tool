@@ -1,6 +1,7 @@
 package be.sgerard.i18n.model.i18n.persistence;
 
 import be.sgerard.i18n.model.i18n.BundleType;
+import be.sgerard.i18n.model.workspace.WorkspaceEntity;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;

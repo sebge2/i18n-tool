@@ -2,6 +2,7 @@ package be.sgerard.i18n.repository.i18n;
 
 import be.sgerard.i18n.model.i18n.dto.BundleKeyEntrySearchRequestDto;
 import be.sgerard.i18n.model.i18n.persistence.*;
+import be.sgerard.i18n.model.workspace.WorkspaceEntity;
 import be.sgerard.i18n.service.security.auth.AuthenticationManager;
 
 import javax.persistence.EntityManager;

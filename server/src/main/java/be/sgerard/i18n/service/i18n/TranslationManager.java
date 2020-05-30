@@ -2,7 +2,7 @@ package be.sgerard.i18n.service.i18n;
 
 import be.sgerard.i18n.model.i18n.dto.BundleKeysPageDto;
 import be.sgerard.i18n.model.i18n.dto.BundleKeysPageRequestDto;
-import be.sgerard.i18n.model.i18n.persistence.WorkspaceEntity;
+import be.sgerard.i18n.model.workspace.WorkspaceEntity;
 import be.sgerard.i18n.service.ResourceNotFoundException;
 import be.sgerard.i18n.service.repository.git.GitAPI;
 

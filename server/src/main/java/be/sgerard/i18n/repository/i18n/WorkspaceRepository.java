@@ -1,6 +1,6 @@
 package be.sgerard.i18n.repository.i18n;
 
-import be.sgerard.i18n.model.i18n.persistence.WorkspaceEntity;
+import be.sgerard.i18n.model.workspace.WorkspaceEntity;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

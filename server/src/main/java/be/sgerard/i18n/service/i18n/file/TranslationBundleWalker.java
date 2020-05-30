@@ -2,7 +2,7 @@ package be.sgerard.i18n.service.i18n.file;
 
 import be.sgerard.i18n.model.i18n.file.ScannedBundleFileDto;
 import be.sgerard.i18n.model.i18n.file.ScannedBundleFileKeyDto;
-import be.sgerard.i18n.service.repository.git.GitAPI;
+import be.sgerard.i18n.service.i18n.TranslationRepositoryApi;
 import com.fasterxml.jackson.datatype.jdk8.WrappedIOException;
 
 import java.io.File;

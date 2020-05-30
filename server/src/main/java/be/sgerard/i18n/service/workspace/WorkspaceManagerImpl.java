@@ -1,7 +1,7 @@
 package be.sgerard.i18n.service.workspace;
 
 import be.sgerard.i18n.model.i18n.WorkspaceStatus;
-import be.sgerard.i18n.model.i18n.persistence.WorkspaceEntity;
+import be.sgerard.i18n.model.workspace.WorkspaceEntity;
 import be.sgerard.i18n.model.repository.persistence.RepositoryEntity;
 import be.sgerard.i18n.repository.i18n.WorkspaceRepository;
 import be.sgerard.i18n.service.LockTimeoutException;
