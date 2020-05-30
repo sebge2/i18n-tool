@@ -8,7 +8,7 @@ import be.sgerard.i18n.service.LockTimeoutException;
 import be.sgerard.i18n.service.ResourceNotFoundException;
 import be.sgerard.i18n.service.ValidationException;
 import be.sgerard.i18n.service.i18n.TranslationManager;
-import be.sgerard.i18n.service.i18n.listener.WorkspaceListener;
+import be.sgerard.i18n.service.workspace.listener.WorkspaceListener;
 import be.sgerard.i18n.service.i18n.review.WorkspaceReviewHandler;
 import be.sgerard.i18n.service.repository.RepositoryException;
 import be.sgerard.i18n.service.repository.RepositoryManager;
