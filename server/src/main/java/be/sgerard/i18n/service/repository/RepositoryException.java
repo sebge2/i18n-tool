@@ -64,15 +64,15 @@ public class RepositoryException extends RuntimeException implements LocalizedMe
     }
 
     public static RepositoryException onFileListing(File location, Throwable cause) {
-        return new RepositoryException("Error while listing files from location [" + location + "].", "RepositoryException.file-listing.message", cause);
+        return new RepositoryException("Error while listing files from location [" + location + "].", "RepositoryException.file-listing.message", cause, location);
     }
 
     public static RepositoryException onFileReading(File file, Throwable cause) {
-        return new RepositoryException("Error while reading [" + file + "].", "RepositoryException.file-reading.message", cause);
+        return new RepositoryException("Error while reading [" + file + "].", "RepositoryException.file-reading.message", cause, file);
     }
 
     public static RepositoryException onFileWriting(File file, Throwable cause) {
-        return new RepositoryException("Error while writing [" + file + "].", "RepositoryException.file-writing.message", cause);
+        return new RepositoryException("Error while writing [" + file + "].", "RepositoryException.file-writing.message", cause, file);
     }
 
     private final String messageKey;
