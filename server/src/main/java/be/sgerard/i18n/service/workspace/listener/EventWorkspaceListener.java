@@ -1,4 +1,4 @@
-package be.sgerard.i18n.service.i18n.listener;
+package be.sgerard.i18n.service.workspace.listener;
 
 import be.sgerard.i18n.model.i18n.dto.WorkspaceDto;
 import be.sgerard.i18n.model.i18n.persistence.WorkspaceEntity;
