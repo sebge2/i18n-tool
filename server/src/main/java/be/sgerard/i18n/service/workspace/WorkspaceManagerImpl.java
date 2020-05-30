@@ -182,7 +182,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
                     + workspace.getStatus() + " does not allow it.");
         }
 
-        translationManager.updateTranslations(workspace, translations); // TODO
+        translationManager.updateTranslations(workspace, translations);
 
         return Mono.empty();
     }
