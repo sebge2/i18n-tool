@@ -1,5 +1,6 @@
 package be.sgerard.i18n.service.repository;
 
+import be.sgerard.i18n.model.repository.persistence.RepositoryEntity;
 import reactor.core.publisher.Mono;
 
 /**
@@ -8,6 +9,11 @@ import reactor.core.publisher.Mono;
  * @author Sebastien Gerard
  */
 public interface RepositoryApi extends AutoCloseable {
+
+    /**
+     * Returns the {@link RepositoryEntity repository} exposed by this API.
+     */
+    RepositoryEntity getRepository();
 
     /**
      * Returns whether this API access has been closed. In that case, further operation are not allowed.

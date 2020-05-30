@@ -22,7 +22,7 @@ public interface WorkspaceTranslationsStrategy {
     /**
      * Returns all the available branches.
      */
-    Flux<String> listBranches() throws RepositoryException;
+    Flux<String> listBranches(String repositoryId) throws RepositoryException;
 
     /**
      * Returns whether the review of the specified {@link WorkspaceEntity workspace} is finished.
