@@ -73,7 +73,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
         return repositoryManager
                 .applyOnRepository(repositoryId, api ->
                         ReactiveUtils
-                                .combine(translationsStrategy.listBranches(repositoryId), findAll(repositoryId), (branch, workspace) -> branch.compareTo(workspace.getBranch()))
+                                .combine(listBranches(repositoryId), findAll(repositoryId), (branch, workspace) -> branch.compareTo(workspace.getBranch()))
                                 .flatMap(pair -> {
                                     if (pair.getRight() == null) {
                                         return repositoryManager
@@ -204,12 +204,20 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
     }
 
     /**
+     * Returns all the branches of the specified repository.
+     */
+    private Flux<String> listBranches(String repositoryId) {
+        return repositoryManager.findByIdOrDie(repositoryId)
+                .flatMapMany(translationsStrategy::listBranches);
+    }
+
+    /**
      * Recreates a new {@link WorkspaceEntity workspace} based on the same branch as the specified workspace.
      * This new workspace is created only if the branch still exists.
      */
     private Mono<WorkspaceEntity> createWorkspaceIfNeeded(WorkspaceEntity workspace) {
         return translationsStrategy
-                .listBranches(workspace.getRepository().getId())
+                .listBranches(workspace.getRepository())
                 .hasElement(workspace.getBranch())
                 .filter(present -> present)
                 .map(present -> createWorkspace(workspace.getRepository(), workspace.getBranch()));

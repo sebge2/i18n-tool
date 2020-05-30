@@ -1,6 +1,7 @@
 package be.sgerard.i18n.service.workspace.strategy;
 
 import be.sgerard.i18n.model.i18n.persistence.WorkspaceEntity;
+import be.sgerard.i18n.model.repository.persistence.RepositoryEntity;
 import be.sgerard.i18n.service.repository.RepositoryException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -15,14 +16,14 @@ import reactor.core.publisher.Mono;
 public interface WorkspaceTranslationsStrategy {
 
     /**
-     * Returns whether the specified workspace is supported.
+     * Returns whether the specified repository is supported.
      */
-    boolean support(WorkspaceEntity workspace);
+    boolean support(RepositoryEntity repository);
 
     /**
      * Returns all the available branches.
      */
-    Flux<String> listBranches(String repositoryId) throws RepositoryException;
+    Flux<String> listBranches(RepositoryEntity repository) throws RepositoryException;
 
     /**
      * Returns whether the review of the specified {@link WorkspaceEntity workspace} is finished.
