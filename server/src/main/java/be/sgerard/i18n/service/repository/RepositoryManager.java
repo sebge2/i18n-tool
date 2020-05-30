@@ -67,6 +67,13 @@ public interface RepositoryManager {
     /**
      * Applies a function over the content of the specified repository.
      */
+    default <T> Mono<T> applyOnRepository(String repositoryId, RepositoryApi.ApiFunction<RepositoryApi, T> apiConsumer) throws RepositoryException {
+        return this.applyOnRepository(repositoryId, RepositoryApi.class, apiConsumer);
+    }
+
+    /**
+     * Applies a function over the content of the specified repository.
+     */
     <A extends RepositoryApi, T> Mono<T> applyOnRepository(String repositoryId,
                                                            Class<A> apiType,
                                                            RepositoryApi.ApiFunction<A, T> apiConsumer) throws RepositoryException;

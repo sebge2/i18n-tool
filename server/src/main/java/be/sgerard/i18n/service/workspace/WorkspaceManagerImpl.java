@@ -73,7 +73,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
         return repositoryManager
                 .applyOnRepository(repositoryId, api ->
                         ReactiveUtils
-                                .combine(translationsStrategy.listBranches(), findAll(repositoryId), (branch, workspace) -> branch.compareTo(workspace.getBranch()))
+                                .combine(translationsStrategy.listBranches(repositoryId), findAll(repositoryId), (branch, workspace) -> branch.compareTo(workspace.getBranch()))
                                 .flatMap(pair -> {
                                     if (pair.getRight() == null) {
                                         return repositoryManager
@@ -209,7 +209,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
      */
     private Mono<WorkspaceEntity> createWorkspaceIfNeeded(WorkspaceEntity workspace) {
         return translationsStrategy
-                .listBranches()
+                .listBranches(workspace.getRepository().getId())
                 .hasElement(workspace.getBranch())
                 .filter(present -> present)
                 .map(present -> createWorkspace(workspace.getRepository(), workspace.getBranch()));
