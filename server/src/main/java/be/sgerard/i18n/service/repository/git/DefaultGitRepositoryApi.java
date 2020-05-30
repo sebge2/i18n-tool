@@ -1,6 +1,5 @@
 package be.sgerard.i18n.service.repository.git;
 
-import be.sgerard.i18n.model.repository.persistence.RepositoryEntity;
 import be.sgerard.i18n.model.validation.ValidationMessage;
 import be.sgerard.i18n.model.validation.ValidationResult;
 import be.sgerard.i18n.service.ValidationException;
@@ -70,13 +69,12 @@ public class DefaultGitRepositoryApi implements GitRepositoryApi {
     /**
      * Creates a new {@link GitRepositoryApi API object} using the specified {@link Configuration configuration}.
      */
-    public static GitRepositoryApi createAPI(RepositoryEntity repository, Configuration configuration) {
-        return new DefaultGitRepositoryApi(repository, configuration);
+    public static GitRepositoryApi createAPI(Configuration configuration) {
+        return new DefaultGitRepositoryApi(configuration);
     }
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultGitRepositoryApi.class);
 
-    private final RepositoryEntity repository;
     private final URI remoteUri;
     private final File repositoryLocation;
     private final CredentialsProvider credentialsProvider;
@@ -87,8 +85,7 @@ public class DefaultGitRepositoryApi implements GitRepositoryApi {
     private final File tempDirectory;
     private boolean closed = false;
 
-    public DefaultGitRepositoryApi(RepositoryEntity repository, Configuration configuration) {
-        this.repository = repository;
+    public DefaultGitRepositoryApi(Configuration configuration) {
         this.remoteUri = configuration.getRemoteUri();
         this.repositoryLocation = configuration.getRepositoryLocation();
         this.credentialsProvider = configuration.toCredentialsProvider().orElse(null);
@@ -99,11 +96,6 @@ public class DefaultGitRepositoryApi implements GitRepositoryApi {
         } catch (IOException e) {
             throw new RuntimeException("Cannot create temporary directory.", e);
         }
-    }
-
-    @Override
-    public RepositoryEntity getRepository() {
-        return repository;
     }
 
     @Override

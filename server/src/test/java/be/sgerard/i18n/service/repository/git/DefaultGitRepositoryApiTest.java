@@ -22,18 +22,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author Sebastien Gerard
  */
-public class DefaultGitAPITest {
+public class DefaultGitRepositoryApiTest {
 
     public static final String REPO_LOCATION = "https://github.com/sebge2/i18n-tool.git";
 
-    private static DefaultGitAPI.Configuration configuration;
-    private static GitAPI api;
+    private static DefaultGitRepositoryApi.Configuration configuration;
+    private static GitRepositoryApi api;
 
     @BeforeClass
     public static void setup() throws IOException {
-        configuration = new DefaultGitAPI.Configuration(URI.create(REPO_LOCATION), generateTemporaryFile());
+        configuration = new DefaultGitRepositoryApi.Configuration(URI.create(REPO_LOCATION), generateTemporaryFile());
 
-        api = DefaultGitAPI.createAPI(configuration);
+        api = DefaultGitRepositoryApi.createAPI(configuration);
         api.init();
     }
 
@@ -44,22 +44,22 @@ public class DefaultGitAPITest {
 
     @Test
     public void validateInfo() throws Exception {
-        DefaultGitAPI.createAPI(new DefaultGitAPI.Configuration(URI.create(REPO_LOCATION), generateTemporaryFile()))
+        DefaultGitRepositoryApi.createAPI(new DefaultGitRepositoryApi.Configuration(URI.create(REPO_LOCATION), generateTemporaryFile()))
                 .validateInfo();
     }
 
     @Test(expected = ValidationException.class)
     public void validateInfoWrongUrl() throws Exception {
-        DefaultGitAPI
-                .createAPI(new DefaultGitAPI.Configuration(URI.create("https://github.com/sebge2/unknown.git"), generateTemporaryFile()))
+        DefaultGitRepositoryApi
+                .createAPI(new DefaultGitRepositoryApi.Configuration(URI.create("https://github.com/sebge2/unknown.git"), generateTemporaryFile()))
                 .validateInfo();
     }
 
     @Test(expected = ValidationException.class)
     public void validateInfoWrongCredentials() throws Exception {
-        DefaultGitAPI
+        DefaultGitRepositoryApi
                 .createAPI(
-                        new DefaultGitAPI.Configuration(URI.create("https://github.com/sebge2/unknown.git"), generateTemporaryFile())
+                        new DefaultGitRepositoryApi.Configuration(URI.create("https://github.com/sebge2/unknown.git"), generateTemporaryFile())
                                 .setUsername("sebge2")
                                 .setPassword("password")
                 )
@@ -68,7 +68,7 @@ public class DefaultGitAPITest {
 
     @Test
     public void update() {
-        final GitAPI update = api.update();
+        final GitRepositoryApi update = api.update();
 
         assertThat(update).isSameAs(api);
     }
@@ -76,21 +76,21 @@ public class DefaultGitAPITest {
     @Test
     public void getCurrentBranch() {
         final String actual = api.getCurrentBranch();
-        assertThat(actual).isEqualTo(DefaultGitAPI.DEFAULT_BRANCH);
+        assertThat(actual).isEqualTo(DefaultGitRepositoryApi.DEFAULT_BRANCH);
     }
 
     @Test
     public void listLocalBranches() {
         final List<String> actual = api.listLocalBranches();
 
-        assertThat(actual).contains(DefaultGitAPI.DEFAULT_BRANCH);
+        assertThat(actual).contains(DefaultGitRepositoryApi.DEFAULT_BRANCH);
     }
 
     @Test
     public void listRemoteBranches() {
         final List<String> actual = api.listRemoteBranches();
 
-        assertThat(actual).contains(DefaultGitAPI.DEFAULT_BRANCH);
+        assertThat(actual).contains(DefaultGitRepositoryApi.DEFAULT_BRANCH);
     }
 
     @Test
@@ -197,21 +197,21 @@ public class DefaultGitAPITest {
     }
 
     @Test
-    public void listFiles() throws Exception {
+    public void listFiles() {
         final List<String> actual = api.listAllFiles(new File("/")).map(File::getName).collect(toList());
 
         assertThat(actual).contains("README.adoc", "LICENSE");
     }
 
     @Test
-    public void listNormalFiles() throws Exception {
+    public void listNormalFiles() {
         final List<String> actual = api.listNormalFiles(new File("/")).map(File::getName).collect(toList());
 
         assertThat(actual).doesNotContain("server", "front");
     }
 
     @Test
-    public void listDirectories() throws Exception {
+    public void listDirectories() {
         final List<String> actual = api.listDirectories(new File("/")).map(File::getName).collect(toList());
 
         assertThat(actual).contains("server", "front");
