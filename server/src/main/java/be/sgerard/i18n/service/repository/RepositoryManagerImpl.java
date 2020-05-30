@@ -146,9 +146,9 @@ public class RepositoryManagerImpl implements RepositoryManager {
     }
 
     @Override
-    public <A extends RepositoryApi, T> Mono<T> applyOnRepository(String repositoryId,
-                                                                  Class<A> apiType,
-                                                                  RepositoryApi.ApiFunction<A, T> apiConsumer) throws RepositoryException {
+    public <A extends RepositoryApi<?>, T> Mono<T> applyOnRepository(String repositoryId,
+                                                                     Class<A> apiType,
+                                                                     RepositoryApi.ApiFunction<A, T> apiConsumer) throws RepositoryException {
         try {
             return lockService.executeInLock(() ->
                     findByIdOrDie(repositoryId)
@@ -176,7 +176,7 @@ public class RepositoryManagerImpl implements RepositoryManager {
      * {@link RepositoryApi#isClosed() closed}.
      */
     @SuppressWarnings("unchecked")
-    private <A extends RepositoryApi> A wrapIntoProxy(Class<A> apiType, A api) {
+    private <A extends RepositoryApi<?>> A wrapIntoProxy(Class<A> apiType, A api) {
         return (A) Proxy.newProxyInstance(
                 apiType.getClassLoader(),
                 new Class<?>[]{apiType},
