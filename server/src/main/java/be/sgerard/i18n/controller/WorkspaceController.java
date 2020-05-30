@@ -1,6 +1,7 @@
 package be.sgerard.i18n.controller;
 
 import be.sgerard.i18n.model.i18n.dto.WorkspaceDto;
+import be.sgerard.i18n.model.i18n.persistence.WorkspaceEntity;
 import be.sgerard.i18n.service.BadRequestException;
 import be.sgerard.i18n.service.i18n.TranslationManager;
 import be.sgerard.i18n.service.workspace.WorkspaceManager;
@@ -83,7 +84,7 @@ public class WorkspaceController {
     @ApiOperation(value = "Deletes the workspace having the specified id.")
     @PreAuthorize("hasRole('ADMIN') and hasRole('MEMBER_OF_REPOSITORY')")
     public Mono<Void> deleteWorkspace(@PathVariable String id) {
-        return workspaceManager.delete(id);
+        return workspaceManager.delete(id).then();
     }
 
     /**

@@ -43,7 +43,8 @@ public interface WorkspaceTranslationsStrategy {
     Mono<Boolean> onPublish(WorkspaceEntity workspace);
 
     /**
-     * Performs some actions before the specified {@link WorkspaceEntity workspace} is deleted. It may include
+     * Performs some actions before the specified {@link WorkspaceEntity workspace} is deleted. It may include cleanup
+     * of branches used during the review.
      */
     Mono<WorkspaceEntity> onDelete(WorkspaceEntity workspace);
 }
