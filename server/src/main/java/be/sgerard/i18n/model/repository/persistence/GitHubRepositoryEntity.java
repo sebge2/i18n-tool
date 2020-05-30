@@ -6,6 +6,7 @@ import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 /**
  * Github {@link GitRepositoryEntity repository}.
@@ -109,6 +110,12 @@ public class GitHubRepositoryEntity extends BaseGitRepositoryEntity {
     @Override
     public GitHubRepositoryEntity setLocation(String location) {
         return (GitHubRepositoryEntity) super.setLocation(location);
+    }
+
+
+    @Override
+    public GitHubRepositoryEntity setAllowedBranches(Pattern allowedBranches) {
+        return (GitHubRepositoryEntity) super.setAllowedBranches(allowedBranches);
     }
 
     @Override

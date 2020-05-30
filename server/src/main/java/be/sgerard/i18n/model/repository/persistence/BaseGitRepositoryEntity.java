@@ -1,6 +1,6 @@
 package be.sgerard.i18n.model.repository.persistence;
 
-import javax.persistence.Column;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.regex.Pattern;
 
@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
  *
  * @author Sebastien Gerard
  */
+@Entity
 public abstract class BaseGitRepositoryEntity extends RepositoryEntity {
 
     /**
