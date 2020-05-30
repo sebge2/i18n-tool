@@ -150,9 +150,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
                     return translationsStrategy
                             .onPublish(workspace)
                             .flatMap(reviewStarted -> {
-                                if (reviewStarted) {
-                                    workspace.setStatus(WorkspaceStatus.IN_REVIEW);
-
+                                if (workspace.getStatus() == WorkspaceStatus.IN_REVIEW) {
                                     listener.onReview(workspace);
 
                                     return Mono.just(workspace);

@@ -36,12 +36,11 @@ public interface WorkspaceTranslationsStrategy {
     Mono<WorkspaceEntity> onInitialize(WorkspaceEntity workspace);
 
     /**
-     * Publishes all modified translations of the specified {@link WorkspaceEntity workspace}.
-     *
-     * @return <tt>true</tt> if a review started, otherwise <tt>false</tt> the workspace in that case must be dropped
-     * @see be.sgerard.i18n.model.i18n.WorkspaceStatus#IN_REVIEW
+     * Publishes all modified translations of the specified {@link WorkspaceEntity workspace}. The workspace
+     * {@link WorkspaceEntity#getStatus() status} will be {@link be.sgerard.i18n.model.i18n.WorkspaceStatus#IN_REVIEW in review}
+     * if a review started. Otherwise, the status won't change.
      */
-    Mono<Boolean> onPublish(WorkspaceEntity workspace);
+    Mono<WorkspaceEntity> onPublish(WorkspaceEntity workspace);
 
     /**
      * Performs some actions before the specified {@link WorkspaceEntity workspace} is deleted. It may include cleanup
