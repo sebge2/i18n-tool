@@ -67,8 +67,8 @@ public class DefaultGitRepositoryApiTest {
     }
 
     @Test
-    public void update() {
-        final GitRepositoryApi update = api.update();
+    public void pull() {
+        final GitRepositoryApi update = api.pull();
 
         assertThat(update).isSameAs(api);
     }

@@ -6,7 +6,6 @@ import be.sgerard.i18n.model.workspace.WorkspaceEntity;
 import be.sgerard.i18n.service.ResourceNotFoundException;
 import be.sgerard.i18n.service.repository.git.GitAPI;
 
-import java.io.IOException;
 import java.util.Map;
 
 /**
@@ -14,9 +13,9 @@ import java.util.Map;
  */
 public interface TranslationManager {
 
-    void readTranslations(WorkspaceEntity workspaceEntity, GitAPI api) throws IOException;
+    Mono<Void> readTranslations(WorkspaceEntity workspaceEntity, TranslationRepositoryReadApi api);
 
-    void writeTranslations(WorkspaceEntity workspaceEntity, GitAPI api) throws IOException;
+    void writeTranslations(WorkspaceEntity workspaceEntity, TranslationRepositoryWriteApi api);
 
     BundleKeysPageDto getTranslations(BundleKeysPageRequestDto searchRequest) throws ResourceNotFoundException;
 

@@ -24,7 +24,9 @@ public abstract class AbstractReviewEntity {
 
     public AbstractReviewEntity(WorkspaceEntity workspace) {
         this.id = UUID.randomUUID().toString();
+
         this.workspace = workspace;
+        this.workspace.setReview(this);
     }
 
     /**

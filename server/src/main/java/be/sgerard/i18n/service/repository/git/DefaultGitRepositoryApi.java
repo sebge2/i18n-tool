@@ -253,7 +253,7 @@ public class DefaultGitRepositoryApi implements GitRepositoryApi {
     }
 
     @Override
-    public GitRepositoryApi update() throws RepositoryException {
+    public GitRepositoryApi pull() throws RepositoryException {
         checkNoModifiedFile();
 
         try {

@@ -18,6 +18,7 @@ import java.util.stream.Stream;
  *
  * @author Sebastien Gerard
  */
+@SuppressWarnings("UnusedReturnValue")
 public interface GitRepositoryApi extends RepositoryApi {
 
     /**
@@ -36,9 +37,9 @@ public interface GitRepositoryApi extends RepositoryApi {
     GitRepositoryApi validateInfo() throws RepositoryException, ValidationException;
 
     /**
-     * Updates the local repository with the remote repository.
+     * Pulls changes from the remote repository branch to the local repository branch.
      */
-    GitRepositoryApi update() throws RepositoryException;
+    GitRepositoryApi pull() throws RepositoryException;
 
     /**
      * Returns the current Git branch.
