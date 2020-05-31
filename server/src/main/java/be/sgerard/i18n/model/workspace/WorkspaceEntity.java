@@ -140,8 +140,15 @@ public class WorkspaceEntity {
     /**
      * Returns information about the current {@link AbstractReviewEntity review}.
      */
+    public <R extends AbstractReviewEntity> Optional<R> getReview(Class<R> reviewType) {
+        return getReview().map(reviewType::cast);
+    }
+
+    /**
+     * Returns information about the current {@link AbstractReviewEntity review}.
+     */
     public <R extends AbstractReviewEntity> R getReviewOrDie(Class<R> reviewType) {
-        return reviewType.cast(getReview().orElseThrow(() -> new IllegalStateException("There is no associated review entity.")));
+        return getReview(reviewType).orElseThrow(() -> new IllegalStateException("There is no associated review entity."));
     }
 
     /**

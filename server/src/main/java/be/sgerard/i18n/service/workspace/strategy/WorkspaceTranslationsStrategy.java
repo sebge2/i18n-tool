@@ -38,7 +38,8 @@ public interface WorkspaceTranslationsStrategy {
     /**
      * Publishes all modified translations of the specified {@link WorkspaceEntity workspace}. The workspace
      * {@link WorkspaceEntity#getStatus() status} will be {@link be.sgerard.i18n.model.i18n.WorkspaceStatus#IN_REVIEW in review}
-     * if a review started. Otherwise, the status won't change.
+     * if a review started. Otherwise, the status won't change. The strategy has also the responsibility to fill
+     * {@link WorkspaceEntity#getReview() review information} if needed.
      */
     Mono<WorkspaceEntity> onPublish(WorkspaceEntity workspace);
 
