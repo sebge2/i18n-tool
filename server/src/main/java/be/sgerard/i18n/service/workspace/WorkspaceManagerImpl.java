@@ -148,7 +148,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
                     logger.info("Start publishing workspace {}.", workspaceId);
 
                     return translationsStrategy
-                            .onPublish(workspace)
+                            .onPublish(workspace, message)
                             .flatMap(reviewStarted -> {
                                 if (workspace.getStatus() == WorkspaceStatus.IN_REVIEW) {
                                     listener.onReview(workspace);

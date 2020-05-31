@@ -4,6 +4,7 @@ import be.sgerard.i18n.model.repository.persistence.BaseGitRepositoryEntity;
 import be.sgerard.i18n.model.repository.persistence.GitHubRepositoryEntity;
 import be.sgerard.i18n.model.workspace.GitHubReviewEntity;
 import be.sgerard.i18n.model.workspace.WorkspaceEntity;
+import be.sgerard.i18n.service.git.PullRequestManager;
 import be.sgerard.i18n.service.i18n.TranslationManager;
 import be.sgerard.i18n.service.repository.RepositoryManager;
 import be.sgerard.i18n.service.repository.git.GitRepositoryApi;
@@ -32,8 +33,13 @@ public class GitHubPRWorkspaceTranslationsStrategy extends BaseGitWorkspaceTrans
 
     private static final Logger logger = LoggerFactory.getLogger(GitHubPRWorkspaceTranslationsStrategy.class);
 
-    public GitHubPRWorkspaceTranslationsStrategy(RepositoryManager repositoryManager, TranslationManager translationManager) {
+    private final PullRequestManager pullRequestManager;
+
+    public GitHubPRWorkspaceTranslationsStrategy(RepositoryManager repositoryManager,
+                                                 TranslationManager translationManager,
+                                                 PullRequestManager pullRequestManager) {
         super(repositoryManager, translationManager);
+        this.pullRequestManager = pullRequestManager;
     }
 
     @Override
@@ -42,7 +48,7 @@ public class GitHubPRWorkspaceTranslationsStrategy extends BaseGitWorkspaceTrans
     }
 
     @Override
-    public Mono<WorkspaceEntity> onPublish(WorkspaceEntity workspace) {
+    public Mono<WorkspaceEntity> onPublish(WorkspaceEntity workspace, String message) {
         return repositoryManager
                 .applyOnRepository(
                         workspace.getRepository().getId(),
@@ -55,16 +61,11 @@ public class GitHubPRWorkspaceTranslationsStrategy extends BaseGitWorkspaceTrans
 
                             translationManager.writeTranslations(workspace, new GitTranslationRepositoryWriteApi(api, workspace.getBranch(), pullRequestBranch));
 
-                            workspace.setReview(new GitHubReviewEntity(workspace, pullRequestBranch));
+                            api.commitAll(message).push();
 
-//
-//                final UserDto currentUser = credentialsProvider.getCurrentUserOrFail().getUser(); TODO
-                            api.commitAll("" /*message*/, "", "").push();
+                            final int requestNumber = pullRequestManager.createRequest(message, pullRequestBranch, workspace.getBranch());
 
-//
-//                final int requestNumber = pullRequestManager.createRequest(message, pullRequestBranch, workspaceEntity.getBranch());
-//
-//                workspaceEntity.setPullRequestNumber(requestNumber);
+                            workspace.setReview(new GitHubReviewEntity(workspace, pullRequestBranch, requestNumber));
 
                             return workspace;
                         }

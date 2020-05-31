@@ -109,7 +109,7 @@ public interface GitRepositoryApi extends RepositoryApi {
     /**
      * Commits all the current changes using the specified message.
      */
-    GitRepositoryApi commitAll(String message, String username, String email) throws RepositoryException;
+    GitRepositoryApi commitAll(String message) throws RepositoryException;
 
     /**
      * Pushes current changes to the remote repository.

@@ -55,12 +55,12 @@ public class CompositeWorkspaceTranslationsStrategy implements WorkspaceTranslat
     }
 
     @Override
-    public Mono<WorkspaceEntity> onPublish(WorkspaceEntity workspace) {
+    public Mono<WorkspaceEntity> onPublish(WorkspaceEntity workspace, String message) {
         return strategies.stream()
                 .filter(strategy -> strategy.support(workspace.getRepository()))
                 .findFirst()
                 .orElseThrow(() -> new UnsupportedOperationException("Unsupported workspace [" + workspace + "]. Please make sure that all strategies have been registered."))
-                .onPublish(workspace);
+                .onPublish(workspace, message);
     }
 
     @Override

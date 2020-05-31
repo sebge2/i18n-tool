@@ -40,6 +40,8 @@ public interface WorkspaceTranslationsStrategy {
      * {@link WorkspaceEntity#getStatus() status} will be {@link be.sgerard.i18n.model.i18n.WorkspaceStatus#IN_REVIEW in review}
      * if a review started. Otherwise, the status won't change. The strategy has also the responsibility to fill
      * {@link WorkspaceEntity#getReview() review information} if needed.
+     *
+     * @param message the message provided to explain modifications
      */
     Mono<WorkspaceEntity> onPublish(WorkspaceEntity workspace);
 

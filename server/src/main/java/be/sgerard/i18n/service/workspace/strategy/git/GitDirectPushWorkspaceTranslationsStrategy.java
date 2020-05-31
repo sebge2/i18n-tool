@@ -29,7 +29,7 @@ public class GitDirectPushWorkspaceTranslationsStrategy extends BaseGitWorkspace
     }
 
     @Override
-    public Mono<WorkspaceEntity> onPublish(WorkspaceEntity workspace) {
+    public Mono<WorkspaceEntity> onPublish(WorkspaceEntity workspace, String message) {
         return repositoryManager
                 .applyOnRepository(
                         workspace.getRepository().getId(),
@@ -37,8 +37,7 @@ public class GitDirectPushWorkspaceTranslationsStrategy extends BaseGitWorkspace
                         api -> {
                             translationManager.writeTranslations(workspace, new GitTranslationRepositoryWriteApi(api, workspace.getBranch(), workspace.getBranch()));
 
-//                final UserDto currentUser = credentialsProvider.getCurrentUserOrFail().getUser(); TODO
-                            api.commitAll("" /*message*/, "", "").push();
+                            api.commitAll(message).push();
 
                             return workspace;
                         }

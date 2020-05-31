@@ -22,10 +22,11 @@ public class GitHubReviewEntity extends AbstractReviewEntity {
     GitHubReviewEntity() {
     }
 
-    public GitHubReviewEntity(WorkspaceEntity workspace, String pullRequestBranch) {
+    public GitHubReviewEntity(WorkspaceEntity workspace, String pullRequestBranch, int pullRequestNumber) {
         super(workspace);
 
         this.pullRequestBranch = pullRequestBranch;
+        this.pullRequestNumber = pullRequestNumber;
     }
 
     /**
