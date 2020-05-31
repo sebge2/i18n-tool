@@ -1,8 +1,12 @@
 package be.sgerard.i18n.service.workspace.strategy.git;
 
 import be.sgerard.i18n.service.i18n.TranslationRepositoryWriteApi;
+import be.sgerard.i18n.service.repository.RepositoryException;
 import be.sgerard.i18n.service.repository.git.GitRepositoryApi;
+import reactor.core.publisher.Mono;
 
+import java.io.File;
+import java.io.OutputStream;
 import java.util.Objects;
 
 /**
@@ -42,5 +46,15 @@ public class GitTranslationRepositoryWriteApi implements TranslationRepositoryWr
             this.api
                     .createBranch(target);
         }
+    }
+
+    @Override
+    public Mono<File> openAsTemp(File file) throws RepositoryException {
+        return Mono.just(api.openAsTemp(file));
+    }
+
+    @Override
+    public Mono<OutputStream> openOutputStream(File file) throws RepositoryException {
+        return Mono.just(api.openOutputStream(file));
     }
 }

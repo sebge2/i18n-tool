@@ -1,10 +1,13 @@
 package be.sgerard.i18n.service.workspace.strategy.git;
 
 import be.sgerard.i18n.service.i18n.TranslationRepositoryReadApi;
+import be.sgerard.i18n.service.repository.RepositoryException;
 import be.sgerard.i18n.service.repository.git.GitRepositoryApi;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.io.File;
+import java.io.InputStream;
 
 /**
  * {@link TranslationRepositoryReadApi API} for Git repository.
@@ -35,5 +38,15 @@ public class GitTranslationRepositoryReadApi implements TranslationRepositoryRea
     @Override
     public Flux<File> listDirectories(File file) {
         return Flux.fromStream(api.listDirectories(file));
+    }
+
+    @Override
+    public Mono<InputStream> openInputStream(File file) throws RepositoryException {
+        return Mono.just(api.openInputStream(file));
+    }
+
+    @Override
+    public Mono<File> openAsTemp(File file) throws RepositoryException {
+        return Mono.just(api.openAsTemp(file));
     }
 }
