@@ -8,6 +8,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.UUID;
 
 import static java.util.Collections.unmodifiableCollection;
@@ -39,6 +40,9 @@ public class WorkspaceEntity {
 
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
     private final Collection<BundleFileEntity> files = new HashSet<>();
+
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    private AbstractReviewEntity review;
 
     @Version
     private int version;
@@ -124,5 +128,27 @@ public class WorkspaceEntity {
      */
     void addFile(BundleFileEntity file) {
         this.files.add(file);
+    }
+
+    /**
+     * Returns information about the current {@link AbstractReviewEntity review}.
+     */
+    public Optional<AbstractReviewEntity> getReview() {
+        return Optional.ofNullable(review);
+    }
+
+    /**
+     * Returns information about the current {@link AbstractReviewEntity review}.
+     */
+    public <R extends AbstractReviewEntity> R getReviewOrDie(Class<R> reviewType) {
+        return reviewType.cast(getReview().orElseThrow(() -> new IllegalStateException("There is no associated review entity.")));
+    }
+
+    /**
+     * Sets information about the current {@link AbstractReviewEntity review}.
+     */
+    public WorkspaceEntity setReview(AbstractReviewEntity review) {
+        this.review = review;
+        return this;
     }
 }
