@@ -126,7 +126,7 @@ public class WorkspaceEntity {
     /**
      * Adds a {@link BundleFileEntity file} to this workspace.
      */
-    void addFile(BundleFileEntity file) {
+    public void addFile(BundleFileEntity file) {
         this.files.add(file);
     }
 

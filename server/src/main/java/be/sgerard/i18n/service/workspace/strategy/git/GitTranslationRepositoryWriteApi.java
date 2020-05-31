@@ -13,6 +13,23 @@ import java.util.Objects;
  */
 public class GitTranslationRepositoryWriteApi implements TranslationRepositoryWriteApi {
 
+    /**
+     * Generates a new unique branch name by adding indexed suffix to make it unique if needed.
+     */
+    public static String generateUniqueBranch(String name, GitRepositoryApi api) {
+        if (!api.listRemoteBranches().contains(name) && !api.listLocalBranches().contains(name)) {
+            return name;
+        }
+
+        String generatedName = name;
+        int index = 0;
+        while (api.listRemoteBranches().contains(generatedName) || api.listLocalBranches().contains(generatedName)) {
+            generatedName = name + "_" + (++index);
+        }
+
+        return generatedName;
+    }
+
     private final GitRepositoryApi api;
 
     public GitTranslationRepositoryWriteApi(GitRepositoryApi api, String original, String target) {
