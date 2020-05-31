@@ -29,7 +29,7 @@ public abstract class BaseGitWorkspaceTranslationsStrategy implements WorkspaceT
     }
 
     @Override
-    public boolean support(RepositoryEntity repository) {
+    public final boolean support(RepositoryEntity repository) {
         return repository instanceof BaseGitRepositoryEntity && doSupport((BaseGitRepositoryEntity) repository);
     }
 
