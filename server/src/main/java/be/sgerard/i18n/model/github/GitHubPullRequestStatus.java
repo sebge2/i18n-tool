@@ -3,9 +3,11 @@ package be.sgerard.i18n.model.github;
 import com.fasterxml.jackson.annotation.JsonCreator;
 
 /**
+ * Status of a {@link GitHubPullRequestDto GitHub pull-request}.
+ *
  * @author Sebastien Gerard
  */
-public enum PullRequestStatus {
+public enum GitHubPullRequestStatus {
 
     OPEN(false),
 
@@ -15,17 +17,23 @@ public enum PullRequestStatus {
 
     private final boolean finished;
 
-    PullRequestStatus(boolean finished) {
+    GitHubPullRequestStatus(boolean finished) {
         this.finished = finished;
     }
 
+    /**
+     * Returns whether the review is finished.
+     */
     public boolean isFinished() {
         return finished;
     }
 
+    /**
+     * Maps the string to a status.
+     */
     @JsonCreator
-    public static PullRequestStatus fromString(String stringStatus) {
-        for (PullRequestStatus status : PullRequestStatus.values()) {
+    public static GitHubPullRequestStatus fromString(String stringStatus) {
+        for (GitHubPullRequestStatus status : GitHubPullRequestStatus.values()) {
             if (status.name().equalsIgnoreCase(stringStatus)) {
                 return status;
             }

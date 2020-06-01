@@ -29,6 +29,14 @@ public interface RepositoryManager {
     }
 
     /**
+     * Returns the {@link RepositoryEntity repository} having the specified id.
+     */
+    default <R extends RepositoryEntity> Mono<R> findByIdOrDie(String id, Class<R> type) throws ResourceNotFoundException {
+        return findByIdOrDie(id)
+                .map(type::cast);
+    }
+
+    /**
      * Finds all the {@link RepositoryEntity repositories}.
      */
     Flux<RepositoryEntity> findAll();

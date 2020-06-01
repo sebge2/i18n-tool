@@ -4,6 +4,7 @@ import be.sgerard.i18n.model.workspace.WorkspaceEntity;
 import be.sgerard.i18n.model.repository.persistence.RepositoryEntity;
 import be.sgerard.i18n.model.workspace.WorkspaceStatus;
 import be.sgerard.i18n.service.repository.RepositoryException;
+import be.sgerard.i18n.service.workspace.WorkspaceException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -24,17 +25,17 @@ public interface WorkspaceTranslationsStrategy {
     /**
      * Returns all the available branches.
      */
-    Flux<String> listBranches(RepositoryEntity repository) throws RepositoryException;
+    Flux<String> listBranches(RepositoryEntity repository)  throws WorkspaceException, RepositoryException;
 
     /**
      * Returns whether the review of the specified {@link WorkspaceEntity workspace} is finished.
      */
-    Mono<Boolean> isReviewFinished(WorkspaceEntity workspace);
+    Mono<Boolean> isReviewFinished(WorkspaceEntity workspace) throws WorkspaceException, RepositoryException;
 
     /**
      * Initializes the specified {@link WorkspaceEntity workspace} after that translations can be read/write.
      */
-    Mono<WorkspaceEntity> onInitialize(WorkspaceEntity workspace);
+    Mono<WorkspaceEntity> onInitialize(WorkspaceEntity workspace) throws WorkspaceException, RepositoryException;
 
     /**
      * Publishes all modified translations of the specified {@link WorkspaceEntity workspace}. The workspace
@@ -44,11 +45,11 @@ public interface WorkspaceTranslationsStrategy {
      *
      * @param message the message provided to explain modifications
      */
-    Mono<WorkspaceEntity> onPublish(WorkspaceEntity workspace);
+    Mono<WorkspaceEntity> onPublish(WorkspaceEntity workspace, String message) throws WorkspaceException, RepositoryException;
 
     /**
      * Performs some actions before the specified {@link WorkspaceEntity workspace} is deleted. It may include cleanup
      * of branches used during the review.
      */
-    Mono<WorkspaceEntity> onDelete(WorkspaceEntity workspace);
+    Mono<WorkspaceEntity> onDelete(WorkspaceEntity workspace) throws WorkspaceException, RepositoryException;
 }
