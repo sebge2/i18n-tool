@@ -70,7 +70,7 @@ public class GitHubPRWorkspaceTranslationsStrategy extends BaseGitWorkspaceTrans
 
                             return pullRequestManager
                                     .createRequest(workspace.getRepository().getId(), message, pullRequestBranch, workspace.getBranch())
-                                    .map(requestNumber -> workspace.setReview(new GitHubReviewEntity(workspace, pullRequestBranch, requestNumber)));
+                                    .map(pullRequest -> workspace.setReview(new GitHubReviewEntity(workspace, pullRequestBranch, pullRequest.getNumber())));
                         }
                 )
                 .flatMap(m -> m);
