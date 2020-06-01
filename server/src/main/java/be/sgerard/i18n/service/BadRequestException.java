@@ -13,6 +13,11 @@ public class BadRequestException extends RuntimeException implements LocalizedMe
         return new BadRequestException("The action [" + action + "] is not supported.", "BadRequestException.action-not-supported.message", action);
     }
 
+    public static BadRequestException actionNotAllowedInStateException(String action, String state) {
+        return new BadRequestException("The action [" + action + "] is not allowed in the state [" + state + "].",
+                "BadRequestException.action-not-allowed-in-state.message", action, state);
+    }
+
     public static BadRequestException idRequestNotMatchIdBodyException(String idRequest, String idBody) {
         return new BadRequestException(
                 String.format("The id %s does not match the id in the body %s.", idRequest, idBody),

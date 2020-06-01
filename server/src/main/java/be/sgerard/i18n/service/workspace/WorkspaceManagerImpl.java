@@ -1,10 +1,10 @@
 package be.sgerard.i18n.service.workspace;
 
 import be.sgerard.i18n.model.i18n.WorkspaceStatus;
-import be.sgerard.i18n.model.workspace.WorkspaceEntity;
 import be.sgerard.i18n.model.repository.persistence.RepositoryEntity;
+import be.sgerard.i18n.model.workspace.WorkspaceEntity;
 import be.sgerard.i18n.repository.workspace.WorkspaceRepository;
-import be.sgerard.i18n.service.LockTimeoutException;
+import be.sgerard.i18n.service.BadRequestException;
 import be.sgerard.i18n.service.ResourceNotFoundException;
 import be.sgerard.i18n.service.ValidationException;
 import be.sgerard.i18n.service.i18n.TranslationManager;
@@ -111,7 +111,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
 
     @Override
     @Transactional
-    public Mono<WorkspaceEntity> initialize(String workspaceId) throws LockTimeoutException, RepositoryException {
+    public Mono<WorkspaceEntity> initialize(String workspaceId) throws RepositoryException {
         return findByIdOrDie(workspaceId)
                 .map(workspace -> {
                     if (workspace.getStatus() == WorkspaceStatus.INITIALIZED) {
@@ -136,7 +136,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
 
     @Override
     @Transactional
-    public Mono<WorkspaceEntity> publish(String workspaceId, String message) throws ResourceNotFoundException, LockTimeoutException, RepositoryException {
+    public Mono<WorkspaceEntity> publish(String workspaceId, String message) throws ResourceNotFoundException, RepositoryException {
         return findByIdOrDie(workspaceId)
                 .flatMap(workspace -> {
                     if (workspace.getStatus() == WorkspaceStatus.IN_REVIEW) {
@@ -176,8 +176,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
                 .orElseThrow(() -> ResourceNotFoundException.workspaceNotFoundException(workspaceId));
 
         if (workspace.getStatus() != WorkspaceStatus.INITIALIZED) {
-            throw new IllegalStateException("Cannot update translations of workspace [" + workspaceId + "], the status "
-                    + workspace.getStatus() + " does not allow it.");
+            throw BadRequestException.actionNotAllowedInStateException(WorkspaceStatus.INITIALIZED.name(), workspace.getStatus().name());
         }
 
         translationManager.updateTranslations(workspace, translations);
@@ -187,7 +186,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
 
     @Override
     @Transactional
-    public Mono<WorkspaceEntity> delete(String workspaceId) throws RepositoryException, LockTimeoutException {
+    public Mono<WorkspaceEntity> delete(String workspaceId) throws RepositoryException {
         return Mono.justOrEmpty(repository.findById(workspaceId))
                 .flatMap(translationsStrategy::onDelete)
                 .map(workspace -> {
@@ -239,7 +238,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
     /**
      * Terminates the review on the specified workspace.
      */
-    private Mono<WorkspaceEntity> doFinishReview(WorkspaceEntity workspace) throws LockTimeoutException, RepositoryException {
+    private Mono<WorkspaceEntity> doFinishReview(WorkspaceEntity workspace) throws RepositoryException {
         ValidationException.throwIfFailed(listener.beforeFinishReview(workspace));
 
         logger.info("The review is now finished, deleting the workspace {} and then creates a new one.", workspace.getId());
