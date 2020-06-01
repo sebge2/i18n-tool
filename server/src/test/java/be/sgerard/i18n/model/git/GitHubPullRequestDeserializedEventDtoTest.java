@@ -1,7 +1,7 @@
 package be.sgerard.i18n.model.git;
 
 import be.sgerard.i18n.model.github.GitHubPullRequestEventDto;
-import be.sgerard.i18n.model.github.PullRequestStatus;
+import be.sgerard.i18n.model.github.GitHubPullRequestStatus;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 
@@ -161,7 +161,7 @@ public class GitHubPullRequestDeserializedEventDtoTest {
 
         assertEquals("id", "456", actual.getId());
         assertEquals("number", 19, actual.getNumber());
-        assertEquals("status", PullRequestStatus.CLOSED, actual.getStatus());
+        assertEquals("status", GitHubPullRequestStatus.CLOSED, actual.getStatus());
     }
 
 }

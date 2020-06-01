@@ -1,6 +1,6 @@
 package be.sgerard.i18n.service.git;
 
-import be.sgerard.i18n.model.git.GitHubBranchEventDto;
+import be.sgerard.i18n.model.github.GitHubBranchEventDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

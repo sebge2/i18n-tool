@@ -1,6 +1,7 @@
 package be.sgerard.i18n.service.workspace.strategy.github;
 
-import be.sgerard.i18n.model.github.PullRequestStatus;
+import be.sgerard.i18n.model.github.GitHubPullRequestDto;
+import be.sgerard.i18n.model.github.GitHubPullRequestStatus;
 import be.sgerard.i18n.model.repository.persistence.BaseGitRepositoryEntity;
 import be.sgerard.i18n.model.repository.persistence.GitHubRepositoryEntity;
 import be.sgerard.i18n.model.workspace.GitHubReviewEntity;
@@ -34,11 +35,11 @@ public class GitHubPRWorkspaceTranslationsStrategy extends BaseGitWorkspaceTrans
 
     private static final Logger logger = LoggerFactory.getLogger(GitHubPRWorkspaceTranslationsStrategy.class);
 
-    private final PullRequestManager pullRequestManager;
+    private final GitHubPullRequestManager pullRequestManager;
 
     public GitHubPRWorkspaceTranslationsStrategy(RepositoryManager repositoryManager,
                                                  TranslationManager translationManager,
-                                                 PullRequestManager pullRequestManager) {
+                                                 GitHubPullRequestManager pullRequestManager) {
         super(repositoryManager, translationManager);
         this.pullRequestManager = pullRequestManager;
     }
@@ -46,8 +47,9 @@ public class GitHubPRWorkspaceTranslationsStrategy extends BaseGitWorkspaceTrans
     @Override
     public Mono<Boolean> isReviewFinished(WorkspaceEntity workspace) {
         return pullRequestManager
-                .getStatus(workspace.getRepository().getId(), workspace.getReviewOrDie(GitHubReviewEntity.class).getPullRequestNumber())
-                .map(PullRequestStatus::isFinished);
+                .findByNumber(workspace.getRepository().getId(), workspace.getReviewOrDie(GitHubReviewEntity.class).getPullRequestNumber())
+                .map(GitHubPullRequestDto::getStatus)
+                .map(GitHubPullRequestStatus::isFinished);
     }
 
     @Override
