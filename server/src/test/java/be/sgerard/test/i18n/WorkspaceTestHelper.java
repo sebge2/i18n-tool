@@ -1,6 +1,6 @@
 package be.sgerard.test.i18n;
 
-import be.sgerard.i18n.model.i18n.dto.WorkspaceDto;
+import be.sgerard.i18n.model.workspace.WorkspaceDto;
 import be.sgerard.test.i18n.support.AsyncMockMvcTestHelper;
 import be.sgerard.test.i18n.support.JsonHolderResultHandler;
 import com.fasterxml.jackson.core.type.TypeReference;

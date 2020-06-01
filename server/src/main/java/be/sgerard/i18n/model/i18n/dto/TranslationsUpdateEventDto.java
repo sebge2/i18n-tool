@@ -1,7 +1,6 @@
 package be.sgerard.i18n.model.i18n.dto;
 
-import be.sgerard.i18n.model.i18n.dto.BundleKeyTranslationDto;
-import be.sgerard.i18n.model.i18n.dto.WorkspaceDto;
+import be.sgerard.i18n.model.workspace.WorkspaceDto;
 import be.sgerard.i18n.model.security.user.UserDto;
 
 import java.util.List;

@@ -1,4 +1,4 @@
-package be.sgerard.i18n.model.git;
+package be.sgerard.i18n.model.github;
 
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonSetter;

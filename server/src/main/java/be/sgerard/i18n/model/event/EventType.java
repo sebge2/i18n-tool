@@ -1,6 +1,7 @@
 package be.sgerard.i18n.model.event;
 
 import be.sgerard.i18n.model.repository.dto.RepositorySummaryDto;
+import be.sgerard.i18n.model.workspace.WorkspaceDto;
 
 /**
  * @author Sebastien Gerard
@@ -33,17 +34,17 @@ public enum EventType {
     DISCONNECTED_USER_SESSION("disconnected-user-session"),
 
     /**
-     * @see be.sgerard.i18n.model.i18n.dto.WorkspaceDto
+     * @see WorkspaceDto
      */
     ADDED_WORKSPACE("added-workspace"),
 
     /**
-     * @see be.sgerard.i18n.model.i18n.dto.WorkspaceDto
+     * @see WorkspaceDto
      */
     UPDATED_WORKSPACE("updated-workspace"),
 
     /**
-     * @see be.sgerard.i18n.model.i18n.dto.WorkspaceDto
+     * @see WorkspaceDto
      */
     DELETED_WORKSPACE("deleted-workspace"),
 

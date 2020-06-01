@@ -1,5 +1,6 @@
 package be.sgerard.i18n.service.workspace.strategy.github;
 
+import be.sgerard.i18n.model.github.PullRequestStatus;
 import be.sgerard.i18n.model.repository.persistence.BaseGitRepositoryEntity;
 import be.sgerard.i18n.model.repository.persistence.GitHubRepositoryEntity;
 import be.sgerard.i18n.model.workspace.GitHubReviewEntity;
@@ -44,7 +45,9 @@ public class GitHubPRWorkspaceTranslationsStrategy extends BaseGitWorkspaceTrans
 
     @Override
     public Mono<Boolean> isReviewFinished(WorkspaceEntity workspace) {
-        return Mono.just(false); // TODO
+        return pullRequestManager
+                .getStatus(workspace.getRepository().getId(), workspace.getReviewOrDie(GitHubReviewEntity.class).getPullRequestNumber())
+                .map(PullRequestStatus::isFinished);
     }
 
     @Override
@@ -63,13 +66,12 @@ public class GitHubPRWorkspaceTranslationsStrategy extends BaseGitWorkspaceTrans
 
                             api.commitAll(message).push();
 
-                            final int requestNumber = pullRequestManager.createRequest(message, pullRequestBranch, workspace.getBranch());
-
-                            workspace.setReview(new GitHubReviewEntity(workspace, pullRequestBranch, requestNumber));
-
-                            return workspace;
+                            return pullRequestManager
+                                    .createRequest(workspace.getRepository().getId(), message, pullRequestBranch, workspace.getBranch())
+                                    .map(requestNumber -> workspace.setReview(new GitHubReviewEntity(workspace, pullRequestBranch, requestNumber)));
                         }
-                );
+                )
+                .flatMap(m -> m);
     }
 
     @Override

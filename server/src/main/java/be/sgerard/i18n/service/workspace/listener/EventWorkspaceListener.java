@@ -1,6 +1,6 @@
 package be.sgerard.i18n.service.workspace.listener;
 
-import be.sgerard.i18n.model.i18n.dto.WorkspaceDto;
+import be.sgerard.i18n.model.workspace.WorkspaceDto;
 import be.sgerard.i18n.model.workspace.WorkspaceEntity;
 import be.sgerard.i18n.service.event.EventService;
 import org.springframework.stereotype.Component;

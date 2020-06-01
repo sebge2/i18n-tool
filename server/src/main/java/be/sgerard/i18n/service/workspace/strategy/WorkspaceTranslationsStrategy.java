@@ -2,6 +2,7 @@ package be.sgerard.i18n.service.workspace.strategy;
 
 import be.sgerard.i18n.model.workspace.WorkspaceEntity;
 import be.sgerard.i18n.model.repository.persistence.RepositoryEntity;
+import be.sgerard.i18n.model.workspace.WorkspaceStatus;
 import be.sgerard.i18n.service.repository.RepositoryException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -37,7 +38,7 @@ public interface WorkspaceTranslationsStrategy {
 
     /**
      * Publishes all modified translations of the specified {@link WorkspaceEntity workspace}. The workspace
-     * {@link WorkspaceEntity#getStatus() status} will be {@link be.sgerard.i18n.model.i18n.WorkspaceStatus#IN_REVIEW in review}
+     * {@link WorkspaceEntity#getStatus() status} will be {@link WorkspaceStatus#IN_REVIEW in review}
      * if a review started. Otherwise, the status won't change. The strategy has also the responsibility to fill
      * {@link WorkspaceEntity#getReview() review information} if needed.
      *

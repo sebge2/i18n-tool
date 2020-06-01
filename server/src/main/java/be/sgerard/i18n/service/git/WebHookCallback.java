@@ -1,6 +1,6 @@
 package be.sgerard.i18n.service.git;
 
-import be.sgerard.i18n.model.git.GitHubPullRequestEventDto;
+import be.sgerard.i18n.model.github.GitHubPullRequestEventDto;
 
 /**
  * @author Sebastien Gerard

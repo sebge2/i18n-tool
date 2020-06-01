@@ -10,6 +10,7 @@ import be.sgerard.i18n.model.i18n.file.ScannedBundleFileKeyDto;
 import be.sgerard.i18n.model.i18n.persistence.BundleFileEntity;
 import be.sgerard.i18n.model.i18n.persistence.BundleKeyEntity;
 import be.sgerard.i18n.model.i18n.persistence.BundleKeyTranslationEntity;
+import be.sgerard.i18n.model.workspace.WorkspaceDto;
 import be.sgerard.i18n.model.workspace.WorkspaceEntity;
 import be.sgerard.i18n.model.security.user.UserDto;
 import be.sgerard.i18n.repository.i18n.BundleKeyTranslationRepository;

@@ -1,4 +1,4 @@
-package be.sgerard.i18n.model.i18n;
+package be.sgerard.i18n.model.workspace;
 
 /**
  * @author Sebastien Gerard

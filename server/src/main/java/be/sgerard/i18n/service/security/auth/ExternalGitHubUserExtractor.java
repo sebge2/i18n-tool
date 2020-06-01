@@ -39,7 +39,8 @@ public class ExternalGitHubUserExtractor implements ExternalUserExtractor {
     private final String repository;
 
     public ExternalGitHubUserExtractor(AppProperties appProperties) {
-        this.repository = appProperties.getRepoFqnName();
+//        this.repository = appProperties.getRepoFqnName(); TODO
+        this.repository = "";
     }
 
     @Override

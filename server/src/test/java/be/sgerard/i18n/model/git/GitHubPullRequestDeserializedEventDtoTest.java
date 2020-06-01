@@ -1,5 +1,7 @@
 package be.sgerard.i18n.model.git;
 
+import be.sgerard.i18n.model.github.GitHubPullRequestEventDto;
+import be.sgerard.i18n.model.github.PullRequestStatus;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 

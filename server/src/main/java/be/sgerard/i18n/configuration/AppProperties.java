@@ -77,11 +77,6 @@ public class AppProperties {
         return this;
     }
 
-    public String getRepoFqnName() {
-//        return getRepoUserName() + "/" + getRepoName();
-        return "";
-    }
-
     public int getLockTimeoutInS() {
         return lockTimeoutInS;
     }
