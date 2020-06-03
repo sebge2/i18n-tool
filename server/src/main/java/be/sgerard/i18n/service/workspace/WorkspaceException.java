@@ -9,6 +9,14 @@ import be.sgerard.i18n.model.support.LocalizedMessageHolder;
  */
 public class WorkspaceException extends RuntimeException implements LocalizedMessageHolder {
 
+    public static WorkspaceException onStartingReview(Throwable cause) {
+        return new WorkspaceException("Error while starting the review.", "WorkspaceException.starting-review.message", cause);
+    }
+
+    public static WorkspaceException onFetchingReviewInformation(Throwable cause) {
+        return new WorkspaceException("Error while fetching information about the current state of the review.", "WorkspaceException.fetching-review-state.message", cause);
+    }
+
     private final String messageKey;
     private final Object[] parameters;
 
