@@ -6,7 +6,7 @@ import be.sgerard.i18n.model.repository.persistence.BaseGitRepositoryEntity;
 import be.sgerard.i18n.model.repository.persistence.GitHubRepositoryEntity;
 import be.sgerard.i18n.model.workspace.GitHubReviewEntity;
 import be.sgerard.i18n.model.workspace.WorkspaceEntity;
-import be.sgerard.i18n.service.git.PullRequestManager;
+import be.sgerard.i18n.service.github.GitHubPullRequestManager;
 import be.sgerard.i18n.service.i18n.TranslationManager;
 import be.sgerard.i18n.service.repository.RepositoryManager;
 import be.sgerard.i18n.service.repository.git.GitRepositoryApi;
