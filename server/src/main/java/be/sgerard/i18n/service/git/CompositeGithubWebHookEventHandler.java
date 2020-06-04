@@ -1,5 +1,6 @@
 package be.sgerard.i18n.service.git;
 
+import be.sgerard.i18n.service.github.GitHubWebHookCallback;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
@@ -24,7 +25,7 @@ public class CompositeGithubWebHookEventHandler implements GithubWebHookEventHan
     }
 
     @Override
-    public void call(String eventType, String payload, WebHookCallback callback) throws Exception {
+    public void call(String eventType, String payload, GitHubWebHookCallback callback) throws Exception {
         for (GithubWebHookEventHandler handler : handlers) {
             if (handler.support(eventType)) {
                 handler.call(eventType, payload, callback);

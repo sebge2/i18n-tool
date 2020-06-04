@@ -17,11 +17,11 @@ public class GitHubPullRequestEventDto {
 
     private final String id;
     private final int number;
-    private final PullRequestStatus status;
+    private final GitHubPullRequestStatus status;
 
     public GitHubPullRequestEventDto(String id,
                                      int number,
-                                     PullRequestStatus status) {
+                                     GitHubPullRequestStatus status) {
         this.id = id;
         this.number = number;
         this.status = status;
@@ -35,7 +35,7 @@ public class GitHubPullRequestEventDto {
         return number;
     }
 
-    public PullRequestStatus getStatus() {
+    public GitHubPullRequestStatus getStatus() {
         return status;
     }
 
@@ -75,7 +75,7 @@ public class GitHubPullRequestEventDto {
 
         private String id;
         private int number;
-        private PullRequestStatus state;
+        private GitHubPullRequestStatus state;
 
         public String getId() {
             return id;
@@ -93,11 +93,11 @@ public class GitHubPullRequestEventDto {
             this.number = number;
         }
 
-        public PullRequestStatus getState() {
+        public GitHubPullRequestStatus getState() {
             return state;
         }
 
-        public void setState(PullRequestStatus state) {
+        public void setState(GitHubPullRequestStatus state) {
             this.state = state;
         }
 

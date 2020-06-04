@@ -82,6 +82,6 @@ public abstract class BaseGitRepositoryHandler<E extends BaseGitRepositoryEntity
      */
     protected GitRepositoryApi initApiFromEntity(E repository) {
         return DefaultGitRepositoryApi
-                .createAPI(repository, createConfiguration(repository));
+                .createAPI(createConfiguration(repository));
     }
 }

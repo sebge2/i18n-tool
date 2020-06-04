@@ -1,6 +1,7 @@
 package be.sgerard.i18n.service.git;
 
 import be.sgerard.i18n.model.github.GitHubBranchEventDto;
+import be.sgerard.i18n.service.github.GitHubWebHookCallback;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +35,7 @@ public class BranchGithubWebHookEventHandler implements GithubWebHookEventHandle
     }
 
     @Override
-    public void call(String eventType, String payload, WebHookCallback callback) throws Exception {
+    public void call(String eventType, String payload, GitHubWebHookCallback callback) throws Exception {
         final GitHubBranchEventDto event = objectMapper.readValue(payload, GitHubBranchEventDto.class);
 
         if (event.isBranchRelated() && Objects.equals(eventType, CREATED_EVENT)) {
