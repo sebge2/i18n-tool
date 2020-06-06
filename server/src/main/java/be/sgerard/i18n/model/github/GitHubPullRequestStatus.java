@@ -1,5 +1,6 @@
 package be.sgerard.i18n.model.github;
 
+import be.sgerard.i18n.service.BadRequestException;
 import com.fasterxml.jackson.annotation.JsonCreator;
 
 /**
@@ -39,6 +40,6 @@ public enum GitHubPullRequestStatus {
             }
         }
 
-        throw new IllegalArgumentException("There is no status [" + stringStatus + "].");
+        throw BadRequestException.cannotParseException(stringStatus, null);
     }
 }
