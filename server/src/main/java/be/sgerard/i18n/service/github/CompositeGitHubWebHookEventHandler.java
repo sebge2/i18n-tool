@@ -1,4 +1,4 @@
-package be.sgerard.i18n.service.git;
+package be.sgerard.i18n.service.github;
 
 import be.sgerard.i18n.model.repository.persistence.GitHubRepositoryEntity;
 import be.sgerard.i18n.service.github.external.BaseGitHubWebHookEventDto;
