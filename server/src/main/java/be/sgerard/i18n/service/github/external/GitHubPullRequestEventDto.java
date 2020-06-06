@@ -16,7 +16,7 @@ public class GitHubPullRequestEventDto extends BaseGitHubWebHookEventDto {
     private final PullRequest pullRequest;
 
     @JsonCreator
-    public GitHubPullRequestEventDto(@JsonProperty("repository") GitHubRepositoryWebHookDto repository,
+    public GitHubPullRequestEventDto(@JsonProperty("repository") Repository repository,
                                      @JsonProperty("pull_request") PullRequest pullRequest) {
         super(repository);
 

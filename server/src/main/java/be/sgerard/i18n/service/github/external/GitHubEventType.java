@@ -1,8 +1,4 @@
-package be.sgerard.i18n.service.github;
-
-import be.sgerard.i18n.service.github.external.BaseGitHubWebHookEventDto;
-import be.sgerard.i18n.service.github.external.GitHubBranchEventDto;
-import be.sgerard.i18n.service.github.external.GitHubPullRequestEventDto;
+package be.sgerard.i18n.service.github.external;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -23,12 +19,12 @@ enum GitHubEventType {
     /**
      * Creation of branch.
      */
-    BRANCH_CREATED("create", GitHubBranchEventDto.class),
+    BRANCH_CREATED("create", GitHubBranchCreatedEventDto.class),
 
     /**
      * Deletion of branch.
      */
-    BRANCH_DELETED("delete", GitHubBranchEventDto.class);
+    BRANCH_DELETED("delete", GitHubBranchDeletedEventDto.class);
 
     private final String type;
     private final Class<? extends BaseGitHubWebHookEventDto> dtoType;

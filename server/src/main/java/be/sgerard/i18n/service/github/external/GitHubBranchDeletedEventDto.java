@@ -5,12 +5,12 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * {@link BaseGitHubWebHookEventDto Event DTO} concerning a branch.
+ * {@link BaseGitHubWebHookEventDto Event DTO} concerning a branch deletion.
  *
  * @author Sebastien Gerard
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class GitHubBranchEventDto extends BaseGitHubWebHookEventDto {
+public class GitHubBranchDeletedEventDto extends BaseGitHubWebHookEventDto {
 
     public static final String REF_TYPE_BRANCH = "branch";
 
@@ -18,9 +18,9 @@ public class GitHubBranchEventDto extends BaseGitHubWebHookEventDto {
     private final String ref;
 
     @JsonCreator
-    public GitHubBranchEventDto(@JsonProperty("repository") GitHubRepositoryWebHookDto repository,
-                                @JsonProperty("ref_type") String refType,
-                                @JsonProperty("ref") String ref) {
+    public GitHubBranchDeletedEventDto(@JsonProperty("repository") Repository repository,
+                                       @JsonProperty("ref_type") String refType,
+                                       @JsonProperty("ref") String ref) {
         super(repository);
         this.refType = refType;
         this.ref = ref;
