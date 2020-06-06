@@ -3,7 +3,6 @@ package be.sgerard.i18n.service.github;
 import be.sgerard.i18n.model.repository.persistence.GitHubRepositoryEntity;
 import be.sgerard.i18n.service.BadRequestException;
 import be.sgerard.i18n.service.UnauthorizedRequestException;
-import be.sgerard.i18n.service.git.GitHubWebHookEventHandler;
 import be.sgerard.i18n.service.github.external.BaseGitHubWebHookEventDto;
 import be.sgerard.i18n.service.github.external.GitHubEventType;
 import be.sgerard.i18n.service.repository.RepositoryManager;

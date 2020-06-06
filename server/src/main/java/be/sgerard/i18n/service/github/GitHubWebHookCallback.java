@@ -1,6 +1,6 @@
 package be.sgerard.i18n.service.github;
 
-import be.sgerard.i18n.model.github.GitHubPullRequestEventDto;
+import be.sgerard.i18n.model.github.GitHubPullRequestStatus;
 import be.sgerard.i18n.model.repository.persistence.GitHubRepositoryEntity;
 import reactor.core.publisher.Mono;
 
@@ -12,9 +12,9 @@ import reactor.core.publisher.Mono;
 public interface GitHubWebHookCallback {
 
     /**
-     * Performs an action when the specified {@link GitHubPullRequestEventDto pull-request} has been updated.
+     * Performs an action when the specified pull-request has been updated.
      */
-    default Mono<Void> onPullRequestUpdate(GitHubRepositoryEntity repository, GitHubPullRequestEventDto event) {
+    default Mono<Void> onPullRequestUpdate(GitHubRepositoryEntity repository, int pullRequestNumber, GitHubPullRequestStatus status) {
         return Mono.empty();
     }
 
