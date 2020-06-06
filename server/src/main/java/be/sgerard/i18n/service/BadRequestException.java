@@ -26,6 +26,10 @@ public class BadRequestException extends RuntimeException implements LocalizedMe
         );
     }
 
+    public static Exception missingHeader(String headerName) {
+        return new BadRequestException("The header [" + headerName + "] is missing.", "BadRequestException.missing-header.message", headerName);
+    }
+
     private final String messageKey;
     private final Object[] parameters;
 

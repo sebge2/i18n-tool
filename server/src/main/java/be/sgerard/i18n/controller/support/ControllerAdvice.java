@@ -4,6 +4,7 @@ import be.sgerard.i18n.model.support.ErrorMessages;
 import be.sgerard.i18n.model.support.LocalizedMessageHolder;
 import be.sgerard.i18n.service.BadRequestException;
 import be.sgerard.i18n.service.ResourceNotFoundException;
+import be.sgerard.i18n.service.UnauthorizedRequestException;
 import be.sgerard.i18n.service.ValidationException;
 import be.sgerard.i18n.service.repository.RepositoryException;
 import be.sgerard.i18n.service.error.ErrorMessagesProvider;
@@ -72,6 +73,20 @@ public class ControllerAdvice {
         }
 
         return new ResponseEntity<>(errorMessages, HttpStatus.BAD_REQUEST);
+    }
+
+    /**
+     * Handles the {@link UnauthorizedRequestException unauthorized exception}.
+     */
+    @ExceptionHandler(value = UnauthorizedRequestException.class)
+    public ResponseEntity<ErrorMessages> handleUnauthorizedRequestException(UnauthorizedRequestException exception) {
+        final ErrorMessages errorMessages = messagesProvider.map(exception);
+
+        if (logger.isDebugEnabled()) {
+            logger.debug(String.format("Unauthorized request with id %s, message %s.", errorMessages.getId(), exception.getMessage()), exception);
+        }
+
+        return new ResponseEntity<>(errorMessages, HttpStatus.UNAUTHORIZED);
     }
 
     /**
