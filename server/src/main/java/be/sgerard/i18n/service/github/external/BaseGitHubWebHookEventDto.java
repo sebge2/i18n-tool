@@ -1,6 +1,7 @@
 package be.sgerard.i18n.service.github.external;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
@@ -28,6 +29,7 @@ public abstract class BaseGitHubWebHookEventDto {
      *
      * @author Sebastien Gerard
      */
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Repository {
 
         private final String id;

@@ -33,6 +33,7 @@ public class GitHubPullRequestEventDto extends BaseGitHubWebHookEventDto {
     /**
      * Information about the {@link PullRequest pull request}.
      */
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class PullRequest {
 
         private final String id;
