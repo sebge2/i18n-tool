@@ -9,7 +9,7 @@ import java.util.stream.Stream;
  *
  * @author Sebastien Gerard
  */
-enum GitHubEventType {
+public enum GitHubEventType {
 
     /**
      * Pull-request events.

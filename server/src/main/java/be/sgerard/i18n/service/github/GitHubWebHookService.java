@@ -5,6 +5,7 @@ import be.sgerard.i18n.service.BadRequestException;
 import be.sgerard.i18n.service.UnauthorizedRequestException;
 import be.sgerard.i18n.service.git.GitHubWebHookEventHandler;
 import be.sgerard.i18n.service.github.external.BaseGitHubWebHookEventDto;
+import be.sgerard.i18n.service.github.external.GitHubEventType;
 import be.sgerard.i18n.service.repository.RepositoryManager;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -91,7 +92,7 @@ public class GitHubWebHookService {
                         return Mono.error(UnauthorizedRequestException.invalidSignatureException(signature));
                     }
 
-                    return eventHandler.handle(event);
+                    return eventHandler.handle(repository, event);
                 })
                 .then(Mono.just("Signature Verified.\n" + "Received " + ((requestEntity.getBody() != null) ? requestEntity.getBody().getBytes().length : 0) + " bytes."));
     }
