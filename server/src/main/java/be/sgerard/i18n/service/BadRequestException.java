@@ -10,31 +10,40 @@ import be.sgerard.i18n.model.support.LocalizedMessageHolder;
 public class BadRequestException extends RuntimeException implements LocalizedMessageHolder {
 
     public static BadRequestException actionNotSupportedException(String action) {
-        return new BadRequestException("The action [" + action + "] is not supported.", "BadRequestException.action-not-supported.message", action);
+        return new BadRequestException("The action [" + action + "] is not supported.", "BadRequestException.action-not-supported.message", null, action);
+    }
+
+    public static BadRequestException cannotParseException(String content, Throwable cause) {
+        return new BadRequestException("The content [" + content + "] cannot be parsed.", "BadRequestException.cannot-parse.message", null, content);
     }
 
     public static BadRequestException actionNotAllowedInStateException(String action, String state) {
-        return new BadRequestException("The action [" + action + "] is not allowed in the state [" + state + "].",
-                "BadRequestException.action-not-allowed-in-state.message", action, state);
+        return new BadRequestException(
+                "The action [" + action + "] is not allowed in the state [" + state + "].",
+                "BadRequestException.action-not-allowed-in-state.message",
+                null,
+                action, state
+        );
     }
 
     public static BadRequestException idRequestNotMatchIdBodyException(String idRequest, String idBody) {
         return new BadRequestException(
                 String.format("The id %s does not match the id in the body %s.", idRequest, idBody),
                 "BadRequestException.id-request-id-body-not-match.message",
+                null,
                 idRequest, idBody
         );
     }
 
-    public static Exception missingHeader(String headerName) {
-        return new BadRequestException("The header [" + headerName + "] is missing.", "BadRequestException.missing-header.message", headerName);
+    public static BadRequestException missingHeader(String headerName) {
+        return new BadRequestException("The header [" + headerName + "] is missing.", "BadRequestException.missing-header.message", null, headerName);
     }
 
     private final String messageKey;
     private final Object[] parameters;
 
-    public BadRequestException(String message, String messageKey, Object... parameters) {
-        super(message);
+    public BadRequestException(String message, String messageKey, Throwable cause, Object... parameters) {
+        super(message, cause);
 
         this.messageKey = messageKey;
         this.parameters = parameters;
