@@ -79,7 +79,7 @@ public class RepositoryController {
     @ResponseStatus(HttpStatus.OK)
     public Mono<RepositoryDto> update(@PathVariable String id,
                                       @RequestBody RepositoryPatchDto patchDto) {
-        if(!Objects.equals(id, patchDto.getId())){
+        if (!Objects.equals(id, patchDto.getId())) {
             throw BadRequestException.idRequestNotMatchIdBodyException(id, patchDto.getId());
         }
 
@@ -113,22 +113,14 @@ public class RepositoryController {
         return repositoryManager.delete(id);
     }
 
-//
-//    @GetMapping(path = "/repository")
-//    @ApiOperation(value = "Returns repository description.")
-//    public RepositorySummaryDto isInitialized() throws RepositoryException {
-//        return repositoryManager.getDescription();
-//    }
-//
-//    @GetMapping("/repository/branch")
-//    @ApiOperation(value = "Lists all branches found on the repository.")
-//    @PreAuthorize("hasRole('MEMBER_OF_REPOSITORY')")
-//    public List<String> listBranches() {
-//        return repositoryManager.open(RepositoryAPI::listRemoteBranches);
-//    }
-
+    /**
+     * All the possible actions that can be performed over a repository.
+     */
     public enum RepositoryAction {
 
+        /**
+         * @see RepositoryManager#initialize(String)
+         */
         INITIALIZE
     }
 

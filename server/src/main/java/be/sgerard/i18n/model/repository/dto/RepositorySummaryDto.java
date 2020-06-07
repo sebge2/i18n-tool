@@ -3,6 +3,7 @@ package be.sgerard.i18n.model.repository.dto;
 import be.sgerard.i18n.model.repository.RepositoryStatus;
 import be.sgerard.i18n.model.repository.persistence.RepositoryEntity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -13,6 +14,7 @@ import io.swagger.annotations.ApiModelProperty;
  * @author Sebastien Gerard
  */
 @ApiModel(description = "Description of the repository.")
+@JsonDeserialize(builder = RepositorySummaryDto.Builder.class)
 public class RepositorySummaryDto {
 
     public static Builder builder(RepositoryEntity repositoryEntity) {
