@@ -27,10 +27,14 @@ public class RepositoryTestHelper {
 
     private final AsyncMockMvcTestHelper mockMvc;
     private final ObjectMapper objectMapper;
+    private final WorkspaceTestHelper workspaceTestHelper;
 
-    public RepositoryTestHelper(AsyncMockMvcTestHelper mockMvc, ObjectMapper objectMapper) {
+    public RepositoryTestHelper(AsyncMockMvcTestHelper mockMvc,
+                                ObjectMapper objectMapper,
+                                WorkspaceTestHelper workspaceTestHelper) {
         this.mockMvc = mockMvc;
         this.objectMapper = objectMapper;
+        this.workspaceTestHelper = workspaceTestHelper;
     }
 
     public <R extends RepositoryDto> StepCreatedRepository<R> create(RepositoryCreationDto creationDto, Class<R> expectedResult) throws Exception {
@@ -111,11 +115,19 @@ public class RepositoryTestHelper {
         private final R repository;
 
         public StepInitializedRepository(R repository) {
+            if (RepositoryStatus.INITIALIZED != repository.getStatus()) {
+                throw new IllegalArgumentException("The repository must be initialized, but it is [" + repository.getStatus() + "].");
+            }
+
             this.repository = repository;
         }
 
         public RepositoryTestHelper and() {
             return RepositoryTestHelper.this;
+        }
+
+        public WorkspaceTestHelper.StepInitializedRepository workspaces() {
+            return workspaceTestHelper.with(repository);
         }
 
         public R get() {

@@ -1,7 +1,6 @@
 package be.sgerard.i18n.service.workspace.strategy.git;
 
 import be.sgerard.i18n.model.repository.persistence.BaseGitRepositoryEntity;
-import be.sgerard.i18n.model.repository.persistence.GitHubRepositoryEntity;
 import be.sgerard.i18n.model.repository.persistence.GitRepositoryEntity;
 import be.sgerard.i18n.model.repository.persistence.RepositoryEntity;
 import be.sgerard.i18n.model.workspace.WorkspaceEntity;
@@ -73,6 +72,6 @@ public abstract class BaseGitWorkspaceTranslationsStrategy implements WorkspaceT
      * Returns whether the specified branch can be exposed.
      */
     private boolean isAllowedBranch(RepositoryEntity repository, String branch) {
-        return ((GitHubRepositoryEntity) repository).getAllowedBranches().matcher(branch).matches();
+        return ((BaseGitRepositoryEntity) repository).getAllowedBranches().matcher(branch).matches();
     }
 }

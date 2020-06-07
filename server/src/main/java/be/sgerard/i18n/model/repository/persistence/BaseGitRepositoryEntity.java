@@ -1,6 +1,7 @@
 package be.sgerard.i18n.model.repository.persistence;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
 import java.util.regex.Pattern;
 

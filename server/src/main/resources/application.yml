@@ -14,6 +14,11 @@ spring:
             client-secret: ${GIT_HUB_OAUTH_SECRET}
             scope: repo
             redirect-uri-template: "{baseUrl}/auth/oauth2/code/{registrationId}"
+#          google:
+#            client-id: "241420143849-soe1koqhh6gh9tauqcnvrfdplag1cqce.apps.googleusercontent.com"
+#            client-secret: "ahUSO_-ywDc6eKm6ygEOx6xi"
+#            scope: openid
+#            redirect-uri-template: "{baseUrl}/auth/oauth2/code/{registrationId}"
   session:
     jdbc:
       initialize-schema: "ALWAYS"
@@ -40,10 +45,9 @@ management:
 be:
   sgerard:
     i18n:
-      repoUserName: ${GIT_HUB_REPO_USER_NAME}
-      repoName: ${GIT_HUB_REPO_NAME}
       lock-timeout-in-s: 120
+      security:
+        default-admin-password: ${DEFAULT_ADMIN_PASSWORD:}
       java-translation-bundle-ignored-paths: "**/src/main/java,**/src/test,.git,.idea,**/target/classes,/front/,**/target/test-classes"
       json-icu-translation-bundle-dirs: "**/src/assets/i18n"
       git-hub-webhook-secret: ${GIT_HUB_WEBHOOK_SECRET}
-      default-admin-password: ${DEFAULT_ADMIN_PASSWORD:}

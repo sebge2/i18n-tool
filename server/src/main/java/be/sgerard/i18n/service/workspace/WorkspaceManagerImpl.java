@@ -23,6 +23,8 @@ import reactor.core.publisher.Mono;
 
 import java.util.Map;
 
+import static java.util.Arrays.asList;
+
 /**
  * Implementation of the {@link WorkspaceManager workspace manager}.
  *
@@ -207,7 +209,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
     private Flux<String> listBranches(String repositoryId) {
         return repositoryManager.findByIdOrDie(repositoryId)
                 .flatMapMany(repository -> {
-                    if (repository.getStatus() != RepositoryStatus.INITIALIZED) {
+                    if (!asList(RepositoryStatus.INITIALIZING, RepositoryStatus.INITIALIZED).contains(repository.getStatus())) {
                         return Flux.empty();
                     }
 
