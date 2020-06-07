@@ -240,7 +240,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
                 .andExpectStarted()
                 .andWaitResult()
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.accessKey").value("develop"));
+                .andExpect(jsonPath("$.defaultBranch").value("develop"));
     }
 
     @Test
