@@ -49,7 +49,8 @@ public class GitHubPRWorkspaceTranslationsStrategy extends BaseGitWorkspaceTrans
         return pullRequestManager
                 .findByNumber(workspace.getRepository().getId(), workspace.getReviewOrDie(GitHubReviewEntity.class).getPullRequestNumber())
                 .map(GitHubPullRequestDto::getStatus)
-                .map(GitHubPullRequestStatus::isFinished);
+                .map(GitHubPullRequestStatus::isFinished)
+                .switchIfEmpty(Mono.just(true));
     }
 
     @Override

@@ -1,12 +1,15 @@
 package be.sgerard.i18n.service.github;
 
 import be.sgerard.i18n.model.repository.persistence.GitHubRepositoryEntity;
+import be.sgerard.i18n.model.workspace.WorkspaceEntity;
 import be.sgerard.i18n.service.github.external.BaseGitHubWebHookEventDto;
 import be.sgerard.i18n.service.github.external.GitHubBranchCreatedEventDto;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import be.sgerard.i18n.service.workspace.WorkspaceManager;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
+
+import java.util.NoSuchElementException;
+import java.util.Objects;
 
 /**
  * {@link GitHubWebHookEventHandler Event handler} for the {@link GitHubBranchCreatedEventDto created branch event}.
@@ -16,12 +19,10 @@ import reactor.core.publisher.Mono;
 @Component
 public class GitHubBranchCreatedEventHandler implements GitHubWebHookEventHandler<GitHubBranchCreatedEventDto> {
 
-    private static final Logger logger = LoggerFactory.getLogger(GitHubBranchCreatedEventHandler.class);
+    private final WorkspaceManager workspaceManager;
 
-    private final GitHubWebHookCallback callback;
-
-    public GitHubBranchCreatedEventHandler(GitHubWebHookCallback callback) {
-        this.callback = callback;
+    public GitHubBranchCreatedEventHandler(WorkspaceManager workspaceManager) {
+        this.workspaceManager = workspaceManager;
     }
 
     @Override
@@ -30,13 +31,21 @@ public class GitHubBranchCreatedEventHandler implements GitHubWebHookEventHandle
     }
 
     @Override
-    public Mono<Void> handle(GitHubRepositoryEntity repository, GitHubBranchCreatedEventDto event) {
+    public Mono<WorkspaceEntity> handle(GitHubRepositoryEntity repository, GitHubBranchCreatedEventDto event) {
         if (!event.isBranchRelated()) {
             return Mono.empty();
         }
 
-        logger.info("The branch [{}] on the repository [{}] has been created.", event.getRef(), repository.getName());
-
-        return callback.onCreatedBranch(repository, event.getRef());
+        return workspaceManager
+                .synchronize(repository.getId())
+                .filter(workspace -> Objects.equals(workspace.getBranch(), event.getRef()))
+                .last()
+                .onErrorResume(throwable -> {
+                    if (throwable instanceof NoSuchElementException) {
+                        return Mono.empty();
+                    } else {
+                        return Mono.error(throwable);
+                    }
+                });
     }
 }

@@ -1,12 +1,14 @@
 package be.sgerard.i18n.service.github;
 
 import be.sgerard.i18n.model.repository.persistence.GitHubRepositoryEntity;
+import be.sgerard.i18n.model.workspace.WorkspaceEntity;
 import be.sgerard.i18n.service.github.external.BaseGitHubWebHookEventDto;
 import be.sgerard.i18n.service.github.external.GitHubBranchDeletedEventDto;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import be.sgerard.i18n.service.workspace.WorkspaceManager;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
+
+import java.util.Objects;
 
 /**
  * {@link GitHubWebHookEventHandler Event handler} for the {@link GitHubBranchDeletedEventDto deleted branch event}.
@@ -16,12 +18,10 @@ import reactor.core.publisher.Mono;
 @Component
 public class GitHubBranchDeletedEventHandler implements GitHubWebHookEventHandler<GitHubBranchDeletedEventDto> {
 
-    private static final Logger logger = LoggerFactory.getLogger(GitHubBranchDeletedEventHandler.class);
+    private final WorkspaceManager workspaceManager;
 
-    private final GitHubWebHookCallback callback;
-
-    public GitHubBranchDeletedEventHandler(GitHubWebHookCallback callback) {
-        this.callback = callback;
+    public GitHubBranchDeletedEventHandler(WorkspaceManager workspaceManager) {
+        this.workspaceManager = workspaceManager;
     }
 
     @Override
@@ -30,13 +30,17 @@ public class GitHubBranchDeletedEventHandler implements GitHubWebHookEventHandle
     }
 
     @Override
-    public Mono<Void> handle(GitHubRepositoryEntity repository, GitHubBranchDeletedEventDto event) {
+    public Mono<WorkspaceEntity> handle(GitHubRepositoryEntity repository, GitHubBranchDeletedEventDto event) {
         if (!event.isBranchRelated()) {
             return Mono.empty();
         }
 
-        logger.info("The branch [{}] on the repository [{}] has been deleted.", event.getRef(), repository.getName());
-
-        return callback.onDeletedBranch(repository, event.getRef());
+        return repository
+                .getWorkspaces()
+                .stream()
+                .filter(workspace -> Objects.equals(workspace.getBranch(), event.getRef()))
+                .findFirst()
+                .map(workspace -> workspaceManager.delete(workspace.getId()))
+                .orElse(Mono.empty());
     }
 }

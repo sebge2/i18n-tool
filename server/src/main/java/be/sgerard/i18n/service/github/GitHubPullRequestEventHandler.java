@@ -1,10 +1,17 @@
 package be.sgerard.i18n.service.github;
 
 import be.sgerard.i18n.model.repository.persistence.GitHubRepositoryEntity;
+import be.sgerard.i18n.model.workspace.GitHubReviewEntity;
+import be.sgerard.i18n.model.workspace.WorkspaceEntity;
 import be.sgerard.i18n.service.github.external.BaseGitHubWebHookEventDto;
 import be.sgerard.i18n.service.github.external.GitHubPullRequestEventDto;
+import be.sgerard.i18n.service.workspace.WorkspaceManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
+
+import java.util.Optional;
 
 /**
  * {@link GitHubWebHookEventHandler Event handler} for the {@link GitHubPullRequestEventDto pull-request event}.
@@ -14,10 +21,12 @@ import reactor.core.publisher.Mono;
 @Component
 public class GitHubPullRequestEventHandler implements GitHubWebHookEventHandler<GitHubPullRequestEventDto> {
 
-    private final GitHubWebHookCallback callback;
+    private static final Logger logger = LoggerFactory.getLogger(GitHubPullRequestEventHandler.class);
 
-    public GitHubPullRequestEventHandler(GitHubWebHookCallback callback) {
-        this.callback = callback;
+    private final WorkspaceManager workspaceManager;
+
+    public GitHubPullRequestEventHandler(WorkspaceManager workspaceManager) {
+        this.workspaceManager = workspaceManager;
     }
 
     @Override
@@ -26,7 +35,21 @@ public class GitHubPullRequestEventHandler implements GitHubWebHookEventHandler<
     }
 
     @Override
-    public Mono<Void> handle(GitHubRepositoryEntity repository, GitHubPullRequestEventDto event) {
-        return callback.onPullRequestUpdate(repository, event.getPullRequest().getNumber(), event.getPullRequest().getStatus());
+    public Mono<WorkspaceEntity> handle(GitHubRepositoryEntity repository, GitHubPullRequestEventDto event) {
+        if (!event.getPullRequest().getStatus().isFinished()) {
+            logger.info("The pull request {} is not finished, but is {}, nothing will be performed.", event.getPullRequest().getNumber(), event.getPullRequest().getStatus());
+            return Mono.empty();
+        }
+
+        return repository
+                .getWorkspaces()
+                .stream()
+                .map(workspace -> workspace.getReview(GitHubReviewEntity.class))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .filter(review -> review.getPullRequestNumber() == event.getPullRequest().getNumber())
+                .findFirst()
+                .map(review -> workspaceManager.finishReview(review.getWorkspace().getId()))
+                .orElse(Mono.empty());
     }
 }

@@ -1,6 +1,7 @@
 package be.sgerard.i18n.service.github;
 
 import be.sgerard.i18n.model.repository.persistence.GitHubRepositoryEntity;
+import be.sgerard.i18n.model.workspace.WorkspaceEntity;
 import be.sgerard.i18n.service.github.external.BaseGitHubWebHookEventDto;
 import reactor.core.publisher.Mono;
 
@@ -19,5 +20,5 @@ public interface GitHubWebHookEventHandler<E extends BaseGitHubWebHookEventDto> 
     /**
      * Handles the specified {@link BaseGitHubWebHookEventDto event}.
      */
-    Mono<Void> handle(GitHubRepositoryEntity repository, E event);
+    Mono<WorkspaceEntity> handle(GitHubRepositoryEntity repository, E event);
 }
