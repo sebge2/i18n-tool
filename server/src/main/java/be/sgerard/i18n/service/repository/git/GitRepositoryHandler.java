@@ -36,7 +36,7 @@ public class GitRepositoryHandler extends BaseGitRepositoryHandler<GitRepository
 
     @Override
     public Mono<GitRepositoryEntity> createRepository(GitRepositoryCreationDto creationDto) {
-        return validateRepository(new GitRepositoryEntity(creationDto.getLocation()));
+        return validateRepository(new GitRepositoryEntity(creationDto.getName(), creationDto.getLocation()));
     }
 
     @Override

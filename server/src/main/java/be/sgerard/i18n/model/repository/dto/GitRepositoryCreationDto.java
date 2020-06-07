@@ -17,9 +17,14 @@ public class GitRepositoryCreationDto extends RepositoryCreationDto {
     @ApiModelProperty(notes = "Location URL of this repository", required = true)
     private final String location;
 
+    @ApiModelProperty(notes = "Name of this repository", required = true)
+    private final String name;
+
     @JsonCreator
-    public GitRepositoryCreationDto(@JsonProperty("location") String location) {
+    public GitRepositoryCreationDto(@JsonProperty("location") String location,
+                                    @JsonProperty("name") String name) {
         this.location = location;
+        this.name = name;
     }
 
     @Override
@@ -32,5 +37,12 @@ public class GitRepositoryCreationDto extends RepositoryCreationDto {
      */
     public String getLocation() {
         return location;
+    }
+
+    /**
+     * Returns the name of this repository.
+     */
+    public String getName() {
+        return name;
     }
 }

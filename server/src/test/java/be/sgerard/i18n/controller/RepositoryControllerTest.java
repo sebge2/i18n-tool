@@ -1,15 +1,15 @@
 package be.sgerard.i18n.controller;
 
 import be.sgerard.i18n.model.repository.RepositoryStatus;
-import be.sgerard.i18n.model.repository.dto.GitHubRepositoryCreationDto;
-import be.sgerard.i18n.model.repository.dto.GitHubRepositoryDto;
-import be.sgerard.i18n.model.repository.dto.GitHubRepositoryPatchDto;
+import be.sgerard.i18n.model.repository.dto.*;
 import be.sgerard.test.i18n.support.WithInternalUser;
 import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.transaction.annotation.Transactional;
 
+import static be.sgerard.test.i18n.model.GitRepositoryCreationDtoTestUtils.i18nToolLocalRepositoryCreationDto;
 import static be.sgerard.test.i18n.model.GitRepositoryCreationDtoTestUtils.i18nToolRepositoryCreationDto;
 import static be.sgerard.test.i18n.model.UserDtoTestUtils.userJohnDoeCreation;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
@@ -95,6 +95,33 @@ public class RepositoryControllerTest extends AbstractControllerTest {
     @Test
     @Transactional
     @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
+    public void createGitRepository() throws Exception {
+        final GitRepositoryCreationDto creationDto = i18nToolLocalRepositoryCreationDto();
+
+        final GitRepositoryDto repository = repositoryTestHelper.createRepository(creationDto, GitRepositoryDto.class);
+//        asyncMockMvc
+//                .perform(
+//                        post("/api/repository")
+//                                .contentType(MediaType.APPLICATION_JSON)
+//                                .content(objectMapper.writeValueAsString(creationDto))
+//                )
+//                .andExpectStarted()
+//                .andWaitResult()
+//                .andExpect(status().isCreated())
+//        .andDo(print())
+////                .andExpect(jsonPath("$.status").value(RepositoryStatus.NOT_INITIALIZED.name()))
+////                .andExpect(jsonPath("$.name").value("sebge2/i18n-tool"))
+////                .andExpect(jsonPath("$.location").value("https://github.com/sebge2/i18n-tool.git"))
+//        ;
+
+        final GitRepositoryDto gitRepositoryDto = repositoryTestHelper.initializeRepository(repository.getId(), GitRepositoryDto.class);
+
+        System.out.println(gitRepositoryDto);
+    }
+
+    @Test
+    @Transactional
+    @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
     public void createGitHubRepositoryWrongUrl() throws Exception {
         final GitHubRepositoryCreationDto creationDto = new GitHubRepositoryCreationDto("unknown", "unknown", null);
 
@@ -140,7 +167,12 @@ public class RepositoryControllerTest extends AbstractControllerTest {
     @Test
     @Transactional
     @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
+    @Tag("GitHub")
     public void initializeGitHubRepository() throws Exception {
+        if(true){
+            throw new RuntimeException("bam");
+        }
+
         final GitHubRepositoryDto repository = repositoryTestHelper.createRepository(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class);
 
         asyncMockMvc

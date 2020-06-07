@@ -18,8 +18,10 @@ public class GitRepositoryEntity extends BaseGitRepositoryEntity {
         super();
     }
 
-    public GitRepositoryEntity(String name) {
+    public GitRepositoryEntity(String name, String location) {
         super(name);
+
+        setLocation(location);
     }
 
     @Override

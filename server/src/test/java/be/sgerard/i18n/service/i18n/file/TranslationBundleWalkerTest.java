@@ -1,6 +1,6 @@
 package be.sgerard.i18n.service.i18n.file;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 

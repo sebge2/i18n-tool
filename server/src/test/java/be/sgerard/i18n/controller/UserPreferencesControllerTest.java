@@ -3,7 +3,7 @@ package be.sgerard.i18n.controller;
 import be.sgerard.i18n.model.ToolLocale;
 import be.sgerard.i18n.model.security.user.UserPreferencesDto;
 import be.sgerard.i18n.service.user.UserManager;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;

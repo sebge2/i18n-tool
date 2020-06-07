@@ -3,7 +3,7 @@ package be.sgerard.i18n.model.git;
 import be.sgerard.i18n.model.github.GitHubPullRequestEventDto;
 import be.sgerard.i18n.model.github.GitHubPullRequestStatus;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 

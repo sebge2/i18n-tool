@@ -4,7 +4,7 @@ import be.sgerard.i18n.model.security.user.UserDto;
 import be.sgerard.i18n.model.security.user.UserPatchDto;
 import be.sgerard.i18n.service.security.UserRole;
 import be.sgerard.i18n.service.user.UserManager;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;

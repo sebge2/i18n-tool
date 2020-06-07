@@ -6,7 +6,9 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.Rule;
+import org.junit.jupiter.api.Test;
+import org.junit.rules.ExpectedException;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,6 +31,9 @@ public class DefaultGitRepositoryApiTest {
     private static DefaultGitRepositoryApi.Configuration configuration;
     private static GitRepositoryApi api;
 
+    @Rule
+    public ExpectedException exceptionRule = ExpectedException.none();
+
     @BeforeClass
     public static void setup() throws IOException {
         configuration = new DefaultGitRepositoryApi.Configuration(URI.create(REPO_LOCATION), generateTemporaryFile());
@@ -48,15 +53,19 @@ public class DefaultGitRepositoryApiTest {
                 .validateInfo();
     }
 
-    @Test(expected = ValidationException.class)
+    @Test
     public void validateInfoWrongUrl() throws Exception {
+        exceptionRule.expect(ValidationException.class);
+
         DefaultGitRepositoryApi
                 .createAPI(new DefaultGitRepositoryApi.Configuration(URI.create("https://github.com/sebge2/unknown.git"), generateTemporaryFile()))
                 .validateInfo();
     }
 
-    @Test(expected = ValidationException.class)
+    @Test
     public void validateInfoWrongCredentials() throws Exception {
+        exceptionRule.expect(ValidationException.class);
+
         DefaultGitRepositoryApi
                 .createAPI(
                         new DefaultGitRepositoryApi.Configuration(URI.create("https://github.com/sebge2/unknown.git"), generateTemporaryFile())
@@ -104,8 +113,10 @@ public class DefaultGitRepositoryApiTest {
         }
     }
 
-    @Test(expected = RepositoryException.class)
+    @Test
     public void checkoutUnknown() {
+        exceptionRule.expect(RepositoryException.class);
+
         api.checkout("unknown branch");
     }
 
@@ -162,8 +173,10 @@ public class DefaultGitRepositoryApiTest {
         }
     }
 
-    @Test(expected = RepositoryException.class)
+    @Test
     public void removeDefaultBranch() {
+        exceptionRule.expect(RepositoryException.class);
+
         api.removeBranch(configuration.getDefaultBranch());
     }
 
@@ -182,8 +195,10 @@ public class DefaultGitRepositoryApiTest {
         }
     }
 
-    @Test(expected = RepositoryException.class)
+    @Test
     public void createBranchTwice() {
+        exceptionRule.expect(RepositoryException.class);
+
         final String branch = "DefaultGitAPITest";
 
         try {
