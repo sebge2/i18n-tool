@@ -1,6 +1,7 @@
 package be.sgerard.i18n.service.github;
 
 import be.sgerard.i18n.model.repository.persistence.GitHubRepositoryEntity;
+import be.sgerard.i18n.model.workspace.WorkspaceEntity;
 import be.sgerard.i18n.service.github.external.BaseGitHubWebHookEventDto;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
@@ -30,7 +31,7 @@ public class CompositeGitHubWebHookEventHandler implements GitHubWebHookEventHan
     }
 
     @Override
-    public Mono<Void> handle(GitHubRepositoryEntity repository, BaseGitHubWebHookEventDto event) {
+    public Mono<WorkspaceEntity> handle(GitHubRepositoryEntity repository, BaseGitHubWebHookEventDto event) {
         return handlers.stream()
                 .filter(handler -> handler.support(event))
                 .findFirst()

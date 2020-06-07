@@ -70,7 +70,6 @@ public class GitHubWebHookService {
     public Mono<String> executeWebHook(RequestEntity<String> requestEntity) {
         checkUserAgent(requestEntity);
 
-        final String signature = getSignature(requestEntity);
         final Optional<GitHubEventType> eventType = getEventType(requestEntity);
 
         if (eventType.isEmpty()) {
@@ -87,6 +86,8 @@ public class GitHubWebHookService {
                 .map(GitHubRepositoryEntity.class::cast)
                 .filter(repository -> Objects.equals(repository.getName(), event.getRepository().getFullName()))
                 .flatMap(repository -> {
+                    final String signature = getSignature(requestEntity);
+
                     if (!isPayloadSignatureValid(requestEntity.getBody(), signature, repository.getWebHookSecret().orElse(null))) {
                         return Mono.error(UnauthorizedRequestException.invalidSignatureException(signature));
                     }
@@ -111,16 +112,12 @@ public class GitHubWebHookService {
     }
 
     /**
-     * Returns the signature from the specified {@link RequestEntity request}.
+     * Returns the signature from the specified {@link RequestEntity request} (can be <tt>null</tt>).
      */
     private String getSignature(RequestEntity<String> requestEntity) {
         final String signature = requestEntity.getHeaders().getFirst(SIGNATURE);
 
-        if (isEmpty(signature)) {
-            throw BadRequestException.missingHeader(SIGNATURE);
-        }
-
-        return signature;
+        return isEmpty(signature) ? null : signature;
     }
 
     /**
@@ -151,6 +148,10 @@ public class GitHubWebHookService {
     private boolean isPayloadSignatureValid(String payload, String signature, String secretKey) {
         if (secretKey == null) {
             return true;
+        }
+
+        if (signature == null) {
+            return false;
         }
 
         return MessageDigest.isEqual(

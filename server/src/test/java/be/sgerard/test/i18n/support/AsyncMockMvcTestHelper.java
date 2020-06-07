@@ -6,6 +6,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.asyncDispatch;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.request;
 
 /**
@@ -35,7 +36,13 @@ public class AsyncMockMvcTestHelper {
         }
 
         public AsyncStartedAsserter andExpectStarted() throws Exception {
-            resultActions.andExpect(request().asyncStarted());
+            try {
+                resultActions.andExpect(request().asyncStarted());
+            } catch (AssertionError e) {
+                resultActions.andDo(print());
+
+                throw e;
+            }
 
             return new AsyncStartedAsserter(resultActions);
         }

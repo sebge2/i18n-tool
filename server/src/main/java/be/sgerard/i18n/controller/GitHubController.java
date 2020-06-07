@@ -28,7 +28,7 @@ public class GitHubController {
      */
     @PostMapping(path = "/git-hub/event")
     @ApiOperation(value = "GitHub Web-hook notifying events on the repository. Only called by GitHub.com")
-    public Mono<String> handle(RequestEntity<String> requestEntity) throws Exception {
+    public Mono<String> handle(RequestEntity<String> requestEntity) {
         return webHookService.executeWebHook(requestEntity);
     }
 

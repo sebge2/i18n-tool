@@ -35,6 +35,13 @@ public enum GitHubEventType {
     }
 
     /**
+     * Returns the type used in the GitHub API.
+     */
+    public String getType() {
+        return type;
+    }
+
+    /**
      * Returns the {@link BaseGitHubWebHookEventDto DTO} associated to this type.
      */
     public Class<? extends BaseGitHubWebHookEventDto> getDtoType() {

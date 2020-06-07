@@ -1,8 +1,9 @@
 package be.sgerard.i18n.service.workspace;
 
-import be.sgerard.i18n.model.workspace.WorkspaceStatus;
+import be.sgerard.i18n.model.repository.RepositoryStatus;
 import be.sgerard.i18n.model.repository.persistence.RepositoryEntity;
 import be.sgerard.i18n.model.workspace.WorkspaceEntity;
+import be.sgerard.i18n.model.workspace.WorkspaceStatus;
 import be.sgerard.i18n.repository.workspace.WorkspaceRepository;
 import be.sgerard.i18n.service.BadRequestException;
 import be.sgerard.i18n.service.ResourceNotFoundException;
@@ -205,7 +206,13 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
      */
     private Flux<String> listBranches(String repositoryId) {
         return repositoryManager.findByIdOrDie(repositoryId)
-                .flatMapMany(translationsStrategy::listBranches);
+                .flatMapMany(repository -> {
+                    if (repository.getStatus() != RepositoryStatus.INITIALIZED) {
+                        return Flux.empty();
+                    }
+
+                    return translationsStrategy.listBranches(repository);
+                });
     }
 
     /**
