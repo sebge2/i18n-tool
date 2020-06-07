@@ -2,9 +2,10 @@ package be.sgerard.i18n.controller;
 
 import be.sgerard.i18n.model.repository.RepositoryStatus;
 import be.sgerard.i18n.model.repository.dto.*;
+import be.sgerard.test.i18n.support.GitHubTest;
 import be.sgerard.test.i18n.support.WithInternalUser;
-import org.junit.Before;
-import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,16 +24,21 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 public class RepositoryControllerTest extends AbstractControllerTest {
 
-    @Before
+    @BeforeEach
     public void setup() throws Exception {
         userTestHelper.createUser(userJohnDoeCreation().build());
+    }
+
+    @AfterEach
+    public void clear() throws Exception {
+        repositoryTestHelper.clearAll();
     }
 
     @Test
     @Transactional
     @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
     public void findAll() throws Exception {
-        final GitHubRepositoryDto repository = repositoryTestHelper.createRepository(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class);
+        final GitRepositoryDto repository = repositoryTestHelper.create(i18nToolLocalRepositoryCreationDto(), GitRepositoryDto.class).get();
 
         asyncMockMvc
                 .perform(get("/api/repository"))
@@ -47,7 +53,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
     @Transactional
     @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
     public void findById() throws Exception {
-        final GitHubRepositoryDto repository = repositoryTestHelper.createRepository(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class);
+        final GitRepositoryDto repository = repositoryTestHelper.create(i18nToolLocalRepositoryCreationDto(), GitRepositoryDto.class).get();
 
         asyncMockMvc
                 .perform(get("/api/repository/{id}", repository.getId()))
@@ -63,7 +69,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
     @Transactional
     @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
     public void findByIdNotFound() throws Exception {
-        repositoryTestHelper.createRepository(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class);
+        repositoryTestHelper.create(i18nToolLocalRepositoryCreationDto(), GitRepositoryDto.class);
 
         asyncMockMvc
                 .perform(get("/api/repository/{id}", "unknown"))
@@ -75,6 +81,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
     @Test
     @Transactional
     @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
+    @GitHubTest
     public void createGitHubRepository() throws Exception {
         final GitHubRepositoryCreationDto creationDto = i18nToolRepositoryCreationDto();
 
@@ -98,30 +105,24 @@ public class RepositoryControllerTest extends AbstractControllerTest {
     public void createGitRepository() throws Exception {
         final GitRepositoryCreationDto creationDto = i18nToolLocalRepositoryCreationDto();
 
-        final GitRepositoryDto repository = repositoryTestHelper.createRepository(creationDto, GitRepositoryDto.class);
-//        asyncMockMvc
-//                .perform(
-//                        post("/api/repository")
-//                                .contentType(MediaType.APPLICATION_JSON)
-//                                .content(objectMapper.writeValueAsString(creationDto))
-//                )
-//                .andExpectStarted()
-//                .andWaitResult()
-//                .andExpect(status().isCreated())
-//        .andDo(print())
-////                .andExpect(jsonPath("$.status").value(RepositoryStatus.NOT_INITIALIZED.name()))
-////                .andExpect(jsonPath("$.name").value("sebge2/i18n-tool"))
-////                .andExpect(jsonPath("$.location").value("https://github.com/sebge2/i18n-tool.git"))
-//        ;
-
-        final GitRepositoryDto gitRepositoryDto = repositoryTestHelper.initializeRepository(repository.getId(), GitRepositoryDto.class);
-
-        System.out.println(gitRepositoryDto);
+        asyncMockMvc
+                .perform(
+                        post("/api/repository")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(creationDto))
+                )
+                .andExpectStarted()
+                .andWaitResult()
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.status").value(RepositoryStatus.NOT_INITIALIZED.name()))
+                .andExpect(jsonPath("$.name").value(creationDto.getName()))
+                .andExpect(jsonPath("$.location").value(creationDto.getLocation()));
     }
 
     @Test
     @Transactional
     @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
+    @GitHubTest
     public void createGitHubRepositoryWrongUrl() throws Exception {
         final GitHubRepositoryCreationDto creationDto = new GitHubRepositoryCreationDto("unknown", "unknown", null);
 
@@ -139,6 +140,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
     @Test
     @Transactional
     @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
+    @GitHubTest
     public void createGitHubRepositorySameName() throws Exception {
         final GitHubRepositoryCreationDto creationDto = i18nToolRepositoryCreationDto();
 
@@ -167,13 +169,23 @@ public class RepositoryControllerTest extends AbstractControllerTest {
     @Test
     @Transactional
     @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
-    @Tag("GitHub")
+    @GitHubTest
     public void initializeGitHubRepository() throws Exception {
-        if(true){
-            throw new RuntimeException("bam");
-        }
+        final GitHubRepositoryDto repository = repositoryTestHelper.create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class).get();
 
-        final GitHubRepositoryDto repository = repositoryTestHelper.createRepository(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class);
+        asyncMockMvc
+                .perform(post("/api/repository/{id}/do?action=INITIALIZE", repository.getId()))
+                .andExpectStarted()
+                .andWaitResult()
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value(RepositoryStatus.INITIALIZED.name()));
+    }
+
+    @Test
+    @Transactional
+    @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
+    public void initializeGitRepository() throws Exception {
+        final GitRepositoryDto repository = repositoryTestHelper.create(i18nToolLocalRepositoryCreationDto(), GitRepositoryDto.class).get();
 
         asyncMockMvc
                 .perform(post("/api/repository/{id}/do?action=INITIALIZE", repository.getId()))
@@ -185,8 +197,9 @@ public class RepositoryControllerTest extends AbstractControllerTest {
     @Test
     @Transactional
     @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
+    @GitHubTest
     public void updateGitHubRepository() throws Exception {
-        final GitHubRepositoryDto repository = repositoryTestHelper.createRepository(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class);
+        final GitHubRepositoryDto repository = repositoryTestHelper.create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class).get();
 
         final GitHubRepositoryPatchDto patchDto = GitHubRepositoryPatchDto.gitHubBuilder()
                 .id(repository.getId())
@@ -210,8 +223,51 @@ public class RepositoryControllerTest extends AbstractControllerTest {
     @Test
     @Transactional
     @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
+    public void updateGitRepository() throws Exception {
+        final GitRepositoryDto repository = repositoryTestHelper.create(i18nToolLocalRepositoryCreationDto(), GitRepositoryDto.class).get();
+
+        final GitRepositoryPatchDto patchDto = GitRepositoryPatchDto.gitBuilder()
+                .id(repository.getId())
+                .defaultBranch("develop")
+                .build();
+
+        asyncMockMvc
+                .perform(
+                        patch("/api/repository/{id}", repository.getId())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(patchDto))
+                )
+                .andExpectStarted()
+                .andWaitResult()
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.accessKey").value("develop"));
+    }
+
+    @Test
+    @Transactional
+    @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
+    @GitHubTest
     public void deleteGitHubRepository() throws Exception {
-        final GitHubRepositoryDto repository = repositoryTestHelper.createRepository(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class);
+        final GitHubRepositoryDto repository = repositoryTestHelper.create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class).get();
+
+        asyncMockMvc
+                .perform(delete("/api/repository/{id}", repository.getId()))
+                .andExpectStarted()
+                .andWaitResult()
+                .andExpect(status().isNoContent());
+
+        asyncMockMvc
+                .perform(get("/api/repository/{id}", repository.getId()))
+                .andExpectStarted()
+                .andWaitResult()
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @Transactional
+    @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
+    public void deleteGitRepository() throws Exception {
+        final GitRepositoryDto repository = repositoryTestHelper.create(i18nToolLocalRepositoryCreationDto(), GitRepositoryDto.class).get();
 
         asyncMockMvc
                 .perform(delete("/api/repository/{id}", repository.getId()))

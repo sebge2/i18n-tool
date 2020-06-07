@@ -64,14 +64,14 @@ public class GitRepositoryPatchDto extends RepositoryPatchDto {
      */
     @JsonPOJOBuilder(withPrefix = "")
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class Builder extends GitRepositoryDto.BaseBuilder<GitRepositoryDto, GitRepositoryDto.Builder> {
+    public static class Builder extends BaseBuilder<GitRepositoryPatchDto, GitRepositoryPatchDto.Builder> {
 
         public Builder() {
         }
 
         @Override
-        public GitRepositoryDto build() {
-            return new GitRepositoryDto(this);
+        public GitRepositoryPatchDto build() {
+            return new GitRepositoryPatchDto(this);
         }
     }
 }
