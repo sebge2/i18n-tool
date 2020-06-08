@@ -168,7 +168,8 @@ public class RepositoryManagerImpl implements RepositoryManager {
     private Mono<RepositoryEntity> updateAndNotifyInTx(RepositoryEntity updated) {
         listener.onUpdate(updated);
 
-        return this.transactionTemplate.execute(transactionStatus -> Mono.just(repository.save(updated)));
+//        return this.transactionTemplate.execute(transactionStatus -> Mono.just(repository.save(updated))); TODO
+        return Mono.just(repository.save(updated));
     }
 
     /**

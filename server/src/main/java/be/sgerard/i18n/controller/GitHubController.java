@@ -6,6 +6,7 @@ import org.springframework.http.RequestEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import reactor.core.publisher.Mono;
 
 /**
@@ -28,6 +29,7 @@ public class GitHubController {
      */
     @PostMapping(path = "/git-hub/event")
     @ApiOperation(value = "GitHub Web-hook notifying events on the repository. Only called by GitHub.com")
+    @ResponseBody
     public Mono<String> handle(RequestEntity<String> requestEntity) {
         return webHookService.executeWebHook(requestEntity);
     }
