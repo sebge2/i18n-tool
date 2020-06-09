@@ -23,8 +23,11 @@ public class GitRepositoryHandler extends BaseGitRepositoryHandler<GitRepository
     private final AuthenticationManager authenticationManager;
     private final AppProperties appProperties;
 
-    public GitRepositoryHandler(AuthenticationManager authenticationManager,
+    public GitRepositoryHandler(GitRepositoryApiProvider apiProvider,
+                                AuthenticationManager authenticationManager,
                                 AppProperties appProperties) {
+        super(apiProvider);
+
         this.authenticationManager = authenticationManager;
         this.appProperties = appProperties;
     }

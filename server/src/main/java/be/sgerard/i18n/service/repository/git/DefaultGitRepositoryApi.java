@@ -14,7 +14,6 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.transport.CredentialsProvider;
-import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,7 +24,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -484,88 +482,4 @@ public class DefaultGitRepositoryApi implements GitRepositoryApi {
         return git;
     }
 
-    /**
-     * Git configuration.
-     */
-    public static final class Configuration {
-
-        private final URI remoteUri;
-        private final File repositoryLocation;
-
-        private String defaultBranch = DEFAULT_BRANCH;
-        private String username;
-        private String password;
-
-        public Configuration(URI remoteUri, File repositoryLocation) {
-            this.remoteUri = remoteUri;
-            this.repositoryLocation = repositoryLocation;
-        }
-
-        /**
-         * Returns the remote URI of the repository.
-         */
-        public URI getRemoteUri() {
-            return remoteUri;
-        }
-
-        /**
-         * Returns the file location of the repository.
-         */
-        public File getRepositoryLocation() {
-            return repositoryLocation;
-        }
-
-        /**
-         * Returns the default branch.
-         */
-        public String getDefaultBranch() {
-            return defaultBranch;
-        }
-
-        /**
-         * Sets the default branch.
-         */
-        public Configuration setDefaultBranch(String defaultBranch) {
-            this.defaultBranch = defaultBranch;
-            return this;
-        }
-
-        /**
-         * Returns the current username.
-         */
-        public Optional<String> getUsername() {
-            return Optional.ofNullable(username);
-        }
-
-        /**
-         * Sets the current username.
-         */
-        public Configuration setUsername(String username) {
-            this.username = username;
-            return this;
-        }
-
-        /**
-         * Returns the password to use.
-         */
-        public Optional<String> getPassword() {
-            return Optional.ofNullable(password);
-        }
-
-        /**
-         * Sets the password to use.
-         */
-        public Configuration setPassword(String password) {
-            this.password = password;
-            return this;
-        }
-
-        /**
-         * Returns {@link CredentialsProvider credentials} to use.
-         */
-        public Optional<CredentialsProvider> toCredentialsProvider() {
-            return getUsername()
-                    .map(username -> new UsernamePasswordCredentialsProvider(username, getPassword().orElse("")));
-        }
-    }
 }

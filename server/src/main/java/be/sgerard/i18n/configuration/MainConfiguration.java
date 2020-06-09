@@ -1,5 +1,7 @@
 package be.sgerard.i18n.configuration;
 
+import be.sgerard.i18n.service.repository.git.DefaultGitRepositoryApi;
+import be.sgerard.i18n.service.repository.git.GitRepositoryApiProvider;
 import org.springframework.boot.autoconfigure.session.JdbcSessionDataSourceInitializer;
 import org.springframework.boot.autoconfigure.session.JdbcSessionProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -48,5 +50,10 @@ public class MainConfiguration {
         messageSource.addBasenames("classpath:i18n/exception");
 
         return messageSource;
+    }
+
+    @Bean
+    public GitRepositoryApiProvider gitRepositoryApiProvider() {
+        return DefaultGitRepositoryApi::createAPI;
     }
 }

@@ -22,7 +22,10 @@ public abstract class BaseGitRepositoryHandler<E extends BaseGitRepositoryEntity
      */
     public static final String DEFAULT_BRANCH = "master";
 
-    protected BaseGitRepositoryHandler() {
+    private final GitRepositoryApiProvider apiProvider;
+
+    protected BaseGitRepositoryHandler(GitRepositoryApiProvider apiProvider) {
+        this.apiProvider = apiProvider;
     }
 
     /**
@@ -81,7 +84,6 @@ public abstract class BaseGitRepositoryHandler<E extends BaseGitRepositoryEntity
      * Returns the {@link GitRepositoryApi Git API} to use for the specified repository.
      */
     protected GitRepositoryApi initApiFromEntity(E repository) {
-        return DefaultGitRepositoryApi
-                .createAPI(createConfiguration(repository));
+        return apiProvider.createApi(createConfiguration(repository));
     }
 }

@@ -3,11 +3,15 @@ package be.sgerard.i18n.service.repository.git;
 import be.sgerard.i18n.service.ValidationException;
 import be.sgerard.i18n.service.repository.RepositoryApi;
 import be.sgerard.i18n.service.repository.RepositoryException;
+import org.eclipse.jgit.transport.CredentialsProvider;
+import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 /**
@@ -120,4 +124,89 @@ public interface GitRepositoryApi extends RepositoryApi {
      * Deletes the current repository.
      */
     GitRepositoryApi delete() throws RepositoryException;
+
+    /**
+     * Git configuration.
+     */
+    final class Configuration {
+
+        private final URI remoteUri;
+        private final File repositoryLocation;
+
+        private String defaultBranch = DEFAULT_BRANCH;
+        private String username;
+        private String password;
+
+        public Configuration(URI remoteUri, File repositoryLocation) {
+            this.remoteUri = remoteUri;
+            this.repositoryLocation = repositoryLocation;
+        }
+
+        /**
+         * Returns the remote URI of the repository.
+         */
+        public URI getRemoteUri() {
+            return remoteUri;
+        }
+
+        /**
+         * Returns the file location of the repository.
+         */
+        public File getRepositoryLocation() {
+            return repositoryLocation;
+        }
+
+        /**
+         * Returns the default branch.
+         */
+        public String getDefaultBranch() {
+            return defaultBranch;
+        }
+
+        /**
+         * Sets the default branch.
+         */
+        public Configuration setDefaultBranch(String defaultBranch) {
+            this.defaultBranch = defaultBranch;
+            return this;
+        }
+
+        /**
+         * Returns the current username.
+         */
+        public Optional<String> getUsername() {
+            return Optional.ofNullable(username);
+        }
+
+        /**
+         * Sets the current username.
+         */
+        public Configuration setUsername(String username) {
+            this.username = username;
+            return this;
+        }
+
+        /**
+         * Returns the password to use.
+         */
+        public Optional<String> getPassword() {
+            return Optional.ofNullable(password);
+        }
+
+        /**
+         * Sets the password to use.
+         */
+        public Configuration setPassword(String password) {
+            this.password = password;
+            return this;
+        }
+
+        /**
+         * Returns {@link CredentialsProvider credentials} to use.
+         */
+        public Optional<CredentialsProvider> toCredentialsProvider() {
+            return getUsername()
+                    .map(username -> new UsernamePasswordCredentialsProvider(username, getPassword().orElse("")));
+        }
+    }
 }

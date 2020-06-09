@@ -8,6 +8,7 @@ import be.sgerard.i18n.model.repository.persistence.GitHubRepositoryEntity;
 import be.sgerard.i18n.service.repository.RepositoryException;
 import be.sgerard.i18n.service.repository.git.BaseGitRepositoryHandler;
 import be.sgerard.i18n.service.repository.git.DefaultGitRepositoryApi;
+import be.sgerard.i18n.service.repository.git.GitRepositoryApiProvider;
 import be.sgerard.i18n.service.security.auth.AuthenticationManager;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
@@ -25,8 +26,11 @@ public class GitHubRepositoryHandler extends BaseGitRepositoryHandler<GitHubRepo
     private final AuthenticationManager authenticationManager;
     private final AppProperties appProperties;
 
-    public GitHubRepositoryHandler(AuthenticationManager authenticationManager,
+    public GitHubRepositoryHandler(GitRepositoryApiProvider apiProvider,
+                                   AuthenticationManager authenticationManager,
                                    AppProperties appProperties) {
+        super(apiProvider);
+
         this.authenticationManager = authenticationManager;
         this.appProperties = appProperties;
     }
