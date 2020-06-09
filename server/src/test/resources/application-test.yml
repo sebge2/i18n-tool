@@ -13,4 +13,3 @@ be:
   sgerard:
     i18n:
       base-directory: "${java.io.tmpdir}/i18n-tool"
-      git-hub-webhook-secret: WEBHOOK_SECRET

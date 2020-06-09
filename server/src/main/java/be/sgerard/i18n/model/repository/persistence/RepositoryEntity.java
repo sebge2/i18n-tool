@@ -1,8 +1,9 @@
 package be.sgerard.i18n.model.repository.persistence;
 
-import be.sgerard.i18n.model.workspace.WorkspaceEntity;
+import be.sgerard.i18n.model.i18n.persistence.BundlesConfigurationEntity;
 import be.sgerard.i18n.model.repository.RepositoryStatus;
 import be.sgerard.i18n.model.repository.RepositoryType;
+import be.sgerard.i18n.model.workspace.WorkspaceEntity;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -36,6 +37,9 @@ public abstract class RepositoryEntity {
 
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
     private final Collection<WorkspaceEntity> workspaces = new HashSet<>();
+
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
+    private final Collection<BundlesConfigurationEntity> bundlesConfigurations = new HashSet<>();
 
     @Version
     private int version;
@@ -111,6 +115,21 @@ public abstract class RepositoryEntity {
     public void addWorkspace(WorkspaceEntity workspace) {
         this.workspaces.add(workspace);
     }
+
+    /**
+     * Returns the {@link BundlesConfigurationEntity configurations of bundles}.
+     */
+    public Collection<BundlesConfigurationEntity> getBundlesConfigurations() {
+        return unmodifiableCollection(bundlesConfigurations);
+    }
+
+    /**
+     * Adds the {@link BundlesConfigurationEntity configuration of bundles}.
+     */
+    public void addBundlesConfiguration(BundlesConfigurationEntity bundlesConfiguration) {
+        this.bundlesConfigurations.add(bundlesConfiguration);
+    }
+
 
     /**
      * Creates a deep copy of this entity.

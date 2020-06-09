@@ -7,5 +7,5 @@ public enum BundleType {
 
     JAVA,
 
-    JSON_ICU
+    JSON
 }
