@@ -3,6 +3,7 @@ package be.sgerard.test.i18n;
 import be.sgerard.i18n.model.repository.RepositoryStatus;
 import be.sgerard.i18n.model.repository.dto.RepositoryCreationDto;
 import be.sgerard.i18n.model.repository.dto.RepositoryDto;
+import be.sgerard.i18n.model.repository.dto.RepositoryPatchDto;
 import be.sgerard.i18n.model.repository.dto.RepositorySummaryDto;
 import be.sgerard.test.i18n.support.AsyncMockMvcTestHelper;
 import be.sgerard.test.i18n.support.JsonHolderResultHandler;
@@ -14,8 +15,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.Collection;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -35,6 +35,10 @@ public class RepositoryTestHelper {
         this.mockMvc = mockMvc;
         this.objectMapper = objectMapper;
         this.workspaceTestHelper = workspaceTestHelper;
+    }
+
+    public StepCreatedRepository<RepositoryDto> create(RepositoryCreationDto creationDto) throws Exception {
+        return create(creationDto, RepositoryDto.class);
     }
 
     public <R extends RepositoryDto> StepCreatedRepository<R> create(RepositoryCreationDto creationDto, Class<R> expectedResult) throws Exception {
@@ -103,6 +107,24 @@ public class RepositoryTestHelper {
                     .andDo(resultHandler);
 
             return new StepInitializedRepository<>(resultHandler.getValue());
+        }
+
+        @SuppressWarnings("unchecked")
+        public StepCreatedRepository<R> update(RepositoryPatchDto.BaseBuilder<?, ?> patch) throws Exception {
+            final JsonHolderResultHandler<R> resultHandler = new JsonHolderResultHandler<>(objectMapper, (Class<R>) repository.getClass());
+
+            mockMvc
+                    .perform(
+                            patch("/api/repository/{id}", repository.getId())
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .content(objectMapper.writeValueAsString(patch.id(repository.getId()).build()))
+                    )
+                    .andExpectStarted()
+                    .andWaitResult()
+                    .andExpect(status().isOk())
+                    .andDo(resultHandler);
+
+            return this;
         }
 
         public R get() {
