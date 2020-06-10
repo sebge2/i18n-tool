@@ -24,7 +24,14 @@ import static java.util.stream.Collectors.toList;
  * The local repository is structured as follow:
  * <ul>
  *     <li>a file containing the remote branches,</li>
- *     <li>a directory per branch.</li>
+ *     <li>/remote</li>
+ *     <ul>
+ *         <li>a directory per branch.</li>
+ *     </ul>
+ *     <li>/local</li>
+ *     <ul>
+ *          <li>a directory per branch.</li>
+ *     </ul>
  * </ul>
  *
  * @author Sebastien Gerard
@@ -32,6 +39,10 @@ import static java.util.stream.Collectors.toList;
 public class GitRepositoryApiMock extends BaseGitRepositoryApi {
 
     public static final String REMOTE_BRANCHES_FILE = "remote-branches.txt";
+
+    public static final String REMOTE_DIRECTORY = "remote";
+
+    public static final String LOCAL_DIRECTORY = "local";
 
     private final GitRepositoryApi.Configuration configuration;
     private final GitRepositoryMock repository;
@@ -71,10 +82,18 @@ public class GitRepositoryApiMock extends BaseGitRepositoryApi {
         checkNoModifiedFile();
 
         try {
-            FileUtils.writeLines(getRemoteBranchesFile(), repository.listBranches(), false);
+            final List<String> branches = repository.listBranches();
 
-            // TODO copy to local remote branch
-            repository.copyTo(getCurrentBranch(), getLocalBranchDir(getCurrentBranch()));
+            FileUtils.writeLines(getRemoteBranchesFile(), branches, false);
+
+            for (String branch : branches) {
+                final File remoteBranchDir = getRemoteBranchDir(branch);
+
+                cleanDirectoryIfExists(remoteBranchDir);
+                repository.copyTo(branch, remoteBranchDir);
+            }
+
+            copyFromTo(getLocalBranchDir(getCurrentBranch()), getRemoteBranchDir(getCurrentBranch()));
 
             return this;
         } catch (Exception e) {
@@ -122,8 +141,11 @@ public class GitRepositoryApiMock extends BaseGitRepositoryApi {
             return this;
         } else if (listRemoteBranches().contains(branch)) {
             try {
-                // TODO copy from local branch
-                repository.copyTo(getCurrentBranch(), getLocalBranchDir(getCurrentBranch()));
+                final File localBranchDir = getLocalBranchDir(getCurrentBranch());
+                final File remoteBranchDir = getRemoteBranchDir(getCurrentBranch());
+
+                cleanDirectoryIfExists(localBranchDir);
+                copyFromTo(localBranchDir, remoteBranchDir);
 
                 return this;
             } catch (Exception e) {
@@ -136,7 +158,15 @@ public class GitRepositoryApiMock extends BaseGitRepositoryApi {
 
     @Override
     public GitRepositoryApi revert(File file) throws RepositoryException {
-        return this; // TODO for revert we need to keep the content of the remote
+        try {
+            FileUtils.copyFile(new File(getRemoteBranchDir(getCurrentBranch()), file.toString()), new File(getLocalBranchDir(getCurrentBranch()), file.toString()));
+
+            return this;
+        } catch (Exception e) {
+            throw RepositoryException.onRevert(e);
+        } finally {
+            removeModifiedFile(file);
+        }
     }
 
     @Override
@@ -147,6 +177,10 @@ public class GitRepositoryApiMock extends BaseGitRepositoryApi {
     @Override
     public GitRepositoryApi push() throws RepositoryException {
         try {
+            cleanDirectoryIfExists(getRemoteBranchDir(getCurrentBranch()));
+
+            copyFromTo(getRemoteBranchDir(getCurrentBranch()), getLocalBranchDir(getCurrentBranch()));
+
             repository.copyFrom(getCurrentBranch(), getLocalBranchDir(getCurrentBranch()));
             return this;
         } catch (Exception e) {
@@ -161,7 +195,7 @@ public class GitRepositoryApiMock extends BaseGitRepositoryApi {
 
     @Override
     protected void doCreateBranch(String branch) throws Exception {
-        FileUtils.copyDirectory(getLocalBranchDir(getCurrentBranch()), getLocalBranchDir(branch));
+        copyFromTo(getLocalBranchDir(branch), getRemoteBranchDir(getCurrentBranch()));
     }
 
     @Override
@@ -170,10 +204,24 @@ public class GitRepositoryApiMock extends BaseGitRepositoryApi {
     }
 
     private File getLocalBranchDir(String branch) {
-        return new File(configuration.getRepositoryLocation(), branch);
+        return new File(new File(configuration.getRepositoryLocation(), LOCAL_DIRECTORY), branch);
+    }
+
+    private File getRemoteBranchDir(String branch) {
+        return new File(new File(configuration.getRepositoryLocation(), REMOTE_DIRECTORY), branch);
     }
 
     private File getRemoteBranchesFile() {
         return new File(configuration.getRepositoryLocation(), REMOTE_BRANCHES_FILE);
+    }
+
+    private void cleanDirectoryIfExists(File remoteBranchDir) throws IOException {
+        if (remoteBranchDir.exists()) {
+            FileUtils.cleanDirectory(remoteBranchDir);
+        }
+    }
+
+    private void copyFromTo(File from, File to) throws IOException {
+        FileUtils.copyDirectory(to, from);
     }
 }
