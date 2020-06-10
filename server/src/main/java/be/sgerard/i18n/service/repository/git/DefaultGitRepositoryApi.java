@@ -3,7 +3,6 @@ package be.sgerard.i18n.service.repository.git;
 import be.sgerard.i18n.model.validation.ValidationMessage;
 import be.sgerard.i18n.model.validation.ValidationResult;
 import be.sgerard.i18n.service.ValidationException;
-import be.sgerard.i18n.service.i18n.file.TranslationFileUtils;
 import be.sgerard.i18n.service.repository.RepositoryException;
 import org.apache.commons.io.FileUtils;
 import org.eclipse.jgit.api.CreateBranchCommand;
@@ -14,21 +13,14 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.transport.CredentialsProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.io.*;
-import java.net.URI;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
 
-import static be.sgerard.i18n.service.i18n.file.TranslationFileUtils.removeParentFile;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 
@@ -37,32 +29,7 @@ import static java.util.stream.Collectors.toList;
  *
  * @author Sebastien Gerard
  */
-public class DefaultGitRepositoryApi implements GitRepositoryApi {
-
-    /**
-     * Pattern of a remote branch.
-     */
-    public static final Pattern REMOTE_BRANCH_PATTERN = Pattern.compile("^refs/remotes/\\w+/(.+)$");
-
-    /**
-     * Pattern of a local branch.
-     */
-    public static final Pattern LOCAL_BRANCH_PATTERN = Pattern.compile("^(master)|refs/heads/(.+)$");
-
-    /**
-     * Validation message key specifying that Git credentials are invalid.
-     */
-    public static final String INVALID_CREDENTIALS = "validation.git.invalid-credentials";
-
-    /**
-     * Validation message key specifying that the Git URL are invalid.
-     */
-    public static final String INVALID_URL = "validation.git.invalid-url";
-
-    /**
-     * Validation message key specifying that there was an error accessing the repository;
-     */
-    public static final String ERROR_ACCESSING = "validation.git.error-accessing";
+public class DefaultGitRepositoryApi extends BaseGitRepositoryApi {
 
     /**
      * Creates a new {@link GitRepositoryApi API object} using the specified {@link Configuration configuration}.
@@ -71,52 +38,16 @@ public class DefaultGitRepositoryApi implements GitRepositoryApi {
         return new DefaultGitRepositoryApi(configuration);
     }
 
-    private static final Logger logger = LoggerFactory.getLogger(DefaultGitRepositoryApi.class);
-
-    private final URI remoteUri;
-    private final File repositoryLocation;
     private final CredentialsProvider credentialsProvider;
     private final String defaultBranch;
 
     private Git git;
-    private final List<File> modifiedFiles = new ArrayList<>();
-    private final File tempDirectory;
-    private boolean closed = false;
 
     public DefaultGitRepositoryApi(Configuration configuration) {
-        this.remoteUri = configuration.getRemoteUri();
-        this.repositoryLocation = configuration.getRepositoryLocation();
+        super(configuration);
+
         this.credentialsProvider = configuration.toCredentialsProvider().orElse(null);
         this.defaultBranch = configuration.getDefaultBranch();
-
-        try {
-            this.tempDirectory = Files.createTempDirectory("repo-api-").toFile();
-        } catch (IOException e) {
-            throw new RuntimeException("Cannot create temporary directory.", e);
-        }
-    }
-
-    @Override
-    public GitRepositoryApi init() throws RepositoryException {
-        try {
-            if (repositoryLocation.exists()) {
-                FileUtils.cleanDirectory(repositoryLocation);
-            }
-
-            Git.cloneRepository()
-                    .setCredentialsProvider(credentialsProvider)
-                    .setURI(remoteUri.toString())
-                    .setDirectory(repositoryLocation)
-                    .setBranchesToClone(singletonList(defaultBranch))
-                    .setBranch(defaultBranch)
-                    .call();
-
-            checkout(defaultBranch);
-
-            return this;
-        } catch (Exception e) {
-            throw RepositoryException.onOpen(e);
-        }
     }
 
     @Override
@@ -210,47 +141,6 @@ public class DefaultGitRepositoryApi implements GitRepositoryApi {
     }
 
     @Override
-    public GitRepositoryApi createBranch(String branch) throws RepositoryException {
-        checkNoModifiedFile();
-
-        if (listRemoteBranches().contains(branch) || listLocalBranches().contains(branch)) {
-            throw RepositoryException.onBranchAlreadyExist(branch);
-        }
-
-        try {
-            openGit().checkout()
-                    .setCreateBranch(true)
-                    .setName(branch)
-                    .call();
-
-            return this;
-        } catch (Exception e) {
-            throw RepositoryException.onBranchCreation(branch, e);
-        }
-    }
-
-    @Override
-    public GitRepositoryApi removeBranch(String branch) throws RepositoryException {
-        if (Objects.equals(branch, DEFAULT_BRANCH)) {
-            throw RepositoryException.onForbiddenBranchDeletion(branch);
-        }
-
-        checkNoModifiedFile();
-
-        if (Objects.equals(branch, getCurrentBranch())) {
-            checkout(DEFAULT_BRANCH);
-        }
-
-        try {
-            openGit().branchDelete().setBranchNames(branch).setForce(true).call();
-
-            return this;
-        } catch (Exception e) {
-            throw RepositoryException.onBranchDeletion(branch, e);
-        }
-    }
-
-    @Override
     public GitRepositoryApi pull() throws RepositoryException {
         checkNoModifiedFile();
 
@@ -276,72 +166,6 @@ public class DefaultGitRepositoryApi implements GitRepositoryApi {
     }
 
     @Override
-    public Stream<File> listAllFiles(File file) throws RepositoryException {
-        try {
-            return TranslationFileUtils.listFiles(getFQNFile(file))
-                    .map(subFile -> removeParentFile(repositoryLocation, subFile));
-        } catch (Exception e) {
-            throw RepositoryException.onFileListing(file, e);
-        }
-    }
-
-    @Override
-    public Stream<File> listNormalFiles(File file) throws RepositoryException {
-        try {
-            return TranslationFileUtils.listFiles(getFQNFile(file))
-                    .filter(File::isFile)
-                    .map(subFile -> removeParentFile(repositoryLocation, subFile));
-        } catch (Exception e) {
-            throw RepositoryException.onFileListing(file, e);
-        }
-    }
-
-    @Override
-    public Stream<File> listDirectories(File file) throws RepositoryException {
-        try {
-            return TranslationFileUtils.listFiles(getFQNFile(file))
-                    .filter(File::isDirectory)
-                    .map(subFile -> removeParentFile(repositoryLocation, subFile));
-        } catch (Exception e) {
-            throw RepositoryException.onFileListing(file, e);
-        }
-    }
-
-    @Override
-    public InputStream openInputStream(File file) throws RepositoryException {
-        try {
-            return new FileInputStream(getFQNFile(file));
-        } catch (FileNotFoundException e) {
-            throw RepositoryException.onFileReading(file, e);
-        }
-    }
-
-    @Override
-    public OutputStream openOutputStream(File file) throws RepositoryException {
-        try {
-            modifiedFiles.add(file);
-
-            return new FileOutputStream(getFQNFile(file));
-        } catch (FileNotFoundException e) {
-            throw RepositoryException.onFileWriting(file, e);
-        }
-    }
-
-    @Override
-    public File openAsTemp(File file) throws RepositoryException {
-        try {
-            final Path target = getFQNFile(file).toPath();
-            final Path link = new File(tempDirectory, file.toString()).toPath();
-
-            Files.createDirectories(link.getParent());
-
-            return Files.createSymbolicLink(link, target).toFile();
-        } catch (IOException e) {
-            throw RepositoryException.onFileWriting(file, e);
-        }
-    }
-
-    @Override
     public GitRepositoryApi revert(File file) throws RepositoryException {
         try {
             openGit().checkout().addPath(file.toString()).call();
@@ -350,7 +174,7 @@ public class DefaultGitRepositoryApi implements GitRepositoryApi {
         } catch (Exception e) {
             throw RepositoryException.onRevert(e);
         } finally {
-            modifiedFiles.remove(file);
+            removeModifiedFile(file);
         }
     }
 
@@ -383,61 +207,29 @@ public class DefaultGitRepositoryApi implements GitRepositoryApi {
     }
 
     @Override
-    public GitRepositoryApi delete() throws RepositoryException {
-        try {
-            if (repositoryLocation.exists()) {
-                FileUtils.deleteDirectory(repositoryLocation);
-            }
+    protected void doInit() throws GitAPIException {
+        Git.cloneRepository()
+                .setCredentialsProvider(credentialsProvider)
+                .setURI(remoteUri.toString())
+                .setDirectory(repositoryLocation)
+                .setBranchesToClone(singletonList(defaultBranch))
+                .setBranch(defaultBranch)
+                .call();
 
-            return this;
-        } catch (Exception e) {
-            throw RepositoryException.onDelete(e);
-        }
+        checkout(defaultBranch);
     }
 
     @Override
-    public void close() {
-        try {
-            try {
-                try {
-                    if (tempDirectory.exists()) {
-                        FileUtils.forceDelete(tempDirectory);
-                    }
-                } catch (IOException e) {
-                    logger.warn("Cannot delete temporary directory [" + tempDirectory + "].");
-                }
-
-                checkNoModifiedFile();
-            } finally {
-                checkout(DEFAULT_BRANCH);
-            }
-        } finally {
-            this.closed = true;
-        }
+    protected void doCreateBranch(String branch) throws Exception {
+        openGit().checkout()
+                .setCreateBranch(true)
+                .setName(branch)
+                .call();
     }
 
     @Override
-    public boolean isClosed() {
-        return closed;
-    }
-
-    /**
-     * Checks that no file has been modified and not committed.
-     */
-    private void checkNoModifiedFile() {
-        if (!modifiedFiles.isEmpty()) {
-            final ArrayList<File> files = new ArrayList<>(modifiedFiles);
-
-            for (File modifiedFile : files) {
-                try {
-                    revert(modifiedFile);
-                } catch (RepositoryException e) {
-                    logger.error("Error while reverting.", e);
-                }
-            }
-
-            throw new IllegalStateException("There are modified files that have not been committed: " + files + ".");
-        }
+    protected void doRemoveBranch(String branch) throws Exception {
+        openGit().branchDelete().setBranchNames(branch).setForce(true).call();
     }
 
     /**
@@ -464,13 +256,6 @@ public class DefaultGitRepositoryApi implements GitRepositoryApi {
         } catch (Exception e) {
             throw RepositoryException.onBranchListing(e);
         }
-    }
-
-    /**
-     * Returns the fully-qualified file based on the specified relative file.
-     */
-    private File getFQNFile(File file) {
-        return new File(repositoryLocation, file.toString());
     }
 
     /**
