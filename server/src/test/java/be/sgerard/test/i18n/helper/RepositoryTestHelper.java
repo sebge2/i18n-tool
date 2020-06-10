@@ -1,11 +1,10 @@
-package be.sgerard.test.i18n;
+package be.sgerard.test.i18n.helper;
 
 import be.sgerard.i18n.model.repository.RepositoryStatus;
 import be.sgerard.i18n.model.repository.dto.RepositoryCreationDto;
 import be.sgerard.i18n.model.repository.dto.RepositoryDto;
 import be.sgerard.i18n.model.repository.dto.RepositoryPatchDto;
 import be.sgerard.i18n.model.repository.dto.RepositorySummaryDto;
-import be.sgerard.test.i18n.support.AsyncMockMvcTestHelper;
 import be.sgerard.test.i18n.support.JsonHolderResultHandler;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;

@@ -1,8 +1,8 @@
 package be.sgerard.i18n.controller;
 
 import be.sgerard.i18n.AbstractIntegrationTest;
-import be.sgerard.test.i18n.*;
-import be.sgerard.test.i18n.support.AsyncMockMvcTestHelper;
+import be.sgerard.test.i18n.helper.*;
+import be.sgerard.test.i18n.helper.AsyncMockMvcTestHelper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.MockMvc;

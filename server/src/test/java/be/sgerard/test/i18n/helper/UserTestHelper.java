@@ -1,4 +1,4 @@
-package be.sgerard.test.i18n;
+package be.sgerard.test.i18n.helper;
 
 import be.sgerard.i18n.model.security.user.UserCreationDto;
 import be.sgerard.i18n.model.security.user.UserDto;

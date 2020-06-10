@@ -1,4 +1,4 @@
-package be.sgerard.test.i18n;
+package be.sgerard.test.i18n.helper;
 
 import be.sgerard.i18n.model.i18n.dto.TranslationLocaleCreationDto;
 import be.sgerard.i18n.model.i18n.dto.TranslationLocaleDto;

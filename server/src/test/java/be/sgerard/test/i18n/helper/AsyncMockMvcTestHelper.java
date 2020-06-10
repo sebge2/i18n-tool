@@ -1,4 +1,4 @@
-package be.sgerard.test.i18n.support;
+package be.sgerard.test.i18n.helper;
 
 import org.springframework.stereotype.Component;
 import org.springframework.test.web.servlet.MockMvc;
