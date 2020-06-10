@@ -25,7 +25,7 @@ public class TranslationLocaleControllerTest extends AbstractControllerTest {
     @Transactional
     @WithMockUser(username = "user-01", roles = {"MEMBER_OF_ORGANIZATION"})
     public void findAllTranslationsNonAdminAllowed() throws Exception {
-        mockMvc.perform(request(HttpMethod.GET, "/api/translation/locale/"))
+        mvc.perform(request(HttpMethod.GET, "/api/translation/locale/"))
                 .andExpect(status().is(OK.value()));
     }
 
@@ -33,9 +33,9 @@ public class TranslationLocaleControllerTest extends AbstractControllerTest {
     @Transactional
     @WithMockUser(username = "user-01", roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
     public void findAllTranslations() throws Exception {
-        final TranslationLocaleDto translationLocale = localeTestHelper.createLocale(frBeWallonLocaleCreationDto().build());
+        final TranslationLocaleDto translationLocale = locale.createLocale(frBeWallonLocaleCreationDto().build());
 
-        mockMvc.perform(request(HttpMethod.GET, "/api/translation/locale/"))
+        mvc.perform(request(HttpMethod.GET, "/api/translation/locale/"))
                 .andExpect(status().is(OK.value()))
                 .andExpect(jsonPath("$[?(@.language=='" + translationLocale.getLanguage() + "')]").exists())
                 .andExpect(jsonPath("$[?(@.icon=='" + translationLocale.getIcon() + "')]").exists())
@@ -48,10 +48,10 @@ public class TranslationLocaleControllerTest extends AbstractControllerTest {
     public void create() throws Exception {
         final TranslationLocaleCreationDto translationLocale = frBeWallonLocaleCreationDto().build();
 
-        final int numberLocalesBefore = localeTestHelper.getLocales().size();
+        final int numberLocalesBefore = locale.getLocales().size();
         final JsonHolderResultHandler<TranslationLocaleDto> handler = new JsonHolderResultHandler<>(objectMapper, TranslationLocaleDto.class);
 
-        mockMvc
+        mvc
                 .perform(
                         request(HttpMethod.POST, "/api/translation/locale/")
                                 .contentType(MediaType.APPLICATION_JSON_UTF8)
@@ -64,11 +64,11 @@ public class TranslationLocaleControllerTest extends AbstractControllerTest {
                 .andExpect(jsonPath("$.region").value(translationLocale.getRegion()))
                 .andExpect(jsonPath("$.variants[0]").value(translationLocale.getVariants().get(0)));
 
-        final int numberLocalesAfter = localeTestHelper.getLocales().size();
+        final int numberLocalesAfter = locale.getLocales().size();
 
         assertThat(numberLocalesAfter).isEqualTo(numberLocalesBefore + 1);
 
-        final TranslationLocaleDto actual = localeTestHelper.getLocaleByIdOrDie(handler.getValue().getId());
+        final TranslationLocaleDto actual = locale.getLocaleByIdOrDie(handler.getValue().getId());
 
         assertThat(actual.getLanguage()).isEqualTo(translationLocale.getLanguage());
         assertThat(actual.getIcon()).isEqualTo(translationLocale.getIcon());
@@ -82,15 +82,15 @@ public class TranslationLocaleControllerTest extends AbstractControllerTest {
     @Transactional
     @WithMockUser(username = "user-01", roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
     public void delete() throws Exception {
-        final TranslationLocaleDto translationLocale = localeTestHelper.createLocale(frBeWallonLocaleCreationDto().build());
+        final TranslationLocaleDto translationLocale = locale.createLocale(frBeWallonLocaleCreationDto().build());
 
-        final int numberLocalesBefore = localeTestHelper.getLocales().size();
+        final int numberLocalesBefore = locale.getLocales().size();
 
-        mockMvc
+        mvc
                 .perform(request(HttpMethod.DELETE, "/api/translation/locale/" + translationLocale.getId()))
                 .andExpect(status().is(NO_CONTENT.value()));
 
-        final int numberLocalesAfter = localeTestHelper.getLocales().size();
+        final int numberLocalesAfter = locale.getLocales().size();
 
         assertThat(numberLocalesAfter).isEqualTo(numberLocalesBefore - 1);
     }

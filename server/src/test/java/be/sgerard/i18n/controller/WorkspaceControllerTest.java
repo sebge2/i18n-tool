@@ -25,7 +25,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
 
     @Before
     public void setup() throws Exception {
-        userTestHelper.createUser(userJohnDoeCreation().build());
+        user.createUser(userJohnDoeCreation().build());
     }
 
     @Test
@@ -33,9 +33,9 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
     @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
     @GitHubTest
     public void synchronizeGitHubRepository() throws Exception {
-        final GitHubRepositoryDto repository = repositoryTestHelper.create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class).initialize().get();
+        final GitHubRepositoryDto repository = this.repository.create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class).initialize().get();
 
-        asyncMockMvc
+        asyncMvc
                 .perform(post("/api/repository/{id}/workspace/do?action=SYNCHRONIZE", repository.getId()))
                 .andExpectStarted()
                 .andWaitResult()
@@ -47,9 +47,9 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
     @Transactional
     @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
     public void synchronizeGitRepository() throws Exception {
-        final GitRepositoryDto repository = repositoryTestHelper.create(i18nToolLocalRepositoryCreationDto(), GitRepositoryDto.class).initialize().get();
+        final GitRepositoryDto repository = this.repository.create(i18nToolLocalRepositoryCreationDto(), GitRepositoryDto.class).initialize().get();
 
-        asyncMockMvc
+        asyncMvc
                 .perform(post("/api/repository/{id}/workspace/do?action=SYNCHRONIZE", repository.getId()))
                 .andExpectStarted()
                 .andWaitResult()
@@ -62,14 +62,14 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
     @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
     @GitHubTest
     public void initializeGitHubRepository() throws Exception {
-        final WorkspaceDto masterWorkspace = repositoryTestHelper
+        final WorkspaceDto masterWorkspace = repository
                 .create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class)
                 .initialize()
                 .workspaces()
                 .sync()
                 .getOrDie("master");
 
-        asyncMockMvc
+        asyncMvc
                 .perform(post("/api/workspace/{id}/do?action=INITIALIZE", masterWorkspace.getId()))
                 .andExpectStarted()
                 .andWaitResult()
@@ -81,14 +81,14 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
     @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
     @GitHubTest
     public void initializeGitRepository() throws Exception {
-        final WorkspaceDto masterWorkspace = repositoryTestHelper
+        final WorkspaceDto masterWorkspace = repository
                 .create(i18nToolLocalRepositoryCreationDto(), GitRepositoryDto.class)
                 .initialize()
                 .workspaces()
                 .sync()
                 .getOrDie("master");
 
-        asyncMockMvc
+        asyncMvc
                 .perform(post("/api/workspace/{id}/do?action=INITIALIZE", masterWorkspace.getId()))
                 .andExpectStarted()
                 .andWaitResult()

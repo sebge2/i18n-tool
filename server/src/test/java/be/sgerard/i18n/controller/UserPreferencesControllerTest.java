@@ -23,7 +23,7 @@ public class UserPreferencesControllerTest extends AbstractControllerTest {
     @Transactional
     @WithMockUser(username = UserManager.ADMIN_USER_NAME, roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
     public void getUserPreferences() throws Exception {
-        mockMvc.perform(request(HttpMethod.GET, "/api/user/" + userTestHelper.getAdminUser().getId() + "/preferences"))
+        mvc.perform(request(HttpMethod.GET, "/api/user/" + user.getAdminUser().getId() + "/preferences"))
                 .andExpect(status().is(OK.value()));
     }
 
@@ -32,16 +32,16 @@ public class UserPreferencesControllerTest extends AbstractControllerTest {
     @WithMockUser(username = UserManager.ADMIN_USER_NAME, roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
     public void updateUserPreferences() throws Exception {
         try {
-            mockMvc
+            mvc
                     .perform(
-                            request(HttpMethod.PUT, "/api/user/" + userTestHelper.getAdminUser().getId() + "/preferences")
+                            request(HttpMethod.PUT, "/api/user/" + user.getAdminUser().getId() + "/preferences")
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .content(objectMapper.writeValueAsString(UserPreferencesDto.builder().toolLocale(ToolLocale.FRENCH).build()))
                     )
                     .andExpect(status().is(OK.value()))
                     .andExpect(jsonPath("$.toolLocale").value(ToolLocale.FRENCH.name()));
         } finally {
-            userTestHelper.resetUserPreferences(UserManager.ADMIN_USER_NAME);
+            user.resetUserPreferences(UserManager.ADMIN_USER_NAME);
         }
     }
 

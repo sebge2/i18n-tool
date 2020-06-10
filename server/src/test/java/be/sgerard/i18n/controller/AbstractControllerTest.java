@@ -1,10 +1,7 @@
 package be.sgerard.i18n.controller;
 
 import be.sgerard.i18n.AbstractIntegrationTest;
-import be.sgerard.test.i18n.RepositoryTestHelper;
-import be.sgerard.test.i18n.TranslationLocaleTestHelper;
-import be.sgerard.test.i18n.UserTestHelper;
-import be.sgerard.test.i18n.WorkspaceTestHelper;
+import be.sgerard.test.i18n.*;
 import be.sgerard.test.i18n.support.AsyncMockMvcTestHelper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,21 +16,24 @@ public abstract class AbstractControllerTest extends AbstractIntegrationTest {
     protected ObjectMapper objectMapper;
 
     @Autowired
-    protected TranslationLocaleTestHelper localeTestHelper;
+    protected TranslationLocaleTestHelper locale;
 
     @Autowired
-    protected UserTestHelper userTestHelper;
+    protected UserTestHelper user;
 
     @Autowired
-    protected RepositoryTestHelper repositoryTestHelper;
+    protected RepositoryTestHelper repository;
 
     @Autowired
-    protected WorkspaceTestHelper workspaceTestHelper;
+    protected WorkspaceTestHelper workspace;
 
     @Autowired
-    protected MockMvc mockMvc;
+    protected GitRepositoryApiTestHelper gitApi;
 
     @Autowired
-    protected AsyncMockMvcTestHelper asyncMockMvc;
+    protected MockMvc mvc;
+
+    @Autowired
+    protected AsyncMockMvcTestHelper asyncMvc;
 
 }

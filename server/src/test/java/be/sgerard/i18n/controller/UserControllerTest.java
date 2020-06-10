@@ -26,9 +26,9 @@ public class UserControllerTest extends AbstractControllerTest {
     @Transactional
     @WithMockUser(username = UserManager.ADMIN_USER_NAME, roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
     public void findAllUsers() throws Exception {
-        final UserDto johnDoe = userTestHelper.createUser(userJohnDoeCreation().build());
+        final UserDto johnDoe = user.createUser(userJohnDoeCreation().build());
 
-        mockMvc.perform(request(HttpMethod.GET, "/api/user"))
+        mvc.perform(request(HttpMethod.GET, "/api/user"))
                 .andExpect(status().is(OK.value()))
                 .andExpect(jsonPath("$", hasSize(greaterThanOrEqualTo(2))))
                 .andExpect(jsonPath("$[?(@.username=='" + johnDoe.getUsername() + "')]").exists())
@@ -39,9 +39,9 @@ public class UserControllerTest extends AbstractControllerTest {
     @Transactional
     @WithMockUser(username = UserManager.ADMIN_USER_NAME, roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
     public void getUserById() throws Exception {
-        final UserDto johnDoe = userTestHelper.createUser(userJohnDoeCreation().build());
+        final UserDto johnDoe = user.createUser(userJohnDoeCreation().build());
 
-        mockMvc.perform(request(HttpMethod.GET, "/api/user/" + johnDoe.getId()))
+        mvc.perform(request(HttpMethod.GET, "/api/user/" + johnDoe.getId()))
                 .andExpect(status().is(OK.value()))
                 .andExpect(jsonPath("$.id").value(johnDoe.getId()))
                 .andExpect(jsonPath("$.username").value(johnDoe.getUsername()))
@@ -55,9 +55,9 @@ public class UserControllerTest extends AbstractControllerTest {
     @Transactional
     @WithMockUser(username = UserManager.ADMIN_USER_NAME, roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
     public void updateUser() throws Exception {
-        final UserDto johnDoe = userTestHelper.createUser(userJohnDoeCreation().build());
+        final UserDto johnDoe = user.createUser(userJohnDoeCreation().build());
 
-        mockMvc
+        mvc
                 .perform(
                         request(HttpMethod.PATCH, "/api/user/" + johnDoe.getId())
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -83,9 +83,9 @@ public class UserControllerTest extends AbstractControllerTest {
     @Transactional
     @WithMockUser(username = UserManager.ADMIN_USER_NAME, roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
     public void updateUserRoleNotAssignable() throws Exception {
-        final UserDto johnDoe = userTestHelper.createUser(userJohnDoeCreation().build());
+        final UserDto johnDoe = user.createUser(userJohnDoeCreation().build());
 
-        mockMvc
+        mvc
                 .perform(
                         request(HttpMethod.PATCH, "/api/user/" + johnDoe.getId())
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -102,12 +102,12 @@ public class UserControllerTest extends AbstractControllerTest {
     @Transactional
     @WithMockUser(username = UserManager.ADMIN_USER_NAME, roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
     public void deleteUser() throws Exception {
-        final UserDto johnDoe = userTestHelper.createUser(userJohnDoeCreation().build());
+        final UserDto johnDoe = user.createUser(userJohnDoeCreation().build());
 
-        mockMvc.perform(request(HttpMethod.DELETE, "/api/user/" + johnDoe.getId()))
+        mvc.perform(request(HttpMethod.DELETE, "/api/user/" + johnDoe.getId()))
                 .andExpect(status().is(NO_CONTENT.value()));
 
-        mockMvc.perform(request(HttpMethod.GET, "/api/user/" + johnDoe.getId()))
+        mvc.perform(request(HttpMethod.GET, "/api/user/" + johnDoe.getId()))
                 .andExpect(status().is(NOT_FOUND.value()));
     }
 
