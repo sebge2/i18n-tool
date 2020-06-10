@@ -355,12 +355,14 @@ public class DefaultGitRepositoryApi implements GitRepositoryApi {
     }
 
     @Override
-    public GitRepositoryApi commitAll(String message, String username, String email) throws RepositoryException {
+    public GitRepositoryApi commitAll(String message) throws RepositoryException {
         try {
+            //                final UserDto currentUser = credentialsProvider.getCurrentUserOrFail().getUser(); TODO
+
             openGit().add().addFilepattern(".").call();
 
             openGit().commit()
-                    .setAuthor(username, email)
+//                    .setAuthor(username, email) TODO
                     .setMessage(message)
                     .call();
 
