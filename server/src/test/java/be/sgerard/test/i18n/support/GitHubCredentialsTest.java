@@ -14,6 +14,6 @@ import java.lang.annotation.Target;
  */
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-@Tag("GitHub")
-public @interface GitHubTest {
+@Tag("GitHubCredentials")
+public @interface GitHubCredentialsTest {
 }

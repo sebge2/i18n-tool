@@ -288,7 +288,7 @@
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <excludedGroups>GitHub</excludedGroups>
+                    <excludedGroups>GitHubCredentials</excludedGroups>
                 </configuration>
             </plugin>
             <plugin>

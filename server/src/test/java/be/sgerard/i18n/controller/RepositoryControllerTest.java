@@ -2,7 +2,6 @@ package be.sgerard.i18n.controller;
 
 import be.sgerard.i18n.model.repository.RepositoryStatus;
 import be.sgerard.i18n.model.repository.dto.*;
-import be.sgerard.test.i18n.support.GitHubTest;
 import be.sgerard.test.i18n.support.WithInternalUser;
 import org.junit.jupiter.api.*;
 import org.springframework.http.MediaType;
@@ -10,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import static be.sgerard.test.i18n.model.GitRepositoryCreationDtoTestUtils.i18nToolLocalRepositoryCreationDto;
 import static be.sgerard.test.i18n.model.GitRepositoryCreationDtoTestUtils.i18nToolRepositoryCreationDto;
-import static be.sgerard.test.i18n.model.UserDtoTestUtils.userJohnDoeCreation;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -20,16 +18,26 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * @author Sebastien Gerard
  */
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class RepositoryControllerTest extends AbstractControllerTest {
 
-    @BeforeEach
-    public void setup() throws Exception {
-        user.createUser(userJohnDoeCreation().build());
+    @BeforeAll
+    public void setupRepo() throws Exception {
+        gitRepo
+                .createMockFor(i18nToolRepositoryCreationDto())
+                .allowAnonymousRead()
+                .basedOnCurrentProject()
+                .create();
+        gitRepo
+                .createMockFor(i18nToolLocalRepositoryCreationDto())
+                .allowAnonymousRead()
+                .basedOnCurrentProject()
+                .create();
     }
 
-    @AfterEach
-    public void clear() throws Exception {
-        repository.clearAll();
+    @AfterAll
+    public void destroy() {
+        gitRepo.destroy();
     }
 
     @Test
@@ -83,14 +91,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
         @Test
         @Transactional
         @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
-        @GitHubTest
         public void create() throws Exception {
-            gitApi
-                    .createRepo("url")
-                    .user("", "")
-                    .currentDirectory()
-                    .setup();
-
             final GitHubRepositoryCreationDto creationDto = i18nToolRepositoryCreationDto();
 
             asyncMvc
@@ -110,7 +111,6 @@ public class RepositoryControllerTest extends AbstractControllerTest {
         @Test
         @Transactional
         @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
-        @GitHubTest
         public void createWrongUrl() throws Exception {
             final GitHubRepositoryCreationDto creationDto = new GitHubRepositoryCreationDto("unknown", "unknown", null);
 
@@ -128,7 +128,6 @@ public class RepositoryControllerTest extends AbstractControllerTest {
         @Test
         @Transactional
         @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
-        @GitHubTest
         public void createSameName() throws Exception {
             final GitHubRepositoryCreationDto creationDto = i18nToolRepositoryCreationDto();
 
@@ -157,7 +156,6 @@ public class RepositoryControllerTest extends AbstractControllerTest {
         @Test
         @Transactional
         @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
-        @GitHubTest
         public void initialize() throws Exception {
             final GitHubRepositoryDto repository = this.repository.create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class).get();
 
@@ -172,7 +170,6 @@ public class RepositoryControllerTest extends AbstractControllerTest {
         @Test
         @Transactional
         @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
-        @GitHubTest
         public void update() throws Exception {
             final GitHubRepositoryDto repository = this.repository.create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class).get();
 
@@ -198,7 +195,6 @@ public class RepositoryControllerTest extends AbstractControllerTest {
         @Test
         @Transactional
         @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
-        @GitHubTest
         public void deleteRepository() throws Exception {
             final GitHubRepositoryDto repository = this.repository.create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class).get();
 

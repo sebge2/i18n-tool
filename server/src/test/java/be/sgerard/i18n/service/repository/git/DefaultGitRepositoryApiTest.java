@@ -2,7 +2,7 @@ package be.sgerard.i18n.service.repository.git;
 
 import be.sgerard.i18n.service.ValidationException;
 import be.sgerard.i18n.service.repository.RepositoryException;
-import be.sgerard.test.i18n.support.GitHubTest;
+import be.sgerard.test.i18n.support.GitHubCredentialsTest;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.*;
@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author Sebastien Gerard
  */
-@GitHubTest
+@GitHubCredentialsTest
 public class DefaultGitRepositoryApiTest {
 
     public static final String REPO_LOCATION = "https://github.com/sebge2/i18n-tool.git";

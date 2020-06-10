@@ -28,7 +28,7 @@ public abstract class AbstractControllerTest extends AbstractIntegrationTest {
     protected WorkspaceTestHelper workspace;
 
     @Autowired
-    protected GitRepositoryApiTestHelper gitApi;
+    protected GitRepositoryMockTestHelper gitRepo;
 
     @Autowired
     protected MockMvc mvc;
