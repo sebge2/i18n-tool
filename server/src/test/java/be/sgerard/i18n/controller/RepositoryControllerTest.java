@@ -26,12 +26,12 @@ public class RepositoryControllerTest extends AbstractControllerTest {
         gitRepo
                 .createMockFor(i18nToolRepositoryCreationDto())
                 .allowAnonymousRead()
-                .basedOnCurrentProject()
+                .baseOnCurrentGitProject()
                 .create();
         gitRepo
                 .createMockFor(i18nToolLocalRepositoryCreationDto())
                 .allowAnonymousRead()
-                .basedOnCurrentProject()
+                .baseOnCurrentGitProject()
                 .create();
     }
 

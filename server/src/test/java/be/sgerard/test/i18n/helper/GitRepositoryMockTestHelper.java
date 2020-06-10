@@ -13,6 +13,8 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+import static be.sgerard.test.i18n.support.TestUtils.currentProjectLocation;
+
 /**
  * @author Sebastien Gerard
  */
@@ -75,19 +77,11 @@ public class GitRepositoryMockTestHelper implements GitRepositoryApiProvider {
             return this;
         }
 
-        public StepFinalize basedOnCurrentProject() {
-            return basedOnCurrentProject(new File("/"));
+        public StepFinalize baseOnCurrentGitProject() {
+            return basedOnGitDirectory(currentProjectLocation());
         }
 
-        public StepFinalize basedOnCurrentProject(File file) {
-            final File currentProject = new File(GitRepositoryMockTestHelper.class.getResource("/application-test.yml").getFile()).getParentFile().getParentFile().getParentFile().getParentFile();
-
-            return basedOnDirectory(
-                    new File(currentProject, file.toString())
-            );
-        }
-
-        public StepFinalize basedOnDirectory(File originalDirectory) {
+        public StepFinalize basedOnGitDirectory(File originalDirectory) {
             return new StepFinalize(builder.originalDirectory(originalDirectory));
         }
     }
