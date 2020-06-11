@@ -1,7 +1,5 @@
 package be.sgerard.test.i18n.helper;
 
-import be.sgerard.i18n.service.repository.git.GitRepositoryApi;
-import com.google.common.io.Files;
 import org.apache.commons.io.FileUtils;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.Constants;
@@ -16,57 +14,51 @@ import org.eclipse.jgit.treewalk.TreeWalk;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.util.*;
+import java.nio.file.Files;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
-import static java.util.stream.Collectors.toList;
 
 /**
  * Repository mocking a remote Git repository.
  * <p>
- * The repository will be initialized based on the content of the {@link Builder#originalDirectory original directory} and
+ * The repository will be initialized based on the content of the {@link Builder#originalGitProject original Git project directory} and
  * will mock the specified {@link Builder#remoteUri URI}.
- * <p>
- * The repository location is placed in a temporary folder and it's organized like this:
- * <ul>
- * <li>/master</li>
- * <li>/branchX</li>
- * </ul>
- * <p>
- * By default the repository will have only the master branch based on the content of the {@link Builder#originalDirectory original directory}.
  *
  * @author Sebastien Gerard
  */
 public class GitRepositoryMock {
 
-    private final File temporaryDirectory;
+    private final File mockedGitProject;
 
     public static Builder builder() {
         return new Builder();
     }
 
-    private final URI remoteUri;
-    private final File originalDirectory;
+    private final URI mockedRemoteUri;
+    private final File originalGitProject;
     private final boolean allowAnonymousRead;
     private final Set<User> users;
     private final Set<UserKey> userKeys;
 
-    private GitRepositoryMock(Builder builder) {
-        remoteUri = builder.remoteUri;
-        originalDirectory = builder.originalDirectory;
+    private GitRepositoryMock(Builder builder) throws Exception {
+        mockedRemoteUri = builder.remoteUri;
+        originalGitProject = builder.originalGitProject;
         allowAnonymousRead = builder.allowAnonymousRead;
         users = builder.users;
         userKeys = builder.userKeys;
-        temporaryDirectory = Files.createTempDir();
+        mockedGitProject = Files.createTempDirectory("mocked-git-repo").toFile();
     }
 
-    public URI getRemoteUri() {
-        return remoteUri;
+    public URI getMockedRemoteUri() {
+        return mockedRemoteUri;
     }
 
     public void init() throws Exception {
-        final Repository repository = Git.open(originalDirectory).getRepository();
+        final Repository repository = Git.open(originalGitProject).getRepository();
 
         try (ObjectReader reader = repository.newObjectReader(); RevWalk walk = new RevWalk(reader); TreeWalk treeWalk = new TreeWalk(repository, reader);) {
             final ObjectId id = repository.resolve(Constants.HEAD);
@@ -77,14 +69,19 @@ public class GitRepositoryMock {
             treeWalk.setRecursive(true);
 
             while (treeWalk.next()) {
-                FileUtils.copyFile(new File(originalDirectory, treeWalk.getPathString()), new File(getBranchDir(GitRepositoryApi.DEFAULT_BRANCH), treeWalk.getPathString()));
+                final File srcFile = new File(originalGitProject, treeWalk.getPathString());
+                final File destFile = new File(mockedGitProject, treeWalk.getPathString());
+
+                if (srcFile.exists()) {
+                    FileUtils.copyFile(srcFile, destFile);
+                }
             }
         }
     }
 
     public void destroy() {
         try {
-            FileUtils.deleteDirectory(temporaryDirectory);
+            FileUtils.deleteDirectory(mockedGitProject);
         } catch (IOException e) {
             throw new IllegalStateException("Cannot delete mock repository.", e);
         }
@@ -102,31 +99,6 @@ public class GitRepositoryMock {
         return userKeys.stream().anyMatch(user -> Objects.equals(username, user.getKey()));
     }
 
-    public List<String> listBranches() {
-        return Optional.ofNullable(temporaryDirectory.list())
-                .map(Arrays::asList)
-                .orElse(emptyList())
-                .stream()
-                .filter(file -> new File(temporaryDirectory, file).isDirectory())
-                .collect(toList());
-    }
-
-    public void copyTo(String branch, File targetDirectory) throws Exception {
-        if (targetDirectory.exists()) {
-            FileUtils.cleanDirectory(targetDirectory);
-        }
-
-        FileUtils.copyDirectory(getBranchDir(branch), targetDirectory);
-    }
-
-    public void copyFrom(String branch, File originalDirectory) throws Exception {
-        if (getBranchDir(branch).exists()) {
-            FileUtils.cleanDirectory(getBranchDir(branch));
-        }
-
-        FileUtils.copyDirectory(originalDirectory, getBranchDir(branch));
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -139,16 +111,12 @@ public class GitRepositoryMock {
 
         final GitRepositoryMock that = (GitRepositoryMock) o;
 
-        return Objects.equals(remoteUri, that.remoteUri);
+        return Objects.equals(mockedRemoteUri, that.mockedRemoteUri);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(remoteUri);
-    }
-
-    private File getBranchDir(String branch) {
-        return new File(temporaryDirectory, branch);
+        return Objects.hash(mockedRemoteUri);
     }
 
     public static final class User {
@@ -206,7 +174,7 @@ public class GitRepositoryMock {
     public static final class Builder {
 
         private URI remoteUri;
-        private File originalDirectory;
+        private File originalGitProject;
         private boolean allowAnonymousRead;
         private final Set<User> users = new HashSet<>();
         private final Set<UserKey> userKeys = new HashSet<>();
@@ -219,8 +187,8 @@ public class GitRepositoryMock {
             return this;
         }
 
-        public Builder originalDirectory(File originalDirectory) {
-            this.originalDirectory = originalDirectory;
+        public Builder originalDirectory(File originalGitProject) {
+            this.originalGitProject = originalGitProject;
             return this;
         }
 
@@ -247,7 +215,7 @@ public class GitRepositoryMock {
             return userKeys(asList(userKeys));
         }
 
-        public GitRepositoryMock build() {
+        public GitRepositoryMock build() throws Exception {
             return new GitRepositoryMock(this);
         }
     }

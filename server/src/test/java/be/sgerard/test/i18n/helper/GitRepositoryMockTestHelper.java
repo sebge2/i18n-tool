@@ -2,6 +2,7 @@ package be.sgerard.test.i18n.helper;
 
 import be.sgerard.i18n.model.repository.dto.GitHubRepositoryCreationDto;
 import be.sgerard.i18n.model.repository.dto.GitRepositoryCreationDto;
+import be.sgerard.i18n.service.repository.git.DefaultGitRepositoryApi;
 import be.sgerard.i18n.service.repository.git.GitRepositoryApi;
 import be.sgerard.i18n.service.repository.git.GitRepositoryApiProvider;
 import org.springframework.context.annotation.Primary;
@@ -31,9 +32,10 @@ public class GitRepositoryMockTestHelper implements GitRepositoryApiProvider {
     public GitRepositoryApi createApi(GitRepositoryApi.Configuration configuration) {
         return new GitRepositoryApiMock(
                 repositories.stream()
-                        .filter(repository -> Objects.equals(repository.getRemoteUri(), configuration.getRemoteUri()))
+                        .filter(repository -> Objects.equals(repository.getMockedRemoteUri(), configuration.getRemoteUri()))
                         .findFirst()
-                        .orElse(null), configuration
+                        .orElse(null),
+                configuration
         );
     }
 
@@ -98,7 +100,7 @@ public class GitRepositoryMockTestHelper implements GitRepositoryApiProvider {
             final GitRepositoryMock repository = builder.build();
 
             repositories.stream()
-                    .filter(existing -> Objects.equals(existing.getRemoteUri(), repository.getRemoteUri()))
+                    .filter(existing -> Objects.equals(existing.getMockedRemoteUri(), repository.getMockedRemoteUri()))
                     .findFirst()
                     .ifPresent(GitRepositoryMock::destroy);
 
