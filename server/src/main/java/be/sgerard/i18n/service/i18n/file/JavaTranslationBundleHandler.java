@@ -4,25 +4,19 @@ import be.sgerard.i18n.configuration.AppProperties;
 import be.sgerard.i18n.model.i18n.BundleType;
 import be.sgerard.i18n.model.i18n.file.ScannedBundleFileDto;
 import be.sgerard.i18n.model.i18n.file.ScannedBundleFileKeyDto;
-import be.sgerard.i18n.service.repository.git.GitAPI;
-import com.fasterxml.jackson.datatype.jdk8.WrappedIOException;
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.PropertiesConfiguration;
+import be.sgerard.i18n.service.i18n.TranslationRepositoryReadApi;
+import be.sgerard.i18n.service.i18n.TranslationRepositoryWriteApi;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
-
-import static be.sgerard.i18n.service.i18n.file.TranslationFileUtils.mapToNullIfEmpty;
-import static java.util.Collections.singletonList;
-import static java.util.Collections.singletonMap;
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.reducing;
 
 /**
  * @author Sebastien Gerard
@@ -51,8 +45,10 @@ public class JavaTranslationBundleHandler implements TranslationBundleHandler {
     }
 
     @Override
-    public Stream<ScannedBundleFileDto> scanBundles(File directory, GitAPI repositoryAPI) throws IOException {
-        return repositoryAPI.listNormalFiles(directory)
+    public Stream<ScannedBundleFileDto> scanBundles(File directory, TranslationRepositoryReadApi repositoryAPI) {
+
+        return Stream.empty();
+/*        return repositoryAPI.listNormalFiles(directory)
                 .map(
                         file -> {
                             final Matcher matcher = BUNDLE_PATTERN.matcher(file.getName());
@@ -73,57 +69,54 @@ public class JavaTranslationBundleHandler implements TranslationBundleHandler {
                 .filter(Objects::nonNull)
                 .collect(groupingBy(ScannedBundleFileDto::getName, reducing(null, ScannedBundleFileDto::merge)))
                 .values()
-                .stream();
+                .stream()*/
     }
 
     @Override
-    public List<ScannedBundleFileKeyDto> scanKeys(ScannedBundleFileDto bundleFile, GitAPI repositoryAPI) throws IOException {
-        try {
-            return new ArrayList<>(
-                    bundleFile.getFiles().stream()
-                            .flatMap(
-                                    file -> {
-                                        try { // TODO language empty
-                                            final PropertyResourceBundle resourceBundle = new PropertyResourceBundle(repositoryAPI.openInputStream(file));
-
-                                            return resourceBundle.keySet().stream()
-                                                    .map(key -> new ScannedBundleFileKeyDto(key, singletonMap(getLocale(file), mapToNullIfEmpty(resourceBundle.getString(key)))));
-                                        } catch (IOException e) {
-                                            throw new WrappedIOException(e);
-                                        }
-                                    }
-                            )
-                            .collect(groupingBy(ScannedBundleFileKeyDto::getKey, reducing(null, ScannedBundleFileKeyDto::merge)))
-                            .values()
-            );
-        } catch (WrappedIOException e) {
-            throw e.getCause();
-        }
+    public List<ScannedBundleFileKeyDto> scanKeys(ScannedBundleFileDto bundleFile, TranslationRepositoryReadApi repositoryAPI) {
+        return Collections.emptyList();
+//            return new ArrayList<>(
+//                    bundleFile.getFiles().stream()
+//                            .flatMap(
+//                                    file -> {
+//                                        try { // TODO language empty
+//                                            final PropertyResourceBundle resourceBundle = new PropertyResourceBundle(repositoryAPI.openInputStream(file));
+//
+//                                            return resourceBundle.keySet().stream()
+//                                                    .map(key -> new ScannedBundleFileKeyDto(key, singletonMap(getLocale(file), mapToNullIfEmpty(resourceBundle.getString(key)))));
+//                                        } catch (IOException e) {
+//                                            throw new WrappedIOException(e);
+//                                        }
+//                                    }
+//                            )
+//                            .collect(groupingBy(ScannedBundleFileKeyDto::getKey, reducing(null, ScannedBundleFileKeyDto::merge)))
+//                            .values()
+//            );
     }
 
     @Override
     public void updateBundle(ScannedBundleFileDto bundleFile,
                              List<ScannedBundleFileKeyDto> keys,
-                             GitAPI repositoryAPI) throws IOException {
-        try {
-            for (File file : bundleFile.getFiles()) {
-                final Matcher matcher = BUNDLE_PATTERN.matcher(file.getName());
+                             TranslationRepositoryWriteApi repositoryAPI) {
+//        try {
+        for (File file : bundleFile.getFiles()) {
+            final Matcher matcher = BUNDLE_PATTERN.matcher(file.getName());
 
-                if (!matcher.matches()) {
-                    continue;
-                }
-
-                final PropertiesConfiguration conf = new PropertiesConfiguration(repositoryAPI.openAsTemp(file));
-
-                final Locale locale = getLocale(file);
-// TODO only what changed ?
-                keys.forEach(key -> conf.setProperty(key.getKey(), key.getTranslations().getOrDefault(locale, null)));
-
-                conf.save();
+            if (!matcher.matches()) {
+                continue;
             }
-        } catch (ConfigurationException e) {
-            throw new IOException("Error while updating bundle files.", e);
+
+//                final PropertiesConfiguration conf = new PropertiesConfiguration(repositoryAPI.openAsTemp(file));
+//
+//                final Locale locale = getLocale(file);
+//// TODO only what changed ?
+//                keys.forEach(key -> conf.setProperty(key.getKey(), key.getTranslations().getOrDefault(locale, null)));
+//
+//                conf.save();
         }
+//        } catch (ConfigurationException e) {
+//            throw new IOException("Error while updating bundle files.", e);
+//        }
     }
 
     private Locale getLocale(File file) {

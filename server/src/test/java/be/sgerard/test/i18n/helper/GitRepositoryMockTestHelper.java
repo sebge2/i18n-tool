@@ -53,11 +53,11 @@ public class GitRepositoryMockTestHelper implements GitRepositoryApiProvider {
         this.repositories.forEach(GitRepositoryMock::destroy);
     }
 
-    public GitRepositoryMock getMockFor(GitHubRepositoryCreationDto creationDto) {
+    public GitRepositoryMock getRepo(GitHubRepositoryCreationDto creationDto) {
         return findRepoByUriOrDie(createGitHubUrl(creationDto.getUsername(), creationDto.getRepository()));
     }
 
-    public GitRepositoryMock getMockFor(GitRepositoryCreationDto creationDto) {
+    public GitRepositoryMock getRepo(GitRepositoryCreationDto creationDto) {
         return findRepoByUriOrDie(URI.create(creationDto.getLocation()));
     }
 

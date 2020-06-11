@@ -4,10 +4,11 @@ import be.sgerard.i18n.configuration.AppProperties;
 import be.sgerard.i18n.model.i18n.BundleType;
 import be.sgerard.i18n.model.i18n.file.ScannedBundleFileDto;
 import be.sgerard.i18n.model.i18n.file.ScannedBundleFileKeyDto;
-import be.sgerard.i18n.service.repository.git.GitAPI;
+import be.sgerard.i18n.service.i18n.TranslationRepositoryReadApi;
+import be.sgerard.i18n.service.i18n.TranslationRepositoryWriteApi;
+import be.sgerard.i18n.service.repository.git.GitRepositoryApi;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jdk8.WrappedIOException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
@@ -21,10 +22,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static be.sgerard.i18n.service.i18n.file.TranslationFileUtils.mapToNullIfEmpty;
-import static java.util.Collections.singletonList;
-import static java.util.Collections.singletonMap;
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.reducing;
+import static java.util.Collections.emptyList;
 import static org.springframework.util.StringUtils.isEmpty;
 
 /**
@@ -52,7 +50,7 @@ public class JsonICUTranslationBundleHandler implements TranslationBundleHandler
 
     @Override
     public boolean support(ScannedBundleFileDto bundleFile) {
-        return bundleFile.getType() == BundleType.JSON_ICU;
+        return bundleFile.getType() == BundleType.JSON;
     }
 
     @Override
@@ -61,61 +59,59 @@ public class JsonICUTranslationBundleHandler implements TranslationBundleHandler
     }
 
     @Override
-    public Stream<ScannedBundleFileDto> scanBundles(File directory, GitAPI repositoryAPI) throws IOException {
-        if (pathsToScan.stream().noneMatch(dirPathPattern -> antPathMatcher.match(dirPathPattern, directory.toPath().toString()))) {
-            return Stream.empty();
-        }
-
-        return repositoryAPI.listNormalFiles(directory)
-                .map(
-                        file -> {
-                            final Matcher matcher = BUNDLE_PATTERN.matcher(file.getName());
-
-                            if (matcher.matches()) {
-                                return new ScannedBundleFileDto(
-                                        directory.getName(),
-                                        BundleType.JSON_ICU,
-                                        directory,
-                                        singletonList(Locale.forLanguageTag(matcher.group(1))),
-                                        singletonList(file)
-                                );
-                            } else {
-                                return null;
-                            }
-                        }
-                )
-                .filter(Objects::nonNull)
-                .collect(groupingBy(ScannedBundleFileDto::getName, reducing(null, ScannedBundleFileDto::merge)))
-                .values()
-                .stream();
+    public Stream<ScannedBundleFileDto> scanBundles(File directory, TranslationRepositoryReadApi repositoryAPI) {
+        return null;
+//        if (pathsToScan.stream().noneMatch(dirPathPattern -> antPathMatcher.match(dirPathPattern, directory.toPath().toString()))) {
+//            return Stream.empty();
+//        }
+//
+//        return repositoryAPI.listNormalFiles(directory)
+//                .map(
+//                        file -> {
+//                            final Matcher matcher = BUNDLE_PATTERN.matcher(file.getName());
+//
+//                            if (matcher.matches()) {
+//                                return new ScannedBundleFileDto(
+//                                        directory.getName(),
+//                                        BundleType.JSON_ICU,
+//                                        directory,
+//                                        singletonList(Locale.forLanguageTag(matcher.group(1))),
+//                                        singletonList(file)
+//                                );
+//                            } else {
+//                                return null;
+//                            }
+//                        }
+//                )
+//                .filter(Objects::nonNull)
+//                .collect(groupingBy(ScannedBundleFileDto::getName, reducing(null, ScannedBundleFileDto::merge)))
+//                .values()
+//                .stream();
     }
 
     @Override
-    public List<ScannedBundleFileKeyDto> scanKeys(ScannedBundleFileDto bundleFile, GitAPI repositoryAPI) throws IOException {
-        try {
-            return new ArrayList<>(
-                    bundleFile.getFiles().stream()
-                            .flatMap(
-                                    file -> {
-                                        try {
-                                            return inlineValues(readValues(repositoryAPI, file))
-                                                    .entrySet().stream()
-                                                    .map(entry -> new ScannedBundleFileKeyDto(entry.getKey(), singletonMap(getLocale(file), mapToNullIfEmpty(entry.getValue()))));
-                                        } catch (IOException e) {
-                                            throw new WrappedIOException(e);
-                                        }
-                                    }
-                            )
-                            .collect(groupingBy(ScannedBundleFileKeyDto::getKey, LinkedHashMap::new, reducing(null, ScannedBundleFileKeyDto::merge)))
-                            .values()
-            );
-        } catch (WrappedIOException e) {
-            throw e.getCause();
-        }
+    public List<ScannedBundleFileKeyDto> scanKeys(ScannedBundleFileDto bundleFile, TranslationRepositoryReadApi repositoryAPI) {
+        return emptyList();
+//            return new ArrayList<>(
+//                    bundleFile.getFiles().stream()
+//                            .flatMap(
+//                                    file -> {
+//                                        try {
+//                                            return inlineValues(readValues(repositoryAPI, file))
+//                                                    .entrySet().stream()
+//                                                    .map(entry -> new ScannedBundleFileKeyDto(entry.getKey(), singletonMap(getLocale(file), mapToNullIfEmpty(entry.getValue()))));
+//                                        } catch (IOException e) {
+//                                            throw new WrappedIOException(e);
+//                                        }
+//                                    }
+//                            )
+//                            .collect(groupingBy(ScannedBundleFileKeyDto::getKey, LinkedHashMap::new, reducing(null, ScannedBundleFileKeyDto::merge)))
+//                            .values()
+//            );
     }
 
     @Override
-    public void updateBundle(ScannedBundleFileDto bundleFile, List<ScannedBundleFileKeyDto> keys, GitAPI repositoryAPI) throws IOException {
+    public void updateBundle(ScannedBundleFileDto bundleFile, List<ScannedBundleFileKeyDto> keys, TranslationRepositoryWriteApi repositoryAPI) {
         for (File file : bundleFile.getFiles()) {
             final Matcher matcher = BUNDLE_PATTERN.matcher(file.getName());
 
@@ -125,12 +121,12 @@ public class JsonICUTranslationBundleHandler implements TranslationBundleHandler
 
             final Locale locale = getLocale(file);
 
-            objectMapper.writeValue(repositoryAPI.openAsTemp(file), toMap(keys, locale));
+//            objectMapper.writeValue(repositoryAPI.openAsTemp(file), toMap(keys, locale));
         }
     }
 
     @SuppressWarnings("unchecked")
-    private Map<String, Object> readValues(GitAPI repositoryAPI, File file) throws IOException {
+    private Map<String, Object> readValues(GitRepositoryApi repositoryAPI, File file) throws IOException {
         return objectMapper.readValue(repositoryAPI.openInputStream(file), LinkedHashMap.class);
     }
 

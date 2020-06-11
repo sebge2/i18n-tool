@@ -12,6 +12,7 @@ import static be.sgerard.test.i18n.model.GitRepositoryCreationDtoTestUtils.i18nT
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -50,11 +51,16 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
         public void synchronize() throws Exception {
             final GitHubRepositoryDto repository = this.repository.create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class).initialize().get();
 
+            gitRepo
+                    .getRepo(i18nToolRepositoryCreationDto())
+                    .createBranches("toto", "tata");
+
             asyncMvc
                     .perform(post("/api/repository/{id}/workspace/do?action=SYNCHRONIZE", repository.getId()))
                     .andExpectStarted()
                     .andWaitResult()
                     .andExpect(status().isOk())
+                    .andDo(print())
                     .andExpect(jsonPath("$", hasSize(greaterThanOrEqualTo(1))));
         }
 

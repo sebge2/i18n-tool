@@ -4,7 +4,6 @@ import be.sgerard.i18n.configuration.AppProperties;
 import be.sgerard.i18n.controller.AuthenticationController;
 import be.sgerard.i18n.model.event.EventType;
 import be.sgerard.i18n.model.i18n.dto.*;
-import be.sgerard.i18n.model.i18n.dto.TranslationsUpdateEventDto;
 import be.sgerard.i18n.model.i18n.file.ScannedBundleFileDto;
 import be.sgerard.i18n.model.i18n.file.ScannedBundleFileKeyDto;
 import be.sgerard.i18n.model.i18n.persistence.BundleFileEntity;
@@ -18,14 +17,12 @@ import be.sgerard.i18n.repository.workspace.WorkspaceRepository;
 import be.sgerard.i18n.service.ResourceNotFoundException;
 import be.sgerard.i18n.service.event.EventService;
 import be.sgerard.i18n.service.event.InternalEventListener;
-import be.sgerard.i18n.service.repository.git.GitAPI;
 import be.sgerard.i18n.service.i18n.file.TranslationBundleHandler;
 import be.sgerard.i18n.service.i18n.file.TranslationBundleWalker;
-import be.sgerard.i18n.repository.i18n.BundleKeyTranslationRepository;
-import be.sgerard.i18n.repository.i18n.WorkspaceRepository;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import reactor.core.publisher.Mono;
 
 import java.io.File;
 import java.util.*;
@@ -117,13 +114,20 @@ public class TranslationManagerImpl implements TranslationManager {
 
     @Override
     @Transactional
-    public void readTranslations(WorkspaceEntity workspaceEntity, GitAPI api) throws IOException {
+    public Mono<Void> readTranslations(WorkspaceEntity workspaceEntity, TranslationRepositoryReadApi api) {
+        api.listAllFiles(new File("/"))
+                .collectList()
+                .block()
+                .forEach(file -> System.out.println(file));
+
         walker.walk(api, (bundleFile, entries) -> onBundleFound(workspaceEntity, bundleFile, entries));
+
+        return Mono.empty();
     }
 
     @Override
     @Transactional
-    public void writeTranslations(WorkspaceEntity workspaceEntity, GitAPI api) throws IOException {
+    public void writeTranslations(WorkspaceEntity workspaceEntity, TranslationRepositoryWriteApi api)  {
         for (BundleFileEntity file : workspaceEntity.getFiles()) {
             final ScannedBundleFileDto bundleFile = new ScannedBundleFileDto(file);
 
@@ -284,7 +288,7 @@ public class TranslationManagerImpl implements TranslationManager {
     }
 
     // TODO
-    private static final class Listener implements InternalEventListener<TranslationLocaleDto>{
+    private static final class Listener implements InternalEventListener<TranslationLocaleDto> {
 
         @Override
         public boolean support(EventType eventType) {

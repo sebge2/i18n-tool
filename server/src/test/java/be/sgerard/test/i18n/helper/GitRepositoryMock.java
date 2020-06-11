@@ -1,5 +1,7 @@
 package be.sgerard.test.i18n.helper;
 
+import be.sgerard.i18n.service.repository.git.DefaultGitRepositoryApi;
+import be.sgerard.i18n.service.repository.git.GitRepositoryApi;
 import org.apache.commons.io.FileUtils;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.Constants;
@@ -32,14 +34,13 @@ import static java.util.Arrays.asList;
  */
 public class GitRepositoryMock {
 
-    private final File mockedGitProject;
-
     public static Builder builder() {
         return new Builder();
     }
 
     private final URI mockedRemoteUri;
     private final File originalGitProject;
+    private final File mockedGitProject;
     private final boolean allowAnonymousRead;
     private final Set<User> users;
     private final Set<UserKey> userKeys;
@@ -58,7 +59,10 @@ public class GitRepositoryMock {
     }
 
     public GitRepositoryMock init() throws Exception {
-        final Repository repository = Git.open(originalGitProject).getRepository();
+        final Git api = Git.open(originalGitProject);
+        final Repository repository = api.getRepository();
+
+        Git.init().setDirectory(mockedGitProject).call();
 
         try (ObjectReader reader = repository.newObjectReader(); RevWalk walk = new RevWalk(reader); TreeWalk treeWalk = new TreeWalk(repository, reader);) {
             final ObjectId id = repository.resolve(Constants.HEAD);
@@ -74,8 +78,39 @@ public class GitRepositoryMock {
 
                 if (srcFile.exists()) {
                     FileUtils.copyFile(srcFile, destFile);
+
+                    api.add().addFilepattern(treeWalk.getPathString()).call();
                 }
             }
+        }
+
+        api.commit().setMessage("initial commit").call();
+
+        return this;
+    }
+
+    private GitRepositoryApi getApi() {
+        return DefaultGitRepositoryApi.createAPI(new GitRepositoryApi.Configuration(null, mockedGitProject));
+    }
+
+    public boolean authenticate(String username, String password) {
+        if ((username == null) && (password == null)) {
+            return allowAnonymousRead;
+        }
+
+        if (password != null) {
+            return users.stream().anyMatch(user -> Objects.equals(username, user.getUsername()) && Objects.equals(password, user.getPassword()));
+        }
+
+        return userKeys.stream().anyMatch(user -> Objects.equals(username, user.getKey()));
+    }
+
+    public GitRepositoryMock createBranches(String... branches) {
+        // TODO optional remote
+        final GitRepositoryApi api = getApi();
+
+        for (String branch : branches) {
+            api.createBranch(branch);
         }
 
         return this;
@@ -89,18 +124,6 @@ public class GitRepositoryMock {
         } catch (IOException e) {
             throw new IllegalStateException("Cannot delete mock repository.", e);
         }
-    }
-
-    public boolean authenticate(String username, String password) {
-        if ((username == null) && (password == null)) {
-            return allowAnonymousRead;
-        }
-
-        if (password != null) {
-            return users.stream().anyMatch(user -> Objects.equals(username, user.getUsername()) && Objects.equals(password, user.getPassword()));
-        }
-
-        return userKeys.stream().anyMatch(user -> Objects.equals(username, user.getKey()));
     }
 
     @Override

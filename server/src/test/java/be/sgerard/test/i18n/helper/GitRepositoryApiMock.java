@@ -50,7 +50,7 @@ public class GitRepositoryApiMock extends DefaultGitRepositoryApi {
             return new Configuration(repository.getMockedRemoteUri(), originalConfiguration.getRepositoryLocation())
                     .setDefaultBranch(originalConfiguration.getDefaultBranch());
         } else {
-            return new Configuration(originalConfiguration.getRemoteUri(), originalConfiguration.getRepositoryLocation());
+            return new Configuration(null, originalConfiguration.getRepositoryLocation());
         }
     }
 }

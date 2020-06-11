@@ -2,11 +2,9 @@ package be.sgerard.i18n.service.i18n.file;
 
 import be.sgerard.i18n.model.i18n.file.ScannedBundleFileDto;
 import be.sgerard.i18n.model.i18n.file.ScannedBundleFileKeyDto;
-import be.sgerard.i18n.service.i18n.TranslationRepositoryApi;
-import com.fasterxml.jackson.datatype.jdk8.WrappedIOException;
+import be.sgerard.i18n.service.i18n.TranslationRepositoryReadApi;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -22,14 +20,14 @@ public class TranslationBundleWalker {
         this.handlers = handlers;
     }
 
-    public void walk(GitAPI browseAPI, TranslationBundleConsumer consumer) throws IOException {
+    public void walk(TranslationRepositoryReadApi browseAPI, TranslationBundleConsumer consumer) {
         walk(new File("/"), browseAPI, consumer, handlers);
     }
 
     private void walk(File directory,
-                      GitAPI browseAPI,
+                      TranslationRepositoryReadApi browseAPI,
                       TranslationBundleConsumer consumer,
-                      List<TranslationBundleHandler> handlers) throws IOException {
+                      List<TranslationBundleHandler> handlers) {
         final List<TranslationBundleHandler> updatedHandlers = handlers.stream()
                 .filter(handler -> handler.continueScanning(directory))
                 .collect(toList());
@@ -38,29 +36,21 @@ public class TranslationBundleWalker {
             return;
         }
 
-        try {
-            for (TranslationBundleHandler handler : updatedHandlers) {
-                handler.scanBundles(directory, browseAPI)
-                        .forEach(bundle -> {
-                            try {
-                                consumer.onBundleFound(bundle, handler.scanKeys(bundle, browseAPI));
-                            } catch (IOException e) {
-                                throw new WrappedIOException(e);
-                            }
-                        });
-            }
-
-            browseAPI.listDirectories(directory)
-                    .forEach(subDir -> {
-                        try {
-                            walk(subDir, browseAPI, consumer, updatedHandlers);
-                        } catch (IOException e) {
-                            throw new WrappedIOException(e);
-                        }
-                    });
-        } catch (WrappedIOException e) {
-            throw e.getCause();
+        for (TranslationBundleHandler handler : updatedHandlers) {
+//            handler.scanBundles(directory, browseAPI)
+//                    .forEach(bundle -> {
+//                        consumer.onBundleFound(bundle, handler.scanKeys(bundle, browseAPI));
+//                    });
         }
+
+//            browseAPI.listDirectories(directory)
+//                    .forEach(subDir -> {
+//                        try {
+//                            walk(subDir, browseAPI, consumer, updatedHandlers);
+//                        } catch (IOException e) {
+//                            throw new WrappedIOException(e);
+//                        }
+//                    });
     }
 
     public interface TranslationBundleConsumer {
