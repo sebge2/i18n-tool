@@ -140,5 +140,36 @@ public class WorkspaceTestHelper {
         public WorkspaceDto get() {
             return workspace;
         }
+
+        public StepPublishedWorkspace<R> publish(String message) throws Exception {
+            mockMvc
+                    .perform(post("/api/repository/workspace/{id}/do?action=PUBLISH&message={message}", workspace.getId(), message))
+                    .andExpectStarted()
+                    .andWaitResult()
+                    .andExpect(status().isOk());
+
+            return new StepPublishedWorkspace<>(repository, workspaces, workspace);
+        }
+    }
+
+    public class StepPublishedWorkspace<R extends RepositoryDto> {
+
+        private final R repository;
+        private final List<WorkspaceDto> workspaces;
+        private final WorkspaceDto workspace;
+
+        public StepPublishedWorkspace(R repository, List<WorkspaceDto> workspaces, WorkspaceDto workspace) {
+            this.repository = repository;
+            this.workspaces = workspaces;
+            this.workspace = workspace;
+        }
+
+        public StepSynchronizedWorkspaces<R> and(){
+            return new StepSynchronizedWorkspaces<>(repository, workspaces);
+        }
+
+        public WorkspaceDto get() {
+            return workspace;
+        }
     }
 }

@@ -4,8 +4,10 @@ import be.sgerard.i18n.model.repository.dto.GitHubRepositoryDto;
 import be.sgerard.i18n.service.github.GitHubWebHookService;
 import be.sgerard.i18n.service.github.external.GitHubEventType;
 import be.sgerard.test.i18n.support.WithInternalUser;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,8 +16,8 @@ import static be.sgerard.test.i18n.model.GitHubBranchCreatedEventDtoTestUtils.i1
 import static be.sgerard.test.i18n.model.GitHubBranchDeletedEventDtoTestUtils.i18nToolRelease20204BranchDeletedEvent;
 import static be.sgerard.test.i18n.model.GitHubBranchPullRequestEventDtoTestUtils.i18nToolRelease20204PullRequestEvent;
 import static be.sgerard.test.i18n.model.GitHubRepositoryPatchDtoTestUtils.i18nToolRepositoryPatchDto;
+import static be.sgerard.test.i18n.model.GitRepositoryCreationDtoTestUtils.i18nToolLocalRepositoryCreationDto;
 import static be.sgerard.test.i18n.model.GitRepositoryCreationDtoTestUtils.i18nToolRepositoryCreationDto;
-import static be.sgerard.test.i18n.model.UserDtoTestUtils.userJohnDoeCreation;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -23,11 +25,27 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * @author Sebastien Gerard
  */
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class GitHubControllerTest extends AbstractControllerTest {
 
-    @Before
-    public void setup() throws Exception {
-        user.createUser(userJohnDoeCreation().build());
+    @BeforeAll
+    public void setupRepo() throws Exception {
+        gitRepo
+                .createMockFor(i18nToolRepositoryCreationDto())
+                .allowAnonymousRead()
+                .baseOnCurrentGitProject()
+                .create();
+
+        gitRepo
+                .createMockFor(i18nToolLocalRepositoryCreationDto())
+                .allowAnonymousRead()
+                .baseOnCurrentGitProject()
+                .create();
+    }
+
+    @AfterAll
+    public void destroy() {
+        gitRepo.destroyAll();
     }
 
     @Test

@@ -164,7 +164,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
         @Test
         @Transactional
         @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
-        public void deleteWorkspace() throws Exception {
+        public void deleteInitialized() throws Exception {
             final WorkspaceDto masterWorkspace = repository
                     .create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class)
                     .initialize()
@@ -172,6 +172,27 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                     .sync()
                     .workspaceForBranch("master")
                     .initialize()
+                    .get();
+
+            asyncMvc
+                    .perform(delete("/api/repository/workspace/{id}", masterWorkspace.getId()))
+                    .andExpectStarted()
+                    .andWaitResult()
+                    .andExpect(status().isNoContent());
+        }
+
+        @Test
+        @Transactional
+        @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
+        public void deletePublished() throws Exception {
+            final WorkspaceDto masterWorkspace = repository
+                    .create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class)
+                    .initialize()
+                    .workspaces()
+                    .sync()
+                    .workspaceForBranch("master")
+                    .initialize()
+                    .publish("publish message")
                     .get();
 
             asyncMvc
@@ -242,7 +263,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
         @Test
         @Transactional
         @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
-        public void deleteWorkspace() throws Exception {
+        public void deleteInitialized() throws Exception {
             final WorkspaceDto masterWorkspace = repository
                     .create(i18nToolLocalRepositoryCreationDto())
                     .initialize()
@@ -250,6 +271,27 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                     .sync()
                     .workspaceForBranch("master")
                     .initialize()
+                    .get();
+
+            asyncMvc
+                    .perform(delete("/api/repository/workspace/{id}", masterWorkspace.getId()))
+                    .andExpectStarted()
+                    .andWaitResult()
+                    .andExpect(status().isNoContent());
+        }
+
+        @Test
+        @Transactional
+        @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
+        public void deletePublished() throws Exception {
+            final WorkspaceDto masterWorkspace = repository
+                    .create(i18nToolLocalRepositoryCreationDto())
+                    .initialize()
+                    .workspaces()
+                    .sync()
+                    .workspaceForBranch("master")
+                    .initialize()
+                    .publish("test message")
                     .get();
 
             asyncMvc
