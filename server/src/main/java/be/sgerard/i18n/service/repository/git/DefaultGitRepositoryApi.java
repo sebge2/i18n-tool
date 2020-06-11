@@ -57,7 +57,7 @@ public class DefaultGitRepositoryApi extends BaseGitRepositoryApi {
                     .wrap(FileRepositoryBuilder.create(FileUtils.getTempDirectory()))
                     .lsRemote()
                     .setCredentialsProvider(credentialsProvider)
-                    .setRemote(remoteUri.toString())
+                    .setRemote(Objects.toString(remoteUri, null))
                     .call();
 
             return this;
@@ -213,7 +213,7 @@ public class DefaultGitRepositoryApi extends BaseGitRepositoryApi {
     protected void doInit() throws GitAPIException {
         Git.cloneRepository()
                 .setCredentialsProvider(credentialsProvider)
-                .setURI(remoteUri.toString())
+                .setURI(Objects.toString(remoteUri, null))
                 .setDirectory(repositoryLocation)
                 .setBranchesToClone(singletonList(defaultBranch))
                 .setBranch(defaultBranch)

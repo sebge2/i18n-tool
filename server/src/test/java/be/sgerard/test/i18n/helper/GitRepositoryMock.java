@@ -32,6 +32,7 @@ import static java.util.Arrays.asList;
  *
  * @author Sebastien Gerard
  */
+@SuppressWarnings("UnusedReturnValue")
 public class GitRepositoryMock {
 
     public static Builder builder() {
@@ -40,7 +41,7 @@ public class GitRepositoryMock {
 
     private final URI mockedRemoteUri;
     private final File originalGitProject;
-    private final File mockedGitProject;
+    private final File location;
     private final boolean allowAnonymousRead;
     private final Set<User> users;
     private final Set<UserKey> userKeys;
@@ -51,21 +52,26 @@ public class GitRepositoryMock {
         allowAnonymousRead = builder.allowAnonymousRead;
         users = builder.users;
         userKeys = builder.userKeys;
-        mockedGitProject = Files.createTempDirectory("mocked-git-repo").toFile();
+        location = Files.createTempDirectory("mocked-git-repo").toFile();
     }
 
     public URI getMockedRemoteUri() {
         return mockedRemoteUri;
     }
 
+    public URI getLocationUri() {
+        return new File(location, ".git").toURI();
+    }
+
     public GitRepositoryMock init() throws Exception {
-        final Git api = Git.open(originalGitProject);
-        final Repository repository = api.getRepository();
+        Git.init().setDirectory(location).call();
 
-        Git.init().setDirectory(mockedGitProject).call();
+        final Repository originalRepository = Git.open(originalGitProject).getRepository();
 
-        try (ObjectReader reader = repository.newObjectReader(); RevWalk walk = new RevWalk(reader); TreeWalk treeWalk = new TreeWalk(repository, reader);) {
-            final ObjectId id = repository.resolve(Constants.HEAD);
+        final Git api = Git.open(location);
+
+        try (ObjectReader reader = originalRepository.newObjectReader(); RevWalk walk = new RevWalk(reader); TreeWalk treeWalk = new TreeWalk(originalRepository, reader)) {
+            final ObjectId id = originalRepository.resolve(Constants.HEAD);
             final RevCommit commit = walk.parseCommit(id);
             final RevTree tree = commit.getTree();
 
@@ -74,7 +80,7 @@ public class GitRepositoryMock {
 
             while (treeWalk.next()) {
                 final File srcFile = new File(originalGitProject, treeWalk.getPathString());
-                final File destFile = new File(mockedGitProject, treeWalk.getPathString());
+                final File destFile = new File(location, treeWalk.getPathString());
 
                 if (srcFile.exists()) {
                     FileUtils.copyFile(srcFile, destFile);
@@ -90,7 +96,7 @@ public class GitRepositoryMock {
     }
 
     private GitRepositoryApi getApi() {
-        return DefaultGitRepositoryApi.createAPI(new GitRepositoryApi.Configuration(null, mockedGitProject));
+        return DefaultGitRepositoryApi.createAPI(new GitRepositoryApi.Configuration(location));
     }
 
     public boolean authenticate(String username, String password) {
@@ -106,19 +112,22 @@ public class GitRepositoryMock {
     }
 
     public GitRepositoryMock createBranches(String... branches) {
-        // TODO optional remote
         final GitRepositoryApi api = getApi();
 
-        for (String branch : branches) {
-            api.createBranch(branch);
-        }
+        try {
+            for (String branch : branches) {
+                api.createBranch(branch);
+            }
 
-        return this;
+            return this;
+        } finally {
+            api.checkout(GitRepositoryApi.DEFAULT_BRANCH);
+        }
     }
 
     public GitRepositoryMock destroy() {
         try {
-            FileUtils.deleteDirectory(mockedGitProject);
+            FileUtils.deleteDirectory(location);
 
             return this;
         } catch (IOException e) {

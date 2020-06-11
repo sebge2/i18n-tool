@@ -31,7 +31,7 @@ public class DefaultGitRepositoryApiTest {
 
     @BeforeAll
     public static void setup() throws IOException {
-        configuration = new DefaultGitRepositoryApi.Configuration(URI.create(REPO_LOCATION), generateTemporaryFile());
+        configuration = new DefaultGitRepositoryApi.Configuration(generateTemporaryFile(), URI.create(REPO_LOCATION));
 
         api = DefaultGitRepositoryApi.createAPI(configuration);
         api.init();
@@ -45,7 +45,7 @@ public class DefaultGitRepositoryApiTest {
     @Test
     @DisplayName("validate information")
     public void validateInfo() throws Exception {
-        DefaultGitRepositoryApi.createAPI(new DefaultGitRepositoryApi.Configuration(URI.create(REPO_LOCATION), generateTemporaryFile()))
+        DefaultGitRepositoryApi.createAPI(new DefaultGitRepositoryApi.Configuration(generateTemporaryFile(), URI.create(REPO_LOCATION)))
                 .validateInfo();
     }
 
@@ -54,7 +54,7 @@ public class DefaultGitRepositoryApiTest {
     public void validateInfoWrongUrl() {
         Assertions.assertThrows(ValidationException.class, () ->
                 DefaultGitRepositoryApi
-                        .createAPI(new DefaultGitRepositoryApi.Configuration(URI.create("https://github.com/sebge2/unknown.git"), generateTemporaryFile()))
+                        .createAPI(new DefaultGitRepositoryApi.Configuration(generateTemporaryFile(), URI.create("https://github.com/sebge2/unknown.git")))
                         .validateInfo()
         );
     }
@@ -65,7 +65,7 @@ public class DefaultGitRepositoryApiTest {
         Assertions.assertThrows(ValidationException.class, () ->
                 DefaultGitRepositoryApi
                         .createAPI(
-                                new DefaultGitRepositoryApi.Configuration(URI.create("https://github.com/sebge2/unknown.git"), generateTemporaryFile())
+                                new DefaultGitRepositoryApi.Configuration(generateTemporaryFile(), URI.create("https://github.com/sebge2/unknown.git"))
                                         .setUsername("sebge2")
                                         .setPassword("password")
                         )

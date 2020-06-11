@@ -32,7 +32,7 @@ public class GitRepositoryMockTestHelper implements GitRepositoryApiProvider {
     @Override
     public GitRepositoryApi createApi(GitRepositoryApi.Configuration configuration) {
         return new GitRepositoryApiMock(
-                findRepoByUri(configuration.getRemoteUri()).orElse(null),
+                findRepoByUri(configuration.getRemoteUri().orElse(null)).orElse(null),
                 configuration
         );
     }

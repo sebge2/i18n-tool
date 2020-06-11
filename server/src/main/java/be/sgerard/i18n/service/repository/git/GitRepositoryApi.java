@@ -137,16 +137,20 @@ public interface GitRepositoryApi extends RepositoryApi {
         private String username;
         private String password;
 
-        public Configuration(URI remoteUri, File repositoryLocation) {
+        public Configuration(File repositoryLocation, URI remoteUri) {
             this.remoteUri = remoteUri;
             this.repositoryLocation = repositoryLocation;
+        }
+
+        public Configuration(File repositoryLocation) {
+            this(repositoryLocation, null);
         }
 
         /**
          * Returns the remote URI of the repository.
          */
-        public URI getRemoteUri() {
-            return remoteUri;
+        public Optional<URI> getRemoteUri() {
+            return Optional.ofNullable(remoteUri);
         }
 
         /**

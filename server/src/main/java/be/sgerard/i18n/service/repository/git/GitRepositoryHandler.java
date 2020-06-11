@@ -51,7 +51,7 @@ public class GitRepositoryHandler extends BaseGitRepositoryHandler<GitRepository
 
     @Override
     protected DefaultGitRepositoryApi.Configuration createConfiguration(GitRepositoryEntity repository) {
-        return new DefaultGitRepositoryApi.Configuration(URI.create(repository.getLocation()), appProperties.getRepository().getDirectoryBaseDir(repository.getId()))
+        return new DefaultGitRepositoryApi.Configuration(appProperties.getRepository().getDirectoryBaseDir(repository.getId()), URI.create(repository.getLocation()))
                 .setUsername(
                         authenticationManager
                                 .getCurrentUserOrFail()

@@ -9,10 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import static be.sgerard.test.i18n.model.GitRepositoryCreationDtoTestUtils.i18nToolLocalRepositoryCreationDto;
 import static be.sgerard.test.i18n.model.GitRepositoryCreationDtoTestUtils.i18nToolRepositoryCreationDto;
-import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -53,15 +51,14 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
 
             gitRepo
                     .getRepo(i18nToolRepositoryCreationDto())
-                    .createBranches("toto", "tata");
+                    .createBranches("release/2020.05", "release/2020.06");
 
             asyncMvc
                     .perform(post("/api/repository/{id}/workspace/do?action=SYNCHRONIZE", repository.getId()))
                     .andExpectStarted()
                     .andWaitResult()
                     .andExpect(status().isOk())
-                    .andDo(print())
-                    .andExpect(jsonPath("$", hasSize(greaterThanOrEqualTo(1))));
+                    .andExpect(jsonPath("$", hasSize(3)));
         }
 
         @Test
@@ -93,12 +90,16 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
         public void synchronize() throws Exception {
             final GitRepositoryDto repository = this.repository.create(i18nToolLocalRepositoryCreationDto(), GitRepositoryDto.class).initialize().get();
 
+            gitRepo
+                    .getRepo(i18nToolLocalRepositoryCreationDto())
+                    .createBranches("release/2020.05", "release/2020.06");
+
             asyncMvc
                     .perform(post("/api/repository/{id}/workspace/do?action=SYNCHRONIZE", repository.getId()))
                     .andExpectStarted()
                     .andWaitResult()
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$", hasSize(greaterThanOrEqualTo(1))));
+                    .andExpect(jsonPath("$", hasSize(3)));
         }
 
         @Test

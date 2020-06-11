@@ -60,7 +60,7 @@ public class GitHubRepositoryHandler extends BaseGitRepositoryHandler<GitHubRepo
 
     @Override
     protected DefaultGitRepositoryApi.Configuration createConfiguration(GitHubRepositoryEntity repository) {
-        return new DefaultGitRepositoryApi.Configuration(URI.create(repository.getLocation()), appProperties.getRepository().getDirectoryBaseDir(repository.getId()))
+        return new DefaultGitRepositoryApi.Configuration(appProperties.getRepository().getDirectoryBaseDir(repository.getId()), URI.create(repository.getLocation()))
                 .setUsername(
                         // todo
                         null

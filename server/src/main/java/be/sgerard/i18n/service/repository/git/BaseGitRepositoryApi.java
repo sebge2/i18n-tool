@@ -59,7 +59,7 @@ public abstract class BaseGitRepositoryApi implements GitRepositoryApi {
     private boolean closed = false;
 
     public BaseGitRepositoryApi(Configuration configuration) {
-        this.remoteUri = configuration.getRemoteUri();
+        this.remoteUri = configuration.getRemoteUri().orElse(null);
         this.repositoryLocation = configuration.getRepositoryLocation();
 
         try {
