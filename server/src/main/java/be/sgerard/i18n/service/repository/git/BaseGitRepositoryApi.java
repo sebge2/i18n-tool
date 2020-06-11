@@ -281,4 +281,11 @@ public abstract class BaseGitRepositoryApi implements GitRepositoryApi {
     protected void removeModifiedFile(File file) {
         modifiedFiles.remove(file);
     }
+
+    /**
+     * Clears all the modified files.
+     */
+    protected void clearModifiedFiles() {
+        modifiedFiles.clear();
+    }
 }

@@ -200,6 +200,9 @@ public class DefaultGitRepositoryApi extends BaseGitRepositoryApi {
     public GitRepositoryApi push() throws RepositoryException {
         try {
             openGit().push().setCredentialsProvider(credentialsProvider).call();
+
+            clearModifiedFiles();
+
             return this;
         } catch (Exception e) {
             throw RepositoryException.onPush(e);
