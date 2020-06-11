@@ -33,24 +33,29 @@ public class WorkspaceController {
     }
 
     /**
-     * Finds all the {@link WorkspaceDto workspaces} optionally restricted to the specified repository.
+     * Finds all the {@link WorkspaceDto workspaces}.
      */
-    @GetMapping("/workspace")
+    @GetMapping("/repository/workspace")
     @ApiOperation(value = "Returns registered workspaces.")
-    public Flux<WorkspaceDto> findAll(@RequestParam(required = false, name = "repository") String repositoryId) {
-        if (StringUtils.isEmpty(repositoryId)) {
-            return workspaceManager.findAll()
-                    .map(entity -> WorkspaceDto.builder(entity).build());
-        } else {
-            return workspaceManager.findAll(repositoryId)
-                    .map(entity -> WorkspaceDto.builder(entity).build());
-        }
+    public Flux<WorkspaceDto> findAll() {
+        return workspaceManager.findAll()
+                .map(entity -> WorkspaceDto.builder(entity).build());
+    }
+
+    /**
+     * Finds all the {@link WorkspaceDto workspaces} restricted to the specified repository.
+     */
+    @GetMapping("/repository/{id}/workspace")
+    @ApiOperation(value = "Returns registered workspaces.")
+    public Flux<WorkspaceDto> findAll(@PathVariable String id) {
+        return workspaceManager.findAll(id)
+                .map(entity -> WorkspaceDto.builder(entity).build());
     }
 
     /**
      * Returns the {@link WorkspaceDto workspace} having the specified id.
      */
-    @GetMapping(path = "/workspace/{id}")
+    @GetMapping(path = "/repository/workspace/{id}")
     @ApiOperation(value = "Returns the workspace having the specified id.")
     public Mono<WorkspaceDto> findById(@PathVariable String id) {
         return workspaceManager.findByIdOrDie(id)
@@ -78,10 +83,10 @@ public class WorkspaceController {
     /**
      * Removes the {@link WorkspaceDto workspace} having the specified id.
      */
-    @DeleteMapping(path = "/workspace/{id}")
+    @DeleteMapping(path = "/repository/workspace/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @ApiOperation(value = "Deletes the workspace having the specified id.")
-    @PreAuthorize("hasRole('ADMIN') and hasRole('MEMBER_OF_REPOSITORY')")
+    @PreAuthorize("hasRole('ADMIN')")
     public Mono<Void> deleteWorkspace(@PathVariable String id) {
         return workspaceManager.delete(id).then();
     }
@@ -89,27 +94,25 @@ public class WorkspaceController {
     /**
      * Executes an action on the specified workspace.
      */
-    @PostMapping(path = "/workspace/{id}/do")
+    @PostMapping(path = "/repository/workspace/{id}/do")
     @ApiOperation(value = "Executes an action on the specified workspace.")
     @PreAuthorize("hasRole('ADMIN')")
     public Mono<WorkspaceDto> executeWorkspaceAction(@PathVariable String id,
-                                                     @ApiParam("The action to execute.") @RequestParam(name = "action") WorkspaceAction action/*,
-                                               @ApiParam("Specify the message to use for the review.")
-                                               @RequestParam(name = "message", required = false) String message*/) {
+                                                     @ApiParam("The action to execute.") @RequestParam(name = "action") WorkspaceAction action,
+                                                     @ApiParam("Specify the message to use for publishing.")
+                                                     @RequestParam(name = "message", required = false) String message) {
         switch (action) {
             case INITIALIZE:
                 return workspaceManager.initialize(id)
                         .map(workspace -> WorkspaceDto.builder(workspace).build());
 
-//            case START_REVIEW:
-//                if (StringUtils.isEmpty(message)) {
-//                    throw new BadRequestException(
-//                            "There is no message specify. A message is needed when starting a review.",
-//                            "BadRequestException.start-review-no-message.message"
-//                    );
-//                }
-//
-//                return WorkspaceDto.builder(workspaceManager.publish(id, message)).build();
+            case PUBLISH:
+                if (StringUtils.isEmpty(message)) {
+                    throw BadRequestException.missingHeader("message");
+                }
+
+                return workspaceManager.publish(id, message)
+                        .map(workspace -> WorkspaceDto.builder(workspace).build());
             default:
                 throw BadRequestException.actionNotSupportedException(action.toString());
         }
@@ -139,16 +142,22 @@ public class WorkspaceController {
 //                                   @RequestBody Map<String, String> translations) {
 //        workspaceManager.updateTranslations(id, translations);
 //    }
-//
+
+    /**
+     * All possible actions that can be performed on workspaces.
+     */
     public enum RepositionWorkspacesAction {
 
         SYNCHRONIZE
     }
 
+    /**
+     * All possible actions that can be performed on a single workspace.
+     */
     public enum WorkspaceAction {
 
         INITIALIZE,
 
-//        START_REVIEW
+        PUBLISH
     }
 }
