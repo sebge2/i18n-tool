@@ -37,7 +37,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
 
     @AfterAll
     public void destroy() {
-        gitRepo.destroy();
+        gitRepo.destroyAll();
     }
 
     @Nested

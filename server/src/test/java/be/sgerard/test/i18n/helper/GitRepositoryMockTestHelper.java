@@ -2,7 +2,6 @@ package be.sgerard.test.i18n.helper;
 
 import be.sgerard.i18n.model.repository.dto.GitHubRepositoryCreationDto;
 import be.sgerard.i18n.model.repository.dto.GitRepositoryCreationDto;
-import be.sgerard.i18n.service.repository.git.DefaultGitRepositoryApi;
 import be.sgerard.i18n.service.repository.git.GitRepositoryApi;
 import be.sgerard.i18n.service.repository.git.GitRepositoryApiProvider;
 import org.springframework.context.annotation.Primary;
@@ -12,8 +11,10 @@ import java.io.File;
 import java.net.URI;
 import java.util.HashSet;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
+import static be.sgerard.i18n.support.GitHubUtils.createGitHubUrl;
 import static be.sgerard.test.i18n.support.TestUtils.currentProjectLocation;
 
 /**
@@ -31,28 +32,44 @@ public class GitRepositoryMockTestHelper implements GitRepositoryApiProvider {
     @Override
     public GitRepositoryApi createApi(GitRepositoryApi.Configuration configuration) {
         return new GitRepositoryApiMock(
-                repositories.stream()
-                        .filter(repository -> Objects.equals(repository.getMockedRemoteUri(), configuration.getRemoteUri()))
-                        .findFirst()
-                        .orElse(null),
+                findRepoByUri(configuration.getRemoteUri()).orElse(null),
                 configuration
         );
     }
 
-    public StepSetup createMockFor(String url) {
-        return new StepSetup(URI.create(url));
+    public StepSetup createMockFor(URI remoteUri) {
+        return new StepSetup(remoteUri);
     }
 
     public StepSetup createMockFor(GitHubRepositoryCreationDto creationDto) {
-        return createMockFor(String.format("https://github.com/%s/%s.git", creationDto.getUsername(), creationDto.getRepository()));
+        return createMockFor(createGitHubUrl(creationDto.getUsername(), creationDto.getRepository()));
     }
 
     public StepSetup createMockFor(GitRepositoryCreationDto creationDto) {
-        return createMockFor(creationDto.getLocation());
+        return createMockFor(creationDto.getLocationAsURI());
     }
 
-    public void destroy() {
+    public void destroyAll() {
         this.repositories.forEach(GitRepositoryMock::destroy);
+    }
+
+    public GitRepositoryMock getMockFor(GitHubRepositoryCreationDto creationDto) {
+        return findRepoByUriOrDie(createGitHubUrl(creationDto.getUsername(), creationDto.getRepository()));
+    }
+
+    public GitRepositoryMock getMockFor(GitRepositoryCreationDto creationDto) {
+        return findRepoByUriOrDie(URI.create(creationDto.getLocation()));
+    }
+
+    private Optional<GitRepositoryMock> findRepoByUri(URI remoteUri) {
+        return repositories.stream()
+                .filter(repository -> Objects.equals(repository.getMockedRemoteUri(), remoteUri))
+                .findFirst();
+    }
+
+    private GitRepositoryMock findRepoByUriOrDie(URI remoteUri) {
+        return findRepoByUri(remoteUri)
+                .orElseThrow(() -> new IllegalArgumentException("There is no mock repository for [" + remoteUri + "]"));
     }
 
     public class StepSetup {

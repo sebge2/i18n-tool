@@ -57,7 +57,7 @@ public class GitRepositoryMock {
         return mockedRemoteUri;
     }
 
-    public void init() throws Exception {
+    public GitRepositoryMock init() throws Exception {
         final Repository repository = Git.open(originalGitProject).getRepository();
 
         try (ObjectReader reader = repository.newObjectReader(); RevWalk walk = new RevWalk(reader); TreeWalk treeWalk = new TreeWalk(repository, reader);) {
@@ -77,11 +77,15 @@ public class GitRepositoryMock {
                 }
             }
         }
+
+        return this;
     }
 
-    public void destroy() {
+    public GitRepositoryMock destroy() {
         try {
             FileUtils.deleteDirectory(mockedGitProject);
+
+            return this;
         } catch (IOException e) {
             throw new IllegalStateException("Cannot delete mock repository.", e);
         }

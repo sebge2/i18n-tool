@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import java.net.URI;
+
 /**
  * Request asking the creation of a Git repository.
  *
@@ -37,6 +39,12 @@ public class GitRepositoryCreationDto extends RepositoryCreationDto {
      */
     public String getLocation() {
         return location;
+    }
+    /**
+     * Returns the location URI of this repository.
+     */
+    public URI getLocationAsURI() {
+        return URI.create(getLocation());
     }
 
     /**

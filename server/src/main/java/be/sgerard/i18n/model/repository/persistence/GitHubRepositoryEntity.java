@@ -8,6 +8,8 @@ import javax.persistence.Entity;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
+import static be.sgerard.i18n.support.GitHubUtils.createGitHubUrl;
+
 /**
  * Github {@link GitRepositoryEntity repository}.
  *
@@ -39,7 +41,7 @@ public class GitHubRepositoryEntity extends BaseGitRepositoryEntity {
         this.username = username;
         this.repository = repository;
 
-        setLocation(String.format("https://github.com/%s/%s.git", username, repository));
+        setLocation(createGitHubUrl(username, repository).toString());
     }
 
     @Override
