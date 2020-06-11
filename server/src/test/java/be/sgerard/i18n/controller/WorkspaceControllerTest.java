@@ -2,6 +2,7 @@ package be.sgerard.i18n.controller;
 
 import be.sgerard.i18n.model.repository.dto.GitHubRepositoryDto;
 import be.sgerard.i18n.model.repository.dto.GitRepositoryDto;
+import be.sgerard.i18n.model.repository.dto.RepositoryDto;
 import be.sgerard.i18n.model.workspace.WorkspaceDto;
 import be.sgerard.test.i18n.support.WithInternalUser;
 import org.junit.jupiter.api.*;
@@ -46,13 +47,13 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
     @Transactional
     @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
     public void findAll() throws Exception {
-        final GitRepositoryDto repository = this.repository.create(i18nToolLocalRepositoryCreationDto(), GitRepositoryDto.class).initialize().get();
-
-        asyncMvc
-                .perform(post("/api/repository/{id}/workspace/do?action=SYNCHRONIZE", repository.getId()))
-                .andExpectStarted()
-                .andWaitResult()
-                .andExpect(status().isOk());
+        this.repository
+                .create(i18nToolLocalRepositoryCreationDto())
+                .initialize()
+                .workspaces()
+                .sync()
+                .and()
+                .get();
 
         asyncMvc
                 .perform(get("/api/repository/workspace"))
@@ -66,13 +67,13 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
     @Transactional
     @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
     public void findAllOfRepository() throws Exception {
-        final GitRepositoryDto repository = this.repository.create(i18nToolLocalRepositoryCreationDto(), GitRepositoryDto.class).initialize().get();
-
-        asyncMvc
-                .perform(post("/api/repository/{id}/workspace/do?action=SYNCHRONIZE", repository.getId()))
-                .andExpectStarted()
-                .andWaitResult()
-                .andExpect(status().isOk());
+        final RepositoryDto repository = this.repository
+                .create(i18nToolLocalRepositoryCreationDto())
+                .initialize()
+                .workspaces()
+                .sync()
+                .and()
+                .get();
 
         asyncMvc
                 .perform(get("/api/repository/{id}/workspace", repository.getId()))
@@ -80,6 +81,25 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                 .andWaitResult()
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(3)));
+    }
+
+    @Test
+    @Transactional
+    @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
+    public void findById() throws Exception {
+        final WorkspaceDto masterWorkspace = repository
+                .create(i18nToolRepositoryCreationDto())
+                .initialize()
+                .workspaces()
+                .sync()
+                .workspaceForBranch("master")
+                .get();
+
+        asyncMvc
+                .perform(get("/api/repository/workspace/{id}", masterWorkspace.getId()))
+                .andExpectStarted()
+                .andWaitResult()
+                .andExpect(status().isOk());
     }
 
     @Nested
@@ -105,11 +125,12 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
         @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
         public void initialize() throws Exception {
             final WorkspaceDto masterWorkspace = repository
-                    .create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class)
+                    .create(i18nToolRepositoryCreationDto())
                     .initialize()
                     .workspaces()
                     .sync()
-                    .getOrDie("master");
+                    .workspaceForBranch("master")
+                    .get();
 
             asyncMvc
                     .perform(post("/api/repository/workspace/{id}/do?action=INITIALIZE", masterWorkspace.getId()))
@@ -121,19 +142,37 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
         @Test
         @Transactional
         @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
+        public void publish() throws Exception {
+            final WorkspaceDto masterWorkspace = repository
+                    .create(i18nToolRepositoryCreationDto())
+                    .initialize()
+                    .workspaces()
+                    .sync()
+                    .workspaceForBranch("master")
+                    .initialize()
+                    .get();
+
+            asyncMvc
+                    .perform(post("/api/repository/workspace/{id}/do?action=PUBLISH&message=test", masterWorkspace.getId()))
+                    .andExpectStarted()
+                    .andWaitResult()
+                    .andExpect(status().isOk());
+
+            // TODO assert PR created
+        }
+
+        @Test
+        @Transactional
+        @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
         public void deleteWorkspace() throws Exception {
             final WorkspaceDto masterWorkspace = repository
                     .create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class)
                     .initialize()
                     .workspaces()
                     .sync()
-                    .getOrDie("master");
-
-            asyncMvc
-                    .perform(post("/api/repository/workspace/{id}/do?action=INITIALIZE", masterWorkspace.getId()))
-                    .andExpectStarted()
-                    .andWaitResult()
-                    .andExpect(status().isOk());
+                    .workspaceForBranch("master")
+                    .initialize()
+                    .get();
 
             asyncMvc
                     .perform(delete("/api/repository/workspace/{id}", masterWorkspace.getId()))
@@ -170,7 +209,8 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                     .initialize()
                     .workspaces()
                     .sync()
-                    .getOrDie("master");
+                    .workspaceForBranch("master")
+                    .get();
 
             asyncMvc
                     .perform(post("/api/repository/workspace/{id}/do?action=INITIALIZE", masterWorkspace.getId()))
@@ -182,19 +222,35 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
         @Test
         @Transactional
         @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
-        public void deleteWorkspace() throws Exception {
+        public void publish() throws Exception {
             final WorkspaceDto masterWorkspace = repository
                     .create(i18nToolLocalRepositoryCreationDto(), GitRepositoryDto.class)
                     .initialize()
                     .workspaces()
                     .sync()
-                    .getOrDie("master");
+                    .workspaceForBranch("master")
+                    .initialize()
+                    .get();
 
             asyncMvc
-                    .perform(post("/api/repository/workspace/{id}/do?action=INITIALIZE", masterWorkspace.getId()))
+                    .perform(post("/api/repository/workspace/{id}/do?action=PUBLISH&message=test", masterWorkspace.getId()))
                     .andExpectStarted()
                     .andWaitResult()
                     .andExpect(status().isOk());
+        }
+
+        @Test
+        @Transactional
+        @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
+        public void deleteWorkspace() throws Exception {
+            final WorkspaceDto masterWorkspace = repository
+                    .create(i18nToolLocalRepositoryCreationDto())
+                    .initialize()
+                    .workspaces()
+                    .sync()
+                    .workspaceForBranch("master")
+                    .initialize()
+                    .get();
 
             asyncMvc
                     .perform(delete("/api/repository/workspace/{id}", masterWorkspace.getId()))
@@ -203,8 +259,5 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                     .andExpect(status().isNoContent());
         }
     }
-
-    // TODO get by id
-    // TODO publish
 
 }

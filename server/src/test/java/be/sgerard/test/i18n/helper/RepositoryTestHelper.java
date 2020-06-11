@@ -147,7 +147,7 @@ public class RepositoryTestHelper {
             return RepositoryTestHelper.this;
         }
 
-        public WorkspaceTestHelper.StepInitializedRepository workspaces() {
+        public WorkspaceTestHelper.StepInitializedRepository<R> workspaces() {
             return workspaceTestHelper.with(repository);
         }
 
