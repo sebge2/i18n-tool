@@ -1,4 +1,4 @@
-package be.sgerard.i18n.client.github;
+package be.sgerard.i18n.service.client;
 
 import be.sgerard.i18n.model.github.GitHubPullRequestDto;
 import be.sgerard.i18n.service.workspace.WorkspaceException;

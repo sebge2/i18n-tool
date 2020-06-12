@@ -18,26 +18,26 @@ import static be.sgerard.test.i18n.model.UserDtoTestUtils.userJohnDoeCreation;
  * @author Sebastien Gerard
  */
 public class GitHubPullRequestClientTest extends AbstractControllerTest {
-
-    @Autowired
-    private GitHubPullRequestClient manager;
-
-    @Before
-    public void setup() throws Exception {
-        user.createUser(userJohnDoeCreation().build());
-    }
-
-    @Test
-    @Transactional
-    @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
-    public void findAll() throws Exception {
-        final GitHubRepositoryDto repository = this.repository.create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class).get();
-
-        final List<GitHubPullRequestDto> byNumber = manager.findAll(repository.getId()).collectList().block();
-        System.out.println(
-                objectMapper.writeValueAsString(byNumber)
-
-        );
-    }
+//
+//    @Autowired
+//    private GitHubPullRequestClient manager;
+//
+//    @Before
+//    public void setup() throws Exception {
+//        user.createUser(userJohnDoeCreation().build());
+//    }
+//
+//    @Test
+//    @Transactional
+//    @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
+//    public void findAll() throws Exception {
+//        final GitHubRepositoryDto repository = this.repository.create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class).get();
+//
+//        final List<GitHubPullRequestDto> byNumber = manager.findAll(repository.getId()).collectList().block();
+//        System.out.println(
+//                objectMapper.writeValueAsString(byNumber)
+//
+//        );
+//    }
 
 }

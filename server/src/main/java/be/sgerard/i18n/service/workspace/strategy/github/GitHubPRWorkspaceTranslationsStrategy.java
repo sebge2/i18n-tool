@@ -6,7 +6,7 @@ import be.sgerard.i18n.model.repository.persistence.BaseGitRepositoryEntity;
 import be.sgerard.i18n.model.repository.persistence.GitHubRepositoryEntity;
 import be.sgerard.i18n.model.workspace.GitHubReviewEntity;
 import be.sgerard.i18n.model.workspace.WorkspaceEntity;
-import be.sgerard.i18n.service.github.GitHubPullRequestManager;
+import be.sgerard.i18n.service.client.GitHubPullRequestClient;
 import be.sgerard.i18n.service.i18n.TranslationManager;
 import be.sgerard.i18n.service.repository.RepositoryManager;
 import be.sgerard.i18n.service.repository.git.GitRepositoryApi;
@@ -35,18 +35,18 @@ public class GitHubPRWorkspaceTranslationsStrategy extends BaseGitWorkspaceTrans
 
     private static final Logger logger = LoggerFactory.getLogger(GitHubPRWorkspaceTranslationsStrategy.class);
 
-    private final GitHubPullRequestManager pullRequestManager;
+    private final GitHubPullRequestClient pullRequestClient;
 
     public GitHubPRWorkspaceTranslationsStrategy(RepositoryManager repositoryManager,
                                                  TranslationManager translationManager,
-                                                 GitHubPullRequestManager pullRequestManager) {
+                                                 GitHubPullRequestClient pullRequestClient) {
         super(repositoryManager, translationManager);
-        this.pullRequestManager = pullRequestManager;
+        this.pullRequestClient = pullRequestClient;
     }
 
     @Override
     public Mono<Boolean> isReviewFinished(WorkspaceEntity workspace) {
-        return pullRequestManager
+        return pullRequestClient
                 .findByNumber(workspace.getRepository().getId(), workspace.getReviewOrDie(GitHubReviewEntity.class).getPullRequestNumber())
                 .map(GitHubPullRequestDto::getStatus)
                 .map(GitHubPullRequestStatus::isFinished)
@@ -69,7 +69,7 @@ public class GitHubPRWorkspaceTranslationsStrategy extends BaseGitWorkspaceTrans
 
                             api.commitAll(message).push();
 
-                            return pullRequestManager
+                            return pullRequestClient
                                     .createRequest(workspace.getRepository().getId(), message, pullRequestBranch, workspace.getBranch())
                                     .map(pullRequest -> workspace.setReview(new GitHubReviewEntity(workspace, pullRequestBranch, pullRequest.getNumber())));
                         }

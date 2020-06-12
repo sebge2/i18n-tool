@@ -2,7 +2,7 @@ package be.sgerard.i18n.controller;
 
 import be.sgerard.i18n.model.github.GitHubPullRequestDto;
 import be.sgerard.i18n.model.github.GitHubPullRequestStatus;
-import be.sgerard.i18n.client.github.GitHubPullRequestClient;
+import be.sgerard.i18n.service.client.GitHubPullRequestClient;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.GetMapping;
