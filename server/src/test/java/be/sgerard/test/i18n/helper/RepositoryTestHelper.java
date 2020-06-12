@@ -1,20 +1,20 @@
 package be.sgerard.test.i18n.helper;
 
 import be.sgerard.i18n.model.repository.RepositoryStatus;
+import be.sgerard.i18n.model.repository.dto.GitHubRepositoryDto;
 import be.sgerard.i18n.model.repository.dto.RepositoryCreationDto;
 import be.sgerard.i18n.model.repository.dto.RepositoryDto;
 import be.sgerard.i18n.model.repository.dto.RepositoryPatchDto;
-import be.sgerard.i18n.model.repository.dto.RepositorySummaryDto;
 import be.sgerard.test.i18n.support.JsonHolderResultHandler;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -27,13 +27,17 @@ public class RepositoryTestHelper {
     private final AsyncMockMvcTestHelper mockMvc;
     private final ObjectMapper objectMapper;
     private final WorkspaceTestHelper workspaceTestHelper;
+    private final GitHubRepositoryMockTestHelper gitHubTestHelper;
+
+    private final Map<String, RepositoryDto> hints = new HashMap<>();
 
     public RepositoryTestHelper(AsyncMockMvcTestHelper mockMvc,
                                 ObjectMapper objectMapper,
-                                WorkspaceTestHelper workspaceTestHelper) {
+                                WorkspaceTestHelper workspaceTestHelper, GitHubRepositoryMockTestHelper gitHubTestHelper) {
         this.mockMvc = mockMvc;
         this.objectMapper = objectMapper;
         this.workspaceTestHelper = workspaceTestHelper;
+        this.gitHubTestHelper = gitHubTestHelper;
     }
 
     public StepCreatedRepository<RepositoryDto> create(RepositoryCreationDto creationDto) throws Exception {
@@ -58,33 +62,45 @@ public class RepositoryTestHelper {
         return new StepCreatedRepository<>(resultHandler.getValue());
     }
 
-    public void clearAll() throws Exception {
-        for (RepositorySummaryDto repository : findAll()) {
-            delete(repository.getId());
+    public <R extends RepositoryDto> StepCreatedRepository<R> forHint(String hint, Class<R> expectedResult) {
+        if (!hints.containsKey(hint)) {
+            throw new IllegalArgumentException("No repository created for hint [" + hint + "]");
         }
+
+        return new StepCreatedRepository<>(expectedResult.cast(hints.get(hint)));
     }
 
-    private Collection<RepositorySummaryDto> findAll() throws Exception {
-        final JsonHolderResultHandler<Collection<RepositorySummaryDto>> resultHandler = new JsonHolderResultHandler<>(objectMapper, new TypeReference<>() {
-        });
-
-        mockMvc
-                .perform(get("/api/repository"))
-                .andExpectStarted()
-                .andWaitResult()
-                .andExpect(status().isOk())
-                .andDo(resultHandler);
-
-        return resultHandler.getValue();
+    public StepCreatedRepository<RepositoryDto> forHint(String hint) {
+        return forHint(hint, RepositoryDto.class);
     }
 
-    private void delete(String repositoryId) throws Exception {
-        mockMvc
-                .perform(MockMvcRequestBuilders.delete("/api/repository/{id}", repositoryId))
-                .andExpectStarted()
-                .andWaitResult()
-                .andExpect(status().isNoContent());
-    }
+//    public void clearAll() throws Exception {
+//        for (RepositorySummaryDto repository : findAll()) {
+//            delete(repository.getId());
+//        }
+//    }
+//
+//    private Collection<RepositorySummaryDto> findAll() throws Exception {
+//        final JsonHolderResultHandler<Collection<RepositorySummaryDto>> resultHandler = new JsonHolderResultHandler<>(objectMapper, new TypeReference<>() {
+//        });
+//
+//        mockMvc
+//                .perform(get("/api/repository"))
+//                .andExpectStarted()
+//                .andWaitResult()
+//                .andExpect(status().isOk())
+//                .andDo(resultHandler);
+//
+//        return resultHandler.getValue();
+//    }
+//
+//    private void delete(String repositoryId) throws Exception {
+//        mockMvc
+//                .perform(MockMvcRequestBuilders.delete("/api/repository/{id}", repositoryId))
+//                .andExpectStarted()
+//                .andWaitResult()
+//                .andExpect(status().isNoContent());
+//    }
 
     public class StepCreatedRepository<R extends RepositoryDto> {
 
@@ -124,6 +140,15 @@ public class RepositoryTestHelper {
                     .andDo(resultHandler);
 
             return this;
+        }
+
+        public StepCreatedRepository<R> hint(String hint) {
+            hints.put(hint, repository);
+            return this;
+        }
+
+        public GitHubRepositoryMockTestHelper.StepRepository gitHub() {
+            return gitHubTestHelper.forRepository((GitHubRepositoryDto) repository);
         }
 
         public R get() {

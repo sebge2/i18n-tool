@@ -4,6 +4,7 @@ import be.sgerard.i18n.model.repository.dto.GitHubRepositoryDto;
 import be.sgerard.i18n.model.repository.dto.GitRepositoryDto;
 import be.sgerard.i18n.model.repository.dto.RepositoryDto;
 import be.sgerard.i18n.model.workspace.WorkspaceDto;
+import be.sgerard.i18n.model.workspace.WorkspaceStatus;
 import be.sgerard.test.i18n.support.WithInternalUser;
 import org.junit.jupiter.api.*;
 import org.springframework.transaction.annotation.Transactional;
@@ -99,7 +100,9 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                 .perform(get("/api/repository/workspace/{id}", masterWorkspace.getId()))
                 .andExpectStarted()
                 .andWaitResult()
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.branch").value("master"))
+                .andExpect(jsonPath("$.status").value(WorkspaceStatus.NOT_INITIALIZED.name()));
     }
 
     @Nested
@@ -136,7 +139,9 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                     .perform(post("/api/repository/workspace/{id}/do?action=INITIALIZE", masterWorkspace.getId()))
                     .andExpectStarted()
                     .andWaitResult()
-                    .andExpect(status().isOk());
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.branch").value("master"))
+                    .andExpect(jsonPath("$.status").value(WorkspaceStatus.INITIALIZED.name()));
         }
 
         @Test
@@ -145,6 +150,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
         public void publish() throws Exception {
             final WorkspaceDto masterWorkspace = repository
                     .create(i18nToolRepositoryCreationDto())
+                    .hint("my-repo")
                     .initialize()
                     .workspaces()
                     .sync()
@@ -156,9 +162,14 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                     .perform(post("/api/repository/workspace/{id}/do?action=PUBLISH&message=test", masterWorkspace.getId()))
                     .andExpectStarted()
                     .andWaitResult()
-                    .andExpect(status().isOk());
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.branch").value("master"))
+                    .andExpect(jsonPath("$.status").value(WorkspaceStatus.NOT_INITIALIZED.name()));
 
-            // TODO assert PR created
+            repository
+                    .forHint("my-repo")
+                    .gitHub()
+                    .assertHasPullRequests();
         }
 
         @Test
@@ -237,7 +248,9 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                     .perform(post("/api/repository/workspace/{id}/do?action=INITIALIZE", masterWorkspace.getId()))
                     .andExpectStarted()
                     .andWaitResult()
-                    .andExpect(status().isOk());
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.branch").value("master"))
+                    .andExpect(jsonPath("$.status").value(WorkspaceStatus.INITIALIZED.name()));
         }
 
         @Test
@@ -257,7 +270,9 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                     .perform(post("/api/repository/workspace/{id}/do?action=PUBLISH&message=test", masterWorkspace.getId()))
                     .andExpectStarted()
                     .andWaitResult()
-                    .andExpect(status().isOk());
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.branch").value("master"))
+                    .andExpect(jsonPath("$.status").value(WorkspaceStatus.NOT_INITIALIZED.name()));
         }
 
         @Test
