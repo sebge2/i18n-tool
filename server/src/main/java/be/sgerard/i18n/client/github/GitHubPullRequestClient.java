@@ -1,4 +1,4 @@
-package be.sgerard.i18n.service.github;
+package be.sgerard.i18n.client.github;
 
 import be.sgerard.i18n.model.github.GitHubPullRequestDto;
 import be.sgerard.i18n.service.workspace.WorkspaceException;
@@ -6,11 +6,11 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
- * Manager of GitHub pull-requests.
+ * Client interacting with GitHub for managing pull-requests.
  *
  * @author Sebastien Gerard
  */
-public interface GitHubPullRequestManager {
+public interface GitHubPullRequestClient {
 
     /**
      * Creates a new {@link GitHubPullRequestDto pull request}.

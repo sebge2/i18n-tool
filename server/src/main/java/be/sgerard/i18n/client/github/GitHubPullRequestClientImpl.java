@@ -1,4 +1,4 @@
-package be.sgerard.i18n.service.github;
+package be.sgerard.i18n.client.github;
 
 import be.sgerard.i18n.model.github.GitHubPullRequestDto;
 import be.sgerard.i18n.model.github.GitHubPullRequestStatus;
@@ -14,17 +14,17 @@ import reactor.core.publisher.Mono;
 import static java.util.Collections.emptyMap;
 
 /**
- * Implementation of the {@link GitHubPullRequestManager pull-request manager}.
+ * Implementation of the {@link GitHubPullRequestClient pull-request manager}.
  *
  * @author Sebastien Gerard
  */
 @Service
-public class GitHubPullRequestManagerImpl implements GitHubPullRequestManager {
+public class GitHubPullRequestClientImpl implements GitHubPullRequestClient {
 
     private final RepositoryManager repositoryManager;
     private final AuthenticationManager authenticationManager;
 
-    public GitHubPullRequestManagerImpl(RepositoryManager repositoryManager, AuthenticationManager authenticationManager) {
+    public GitHubPullRequestClientImpl(RepositoryManager repositoryManager, AuthenticationManager authenticationManager) {
         this.repositoryManager = repositoryManager;
         this.authenticationManager = authenticationManager;
     }

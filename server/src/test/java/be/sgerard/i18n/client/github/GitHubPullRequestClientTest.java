@@ -1,4 +1,4 @@
-package be.sgerard.i18n.service.github;
+package be.sgerard.i18n.client.github;
 
 import be.sgerard.i18n.controller.AbstractControllerTest;
 import be.sgerard.i18n.model.github.GitHubPullRequestDto;
@@ -17,10 +17,10 @@ import static be.sgerard.test.i18n.model.UserDtoTestUtils.userJohnDoeCreation;
 /**
  * @author Sebastien Gerard
  */
-public class GitHubPullRequestManagerTest extends AbstractControllerTest {
+public class GitHubPullRequestClientTest extends AbstractControllerTest {
 
     @Autowired
-    private GitHubPullRequestManager manager;
+    private GitHubPullRequestClient manager;
 
     @Before
     public void setup() throws Exception {

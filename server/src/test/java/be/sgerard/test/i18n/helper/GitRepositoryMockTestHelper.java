@@ -51,6 +51,7 @@ public class GitRepositoryMockTestHelper implements GitRepositoryApiProvider {
 
     public void destroyAll() {
         this.repositories.forEach(GitRepositoryMock::destroy);
+        this.repositories.clear();
     }
 
     public GitRepositoryMock getRepo(GitHubRepositoryCreationDto creationDto) {
