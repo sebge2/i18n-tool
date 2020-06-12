@@ -164,12 +164,14 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                     .andWaitResult()
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.branch").value("master"))
-                    .andExpect(jsonPath("$.status").value(WorkspaceStatus.NOT_INITIALIZED.name()));
+                    .andExpect(jsonPath("$.status").value(WorkspaceStatus.IN_REVIEW.name()));
+
+            // TODO assert modifications
 
             repository
                     .forHint("my-repo")
                     .gitHub()
-                    .assertHasPullRequests();
+                    .assertHasPullRequests(); // TODO assert PR
         }
 
         @Test
