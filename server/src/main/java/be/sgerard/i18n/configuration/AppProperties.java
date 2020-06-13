@@ -3,12 +3,8 @@ package be.sgerard.i18n.configuration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.io.File;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
-import static java.util.Collections.emptyList;
-import static java.util.stream.Collectors.toList;
 import static org.springframework.util.StringUtils.isEmpty;
 
 /**
@@ -25,8 +21,6 @@ public class AppProperties {
 
 
     private int lockTimeoutInS = 120;
-    private String javaTranslationBundleIgnoredPaths;
-    private String jsonIcuTranslationBundleDirs;
 
     public AppProperties() {
         this.repository = new Repository(this);
@@ -83,34 +77,6 @@ public class AppProperties {
 
     public void setLockTimeoutInS(int lockTimeoutInS) {
         this.lockTimeoutInS = lockTimeoutInS;
-    }
-
-    public String getJavaTranslationBundleIgnoredPaths() {
-        return javaTranslationBundleIgnoredPaths;
-    }
-
-    public List<String> getJavaTranslationBundleIgnoredPathsAsList() {
-        return getJavaTranslationBundleIgnoredPaths() != null
-                ? Stream.of(getJavaTranslationBundleIgnoredPaths().split(",")).map(String::trim).collect(toList())
-                : emptyList();
-    }
-
-    public void setJavaTranslationBundleIgnoredPaths(String javaTranslationBundleIgnoredPaths) {
-        this.javaTranslationBundleIgnoredPaths = javaTranslationBundleIgnoredPaths;
-    }
-
-    public String getJsonIcuTranslationBundleDirs() {
-        return jsonIcuTranslationBundleDirs;
-    }
-
-    public List<String> getJsonIcuTranslationBundleDirsAsList() {
-        return getJsonIcuTranslationBundleDirs() != null
-                ? Stream.of(getJsonIcuTranslationBundleDirs().split(",")).map(String::trim).collect(toList())
-                : emptyList();
-    }
-
-    public void setJsonIcuTranslationBundleDirs(String jsonIcuTranslationBundleDirs) {
-        this.jsonIcuTranslationBundleDirs = jsonIcuTranslationBundleDirs;
     }
 
     /**

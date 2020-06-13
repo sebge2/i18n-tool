@@ -5,7 +5,7 @@ package be.sgerard.i18n.model.i18n;
  */
 public enum BundleType {
 
-    JAVA,
+    JAVA_PROPERTIES,
 
-    JSON
+    JSON_ICU
 }
