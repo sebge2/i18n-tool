@@ -7,6 +7,7 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 /**
  * Configurations of bundles of a repository.
@@ -14,7 +15,7 @@ import java.util.UUID;
  * @author Sebastien Gerard
  */
 @Entity
-public class BundlesConfigurationEntity {
+public class BundleConfigurationEntity {
 
     @Id
     private String id;
@@ -26,12 +27,17 @@ public class BundlesConfigurationEntity {
     private RepositoryEntity repository;
 
     @ElementCollection
-    private List<String> ignoredPaths = new ArrayList<>();
+    @CollectionTable(name = "repository_translations_ignored_path", joinColumns = @JoinColumn(name = "bundle_configuration_id"))
+    private List<Pattern> ignoredPaths = new ArrayList<>();
 
-    BundlesConfigurationEntity() {
+    @ElementCollection
+    @CollectionTable(name = "repository_translations_included_path", joinColumns = @JoinColumn(name = "bundle_configuration_id"))
+    private List<Pattern> includedPaths = new ArrayList<>();
+
+    BundleConfigurationEntity() {
     }
 
-    BundlesConfigurationEntity(BundleType bundleType, RepositoryEntity repository) {
+    BundleConfigurationEntity(BundleType bundleType, RepositoryEntity repository) {
         this.id = UUID.randomUUID().toString();
         this.bundleType = bundleType;
         this.repository = repository;
@@ -47,7 +53,7 @@ public class BundlesConfigurationEntity {
     /**
      * Sets the unique id of this configuration.
      */
-    public BundlesConfigurationEntity setId(String id) {
+    public BundleConfigurationEntity setId(String id) {
         this.id = id;
         return this;
     }
@@ -62,7 +68,7 @@ public class BundlesConfigurationEntity {
     /**
      * Sets the type of bundle associated to this configuration.
      */
-    public BundlesConfigurationEntity setBundleType(BundleType bundleType) {
+    public BundleConfigurationEntity setBundleType(BundleType bundleType) {
         this.bundleType = bundleType;
         return this;
     }
@@ -77,7 +83,7 @@ public class BundlesConfigurationEntity {
     /**
      * Sets the associated {@link RepositoryEntity repository}.
      */
-    public BundlesConfigurationEntity setRepository(RepositoryEntity repository) {
+    public BundleConfigurationEntity setRepository(RepositoryEntity repository) {
         this.repository = repository;
         return this;
     }
@@ -85,15 +91,30 @@ public class BundlesConfigurationEntity {
     /**
      * Returns all the paths that are ignored when scanning bundles of this type.
      */
-    public List<String> getIgnoredPaths() {
+    public List<Pattern> getIgnoredPaths() {
         return ignoredPaths;
     }
 
     /**
      * Sets all the paths that are ignored when scanning bundles of this type.
      */
-    public BundlesConfigurationEntity setIgnoredPaths(List<String> ignoredPaths) {
+    public BundleConfigurationEntity setIgnoredPaths(List<Pattern> ignoredPaths) {
         this.ignoredPaths = ignoredPaths;
+        return this;
+    }
+
+    /**
+     * Returns all the paths that are included when scanning bundles of this type.
+     */
+    public List<Pattern> getIncludedPaths() {
+        return includedPaths;
+    }
+
+    /**
+     * Sets all the paths that are included when scanning bundles of this type.
+     */
+    public BundleConfigurationEntity setIncludedPaths(List<Pattern> includedPaths) {
+        this.includedPaths = includedPaths;
         return this;
     }
 }

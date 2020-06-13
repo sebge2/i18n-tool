@@ -1,6 +1,5 @@
 package be.sgerard.i18n.model.repository.persistence;
 
-import be.sgerard.i18n.model.i18n.persistence.BundlesConfigurationEntity;
 import be.sgerard.i18n.model.repository.RepositoryStatus;
 import be.sgerard.i18n.model.repository.RepositoryType;
 import be.sgerard.i18n.model.workspace.WorkspaceEntity;
@@ -38,8 +37,8 @@ public abstract class RepositoryEntity {
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
     private final Collection<WorkspaceEntity> workspaces = new HashSet<>();
 
-    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
-    private final Collection<BundlesConfigurationEntity> bundlesConfigurations = new HashSet<>();
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "repository")
+    private TranslationsConfigurationEntity translationsConfiguration;
 
     @Version
     private int version;
@@ -50,6 +49,7 @@ public abstract class RepositoryEntity {
     public RepositoryEntity(String name) {
         this.id = UUID.randomUUID().toString();
         this.name = name;
+        this.translationsConfiguration = new TranslationsConfigurationEntity(this);
     }
 
     /**
@@ -117,19 +117,19 @@ public abstract class RepositoryEntity {
     }
 
     /**
-     * Returns the {@link BundlesConfigurationEntity configurations of bundles}.
+     * Returns the {@link TranslationsConfigurationEntity configuration} to use for managing translations.
      */
-    public Collection<BundlesConfigurationEntity> getBundlesConfigurations() {
-        return unmodifiableCollection(bundlesConfigurations);
+    public TranslationsConfigurationEntity getTranslationsConfiguration() {
+        return translationsConfiguration;
     }
 
     /**
-     * Adds the {@link BundlesConfigurationEntity configuration of bundles}.
+     * Sets the {@link TranslationsConfigurationEntity configuration} to use for managing translations.
      */
-    public void addBundlesConfiguration(BundlesConfigurationEntity bundlesConfiguration) {
-        this.bundlesConfigurations.add(bundlesConfiguration);
+    public RepositoryEntity setTranslationsConfiguration(TranslationsConfigurationEntity translationsConfiguration) {
+        this.translationsConfiguration = translationsConfiguration;
+        return this;
     }
-
 
     /**
      * Creates a deep copy of this entity.
@@ -143,6 +143,7 @@ public abstract class RepositoryEntity {
         ((RepositoryEntity) copy).id = this.id;
         ((RepositoryEntity) copy).name = this.name;
         ((RepositoryEntity) copy).status = this.status;
+        ((RepositoryEntity) copy).translationsConfiguration = this.translationsConfiguration.deepCopy(copy);
         ((RepositoryEntity) copy).version = this.version;
 
         return copy;

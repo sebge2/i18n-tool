@@ -128,6 +128,8 @@ public class GitHubRepositoryEntity extends BaseGitRepositoryEntity {
     @Override
     protected GitHubRepositoryEntity fillEntity(RepositoryEntity copy) {
         ((GitHubRepositoryEntity) copy)
+                .setUsername(this.username)
+                .setRepository(this.repository)
                 .setAccessKey(this.accessKey)
                 .setWebHookSecret(this.webHookSecret);
 
