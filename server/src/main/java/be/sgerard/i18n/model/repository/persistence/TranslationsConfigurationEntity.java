@@ -1,5 +1,6 @@
 package be.sgerard.i18n.model.repository.persistence;
 
+import be.sgerard.i18n.model.i18n.BundleType;
 import be.sgerard.i18n.model.i18n.persistence.BundleConfigurationEntity;
 
 import javax.persistence.*;
@@ -77,16 +78,33 @@ public class TranslationsConfigurationEntity {
     /**
      * Adds the {@link BundleConfigurationEntity configuration of bundles}.
      */
-    public void addBundlesConfiguration(BundleConfigurationEntity bundle) {
+    public void addBundles(BundleConfigurationEntity bundle) {
         this.bundles.add(bundle);
     }
 
     /**
      * Adds the {@link BundleConfigurationEntity configuration of bundles}.
      */
-    public TranslationsConfigurationEntity addBundlesConfiguration(Collection<BundleConfigurationEntity> bundles) {
+    public TranslationsConfigurationEntity addBundles(Collection<BundleConfigurationEntity> bundles) {
         this.bundles.addAll(bundles);
         return this;
+    }
+
+    /**
+     * Returns the {@link BundleConfigurationEntity bundle configuration} for the specified {@link BundleType type}.
+     */
+    public Optional<BundleConfigurationEntity> getBundle(BundleType bundleType) {
+        return getBundles().stream()
+                .filter(bundle -> bundle.getBundleType() == bundleType)
+                .findFirst();
+    }
+
+    /**
+     * Returns the {@link BundleConfigurationEntity bundle configuration} for the specified {@link BundleType type}.
+     */
+    public BundleConfigurationEntity getBundleOrDie(BundleType bundleType) {
+        return getBundle(bundleType)
+                .orElseThrow(() -> new IllegalArgumentException("There is no configuration for type [" + bundleType + "]."));
     }
 
     /**
@@ -111,6 +129,6 @@ public class TranslationsConfigurationEntity {
         return new TranslationsConfigurationEntity(repository)
                 .setId(getId())
                 .setIgnoredKeys(new ArrayList<>(getIgnoredKeys()))
-                .addBundlesConfiguration(getBundles());
+                .addBundles(getBundles());
     }
 }

@@ -3,6 +3,8 @@ package be.sgerard.i18n.configuration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.springframework.util.StringUtils.isEmpty;
@@ -44,6 +46,7 @@ public class AppProperties {
     /**
      * Returns properties related to {@link Repository repositories}.
      */
+    @ConfigurationProperties(prefix = "repository")
     public Repository getRepository() {
         return repository;
     }
@@ -59,6 +62,7 @@ public class AppProperties {
     /**
      * Returns properties related to {@link Security security}.
      */
+    @ConfigurationProperties(prefix = "security")
     public Security getSecurity() {
         return security;
     }
@@ -80,14 +84,40 @@ public class AppProperties {
     }
 
     /**
+     * Properties related to security.
+     */
+    public static final class Security {
+
+        private String defaultAdminPassword;
+
+        public Security() {
+        }
+
+        /**
+         * Returns the password to use for the administrator use. Only for the test environment.
+         */
+        public Optional<String> getDefaultAdminPassword() {
+            return Optional.ofNullable(defaultAdminPassword);
+        }
+
+        /**
+         * Sets the password to use for the administrator use. Only for the test environment.
+         */
+        public void setDefaultAdminPassword(String defaultAdminPassword) {
+            this.defaultAdminPassword = !isEmpty(defaultAdminPassword) ? defaultAdminPassword : null;
+        }
+    }
+
+    /**
      * Properties related to directories.
      */
-    @ConfigurationProperties(prefix = "repository")
     public static final class Repository {
 
         private final AppProperties appProperties;
 
         private String directory = "repository";
+        private final BundleConfiguration javaProperties = new BundleConfiguration();
+        private final BundleConfiguration jsonIcu = new BundleConfiguration();
 
         public Repository(AppProperties appProperties) {
             this.appProperties = appProperties;
@@ -114,31 +144,61 @@ public class AppProperties {
         public File getDirectoryBaseDir(String id) {
             return new File(new File(appProperties.getBaseDirectory(), getDirectory()), id);
         }
+
+        @ConfigurationProperties(prefix = "java-properties")
+        public BundleConfiguration getJavaProperties() {
+            return javaProperties;
+        }
+
+        @ConfigurationProperties(prefix = "json-icu")
+        public BundleConfiguration getJsonIcu() {
+            return jsonIcu;
+        }
     }
 
     /**
-     * Properties related to security.
+     * Default configuration for translations bundles.
      */
-    @ConfigurationProperties(prefix = "security")
-    public static final class Security {
+    public static class BundleConfiguration {
 
-        private String defaultAdminPassword;
+        private List<String> ignoredPaths = new ArrayList<>();
+        private List<String> includedPaths = new ArrayList<>();
 
-        public Security() {
+        public BundleConfiguration() {
         }
 
         /**
-         * Returns the password to use for the administrator use. Only for the test environment.
+         * Returns all the paths that are included when scanning bundles of this type.
+         * By default all paths are included. If paths have been specified only those paths will be scanned,
+         * expected if they have been {@link #getIgnoredPaths() ignored}.
          */
-        public Optional<String> getDefaultAdminPassword() {
-            return Optional.ofNullable(defaultAdminPassword);
+        public List<String> getIncludedPaths() {
+            return includedPaths;
         }
 
         /**
-         * Sets the password to use for the administrator use. Only for the test environment.
+         * Sets all the paths that are included when scanning bundles of this type.
          */
-        public void setDefaultAdminPassword(String defaultAdminPassword) {
-            this.defaultAdminPassword = !isEmpty(defaultAdminPassword) ? defaultAdminPassword : null;
+        public BundleConfiguration setIncludedPaths(List<String> includedPaths) {
+            this.includedPaths = includedPaths;
+            return this;
+        }
+
+        /**
+         * Returns all the paths that are ignored when scanning bundles of this type.
+         * <p>
+         * Note that ignored paths have a bigger priority over {@link #getIncludedPaths() included paths}.
+         */
+        public List<String> getIgnoredPaths() {
+            return ignoredPaths;
+        }
+
+        /**
+         * Sets all the paths that are ignored when scanning bundles of this type.
+         */
+        public BundleConfiguration setIgnoredPaths(List<String> ignoredPaths) {
+            this.ignoredPaths = ignoredPaths;
+            return this;
         }
     }
 }

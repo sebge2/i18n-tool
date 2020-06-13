@@ -211,7 +211,7 @@ public class TranslationManagerImpl implements TranslationManager {
     private TranslationBundleHandler getHandler(ScannedBundleFileDto bundleFile) {
         for (TranslationBundleHandler handler : handlers) {
 
-            if (handler.support(bundleFile)) {
+            if (handler.support(bundleFile.getType())) {
                 return handler;
             }
         }

@@ -2,9 +2,9 @@ spring:
   main:
     banner-mode: "OFF"
   jpa:
-      open-in-view: false
-      hibernate:
-          ddl-auto: update
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
   security:
     oauth2:
       client:
@@ -14,11 +14,11 @@ spring:
             client-secret: ${GIT_HUB_OAUTH_SECRET}
             scope: repo
             redirect-uri-template: "{baseUrl}/auth/oauth2/code/{registrationId}"
-#          google:
-#            client-id: "241420143849-soe1koqhh6gh9tauqcnvrfdplag1cqce.apps.googleusercontent.com"
-#            client-secret: "ahUSO_-ywDc6eKm6ygEOx6xi"
-#            scope: openid
-#            redirect-uri-template: "{baseUrl}/auth/oauth2/code/{registrationId}"
+  #          google:
+  #            client-id: "241420143849-soe1koqhh6gh9tauqcnvrfdplag1cqce.apps.googleusercontent.com"
+  #            client-secret: "ahUSO_-ywDc6eKm6ygEOx6xi"
+  #            scope: openid
+  #            redirect-uri-template: "{baseUrl}/auth/oauth2/code/{registrationId}"
   session:
     jdbc:
       initialize-schema: "ALWAYS"
@@ -48,5 +48,17 @@ be:
       lock-timeout-in-s: 120
       security:
         default-admin-password: ${DEFAULT_ADMIN_PASSWORD:}
-      java-translation-bundle-ignored-paths: "**/src/main/java,**/src/test,.git,.idea,**/target/classes,/front/,**/target/test-classes"
-      json-icu-translation-bundle-dirs: "**/src/assets/i18n"
+      repository:
+        java-properties:
+          ignored-paths:
+            - "**/src/main/java"
+            - "**/src/test"
+            - ".git"
+            - ".idea"
+            - "**/target/classes"
+            - "**/target/test-classes"
+          included-paths:
+        json-icu:
+          ignored-paths:
+          included-paths:
+            - "**/src/assets/i18n"
