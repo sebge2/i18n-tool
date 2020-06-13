@@ -19,7 +19,7 @@ public class SimpleLockService implements LockService {
     private final int timeoutInS;
 
     public SimpleLockService(AppProperties appProperties) {
-        this.timeoutInS = appProperties.getLockTimeoutInS();
+        this.timeoutInS = appProperties.getLock().getTimeoutInS();
     }
 
 

@@ -1,9 +1,9 @@
 package be.sgerard.i18n.service.i18n.file;
 
-import be.sgerard.i18n.model.i18n.file.ScannedBundleFileDto;
-import be.sgerard.i18n.model.i18n.file.ScannedBundleFileKeyDto;
+import be.sgerard.i18n.model.i18n.file.BundleWalkContext;
+import be.sgerard.i18n.model.i18n.file.ScannedBundleFile;
+import be.sgerard.i18n.model.i18n.file.ScannedBundleFileKey;
 import be.sgerard.i18n.model.i18n.persistence.BundleFileEntity;
-import be.sgerard.i18n.model.workspace.WorkspaceEntity;
 import be.sgerard.i18n.service.i18n.TranslationRepositoryReadApi;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -18,11 +18,11 @@ import static java.util.stream.Collectors.toList;
  *
  * @author Sebastien Gerard
  */
-public class TranslationBundleWalker {
+public class BundleWalker {
 
     private final List<TranslationBundleHandler> handlers;
 
-    public TranslationBundleWalker(List<TranslationBundleHandler> handlers) {
+    public BundleWalker(List<TranslationBundleHandler> handlers) {
         this.handlers = handlers;
     }
 
@@ -30,8 +30,8 @@ public class TranslationBundleWalker {
      * Browses the repository using the specified {@link TranslationRepositoryReadApi API} using the specified
      * {@link TranslationBundleHandler handler} that indicates where are those translations.
      */
-    public Flux<BundleFileEntity> walk(WorkspaceEntity workspace, TranslationRepositoryReadApi api, TranslationBundleConsumer consumer) {
-        return walk(new File("/"), workspace, api, consumer, handlers);
+    public Flux<BundleFileEntity> walk(TranslationBundleConsumer consumer, BundleWalkContext context) {
+        return walk(new File("/"), consumer, context, handlers);
     }
 
     /**
@@ -39,12 +39,11 @@ public class TranslationBundleWalker {
      * that may still find some translations.
      */
     private Flux<BundleFileEntity> walk(File directory,
-                                        WorkspaceEntity workspace,
-                                        TranslationRepositoryReadApi api,
                                         TranslationBundleConsumer consumer,
+                                        BundleWalkContext context,
                                         List<TranslationBundleHandler> handlers) {
         final List<TranslationBundleHandler> updatedHandlers = handlers.stream()
-                .filter(handler -> handler.continueScanning(workspace, directory))
+                .filter(handler -> handler.continueScanning(directory, context))
                 .collect(toList());
 
         if (updatedHandlers.isEmpty()) {
@@ -56,12 +55,12 @@ public class TranslationBundleWalker {
                         .fromIterable(updatedHandlers)
                         .flatMap(handler ->
                                 handler
-                                        .scanBundles(directory, api)
-                                        .flatMap(bundle -> consumer.onBundleFound(bundle, handler.scanKeys(bundle, api)))
+                                        .scanBundles(directory, context.getApi())
+                                        .flatMap(bundle -> consumer.onBundleFound(bundle, handler.scanKeys(bundle, context.getApi())))
                         ),
-                api
+                context.getApi()
                         .listDirectories(directory)
-                        .flatMap(subDir -> walk(subDir, workspace, api, consumer, updatedHandlers))
+                        .flatMap(subDir -> walk(subDir, consumer, context, updatedHandlers))
         );
     }
 
@@ -72,10 +71,10 @@ public class TranslationBundleWalker {
     public interface TranslationBundleConsumer {
 
         /**
-         * Callbacks when the specified {@link ScannedBundleFileDto bundle file} has been found containing
-         * the specified {@link ScannedBundleFileKeyDto keys}.
+         * Callbacks when the specified {@link ScannedBundleFile bundle file} has been found containing
+         * the specified {@link ScannedBundleFileKey keys}.
          */
-        Mono<BundleFileEntity> onBundleFound(ScannedBundleFileDto bundleFile, List<ScannedBundleFileKeyDto> keys);
+        Mono<BundleFileEntity> onBundleFound(ScannedBundleFile bundleFile, List<ScannedBundleFileKey> keys);
 
     }
 
