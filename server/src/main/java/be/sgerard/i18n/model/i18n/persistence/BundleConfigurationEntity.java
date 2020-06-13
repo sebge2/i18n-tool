@@ -37,7 +37,7 @@ public class BundleConfigurationEntity {
     BundleConfigurationEntity() {
     }
 
-    BundleConfigurationEntity(BundleType bundleType, RepositoryEntity repository) {
+    public BundleConfigurationEntity(BundleType bundleType, RepositoryEntity repository) {
         this.id = UUID.randomUUID().toString();
         this.bundleType = bundleType;
         this.repository = repository;
@@ -90,6 +90,8 @@ public class BundleConfigurationEntity {
 
     /**
      * Returns all the paths that are ignored when scanning bundles of this type.
+     * <p>
+     * Note that ignored paths have a bigger priority over {@link #getIncludedPaths() included paths}.
      */
     public List<Pattern> getIgnoredPaths() {
         return ignoredPaths;
@@ -105,6 +107,8 @@ public class BundleConfigurationEntity {
 
     /**
      * Returns all the paths that are included when scanning bundles of this type.
+     * <p>
+     * Note that {@link #getIgnoredPaths() ignored paths} have a bigger priority over included paths.
      */
     public List<Pattern> getIncludedPaths() {
         return includedPaths;

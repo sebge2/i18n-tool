@@ -55,12 +55,13 @@ public abstract class BaseGitWorkspaceTranslationsStrategy implements WorkspaceT
                 .applyOnRepository(
                         workspace.getRepository().getId(),
                         GitRepositoryApi.class,
-                        api -> {
-                            translationManager.readTranslations(workspace, new GitTranslationRepositoryReadApi(api, workspace.getBranch()));
-
-                            return workspace;
-                        }
-                );
+                        api ->
+                                translationManager
+                                        .readTranslations(workspace, new GitTranslationRepositoryReadApi(api, workspace.getBranch()))
+                                        .then()
+                                        .map(v -> workspace)
+                )
+                .flatMap(m -> m);
     }
 
     /**

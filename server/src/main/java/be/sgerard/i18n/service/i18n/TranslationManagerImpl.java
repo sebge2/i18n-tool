@@ -22,6 +22,7 @@ import be.sgerard.i18n.service.i18n.file.TranslationBundleWalker;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.io.File;
@@ -218,7 +219,7 @@ public class TranslationManagerImpl implements TranslationManager {
         throw new IllegalStateException("There is no handler supporting [" + bundleFile + "].");
     }
 
-    private void onBundleFound(WorkspaceEntity workspaceEntity,
+    private Mono<BundleFileEntity> onBundleFound(WorkspaceEntity workspaceEntity,
                                ScannedBundleFileDto bundleFile,
                                List<ScannedBundleFileKeyDto> keys) {
         final BundleFileEntity bundleFileEntity =
@@ -239,6 +240,8 @@ public class TranslationManagerImpl implements TranslationManager {
                         new BundleKeyTranslationEntity(keyEntity, locale.toLanguageTag(), mapToNullIfEmpty(entry.getTranslations().get(locale)));
                     }
                 });
+
+        return Mono.just(bundleFileEntity);
     }
 
     private List<ScannedBundleFileKeyDto> getTranslations(BundleFileEntity file) {

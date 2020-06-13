@@ -2,10 +2,11 @@ package be.sgerard.i18n.service.i18n;
 
 import be.sgerard.i18n.model.i18n.dto.BundleKeysPageDto;
 import be.sgerard.i18n.model.i18n.dto.BundleKeysPageRequestDto;
+import be.sgerard.i18n.model.i18n.persistence.BundleFileEntity;
 import be.sgerard.i18n.model.i18n.persistence.BundleKeyTranslationEntity;
 import be.sgerard.i18n.model.workspace.WorkspaceEntity;
 import be.sgerard.i18n.service.ResourceNotFoundException;
-import reactor.core.publisher.Mono;
+import reactor.core.publisher.Flux;
 
 import java.util.Map;
 
@@ -19,7 +20,7 @@ public interface TranslationManager {
     /**
      * Reads all the translations of the specified {@link WorkspaceEntity workspace} using the {@link TranslationRepositoryReadApi read API}.
      */
-    Mono<Void> readTranslations(WorkspaceEntity workspace, TranslationRepositoryReadApi api);
+    Flux<BundleFileEntity> readTranslations(WorkspaceEntity workspace, TranslationRepositoryReadApi api);
 
     /**
      * Writes back all the translations using the specified {@link WorkspaceEntity workspace} using the
