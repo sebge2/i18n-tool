@@ -45,7 +45,8 @@ management:
 be:
   sgerard:
     i18n:
-      lock-timeout-in-s: 120
+      lock:
+        timeout-in-s: 120
       security:
         default-admin-password: ${DEFAULT_ADMIN_PASSWORD:}
       repository:

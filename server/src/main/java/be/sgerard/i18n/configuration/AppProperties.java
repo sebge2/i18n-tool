@@ -20,9 +20,7 @@ public class AppProperties {
     private String baseDirectory;
     private Repository repository;
     private Security security;
-
-
-    private int lockTimeoutInS = 120;
+    private Lock lock;
 
     public AppProperties() {
         this.repository = new Repository(this);
@@ -75,12 +73,20 @@ public class AppProperties {
         return this;
     }
 
-    public int getLockTimeoutInS() {
-        return lockTimeoutInS;
+    /**
+     * Returns properties about the locking service.
+     */
+    @ConfigurationProperties(prefix = "lock")
+    public Lock getLock() {
+        return lock;
     }
 
-    public void setLockTimeoutInS(int lockTimeoutInS) {
-        this.lockTimeoutInS = lockTimeoutInS;
+    /**
+     * Sets properties about the locking service.
+     */
+    public AppProperties setLock(Lock lock) {
+        this.lock = lock;
+        return this;
     }
 
     /**
@@ -199,6 +205,31 @@ public class AppProperties {
         public BundleConfiguration setIgnoredPaths(List<String> ignoredPaths) {
             this.ignoredPaths = ignoredPaths;
             return this;
+        }
+    }
+
+    /**
+     * Properties related to the locking service.
+     */
+    public static class Lock {
+
+        private int timeoutInS = 120;
+
+        public Lock() {
+        }
+
+        /**
+         * Returns the maximum time to get the lock (in seconds) after a timeout exception will be thrown.
+         */
+        public int getTimeoutInS() {
+            return timeoutInS;
+        }
+
+        /**
+         * Sets the maximum time to get the lock (in seconds) after a timeout exception will be thrown.
+         */
+        public void setTimeoutInS(int timeoutInS) {
+            this.timeoutInS = timeoutInS;
         }
     }
 }

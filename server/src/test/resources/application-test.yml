@@ -12,8 +12,8 @@ spring:
 be:
   sgerard:
     i18n:
+      base-directory: "${java.io.tmpdir}/i18n-tool"
       repository:
-        directory: "${java.io.tmpdir}/i18n-tool"
         java-properties:
           ignored-paths:
             - "**/src/main/java"
