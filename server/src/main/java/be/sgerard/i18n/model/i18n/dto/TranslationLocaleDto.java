@@ -1,7 +1,9 @@
 package be.sgerard.i18n.model.i18n.dto;
 
 import be.sgerard.i18n.model.i18n.persistence.TranslationLocaleEntity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import io.swagger.annotations.ApiModel;
@@ -11,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableList;
 
 /**
@@ -119,9 +122,15 @@ public class TranslationLocaleDto {
             return this;
         }
 
+        @JsonProperty("variants")
         public Builder variants(Collection<String> variants) {
             this.variants.addAll(variants);
             return this;
+        }
+
+        @JsonIgnore
+        public Builder variants(String... variants) {
+            return variants(asList(variants));
         }
 
         public Builder icon(String icon) {

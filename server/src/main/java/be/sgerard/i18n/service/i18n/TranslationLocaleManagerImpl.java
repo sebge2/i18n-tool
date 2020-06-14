@@ -1,20 +1,14 @@
 package be.sgerard.i18n.service.i18n;
 
-import be.sgerard.i18n.model.event.EventType;
 import be.sgerard.i18n.model.i18n.dto.TranslationLocaleCreationDto;
 import be.sgerard.i18n.model.i18n.dto.TranslationLocaleDto;
 import be.sgerard.i18n.model.i18n.persistence.TranslationLocaleEntity;
-import be.sgerard.i18n.model.validation.ValidationMessage;
-import be.sgerard.i18n.model.validation.ValidationResult;
 import be.sgerard.i18n.repository.i18n.TranslationLocaleRepository;
-import be.sgerard.i18n.service.ResourceNotFoundException;
-import be.sgerard.i18n.service.ValidationException;
-import be.sgerard.i18n.service.event.EventService;
+import be.sgerard.i18n.service.i18n.listener.TranslationLocaleListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Collection;
-import java.util.Objects;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * Implementation of the {@link TranslationLocaleManager translation locale manager}.
@@ -25,88 +19,74 @@ import java.util.Objects;
 public class TranslationLocaleManagerImpl implements TranslationLocaleManager {
 
     private final TranslationLocaleRepository repository;
-    private final EventService eventService;
+    private final TranslationLocaleListener localeListener;
 
-    public TranslationLocaleManagerImpl(TranslationLocaleRepository repository, EventService eventService) {
+    public TranslationLocaleManagerImpl(TranslationLocaleRepository repository, TranslationLocaleListener localeListener) {
         this.repository = repository;
-        this.eventService = eventService;
+        this.localeListener = localeListener;
     }
 
     @Override
     @Transactional(readOnly = true)
-    public TranslationLocaleEntity findById(String id) throws ResourceNotFoundException {
-        return repository.findById(id)
-                .orElseThrow(() -> ResourceNotFoundException.translationLocaleNotFoundException(id));
+    public Mono<TranslationLocaleEntity> findById(String id) {
+        return Mono.justOrEmpty(repository.findById(id));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Collection<TranslationLocaleEntity> findAll() {
-        return repository.findAll();
+    public Flux<TranslationLocaleEntity> findAll() {
+        return Flux.fromIterable(repository.findAll());
     }
 
     @Override
     @Transactional
-    public TranslationLocaleEntity create(TranslationLocaleCreationDto locale) {
-        final TranslationLocaleEntity translationLocale = repository.save(
-                new TranslationLocaleEntity(
-                        locale.getLanguage(),
-                        locale.getRegion(),
-                        locale.getVariants(),
-                        locale.getIcon()
-                )
-        );
+    public Mono<TranslationLocaleEntity> create(TranslationLocaleCreationDto creationDto) {
+        return Mono
+                .just(new TranslationLocaleEntity(
+                        creationDto.getLanguage(),
+                        creationDto.getRegion(),
+                        creationDto.getVariants(),
+                        creationDto.getIcon()
+                ))
+                .flatMap(locale -> localeListener.beforePersist(locale).thenReturn(locale))
+                .map(repository::save)
+                .map(translationLocale -> {
+                    localeListener.onCreatedLocale(translationLocale);
 
-        validateUnique(translationLocale);
-
-        eventService.broadcastEvent(EventType.ADDED_TRANSLATION_LOCALE, TranslationLocaleDto.builder(translationLocale).build());
-
-        return translationLocale;
+                    return translationLocale;
+                });
     }
 
     @Override
     @Transactional
-    public TranslationLocaleEntity update(TranslationLocaleDto locale) {
-        final TranslationLocaleEntity translationLocale = repository.findById(locale.getId())
+    public Mono<TranslationLocaleEntity> update(TranslationLocaleDto localeDto) {
+        return findById(localeDto.getId())
+                .flatMap(locale -> localeListener.beforeUpdate(locale, localeDto).thenReturn(locale))
                 .map(entity ->
                         entity
-                                .setLanguage(locale.getLanguage())
-                                .setRegion(locale.getRegion())
-                                .setVariants(locale.getVariants())
-                                .setIcon(locale.getIcon())
+                                .setLanguage(localeDto.getLanguage())
+                                .setRegion(localeDto.getRegion())
+                                .setVariants(localeDto.getVariants())
+                                .setIcon(localeDto.getIcon())
                 )
-                .orElseThrow(() -> ResourceNotFoundException.translationLocaleNotFoundException(locale.getId()));
+                .map(translationLocale -> {
+                    localeListener.onUpdatedLocale(translationLocale);
 
-        validateUnique(translationLocale);
-
-        eventService.broadcastEvent(EventType.UPDATED_TRANSLATION_LOCALE, TranslationLocaleDto.builder(translationLocale).build());
-
-        return translationLocale;
+                    return translationLocale;
+                });
     }
 
     @Override
     @Transactional
-    public void delete(String localeId) {
-        repository.findById(localeId)
-                .ifPresent(translationLocale -> {
-                    eventService.broadcastEvent(EventType.DELETED_TRANSLATION_LOCALE, TranslationLocaleDto.builder(translationLocale).build());
+    public Mono<TranslationLocaleEntity> delete(String localeId) {
+        return findById(localeId)
+                .map(translationLocale -> {
+                    localeListener.onDeletedLocale(translationLocale);
 
                     repository.delete(translationLocale);
+
+                    return translationLocale;
                 });
     }
 
-    /**
-     * Validates that the specified locale is unique.
-     */
-    private void validateUnique(TranslationLocaleEntity translationLocale) {
-        findAll().stream()
-                .filter(existingTranslationLocale -> !Objects.equals(existingTranslationLocale.getId(), translationLocale.getId()))
-                .forEach(existingTranslationLocale -> {
-                    if (existingTranslationLocale.matchLocale(translationLocale)) {
-                        ValidationException.throwIfFailed(
-                                ValidationResult.builder().messages(new ValidationMessage("DUPLICATE_LOCALE")).build()
-                        );
-                    }
-                });
-    }
 }
