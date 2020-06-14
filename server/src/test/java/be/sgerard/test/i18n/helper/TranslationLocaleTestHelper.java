@@ -23,11 +23,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Component
 public class TranslationLocaleTestHelper {
 
-    private final MockMvc mockMvc;
+    private final AsyncMockMvcTestHelper asyncMvc;
     private final ObjectMapper objectMapper;
 
-    public TranslationLocaleTestHelper(MockMvc mockMvc, ObjectMapper objectMapper) {
-        this.mockMvc = mockMvc;
+    public TranslationLocaleTestHelper(AsyncMockMvcTestHelper asyncMvc, ObjectMapper objectMapper) {
+        this.asyncMvc = asyncMvc;
         this.objectMapper = objectMapper;
     }
 
@@ -35,8 +35,10 @@ public class TranslationLocaleTestHelper {
         final JsonHolderResultHandler<Set<TranslationLocaleDto>> handler = new JsonHolderResultHandler<>(objectMapper, new TypeReference<>() {
         });
 
-        mockMvc
+        asyncMvc
                 .perform(request(HttpMethod.GET, "/api/translation/locale/"))
+                .andExpectStarted()
+                .andWaitResult()
                 .andExpect(status().is(OK.value()))
                 .andDo(handler);
 
@@ -45,12 +47,14 @@ public class TranslationLocaleTestHelper {
 
     public TranslationLocaleDto createLocale(TranslationLocaleCreationDto creationDto) throws Exception {
         final JsonHolderResultHandler<TranslationLocaleDto> handler = new JsonHolderResultHandler<>(objectMapper, TranslationLocaleDto.class);
-        mockMvc
+        asyncMvc
                 .perform(
                         request(HttpMethod.POST, "/api/translation/locale/")
-                                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                                .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(creationDto))
                 )
+                .andExpectStarted()
+                .andWaitResult()
                 .andExpect(status().is(CREATED.value()))
                 .andDo(handler);
 
@@ -60,8 +64,10 @@ public class TranslationLocaleTestHelper {
     public TranslationLocaleDto getLocaleByIdOrDie(String id) throws Exception {
         final JsonHolderResultHandler<TranslationLocaleDto> handler = new JsonHolderResultHandler<>(objectMapper, TranslationLocaleDto.class);
 
-        mockMvc
+        asyncMvc
                 .perform(request(HttpMethod.GET, "/api/translation/locale/" + id))
+                .andExpectStarted()
+                .andWaitResult()
                 .andExpect(status().is(OK.value()))
                 .andDo(handler);
 

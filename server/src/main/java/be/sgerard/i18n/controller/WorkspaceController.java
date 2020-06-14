@@ -76,7 +76,7 @@ public class WorkspaceController {
                 return workspaceManager.synchronize(repositoryId)
                         .map(entity -> WorkspaceDto.builder(entity).build());
             default:
-                throw BadRequestException.actionNotSupportedException(action.name());
+                return Flux.error(BadRequestException.actionNotSupportedException(action.name()));
         }
     }
 
@@ -108,13 +108,13 @@ public class WorkspaceController {
 
             case PUBLISH:
                 if (StringUtils.isEmpty(message)) {
-                    throw BadRequestException.missingHeader("message");
+                    return Mono.error(BadRequestException.missingHeader("message"));
                 }
 
                 return workspaceManager.publish(id, message)
                         .map(workspace -> WorkspaceDto.builder(workspace).build());
             default:
-                throw BadRequestException.actionNotSupportedException(action.toString());
+                return Mono.error(BadRequestException.actionNotSupportedException(action.toString()));
         }
     }
 

@@ -20,29 +20,29 @@ import static java.util.stream.Collectors.toList;
  */
 public class BundleWalker {
 
-    private final List<TranslationBundleHandler> handlers;
+    private final List<BundleHandler> handlers;
 
-    public BundleWalker(List<TranslationBundleHandler> handlers) {
+    public BundleWalker(List<BundleHandler> handlers) {
         this.handlers = handlers;
     }
 
     /**
      * Browses the repository using the specified {@link TranslationRepositoryReadApi API} using the specified
-     * {@link TranslationBundleHandler handler} that indicates where are those translations.
+     * {@link BundleHandler handler} that indicates where are those translations.
      */
     public Flux<BundleFileEntity> walk(TranslationBundleConsumer consumer, BundleWalkContext context) {
         return walk(new File("/"), consumer, context, handlers);
     }
 
     /**
-     * Browses the specified directory in the repository using the remaining {@link TranslationBundleHandler bundle handlers}
+     * Browses the specified directory in the repository using the remaining {@link BundleHandler bundle handlers}
      * that may still find some translations.
      */
     private Flux<BundleFileEntity> walk(File directory,
                                         TranslationBundleConsumer consumer,
                                         BundleWalkContext context,
-                                        List<TranslationBundleHandler> handlers) {
-        final List<TranslationBundleHandler> updatedHandlers = handlers.stream()
+                                        List<BundleHandler> handlers) {
+        final List<BundleHandler> updatedHandlers = handlers.stream()
                 .filter(handler -> handler.continueScanning(directory, context))
                 .collect(toList());
 
@@ -55,7 +55,7 @@ public class BundleWalker {
                         .fromIterable(updatedHandlers)
                         .flatMap(handler ->
                                 handler
-                                        .scanBundles(directory, context.getApi())
+                                        .scanBundles(directory, context)
                                         .flatMap(bundle -> consumer.onBundleFound(bundle, handler.scanKeys(bundle, context.getApi())))
                         ),
                 context.getApi()

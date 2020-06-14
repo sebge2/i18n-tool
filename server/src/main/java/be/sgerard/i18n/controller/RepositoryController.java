@@ -80,7 +80,7 @@ public class RepositoryController {
     public Mono<RepositoryDto> update(@PathVariable String id,
                                       @RequestBody RepositoryPatchDto patchDto) {
         if (!Objects.equals(id, patchDto.getId())) {
-            throw BadRequestException.idRequestNotMatchIdBodyException(id, patchDto.getId());
+            return Mono.error(BadRequestException.idRequestNotMatchIdBodyException(id, patchDto.getId()));
         }
 
         return repositoryManager.update(patchDto)
@@ -98,7 +98,7 @@ public class RepositoryController {
                 return repositoryManager.initialize(id)
                         .map(dtoMapper::mapToDto);
             default:
-                throw BadRequestException.actionNotSupportedException(action.toString());
+                return Mono.error(BadRequestException.actionNotSupportedException(action.toString()));
         }
     }
 

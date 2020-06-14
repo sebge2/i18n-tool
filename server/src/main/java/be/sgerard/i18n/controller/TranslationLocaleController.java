@@ -9,11 +9,10 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
-import java.util.Collection;
 import java.util.Objects;
-
-import static java.util.stream.Collectors.toList;
 
 /**
  * Controller managing all locales used by the application to translate.
@@ -36,10 +35,10 @@ public class TranslationLocaleController {
      */
     @GetMapping(path = "/translation/locale/")
     @ApiOperation(value = "Returns all translation locales that have been used so far.")
-    public Collection<TranslationLocaleDto> findAll() {
-        return localeManager.findAll().stream()
-                .map(locale -> TranslationLocaleDto.builder(locale).build())
-                .collect(toList());
+    public Flux<TranslationLocaleDto> findAll() {
+        return localeManager
+                .findAll()
+                .map(locale -> TranslationLocaleDto.builder(locale).build());
     }
 
     /**
@@ -47,8 +46,10 @@ public class TranslationLocaleController {
      */
     @GetMapping(path = "/translation/locale/{id}")
     @ApiOperation(value = "Returns the registered locale.")
-    public TranslationLocaleDto findById(@PathVariable String id) {
-        return TranslationLocaleDto.builder(localeManager.findById(id)).build();
+    public Mono<TranslationLocaleDto> findById(@PathVariable String id) {
+        return localeManager
+                .findByIdOrDie(id)
+                .map(locale -> TranslationLocaleDto.builder(locale).build());
     }
 
     /**
@@ -58,8 +59,10 @@ public class TranslationLocaleController {
     @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(value = "Creates a new translation locale.")
     @PreAuthorize("hasRole('ADMIN')")
-    public TranslationLocaleDto create(@RequestBody TranslationLocaleCreationDto locale) {
-        return TranslationLocaleDto.builder(localeManager.create(locale)).build();
+    public Mono<TranslationLocaleDto> create(@RequestBody TranslationLocaleCreationDto creationDto) {
+        return localeManager
+                .create(creationDto)
+                .map(locale -> TranslationLocaleDto.builder(locale).build());
     }
 
     /**
@@ -68,13 +71,15 @@ public class TranslationLocaleController {
     @PutMapping(path = "/translation/locale/{id}")
     @ApiOperation(value = "Updates an existing translation locale.")
     @PreAuthorize("hasRole('ADMIN')")
-    public TranslationLocaleDto update(@PathVariable String id,
-                                       @RequestBody TranslationLocaleDto locale) {
-        if (!Objects.equals(id, locale.getId())) {
-            throw BadRequestException.idRequestNotMatchIdBodyException(id, locale.getId());
+    public Mono<TranslationLocaleDto> update(@PathVariable String id,
+                                             @RequestBody TranslationLocaleDto localeDto) {
+        if (!Objects.equals(id, localeDto.getId())) {
+            return Mono.error(BadRequestException.idRequestNotMatchIdBodyException(id, localeDto.getId()));
         }
 
-        return TranslationLocaleDto.builder(localeManager.update(locale)).build();
+        return localeManager
+                .update(localeDto)
+                .map(locale -> TranslationLocaleDto.builder(locale).build());
     }
 
     /**
@@ -84,8 +89,8 @@ public class TranslationLocaleController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @ApiOperation(value = "Deletes a translation locale.")
     @PreAuthorize("hasRole('ADMIN')")
-    public void delete(@PathVariable String id) {
-        localeManager.delete(id);
+    public Mono<Void> delete(@PathVariable String id) {
+        return localeManager.delete(id).then();
     }
 
 }
