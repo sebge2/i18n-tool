@@ -15,6 +15,8 @@ import static java.util.Collections.unmodifiableList;
 import static java.util.stream.Collectors.toList;
 
 /**
+ * Result of a validation.
+ *
  * @author Sebastien Gerard
  */
 public class ValidationResult {
@@ -60,6 +62,19 @@ public class ValidationResult {
         };
     }
 
+    /**
+     * Merges both {@link ValidationResult validation results}.
+     */
+    public static ValidationResult merge(ValidationResult first, ValidationResult second){
+        return ValidationResult.builder()
+                .merge(first)
+                .merge(second)
+                .build();
+    }
+
+    /**
+     * Empty succesful validation result.
+     */
     public static final ValidationResult EMPTY = ValidationResult.builder().build();
 
     private final List<ValidationMessage> messages;
@@ -68,14 +83,23 @@ public class ValidationResult {
         messages = unmodifiableList(builder.messages);
     }
 
+    /**
+     * Returns all the generated {@link ValidationMessage messages}.
+     */
     public List<ValidationMessage> getMessages() {
         return messages;
     }
 
+    /**
+     * Returns whether the validation was successful.
+     */
     public boolean isSuccessful() {
         return getMessages().isEmpty();
     }
 
+    /**
+     * Builder of {@link ValidationResult validation result}.
+     */
     public static final class Builder {
 
         private final List<ValidationMessage> messages = new ArrayList<>();

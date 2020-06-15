@@ -3,7 +3,7 @@ package be.sgerard.i18n.model.validation;
 import be.sgerard.i18n.model.support.LocalizedMessageHolder;
 
 /**
- * Validation message.
+ * Validation message. The message is a key and it's used for translating the validation message in the user's locale.
  *
  * @author Sebastien Gerard
  */
