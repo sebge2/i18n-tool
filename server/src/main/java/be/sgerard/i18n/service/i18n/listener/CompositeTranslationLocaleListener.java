@@ -2,6 +2,7 @@ package be.sgerard.i18n.service.i18n.listener;
 
 import be.sgerard.i18n.model.i18n.dto.TranslationLocaleDto;
 import be.sgerard.i18n.model.i18n.persistence.TranslationLocaleEntity;
+import be.sgerard.i18n.model.validation.ValidationResult;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
@@ -19,7 +20,7 @@ import java.util.List;
 @Primary
 public class CompositeTranslationLocaleListener implements TranslationLocaleListener {
 
-    private List<TranslationLocaleListener> listeners;
+    private final List<TranslationLocaleListener> listeners;
 
     @Lazy
     public CompositeTranslationLocaleListener(List<TranslationLocaleListener> listeners) {
@@ -27,19 +28,19 @@ public class CompositeTranslationLocaleListener implements TranslationLocaleList
     }
 
     @Override
-    public Mono<Void> beforePersist(TranslationLocaleEntity locale) {
+    public Mono<ValidationResult> beforePersist(TranslationLocaleEntity locale) {
         return Flux
                 .fromIterable(listeners)
                 .flatMap(listener -> listener.beforePersist(locale))
-                .then();
+                .reduce(ValidationResult::merge);
     }
 
     @Override
-    public Mono<Void> beforeUpdate(TranslationLocaleEntity original, TranslationLocaleDto locale) {
+    public Mono<ValidationResult> beforeUpdate(TranslationLocaleEntity original, TranslationLocaleDto update) {
         return Flux
                 .fromIterable(listeners)
-                .flatMap(listener -> listener.beforeUpdate(original, locale))
-                .then();
+                .flatMap(listener -> listener.beforeUpdate(original, update))
+                .reduce(ValidationResult::merge);
     }
 
     @Override

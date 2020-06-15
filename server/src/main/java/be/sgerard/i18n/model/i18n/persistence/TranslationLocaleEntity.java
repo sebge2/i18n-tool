@@ -1,5 +1,8 @@
 package be.sgerard.i18n.model.i18n.persistence;
 
+import be.sgerard.i18n.model.i18n.dto.TranslationLocaleDto;
+import org.springframework.util.StringUtils;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.*;
@@ -15,6 +18,13 @@ import java.util.*;
 )
 public class TranslationLocaleEntity {
 
+    /**
+     * Returns the user representation of the following fields composing a locale.
+     */
+    public static String toUserString(String language, String region, Collection<String> variants) {
+        return language + (StringUtils.isEmpty(region) ? "" : "-" + region.toUpperCase()) + (variants.isEmpty() ? "" : " " + variants);
+    }
+
     @Id
     private String id;
 
@@ -28,7 +38,7 @@ public class TranslationLocaleEntity {
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "translation_locale_variant", joinColumns = @JoinColumn(name = "locale_id"))
     @Column
-    private Set<String> variants = new HashSet<>();
+    private List<String> variants = new ArrayList<>();
 
     @NotNull
     @Column(nullable = false)
@@ -48,34 +58,52 @@ public class TranslationLocaleEntity {
         this.icon = icon;
     }
 
+    /**
+     * Returns the unique id of this entity.
+     */
     public String getId() {
         return id;
     }
 
+    /**
+     * Sets the unique id of this entity.
+     */
     public TranslationLocaleEntity setId(String id) {
         this.id = id;
         return this;
     }
 
+    /**
+     * Returns the locale language (ex: fr).
+     */
     public String getLanguage() {
         return language;
     }
 
+    /**
+     * Sets the locale language (ex: fr).
+     */
     public TranslationLocaleEntity setLanguage(String language) {
         this.language = language;
         return this;
     }
 
+    /**
+     * Returns the locale region (ex: BE).
+     */
     public String getRegion() {
         return region;
     }
 
+    /**
+     * Sets the locale region (ex: BE).
+     */
     public TranslationLocaleEntity setRegion(String region) {
         this.region = region;
         return this;
     }
 
-    public Set<String> getVariants() {
+    public List<String> getVariants() {
         return variants;
     }
 
@@ -84,30 +112,36 @@ public class TranslationLocaleEntity {
         return this;
     }
 
+    /**
+     * Returns the icon associated to this locale (library flag-icon-css).
+     */
     public String getIcon() {
         return icon;
     }
 
+    /**
+     * Sets the icon associated to this locale (library flag-icon-css).
+     */
     public TranslationLocaleEntity setIcon(String icon) {
         this.icon = icon;
-        return this;
-    }
-
-    public int getVersion() {
-        return version;
-    }
-
-    public TranslationLocaleEntity setVersion(int version) {
-        this.version = version;
         return this;
     }
 
     /**
      * Returns whether this locale and the specified one matches.
      */
-    public boolean matchLocale(TranslationLocaleEntity other){
+    public boolean matchLocale(TranslationLocaleEntity other) {
         return Objects.equals(getLanguage(), other.getLanguage())
                 && Objects.equals(getRegion(), other.getRegion())
-                && Objects.equals(getVariants(), other.getVariants());
+                && Objects.equals(new ArrayList<>(getVariants()), new ArrayList<>(other.getVariants()));
+    }
+
+    /**
+     * Returns whether this locale and the specified one matches.
+     */
+    public boolean matchLocale(TranslationLocaleDto other) {
+        return Objects.equals(getLanguage(), other.getLanguage())
+                && Objects.equals(getRegion(), other.getRegion())
+                && Objects.equals(new ArrayList<>(getVariants()), new ArrayList<>(other.getVariants()));
     }
 }

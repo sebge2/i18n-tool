@@ -4,6 +4,7 @@ import be.sgerard.i18n.model.i18n.dto.TranslationLocaleCreationDto;
 import be.sgerard.i18n.model.i18n.dto.TranslationLocaleDto;
 import be.sgerard.i18n.model.i18n.persistence.TranslationLocaleEntity;
 import be.sgerard.i18n.repository.i18n.TranslationLocaleRepository;
+import be.sgerard.i18n.service.ValidationException;
 import be.sgerard.i18n.service.i18n.listener.TranslationLocaleListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,7 +49,13 @@ public class TranslationLocaleManagerImpl implements TranslationLocaleManager {
                         creationDto.getVariants(),
                         creationDto.getIcon()
                 ))
-                .flatMap(locale -> localeListener.beforePersist(locale).thenReturn(locale))
+                .flatMap(locale -> localeListener.beforePersist(locale)
+                        .map(validationResult -> {
+                            ValidationException.throwIfFailed(validationResult);
+
+                            return locale;
+                        })
+                )
                 .map(repository::save)
                 .map(translationLocale -> {
                     localeListener.onCreatedLocale(translationLocale);
@@ -61,7 +68,13 @@ public class TranslationLocaleManagerImpl implements TranslationLocaleManager {
     @Transactional
     public Mono<TranslationLocaleEntity> update(TranslationLocaleDto localeDto) {
         return findById(localeDto.getId())
-                .flatMap(locale -> localeListener.beforeUpdate(locale, localeDto).thenReturn(locale))
+                .flatMap(locale -> localeListener.beforeUpdate(locale, localeDto)
+                        .map(validationResult -> {
+                            ValidationException.throwIfFailed(validationResult);
+
+                            return locale;
+                        })
+                )
                 .map(entity ->
                         entity
                                 .setLanguage(localeDto.getLanguage())
