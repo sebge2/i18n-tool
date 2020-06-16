@@ -1,9 +1,9 @@
 package be.sgerard.i18n.service.i18n.file;
 
-import be.sgerard.i18n.configuration.AppProperties;
 import be.sgerard.i18n.model.i18n.BundleType;
-import be.sgerard.i18n.model.i18n.file.ScannedBundleFileDto;
-import be.sgerard.i18n.model.i18n.file.ScannedBundleFileKeyDto;
+import be.sgerard.i18n.model.i18n.file.BundleWalkContext;
+import be.sgerard.i18n.model.i18n.file.ScannedBundleFile;
+import be.sgerard.i18n.model.i18n.file.ScannedBundleFileKey;
 import be.sgerard.i18n.service.i18n.TranslationRepositoryReadApi;
 import be.sgerard.i18n.service.i18n.TranslationRepositoryWriteApi;
 import be.sgerard.i18n.service.repository.git.GitRepositoryApi;
@@ -11,7 +11,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.AntPathMatcher;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,74 +24,71 @@ import java.util.stream.Stream;
 
 import static be.sgerard.i18n.service.i18n.file.TranslationFileUtils.mapToNullIfEmpty;
 import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static org.springframework.util.StringUtils.isEmpty;
 
 /**
+ * {@link BundleHandler Bundle handler} for JSON files.
+ *
  * @author Sebastien Gerard
  */
 @Component
-public class JsonICUTranslationBundleHandler implements TranslationBundleHandler {
+public class JsonBundleHandler implements BundleHandler {
 
     private static final Pattern BUNDLE_PATTERN = Pattern.compile("^(.*)\\.json$");
 
-    private final List<String> pathsToScan;
-    private final AntPathMatcher antPathMatcher;
     private final ObjectMapper objectMapper;
 
-    public JsonICUTranslationBundleHandler(AppProperties appProperties, ObjectMapper objectMapper) {
-        this.pathsToScan = appProperties.getJsonIcuTranslationBundleDirsAsList();
+    public JsonBundleHandler(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
-        this.antPathMatcher = new AntPathMatcher();
     }
 
     @Autowired
-    public JsonICUTranslationBundleHandler(AppProperties appProperties) {
-        this(appProperties, new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT));
+    public JsonBundleHandler() {
+        this(new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT));
     }
 
     @Override
-    public boolean support(ScannedBundleFileDto bundleFile) {
-        return bundleFile.getType() == BundleType.JSON;
+    public boolean support(BundleType bundleType) {
+        return bundleType == BundleType.JSON_ICU;
     }
 
     @Override
-    public boolean continueScanning(File directory) {
-        return true;
+    public boolean continueScanning(File directory, BundleWalkContext context) {
+        return context.isIncluded(BundleType.JSON_ICU, directory.toPath());
     }
 
     @Override
-    public Stream<ScannedBundleFileDto> scanBundles(File directory, TranslationRepositoryReadApi repositoryAPI) {
-        return null;
-//        if (pathsToScan.stream().noneMatch(dirPathPattern -> antPathMatcher.match(dirPathPattern, directory.toPath().toString()))) {
-//            return Stream.empty();
-//        }
-//
-//        return repositoryAPI.listNormalFiles(directory)
-//                .map(
-//                        file -> {
-//                            final Matcher matcher = BUNDLE_PATTERN.matcher(file.getName());
-//
-//                            if (matcher.matches()) {
-//                                return new ScannedBundleFileDto(
-//                                        directory.getName(),
-//                                        BundleType.JSON_ICU,
-//                                        directory,
-//                                        singletonList(Locale.forLanguageTag(matcher.group(1))),
-//                                        singletonList(file)
-//                                );
-//                            } else {
-//                                return null;
-//                            }
-//                        }
-//                )
-//                .filter(Objects::nonNull)
-//                .collect(groupingBy(ScannedBundleFileDto::getName, reducing(null, ScannedBundleFileDto::merge)))
-//                .values()
-//                .stream();
+    public Flux<ScannedBundleFile> scanBundles(File directory, BundleWalkContext context) {
+        return context
+                .getApi()
+                .listNormalFiles(directory)
+                .flatMap(
+                        file -> {
+                            final Matcher matcher = BUNDLE_PATTERN.matcher(file.getName());
+
+                            if (matcher.matches()) {
+                                return Mono.just(
+                                        new ScannedBundleFile(
+                                                directory.getName(),
+                                                BundleType.JSON_ICU,
+                                                directory,
+                                                singletonList(Locale.forLanguageTag(matcher.group(1))),
+                                                singletonList(file)
+                                        )
+                                );
+                            } else {
+                                return Mono.empty();
+                            }
+                        }
+                )
+                .filter(bundleFile -> context.getLocales().containsAll(bundleFile.getLocales()))
+                .groupBy(ScannedBundleFile::getName)
+                .flatMap(group -> group.reduce(ScannedBundleFile::merge));
     }
 
     @Override
-    public List<ScannedBundleFileKeyDto> scanKeys(ScannedBundleFileDto bundleFile, TranslationRepositoryReadApi repositoryAPI) {
+    public List<ScannedBundleFileKey> scanKeys(ScannedBundleFile bundleFile, TranslationRepositoryReadApi api) {
         return emptyList();
 //            return new ArrayList<>(
 //                    bundleFile.getFiles().stream()
@@ -111,7 +109,7 @@ public class JsonICUTranslationBundleHandler implements TranslationBundleHandler
     }
 
     @Override
-    public void updateBundle(ScannedBundleFileDto bundleFile, List<ScannedBundleFileKeyDto> keys, TranslationRepositoryWriteApi repositoryAPI) {
+    public void updateBundle(ScannedBundleFile bundleFile, List<ScannedBundleFileKey> keys, TranslationRepositoryWriteApi repositoryAPI) {
         for (File file : bundleFile.getFiles()) {
             final Matcher matcher = BUNDLE_PATTERN.matcher(file.getName());
 
@@ -163,7 +161,7 @@ public class JsonICUTranslationBundleHandler implements TranslationBundleHandler
     }
 
     @SuppressWarnings("unchecked")
-    private Map<String, Object> toMap(List<ScannedBundleFileKeyDto> keys, Locale locale) {
+    private Map<String, Object> toMap(List<ScannedBundleFileKey> keys, Locale locale) {
         final Map<String, Object> map = new LinkedHashMap<>();
 
         keys.forEach(

@@ -11,6 +11,7 @@ import io.swagger.annotations.ApiModelProperty;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableList;
@@ -51,15 +52,15 @@ public class TranslationLocaleCreationDto {
     /**
      * Returns the region of the language.
      */
-    @ApiModelProperty(notes = "The region of the language.", required = true)
-    public String getRegion() {
-        return region;
+    @ApiModelProperty(notes = "The region of the language.")
+    public Optional<String> getRegion() {
+        return Optional.ofNullable(region);
     }
 
     /**
      * Returns the variants of the region.
      */
-    @ApiModelProperty(notes = "The variants in the region.", required = true)
+    @ApiModelProperty(notes = "The variants in the region.")
     public List<String> getVariants() {
         return variants;
     }
