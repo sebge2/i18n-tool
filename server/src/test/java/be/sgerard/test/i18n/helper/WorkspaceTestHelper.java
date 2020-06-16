@@ -40,6 +40,10 @@ public class WorkspaceTestHelper {
             this.repository = repository;
         }
 
+        public WorkspaceTestHelper and() {
+            return WorkspaceTestHelper.this;
+        }
+
         public RepositoryDto get() {
             return repository;
         }
@@ -102,7 +106,7 @@ public class WorkspaceTestHelper {
             this.workspace = workspace;
         }
 
-        public StepSynchronizedWorkspaces<R> and(){
+        public StepSynchronizedWorkspaces<R> and() {
             return new StepSynchronizedWorkspaces<>(repository, workspaces);
         }
 
@@ -133,7 +137,7 @@ public class WorkspaceTestHelper {
             this.workspace = workspace;
         }
 
-        public StepSynchronizedWorkspaces<R> and(){
+        public StepSynchronizedWorkspaces<R> and() {
             return new StepSynchronizedWorkspaces<>(repository, workspaces);
         }
 
@@ -164,7 +168,7 @@ public class WorkspaceTestHelper {
             this.workspace = workspace;
         }
 
-        public StepSynchronizedWorkspaces<R> and(){
+        public StepSynchronizedWorkspaces<R> and() {
             return new StepSynchronizedWorkspaces<>(repository, workspaces);
         }
 

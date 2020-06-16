@@ -8,7 +8,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Set;
 
@@ -45,8 +44,9 @@ public class TranslationLocaleTestHelper {
         return handler.getValue();
     }
 
-    public TranslationLocaleDto createLocale(TranslationLocaleCreationDto creationDto) throws Exception {
+    public StepCreatedLocale createLocale(TranslationLocaleCreationDto creationDto) throws Exception {
         final JsonHolderResultHandler<TranslationLocaleDto> handler = new JsonHolderResultHandler<>(objectMapper, TranslationLocaleDto.class);
+
         asyncMvc
                 .perform(
                         request(HttpMethod.POST, "/api/translation/locale/")
@@ -58,19 +58,27 @@ public class TranslationLocaleTestHelper {
                 .andExpect(status().is(CREATED.value()))
                 .andDo(handler);
 
-        return handler.getValue();
+        return new StepCreatedLocale(handler.getValue());
     }
 
-    public TranslationLocaleDto getLocaleByIdOrDie(String id) throws Exception {
-        final JsonHolderResultHandler<TranslationLocaleDto> handler = new JsonHolderResultHandler<>(objectMapper, TranslationLocaleDto.class);
+    public StepCreatedLocale createLocale(TranslationLocaleCreationDto.Builder creationDto) throws Exception {
+        return createLocale(creationDto.build());
+    }
 
-        asyncMvc
-                .perform(request(HttpMethod.GET, "/api/translation/locale/" + id))
-                .andExpectStarted()
-                .andWaitResult()
-                .andExpect(status().is(OK.value()))
-                .andDo(handler);
+    public final class StepCreatedLocale {
 
-        return handler.getValue();
+        private final TranslationLocaleDto locale;
+
+        public StepCreatedLocale(TranslationLocaleDto locale) {
+            this.locale = locale;
+        }
+
+        public TranslationLocaleTestHelper and() {
+            return TranslationLocaleTestHelper.this;
+        }
+
+        public TranslationLocaleDto get() {
+            return locale;
+        }
     }
 }

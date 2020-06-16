@@ -142,6 +142,14 @@ public class RepositoryTestHelper {
             return this;
         }
 
+        public RepositoryTestHelper and() {
+            return RepositoryTestHelper.this;
+        }
+
+        public R get() {
+            return repository;
+        }
+
         public StepCreatedRepository<R> hint(String hint) {
             hints.put(hint, repository);
             return this;
@@ -149,10 +157,6 @@ public class RepositoryTestHelper {
 
         public GitHubRepositoryMockTestHelper.StepRepository gitHub() {
             return gitHubTestHelper.forRepository((GitHubRepositoryDto) repository);
-        }
-
-        public R get() {
-            return repository;
         }
     }
 
@@ -172,12 +176,12 @@ public class RepositoryTestHelper {
             return RepositoryTestHelper.this;
         }
 
-        public WorkspaceTestHelper.StepInitializedRepository<R> workspaces() {
-            return workspaceTestHelper.with(repository);
-        }
-
         public R get() {
             return repository;
+        }
+
+        public WorkspaceTestHelper.StepInitializedRepository<R> workspaces() {
+            return workspaceTestHelper.with(repository);
         }
     }
 }
