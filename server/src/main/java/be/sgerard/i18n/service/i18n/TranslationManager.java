@@ -7,6 +7,7 @@ import be.sgerard.i18n.model.i18n.persistence.BundleKeyTranslationEntity;
 import be.sgerard.i18n.model.workspace.WorkspaceEntity;
 import be.sgerard.i18n.service.ResourceNotFoundException;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.Map;
 
@@ -26,7 +27,7 @@ public interface TranslationManager {
      * Writes back all the translations using the specified {@link WorkspaceEntity workspace} using the
      * {@link TranslationRepositoryWriteApi write API}.
      */
-    void writeTranslations(WorkspaceEntity workspace, TranslationRepositoryWriteApi api);
+    Mono<Void> writeTranslations(WorkspaceEntity workspace, TranslationRepositoryWriteApi api);
 
     /**
      * Performs the specified {@link BundleKeysPageRequestDto search request} and returns a page of {@link BundleKeysPageDto translations}.
