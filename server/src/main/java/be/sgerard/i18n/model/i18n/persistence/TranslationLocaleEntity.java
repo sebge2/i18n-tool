@@ -91,8 +91,8 @@ public class TranslationLocaleEntity {
     /**
      * Returns the locale region (ex: BE).
      */
-    public String getRegion() {
-        return region;
+    public Optional<String> getRegion() {
+        return Optional.ofNullable(region);
     }
 
     /**
@@ -125,6 +125,21 @@ public class TranslationLocaleEntity {
     public TranslationLocaleEntity setIcon(String icon) {
         this.icon = icon;
         return this;
+    }
+
+    /**
+     * Returns this entity as a {@link Locale locale}.
+     */
+    public Locale toLocale() {
+        if (getRegion().isPresent()) {
+            if (getVariants().isEmpty()) {
+                return new Locale(getLanguage(), getRegion().get());
+            } else {
+                return new Locale(getLanguage(), getRegion().get(), String.join("_", getVariants()));
+            }
+        } else {
+            return new Locale(getLanguage());
+        }
     }
 
     /**
