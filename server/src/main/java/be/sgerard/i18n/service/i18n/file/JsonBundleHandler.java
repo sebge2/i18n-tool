@@ -4,11 +4,12 @@ import be.sgerard.i18n.model.i18n.BundleType;
 import be.sgerard.i18n.model.i18n.file.BundleWalkContext;
 import be.sgerard.i18n.model.i18n.file.ScannedBundleFile;
 import be.sgerard.i18n.model.i18n.file.ScannedBundleFileKey;
-import be.sgerard.i18n.service.i18n.TranslationRepositoryReadApi;
 import be.sgerard.i18n.service.i18n.TranslationRepositoryWriteApi;
-import be.sgerard.i18n.service.repository.git.GitRepositoryApi;
+import be.sgerard.i18n.service.workspace.WorkspaceException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
@@ -16,15 +17,17 @@ import reactor.core.publisher.Mono;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.io.InputStream;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static be.sgerard.i18n.service.i18n.file.TranslationFileUtils.mapToNullIfEmpty;
-import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
+import static java.util.Collections.singletonMap;
 import static org.springframework.util.StringUtils.isEmpty;
 
 /**
@@ -35,7 +38,11 @@ import static org.springframework.util.StringUtils.isEmpty;
 @Component
 public class JsonBundleHandler implements BundleHandler {
 
-    private static final Pattern BUNDLE_PATTERN = Pattern.compile("^(.*)\\.json$");
+    /**
+     * Pattern for a translation bundle file. It's composed of the language (2 letters in lower case) and then
+     * the region (2 letters in upper-case)
+     */
+    private static final Pattern BUNDLE_PATTERN = Pattern.compile("^([a-z]{2}(_[A-Z]{2})?)\\.json$");
 
     private final ObjectMapper objectMapper;
 
@@ -88,24 +95,21 @@ public class JsonBundleHandler implements BundleHandler {
     }
 
     @Override
-    public List<ScannedBundleFileKey> scanKeys(ScannedBundleFile bundleFile, TranslationRepositoryReadApi api) {
-        return emptyList();
-//            return new ArrayList<>(
-//                    bundleFile.getFiles().stream()
-//                            .flatMap(
-//                                    file -> {
-//                                        try {
-//                                            return inlineValues(readValues(repositoryAPI, file))
-//                                                    .entrySet().stream()
-//                                                    .map(entry -> new ScannedBundleFileKeyDto(entry.getKey(), singletonMap(getLocale(file), mapToNullIfEmpty(entry.getValue()))));
-//                                        } catch (IOException e) {
-//                                            throw new WrappedIOException(e);
-//                                        }
-//                                    }
-//                            )
-//                            .collect(groupingBy(ScannedBundleFileKeyDto::getKey, LinkedHashMap::new, reducing(null, ScannedBundleFileKeyDto::merge)))
-//                            .values()
-//            );
+    public Flux<ScannedBundleFileKey> scanKeys(ScannedBundleFile bundleFile, BundleWalkContext context) {
+        return Flux
+                .fromStream(bundleFile.getFiles().stream())
+                .flatMap(file ->
+                        context
+                                .getApi()
+                                .openInputStream(file)
+                                .map(inputStream -> readTranslations(file, inputStream))
+                                .flatMapMany(translations ->
+                                        inlineValues(translations)
+                                                .map(entry -> new ScannedBundleFileKey(entry.getKey(), singletonMap(getLocale(file), mapToNullIfEmpty(entry.getValue()))))
+                                )
+                )
+                .groupBy(ScannedBundleFileKey::getKey)
+                .flatMap(group -> group.reduce(ScannedBundleFileKey::merge));
     }
 
     @Override
@@ -123,33 +127,63 @@ public class JsonBundleHandler implements BundleHandler {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private Map<String, Object> readValues(GitRepositoryApi repositoryAPI, File file) throws IOException {
-        return objectMapper.readValue(repositoryAPI.openInputStream(file), LinkedHashMap.class);
+    /**
+     * Reads translations from the specified file using the specified stream. The map is a structured
+     * map of translations.
+     */
+    private Map<String, Object> readTranslations(File file, InputStream inputStream) {
+        try {
+            return objectMapper.readValue(inputStream, new TypeReference<>() {
+            });
+        } catch (IOException e) {
+            throw WorkspaceException.onFileReading(file, e);
+        }
     }
 
-    private Map<String, String> inlineValues(Map<String, Object> originalValues) {
-        return inlineValues(originalValues, "").collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (first, second) -> first, LinkedHashMap::new));
+    /**
+     * Inlines all values from the specified structured translations.
+     */
+    private Flux<Pair<String, String>> inlineValues(Map<String, Object> translations) {
+        return inlineValues(translations, "");
     }
 
+    /**
+     * Inlines all values from the specified structured translations knowing the specified current key of the parent.
+     *
+     * For instance:
+     * <ul>
+     *     <li>the current parent key is: <tt>workspace.message</tt>,</li>
+     *     <li>the structured translations are: <tt>{"error": "my message"}</tt></li>
+     * </ul>
+     *
+     * The result will be: <tt>workspace.message.error = "my message"</tt>
+     */
     @SuppressWarnings("unchecked")
-    private Stream<Map.Entry<String, String>> inlineValues(Map<String, Object> originalValues, String currentParentKey) {
-        return originalValues.entrySet().stream()
+    private Flux<Pair<String, String>> inlineValues(Map<String, Object> translations, String currentParentKey) {
+        return Flux.fromStream(translations.entrySet().stream())
                 .flatMap(entry -> {
                     if (entry.getValue() instanceof Map) {
                         return inlineValues((Map<String, Object>) entry.getValue(), createKey(currentParentKey, entry.getKey()));
                     } else if (entry.getValue() instanceof String) {
-                        return Stream.of(new AbstractMap.SimpleEntry<>(createKey(currentParentKey, entry.getKey()), mapToNullIfEmpty((String) entry.getValue())));
+                        return Flux.just(Pair.of(createKey(currentParentKey, entry.getKey()), mapToNullIfEmpty((String) entry.getValue())));
                     } else {
-                        return Stream.empty();
+                        return Flux.empty();
                     }
                 });
     }
 
-    private String createKey(String currentParentKey, String key) {
-        return isEmpty(currentParentKey) ? key : currentParentKey + "." + key;
+    /**
+     * Creates a key concatenating the parent key with the sub-key.
+     */
+    private String createKey(String parentKey, String subKey) {
+        return isEmpty(parentKey) ? subKey : parentKey + "." + subKey;
     }
 
+    /**
+     * Returns the locale based on the file name.
+     *
+     * @see #BUNDLE_PATTERN
+     */
     private Locale getLocale(File file) {
         final Matcher matcher = BUNDLE_PATTERN.matcher(file.getName());
 
@@ -159,6 +193,8 @@ public class JsonBundleHandler implements BundleHandler {
 
         return Locale.forLanguageTag(matcher.group(1));
     }
+
+
 
     @SuppressWarnings("unchecked")
     private Map<String, Object> toMap(List<ScannedBundleFileKey> keys, Locale locale) {

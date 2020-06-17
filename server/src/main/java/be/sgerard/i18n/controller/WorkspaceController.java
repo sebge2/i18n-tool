@@ -108,7 +108,7 @@ public class WorkspaceController {
 
             case PUBLISH:
                 if (StringUtils.isEmpty(message)) {
-                    return Mono.error(BadRequestException.missingHeader("message"));
+                    return Mono.error(BadRequestException.missingReviewMessage());
                 }
 
                 return workspaceManager.publish(id, message)
