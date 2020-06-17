@@ -1,7 +1,6 @@
 package be.sgerard.i18n.service.i18n;
 
 import be.sgerard.i18n.controller.AuthenticationController;
-import be.sgerard.i18n.model.event.EventType;
 import be.sgerard.i18n.model.i18n.BundleType;
 import be.sgerard.i18n.model.i18n.dto.*;
 import be.sgerard.i18n.model.i18n.file.BundleWalkContext;
@@ -18,7 +17,6 @@ import be.sgerard.i18n.repository.i18n.BundleKeyTranslationRepository;
 import be.sgerard.i18n.repository.workspace.WorkspaceRepository;
 import be.sgerard.i18n.service.ResourceNotFoundException;
 import be.sgerard.i18n.service.event.EventService;
-import be.sgerard.i18n.service.event.InternalEventListener;
 import be.sgerard.i18n.service.i18n.file.BundleHandler;
 import be.sgerard.i18n.service.i18n.file.BundleWalker;
 import org.apache.commons.lang3.tuple.Pair;
@@ -34,7 +32,6 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import static be.sgerard.i18n.model.event.EventType.UPDATED_TRANSLATIONS;
-import static be.sgerard.i18n.model.event.EventType.UPDATED_TRANSLATION_LOCALE;
 import static be.sgerard.i18n.service.i18n.file.TranslationFileUtils.mapToNullIfEmpty;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
@@ -70,50 +67,52 @@ public class TranslationManagerImpl implements TranslationManager {
 
     @Override
     @Transactional(readOnly = true)
-    public BundleKeysPageDto getTranslations(BundleKeysPageRequestDto searchRequest) {
+    public Mono<BundleKeysPageDto> getTranslations(BundleKeysPageRequestDto searchRequest) {
         final WorkspaceEntity workspaceEntity = workspaceRepository.findById(searchRequest.getWorkspaceId())
                 .orElseThrow(() -> ResourceNotFoundException.workspaceNotFoundException(searchRequest.getWorkspaceId()));
 
         final GroupedTranslations groupedEntries = doGetTranslations(searchRequest);
 
-        return BundleKeysPageDto.builder()
-                .workspaceId(workspaceEntity.getId())
-                .files(
-                        groupedEntries.getGroups().entrySet().stream()
-                                .map(file ->
-                                        BundleFileDto.builder()
-                                                .id(file.getKey().getId())
-                                                .name(file.getKey().getName())
-                                                .location(file.getKey().getLocation())
-                                                .keys(
-                                                        file.getValue().entrySet().stream()
-                                                                .map(key ->
-                                                                        BundleKeyDto.builder()
-                                                                                .id(key.getKey().getId())
-                                                                                .key(key.getKey().getKey())
-                                                                                .translations(
-                                                                                        key.getValue().stream()
-                                                                                                .map(keyEntry ->
-                                                                                                        BundleKeyTranslationDto.builder()
-                                                                                                                .id(keyEntry.getId())
-                                                                                                                .locale(keyEntry.getLocale())
-                                                                                                                .originalValue(keyEntry.getOriginalValue().orElse(null))
-                                                                                                                .updatedValue(keyEntry.getUpdatedValue().orElse(null))
-                                                                                                                .lastEditor(keyEntry.getLastEditor().orElse(null))
-                                                                                                                .build()
-                                                                                                )
-                                                                                                .collect(toList())
-                                                                                )
-                                                                                .build()
-                                                                )
-                                                                .collect(toList())
-                                                )
-                                                .build()
-                                )
-                                .collect(toList())
-                )
-                .lastKey(groupedEntries.getLastKey().orElse(null))
-                .build();
+        return Mono.just(
+                BundleKeysPageDto.builder()
+                        .workspaceId(workspaceEntity.getId())
+                        .files(
+                                groupedEntries.getGroups().entrySet().stream()
+                                        .map(file ->
+                                                BundleFileDto.builder()
+                                                        .id(file.getKey().getId())
+                                                        .name(file.getKey().getName())
+                                                        .location(file.getKey().getLocation())
+                                                        .keys(
+                                                                file.getValue().entrySet().stream()
+                                                                        .map(key ->
+                                                                                BundleKeyDto.builder()
+                                                                                        .id(key.getKey().getId())
+                                                                                        .key(key.getKey().getKey())
+                                                                                        .translations(
+                                                                                                key.getValue().stream()
+                                                                                                        .map(keyEntry ->
+                                                                                                                BundleKeyTranslationDto.builder()
+                                                                                                                        .id(keyEntry.getId())
+                                                                                                                        .locale(keyEntry.getLocale())
+                                                                                                                        .originalValue(keyEntry.getOriginalValue().orElse(null))
+                                                                                                                        .updatedValue(keyEntry.getUpdatedValue().orElse(null))
+                                                                                                                        .lastEditor(keyEntry.getLastEditor().orElse(null))
+                                                                                                                        .build()
+                                                                                                        )
+                                                                                                        .collect(toList())
+                                                                                        )
+                                                                                        .build()
+                                                                        )
+                                                                        .collect(toList())
+                                                        )
+                                                        .build()
+                                        )
+                                        .collect(toList())
+                        )
+                        .lastKey(groupedEntries.getLastKey().orElse(null))
+                        .build()
+        );
     }
 
     @Override
@@ -138,7 +137,8 @@ public class TranslationManagerImpl implements TranslationManager {
 
     @Override
     @Transactional
-    public void updateTranslations(WorkspaceEntity workspace, Map<String, String> translations) throws ResourceNotFoundException {
+    public Mono<Void> updateTranslations(WorkspaceEntity workspace, Map<String, String> translations) throws ResourceNotFoundException {
+        // TODO
         final UserDto currentUser = authenticationManager.getCurrentUser().getUser();
 
         final List<BundleKeyTranslationDto> updatedEntries = new ArrayList<>();
@@ -168,6 +168,8 @@ public class TranslationManagerImpl implements TranslationManager {
                         updatedEntries
                 )
         );
+
+        return Mono.empty();
     }
 
     private Mono<BundleWalkContext> createContext(WorkspaceEntity workspace, TranslationRepositoryReadApi api) {
@@ -307,17 +309,4 @@ public class TranslationManagerImpl implements TranslationManager {
         }
     }
 
-    // TODO
-    private static final class Listener implements InternalEventListener<TranslationLocaleDto> {
-
-        @Override
-        public boolean support(EventType eventType) {
-            return eventType == UPDATED_TRANSLATION_LOCALE;
-        }
-
-        @Override
-        public void onEvent(TranslationLocaleDto event) {
-
-        }
-    }
 }

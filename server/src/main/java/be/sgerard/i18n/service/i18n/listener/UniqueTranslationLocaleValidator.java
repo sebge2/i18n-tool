@@ -40,7 +40,7 @@ public class UniqueTranslationLocaleValidator implements TranslationLocaleListen
 
                     if (count > 0) {
                         builder.messages(
-                                new ValidationMessage(DUPLICATED_LOCALE, toUserString(locale.getLanguage(), locale.getRegion(), locale.getVariants()))
+                                new ValidationMessage(DUPLICATED_LOCALE, toUserString(locale.getLanguage(), locale.getRegion().orElse(null), locale.getVariants()))
                         );
                     }
 
@@ -60,7 +60,7 @@ public class UniqueTranslationLocaleValidator implements TranslationLocaleListen
 
                     if (count > 0) {
                         builder.messages(
-                                new ValidationMessage(DUPLICATED_LOCALE, toUserString(update.getLanguage(), update.getRegion(), update.getVariants()))
+                                new ValidationMessage(DUPLICATED_LOCALE, toUserString(update.getLanguage(), update.getRegion().orElse(null), update.getVariants()))
                         );
                     }
 

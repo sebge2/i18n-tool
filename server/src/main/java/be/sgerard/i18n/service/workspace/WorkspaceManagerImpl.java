@@ -184,9 +184,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
             throw BadRequestException.actionNotAllowedInStateException(WorkspaceStatus.INITIALIZED.name(), workspace.getStatus().name());
         }
 
-        translationManager.updateTranslations(workspace, translations);
-
-        return Mono.empty();
+        return translationManager.updateTranslations(workspace, translations);
     }
 
     @Override

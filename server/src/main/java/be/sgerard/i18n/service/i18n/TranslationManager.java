@@ -32,11 +32,11 @@ public interface TranslationManager {
     /**
      * Performs the specified {@link BundleKeysPageRequestDto search request} and returns a page of {@link BundleKeysPageDto translations}.
      */
-    BundleKeysPageDto getTranslations(BundleKeysPageRequestDto searchRequest) throws ResourceNotFoundException;
+    Mono<BundleKeysPageDto> getTranslations(BundleKeysPageRequestDto searchRequest) throws ResourceNotFoundException;
 
     /**
      * Updates translations of the specified {@link WorkspaceEntity workspace}, the map associates the
      * {@link BundleKeyTranslationEntity#getId() translation id} to the actual translation value.
      */
-    void updateTranslations(WorkspaceEntity workspace, Map<String, String> translations) throws ResourceNotFoundException;
+    Mono<Void> updateTranslations(WorkspaceEntity workspace, Map<String, String> translations) throws ResourceNotFoundException;
 }

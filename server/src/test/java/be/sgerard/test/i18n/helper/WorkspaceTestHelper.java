@@ -6,6 +6,7 @@ import be.sgerard.test.i18n.support.JsonHolderResultHandler;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Component;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.List;
 import java.util.Objects;
@@ -17,18 +18,22 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @author Sebastien Gerard
  */
 @Component
+@SuppressWarnings("unused")
 public class WorkspaceTestHelper {
 
     private final AsyncMockMvcTestHelper mockMvc;
     private final ObjectMapper objectMapper;
+    private final TranslationsTestHelper translations;
 
     public WorkspaceTestHelper(AsyncMockMvcTestHelper mockMvc,
-                               ObjectMapper objectMapper) {
+                               ObjectMapper objectMapper,
+                               TranslationsTestHelper translations) {
         this.mockMvc = mockMvc;
         this.objectMapper = objectMapper;
+        this.translations = translations;
     }
 
-    public <R extends RepositoryDto> StepInitializedRepository<R> with(R repository) {
+    <R extends RepositoryDto> StepInitializedRepository<R> with(R repository) {
         return new StepInitializedRepository<>(repository);
     }
 
@@ -48,66 +53,54 @@ public class WorkspaceTestHelper {
             return repository;
         }
 
-        public StepSynchronizedWorkspaces<R> sync() throws Exception {
-            final JsonHolderResultHandler<List<WorkspaceDto>> resultHandler = new JsonHolderResultHandler<>(objectMapper, new TypeReference<>() {
-            });
-
+        public StepInitializedRepository<R> sync() throws Exception {
             mockMvc
                     .perform(post("/api/repository/{id}/workspace/do?action=SYNCHRONIZE", repository.getId()))
                     .andExpectStarted()
                     .andWaitResult()
-                    .andExpect(status().isOk())
-                    .andDo(resultHandler);
+                    .andExpect(status().isOk());
 
-            return new StepSynchronizedWorkspaces<>(repository, resultHandler.getValue());
-        }
-    }
-
-    public class StepSynchronizedWorkspaces<R extends RepositoryDto> {
-
-        private final R repository;
-        private final List<WorkspaceDto> workspaces;
-
-        public StepSynchronizedWorkspaces(R repository, List<WorkspaceDto> workspaces) {
-            this.repository = repository;
-            this.workspaces = workspaces;
-        }
-
-        public StepInitializedRepository<R> and() {
             return new StepInitializedRepository<>(repository);
         }
 
-        public List<WorkspaceDto> get() {
-            return workspaces;
-        }
-
-        public StepNotInitializedWorkspace<R> workspaceForBranch(String branch) {
+        public StepNotInitializedWorkspace<R> workspaceForBranch(String branch) throws Exception {
             return new StepNotInitializedWorkspace<>(
                     repository,
-                    workspaces,
-                    get()
+                    findAll()
                             .stream()
                             .filter(workspace -> Objects.equals(workspace.getBranch(), branch))
                             .findFirst()
                             .orElseThrow(() -> new IllegalStateException("There is no workspace with branch [" + branch + "]."))
             );
         }
+
+        private List<WorkspaceDto> findAll() throws Exception {
+            final JsonHolderResultHandler<List<WorkspaceDto>> resultHandler = new JsonHolderResultHandler<>(objectMapper, new TypeReference<>() {
+            });
+
+            mockMvc
+                    .perform(MockMvcRequestBuilders.get("/api/repository/{id}/workspace", repository.getId()))
+                    .andExpectStarted()
+                    .andWaitResult()
+                    .andExpect(status().isOk())
+                    .andDo(resultHandler);
+
+            return resultHandler.getValue();
+        }
     }
 
     public class StepNotInitializedWorkspace<R extends RepositoryDto> {
 
         private final R repository;
-        private final List<WorkspaceDto> workspaces;
         private final WorkspaceDto workspace;
 
-        public StepNotInitializedWorkspace(R repository, List<WorkspaceDto> workspaces, WorkspaceDto workspace) {
+        public StepNotInitializedWorkspace(R repository, WorkspaceDto workspace) {
             this.repository = repository;
-            this.workspaces = workspaces;
             this.workspace = workspace;
         }
 
-        public StepSynchronizedWorkspaces<R> and() {
-            return new StepSynchronizedWorkspaces<>(repository, workspaces);
+        public StepInitializedRepository<R> and() {
+            return new StepInitializedRepository<>(repository);
         }
 
         public WorkspaceDto get() {
@@ -121,24 +114,22 @@ public class WorkspaceTestHelper {
                     .andWaitResult()
                     .andExpect(status().isOk());
 
-            return new StepInitializedWorkspace<>(repository, workspaces, workspace);
+            return new StepInitializedWorkspace<>(repository, workspace);
         }
     }
 
     public class StepInitializedWorkspace<R extends RepositoryDto> {
 
         private final R repository;
-        private final List<WorkspaceDto> workspaces;
         private final WorkspaceDto workspace;
 
-        public StepInitializedWorkspace(R repository, List<WorkspaceDto> workspaces, WorkspaceDto workspace) {
+        public StepInitializedWorkspace(R repository, WorkspaceDto workspace) {
             this.repository = repository;
-            this.workspaces = workspaces;
             this.workspace = workspace;
         }
 
-        public StepSynchronizedWorkspaces<R> and() {
-            return new StepSynchronizedWorkspaces<>(repository, workspaces);
+        public StepInitializedRepository<R> and() {
+            return new StepInitializedRepository<>(repository);
         }
 
         public WorkspaceDto get() {
@@ -152,24 +143,26 @@ public class WorkspaceTestHelper {
                     .andWaitResult()
                     .andExpect(status().isOk());
 
-            return new StepPublishedWorkspace<>(repository, workspaces, workspace);
+            return new StepPublishedWorkspace<>(repository, workspace);
+        }
+
+        public TranslationsTestHelper.StepInitializedWorkspace<R> translations() {
+            return translations.with(repository, workspace);
         }
     }
 
     public class StepPublishedWorkspace<R extends RepositoryDto> {
 
         private final R repository;
-        private final List<WorkspaceDto> workspaces;
         private final WorkspaceDto workspace;
 
-        public StepPublishedWorkspace(R repository, List<WorkspaceDto> workspaces, WorkspaceDto workspace) {
+        public StepPublishedWorkspace(R repository, WorkspaceDto workspace) {
             this.repository = repository;
-            this.workspaces = workspaces;
             this.workspace = workspace;
         }
 
-        public StepSynchronizedWorkspaces<R> and() {
-            return new StepSynchronizedWorkspaces<>(repository, workspaces);
+        public StepInitializedRepository<R> and() {
+            return new StepInitializedRepository<>(repository);
         }
 
         public WorkspaceDto get() {
