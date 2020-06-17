@@ -3,7 +3,7 @@ package be.sgerard.test.i18n.mock;
 import be.sgerard.i18n.model.github.GitHubPullRequestDto;
 import be.sgerard.i18n.model.github.GitHubPullRequestStatus;
 import be.sgerard.i18n.model.repository.persistence.GitHubRepositoryEntity;
-import be.sgerard.i18n.service.client.GitHubPullRequestClient;
+import be.sgerard.i18n.service.client.GitHubClient;
 import be.sgerard.i18n.service.repository.RepositoryManager;
 import be.sgerard.i18n.service.workspace.WorkspaceException;
 import org.springframework.context.annotation.Primary;
@@ -22,13 +22,13 @@ import static be.sgerard.i18n.support.GitHubUtils.createGitHubRepositoryName;
  */
 @Service
 @Primary
-public class GitHubPullRequestClientMock implements GitHubPullRequestClient {
+public class GitHubClientMock implements GitHubClient {
 
     private final Set<PullRequest> pullRequests = new HashSet<>();
 
     private final RepositoryManager repositoryManager;
 
-    public GitHubPullRequestClientMock(RepositoryManager repositoryManager) {
+    public GitHubClientMock(RepositoryManager repositoryManager) {
         this.repositoryManager = repositoryManager;
     }
 

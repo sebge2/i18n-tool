@@ -6,11 +6,11 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
- * Client interacting with GitHub for managing pull-requests.
+ * Client interacting with GitHub.
  *
  * @author Sebastien Gerard
  */
-public interface GitHubPullRequestClient {
+public interface GitHubClient {
 
     /**
      * Creates a new {@link GitHubPullRequestDto pull request}.

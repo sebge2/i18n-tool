@@ -1,7 +1,7 @@
 package be.sgerard.test.i18n.helper;
 
 import be.sgerard.i18n.model.repository.dto.GitHubRepositoryDto;
-import be.sgerard.test.i18n.mock.GitHubPullRequestClientMock;
+import be.sgerard.test.i18n.mock.GitHubClientMock;
 import org.springframework.stereotype.Component;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -12,9 +12,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Component
 public class GitHubRepositoryMockTestHelper {
 
-    private final GitHubPullRequestClientMock pullRequestClient;
+    private final GitHubClientMock pullRequestClient;
 
-    public GitHubRepositoryMockTestHelper(GitHubPullRequestClientMock pullRequestClient) {
+    public GitHubRepositoryMockTestHelper(GitHubClientMock pullRequestClient) {
         this.pullRequestClient = pullRequestClient;
     }
 

@@ -14,17 +14,17 @@ import reactor.core.publisher.Mono;
 import static java.util.Collections.emptyMap;
 
 /**
- * Implementation of the {@link GitHubPullRequestClient pull-request manager}.
+ * Implementation of the {@link GitHubClient pull-request manager}.
  *
  * @author Sebastien Gerard
  */
 @Service
-public class GitHubPullRequestClientImpl implements GitHubPullRequestClient {
+public class GitHubClientImpl implements GitHubClient {
 
     private final RepositoryManager repositoryManager;
     private final AuthenticationManager authenticationManager;
 
-    public GitHubPullRequestClientImpl(RepositoryManager repositoryManager, AuthenticationManager authenticationManager) {
+    public GitHubClientImpl(RepositoryManager repositoryManager, AuthenticationManager authenticationManager) {
         this.repositoryManager = repositoryManager;
         this.authenticationManager = authenticationManager;
     }
