@@ -56,7 +56,7 @@ public class BundleWalker {
                         .flatMap(handler ->
                                 handler
                                         .scanBundles(directory, context)
-                                        .flatMap(bundle -> consumer.onBundleFound(bundle, handler.scanKeys(bundle, context.getApi())))
+                                        .flatMap(bundle -> consumer.onBundleFound(bundle, handler.scanKeys(bundle, context)))
                         ),
                 context.getApi()
                         .listDirectories(directory)
@@ -74,7 +74,7 @@ public class BundleWalker {
          * Callbacks when the specified {@link ScannedBundleFile bundle file} has been found containing
          * the specified {@link ScannedBundleFileKey keys}.
          */
-        Mono<BundleFileEntity> onBundleFound(ScannedBundleFile bundleFile, List<ScannedBundleFileKey> keys);
+        Mono<BundleFileEntity> onBundleFound(ScannedBundleFile bundleFile, Flux<ScannedBundleFileKey> keys);
 
     }
 

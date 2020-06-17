@@ -4,7 +4,6 @@ import be.sgerard.i18n.model.i18n.BundleType;
 import be.sgerard.i18n.model.i18n.file.BundleWalkContext;
 import be.sgerard.i18n.model.i18n.file.ScannedBundleFile;
 import be.sgerard.i18n.model.i18n.file.ScannedBundleFileKey;
-import be.sgerard.i18n.service.i18n.TranslationRepositoryReadApi;
 import be.sgerard.i18n.service.i18n.TranslationRepositoryWriteApi;
 import reactor.core.publisher.Flux;
 
@@ -16,7 +15,7 @@ import java.util.List;
  *
  * @author Sebastien Gerard
  */
-public interface TranslationBundleHandler {
+public interface BundleHandler {
 
     /**
      * Returns whether the specified {@link BundleType bundle type} is supported by this handler.
@@ -28,9 +27,16 @@ public interface TranslationBundleHandler {
      */
     boolean continueScanning(File directory, BundleWalkContext context);
 
-    Flux<ScannedBundleFile> scanBundles(File directory, TranslationRepositoryReadApi api);
+    /**
+     * Scans the specified directory and finds {@link ScannedBundleFile bundle files}.
+     */
+    Flux<ScannedBundleFile> scanBundles(File directory, BundleWalkContext context);
 
-    List<ScannedBundleFileKey> scanKeys(ScannedBundleFile bundleFile, TranslationRepositoryReadApi api);
+    /**
+     * Scans all the {@link ScannedBundleFileKey translation keys} of the specified {@link ScannedBundleFile bundle file}.
+     */
+    Flux<ScannedBundleFileKey> scanKeys(ScannedBundleFile bundleFile, BundleWalkContext context);
+
 
     void updateBundle(ScannedBundleFile bundleFile,
                       List<ScannedBundleFileKey> keys,
