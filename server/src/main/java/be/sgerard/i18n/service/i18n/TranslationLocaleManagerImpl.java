@@ -45,7 +45,7 @@ public class TranslationLocaleManagerImpl implements TranslationLocaleManager {
         return Mono
                 .just(new TranslationLocaleEntity(
                         creationDto.getLanguage(),
-                        creationDto.getRegion(),
+                        creationDto.getRegion().orElse(null),
                         creationDto.getVariants(),
                         creationDto.getIcon()
                 ))
@@ -78,7 +78,7 @@ public class TranslationLocaleManagerImpl implements TranslationLocaleManager {
                 .map(entity ->
                         entity
                                 .setLanguage(localeDto.getLanguage())
-                                .setRegion(localeDto.getRegion())
+                                .setRegion(localeDto.getRegion().orElse(null))
                                 .setVariants(localeDto.getVariants())
                                 .setIcon(localeDto.getIcon())
                 )

@@ -23,6 +23,10 @@ public class WorkspaceException extends RuntimeException implements LocalizedMes
         return new WorkspaceException("Error while reading the content of the file [" + file + "].", "WorkspaceException.error-reading-file.message", cause, file.toPath());
     }
 
+    public static WorkspaceException onFileWriting(File file, Throwable cause) {
+        return new WorkspaceException("Error while writing the content of the file [" + file + "].", "WorkspaceException.error-writing-file.message", cause, file.toPath());
+    }
+
     private final String messageKey;
     private final Object[] parameters;
 

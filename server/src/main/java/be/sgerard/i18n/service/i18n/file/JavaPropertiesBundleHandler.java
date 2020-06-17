@@ -6,6 +6,8 @@ import be.sgerard.i18n.model.i18n.file.ScannedBundleFile;
 import be.sgerard.i18n.model.i18n.file.ScannedBundleFileKey;
 import be.sgerard.i18n.service.i18n.TranslationRepositoryWriteApi;
 import be.sgerard.i18n.service.workspace.WorkspaceException;
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.PropertiesConfiguration;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -99,28 +101,18 @@ public class JavaPropertiesBundleHandler implements BundleHandler {
     }
 
     @Override
-    public void updateBundle(ScannedBundleFile bundleFile,
-                             List<ScannedBundleFileKey> keys,
-                             TranslationRepositoryWriteApi repositoryAPI) {
-//        try {
-//        for (File file : bundleFile.getFiles()) {
-//            final Matcher matcher = BUNDLE_PATTERN.matcher(file.getName());
-//
-//            if (!matcher.matches()) {
-//                continue;
-//            }
-
-//                final PropertiesConfiguration conf = new PropertiesConfiguration(repositoryAPI.openAsTemp(file));
-//
-//                final Locale locale = getLocale(file);
-//// TODO only what changed ?
-//                keys.forEach(key -> conf.setProperty(key.getKey(), key.getTranslations().getOrDefault(locale, null)));
-//
-//                conf.save();
-//        }
-//        } catch (ConfigurationException e) {
-//            throw new IOException("Error while updating bundle files.", e);
-//        }
+    public Mono<Void> updateBundle(ScannedBundleFile bundleFile,
+                                   List<ScannedBundleFileKey> keys,
+                                   TranslationRepositoryWriteApi repositoryAPI) {
+        return Flux
+                .fromIterable(bundleFile.getFiles())
+                .filter(file -> BUNDLE_PATTERN.matcher(file.getName()).matches())
+                .flatMap(file ->
+                        repositoryAPI
+                                .openAsTemp(file)
+                                .doOnNext(outputStream -> writeTranslations(keys, file, outputStream))
+                )
+                .then();
     }
 
     /**
@@ -146,6 +138,23 @@ public class JavaPropertiesBundleHandler implements BundleHandler {
             return new PropertyResourceBundle(fileStream);
         } catch (IOException e) {
             throw WorkspaceException.onFileReading(file, e);
+        }
+    }
+
+    /**
+     * Writes the specified keys in the specified file using the output-stream.
+     */
+    private void writeTranslations(List<ScannedBundleFileKey> keys, File file, File outputStream) {
+        try {
+            final Locale locale = getLocale(file);
+
+            final PropertiesConfiguration conf = new PropertiesConfiguration(outputStream);
+
+            keys.forEach(key -> conf.setProperty(key.getKey(), key.getTranslations().getOrDefault(locale, null)));
+
+            conf.save();
+        } catch (ConfigurationException e) {
+            throw WorkspaceException.onFileWriting(file, e);
         }
     }
 }

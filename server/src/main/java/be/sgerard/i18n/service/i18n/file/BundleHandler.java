@@ -6,6 +6,7 @@ import be.sgerard.i18n.model.i18n.file.ScannedBundleFile;
 import be.sgerard.i18n.model.i18n.file.ScannedBundleFileKey;
 import be.sgerard.i18n.service.i18n.TranslationRepositoryWriteApi;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.io.File;
 import java.util.List;
@@ -37,9 +38,11 @@ public interface BundleHandler {
      */
     Flux<ScannedBundleFileKey> scanKeys(ScannedBundleFile bundleFile, BundleWalkContext context);
 
-
-    void updateBundle(ScannedBundleFile bundleFile,
-                      List<ScannedBundleFileKey> keys,
-                      TranslationRepositoryWriteApi repositoryAPI);
+    /**
+     * Writes the specified {@link ScannedBundleFileKey translation keys} into the specified {@link ScannedBundleFile bundle file}.
+     */
+    Mono<Void> updateBundle(ScannedBundleFile bundleFile,
+                            List<ScannedBundleFileKey> keys,
+                            TranslationRepositoryWriteApi repositoryAPI);
 
 }

@@ -113,18 +113,31 @@ public class JsonBundleHandler implements BundleHandler {
     }
 
     @Override
-    public void updateBundle(ScannedBundleFile bundleFile, List<ScannedBundleFileKey> keys, TranslationRepositoryWriteApi repositoryAPI) {
-        for (File file : bundleFile.getFiles()) {
-            final Matcher matcher = BUNDLE_PATTERN.matcher(file.getName());
+    public Mono<Void> updateBundle(ScannedBundleFile bundleFile, List<ScannedBundleFileKey> keys, TranslationRepositoryWriteApi repositoryAPI) {
+        return Flux
+                .fromIterable(bundleFile.getFiles())
+                .filter(file -> BUNDLE_PATTERN.matcher(file.getName()).matches())
+                .flatMap(file ->
+                        repositoryAPI
+                                .openAsTemp(file)
+                                .doOnNext(outputStream -> writeTranslations(keys, file, outputStream))
+                )
+                .then();
+    }
 
-            if (!matcher.matches()) {
-                continue;
-            }
+    /**
+     * Returns the locale based on the file name.
+     *
+     * @see #BUNDLE_PATTERN
+     */
+    private Locale getLocale(File file) {
+        final Matcher matcher = BUNDLE_PATTERN.matcher(file.getName());
 
-            final Locale locale = getLocale(file);
-
-//            objectMapper.writeValue(repositoryAPI.openAsTemp(file), toMap(keys, locale));
+        if (!matcher.matches()) {
+            throw new IllegalArgumentException("The file [" + file + "] is not a resource bundle file.");
         }
+
+        return Locale.forLanguageTag(matcher.group(1));
     }
 
     /**
@@ -142,6 +155,8 @@ public class JsonBundleHandler implements BundleHandler {
 
     /**
      * Inlines all values from the specified structured translations.
+     *
+     * @see #toStructuredMap(List, Locale)
      */
     private Flux<Pair<String, String>> inlineValues(Map<String, Object> translations) {
         return inlineValues(translations, "");
@@ -149,13 +164,13 @@ public class JsonBundleHandler implements BundleHandler {
 
     /**
      * Inlines all values from the specified structured translations knowing the specified current key of the parent.
-     *
+     * <p>
      * For instance:
      * <ul>
      *     <li>the current parent key is: <tt>workspace.message</tt>,</li>
      *     <li>the structured translations are: <tt>{"error": "my message"}</tt></li>
      * </ul>
-     *
+     * <p>
      * The result will be: <tt>workspace.message.error = "my message"</tt>
      */
     @SuppressWarnings("unchecked")
@@ -180,24 +195,23 @@ public class JsonBundleHandler implements BundleHandler {
     }
 
     /**
-     * Returns the locale based on the file name.
-     *
-     * @see #BUNDLE_PATTERN
+     * Writes the specified keys in the specified file using the output-stream.
      */
-    private Locale getLocale(File file) {
-        final Matcher matcher = BUNDLE_PATTERN.matcher(file.getName());
-
-        if (!matcher.matches()) {
-            throw new IllegalArgumentException("The file [" + file + "] is not a resource bundle file.");
+    private void writeTranslations(List<ScannedBundleFileKey> keys, File file, File outputStream) {
+        try {
+            objectMapper.writeValue(outputStream, toStructuredMap(keys, getLocale(file)));
+        } catch (IOException e) {
+            throw WorkspaceException.onFileWriting(file, e);
         }
-
-        return Locale.forLanguageTag(matcher.group(1));
     }
 
-
-
+    /**
+     * Returns a structured map from inlined properties.
+     *
+     * @see #inlineValues(Map)
+     */
     @SuppressWarnings("unchecked")
-    private Map<String, Object> toMap(List<ScannedBundleFileKey> keys, Locale locale) {
+    private Map<String, Object> toStructuredMap(List<ScannedBundleFileKey> keys, Locale locale) {
         final Map<String, Object> map = new LinkedHashMap<>();
 
         keys.forEach(
