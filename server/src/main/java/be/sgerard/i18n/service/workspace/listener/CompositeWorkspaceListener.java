@@ -1,9 +1,11 @@
 package be.sgerard.i18n.service.workspace.listener;
 
-import be.sgerard.i18n.model.workspace.WorkspaceEntity;
 import be.sgerard.i18n.model.validation.ValidationResult;
+import be.sgerard.i18n.model.workspace.WorkspaceEntity;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 
@@ -28,54 +30,65 @@ public class CompositeWorkspaceListener implements WorkspaceListener {
     }
 
     @Override
-    public void onCreate(WorkspaceEntity workspace) {
-        listeners.stream()
+    public Mono<Void> onCreate(WorkspaceEntity workspace) {
+        return Flux
+                .fromIterable(listeners)
                 .filter(listener -> listener.support(workspace))
-                .forEach(listener -> listener.onCreate(workspace));
+                .flatMap(listener -> listener.onCreate(workspace))
+                .then();
     }
 
     @Override
-    public ValidationResult beforeInitialize(WorkspaceEntity workspace) {
-        return listeners.stream()
+    public Mono<ValidationResult> beforeInitialize(WorkspaceEntity workspace) {
+        return Flux
+                .fromIterable(listeners)
                 .filter(listener -> listener.support(workspace))
-                .map(listener -> listener.beforeInitialize(workspace))
-                .collect(ValidationResult.toValidationResult());
+                .flatMap(listener -> listener.beforeInitialize(workspace))
+                .reduce(ValidationResult::merge);
     }
 
     @Override
-    public void onInitialize(WorkspaceEntity workspace) {
-        listeners.stream()
+    public Mono<Void> onInitialize(WorkspaceEntity workspace) {
+        return Flux
+                .fromIterable(listeners)
                 .filter(listener -> listener.support(workspace))
-                .forEach(listener -> listener.onInitialize(workspace));
+                .flatMap(listener -> listener.onInitialize(workspace))
+                .then();
     }
 
     @Override
-    public ValidationResult beforePublish(WorkspaceEntity workspace) {
-        return listeners.stream()
+    public Mono<ValidationResult> beforePublish(WorkspaceEntity workspace) {
+        return Flux
+                .fromIterable(listeners)
                 .filter(listener -> listener.support(workspace))
-                .map(listener -> listener.beforePublish(workspace))
-                .collect(ValidationResult.toValidationResult());
+                .flatMap(listener -> listener.beforePublish(workspace))
+                .reduce(ValidationResult::merge);
     }
 
     @Override
-    public void onReview(WorkspaceEntity workspace) {
-        listeners.stream()
+    public Mono<Void> onReview(WorkspaceEntity workspace) {
+        return Flux
+                .fromIterable(listeners)
                 .filter(listener -> listener.support(workspace))
-                .forEach(listener -> listener.onReview(workspace));
+                .flatMap(listener -> listener.onReview(workspace))
+                .then();
     }
 
     @Override
-    public ValidationResult beforeFinishReview(WorkspaceEntity workspace) {
-        return listeners.stream()
+    public Mono<ValidationResult> beforeFinishReview(WorkspaceEntity workspace) {
+        return Flux
+                .fromIterable(listeners)
                 .filter(listener -> listener.support(workspace))
-                .map(listener -> listener.beforeFinishReview(workspace))
-                .collect(ValidationResult.toValidationResult());
+                .flatMap(listener -> listener.beforeFinishReview(workspace))
+                .reduce(ValidationResult::merge);
     }
 
     @Override
-    public void onDelete(WorkspaceEntity workspace) {
-        listeners.stream()
+    public Mono<Void> onDelete(WorkspaceEntity workspace) {
+        return Flux
+                .fromIterable(listeners)
                 .filter(listener -> listener.support(workspace))
-                .forEach(listener -> listener.onDelete(workspace));
+                .flatMap(listener -> listener.onDelete(workspace))
+                .then();
     }
 }

@@ -1,7 +1,8 @@
 package be.sgerard.i18n.service.workspace.listener;
 
-import be.sgerard.i18n.model.workspace.WorkspaceEntity;
 import be.sgerard.i18n.model.validation.ValidationResult;
+import be.sgerard.i18n.model.workspace.WorkspaceEntity;
+import reactor.core.publisher.Mono;
 
 /**
  * Listener of the lifecycle of {@link WorkspaceEntity workspaces}.
@@ -18,45 +19,49 @@ public interface WorkspaceListener {
     /**
      * Performs an action after the creation of the specified workspace.
      */
-    default void onCreate(WorkspaceEntity workspace) {
+    default Mono<Void> onCreate(WorkspaceEntity workspace) {
+        return Mono.empty();
     }
 
     /**
      * Validates before the workspace is initialized.
      */
-    default ValidationResult beforeInitialize(WorkspaceEntity workspace) {
-        return ValidationResult.EMPTY;
+    default Mono<ValidationResult> beforeInitialize(WorkspaceEntity workspace) {
+        return Mono.just(ValidationResult.EMPTY);
     }
 
     /**
      * Performs an action after the initialization of the specified workspace.
      */
-    default void onInitialize(WorkspaceEntity workspace) {
+    default Mono<Void> onInitialize(WorkspaceEntity workspace) {
+        return Mono.empty();
     }
 
     /**
      * Validates that the specified workspace can be published and eventually be in review.
      */
-    default ValidationResult beforePublish(WorkspaceEntity workspace){
-        return ValidationResult.EMPTY;
+    default Mono<ValidationResult> beforePublish(WorkspaceEntity workspace) {
+        return Mono.just(ValidationResult.EMPTY);
     }
 
     /**
      * Performs an action when the specified workspace starts to be in review.
      */
-    default void onReview(WorkspaceEntity workspace){
+    default Mono<Void> onReview(WorkspaceEntity workspace) {
+        return Mono.empty();
     }
 
     /**
      * Validates that the review on the specified workspace can finish.
      */
-    default ValidationResult beforeFinishReview(WorkspaceEntity workspace) {
-        return ValidationResult.EMPTY;
+    default Mono<ValidationResult> beforeFinishReview(WorkspaceEntity workspace) {
+        return Mono.just(ValidationResult.EMPTY);
     }
 
     /**
      * Performs an action after the deletion of the specified workspace.
      */
-    default void onDelete(WorkspaceEntity workspace) {
+    default Mono<Void> onDelete(WorkspaceEntity workspace) {
+        return Mono.empty();
     }
 }
