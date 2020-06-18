@@ -1,14 +1,11 @@
 package be.sgerard.i18n.service.workspace;
 
 import be.sgerard.i18n.model.workspace.WorkspaceDto;
-import be.sgerard.i18n.model.i18n.persistence.BundleKeyTranslationEntity;
 import be.sgerard.i18n.model.workspace.WorkspaceEntity;
 import be.sgerard.i18n.service.ResourceNotFoundException;
 import be.sgerard.i18n.service.repository.RepositoryException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.util.Map;
 
 /**
  * Manager of {@link WorkspaceEntity workspaces}.
@@ -61,12 +58,6 @@ public interface WorkspaceManager {
      * Terminates the review of the specified workspace. The workspace will be removed and a new fresh workspace will be created and returned.
      */
     Mono<WorkspaceEntity> finishReview(String workspaceId) throws ResourceNotFoundException, RepositoryException;
-
-    /**
-     * Updates the specified translations of the specified workspace. Translations are associated with their
-     * {@link BundleKeyTranslationEntity#getId() ids}.
-     */
-    Mono<Void> updateTranslations(String workspaceId, Map<String, String> translations) throws ResourceNotFoundException;
 
     /**
      * Removes the {@link WorkspaceEntity workspace} having the specified id.

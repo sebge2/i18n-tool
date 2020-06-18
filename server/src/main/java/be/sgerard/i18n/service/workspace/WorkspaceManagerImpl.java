@@ -5,10 +5,8 @@ import be.sgerard.i18n.model.repository.persistence.RepositoryEntity;
 import be.sgerard.i18n.model.workspace.WorkspaceEntity;
 import be.sgerard.i18n.model.workspace.WorkspaceStatus;
 import be.sgerard.i18n.repository.workspace.WorkspaceRepository;
-import be.sgerard.i18n.service.BadRequestException;
 import be.sgerard.i18n.service.ResourceNotFoundException;
 import be.sgerard.i18n.service.ValidationException;
-import be.sgerard.i18n.service.i18n.TranslationManager;
 import be.sgerard.i18n.service.repository.RepositoryException;
 import be.sgerard.i18n.service.repository.RepositoryManager;
 import be.sgerard.i18n.service.workspace.listener.WorkspaceListener;
@@ -20,8 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.util.Map;
 
 import static java.util.Arrays.asList;
 
@@ -37,17 +33,14 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
 
     private final WorkspaceRepository repository;
     private final RepositoryManager repositoryManager;
-    private final TranslationManager translationManager;
     private final WorkspaceListener listener;
     private final WorkspaceTranslationsStrategy translationsStrategy;
 
     public WorkspaceManagerImpl(WorkspaceRepository repository,
                                 RepositoryManager repositoryManager,
-                                TranslationManager translationManager,
                                 WorkspaceListener listener,
                                 WorkspaceTranslationsStrategy translationsStrategy) {
         this.repositoryManager = repositoryManager;
-        this.translationManager = translationManager;
         this.repository = repository;
         this.listener = listener;
         this.translationsStrategy = translationsStrategy;
@@ -172,19 +165,6 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
     public Mono<WorkspaceEntity> finishReview(String workspaceId) throws ResourceNotFoundException, RepositoryException {
         return findById(workspaceId)
                 .flatMap(this::doFinishReview);
-    }
-
-    @Override
-    @Transactional
-    public Mono<Void> updateTranslations(String workspaceId, Map<String, String> translations) throws ResourceNotFoundException {
-        final WorkspaceEntity workspace = repository.findById(workspaceId)
-                .orElseThrow(() -> ResourceNotFoundException.workspaceNotFoundException(workspaceId));
-
-        if (workspace.getStatus() != WorkspaceStatus.INITIALIZED) {
-            throw BadRequestException.actionNotAllowedInStateException(WorkspaceStatus.INITIALIZED.name(), workspace.getStatus().name());
-        }
-
-        return translationManager.updateTranslations(workspace, translations);
     }
 
     @Override

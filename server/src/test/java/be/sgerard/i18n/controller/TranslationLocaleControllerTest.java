@@ -35,7 +35,7 @@ public class TranslationLocaleControllerTest extends AbstractControllerTest {
     @Transactional
     @WithMockUser(username = "user-01", roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
     public void findAllTranslations() throws Exception {
-        locale.createLocale(frBeWallonLocaleCreationDto()).get();
+        locale.createLocale(frBeWallonLocaleCreationDto());
 
         asyncMvc
                 .perform(request(HttpMethod.GET, "/api/translation/locale/"))

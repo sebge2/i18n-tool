@@ -1,12 +1,7 @@
 package be.sgerard.i18n.controller;
 
-import be.sgerard.i18n.model.i18n.dto.BundleKeyTranslationDto;
-import be.sgerard.i18n.model.i18n.dto.BundleKeysPageDto;
-import be.sgerard.i18n.model.i18n.dto.BundleKeysPageRequestDto;
-import be.sgerard.i18n.model.i18n.dto.TranslationSearchCriterion;
 import be.sgerard.i18n.model.workspace.WorkspaceDto;
 import be.sgerard.i18n.service.BadRequestException;
-import be.sgerard.i18n.service.i18n.TranslationManager;
 import be.sgerard.i18n.service.workspace.WorkspaceManager;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -17,10 +12,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 /**
  * {@link RestController Controller} handling {@link WorkspaceDto workspaces}.
@@ -33,11 +24,9 @@ import java.util.Map;
 public class WorkspaceController {
 
     private final WorkspaceManager workspaceManager;
-    private final TranslationManager translationManager;
 
-    public WorkspaceController(WorkspaceManager workspaceManager, TranslationManager translationManager) {
+    public WorkspaceController(WorkspaceManager workspaceManager) {
         this.workspaceManager = workspaceManager;
-        this.translationManager = translationManager;
     }
 
     /**
@@ -124,37 +113,6 @@ public class WorkspaceController {
             default:
                 return Mono.error(BadRequestException.actionNotSupportedException(action.toString()));
         }
-    }
-
-    /**
-     * Returns translations of the workspace having the specified id.
-     */
-    @GetMapping(path = "/repository/workspace/{id}/translation")
-    @ApiOperation(value = "Returns translations of the workspace having the specified id.")
-    public Mono<BundleKeysPageDto> getWorkspaceTranslations(@PathVariable String id,
-                                                            @RequestParam(name = "locales", required = false, defaultValue = "") List<Locale> locales,
-                                                            @RequestParam(name = "criterion", required = false) TranslationSearchCriterion criterion,
-                                                            @RequestParam(name = "lastKey", required = false) String lastKey,
-                                                            @RequestParam(name = "maxKeys", required = false) Integer maxKeys) {
-        return translationManager.getTranslations(
-                BundleKeysPageRequestDto.builder(id)
-                        .locales(locales)
-                        .lastKey(lastKey)
-                        .maxKeys(maxKeys)
-                        .criterion(criterion)
-                        .build()
-        );
-    }
-
-    /**
-     * Updates translations of the workspace having the specified id. The maps associated {@link BundleKeyTranslationDto#getId() translation ids}
-     * to their translations.
-     */
-    @RequestMapping(path = "/repository/workspace/{id}/translation", method = RequestMethod.PATCH)
-    @ApiOperation(value = "Updates translations of the workspace having the specified id.")
-    public Mono<Void> updateWorkspaceTranslations(@PathVariable String id,
-                                                  @RequestBody Map<String, String> translations) {
-        return workspaceManager.updateTranslations(id, translations);
     }
 
     /**
