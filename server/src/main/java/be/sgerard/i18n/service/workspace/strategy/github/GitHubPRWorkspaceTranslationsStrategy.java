@@ -6,7 +6,7 @@ import be.sgerard.i18n.model.repository.persistence.BaseGitRepositoryEntity;
 import be.sgerard.i18n.model.repository.persistence.GitHubRepositoryEntity;
 import be.sgerard.i18n.model.workspace.GitHubReviewEntity;
 import be.sgerard.i18n.model.workspace.WorkspaceEntity;
-import be.sgerard.i18n.service.client.GitHubPullRequestClient;
+import be.sgerard.i18n.service.client.GitHubClient;
 import be.sgerard.i18n.service.i18n.TranslationManager;
 import be.sgerard.i18n.service.repository.RepositoryManager;
 import be.sgerard.i18n.service.repository.git.GitRepositoryApi;
@@ -35,18 +35,18 @@ public class GitHubPRWorkspaceTranslationsStrategy extends BaseGitWorkspaceTrans
 
     private static final Logger logger = LoggerFactory.getLogger(GitHubPRWorkspaceTranslationsStrategy.class);
 
-    private final GitHubPullRequestClient pullRequestClient;
+    private final GitHubClient gitHubClient;
 
     public GitHubPRWorkspaceTranslationsStrategy(RepositoryManager repositoryManager,
                                                  TranslationManager translationManager,
-                                                 GitHubPullRequestClient pullRequestClient) {
+                                                 GitHubClient gitHubClient) {
         super(repositoryManager, translationManager);
-        this.pullRequestClient = pullRequestClient;
+        this.gitHubClient = gitHubClient;
     }
 
     @Override
     public Mono<Boolean> isReviewFinished(WorkspaceEntity workspace) {
-        return pullRequestClient
+        return gitHubClient
                 .findByNumber(workspace.getRepository().getId(), workspace.getReviewOrDie(GitHubReviewEntity.class).getPullRequestNumber())
                 .map(GitHubPullRequestDto::getStatus)
                 .map(GitHubPullRequestStatus::isFinished)
@@ -59,20 +59,19 @@ public class GitHubPRWorkspaceTranslationsStrategy extends BaseGitWorkspaceTrans
                 .applyOnRepository(
                         workspace.getRepository().getId(),
                         GitRepositoryApi.class,
-                        api -> {
-                            final String pullRequestBranch = generateUniqueBranch(
-                                    workspace.getBranch() + "_i18n_" + LocalDate.ofInstant(Instant.now(), ZoneId.systemDefault()).toString(),
-                                    api
-                            );
-
-                            translationManager.writeTranslations(workspace, new GitTranslationRepositoryWriteApi(api, workspace.getBranch(), pullRequestBranch));
-
-                            api.commitAll(message).push();
-
-                            return pullRequestClient
-                                    .createRequest(workspace.getRepository().getId(), message, pullRequestBranch, workspace.getBranch())
-                                    .map(pullRequest -> workspace.setReview(new GitHubReviewEntity(workspace, pullRequestBranch, pullRequest.getNumber())));
-                        }
+                        api ->
+                                Mono
+                                        .just(generatePullRequestBranchName(workspace, api))
+                                        .flatMap(prBranch ->
+                                                translationManager
+                                                        .writeTranslations(workspace, new GitTranslationRepositoryWriteApi(api, workspace.getBranch(), prBranch))
+                                                        .doOnSuccess(v -> api.commitAll(message).push())
+                                                        .then(Mono.defer(() ->
+                                                                gitHubClient
+                                                                        .createRequest(workspace.getRepository().getId(), message, prBranch, workspace.getBranch())
+                                                                        .map(pr -> workspace.setReview(new GitHubReviewEntity(workspace, prBranch, pr.getNumber()))))
+                                                        )
+                                        )
                 )
                 .flatMap(m -> m);
     }
@@ -100,5 +99,9 @@ public class GitHubPRWorkspaceTranslationsStrategy extends BaseGitWorkspaceTrans
     @Override
     protected boolean doSupport(BaseGitRepositoryEntity repository) {
         return repository instanceof GitHubRepositoryEntity;
+    }
+
+    private String generatePullRequestBranchName(WorkspaceEntity workspace, GitRepositoryApi api) {
+        return generateUniqueBranch(workspace.getBranch() + "_i18n_" + LocalDate.ofInstant(Instant.now(), ZoneId.systemDefault()).toString(), api);
     }
 }

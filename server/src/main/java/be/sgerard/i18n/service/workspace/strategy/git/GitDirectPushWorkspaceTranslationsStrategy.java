@@ -34,14 +34,12 @@ public class GitDirectPushWorkspaceTranslationsStrategy extends BaseGitWorkspace
                 .applyOnRepository(
                         workspace.getRepository().getId(),
                         GitRepositoryApi.class,
-                        api -> {
-                            translationManager.writeTranslations(workspace, new GitTranslationRepositoryWriteApi(api, workspace.getBranch(), workspace.getBranch()));
-
-                            api.commitAll(message).push();
-
-                            return workspace;
-                        }
-                );
+                        api -> translationManager
+                                .writeTranslations(workspace, new GitTranslationRepositoryWriteApi(api, workspace.getBranch(), workspace.getBranch()))
+                                .doOnSuccess(v -> api.commitAll(message).push())
+                                .thenReturn(workspace)
+                )
+                .flatMap(m -> m);
     }
 
     @Override
