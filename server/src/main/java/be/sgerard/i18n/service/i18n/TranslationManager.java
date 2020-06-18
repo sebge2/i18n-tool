@@ -31,5 +31,5 @@ public interface TranslationManager {
      * Updates translations of the specified {@link WorkspaceEntity workspace}, the map associates the
      * {@link BundleKeyTranslationEntity#getId() translation id} to the actual translation value.
      */
-    Mono<Void> updateTranslations(Map<String, String> translations) throws ResourceNotFoundException;
+    Flux<BundleKeyTranslationEntity> updateTranslations(Map<String, String> translations) throws ResourceNotFoundException;
 }
