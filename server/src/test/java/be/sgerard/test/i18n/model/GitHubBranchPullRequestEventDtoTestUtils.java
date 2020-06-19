@@ -12,7 +12,7 @@ public final class GitHubBranchPullRequestEventDtoTestUtils {
     private GitHubBranchPullRequestEventDtoTestUtils() {
     }
 
-    public static GitHubPullRequestEventDto i18nToolRelease20204PullRequestEvent() {
+    public static GitHubPullRequestEventDto i18nToolRelease20206PullRequestEvent() {
         return new GitHubPullRequestEventDto(
                 new BaseGitHubWebHookEventDto.Repository("048650d2-7a90-4086-9315-2960acf71099", "sebge2/i18n-tool"),
                 new GitHubPullRequestEventDto.PullRequest(
