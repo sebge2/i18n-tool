@@ -13,6 +13,12 @@ public final class TranslationLocaleCreationDtoTestUtils {
     public static TranslationLocaleCreationDto.Builder enLocaleCreationDto() {
         return TranslationLocaleCreationDto.builder()
                 .language("en")
+                .icon("flag-icon-gb");
+    }
+
+    public static TranslationLocaleCreationDto.Builder enGbLocaleCreationDto() {
+        return TranslationLocaleCreationDto.builder()
+                .language("en")
                 .region("GB")
                 .icon("flag-icon-gb");
     }

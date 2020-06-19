@@ -34,6 +34,9 @@ public abstract class AbstractControllerTest extends AbstractIntegrationTest {
     protected GitHubRepositoryMockTestHelper gitHub;
 
     @Autowired
+    protected TranslationsTestHelper translations;
+
+    @Autowired
     protected MockMvc mvc;
 
     @Autowired

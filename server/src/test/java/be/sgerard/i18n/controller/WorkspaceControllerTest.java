@@ -9,6 +9,8 @@ import be.sgerard.test.i18n.support.WithInternalUser;
 import org.junit.jupiter.api.*;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Locale;
+
 import static be.sgerard.test.i18n.model.GitRepositoryCreationDtoTestUtils.i18nToolLocalRepositoryCreationDto;
 import static be.sgerard.test.i18n.model.GitRepositoryCreationDtoTestUtils.i18nToolRepositoryCreationDto;
 import static be.sgerard.test.i18n.model.TranslationLocaleCreationDtoTestUtils.enLocaleCreationDto;
@@ -137,6 +139,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
         public void initialize() throws Exception {
             final WorkspaceDto masterWorkspace = repository
                     .create(i18nToolRepositoryCreationDto())
+                    .hint("my-repo")
                     .initialize()
                     .workspaces()
                     .sync()
@@ -151,15 +154,12 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                     .andExpect(jsonPath("$.branch").value("master"))
                     .andExpect(jsonPath("$.status").value(WorkspaceStatus.INITIALIZED.name()));
 
-//            repository
-//                    .forHint("my-repo")
-//                    .initialize()
-//                    .workspaces()
-//                    .workspaceForBranch("master")
-//                    .initialize()
-//                    .translations()
-//                    .expectTranslation("xxxx", Locale.ENGLISH, "abc")
-            ; // TODO assert translations
+            translations
+                    .forRepositoryHint("my-repo")
+                    .forWorkspaceName("master")
+                    .expectTranslation("ResourceNotFoundException.user.message", Locale.ENGLISH, "There is no user with reference [{0}].")
+                    .expectTranslation("SHARED.WORKSPACES_TITLE", Locale.ENGLISH, "Workspaces")
+                    .expectNoModification();
         }
 
         @Test
@@ -265,6 +265,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
         public void initialize() throws Exception {
             final WorkspaceDto masterWorkspace = repository
                     .create(i18nToolLocalRepositoryCreationDto(), GitRepositoryDto.class)
+                    .hint("my-repo")
                     .initialize()
                     .workspaces()
                     .sync()
@@ -279,6 +280,13 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                     .andDo(print())
                     .andExpect(jsonPath("$.branch").value("master"))
                     .andExpect(jsonPath("$.status").value(WorkspaceStatus.INITIALIZED.name()));
+
+            translations
+                    .forRepositoryHint("my-repo")
+                    .forWorkspaceName("master")
+                    .expectTranslation("ResourceNotFoundException.user.message", Locale.ENGLISH, "There is no user with reference [{0}].")
+                    .expectTranslation("SHARED.WORKSPACES_TITLE", Locale.ENGLISH, "Workspaces")
+                    .expectNoModification();
         }
 
         @Test

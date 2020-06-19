@@ -23,14 +23,10 @@ public class WorkspaceTestHelper {
 
     private final AsyncMockMvcTestHelper mockMvc;
     private final ObjectMapper objectMapper;
-    private final TranslationsTestHelper translations;
 
-    public WorkspaceTestHelper(AsyncMockMvcTestHelper mockMvc,
-                               ObjectMapper objectMapper,
-                               TranslationsTestHelper translations) {
+    public WorkspaceTestHelper(AsyncMockMvcTestHelper mockMvc, ObjectMapper objectMapper) {
         this.mockMvc = mockMvc;
         this.objectMapper = objectMapper;
-        this.translations = translations;
     }
 
     <R extends RepositoryDto> StepInitializedRepository<R> with(R repository) {
@@ -144,10 +140,6 @@ public class WorkspaceTestHelper {
                     .andExpect(status().isOk());
 
             return new StepPublishedWorkspace<>(repository, workspace);
-        }
-
-        public TranslationsTestHelper.StepInitializedWorkspace<R> translations() {
-            return translations.with(repository, workspace);
         }
     }
 
