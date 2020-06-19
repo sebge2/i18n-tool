@@ -10,6 +10,8 @@ import be.sgerard.i18n.service.LockTimeoutException;
 import be.sgerard.i18n.service.ResourceNotFoundException;
 import be.sgerard.i18n.service.ValidationException;
 import be.sgerard.i18n.service.repository.listener.RepositoryListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.cglib.proxy.Proxy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +30,8 @@ import static java.util.Arrays.asList;
  */
 @Service
 public class RepositoryManagerImpl implements RepositoryManager {
+
+    private static final Logger logger = LoggerFactory.getLogger(RepositoryManagerImpl.class);
 
     private final RepositoryEntityRepository repository;
     private final RepositoryHandler<RepositoryEntity, RepositoryCreationDto, RepositoryPatchDto> handler;
@@ -99,6 +103,8 @@ public class RepositoryManagerImpl implements RepositoryManager {
                                         .doOnNext(repo -> repo.setStatus(RepositoryStatus.INITIALIZED))
                                         .flatMap(this::updateAndNotifyInTx)
                                         .onErrorResume(error -> {
+                                            logger.error("Error while initializing repository.", error);
+
                                             entity.setStatus(RepositoryStatus.INITIALIZATION_ERROR);
 
                                             return updateAndNotifyInTx(entity);

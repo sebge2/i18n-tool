@@ -64,8 +64,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                 .create(i18nToolLocalRepositoryCreationDto())
                 .initialize()
                 .workspaces()
-                .sync()
-                .get();
+                .sync();
 
         asyncMvc
                 .perform(get("/api/repository/workspace"))
@@ -84,7 +83,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                 .initialize()
                 .workspaces()
                 .sync()
-                .get();
+                .getRepo();
 
         asyncMvc
                 .perform(get("/api/repository/{id}/workspace", repository.getId()))

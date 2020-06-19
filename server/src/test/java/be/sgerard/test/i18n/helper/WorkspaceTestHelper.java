@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Component;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
@@ -45,7 +46,21 @@ public class WorkspaceTestHelper {
             return WorkspaceTestHelper.this;
         }
 
-        public RepositoryDto get() {
+        public Collection<WorkspaceDto> get() throws Exception {
+            final JsonHolderResultHandler<List<WorkspaceDto>> resultHandler = new JsonHolderResultHandler<>(objectMapper, new TypeReference<>() {
+            });
+
+            mockMvc
+                    .perform(MockMvcRequestBuilders.get("/api/repository/{id}/workspace", repository.getId()))
+                    .andExpectStarted()
+                    .andWaitResult()
+                    .andExpect(status().isOk())
+                    .andDo(resultHandler);
+
+            return resultHandler.getValue();
+        }
+
+        public RepositoryDto getRepo() {
             return repository;
         }
 

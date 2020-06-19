@@ -125,6 +125,20 @@ public class GitRepositoryMock {
         }
     }
 
+    public GitRepositoryMock deleteBranches(String... branches) {
+        final GitRepositoryApi api = getApi();
+
+        try {
+            for (String branch : branches) {
+                api.removeBranch(branch);
+            }
+
+            return this;
+        } finally {
+            api.checkout(GitRepositoryApi.DEFAULT_BRANCH);
+        }
+    }
+
     public GitRepositoryMock destroy() {
         try {
             FileUtils.deleteDirectory(location);
