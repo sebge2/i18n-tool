@@ -97,7 +97,7 @@ public class GitRepositoryMockTestHelper implements GitRepositoryApiProvider {
             return this;
         }
 
-        public StepFinalize baseOnCurrentGitProject() {
+        public StepFinalize onCurrentGitProject() {
             return basedOnGitDirectory(currentProjectLocation());
         }
 

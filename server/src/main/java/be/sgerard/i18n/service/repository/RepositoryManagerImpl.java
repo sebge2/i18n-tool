@@ -12,10 +12,7 @@ import be.sgerard.i18n.service.ValidationException;
 import be.sgerard.i18n.service.repository.listener.RepositoryListener;
 import org.springframework.cglib.proxy.Proxy;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionTemplate;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -66,7 +63,8 @@ public class RepositoryManagerImpl implements RepositoryManager {
     @Transactional
     @Override
     public Mono<RepositoryEntity> create(RepositoryCreationDto creationDto) {
-        return handler.createRepository(creationDto)
+        return handler
+                .createRepository(creationDto)
                 .flatMap(rep ->
                         listener
                                 .beforePersist(rep)
@@ -98,11 +96,8 @@ public class RepositoryManagerImpl implements RepositoryManager {
                                 updateAndNotifyInTx(entity)
                                         .filter(repo -> repo.getStatus() == RepositoryStatus.INITIALIZING)
                                         .flatMap(handler::initializeRepository)
-                                        .flatMap(repo -> {
-                                            repo.setStatus(RepositoryStatus.INITIALIZED);
-
-                                            return updateAndNotifyInTx(repo);
-                                        })
+                                        .doOnNext(repo -> repo.setStatus(RepositoryStatus.INITIALIZED))
+                                        .flatMap(this::updateAndNotifyInTx)
                                         .onErrorResume(error -> {
                                             entity.setStatus(RepositoryStatus.INITIALIZATION_ERROR);
 
@@ -177,10 +172,11 @@ public class RepositoryManagerImpl implements RepositoryManager {
      * Persists the specified entity in another transaction and sends an event.
      */
     private Mono<RepositoryEntity> updateAndNotifyInTx(RepositoryEntity updated) {
-        listener.onUpdate(updated);
+        return listener
+                .onUpdate(updated)
+                .then(Mono.defer(() -> Mono.just(repository.save(updated))));
 
 //        return this.transactionTemplate.execute(transactionStatus -> Mono.just(repository.save(updated))); TODO
-        return Mono.just(repository.save(updated));
     }
 
     /**

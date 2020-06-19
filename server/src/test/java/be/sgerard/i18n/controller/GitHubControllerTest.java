@@ -33,13 +33,13 @@ public class GitHubControllerTest extends AbstractControllerTest {
         gitRepo
                 .createMockFor(i18nToolRepositoryCreationDto())
                 .allowAnonymousRead()
-                .baseOnCurrentGitProject()
+                .onCurrentGitProject()
                 .create();
 
         gitRepo
                 .createMockFor(i18nToolLocalRepositoryCreationDto())
                 .allowAnonymousRead()
-                .baseOnCurrentGitProject()
+                .onCurrentGitProject()
                 .create();
     }
 

@@ -27,14 +27,14 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
         gitRepo
                 .createMockFor(i18nToolRepositoryCreationDto())
                 .allowAnonymousRead()
-                .baseOnCurrentGitProject()
+                .onCurrentGitProject()
                 .create()
                 .createBranches("release/2020.05", "release/2020.06");
 
         gitRepo
                 .createMockFor(i18nToolLocalRepositoryCreationDto())
                 .allowAnonymousRead()
-                .baseOnCurrentGitProject()
+                .onCurrentGitProject()
                 .create()
                 .createBranches("release/2020.05", "release/2020.06");
     }
