@@ -36,19 +36,19 @@ public class RepositoryManagerImpl implements RepositoryManager {
     private final RepositoryHandler<RepositoryEntity, RepositoryCreationDto, RepositoryPatchDto> handler;
     private final LockService lockService;
     private final RepositoryListener<RepositoryEntity> listener;
-    private final TransactionTemplate transactionTemplate;
+//    private final TransactionTemplate transactionTemplate;
 
     public RepositoryManagerImpl(RepositoryEntityRepository repository,
                                  RepositoryHandler<RepositoryEntity, RepositoryCreationDto, RepositoryPatchDto> handler,
                                  LockService lockService,
-                                 RepositoryListener<RepositoryEntity> listener,
-                                 PlatformTransactionManager platformTransactionManager) {
+                                 RepositoryListener<RepositoryEntity> listener/*,
+                                 PlatformTransactionManager platformTransactionManager*/) {
         this.repository = repository;
         this.handler = handler;
         this.lockService = lockService;
         this.listener = listener;
-        this.transactionTemplate = new TransactionTemplate(platformTransactionManager);
-        this.transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+//        this.transactionTemplate = new TransactionTemplate(platformTransactionManager);
+//        this.transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
     }
 
     @Transactional(readOnly = true)
@@ -67,16 +67,20 @@ public class RepositoryManagerImpl implements RepositoryManager {
     @Override
     public Mono<RepositoryEntity> create(RepositoryCreationDto creationDto) {
         return handler.createRepository(creationDto)
-                .map(entity -> {
-                    ValidationException.throwIfFailed(listener.beforePersist(entity));
+                .flatMap(rep ->
+                        listener
+                                .beforePersist(rep)
+                                .map(validationResult -> {
+                                    ValidationException.throwIfFailed(validationResult);
 
-                    return entity;
-                })
-                .map(repository::save)
-                .map(entity -> {
-                    listener.onCreate(entity);
-                    return entity;
-                });
+                                    return rep;
+                                })
+                                .map(repository::save)
+                                .flatMap(repo ->
+                                        listener.onCreate(repo)
+                                                .thenReturn(repo)
+                                )
+                );
     }
 
     @Transactional
@@ -113,13 +117,17 @@ public class RepositoryManagerImpl implements RepositoryManager {
     public Mono<RepositoryEntity> update(RepositoryPatchDto patchDto) throws ResourceNotFoundException, RepositoryException {
         return lockService.executeInLock(() ->
                 findByIdOrDie(patchDto.getId())
-                        .map(entity -> {
-                            ValidationException.throwIfFailed(listener.beforeUpdate(entity, patchDto));
+                        .flatMap(repo ->
+                                listener
+                                        .beforeUpdate(repo, patchDto)
+                                        .map(validationResult -> {
+                                            ValidationException.throwIfFailed(validationResult);
 
-                            return entity;
-                        })
-                        .flatMap(entity -> handler.updateRepository(entity, patchDto))
-                        .flatMap(this::updateAndNotifyInTx)
+                                            return repo;
+                                        })
+                                        .flatMap(rep -> handler.updateRepository(rep, patchDto))
+                                        .flatMap(this::updateAndNotifyInTx)
+                        )
         );
     }
 
@@ -130,19 +138,22 @@ public class RepositoryManagerImpl implements RepositoryManager {
                 .just(repository.findById(id))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .map(entity -> {
-                    ValidationException.throwIfFailed(listener.beforeDelete(entity));
+                .flatMap(repo ->
+                        listener
+                                .beforeDelete(repo)
+                                .map(validationResult -> {
+                                    ValidationException.throwIfFailed(validationResult);
 
-                    return entity;
-                })
-                .flatMap(handler::deleteRepository)
-                .map(entity -> {
-                    repository.delete(entity);
-                    listener.onDelete(entity);
-
-                    return entity;
-                })
-                .then();
+                                    return repo;
+                                })
+                                .flatMap(handler::deleteRepository)
+                                .map(rep -> {
+                                    repository.delete(rep);
+                                    return rep;
+                                })
+                                .flatMap(rep -> listener.onDelete(rep).thenReturn(rep))
+                                .then()
+                );
     }
 
     @Override

@@ -125,8 +125,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
                             })
                             .flatMap(translationsStrategy::onInitialize)
                             .doOnNext(wk -> wk.setStatus(WorkspaceStatus.INITIALIZED))
-                            .flatMap(listener::onInitialize)
-                            .thenReturn(workspace);
+                            .flatMap(wk -> listener.onInitialize(wk).thenReturn(wk));
                 });
     }
 
