@@ -70,6 +70,7 @@ public class GitHubRepositoryHandler extends BaseGitRepositoryHandler<GitHubRepo
 //                                .or(repository::getAccessKey)
 //                                .orElse(null)
                 )
+                .setUsername(repository.getAccessKey().orElse(null))
                 .setPassword(null)
                 .setDefaultBranch(repository.getDefaultBranch());
     }

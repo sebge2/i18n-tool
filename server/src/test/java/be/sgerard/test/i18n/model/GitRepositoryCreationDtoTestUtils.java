@@ -17,6 +17,10 @@ public final class GitRepositoryCreationDtoTestUtils {
         return new GitHubRepositoryCreationDto("sebge2", "i18n-tool", null);
     }
 
+    public static GitHubRepositoryCreationDto privateI18nToolRepositoryCreationDto() {
+        return new GitHubRepositoryCreationDto("sebge2", "private-i18n-tool", "ABCD");
+    }
+
     public static GitRepositoryCreationDto i18nToolLocalRepositoryCreationDto() {
         return new GitRepositoryCreationDto(currentProjectLocation().toString(), "i18n-tool");
     }

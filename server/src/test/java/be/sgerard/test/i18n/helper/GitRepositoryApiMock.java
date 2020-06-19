@@ -29,7 +29,7 @@ public class GitRepositoryApiMock extends DefaultGitRepositoryApi {
         if (repository == null) {
             throw new ValidationException(
                     ValidationResult.builder()
-                            .messages(new ValidationMessage(INVALID_URL, originalConfiguration.getRemoteUri()))
+                            .messages(new ValidationMessage(INVALID_URL, originalConfiguration.getRemoteUri().orElse(null)))
                             .build()
             );
         }
@@ -37,7 +37,7 @@ public class GitRepositoryApiMock extends DefaultGitRepositoryApi {
         if (!repository.authenticate(originalConfiguration.getUsername().orElse(null), originalConfiguration.getPassword().orElse(null))) {
             throw new ValidationException(
                     ValidationResult.builder()
-                            .messages(new ValidationMessage(INVALID_CREDENTIALS, originalConfiguration.getRemoteUri()))
+                            .messages(new ValidationMessage(INVALID_CREDENTIALS, originalConfiguration.getRemoteUri().orElse(null)))
                             .build()
             );
         }
@@ -48,7 +48,9 @@ public class GitRepositoryApiMock extends DefaultGitRepositoryApi {
     private static Configuration createMockedConfiguration(GitRepositoryMock repository, Configuration originalConfiguration) {
         if (repository != null) {
             return new Configuration(originalConfiguration.getRepositoryLocation(), repository.getLocationUri())
-                    .setDefaultBranch(originalConfiguration.getDefaultBranch());
+                    .setDefaultBranch(originalConfiguration.getDefaultBranch())
+                    .setUsername(originalConfiguration.getUsername().orElse(null))
+                    .setPassword(originalConfiguration.getPassword().orElse(null));
         } else {
             return new Configuration(originalConfiguration.getRepositoryLocation());
         }

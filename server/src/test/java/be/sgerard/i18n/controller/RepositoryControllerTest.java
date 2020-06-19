@@ -7,8 +7,7 @@ import org.junit.jupiter.api.*;
 import org.springframework.http.MediaType;
 import org.springframework.transaction.annotation.Transactional;
 
-import static be.sgerard.test.i18n.model.GitRepositoryCreationDtoTestUtils.i18nToolLocalRepositoryCreationDto;
-import static be.sgerard.test.i18n.model.GitRepositoryCreationDtoTestUtils.i18nToolRepositoryCreationDto;
+import static be.sgerard.test.i18n.model.GitRepositoryCreationDtoTestUtils.*;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -31,6 +30,11 @@ public class RepositoryControllerTest extends AbstractControllerTest {
         gitRepo
                 .createMockFor(i18nToolLocalRepositoryCreationDto())
                 .allowAnonymousRead()
+                .onCurrentGitProject()
+                .create();
+        gitRepo
+                .createMockFor(privateI18nToolRepositoryCreationDto())
+                .userKey("ABCD")
                 .onCurrentGitProject()
                 .create();
     }
@@ -122,7 +126,61 @@ public class RepositoryControllerTest extends AbstractControllerTest {
                     )
                     .andExpectStarted()
                     .andWaitResult()
-                    .andExpect(status().isBadRequest());
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.messages[0]").value("The Git repository [https://github.com/unknown/unknown.git] has not been found. Please verify the URL."));
+        }
+
+        @Test
+        @Transactional
+        @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
+        public void createInvalidAccessKeyCredentials() throws Exception {
+            final GitHubRepositoryCreationDto creationDto = new GitHubRepositoryCreationDto("sebge2", "private-i18n-tool", "ZEF");
+
+            asyncMvc
+                    .perform(
+                            post("/api/repository")
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .content(objectMapper.writeValueAsString(creationDto))
+                    )
+                    .andExpectStarted()
+                    .andWaitResult()
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.messages[0]").value("Please verify your credentials for accessing the Git repository [https://github.com/sebge2/private-i18n-tool.git]."));
+        }
+
+        @Test
+        @Transactional
+        @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
+        public void createNoAccessKeyCredentials() throws Exception {
+            final GitHubRepositoryCreationDto creationDto = new GitHubRepositoryCreationDto("sebge2", "private-i18n-tool", null);
+
+            asyncMvc
+                    .perform(
+                            post("/api/repository")
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .content(objectMapper.writeValueAsString(creationDto))
+                    )
+                    .andExpectStarted()
+                    .andWaitResult()
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.messages[0]").value("Please verify your credentials for accessing the Git repository [https://github.com/sebge2/private-i18n-tool.git]."));
+        }
+
+        @Test
+        @Transactional
+        @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
+        public void createValidAccessKeyCredentials() throws Exception {
+            final GitHubRepositoryCreationDto creationDto = privateI18nToolRepositoryCreationDto();
+
+            asyncMvc
+                    .perform(
+                            post("/api/repository")
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .content(objectMapper.writeValueAsString(creationDto))
+                    )
+                    .andExpectStarted()
+                    .andWaitResult()
+                    .andExpect(status().isCreated());
         }
 
         @Test
