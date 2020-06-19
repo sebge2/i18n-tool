@@ -5,7 +5,7 @@ import be.sgerard.i18n.model.repository.dto.RepositoryPatchDto;
 import be.sgerard.i18n.model.repository.persistence.RepositoryEntity;
 import be.sgerard.i18n.model.validation.ValidationMessage;
 import be.sgerard.i18n.model.validation.ValidationResult;
-import be.sgerard.i18n.repository.repository.RepositoryEntityRepository;
+import be.sgerard.i18n.service.repository.RepositoryManager;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
@@ -29,10 +29,10 @@ public class RepositoryValidationListener implements RepositoryListener<Reposito
      */
     public static final String READ_ONLY = "validation.repository.read-only";
 
-    private final RepositoryEntityRepository repository;
+    private final RepositoryManager repositoryManager;
 
-    public RepositoryValidationListener(RepositoryEntityRepository repository) {
-        this.repository = repository;
+    public RepositoryValidationListener(RepositoryManager repositoryManager) {
+        this.repositoryManager = repositoryManager;
     }
 
     @Override
@@ -42,29 +42,29 @@ public class RepositoryValidationListener implements RepositoryListener<Reposito
 
     @Override
     public Mono<ValidationResult> beforePersist(RepositoryEntity repositoryEntity) {
-        // TODO
-        if (repository.findAll().stream().anyMatch(repo -> Objects.equals(repo.getName(), repositoryEntity.getName()))) {
-            return Mono.just(
-                    ValidationResult.builder()
-                            .messages(new ValidationMessage(NAME_NOT_UNIQUE, repositoryEntity.getName()))
-                            .build()
-            );
-        }
-
-        return Mono.just(ValidationResult.EMPTY);
+        return repositoryManager
+                .findAll()
+                .filter(repo -> Objects.equals(repo.getName(), repositoryEntity.getName()))
+                .collectList()
+                .map(conflicts -> {
+                    if (!conflicts.isEmpty()) {
+                        return ValidationResult.builder()
+                                .messages(new ValidationMessage(NAME_NOT_UNIQUE, repositoryEntity.getName()))
+                                .build();
+                    } else {
+                        return ValidationResult.EMPTY;
+                    }
+                });
     }
 
     @Override
-    public Mono<ValidationResult> beforeUpdate(RepositoryEntity repositoryEntity, RepositoryPatchDto patch) {
-        if ((repositoryEntity.getStatus() != RepositoryStatus.NOT_INITIALIZED) && (repositoryEntity.getStatus() != RepositoryStatus.INITIALIZED)) {
-            // TODO
-            return Mono.just(
-                    ValidationResult.builder()
-                            .messages(new ValidationMessage(READ_ONLY))
-                            .build()
-            );
-        }
-
-        return Mono.just(ValidationResult.EMPTY);
+    public Mono<ValidationResult> beforeUpdate(RepositoryEntity repository, RepositoryPatchDto patch) {
+        return Mono
+                .just(repository)
+                .filter(repo -> (repo.getStatus() != RepositoryStatus.NOT_INITIALIZED) && (repo.getStatus() != RepositoryStatus.INITIALIZED))
+                .map(rep -> ValidationResult.builder()
+                        .messages(new ValidationMessage(READ_ONLY))
+                        .build()
+                );
     }
 }

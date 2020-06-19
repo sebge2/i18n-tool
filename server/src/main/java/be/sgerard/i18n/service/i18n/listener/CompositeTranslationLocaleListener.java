@@ -32,7 +32,8 @@ public class CompositeTranslationLocaleListener implements TranslationLocaleList
         return Flux
                 .fromIterable(listeners)
                 .flatMap(listener -> listener.beforePersist(locale))
-                .reduce(ValidationResult::merge);
+                .reduce(ValidationResult::merge)
+                .switchIfEmpty(Mono.just(ValidationResult.EMPTY));
     }
 
     @Override
@@ -40,7 +41,8 @@ public class CompositeTranslationLocaleListener implements TranslationLocaleList
         return Flux
                 .fromIterable(listeners)
                 .flatMap(listener -> listener.beforeUpdate(original, update))
-                .reduce(ValidationResult::merge);
+                .reduce(ValidationResult::merge)
+                .switchIfEmpty(Mono.just(ValidationResult.EMPTY));
     }
 
     @Override

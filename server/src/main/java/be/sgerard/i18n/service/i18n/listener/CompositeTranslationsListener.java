@@ -33,7 +33,8 @@ public class CompositeTranslationsListener implements TranslationsListener {
         return Flux
                 .fromIterable(listeners)
                 .flatMap(listener -> listener.beforeUpdate(translations))
-                .reduce(ValidationResult::merge);
+                .reduce(ValidationResult::merge)
+                .switchIfEmpty(Mono.just(ValidationResult.EMPTY));
     }
 
     @Override

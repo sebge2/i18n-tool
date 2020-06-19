@@ -44,7 +44,8 @@ public class CompositeWorkspaceListener implements WorkspaceListener {
                 .fromIterable(listeners)
                 .filter(listener -> listener.support(workspace))
                 .flatMap(listener -> listener.beforeInitialize(workspace))
-                .reduce(ValidationResult::merge);
+                .reduce(ValidationResult::merge)
+                .switchIfEmpty(Mono.just(ValidationResult.EMPTY));
     }
 
     @Override
@@ -62,7 +63,8 @@ public class CompositeWorkspaceListener implements WorkspaceListener {
                 .fromIterable(listeners)
                 .filter(listener -> listener.support(workspace))
                 .flatMap(listener -> listener.beforePublish(workspace))
-                .reduce(ValidationResult::merge);
+                .reduce(ValidationResult::merge)
+                .switchIfEmpty(Mono.just(ValidationResult.EMPTY));
     }
 
     @Override
@@ -80,7 +82,8 @@ public class CompositeWorkspaceListener implements WorkspaceListener {
                 .fromIterable(listeners)
                 .filter(listener -> listener.support(workspace))
                 .flatMap(listener -> listener.beforeFinishReview(workspace))
-                .reduce(ValidationResult::merge);
+                .reduce(ValidationResult::merge)
+                .switchIfEmpty(Mono.just(ValidationResult.EMPTY));
     }
 
     @Override
