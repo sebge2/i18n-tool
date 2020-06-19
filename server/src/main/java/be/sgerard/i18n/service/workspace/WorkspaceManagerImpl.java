@@ -74,7 +74,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
                                     if (pair.getRight() == null) {
                                         return repositoryManager
                                                 .findByIdOrDie(repositoryId)
-                                                .map(repository -> createWorkspace(repository, pair.getLeft()));
+                                                .flatMap(repository -> createWorkspace(repository, pair.getLeft()));
                                     } else {
                                         switch (pair.getRight().getStatus()) {
                                             case IN_REVIEW:
@@ -109,24 +109,24 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
     @Transactional
     public Mono<WorkspaceEntity> initialize(String workspaceId) throws RepositoryException {
         return findByIdOrDie(workspaceId)
-                .map(workspace -> {
+                .flatMap(workspace -> {
                     if (workspace.getStatus() == WorkspaceStatus.INITIALIZED) {
-                        return workspace;
+                        return Mono.just(workspace);
                     }
 
-                    ValidationException.throwIfFailed(listener.beforeInitialize(workspace));
+                    return listener
+                            .beforeInitialize(workspace)
+                            .map(validationResult -> {
+                                ValidationException.throwIfFailed(validationResult);
 
-                    logger.info("Initialing workspace {}.", workspaceId);
+                                logger.info("Initialing workspace {}.", workspaceId);
 
-                    return workspace;
-                })
-                .flatMap(translationsStrategy::onInitialize)
-                .map(workspace -> {
-                    workspace.setStatus(WorkspaceStatus.INITIALIZED);
-
-                    listener.onInitialize(workspace);
-
-                    return workspace;
+                                return workspace;
+                            })
+                            .flatMap(translationsStrategy::onInitialize)
+                            .doOnNext(wk -> wk.setStatus(WorkspaceStatus.INITIALIZED))
+                            .flatMap(listener::onInitialize)
+                            .thenReturn(workspace);
                 });
     }
 
@@ -139,12 +139,16 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
                         return Mono.just(workspace);
                     }
 
-                    ValidationException.throwIfFailed(listener.beforePublish(workspace));
+                    return listener
+                            .beforePublish(workspace)
+                            .map(validationResult -> {
+                                ValidationException.throwIfFailed(validationResult);
 
-                    logger.info("Start publishing workspace {}.", workspaceId);
+                                logger.info("Start publishing workspace {}.", workspaceId);
 
-                    return translationsStrategy
-                            .onPublish(workspace, message)
+                                return workspace;
+                            })
+                            .flatMap(wk -> translationsStrategy.onPublish(wk, message))
                             .flatMap(reviewStarted -> {
                                 if (workspace.getReview().isPresent()) {
                                     workspace.setStatus(WorkspaceStatus.IN_REVIEW);
@@ -206,33 +210,34 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
                 .listBranches(workspace.getRepository())
                 .hasElement(workspace.getBranch())
                 .filter(present -> present)
-                .map(present -> createWorkspace(workspace.getRepository(), workspace.getBranch()));
+                .flatMap(present -> createWorkspace(workspace.getRepository(), workspace.getBranch()));
     }
 
     /**
      * Creates a new {@link WorkspaceEntity workspace} based on the specified branch.
      */
-    private WorkspaceEntity createWorkspace(RepositoryEntity repository, String branch) {
-        final WorkspaceEntity workspaceEntity = new WorkspaceEntity(repository, branch);
-
-        listener.onCreate(workspaceEntity);
-
-        logger.info("The workspace {} has been created.", workspaceEntity);
-
-        this.repository.save(workspaceEntity);
-
-        return workspaceEntity;
+    private Mono<WorkspaceEntity> createWorkspace(RepositoryEntity repository, String branch) {
+        return Mono
+                .just(new WorkspaceEntity(repository, branch))
+                .flatMap(workspace -> listener.onCreate(workspace).thenReturn(workspace))
+                .doOnNext(workspace -> logger.info("The workspace {} has been created.", workspace))
+                .map(this.repository::save);
     }
 
     /**
      * Terminates the review on the specified workspace.
      */
     private Mono<WorkspaceEntity> doFinishReview(WorkspaceEntity workspace) throws RepositoryException {
-        ValidationException.throwIfFailed(listener.beforeFinishReview(workspace));
+        return listener
+                .beforeFinishReview(workspace)
+                .map(validationResult -> {
+                    ValidationException.throwIfFailed(validationResult);
 
-        logger.info("The review is now finished, deleting the workspace {} and then creates a new one.", workspace.getId());
+                    logger.info("The review is now finished, deleting the workspace {} and then creates a new one.", workspace.getId());
 
-        return delete(workspace.getId())
+                    return workspace;
+                })
+                .flatMap(wk -> delete(wk.getId()))
                 .then(createWorkspaceIfNeeded(workspace));
     }
 }

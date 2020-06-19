@@ -7,6 +7,7 @@ import be.sgerard.i18n.model.validation.ValidationMessage;
 import be.sgerard.i18n.model.validation.ValidationResult;
 import be.sgerard.i18n.repository.repository.RepositoryEntityRepository;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Mono;
 
 import java.util.Objects;
 
@@ -40,24 +41,30 @@ public class RepositoryValidationListener implements RepositoryListener<Reposito
     }
 
     @Override
-    public ValidationResult beforePersist(RepositoryEntity repositoryEntity) {
+    public Mono<ValidationResult> beforePersist(RepositoryEntity repositoryEntity) {
+        // TODO
         if (repository.findAll().stream().anyMatch(repo -> Objects.equals(repo.getName(), repositoryEntity.getName()))) {
-            return ValidationResult.builder()
-                    .messages(new ValidationMessage(NAME_NOT_UNIQUE, repositoryEntity.getName()))
-                    .build();
+            return Mono.just(
+                    ValidationResult.builder()
+                            .messages(new ValidationMessage(NAME_NOT_UNIQUE, repositoryEntity.getName()))
+                            .build()
+            );
         }
 
-        return ValidationResult.EMPTY;
+        return Mono.just(ValidationResult.EMPTY);
     }
 
     @Override
-    public ValidationResult beforeUpdate(RepositoryEntity repositoryEntity, RepositoryPatchDto patch) {
-        if((repositoryEntity.getStatus() != RepositoryStatus.NOT_INITIALIZED) && (repositoryEntity.getStatus() != RepositoryStatus.INITIALIZED)){
-            return ValidationResult.builder()
-                    .messages(new ValidationMessage(READ_ONLY))
-                    .build();
+    public Mono<ValidationResult> beforeUpdate(RepositoryEntity repositoryEntity, RepositoryPatchDto patch) {
+        if ((repositoryEntity.getStatus() != RepositoryStatus.NOT_INITIALIZED) && (repositoryEntity.getStatus() != RepositoryStatus.INITIALIZED)) {
+            // TODO
+            return Mono.just(
+                    ValidationResult.builder()
+                            .messages(new ValidationMessage(READ_ONLY))
+                            .build()
+            );
         }
 
-        return ValidationResult.EMPTY;
+        return Mono.just(ValidationResult.EMPTY);
     }
 }

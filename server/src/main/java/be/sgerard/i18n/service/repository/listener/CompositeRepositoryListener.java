@@ -5,10 +5,10 @@ import be.sgerard.i18n.model.repository.persistence.RepositoryEntity;
 import be.sgerard.i18n.model.validation.ValidationResult;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
-
-import static be.sgerard.i18n.model.validation.ValidationResult.toValidationResult;
 
 /**
  * Composite {@link RepositoryListener repository listener}.
@@ -32,47 +32,56 @@ public class CompositeRepositoryListener implements RepositoryListener<Repositor
     }
 
     @Override
-    public ValidationResult beforePersist(RepositoryEntity repository) {
-        return listeners.stream()
+    public Mono<ValidationResult> beforePersist(RepositoryEntity repository) {
+        return Flux
+                .fromIterable(listeners)
                 .filter(listener -> listener.support(repository))
-                .map(listener -> listener.beforePersist(repository))
-                .collect(toValidationResult());
+                .flatMap(listener -> listener.beforePersist(repository))
+                .reduce(ValidationResult::merge);
     }
 
     @Override
-    public void onCreate(RepositoryEntity repository) {
-        listeners.stream()
+    public Mono<Void> onCreate(RepositoryEntity repository) {
+        return Flux
+                .fromIterable(listeners)
                 .filter(listener -> listener.support(repository))
-                .forEach(listener -> listener.onCreate(repository));
+                .flatMap(listener -> listener.onCreate(repository))
+                .then();
     }
 
     @Override
-    public ValidationResult beforeUpdate(RepositoryEntity original, RepositoryPatchDto patch) {
-        return listeners.stream()
+    public Mono<ValidationResult> beforeUpdate(RepositoryEntity original, RepositoryPatchDto patch) {
+        return Flux
+                .fromIterable(listeners)
                 .filter(listener -> listener.support(original))
-                .map(listener -> listener.beforeUpdate(original, patch))
-                .collect(toValidationResult());
+                .flatMap(listener -> listener.beforeUpdate(original, patch))
+                .reduce(ValidationResult::merge);
     }
 
     @Override
-    public void onUpdate(RepositoryEntity repository) {
-        listeners.stream()
+    public Mono<Void> onUpdate(RepositoryEntity repository) {
+        return Flux
+                .fromIterable(listeners)
                 .filter(listener -> listener.support(repository))
-                .forEach(listener -> listener.onUpdate(repository));
+                .flatMap(listener -> listener.onUpdate(repository))
+                .then();
     }
 
     @Override
-    public ValidationResult beforeDelete(RepositoryEntity repository) {
-        return listeners.stream()
+    public Mono<ValidationResult> beforeDelete(RepositoryEntity repository) {
+        return Flux
+                .fromIterable(listeners)
                 .filter(listener -> listener.support(repository))
-                .map(listener -> listener.beforeDelete(repository))
-                .collect(toValidationResult());
+                .flatMap(listener -> listener.beforeDelete(repository))
+                .reduce(ValidationResult::merge);
     }
 
     @Override
-    public void onDelete(RepositoryEntity repository) {
-        listeners.stream()
+    public Mono<Void> onDelete(RepositoryEntity repository) {
+        return Flux
+                .fromIterable(listeners)
                 .filter(listener -> listener.support(repository))
-                .forEach(listener -> listener.onCreate(repository));
+                .flatMap(listener -> listener.onCreate(repository))
+                .then();
     }
 }
