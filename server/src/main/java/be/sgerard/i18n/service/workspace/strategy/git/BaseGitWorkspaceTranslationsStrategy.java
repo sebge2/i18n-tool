@@ -58,8 +58,7 @@ public abstract class BaseGitWorkspaceTranslationsStrategy implements WorkspaceT
                         api ->
                                 translationManager
                                         .readTranslations(workspace, new GitTranslationRepositoryReadApi(api, workspace.getBranch()))
-                                        .then()
-                                        .map(v -> workspace)
+                                        .then(Mono.just(workspace))
                 )
                 .flatMap(m -> m);
     }

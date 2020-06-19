@@ -11,8 +11,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import static be.sgerard.test.i18n.model.GitRepositoryCreationDtoTestUtils.i18nToolLocalRepositoryCreationDto;
 import static be.sgerard.test.i18n.model.GitRepositoryCreationDtoTestUtils.i18nToolRepositoryCreationDto;
+import static be.sgerard.test.i18n.model.TranslationLocaleCreationDtoTestUtils.enLocaleCreationDto;
+import static be.sgerard.test.i18n.model.TranslationLocaleCreationDtoTestUtils.frLocaleCreationDto;
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -39,6 +42,13 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                 .createBranches("release/2020.05", "release/2020.06");
     }
 
+    @BeforeEach
+    public void setupLocales() throws Exception {
+        locale
+                .createLocale(frLocaleCreationDto()).and()
+                .createLocale(enLocaleCreationDto());
+    }
+
     @AfterAll
     public void destroy() {
         gitRepo.destroyAll();
@@ -53,7 +63,6 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                 .initialize()
                 .workspaces()
                 .sync()
-                .and()
                 .get();
 
         asyncMvc
@@ -73,7 +82,6 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                 .initialize()
                 .workspaces()
                 .sync()
-                .and()
                 .get();
 
         asyncMvc
@@ -142,6 +150,16 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.branch").value("master"))
                     .andExpect(jsonPath("$.status").value(WorkspaceStatus.INITIALIZED.name()));
+
+//            repository
+//                    .forHint("my-repo")
+//                    .initialize()
+//                    .workspaces()
+//                    .workspaceForBranch("master")
+//                    .initialize()
+//                    .translations()
+//                    .expectTranslation("xxxx", Locale.ENGLISH, "abc")
+            ; // TODO assert translations
         }
 
         @Test
@@ -232,6 +250,13 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                     .andWaitResult()
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$", hasSize(3)));
+
+            asyncMvc
+                    .perform(get("/api/repository/workspace"))
+                    .andExpectStarted()
+                    .andWaitResult()
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$", hasSize(3)));
         }
 
         @Test
@@ -251,6 +276,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                     .andExpectStarted()
                     .andWaitResult()
                     .andExpect(status().isOk())
+                    .andDo(print())
                     .andExpect(jsonPath("$.branch").value("master"))
                     .andExpect(jsonPath("$.status").value(WorkspaceStatus.INITIALIZED.name()));
         }

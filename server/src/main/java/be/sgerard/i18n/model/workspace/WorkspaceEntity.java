@@ -53,7 +53,6 @@ public class WorkspaceEntity {
         this.id = UUID.randomUUID().toString();
 
         this.repository = repository;
-        this.repository.addWorkspace(this);
 
         this.branch = branch;
         this.status = WorkspaceStatus.NOT_INITIALIZED;

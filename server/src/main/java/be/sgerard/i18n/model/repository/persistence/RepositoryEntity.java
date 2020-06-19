@@ -34,7 +34,7 @@ public abstract class RepositoryEntity {
     @Column(nullable = false)
     private RepositoryStatus status = RepositoryStatus.NOT_INITIALIZED;
 
-    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, mappedBy = "repository")
     private final Collection<WorkspaceEntity> workspaces = new HashSet<>();
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "repository")

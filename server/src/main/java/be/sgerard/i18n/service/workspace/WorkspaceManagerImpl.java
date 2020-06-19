@@ -53,6 +53,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Flux<WorkspaceEntity> findAll(String repositoryId) {
         return Flux.fromStream(repository.findByRepositoryId(repositoryId));
     }
@@ -218,9 +219,13 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
     private Mono<WorkspaceEntity> createWorkspace(RepositoryEntity repository, String branch) {
         return Mono
                 .just(new WorkspaceEntity(repository, branch))
-                .flatMap(workspace -> listener.onCreate(workspace).thenReturn(workspace))
-                .doOnNext(workspace -> logger.info("The workspace {} has been created.", workspace))
-                .map(this.repository::save);
+                .map(this.repository::save)
+                .doOnNext(workspace -> {
+                    workspace.getRepository().addWorkspace(workspace); // TODO strange
+
+                    logger.info("The workspace {} has been created.", workspace);
+                })
+                .flatMap(workspace -> listener.onCreate(workspace).thenReturn(workspace));
     }
 
     /**
