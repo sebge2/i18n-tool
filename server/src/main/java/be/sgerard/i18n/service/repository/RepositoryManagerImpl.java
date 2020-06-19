@@ -103,6 +103,7 @@ public class RepositoryManagerImpl implements RepositoryManager {
 
                                             return updateAndNotifyInTx(entity);
                                         })
+                                        .switchIfEmpty(Mono.just(entity))
                         )
         );
     }

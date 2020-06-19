@@ -170,6 +170,27 @@ public class RepositoryControllerTest extends AbstractControllerTest {
         @Test
         @Transactional
         @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
+        public void initializeTwice() throws Exception {
+            final GitHubRepositoryDto repository = this.repository.create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class).get();
+
+            asyncMvc
+                    .perform(post("/api/repository/{id}/do?action=INITIALIZE", repository.getId()))
+                    .andExpectStarted()
+                    .andWaitResult()
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.status").value(RepositoryStatus.INITIALIZED.name()));
+
+            asyncMvc
+                    .perform(post("/api/repository/{id}/do?action=INITIALIZE", repository.getId()))
+                    .andExpectStarted()
+                    .andWaitResult()
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.status").value(RepositoryStatus.INITIALIZED.name()));
+        }
+
+        @Test
+        @Transactional
+        @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
         public void update() throws Exception {
             final GitHubRepositoryDto repository = this.repository.create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class).get();
 
