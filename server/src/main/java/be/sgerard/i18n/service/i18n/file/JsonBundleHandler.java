@@ -62,7 +62,7 @@ public class JsonBundleHandler implements BundleHandler {
 
     @Override
     public boolean continueScanning(File directory, BundleWalkContext context) {
-        return context.isIncluded(BundleType.JSON_ICU, directory.toPath());
+        return context.canWalkTrough(BundleType.JSON_ICU, directory.toPath());
     }
 
     @Override

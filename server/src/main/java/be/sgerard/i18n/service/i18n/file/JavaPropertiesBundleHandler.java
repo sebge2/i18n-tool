@@ -49,7 +49,7 @@ public class JavaPropertiesBundleHandler implements BundleHandler {
 
     @Override
     public boolean continueScanning(File directory, BundleWalkContext context) {
-        return context.isIncluded(BundleType.JAVA_PROPERTIES, directory.toPath());
+        return context.canWalkTrough(BundleType.JAVA_PROPERTIES, directory.toPath());
     }
 
     @Override
