@@ -5,6 +5,7 @@ import be.sgerard.i18n.model.workspace.WorkspaceEntity;
 import be.sgerard.i18n.model.validation.ValidationMessage;
 import be.sgerard.i18n.model.validation.ValidationResult;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Mono;
 
 /**
  * {@link WorkspaceListener Workspace listener} performing validation.
@@ -23,35 +24,35 @@ public class WorkspaceValidationListener implements WorkspaceListener {
     }
 
     @Override
-    public ValidationResult beforeFinishReview(WorkspaceEntity workspace) {
+    public Mono<ValidationResult> beforeFinishReview(WorkspaceEntity workspace) {
         if (workspace.getStatus() != WorkspaceStatus.IN_REVIEW) {
-            return ValidationResult.builder()
-                    .messages(new ValidationMessage("validation.workspace.cannot-finish-review", workspace.getId()))
-                    .build();
+//            return ValidationResult.builder()
+//                    .messages(new ValidationMessage("validation.workspace.cannot-finish-review", workspace.getId()))
+//                    .build();
         }
 
-        return ValidationResult.EMPTY;
+        return Mono.just(ValidationResult.EMPTY);
     }
 
     @Override
-    public ValidationResult beforeInitialize(WorkspaceEntity workspace) {
-//        if (workspaceEntity.getStatus() == WorkspaceStatus.INITIALIZED) {
-//            return workspaceEntity;
-//        } else if (workspaceEntity.getStatus() != WorkspaceStatus.NOT_INITIALIZED) {
-//            throw new IllegalStateException("The workspace status must be available, but was " + workspaceEntity.getStatus() + ".");
+    public Mono<ValidationResult> beforeInitialize(WorkspaceEntity workspace) {
+//        if (workspace.getStatus() == WorkspaceStatus.INITIALIZED) {
+//            return workspace;
+//        } else if (workspace.getStatus() != WorkspaceStatus.NOT_INITIALIZED) {
+//            throw new IllegalStateException("The workspace status must be available, but was " + workspace.getStatus() + ".");
 //        }
 
-        return ValidationResult.EMPTY;
+        return Mono.just(ValidationResult.EMPTY);
     }
 
     @Override
-    public ValidationResult beforePublish(WorkspaceEntity workspace) {
-        //                if (workspaceEntity.getStatus() == WorkspaceStatus.IN_REVIEW) {
-//                    return workspaceEntity;
-//                } else if (workspaceEntity.getStatus() != WorkspaceStatus.INITIALIZED) {
-//                    throw new IllegalStateException("The workspace status must be available, but was " + workspaceEntity.getStatus() + ".");
+    public Mono<ValidationResult> beforePublish(WorkspaceEntity workspace) {
+//                        if (workspace.getStatus() == WorkspaceStatus.IN_REVIEW) {
+//                    return workspace;
+//                } else if (workspace.getStatus() != WorkspaceStatus.INITIALIZED) {
+//                    throw new IllegalStateException("The workspace status must be available, but was " + workspace.getStatus() + ".");
 //                }
 
-        return ValidationResult.EMPTY;
+        return Mono.just(ValidationResult.EMPTY);
     }
 }
