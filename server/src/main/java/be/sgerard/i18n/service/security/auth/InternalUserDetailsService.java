@@ -26,8 +26,8 @@ public class InternalUserDetailsService implements UserDetailsService {
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         final InternalUserEntity user = userManager
-                .getUserByName(username)
-                .orElseThrow(() -> new UsernameNotFoundException("There is no user [" + username + "]."));
+                .finUserByNameOrDie(username)
+                .block();
 
         return authenticationManager.initInternalUser(user);
     }

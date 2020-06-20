@@ -25,25 +25,34 @@ public interface UserManager {
     /**
      * Finds the {@link UserEntity user} having the specified id.
      */
-    Mono<UserEntity> getUserById(String id);
+    Mono<UserEntity> findById(String id);
 
     /**
      * Finds the {@link UserEntity user} having the specified {@link UserEntity#getId() id}.
      */
-    default Mono<UserEntity> getUserByIdOrFail(String id) {
-        return getUserById(id)
-                .switchIfEmpty(Mono.error(ResourceNotFoundException.workspaceNotFoundException(id)));
+    default Mono<UserEntity> findByIdOrDie(String id) {
+        return findById(id)
+                .switchIfEmpty(Mono.error(ResourceNotFoundException.userNotFoundException(id)));
     }
-
-    /**
-     * Returns all the {@link UserEntity users}.
-     */
-    Flux<UserEntity> getAllUsers();
 
     /**
      * Finds the {@link UserEntity user} having the specified {@link UserEntity#getUsername() username}.
      */
-    Mono<InternalUserEntity> getUserByName(String username);
+    Mono<InternalUserEntity> finUserByName(String username);
+
+    /**
+     * Finds the {@link UserEntity user} having the specified {@link UserEntity#getUsername() username}.
+     */
+    default Mono<InternalUserEntity> finUserByNameOrDie(String username) {
+        return finUserByName(username)
+                .switchIfEmpty(Mono.error(ResourceNotFoundException.userNotFoundException(username)));
+    }
+
+
+    /**
+     * Returns all the {@link UserEntity users}.
+     */
+    Flux<UserEntity> findAll();
 
     /**
      * Creates a new {@link InternalUserEntity internal user} based on the specified {@link UserCreationDto info}.
@@ -63,6 +72,6 @@ public interface UserManager {
     /**
      * Deletes the {@link UserEntity user} having the specified id.
      */
-    Mono<UserEntity> deleteUserById(String id);
+    Mono<UserEntity> delete(String id);
 
 }

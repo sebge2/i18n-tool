@@ -57,7 +57,7 @@ public class UserLiveSessionManagerImpl implements UserLiveSessionManager {
     public void onSessionConnectedEvent(SessionConnectedEvent event) {
         final AuthenticatedUser authenticatedUser = getAuthenticatedUserOrFail(event.getUser());
 
-        final UserEntity userEntity = userManager.getUserByIdOrFail(authenticatedUser.getUser().getId());
+        final UserEntity userEntity = userManager.findByIdOrDie(authenticatedUser.getUser().getId()).block(); // TODO
 
         final UserLiveSessionEntity sessionEntity = new UserLiveSessionEntity(
                 userEntity,

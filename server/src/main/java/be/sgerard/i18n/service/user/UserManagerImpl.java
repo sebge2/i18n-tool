@@ -21,6 +21,7 @@ import reactor.core.publisher.Mono;
 
 import javax.annotation.PostConstruct;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -66,7 +67,7 @@ public class UserManagerImpl implements UserManager {
 
     @Override
     @Transactional(readOnly = true)
-    public Flux<UserEntity> getAllUsers() {
+    public Flux<UserEntity> findAll() {
         return Flux.fromIterable(userRepository.findAll());
     }
 
@@ -159,7 +160,7 @@ public class UserManagerImpl implements UserManager {
 
     @Override
     @Transactional
-    public Mono<UserEntity> deleteUserById(String id) {
+    public Mono<UserEntity> delete(String id) {
         return findById(id)
                 .flatMap(user ->
                         listener
@@ -182,13 +183,16 @@ public class UserManagerImpl implements UserManager {
     }
 
     @Override
-    public Mono<InternalUserEntity> getUserByName(String username) {
+    public Mono<InternalUserEntity> finUserByName(String username) {
         return Mono.justOrEmpty(internalUserRepository.findByUsername(username));
     }
 
+    /**
+     * Initializes the default admin user if no user has been defined yet.
+     */
     @PostConstruct
     @Transactional
-    public Mono<InternalUserEntity> initializeDefaultAdmin() {
+    public Optional<InternalUserEntity> initializeDefaultAdmin() {
         return Flux
                 .fromIterable(internalUserRepository.findAll())
                 .hasElements()
@@ -216,6 +220,7 @@ public class UserManagerImpl implements UserManager {
                                     .avatarUrl(ADMIN_AVATAR)
                                     .build()
                     );
-                });
+                })
+                .blockOptional();
     }
 }

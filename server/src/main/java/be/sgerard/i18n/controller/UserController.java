@@ -3,7 +3,6 @@ package be.sgerard.i18n.controller;
 import be.sgerard.i18n.model.security.user.dto.UserCreationDto;
 import be.sgerard.i18n.model.security.user.dto.UserDto;
 import be.sgerard.i18n.model.security.user.dto.UserPatchDto;
-import be.sgerard.i18n.service.ResourceNotFoundException;
 import be.sgerard.i18n.service.user.UserManager;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -11,10 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Collection;
-
-import static java.util.stream.Collectors.toList;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * Controller managing users.
@@ -33,14 +30,16 @@ public class UserController {
     }
 
     /**
-     * Retrieves all users.
+     * Finds all users.
      */
     @GetMapping("/user")
     @ApiOperation(value = "Retrieves all users.")
     @PreAuthorize("hasRole('ADMIN')")
     @Transactional(readOnly = true)
-    public Collection<UserDto> getAllUsers() {
-        return userManager.getAllUsers().stream().map(entity -> UserDto.builder(entity).build()).collect(toList());
+    public Flux<UserDto> findAll() {
+        return userManager
+                .findAll()
+                .map(entity -> UserDto.builder(entity).build());
     }
 
     /**
@@ -50,10 +49,10 @@ public class UserController {
     @ApiOperation(value = "Returns the user having the specified id.")
     @PreAuthorize("hasRole('ADMIN')")
     @Transactional(readOnly = true)
-    public UserDto getUserById(@PathVariable String id) {
-        return userManager.getUserById(id)
-                .map(entity -> UserDto.builder(entity).build())
-                .orElseThrow(() -> ResourceNotFoundException.userNotFoundException(id));
+    public Mono<UserDto> findById(@PathVariable String id) {
+        return userManager
+                .findByIdOrDie(id)
+                .map(entity -> UserDto.builder(entity).build());
     }
 
     /**
@@ -63,8 +62,10 @@ public class UserController {
     @ApiOperation(value = "Creates a new internal user.")
     @PreAuthorize("hasRole('ADMIN')")
     @Transactional
-    public UserDto createUser(@RequestBody UserCreationDto creationDto) {
-        return UserDto.builder(userManager.createUser(creationDto)).build();
+    public Mono<UserDto> createUser(@RequestBody UserCreationDto creationDto) {
+        return userManager
+                .createUser(creationDto)
+                .map(entity -> UserDto.builder(entity).build());
     }
 
     /**
@@ -74,9 +75,11 @@ public class UserController {
     @ApiOperation(value = "Updates the user having the specified id.")
     @PreAuthorize("hasRole('ADMIN')")
     @Transactional
-    public UserDto updateUser(@PathVariable String id,
-                              @RequestBody UserPatchDto userUpdate) {
-        return UserDto.builder(userManager.updateUser(id, userUpdate)).build();
+    public Mono<UserDto> updateUser(@PathVariable String id,
+                                    @RequestBody UserPatchDto userUpdate) {
+        return userManager
+                .updateUser(id, userUpdate)
+                .map(entity -> UserDto.builder(entity).build());
     }
 
     /**
@@ -87,7 +90,9 @@ public class UserController {
     @PreAuthorize("hasRole('ADMIN')")
     @Transactional
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteUserById(@PathVariable String id) {
-        userManager.deleteUserById(id);
+    public Mono<UserDto> deleteUserById(@PathVariable String id) {
+        return userManager
+                .delete(id)
+                .map(entity -> UserDto.builder(entity).build());
     }
 }

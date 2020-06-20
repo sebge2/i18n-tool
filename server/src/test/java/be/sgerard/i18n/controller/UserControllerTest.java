@@ -5,7 +5,6 @@ import be.sgerard.i18n.model.security.user.dto.UserPatchDto;
 import be.sgerard.i18n.service.security.UserRole;
 import be.sgerard.i18n.service.user.UserManager;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import static be.sgerard.test.i18n.model.UserDtoTestUtils.userJohnDoeCreation;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.http.HttpStatus.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.request;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -28,7 +27,10 @@ public class UserControllerTest extends AbstractControllerTest {
     public void findAllUsers() throws Exception {
         final UserDto johnDoe = user.createUser(userJohnDoeCreation().build());
 
-        mvc.perform(request(HttpMethod.GET, "/api/user"))
+        asyncMvc
+                .perform(get("/api/user"))
+                .andExpectStarted()
+                .andWaitResult()
                 .andExpect(status().is(OK.value()))
                 .andExpect(jsonPath("$", hasSize(greaterThanOrEqualTo(2))))
                 .andExpect(jsonPath("$[?(@.username=='" + johnDoe.getUsername() + "')]").exists())
@@ -41,7 +43,10 @@ public class UserControllerTest extends AbstractControllerTest {
     public void getUserById() throws Exception {
         final UserDto johnDoe = user.createUser(userJohnDoeCreation().build());
 
-        mvc.perform(request(HttpMethod.GET, "/api/user/" + johnDoe.getId()))
+        asyncMvc
+                .perform(get("/api/user/{id}", johnDoe.getId()))
+                .andExpectStarted()
+                .andWaitResult()
                 .andExpect(status().is(OK.value()))
                 .andExpect(jsonPath("$.id").value(johnDoe.getId()))
                 .andExpect(jsonPath("$.username").value(johnDoe.getUsername()))
@@ -57,9 +62,9 @@ public class UserControllerTest extends AbstractControllerTest {
     public void updateUser() throws Exception {
         final UserDto johnDoe = user.createUser(userJohnDoeCreation().build());
 
-        mvc
+        asyncMvc
                 .perform(
-                        request(HttpMethod.PATCH, "/api/user/" + johnDoe.getId())
+                        patch("/api/user/{id}", johnDoe.getId())
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(
                                         UserPatchDto.builder()
@@ -70,6 +75,8 @@ public class UserControllerTest extends AbstractControllerTest {
                                                 .build()
                                 ))
                 )
+                .andExpectStarted()
+                .andWaitResult()
                 .andExpect(status().is(OK.value()))
                 .andExpect(jsonPath("$.id").value(johnDoe.getId()))
                 .andExpect(jsonPath("$.username").value("stay_home"))
@@ -85,9 +92,9 @@ public class UserControllerTest extends AbstractControllerTest {
     public void updateUserRoleNotAssignable() throws Exception {
         final UserDto johnDoe = user.createUser(userJohnDoeCreation().build());
 
-        mvc
+        asyncMvc
                 .perform(
-                        request(HttpMethod.PATCH, "/api/user/" + johnDoe.getId())
+                        patch("/api/user/{id}", johnDoe.getId())
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(
                                         UserPatchDto.builder()
@@ -95,7 +102,10 @@ public class UserControllerTest extends AbstractControllerTest {
                                                 .build()
                                 ))
                 )
-                .andExpect(status().is(BAD_REQUEST.value()));
+                .andExpectStarted()
+                .andWaitResult()
+                .andExpect(status().is(BAD_REQUEST.value()))
+                .andExpect(jsonPath("$.messages[0]").value("The role MEMBER_OF_ORGANIZATION cannot be assigned."));
     }
 
     @Test
@@ -104,10 +114,16 @@ public class UserControllerTest extends AbstractControllerTest {
     public void deleteUser() throws Exception {
         final UserDto johnDoe = user.createUser(userJohnDoeCreation().build());
 
-        mvc.perform(request(HttpMethod.DELETE, "/api/user/" + johnDoe.getId()))
+        asyncMvc
+                .perform(delete("/api/user/{id}", johnDoe.getId()))
+                .andExpectStarted()
+                .andWaitResult()
                 .andExpect(status().is(NO_CONTENT.value()));
 
-        mvc.perform(request(HttpMethod.GET, "/api/user/" + johnDoe.getId()))
+        asyncMvc
+                .perform(get("/api/user/{id}", johnDoe.getId()))
+                .andExpectStarted()
+                .andWaitResult()
                 .andExpect(status().is(NOT_FOUND.value()));
     }
 

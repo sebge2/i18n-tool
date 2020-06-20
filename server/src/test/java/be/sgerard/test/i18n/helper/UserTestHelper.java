@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static org.springframework.http.HttpStatus.OK;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.request;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -27,10 +27,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class UserTestHelper {
 
     private final MockMvc mockMvc;
+    private final AsyncMockMvcTestHelper asyncMvc;
     private final ObjectMapper objectMapper;
 
-    public UserTestHelper(MockMvc mockMvc, ObjectMapper objectMapper) {
+    public UserTestHelper(MockMvc mockMvc,
+                          AsyncMockMvcTestHelper asyncMvc,
+                          ObjectMapper objectMapper) {
         this.mockMvc = mockMvc;
+        this.asyncMvc = asyncMvc;
         this.objectMapper = objectMapper;
     }
 
@@ -38,8 +42,10 @@ public class UserTestHelper {
         final JsonHolderResultHandler<List<UserDto>> resultHandler = new JsonHolderResultHandler<>(objectMapper, new TypeReference<List<UserDto>>() {
         });
 
-        mockMvc
+        asyncMvc
                 .perform(request(HttpMethod.GET, "/api/user/"))
+                .andExpectStarted()
+                .andWaitResult()
                 .andExpect(status().is(OK.value()))
                 .andDo(resultHandler);
 
@@ -47,18 +53,20 @@ public class UserTestHelper {
     }
 
     public UserDto getAdminUser() throws Exception {
-        return getUserByNameOrDie(UserManager.ADMIN_USER_NAME);
+        return findByUsernameOrDie(UserManager.ADMIN_USER_NAME);
     }
 
     public UserDto createUser(UserCreationDto userCreationDto) throws Exception {
         final JsonHolderResultHandler<UserDto> resultHandler = new JsonHolderResultHandler<>(objectMapper, UserDto.class);
 
-        mockMvc
+        asyncMvc
                 .perform(
-                        request(HttpMethod.POST, "/api/user/")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(userCreationDto))
+                        post("/api/user/")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(userCreationDto))
                 )
+                .andExpectStarted()
+                .andWaitResult()
                 .andExpect(status().is(OK.value()))
                 .andDo(resultHandler);
 
@@ -67,7 +75,7 @@ public class UserTestHelper {
 
     @SuppressWarnings("UnusedReturnValue")
     public UserTestHelper resetUserPreferences(String userName) throws Exception {
-        final UserDto user = getUserByNameOrDie(userName);
+        final UserDto user = findByUsernameOrDie(userName);
 
         mockMvc
                 .perform(
@@ -80,7 +88,7 @@ public class UserTestHelper {
         return this;
     }
 
-    private UserDto getUserByNameOrDie(String username) throws Exception {
+    private UserDto findByUsernameOrDie(String username) throws Exception {
         return findAllUsers().stream()
                 .filter(user -> Objects.equals(user.getUsername(), username))
                 .findFirst()

@@ -20,6 +20,7 @@ import java.util.List;
 @Component
 @Primary
 public class CompositeUserListener implements UserListener {
+
     private final List<UserListener> listeners;
 
     @Lazy
@@ -27,6 +28,7 @@ public class CompositeUserListener implements UserListener {
         this.listeners = listeners;
     }
 
+    @Override
     public Mono<ValidationResult> beforePersist(UserCreationDto info) {
         return Flux
                 .fromIterable(listeners)
@@ -43,6 +45,7 @@ public class CompositeUserListener implements UserListener {
                 .then();
     }
 
+    @Override
     public Mono<ValidationResult> beforeUpdate(UserEntity user, UserPatchDto patch) {
         return Flux
                 .fromIterable(listeners)
@@ -59,6 +62,7 @@ public class CompositeUserListener implements UserListener {
                 .then();
     }
 
+    @Override
     public Mono<ValidationResult> beforeDelete(UserEntity user) {
         return Flux
                 .fromIterable(listeners)

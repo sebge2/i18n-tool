@@ -51,7 +51,7 @@ public class ExternalUserService extends DefaultOAuth2UserService implements Use
                 .orElseThrow(() -> new IllegalStateException("There is no handler able to handle the current request." +
                         " Hint: check that all handlers have been registered."));
 
-        final ExternalUserEntity currentUser = userManager.createOrUpdateUser(externalUserDto);
+        final ExternalUserEntity currentUser = userManager.createOrUpdateUser(externalUserDto).block(); // TODO
 
         return authenticationManager.initExternalOAuthUser(currentUser, externalUserDto);
     }
@@ -65,7 +65,7 @@ public class ExternalUserService extends DefaultOAuth2UserService implements Use
 
         final ExternalUserDto externalUserDto = gitHubUserExtractor.loadUser(username.substring(USER_PREFIX.length()));
 
-        final ExternalUserEntity currentUser = userManager.createOrUpdateUser(externalUserDto);
+        final ExternalUserEntity currentUser = userManager.createOrUpdateUser(externalUserDto).block(); // TODO
 
         return authenticationManager.initExternalKeyUser(currentUser, externalUserDto);
     }
