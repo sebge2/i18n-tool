@@ -1,12 +1,13 @@
 package be.sgerard.i18n.service.security.auth;
 
 import be.sgerard.i18n.model.security.auth.AuthenticatedUser;
-import be.sgerard.i18n.model.security.auth.ExternalOAuth2AuthenticatedUser;
-import be.sgerard.i18n.model.security.auth.InternalAuthenticatedUser;
+import be.sgerard.i18n.model.security.auth.ExternalAuthenticatedUser;
+import be.sgerard.i18n.model.security.auth.external.OAuthExternalUser;
+import be.sgerard.i18n.model.security.auth.internal.InternalAuthenticatedUser;
 import be.sgerard.i18n.model.security.user.dto.ExternalUserDto;
 import be.sgerard.i18n.model.security.user.persistence.ExternalUserEntity;
-import be.sgerard.i18n.model.security.user.persistence.InternalUserEntity;
 import org.springframework.security.access.AccessDeniedException;
+import reactor.core.publisher.Mono;
 
 import java.util.Optional;
 
@@ -17,9 +18,17 @@ import java.util.Optional;
  */
 public interface AuthenticationManager {
 
-    ExternalOAuth2AuthenticatedUser initExternalOAuthUser(ExternalUserEntity currentUser, ExternalUserDto externalUserDto);
+    /**
+     * Creates the {@link ExternalAuthenticatedUser authenticated user} for the specified {@link OAuthExternalUser OAuth user}.
+     */
+    Mono<ExternalAuthenticatedUser> createAuthentication(OAuthExternalUser externalUser);
 
-    InternalAuthenticatedUser initInternalUser(InternalUserEntity currentUser);
+    /**
+     * Creates the {@link InternalAuthenticatedUser authenticated user} for the specified username. The password
+     * has not been checked and must be checked later on.
+     */
+    // TODO in the other method the user is authenticated, find a better way
+    Mono<InternalAuthenticatedUser> createAuthentication(String username);
 
     /**
      * Returns the current {@link AuthenticatedUser authenticated user}.
