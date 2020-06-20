@@ -1,8 +1,7 @@
 package be.sgerard.i18n.service.i18n.file;
 
-import be.sgerard.i18n.configuration.AppProperties;
 import be.sgerard.i18n.model.i18n.BundleType;
-import be.sgerard.i18n.model.i18n.file.ScannedBundleFileDto;
+import be.sgerard.i18n.model.i18n.file.ScannedBundleFile;
 import be.sgerard.i18n.service.repository.git.GitRepositoryApi;
 import org.junit.Ignore;
 import org.junit.jupiter.api.Test;
@@ -19,8 +18,9 @@ import static org.mockito.Mockito.when;
 /**
  * @author Sebastien Gerard
  */
-public class JsonICUTranslationBundleHandlerTest {
+public class JsonBundleHandlerTest {
 
+    // TODO
     @Test
     @Ignore
     public void scanBundles() throws IOException {
@@ -30,7 +30,7 @@ public class JsonICUTranslationBundleHandlerTest {
         when(repositoryAPI.listNormalFiles(directory))
                 .thenReturn(Stream.of(new File(directory, "fr.json")));
 
-        final JsonICUTranslationBundleHandler handler = new JsonICUTranslationBundleHandler(new AppProperties());
+        final JsonBundleHandler handler = new JsonBundleHandler();
 
 //        final List<ScannedBundleFileDto> actual = handler.scanBundles(directory, repositoryAPI).collect(toList());
 //
@@ -45,9 +45,9 @@ public class JsonICUTranslationBundleHandlerTest {
     @Test
     public void scanKeys() throws IOException {
         final File directory = new File("/be/sgerard/i18n/service/i18n/file");
-        final ScannedBundleFileDto bundleFile = new ScannedBundleFileDto(
+        final ScannedBundleFile bundleFile = new ScannedBundleFile(
                 "file",
-                BundleType.JSON,
+                BundleType.JSON_ICU,
                 directory,
                 singletonList(Locale.FRENCH),
                 singletonList(new File(directory, "fr.json"))
@@ -57,7 +57,7 @@ public class JsonICUTranslationBundleHandlerTest {
         when(repositoryAPI.openInputStream(new File(directory, "fr.json")))
                 .then(invocationOnMock -> getClass().getResourceAsStream(invocationOnMock.getArgument(0).toString()));
 
-        final JsonICUTranslationBundleHandler handler = new JsonICUTranslationBundleHandler(new AppProperties());
+        final JsonBundleHandler handler = new JsonBundleHandler();
 
 //        final Collection<ScannedBundleFileKeyDto> actual = handler.scanKeys(bundleFile, repositoryAPI);
 //

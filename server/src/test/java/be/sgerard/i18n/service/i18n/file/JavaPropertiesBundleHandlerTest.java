@@ -8,14 +8,11 @@ import java.util.Locale;
 /**
  * @author Sebastien Gerard
  */
-public class JavaTranslationBundleHandlerTest {
+public class JavaPropertiesBundleHandlerTest {
 
+    // TODO
     @Test
     public void check() throws IOException {
-        System.out.println(Locale.CANADA_FRENCH.getDisplayName());
-        System.out.println(Locale.CANADA_FRENCH.toString());
-        System.out.println(Locale.CANADA_FRENCH.toLanguageTag());
-        System.out.println("");
 //        final Locale x = Locale.forLanguageTag(Locale.CANADA_FRENCH.toString());
 //        System.out.println(x);
 

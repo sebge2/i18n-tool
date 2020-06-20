@@ -7,7 +7,9 @@ import java.io.IOException;
 /**
  * @author Sebastien Gerard
  */
-public class TranslationBundleWalkerTest {
+public class BundleWalkerTest {
+
+    // TODO
 
     @Test
     public void scan() throws IOException {
