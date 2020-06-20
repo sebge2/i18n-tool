@@ -57,11 +57,11 @@ public class TranslationLocaleManagerImpl implements TranslationLocaleManager {
                         })
                 )
                 .map(repository::save)
-                .map(translationLocale -> {
-                    localeListener.onCreatedLocale(translationLocale);
-
-                    return translationLocale;
-                });
+                .flatMap(translationLocale ->
+                        localeListener
+                                .onCreatedLocale(translationLocale)
+                                .thenReturn(translationLocale)
+                );
     }
 
     @Override
@@ -82,20 +82,23 @@ public class TranslationLocaleManagerImpl implements TranslationLocaleManager {
                                 .setVariants(localeDto.getVariants())
                                 .setIcon(localeDto.getIcon())
                 )
-                .map(translationLocale -> {
-                    localeListener.onUpdatedLocale(translationLocale);
-
-                    return translationLocale;
-                });
+                .flatMap(translationLocale ->
+                        localeListener
+                                .onUpdatedLocale(translationLocale)
+                                .thenReturn(translationLocale)
+                );
     }
 
     @Override
     @Transactional
     public Mono<TranslationLocaleEntity> delete(String localeId) {
         return findById(localeId)
+                .flatMap(translationLocale ->
+                        localeListener
+                                .onDeletedLocale(translationLocale)
+                                .thenReturn(translationLocale)
+                )
                 .map(translationLocale -> {
-                    localeListener.onDeletedLocale(translationLocale);
-
                     repository.delete(translationLocale);
 
                     return translationLocale;

@@ -19,7 +19,6 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Optional;
 
 import static java.util.Arrays.asList;
 
@@ -135,11 +134,8 @@ public class RepositoryManagerImpl implements RepositoryManager {
 
     @Transactional
     @Override
-    public Mono<Void> delete(String id) {
-        return Mono
-                .just(repository.findById(id))
-                .filter(Optional::isPresent)
-                .map(Optional::get)
+    public Mono<RepositoryEntity> delete(String id) {
+        return findById(id)
                 .flatMap(repo ->
                         listener
                                 .beforeDelete(repo)
@@ -153,8 +149,11 @@ public class RepositoryManagerImpl implements RepositoryManager {
                                     repository.delete(rep);
                                     return rep;
                                 })
-                                .flatMap(rep -> listener.onDelete(rep).thenReturn(rep))
-                                .then()
+                                .flatMap(rep ->
+                                        listener
+                                                .onDelete(rep)
+                                                .thenReturn(rep)
+                                )
                 );
     }
 

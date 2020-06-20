@@ -1,4 +1,4 @@
-package be.sgerard.i18n.service.user.validator;
+package be.sgerard.i18n.service.user.listener;
 
 import be.sgerard.i18n.model.security.user.dto.UserCreationDto;
 import be.sgerard.i18n.model.security.user.dto.UserPatchDto;
@@ -20,7 +20,6 @@ import java.util.List;
 @Component
 @Primary
 public class CompositeUserListener implements UserListener {
-
     private final List<UserListener> listeners;
 
     @Lazy
@@ -28,30 +27,51 @@ public class CompositeUserListener implements UserListener {
         this.listeners = listeners;
     }
 
-    @Override
-    public Mono<ValidationResult> validateBeforeCreate(UserCreationDto info) {
+    public Mono<ValidationResult> beforePersist(UserCreationDto info) {
         return Flux
                 .fromIterable(listeners)
-                .flatMap(listener -> listener.validateBeforeCreate(info))
+                .flatMap(listener -> listener.beforePersist(info))
                 .reduce(ValidationResult::merge)
                 .switchIfEmpty(Mono.just(ValidationResult.EMPTY));
     }
 
     @Override
-    public Mono<ValidationResult> validateBeforeUpdate(UserEntity user, UserPatchDto patch) {
+    public Mono<Void> onCreate(UserEntity user) {
         return Flux
                 .fromIterable(listeners)
-                .flatMap(listener -> listener.validateBeforeUpdate(user, patch))
+                .flatMap(listener -> listener.onCreate(user))
+                .then();
+    }
+
+    public Mono<ValidationResult> beforeUpdate(UserEntity user, UserPatchDto patch) {
+        return Flux
+                .fromIterable(listeners)
+                .flatMap(listener -> listener.beforeUpdate(user, patch))
                 .reduce(ValidationResult::merge)
                 .switchIfEmpty(Mono.just(ValidationResult.EMPTY));
     }
 
     @Override
-    public Mono<ValidationResult> validateBeforeDelete(UserEntity user) {
+    public Mono<Void> onUpdate(UserEntity user) {
         return Flux
                 .fromIterable(listeners)
-                .flatMap(listener -> listener.validateBeforeDelete(user))
+                .flatMap(listener -> listener.onUpdate(user))
+                .then();
+    }
+
+    public Mono<ValidationResult> beforeDelete(UserEntity user) {
+        return Flux
+                .fromIterable(listeners)
+                .flatMap(listener -> listener.beforeDelete(user))
                 .reduce(ValidationResult::merge)
                 .switchIfEmpty(Mono.just(ValidationResult.EMPTY));
+    }
+
+    @Override
+    public Mono<Void> onDelete(UserEntity user) {
+        return Flux
+                .fromIterable(listeners)
+                .flatMap(listener -> listener.onDelete(user))
+                .then();
     }
 }

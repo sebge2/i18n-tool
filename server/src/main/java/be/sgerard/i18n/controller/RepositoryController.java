@@ -109,8 +109,9 @@ public class RepositoryController {
     @ApiOperation(value = "Delete a repository.")
     @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public Publisher<Void> delete(@PathVariable String id) {
-        return repositoryManager.delete(id);
+    public Mono<RepositoryDto> delete(@PathVariable String id) {
+        return repositoryManager.delete(id)
+                .map(dtoMapper::mapToDto);
     }
 
     /**

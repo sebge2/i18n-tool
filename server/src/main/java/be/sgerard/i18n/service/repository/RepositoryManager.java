@@ -59,7 +59,7 @@ public interface RepositoryManager {
     /**
      * Removes the {@link RepositoryEntity repository} having the specified id.
      */
-    Mono<Void> delete(String id);
+    Mono<RepositoryEntity> delete(String id);
 
     /**
      * Consumes the content of the specified repository.
