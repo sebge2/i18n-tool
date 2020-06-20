@@ -134,7 +134,7 @@ public class JsonBundleHandler implements BundleHandler {
         final Matcher matcher = BUNDLE_PATTERN.matcher(file.getName());
 
         if (!matcher.matches()) {
-            throw new IllegalArgumentException("The file [" + file + "] is not a resource bundle file.");
+            throw new IllegalStateException("The file [" + file + "] is not a resource bundle file.");
         }
 
         return Locale.forLanguageTag(matcher.group(1));

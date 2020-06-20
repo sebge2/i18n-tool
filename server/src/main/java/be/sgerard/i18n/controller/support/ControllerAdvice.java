@@ -114,24 +114,6 @@ public class ControllerAdvice {
     }
 
     // TODO
-//    @ExceptionHandler(value = IllegalArgumentException.class)
-//    public Object handleIllegalArgumentException(IllegalArgumentException exception) {
-//        if (logger.isDebugEnabled()) {
-//            logger.debug(exception.getMessage(), exception);
-//        }
-//
-//        return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
-//    }
-//
-//    @ExceptionHandler(value = IllegalStateException.class)
-//    public Object handleIllegalStateException(IllegalStateException exception) {
-//        if (logger.isDebugEnabled()) {
-//            logger.debug(exception.getMessage(), exception);
-//        }
-//
-//        return new ResponseEntity<>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-//    }
-//
 //    @ExceptionHandler(value = LockTimeoutException.class)
 //    public Object handleLockTimeoutException(LockTimeoutException exception) {
 //        return new ResponseEntity<>(exception.getMessage(), HttpStatus.CONFLICT);
