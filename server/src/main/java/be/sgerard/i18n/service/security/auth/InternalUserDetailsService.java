@@ -1,6 +1,6 @@
 package be.sgerard.i18n.service.security.auth;
 
-import be.sgerard.i18n.model.security.user.InternalUserEntity;
+import be.sgerard.i18n.model.security.user.persistence.InternalUserEntity;
 import be.sgerard.i18n.service.user.UserManager;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

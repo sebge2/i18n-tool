@@ -1,6 +1,6 @@
 package be.sgerard.i18n.repository.user;
 
-import be.sgerard.i18n.model.security.user.InternalUserEntity;
+import be.sgerard.i18n.model.security.user.persistence.InternalUserEntity;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

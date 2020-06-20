@@ -1,7 +1,7 @@
 package be.sgerard.i18n.controller;
 
 import be.sgerard.i18n.model.security.auth.AuthenticatedUser;
-import be.sgerard.i18n.model.security.user.AuthenticatedUserDto;
+import be.sgerard.i18n.model.security.user.dto.AuthenticatedUserDto;
 import be.sgerard.i18n.service.ResourceNotFoundException;
 import be.sgerard.i18n.service.security.auth.AuthenticationManager;
 import io.swagger.annotations.Api;

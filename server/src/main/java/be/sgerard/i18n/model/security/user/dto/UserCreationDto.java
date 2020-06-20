@@ -1,4 +1,4 @@
-package be.sgerard.i18n.model.security.user;
+package be.sgerard.i18n.model.security.user.dto;
 
 import be.sgerard.i18n.service.security.UserRole;
 import com.fasterxml.jackson.annotation.JsonIgnore;

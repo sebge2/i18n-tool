@@ -1,6 +1,9 @@
 package be.sgerard.i18n.model.event;
 
 import be.sgerard.i18n.model.repository.dto.RepositorySummaryDto;
+import be.sgerard.i18n.model.security.user.dto.AuthenticatedUserDto;
+import be.sgerard.i18n.model.security.user.dto.UserDto;
+import be.sgerard.i18n.model.security.user.dto.UserPreferencesDto;
 import be.sgerard.i18n.model.workspace.WorkspaceDto;
 
 /**
@@ -69,32 +72,32 @@ public enum EventType {
     DELETED_REPOSITORY("deleted-repository"),
 
     /**
-     * @see be.sgerard.i18n.model.security.user.UserDto
+     * @see UserDto
      */
     UPDATED_USER("updated-user"),
 
     /**
-     * @see be.sgerard.i18n.model.security.user.UserDto
+     * @see UserDto
      */
     DELETED_USER("deleted-user"),
 
     /**
-     * @see be.sgerard.i18n.model.security.user.UserDto
+     * @see UserDto
      */
     UPDATED_CURRENT_USER("updated-current-user"),
 
     /**
-     * @see be.sgerard.i18n.model.security.user.AuthenticatedUserDto
+     * @see AuthenticatedUserDto
      */
     UPDATED_AUTHENTICATED_USER("updated-authenticated-user"),
 
     /**
-     * @see be.sgerard.i18n.model.security.user.AuthenticatedUserDto
+     * @see AuthenticatedUserDto
      */
     UPDATED_CURRENT_AUTHENTICATED_USER("updated-current-authenticated-user"),
 
     /**
-     * @see be.sgerard.i18n.model.security.user.UserPreferencesDto
+     * @see UserPreferencesDto
      */
     UPDATED_USER_PREFERENCES("updated-current-user-preferences");
 

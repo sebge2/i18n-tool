@@ -1,8 +1,8 @@
 package be.sgerard.test.i18n.helper;
 
-import be.sgerard.i18n.model.security.user.UserCreationDto;
-import be.sgerard.i18n.model.security.user.UserDto;
-import be.sgerard.i18n.model.security.user.UserPreferencesDto;
+import be.sgerard.i18n.model.security.user.dto.UserCreationDto;
+import be.sgerard.i18n.model.security.user.dto.UserDto;
+import be.sgerard.i18n.model.security.user.dto.UserPreferencesDto;
 import be.sgerard.i18n.service.ResourceNotFoundException;
 import be.sgerard.i18n.service.user.UserManager;
 import be.sgerard.test.i18n.support.JsonHolderResultHandler;

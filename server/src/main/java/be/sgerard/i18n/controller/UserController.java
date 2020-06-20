@@ -1,8 +1,8 @@
 package be.sgerard.i18n.controller;
 
-import be.sgerard.i18n.model.security.user.UserCreationDto;
-import be.sgerard.i18n.model.security.user.UserDto;
-import be.sgerard.i18n.model.security.user.UserPatchDto;
+import be.sgerard.i18n.model.security.user.dto.UserCreationDto;
+import be.sgerard.i18n.model.security.user.dto.UserDto;
+import be.sgerard.i18n.model.security.user.dto.UserPatchDto;
 import be.sgerard.i18n.service.ResourceNotFoundException;
 import be.sgerard.i18n.service.user.UserManager;
 import io.swagger.annotations.Api;

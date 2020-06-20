@@ -1,6 +1,6 @@
 package be.sgerard.i18n.model.security.session;
 
-import be.sgerard.i18n.model.security.user.UserEntity;
+import be.sgerard.i18n.model.security.user.persistence.UserEntity;
 import be.sgerard.i18n.service.security.UserRole;
 
 import javax.persistence.*;

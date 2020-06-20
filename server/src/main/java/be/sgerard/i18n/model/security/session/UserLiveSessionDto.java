@@ -1,6 +1,6 @@
 package be.sgerard.i18n.model.security.session;
 
-import be.sgerard.i18n.model.security.user.UserDto;
+import be.sgerard.i18n.model.security.user.dto.UserDto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;

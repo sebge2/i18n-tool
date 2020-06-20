@@ -1,6 +1,6 @@
 package be.sgerard.i18n.model.security.auth;
 
-import be.sgerard.i18n.model.security.user.UserDto;
+import be.sgerard.i18n.model.security.user.dto.UserDto;
 import be.sgerard.i18n.service.security.UserRole;
 import org.springframework.security.core.CredentialsContainer;
 import org.springframework.security.core.GrantedAuthority;

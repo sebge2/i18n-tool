@@ -1,6 +1,6 @@
 package be.sgerard.i18n.service.security.auth;
 
-import be.sgerard.i18n.model.security.user.ExternalUserDto;
+import be.sgerard.i18n.model.security.user.dto.ExternalUserDto;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.user.OAuth2User;

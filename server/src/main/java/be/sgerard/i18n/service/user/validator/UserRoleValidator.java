@@ -1,8 +1,8 @@
 package be.sgerard.i18n.service.user.validator;
 
-import be.sgerard.i18n.model.security.user.UserCreationDto;
-import be.sgerard.i18n.model.security.user.UserEntity;
-import be.sgerard.i18n.model.security.user.UserPatchDto;
+import be.sgerard.i18n.model.security.user.dto.UserCreationDto;
+import be.sgerard.i18n.model.security.user.persistence.UserEntity;
+import be.sgerard.i18n.model.security.user.dto.UserPatchDto;
 import be.sgerard.i18n.model.validation.ValidationMessage;
 import be.sgerard.i18n.model.validation.ValidationResult;
 import org.springframework.stereotype.Component;

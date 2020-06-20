@@ -1,7 +1,7 @@
 package be.sgerard.test.i18n.model;
 
-import be.sgerard.i18n.model.security.user.UserCreationDto;
-import be.sgerard.i18n.model.security.user.UserDto;
+import be.sgerard.i18n.model.security.user.dto.UserCreationDto;
+import be.sgerard.i18n.model.security.user.dto.UserDto;
 
 /**
  * @author Sebastien Gerard

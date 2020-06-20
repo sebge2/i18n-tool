@@ -1,4 +1,4 @@
-package be.sgerard.i18n.model.security.user;
+package be.sgerard.i18n.model.security.user.persistence;
 
 import be.sgerard.i18n.model.ToolLocale;
 

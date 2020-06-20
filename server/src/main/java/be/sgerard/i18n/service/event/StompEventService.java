@@ -1,7 +1,7 @@
 package be.sgerard.i18n.service.event;
 
 import be.sgerard.i18n.model.event.EventType;
-import be.sgerard.i18n.model.security.user.UserDto;
+import be.sgerard.i18n.model.security.user.dto.UserDto;
 import be.sgerard.i18n.service.security.UserRole;
 import be.sgerard.i18n.service.security.session.UserLiveSessionManager;
 import org.springframework.context.annotation.Lazy;

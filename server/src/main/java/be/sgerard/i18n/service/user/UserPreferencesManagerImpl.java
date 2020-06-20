@@ -1,10 +1,10 @@
 package be.sgerard.i18n.service.user;
 
 import be.sgerard.i18n.model.event.EventType;
-import be.sgerard.i18n.model.security.user.UserDto;
-import be.sgerard.i18n.model.security.user.UserEntity;
-import be.sgerard.i18n.model.security.user.UserPreferencesDto;
-import be.sgerard.i18n.model.security.user.UserPreferencesEntity;
+import be.sgerard.i18n.model.security.user.dto.UserDto;
+import be.sgerard.i18n.model.security.user.persistence.UserEntity;
+import be.sgerard.i18n.model.security.user.dto.UserPreferencesDto;
+import be.sgerard.i18n.model.security.user.persistence.UserPreferencesEntity;
 import be.sgerard.i18n.repository.user.UserRepository;
 import be.sgerard.i18n.service.ResourceNotFoundException;
 import be.sgerard.i18n.service.event.EventService;

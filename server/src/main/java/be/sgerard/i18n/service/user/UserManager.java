@@ -1,6 +1,11 @@
 package be.sgerard.i18n.service.user;
 
-import be.sgerard.i18n.model.security.user.*;
+import be.sgerard.i18n.model.security.user.dto.ExternalUserDto;
+import be.sgerard.i18n.model.security.user.dto.UserCreationDto;
+import be.sgerard.i18n.model.security.user.dto.UserPatchDto;
+import be.sgerard.i18n.model.security.user.persistence.ExternalUserEntity;
+import be.sgerard.i18n.model.security.user.persistence.InternalUserEntity;
+import be.sgerard.i18n.model.security.user.persistence.UserEntity;
 import be.sgerard.i18n.service.ResourceNotFoundException;
 
 import java.util.Collection;

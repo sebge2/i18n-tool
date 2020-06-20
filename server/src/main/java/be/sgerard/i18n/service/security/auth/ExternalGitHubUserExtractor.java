@@ -1,7 +1,7 @@
 package be.sgerard.i18n.service.security.auth;
 
 import be.sgerard.i18n.configuration.AppProperties;
-import be.sgerard.i18n.model.security.user.ExternalUserDto;
+import be.sgerard.i18n.model.security.user.dto.ExternalUserDto;
 import be.sgerard.i18n.service.security.UserRole;
 import com.jcabi.github.Coordinates;
 import com.jcabi.github.RtGithub;

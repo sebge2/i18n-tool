@@ -1,4 +1,4 @@
-package be.sgerard.i18n.model.security.user;
+package be.sgerard.i18n.model.security.user.persistence;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

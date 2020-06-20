@@ -1,5 +1,7 @@
-package be.sgerard.i18n.model.security.user;
+package be.sgerard.i18n.model.security.user.dto;
 
+import be.sgerard.i18n.model.security.user.persistence.ExternalUserEntity;
+import be.sgerard.i18n.model.security.user.persistence.UserEntity;
 import be.sgerard.i18n.service.security.UserRole;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;

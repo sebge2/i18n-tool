@@ -1,7 +1,7 @@
 package be.sgerard.test.i18n.support;
 
 import be.sgerard.i18n.model.security.auth.InternalAuthenticatedUser;
-import be.sgerard.i18n.model.security.user.UserDto;
+import be.sgerard.i18n.model.security.user.dto.UserDto;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
