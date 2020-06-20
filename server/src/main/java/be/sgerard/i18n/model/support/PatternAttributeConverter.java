@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
  * @author Sebastien Gerard
  */
 @Converter(autoApply = true)
+@SuppressWarnings("unused")
 public class PatternAttributeConverter implements AttributeConverter<Pattern, String> {
 
     @Override

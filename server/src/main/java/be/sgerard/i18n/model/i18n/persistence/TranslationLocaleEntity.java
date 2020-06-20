@@ -8,14 +8,11 @@ import javax.validation.constraints.NotNull;
 import java.util.*;
 
 /**
+ * Locale in which translations must be available.
+ *
  * @author Sebastien Gerard
  */
 @Entity(name = "translation_locale")
-@Table(
-        uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"language", "region"})
-        }
-)
 public class TranslationLocaleEntity {
 
     /**
