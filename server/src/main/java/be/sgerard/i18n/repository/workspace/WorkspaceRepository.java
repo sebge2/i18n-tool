@@ -23,6 +23,6 @@ public interface WorkspaceRepository extends CrudRepository<WorkspaceEntity, Str
     /**
      * Finds {@link WorkspaceEntity workspaces} of the specified repository.
      */
-    Stream<WorkspaceEntity> findByRepositoryId(String repositoryId);
+    List<WorkspaceEntity> findByRepositoryId(String repositoryId);
 
 }

@@ -55,7 +55,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
     @Override
     @Transactional(readOnly = true)
     public Flux<WorkspaceEntity> findAll(String repositoryId) {
-        return Flux.fromStream(repository.findByRepositoryId(repositoryId));
+        return Flux.fromIterable(repository.findByRepositoryId(repositoryId));
     }
 
     @Override
