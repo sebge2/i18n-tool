@@ -1,15 +1,13 @@
 package be.sgerard.i18n.service.user;
 
-import be.sgerard.i18n.model.event.EventType;
-import be.sgerard.i18n.model.security.user.dto.UserDto;
-import be.sgerard.i18n.model.security.user.persistence.UserEntity;
 import be.sgerard.i18n.model.security.user.dto.UserPreferencesDto;
+import be.sgerard.i18n.model.security.user.persistence.UserEntity;
 import be.sgerard.i18n.model.security.user.persistence.UserPreferencesEntity;
-import be.sgerard.i18n.repository.user.UserRepository;
 import be.sgerard.i18n.service.ResourceNotFoundException;
-import be.sgerard.i18n.service.event.EventService;
+import be.sgerard.i18n.service.user.listener.UserPreferencesListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import reactor.core.publisher.Mono;
 
 /**
  * Implementation of the {@link UserPreferencesManager user preferences service}.
@@ -19,36 +17,39 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class UserPreferencesManagerImpl implements UserPreferencesManager {
 
-    private final UserRepository userRepository;
-    private final EventService eventService;
+    private final UserManager userManager;
+    private final UserPreferencesListener listener;
 
-    public UserPreferencesManagerImpl(UserRepository userRepository, EventService eventService) {
-        this.userRepository = userRepository;
-        this.eventService = eventService;
+    public UserPreferencesManagerImpl(UserManager userManager, UserPreferencesListener listener) {
+        this.userManager = userManager;
+        this.listener = listener;
     }
 
     @Override
     @Transactional(readOnly = true)
-    public UserPreferencesEntity getUserPreferences(String userId) throws ResourceNotFoundException {
-        return findUserOrDie(userId).getPreferences();
+    public Mono<UserPreferencesEntity> getUserPreferences(String userId) throws ResourceNotFoundException {
+        return findUserOrDie(userId)
+                .map(UserEntity::getPreferences);
     }
 
     @Override
-    public UserPreferencesEntity updateUserPreferences(String userId, UserPreferencesDto preferences) throws ResourceNotFoundException {
-        final UserPreferencesEntity existingPreferences = findUserOrDie(userId).getPreferences();
+    public Mono<UserPreferencesEntity> updateUserPreferences(String userId, UserPreferencesDto preferences) throws ResourceNotFoundException {
+        return getUserPreferences(userId)
+                .doOnNext(pref -> {
+                    pref.setToolLocale(preferences.getToolLocale().orElse(null));
+                })
+                .flatMap(pref ->
+                        listener
+                                .onUpdate(pref)
+                                .thenReturn(pref)
+                );
 
-        existingPreferences.setToolLocale(preferences.getToolLocale().orElse(null));
-
-        eventService.sendEventToUser(UserDto.builder(existingPreferences.getUser()).build(), EventType.UPDATED_USER_PREFERENCES ,preferences);
-
-        return existingPreferences;
     }
 
     /**
      * Returns the {@link UserEntity user} having the specified id.
      */
-    private UserEntity findUserOrDie(String userId) {
-        return userRepository.findById(userId)
-                .orElseThrow(() -> ResourceNotFoundException.userNotFoundException(userId));
+    private Mono<UserEntity> findUserOrDie(String userId) {
+        return userManager.findByIdOrDie(userId);
     }
 }

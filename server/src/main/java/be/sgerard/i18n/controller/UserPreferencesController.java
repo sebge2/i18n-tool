@@ -6,6 +6,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
 
 /**
  * Controller for user preferences.
@@ -29,8 +30,9 @@ public class UserPreferencesController {
     @GetMapping(path = "/user/{id}/preferences")
     @ApiOperation(value = "Returns preferences for user having the specified id.")
     @Transactional(readOnly = true)
-    public UserPreferencesDto getPreferencesByUserId(@PathVariable String id) {
-        return UserPreferencesDto.builder(userPreferencesManager.getUserPreferences(id)).build();
+    public Mono<UserPreferencesDto> getPreferencesByUserId(@PathVariable String id) {
+        return userPreferencesManager.getUserPreferences(id)
+                .map(pref -> UserPreferencesDto.builder(pref).build());
     }
 
     /**
@@ -39,8 +41,10 @@ public class UserPreferencesController {
     @PutMapping(path = "/user/{id}/preferences")
     @ApiOperation(value = "Updates preferences for user having the specified id.")
     @Transactional
-    public UserPreferencesDto updateUserPreferences(@PathVariable String id,
-                                                    @RequestBody UserPreferencesDto userPreferences) {
-        return UserPreferencesDto.builder(userPreferencesManager.updateUserPreferences(id, userPreferences)).build();
+    public Mono<UserPreferencesDto> updateUserPreferences(@PathVariable String id,
+                                                          @RequestBody UserPreferencesDto userPreferences) {
+        return userPreferencesManager
+                .updateUserPreferences(id, userPreferences)
+                .map(pref -> UserPreferencesDto.builder(pref).build());
     }
 }

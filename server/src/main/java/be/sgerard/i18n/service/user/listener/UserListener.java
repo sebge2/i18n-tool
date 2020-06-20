@@ -7,7 +7,7 @@ import be.sgerard.i18n.model.validation.ValidationResult;
 import reactor.core.publisher.Mono;
 
 /**
- * Validator of users.
+ * Listener of users.
  *
  * @author Sebastien Gerard
  */
