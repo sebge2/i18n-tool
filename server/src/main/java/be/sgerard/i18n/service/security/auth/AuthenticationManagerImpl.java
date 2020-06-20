@@ -1,29 +1,27 @@
 package be.sgerard.i18n.service.security.auth;
 
 import be.sgerard.i18n.model.security.auth.AuthenticatedUser;
-import be.sgerard.i18n.model.security.auth.ExternalOAuth2AuthenticatedUser;
-import be.sgerard.i18n.model.security.auth.InternalAuthenticatedUser;
-import be.sgerard.i18n.model.security.user.dto.ExternalUserDto;
+import be.sgerard.i18n.model.security.auth.ExternalAuthenticatedUser;
+import be.sgerard.i18n.model.security.auth.external.OAuthExternalUser;
+import be.sgerard.i18n.model.security.auth.internal.InternalAuthenticatedUser;
 import be.sgerard.i18n.model.security.user.dto.UserDto;
-import be.sgerard.i18n.model.security.user.persistence.ExternalUserEntity;
-import be.sgerard.i18n.model.security.user.persistence.InternalUserEntity;
 import be.sgerard.i18n.model.security.user.persistence.UserEntity;
+import be.sgerard.i18n.service.repository.RepositoryManager;
 import be.sgerard.i18n.service.security.UserRole;
+import be.sgerard.i18n.service.security.auth.external.OAuthExternalUserHandler;
+import be.sgerard.i18n.service.user.UserManager;
 import be.sgerard.i18n.service.user.listener.UserListener;
-import org.springframework.security.core.GrantedAuthority;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.session.FindByIndexNameSessionRepository;
 import org.springframework.session.Session;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
 
-import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Stream;
 
@@ -40,42 +38,51 @@ import static org.springframework.security.web.server.context.WebSessionServerSe
 @Service
 public class AuthenticationManagerImpl implements AuthenticationManager, UserListener {
 
-    private final PasswordEncoder passwordEncoder;
+    private final UserManager userManager;
+    private final RepositoryManager repositoryManager;
     private final FindByIndexNameSessionRepository<Session> sessionRepository;
+    private final OAuthExternalUserHandler externalUserHandler;
+//    private final AuthenticatedUserListener listener;
 
     @SuppressWarnings("unchecked")
-    public AuthenticationManagerImpl(PasswordEncoder passwordEncoder,
-                                     FindByIndexNameSessionRepository<?> sessionRepository) {
-        this.passwordEncoder = passwordEncoder;
+    @Lazy
+    public AuthenticationManagerImpl(UserManager userManager,
+                                     RepositoryManager repositoryManager,
+                                     FindByIndexNameSessionRepository<?> sessionRepository,
+                                     OAuthExternalUserHandler externalUserHandler) {
+        this.userManager = userManager;
+        this.repositoryManager = repositoryManager;
         this.sessionRepository = (FindByIndexNameSessionRepository<Session>) sessionRepository;
+        this.externalUserHandler = externalUserHandler;
     }
 
     @Override
     @Transactional(readOnly = true)
-    public ExternalOAuth2AuthenticatedUser initExternalOAuthUser(ExternalUserEntity currentUser, ExternalUserDto externalUserDto) {
-        final Set<GrantedAuthority> authorities = new HashSet<>();
-
-        authorities.addAll(currentUser.getRoles().stream().map(UserRole::toAuthority).collect(toSet()));
-        authorities.addAll(externalUserDto.getRoles().stream().map(UserRole::toAuthority).collect(toSet()));
-
-        return new ExternalOAuth2AuthenticatedUser(
-                UUID.randomUUID().toString(),
-                UserDto.builder(currentUser).build(),
-                externalUserDto.getGitHubToken().orElse(null),
-                authorities
-        );
+    public Mono<ExternalAuthenticatedUser> createAuthentication(OAuthExternalUser externalUser) {
+        return externalUserHandler.createAuthentication(externalUser);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public InternalAuthenticatedUser initInternalUser(InternalUserEntity currentUser) {
-        return new InternalAuthenticatedUser(
-                UUID.randomUUID().toString(),
-                UserDto.builder(currentUser).build(),
-                currentUser.getPassword(),
-                null,
-                currentUser.getRoles().stream().map(UserRole::toAuthority).collect(toSet())
-        );
+    public Mono<InternalAuthenticatedUser> createAuthentication(String username) {
+        return userManager
+                .finUserByNameOrDie(username)
+                .flatMap(user ->
+                        repositoryManager
+                                .findAll()
+                                .flatMap(repository -> repositoryManager.getDefaultCredentials(repository.getId()))
+                                .collectList()
+                                .map(repositories ->
+                                        new InternalAuthenticatedUser(
+                                                UUID.randomUUID().toString(),
+                                                UserDto.builder(user).build(),
+                                                user.getPassword(),
+                                                user.getRoles().stream().map(UserRole::toAuthority).collect(toSet()),
+                                                repositories
+                                        )
+                                )
+                );
+
     }
 
     @Override
