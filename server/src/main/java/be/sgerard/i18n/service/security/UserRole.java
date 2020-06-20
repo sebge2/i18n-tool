@@ -17,12 +17,6 @@ public enum UserRole {
      */
     MEMBER_OF_ORGANIZATION(false),
 
-// TODO search all usages
-//    /**
-//     * The user has permission to access the repository.
-//     */
-//    MEMBER_OF_REPOSITORY(false),
-
     /**
      * Administrator role with all privileges.
      */

@@ -77,18 +77,4 @@ public class UserPreferencesEntity {
     public void setToolLocale(ToolLocale toolLocale) {
         this.toolLocale = toolLocale;
     }
-
-    /**
-     * Returns the version of this entity.
-     */
-    public int getVersion() {
-        return version;
-    }
-
-    /**
-     * Sets the version of this entity.
-     */
-    public void setVersion(int version) {
-        this.version = version;
-    }
 }
