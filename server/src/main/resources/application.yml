@@ -9,6 +9,7 @@ spring:
     oauth2:
       client:
         registration:
+#          http://i18n-tool.test.sgerard.be:8080
           github:
             client-id: ${GIT_HUB_OAUTH_CLIENT}
             client-secret: ${GIT_HUB_OAUTH_SECRET}

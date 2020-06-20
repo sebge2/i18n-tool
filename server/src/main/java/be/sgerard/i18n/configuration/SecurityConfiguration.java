@@ -3,7 +3,6 @@ package be.sgerard.i18n.configuration;
 import be.sgerard.i18n.service.security.UserRole;
 import be.sgerard.i18n.service.security.auth.ExternalUserService;
 import be.sgerard.i18n.service.security.auth.InternalUserDetailsService;
-import org.springframework.boot.autoconfigure.security.oauth2.client.EnableOAuth2Sso;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -13,6 +12,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.config.annotation.web.configuration.EnableOAuth2Client;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author Sebastien Gerard
  */
 @Configuration
-@EnableOAuth2Sso
+@EnableOAuth2Client
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
