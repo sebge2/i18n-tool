@@ -17,8 +17,8 @@ import static java.util.Arrays.asList;
  * @author Sebastien Gerard
  */
 @ApiModel(description = "The initial information needed to create an internal user.")
-@JsonDeserialize(builder = UserCreationDto.Builder.class)
-public class UserCreationDto {
+@JsonDeserialize(builder = InternalUserCreationDto.Builder.class)
+public class InternalUserCreationDto {
 
     public static Builder builder() {
         return new Builder();
@@ -38,7 +38,7 @@ public class UserCreationDto {
     private final String avatarUrl;
     private final Collection<UserRole> roles;
 
-    private UserCreationDto(Builder builder) {
+    private InternalUserCreationDto(Builder builder) {
         roles = builder.roles;
         username = builder.username;
         email = builder.email;
@@ -110,8 +110,8 @@ public class UserCreationDto {
             return roles(asList(roles));
         }
 
-        public UserCreationDto build() {
-            return new UserCreationDto(this);
+        public InternalUserCreationDto build() {
+            return new InternalUserCreationDto(this);
         }
     }
 }

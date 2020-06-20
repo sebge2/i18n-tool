@@ -1,6 +1,6 @@
 package be.sgerard.i18n.service.user.listener;
 
-import be.sgerard.i18n.model.security.user.dto.UserCreationDto;
+import be.sgerard.i18n.model.security.user.dto.InternalUserCreationDto;
 import be.sgerard.i18n.model.security.user.dto.UserPatchDto;
 import be.sgerard.i18n.model.security.user.persistence.UserEntity;
 import be.sgerard.i18n.model.validation.ValidationMessage;
@@ -25,7 +25,7 @@ public class UserRoleValidationListener implements UserListener {
     }
 
     @Override
-    public Mono<ValidationResult> beforePersist(UserCreationDto info) {
+    public Mono<ValidationResult> beforePersist(InternalUserCreationDto info) {
         return Flux.fromIterable(info.getRoles())
                 .filter(role -> !role.isAssignableByEndUser())
                 .map(role -> ValidationResult.builder().messages(new ValidationMessage(ROLE_NOT_ASSIGNABLE, role.name())).build())

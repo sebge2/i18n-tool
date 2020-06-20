@@ -1,6 +1,6 @@
 package be.sgerard.test.i18n.helper;
 
-import be.sgerard.i18n.model.security.user.dto.UserCreationDto;
+import be.sgerard.i18n.model.security.user.dto.InternalUserCreationDto;
 import be.sgerard.i18n.model.security.user.dto.UserDto;
 import be.sgerard.i18n.model.security.user.dto.UserPreferencesDto;
 import be.sgerard.i18n.service.ResourceNotFoundException;
@@ -56,14 +56,14 @@ public class UserTestHelper {
         return findByUsernameOrDie(UserManager.ADMIN_USER_NAME);
     }
 
-    public UserDto createUser(UserCreationDto userCreationDto) throws Exception {
+    public UserDto createUser(InternalUserCreationDto internalUserCreationDto) throws Exception {
         final JsonHolderResultHandler<UserDto> resultHandler = new JsonHolderResultHandler<>(objectMapper, UserDto.class);
 
         asyncMvc
                 .perform(
                         post("/api/user/")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(userCreationDto))
+                                .content(objectMapper.writeValueAsString(internalUserCreationDto))
                 )
                 .andExpectStarted()
                 .andWaitResult()

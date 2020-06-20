@@ -1,6 +1,6 @@
 package be.sgerard.test.i18n.model;
 
-import be.sgerard.i18n.model.security.user.dto.UserCreationDto;
+import be.sgerard.i18n.model.security.user.dto.InternalUserCreationDto;
 import be.sgerard.i18n.model.security.user.dto.UserDto;
 
 /**
@@ -19,8 +19,8 @@ public final class UserDtoTestUtils {
                 .avatarUrl("https://pickaface.net/gallery/avatar/unr_sample_161118_2054_ynlrg.png");
     }
 
-    public static UserCreationDto.Builder userJohnDoeCreation() {
-        return UserCreationDto.builder(userJohnDoe().build())
+    public static InternalUserCreationDto.Builder userJohnDoeCreation() {
+        return InternalUserCreationDto.builder(userJohnDoe().build())
                 .password("password");
     }
 

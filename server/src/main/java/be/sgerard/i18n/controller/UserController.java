@@ -1,6 +1,6 @@
 package be.sgerard.i18n.controller;
 
-import be.sgerard.i18n.model.security.user.dto.UserCreationDto;
+import be.sgerard.i18n.model.security.user.dto.InternalUserCreationDto;
 import be.sgerard.i18n.model.security.user.dto.UserDto;
 import be.sgerard.i18n.model.security.user.dto.UserPatchDto;
 import be.sgerard.i18n.service.user.UserManager;
@@ -62,7 +62,7 @@ public class UserController {
     @ApiOperation(value = "Creates a new internal user.")
     @PreAuthorize("hasRole('ADMIN')")
     @Transactional
-    public Mono<UserDto> createUser(@RequestBody UserCreationDto creationDto) {
+    public Mono<UserDto> createUser(@RequestBody InternalUserCreationDto creationDto) {
         return userManager
                 .createUser(creationDto)
                 .map(entity -> UserDto.builder(entity).build());

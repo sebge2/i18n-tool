@@ -1,7 +1,6 @@
 package be.sgerard.i18n.configuration;
 
 import be.sgerard.i18n.service.security.UserRole;
-import be.sgerard.i18n.service.security.auth.ExternalUserService;
 import be.sgerard.i18n.service.security.auth.InternalUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,15 +26,12 @@ import javax.servlet.http.HttpServletResponse;
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private final PasswordEncoder passwordEncoder;
-    private final ExternalUserService externalUserService;
     private final InternalUserDetailsService internalUserDetailsService;
 
     public SecurityConfiguration(PasswordEncoder passwordEncoder,
-                                 ExternalUserService externalUserService,
                                  InternalUserDetailsService internalUserDetailsService) {
         this.passwordEncoder = passwordEncoder;
 
-        this.externalUserService = externalUserService;
         this.internalUserDetailsService = internalUserDetailsService;
     }
 
@@ -45,16 +41,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
         daoAuthenticationProvider.setPasswordEncoder(passwordEncoder);
         daoAuthenticationProvider.setUserDetailsService(internalUserDetailsService);
-
-        return daoAuthenticationProvider;
-    }
-
-    @Bean
-    public AuthenticationProvider externalUserAuthenticationProvider() {
-        final DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
-
-        daoAuthenticationProvider.setUserDetailsService(externalUserService);
-        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder);
 
         return daoAuthenticationProvider;
     }
@@ -88,14 +74,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
                 .oauth2Login()
                 .authorizationEndpoint().baseUri("/auth/oauth2/authorize-client").and()
-                .redirectionEndpoint().baseUri("/auth/oauth2/code/*").and()
-
-                .userInfoEndpoint().userService(externalUserService);
+                .redirectionEndpoint().baseUri("/auth/oauth2/code/*");
     }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) {
         auth.authenticationProvider(internalUserAuthenticationProvider());
-        auth.authenticationProvider(externalUserAuthenticationProvider());
     }
 }

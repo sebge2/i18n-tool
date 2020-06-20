@@ -2,7 +2,7 @@ package be.sgerard.i18n.service.user;
 
 import be.sgerard.i18n.configuration.AppProperties;
 import be.sgerard.i18n.model.security.user.dto.ExternalUserDto;
-import be.sgerard.i18n.model.security.user.dto.UserCreationDto;
+import be.sgerard.i18n.model.security.user.dto.InternalUserCreationDto;
 import be.sgerard.i18n.model.security.user.dto.UserPatchDto;
 import be.sgerard.i18n.model.security.user.persistence.ExternalUserEntity;
 import be.sgerard.i18n.model.security.user.persistence.InternalUserEntity;
@@ -73,7 +73,7 @@ public class UserManagerImpl implements UserManager {
 
     @Override
     @Transactional
-    public Mono<InternalUserEntity> createUser(UserCreationDto info) {
+    public Mono<InternalUserEntity> createUser(InternalUserCreationDto info) {
         return listener
                 .beforePersist(info)
                 .map(validationResult -> {
@@ -107,7 +107,7 @@ public class UserManagerImpl implements UserManager {
                 .switchIfEmpty(Mono.just(new ExternalUserEntity(externalUserDto.getExternalId())))
                 .flatMap(externalUser ->
                         listener
-                                .beforePersist(null)
+                                .beforePersist(externalUserDto)
                                 .map(validationResult -> {
                                     ValidationException.throwIfFailed(validationResult);
 
@@ -213,7 +213,7 @@ public class UserManagerImpl implements UserManager {
                             });
 
                     return createUser(
-                            UserCreationDto.builder()
+                            InternalUserCreationDto.builder()
                                     .username(ADMIN_USER_NAME)
                                     .password(password)
                                     .roles(UserRole.ADMIN)

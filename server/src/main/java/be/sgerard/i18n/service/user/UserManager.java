@@ -1,7 +1,7 @@
 package be.sgerard.i18n.service.user;
 
 import be.sgerard.i18n.model.security.user.dto.ExternalUserDto;
-import be.sgerard.i18n.model.security.user.dto.UserCreationDto;
+import be.sgerard.i18n.model.security.user.dto.InternalUserCreationDto;
 import be.sgerard.i18n.model.security.user.dto.UserPatchDto;
 import be.sgerard.i18n.model.security.user.persistence.ExternalUserEntity;
 import be.sgerard.i18n.model.security.user.persistence.InternalUserEntity;
@@ -48,16 +48,15 @@ public interface UserManager {
                 .switchIfEmpty(Mono.error(ResourceNotFoundException.userNotFoundException(username)));
     }
 
-
     /**
      * Returns all the {@link UserEntity users}.
      */
     Flux<UserEntity> findAll();
 
     /**
-     * Creates a new {@link InternalUserEntity internal user} based on the specified {@link UserCreationDto info}.
+     * Creates a new {@link InternalUserEntity internal user} based on the specified {@link InternalUserCreationDto info}.
      */
-    Mono<InternalUserEntity> createUser(UserCreationDto info);
+    Mono<InternalUserEntity> createUser(InternalUserCreationDto info);
 
     /**
      * Creates a new, or updates the existing {@link ExternalUserEntity external user} based on the specified {@link ExternalUserDto info}.

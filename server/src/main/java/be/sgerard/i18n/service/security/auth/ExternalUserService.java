@@ -1,12 +1,9 @@
 package be.sgerard.i18n.service.security.auth;
 
-import be.sgerard.i18n.model.security.auth.ExternalKeyAuthenticatedUser;
 import be.sgerard.i18n.model.security.auth.ExternalOAuth2AuthenticatedUser;
 import be.sgerard.i18n.model.security.user.dto.ExternalUserDto;
 import be.sgerard.i18n.model.security.user.persistence.ExternalUserEntity;
 import be.sgerard.i18n.service.user.UserManager;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -20,14 +17,11 @@ import java.util.List;
  * @author Sebastien Gerard
  */
 @Service
-public class ExternalUserService extends DefaultOAuth2UserService implements UserDetailsService {
-
-    public static final String USER_PREFIX = "#";
+public class ExternalUserService extends DefaultOAuth2UserService {
 
     private final UserManager userManager;
     private final AuthenticationManager authenticationManager;
     private final List<ExternalUserExtractor> handlers;
-    private final ExternalGitHubUserExtractor gitHubUserExtractor;
 
     public ExternalUserService(UserManager userManager,
                                AuthenticationManager authenticationManager,
@@ -36,7 +30,6 @@ public class ExternalUserService extends DefaultOAuth2UserService implements Use
         this.userManager = userManager;
         this.authenticationManager = authenticationManager;
         this.handlers = handlers;
-        this.gitHubUserExtractor = gitHubUserExtractor;
     }
 
     @Override
@@ -54,19 +47,5 @@ public class ExternalUserService extends DefaultOAuth2UserService implements Use
         final ExternalUserEntity currentUser = userManager.createOrUpdateUser(externalUserDto).block(); // TODO
 
         return authenticationManager.initExternalOAuthUser(currentUser, externalUserDto);
-    }
-
-    @Override
-    @Transactional
-    public ExternalKeyAuthenticatedUser loadUserByUsername(String username) throws UsernameNotFoundException {
-        if (!username.startsWith(USER_PREFIX)) {
-            throw new UsernameNotFoundException("There is no user name [" + username + "].");
-        }
-
-        final ExternalUserDto externalUserDto = gitHubUserExtractor.loadUser(username.substring(USER_PREFIX.length()));
-
-        final ExternalUserEntity currentUser = userManager.createOrUpdateUser(externalUserDto).block(); // TODO
-
-        return authenticationManager.initExternalKeyUser(currentUser, externalUserDto);
     }
 }
