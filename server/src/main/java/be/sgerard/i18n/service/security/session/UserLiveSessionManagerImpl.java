@@ -1,15 +1,10 @@
 package be.sgerard.i18n.service.security.session;
 
-import be.sgerard.i18n.model.event.EventType;
-import be.sgerard.i18n.model.security.auth.AuthenticatedUser;
-import be.sgerard.i18n.model.security.session.UserLiveSessionDto;
 import be.sgerard.i18n.model.security.session.UserLiveSessionEntity;
 import be.sgerard.i18n.model.security.user.dto.AuthenticatedUserDto;
 import be.sgerard.i18n.model.security.user.dto.UserDto;
-import be.sgerard.i18n.model.security.user.persistence.UserEntity;
 import be.sgerard.i18n.repository.security.UserLiveSessionManagerRepository;
 import be.sgerard.i18n.service.event.EventService;
-import be.sgerard.i18n.service.event.InternalEventListener;
 import be.sgerard.i18n.service.user.UserManager;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
@@ -20,14 +15,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.socket.messaging.AbstractSubProtocolEvent;
 import org.springframework.web.socket.messaging.SessionConnectedEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
-
-import java.time.Instant;
-import java.util.Collection;
+import reactor.core.publisher.Flux;
 
 import static be.sgerard.i18n.model.event.EventType.UPDATED_CURRENT_AUTHENTICATED_USER;
-import static be.sgerard.i18n.service.security.auth.AuthenticationUtils.getAuthenticatedUserOrFail;
 
 /**
+ * Implementation of the {@link UserLiveSessionManager user live session manager}.
+ *
  * @author Sebastien Gerard
  */
 @Service
@@ -48,15 +42,15 @@ public class UserLiveSessionManagerImpl implements UserLiveSessionManager {
 
     @Override
     @Transactional(readOnly = true)
-    public Collection<UserLiveSessionEntity> getCurrentLiveSessions() {
-        return repository.findByLogoutTimeIsNull();
+    public Flux<UserLiveSessionEntity> getCurrentLiveSessions() {
+        return Flux.fromIterable(repository.findByLogoutTimeIsNull());
     }
 
     @EventListener
     @Transactional
     public void onSessionConnectedEvent(SessionConnectedEvent event) {
-        final AuthenticatedUser authenticatedUser = getAuthenticatedUserOrFail(event.getUser());
-
+//        final AuthenticatedUser authenticatedUser = getAuthenticatedUserOrFail(event.getUser());
+/*
         final UserEntity userEntity = userManager.findByIdOrDie(authenticatedUser.getUser().getId()).block(); // TODO
 
         final UserLiveSessionEntity sessionEntity = new UserLiveSessionEntity(
@@ -70,24 +64,24 @@ public class UserLiveSessionManagerImpl implements UserLiveSessionManager {
         repository.save(sessionEntity);
 
         // TODO restrict visible info
-        eventService.broadcastEvent(EventType.CONNECTED_USER_SESSION, UserLiveSessionDto.builder(sessionEntity).build());
+        eventService.broadcastEvent(EventType.CONNECTED_USER_SESSION, UserLiveSessionDto.builder(sessionEntity).build());*/
     }
 
     @EventListener
     @Transactional
     public void onSessionDisconnectEvent(SessionDisconnectEvent event) {
-        final String sessionId = getSessionId(event);
-
-        final UserLiveSessionEntity sessionEntity = repository.findBySimpSessionId(sessionId)
-                .orElseThrow(() -> new IllegalStateException("There is no session with id [" + sessionId + "]."));
-
-
-        if (sessionEntity.getLogoutTime() == null) {
-            sessionEntity.setLogoutTime(Instant.now());
-
-            // TODO restrict visible info
-            eventService.broadcastEvent(EventType.DISCONNECTED_USER_SESSION, UserLiveSessionDto.builder(sessionEntity).build());
-        }
+//        final String sessionId = getSessionId(event);
+//
+//        final UserLiveSessionEntity sessionEntity = repository.findBySimpSessionId(sessionId)
+//                .orElseThrow(() -> new IllegalStateException("There is no session with id [" + sessionId + "]."));
+//
+//
+//        if (sessionEntity.getLogoutTime() == null) {
+//            sessionEntity.setLogoutTime(Instant.now());
+//
+//            // TODO restrict visible info
+//            eventService.broadcastEvent(EventType.DISCONNECTED_USER_SESSION, UserLiveSessionDto.builder(sessionEntity).build());
+//        }
     }
 
     private String getSessionId(AbstractSubProtocolEvent event) {
@@ -100,14 +94,14 @@ public class UserLiveSessionManagerImpl implements UserLiveSessionManager {
         return SimpMessageHeaderAccessor.getSessionId(accessor.getMessageHeaders());
     }
 
-    private final class UpdatedAuthenticationUserListener implements InternalEventListener<AuthenticatedUserDto> {
+    private final class UpdatedAuthenticationUserListener {
 
-        @Override
-        public boolean support(EventType eventType) {
-            return eventType == EventType.UPDATED_AUTHENTICATED_USER;
-        }
-
-        @Override
+        //        @Override
+//        public boolean support(EventType eventType) {
+//            return eventType == EventType.UPDATED_AUTHENTICATED_USER;
+//        }
+//
+//        @Override
         public void onEvent(AuthenticatedUserDto updatedAuthenticatedUser) {
             repository.findByAuthenticatedUserId(updatedAuthenticatedUser.getId())
                     .forEach(liveSession -> {

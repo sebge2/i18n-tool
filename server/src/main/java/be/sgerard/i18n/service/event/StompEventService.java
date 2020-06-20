@@ -11,9 +11,6 @@ import org.springframework.messaging.simp.SimpMessageType;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * {@link EventService Event service} based on the STOMP protocol.
  *
@@ -24,35 +21,26 @@ public class StompEventService implements EventService {
 
     private final SimpMessageSendingOperations template;
     private final UserLiveSessionManager userSessionManager;
-    private final List<InternalEventListener<Object>> eventListeners = new ArrayList<>();
 
-    public StompEventService(SimpMessageSendingOperations template,
-                             @Lazy UserLiveSessionManager userSessionManager) {
+    @Lazy
+    public StompEventService(SimpMessageSendingOperations template, UserLiveSessionManager userSessionManager) {
         this.template = template;
         this.userSessionManager = userSessionManager;
     }
 
-//    @Override
-//    public void broadcastInternally(EventType eventType, Object payload) {
-//        eventListeners.stream()
-//                .filter(listener -> listener.support(eventType))
-//                .forEach(listener -> listener.onEvent(payload));
-//    }
-
     @Override
     public Mono<Void> broadcastEvent(EventType eventType, Object payload) {
-        sendEventToUsers(UserRole.MEMBER_OF_ORGANIZATION, eventType, payload);
-        return Mono.empty();
+        return sendEventToUsers(UserRole.MEMBER_OF_ORGANIZATION, eventType, payload);
     }
 
-    // TODO
     @Override
     public Mono<Void> sendEventToUsers(UserRole userRole, EventType eventType, Object payload) {
-//        userSessionManager.getCurrentLiveSessions().stream()
-//                .filter(session -> session.getSessionRoles().contains(userRole))
-//                .distinct()
-//                .forEach(session -> sendEventToSession(session.getSimpSessionId(), eventType, payload));
-        return Mono.empty();
+        return userSessionManager
+                .getCurrentLiveSessions()
+                .filter(session -> session.getSessionRoles().contains(userRole))
+                .distinct()
+                .flatMap(session -> sendEventToSession(session.getSimpSessionId(), eventType, payload))
+                .then();
     }
 
     @Override
@@ -71,10 +59,4 @@ public class StompEventService implements EventService {
 
         return Mono.empty();
     }
-
-//    @Override
-//    @SuppressWarnings({"unchecked", "RedundantCast"})
-//    public void addListener(InternalEventListener<?> listener) {
-//        this.eventListeners.add((InternalEventListener<Object>) (Object) listener);
-//    }
 }
