@@ -48,7 +48,7 @@ public class GitHubClientMock implements GitHubClient {
                                     .map(PullRequest::getRequestNumber)
                                     .max(Integer::compareTo)
                                     .map(max -> max + 1)
-                                    .orElse(0)
+                                    .orElse(1)
                     );
 
                     pullRequests.add(pullRequest);

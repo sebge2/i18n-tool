@@ -39,7 +39,7 @@ public class BundleConfigurationEntity {
 
     BundleConfigurationEntity() {
     }
-
+// TODO
     public BundleConfigurationEntity(BundleType bundleType, RepositoryEntity repository) {
         this.id = UUID.randomUUID().toString();
         this.bundleType = bundleType;

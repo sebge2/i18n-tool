@@ -117,6 +117,13 @@ public abstract class RepositoryEntity {
     }
 
     /**
+     * Removes the {@link WorkspaceEntity workspace} from this repository.
+     */
+    public void deleteWorkspace(WorkspaceEntity workspace) {
+        this.workspaces.remove(workspace);
+    }
+
+    /**
      * Returns the {@link TranslationsConfigurationEntity configuration} to use for managing translations.
      */
     public TranslationsConfigurationEntity getTranslationsConfiguration() {

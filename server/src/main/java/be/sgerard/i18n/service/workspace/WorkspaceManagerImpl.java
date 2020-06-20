@@ -181,6 +181,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
 
                     logger.info("The workspace {} has been deleted.", workspaceId);
 
+                    workspace.getRepository().deleteWorkspace(workspace);
                     repository.delete(workspace);
 
                     return workspace;
