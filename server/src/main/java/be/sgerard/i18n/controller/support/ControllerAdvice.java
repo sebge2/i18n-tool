@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 /**
@@ -99,6 +100,14 @@ public class ControllerAdvice {
         logger.error(String.format("Repository exception with id %s, message %s.", errorMessages.getId(), exception.getMessage()), exception);
 
         return new ResponseEntity<>(errorMessages, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    /**
+     * Handles the {@link MissingServletRequestParameterException parameter exception}.
+     */
+    @ExceptionHandler(value = MissingServletRequestParameterException.class)
+    public ResponseEntity<ErrorMessages> handleMissingServletRequestParameterException(MissingServletRequestParameterException original) {
+        return handleBadRequestException(BadRequestException.actionNotSupportedException(null));
     }
 
     /**
