@@ -1,6 +1,6 @@
 package be.sgerard.i18n.repository.security;
 
-import be.sgerard.i18n.model.security.session.UserLiveSessionEntity;
+import be.sgerard.i18n.model.security.session.persistence.UserLiveSessionEntity;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

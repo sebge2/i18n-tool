@@ -1,6 +1,7 @@
 package be.sgerard.i18n.model.event;
 
 import be.sgerard.i18n.model.repository.dto.RepositorySummaryDto;
+import be.sgerard.i18n.model.security.session.dto.UserLiveSessionDto;
 import be.sgerard.i18n.model.security.user.dto.AuthenticatedUserDto;
 import be.sgerard.i18n.model.security.user.dto.UserDto;
 import be.sgerard.i18n.model.security.user.dto.UserPreferencesDto;
@@ -12,7 +13,7 @@ import be.sgerard.i18n.model.workspace.WorkspaceDto;
 public enum EventType {
 
     /**
-     * @see be.sgerard.i18n.model.security.session.UserLiveSessionDto
+     * @see UserLiveSessionDto
      */
     CONNECTED_USER_SESSION("connected-user-session"),
 
@@ -32,7 +33,7 @@ public enum EventType {
     DELETED_TRANSLATION_LOCALE("deleted-translation-locale"),
 
     /**
-     * @see be.sgerard.i18n.model.security.session.UserLiveSessionDto
+     * @see UserLiveSessionDto
      */
     DISCONNECTED_USER_SESSION("disconnected-user-session"),
 

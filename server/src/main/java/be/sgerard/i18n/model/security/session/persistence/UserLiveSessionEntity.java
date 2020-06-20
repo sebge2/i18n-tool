@@ -1,4 +1,4 @@
-package be.sgerard.i18n.model.security.session;
+package be.sgerard.i18n.model.security.session.persistence;
 
 import be.sgerard.i18n.model.security.user.persistence.UserEntity;
 import be.sgerard.i18n.service.security.UserRole;

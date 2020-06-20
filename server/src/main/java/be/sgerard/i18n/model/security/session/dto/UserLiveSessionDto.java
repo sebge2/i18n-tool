@@ -1,5 +1,6 @@
-package be.sgerard.i18n.model.security.session;
+package be.sgerard.i18n.model.security.session.dto;
 
+import be.sgerard.i18n.model.security.session.persistence.UserLiveSessionEntity;
 import be.sgerard.i18n.model.security.user.dto.UserDto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;

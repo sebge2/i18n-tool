@@ -1,6 +1,6 @@
 package be.sgerard.i18n.service.security.session;
 
-import be.sgerard.i18n.model.security.session.UserLiveSessionEntity;
+import be.sgerard.i18n.model.security.session.persistence.UserLiveSessionEntity;
 import be.sgerard.i18n.model.security.user.dto.AuthenticatedUserDto;
 import be.sgerard.i18n.model.security.user.dto.UserDto;
 import be.sgerard.i18n.repository.security.UserLiveSessionManagerRepository;

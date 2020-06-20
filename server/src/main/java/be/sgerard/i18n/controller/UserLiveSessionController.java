@@ -1,6 +1,6 @@
 package be.sgerard.i18n.controller;
 
-import be.sgerard.i18n.model.security.session.UserLiveSessionDto;
+import be.sgerard.i18n.model.security.session.dto.UserLiveSessionDto;
 import be.sgerard.i18n.service.security.session.UserLiveSessionManager;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

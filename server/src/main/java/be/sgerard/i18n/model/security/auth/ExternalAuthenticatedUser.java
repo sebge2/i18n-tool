@@ -16,7 +16,7 @@ import static java.util.stream.Collectors.toList;
 /**
  * @author Sebastien Gerard
  */
-public final class ExternalOAuth2AuthenticatedUser extends DefaultOAuth2User implements AuthenticatedUser {
+public final class ExternalAuthenticatedUser extends DefaultOAuth2User implements AuthenticatedUser {
 
     public static final String NAME_ATTRIBUTE = "principal_id";
 
@@ -24,10 +24,10 @@ public final class ExternalOAuth2AuthenticatedUser extends DefaultOAuth2User imp
     private final UserDto user;
     private final String gitHubToken;
 
-    public ExternalOAuth2AuthenticatedUser(String id,
-                                           UserDto user,
-                                           String gitHubToken,
-                                           Collection<GrantedAuthority> authorities) {
+    public ExternalAuthenticatedUser(String id,
+                                     UserDto user,
+                                     String gitHubToken,
+                                     Collection<GrantedAuthority> authorities) {
         super(authorities, singletonMap(NAME_ATTRIBUTE, user.getId()), NAME_ATTRIBUTE);
 
         this.id = id;
@@ -51,11 +51,6 @@ public final class ExternalOAuth2AuthenticatedUser extends DefaultOAuth2User imp
     }
 
     @Override
-    public Optional<String> getGitHubToken() {
-        return Optional.ofNullable(gitHubToken);
-    }
-
-    @Override
     public Collection<UserRole> getSessionRoles() {
         return getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
@@ -66,12 +61,17 @@ public final class ExternalOAuth2AuthenticatedUser extends DefaultOAuth2User imp
     }
 
     @Override
-    public ExternalOAuth2AuthenticatedUser updateSessionRoles(List<UserRole> roles) {
-        return new ExternalOAuth2AuthenticatedUser(
+    public <A extends RepositoryCredentials> Optional<A> getCredentials(String repository, Class<A> expectedType) {
+        return Optional.empty();
+    }
+
+    @Override
+    public ExternalAuthenticatedUser updateSessionRoles(List<UserRole> sessionRoles) {
+        return new ExternalAuthenticatedUser(
                 id,
                 user,
                 gitHubToken,
-                roles.stream().map(UserRole::toAuthority).collect(toList())
+                sessionRoles.stream().map(UserRole::toAuthority).collect(toList())
         );
     }
 
@@ -86,7 +86,7 @@ public final class ExternalOAuth2AuthenticatedUser extends DefaultOAuth2User imp
         }
         if (!super.equals(o)) return false;
 
-        final ExternalOAuth2AuthenticatedUser that = (ExternalOAuth2AuthenticatedUser) o;
+        final ExternalAuthenticatedUser that = (ExternalAuthenticatedUser) o;
 
         return user.equals(that.user);
     }

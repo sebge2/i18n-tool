@@ -1,6 +1,6 @@
 package be.sgerard.i18n.service.security.session;
 
-import be.sgerard.i18n.model.security.session.UserLiveSessionEntity;
+import be.sgerard.i18n.model.security.session.persistence.UserLiveSessionEntity;
 import reactor.core.publisher.Flux;
 
 /**
