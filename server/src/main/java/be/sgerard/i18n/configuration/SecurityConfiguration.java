@@ -1,7 +1,7 @@
 package be.sgerard.i18n.configuration;
 
 import be.sgerard.i18n.service.security.UserRole;
-import be.sgerard.i18n.service.security.auth.InternalUserDetailsService;
+import be.sgerard.i18n.service.security.auth.internal.InternalUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;

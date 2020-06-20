@@ -167,14 +167,14 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
     @Override
     @Transactional
     public Mono<WorkspaceEntity> finishReview(String workspaceId) throws ResourceNotFoundException, RepositoryException {
-        return findById(workspaceId)
+        return findByIdOrDie(workspaceId)
                 .flatMap(this::doFinishReview);
     }
 
     @Override
     @Transactional
     public Mono<WorkspaceEntity> delete(String workspaceId) throws RepositoryException {
-        return Mono.justOrEmpty(repository.findById(workspaceId))
+        return findByIdOrDie(workspaceId)
                 .flatMap(translationsStrategy::onDelete)
                 .map(workspace -> {
                     listener.onDelete(workspace);

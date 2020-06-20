@@ -5,6 +5,7 @@ import be.sgerard.i18n.model.repository.RepositoryType;
 import be.sgerard.i18n.model.repository.dto.GitHubRepositoryCreationDto;
 import be.sgerard.i18n.model.repository.dto.GitHubRepositoryPatchDto;
 import be.sgerard.i18n.model.repository.persistence.GitHubRepositoryEntity;
+import be.sgerard.i18n.model.security.auth.RepositoryTokenAuthentication;
 import be.sgerard.i18n.service.repository.RepositoryException;
 import be.sgerard.i18n.service.repository.git.BaseGitRepositoryHandler;
 import be.sgerard.i18n.service.repository.git.DefaultGitRepositoryApi;
@@ -62,15 +63,12 @@ public class GitHubRepositoryHandler extends BaseGitRepositoryHandler<GitHubRepo
     protected DefaultGitRepositoryApi.Configuration createConfiguration(GitHubRepositoryEntity repository) {
         return new DefaultGitRepositoryApi.Configuration(appProperties.getRepository().getDirectoryBaseDir(repository.getId()), URI.create(repository.getLocation()))
                 .setUsername(
-                        // todo
-                        null
-//                        authenticationManager
-//                                .getCurrentUserOrFail()
-//                                .getGitHubToken()
-//                                .or(repository::getAccessKey)
-//                                .orElse(null)
+                        authenticationManager
+                                .getCurrentUserOrDie()
+                                .getAuthentication(repository.getId(), RepositoryTokenAuthentication.class)
+                                .map(RepositoryTokenAuthentication::getToken)
+                                .orElse(null)
                 )
-                .setUsername(repository.getAccessKey().orElse(null))
                 .setPassword(null)
                 .setDefaultBranch(repository.getDefaultBranch());
     }
