@@ -6,8 +6,8 @@ import be.sgerard.i18n.service.BadRequestException;
 import be.sgerard.i18n.service.ResourceNotFoundException;
 import be.sgerard.i18n.service.UnauthorizedRequestException;
 import be.sgerard.i18n.service.ValidationException;
-import be.sgerard.i18n.service.repository.RepositoryException;
 import be.sgerard.i18n.service.error.ErrorMessagesProvider;
+import be.sgerard.i18n.service.repository.RepositoryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -112,12 +112,6 @@ public class ControllerAdvice {
 
         return new ResponseEntity<>(errorMessages, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-
-    // TODO
-//    @ExceptionHandler(value = LockTimeoutException.class)
-//    public Object handleLockTimeoutException(LockTimeoutException exception) {
-//        return new ResponseEntity<>(exception.getMessage(), HttpStatus.CONFLICT);
-//    }
 
     @ExceptionHandler(value = BadCredentialsException.class)
     public String handleBadCredentialsException() {

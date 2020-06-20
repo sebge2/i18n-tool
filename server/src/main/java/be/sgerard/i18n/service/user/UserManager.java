@@ -7,11 +7,12 @@ import be.sgerard.i18n.model.security.user.persistence.ExternalUserEntity;
 import be.sgerard.i18n.model.security.user.persistence.InternalUserEntity;
 import be.sgerard.i18n.model.security.user.persistence.UserEntity;
 import be.sgerard.i18n.service.ResourceNotFoundException;
-
-import java.util.Collection;
-import java.util.Optional;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
+ * Manager of {@link UserEntity users}.
+ *
  * @author Sebastien Gerard
  */
 public interface UserManager {
@@ -21,23 +22,47 @@ public interface UserManager {
      */
     String ADMIN_USER_NAME = "admin";
 
-    Optional<UserEntity> getUserById(String id);
+    /**
+     * Finds the {@link UserEntity user} having the specified id.
+     */
+    Mono<UserEntity> getUserById(String id);
 
-    default UserEntity getUserByIdOrFail(String id) {
+    /**
+     * Finds the {@link UserEntity user} having the specified {@link UserEntity#getId() id}.
+     */
+    default Mono<UserEntity> getUserByIdOrFail(String id) {
         return getUserById(id)
-                .orElseThrow(() -> ResourceNotFoundException.userNotFoundException(id));
+                .switchIfEmpty(Mono.error(ResourceNotFoundException.workspaceNotFoundException(id)));
     }
 
-    Collection<UserEntity> getAllUsers();
+    /**
+     * Returns all the {@link UserEntity users}.
+     */
+    Flux<UserEntity> getAllUsers();
 
-    Optional<InternalUserEntity> getUserByName(String username);
+    /**
+     * Finds the {@link UserEntity user} having the specified {@link UserEntity#getUsername() username}.
+     */
+    Mono<InternalUserEntity> getUserByName(String username);
 
-    InternalUserEntity createUser(UserCreationDto info);
+    /**
+     * Creates a new {@link InternalUserEntity internal user} based on the specified {@link UserCreationDto info}.
+     */
+    Mono<InternalUserEntity> createUser(UserCreationDto info);
 
-    ExternalUserEntity createOrUpdateUser(ExternalUserDto externalUser);
+    /**
+     * Creates a new, or updates the existing {@link ExternalUserEntity external user} based on the specified {@link ExternalUserDto info}.
+     */
+    Mono<ExternalUserEntity> createOrUpdateUser(ExternalUserDto externalUser);
 
-    UserEntity updateUser(String id, UserPatchDto userUpdate);
+    /**
+     * Updates the {@link InternalUserEntity internal user} based on the specified {@link UserPatchDto info}.
+     */
+    Mono<UserEntity> updateUser(String id, UserPatchDto patch);
 
-    void deleteUserById(String id);
+    /**
+     * Deletes the {@link UserEntity user} having the specified id.
+     */
+    Mono<UserEntity> deleteUserById(String id);
 
 }
