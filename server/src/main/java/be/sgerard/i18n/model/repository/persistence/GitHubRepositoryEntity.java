@@ -119,20 +119,4 @@ public class GitHubRepositoryEntity extends BaseGitRepositoryEntity {
     public GitHubRepositoryEntity setAllowedBranches(Pattern allowedBranches) {
         return (GitHubRepositoryEntity) super.setAllowedBranches(allowedBranches);
     }
-
-    @Override
-    public GitHubRepositoryEntity deepCopy() {
-        return fillEntity(new GitHubRepositoryEntity());
-    }
-
-    @Override
-    protected GitHubRepositoryEntity fillEntity(RepositoryEntity copy) {
-        ((GitHubRepositoryEntity) copy)
-                .setUsername(this.username)
-                .setRepository(this.repository)
-                .setAccessKey(this.accessKey)
-                .setWebHookSecret(this.webHookSecret);
-
-        return (GitHubRepositoryEntity) super.fillEntity(copy);
-    }
 }

@@ -15,19 +15,6 @@ public interface RepositoryApi extends AutoCloseable {
     boolean isClosed();
 
     /**
-     * {@link FunctionalInterface Functional interface} for consuming the API.
-     */
-    @FunctionalInterface
-    interface ApiConsumer<A extends RepositoryApi> {
-
-        /**
-         * Consumes the specified {@link RepositoryApi API}.
-         */
-        Mono<Void> consume(A api) throws RepositoryException;
-
-    }
-
-    /**
      * {@link FunctionalInterface Functional interface} for applying a function using the API.
      */
     @FunctionalInterface

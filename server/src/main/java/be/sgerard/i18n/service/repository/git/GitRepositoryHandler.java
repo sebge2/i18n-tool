@@ -5,6 +5,7 @@ import be.sgerard.i18n.model.repository.RepositoryType;
 import be.sgerard.i18n.model.repository.dto.GitRepositoryCreationDto;
 import be.sgerard.i18n.model.repository.dto.GitRepositoryPatchDto;
 import be.sgerard.i18n.model.repository.persistence.GitRepositoryEntity;
+import be.sgerard.i18n.model.security.auth.RepositoryCredentials;
 import be.sgerard.i18n.model.security.auth.RepositoryTokenCredentials;
 import be.sgerard.i18n.service.repository.RepositoryException;
 import be.sgerard.i18n.service.security.auth.AuthenticationManager;
@@ -48,6 +49,11 @@ public class GitRepositoryHandler extends BaseGitRepositoryHandler<GitRepository
         updateFromPatch(patchDto, repository);
 
         return Mono.just(repository);
+    }
+
+    @Override
+    public Mono<RepositoryCredentials> getDefaultCredentials(GitRepositoryEntity repository) throws RepositoryException {
+        return Mono.empty();
     }
 
     @Override

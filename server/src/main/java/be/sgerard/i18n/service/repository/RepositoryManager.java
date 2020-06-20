@@ -3,6 +3,7 @@ package be.sgerard.i18n.service.repository;
 import be.sgerard.i18n.model.repository.dto.RepositoryCreationDto;
 import be.sgerard.i18n.model.repository.dto.RepositoryPatchDto;
 import be.sgerard.i18n.model.repository.persistence.RepositoryEntity;
+import be.sgerard.i18n.model.security.auth.RepositoryCredentials;
 import be.sgerard.i18n.service.ResourceNotFoundException;
 import be.sgerard.i18n.service.ValidationException;
 import reactor.core.publisher.Flux;
@@ -62,15 +63,10 @@ public interface RepositoryManager {
     Mono<RepositoryEntity> delete(String id);
 
     /**
-     * Consumes the content of the specified repository.
+     * Returns the {@link RepositoryCredentials default credentials} to use to access the repository (if the authenticated user
+     * could not himself access it).
      */
-    default <A extends RepositoryApi> Mono<Void> consumeRepository(String repositoryId,
-                                                                   Class<A> apiType,
-                                                                   RepositoryApi.ApiConsumer<A> apiConsumer) throws RepositoryException {
-        return this
-                .applyOnRepository(repositoryId, apiType, apiConsumer::consume)
-                .then();
-    }
+    Mono<RepositoryCredentials> getDefaultCredentials(String repositoryId);
 
     /**
      * Applies a function over the content of the specified repository.

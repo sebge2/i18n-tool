@@ -82,15 +82,4 @@ public abstract class BaseGitRepositoryEntity extends RepositoryEntity {
         this.allowedBranches = allowedBranches;
         return this;
     }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    protected BaseGitRepositoryEntity fillEntity(RepositoryEntity copy) {
-        ((BaseGitRepositoryEntity) copy)
-                .setDefaultBranch(this.defaultBranch)
-                .setLocation(this.location)
-                .setAllowedBranches(this.allowedBranches);
-
-        return (BaseGitRepositoryEntity) super.fillEntity(copy);
-    }
 }

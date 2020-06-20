@@ -4,6 +4,7 @@ import be.sgerard.i18n.model.repository.RepositoryType;
 import be.sgerard.i18n.model.repository.dto.RepositoryCreationDto;
 import be.sgerard.i18n.model.repository.dto.RepositoryPatchDto;
 import be.sgerard.i18n.model.repository.persistence.RepositoryEntity;
+import be.sgerard.i18n.model.security.auth.RepositoryCredentials;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
@@ -74,5 +75,14 @@ public class CompositeRepositoryHandler implements RepositoryHandler<RepositoryE
                 .findFirst()
                 .orElseThrow(() -> new UnsupportedOperationException("Unsupported repository [" + repository.getType() + "]."))
                 .createAPI(repository);
+    }
+
+    @Override
+    public Mono<RepositoryCredentials> getDefaultCredentials(RepositoryEntity repository) throws RepositoryException {
+        return handlers.stream()
+                .filter(handler -> handler.support(repository.getType()))
+                .findFirst()
+                .orElseThrow(() -> new UnsupportedOperationException("Unsupported repository [" + repository.getType() + "]."))
+                .getDefaultCredentials(repository);
     }
 }

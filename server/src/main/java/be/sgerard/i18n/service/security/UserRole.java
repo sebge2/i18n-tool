@@ -18,6 +18,13 @@ public enum UserRole {
     MEMBER_OF_ORGANIZATION(false),
 
     /**
+     * The user is allowed to access and modify the repository.
+     * <p>
+     * This role will be automatically assigned by the authentication mechanism.
+     */
+    MEMBER_OF_REPOSITORY(false),
+
+    /**
      * Administrator role with all privileges.
      */
     ADMIN(true);

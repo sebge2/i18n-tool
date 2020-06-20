@@ -34,7 +34,8 @@ public abstract class RepositoryEntity {
     @Column(nullable = false)
     private RepositoryStatus status = RepositoryStatus.NOT_INITIALIZED;
 
-    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, mappedBy = "repository", fetch = FetchType.EAGER) // TODO lazy
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, mappedBy = "repository", fetch = FetchType.EAGER)
+    // TODO lazy
     private final Collection<WorkspaceEntity> workspaces = new HashSet<>();
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "repository")
@@ -138,21 +139,4 @@ public abstract class RepositoryEntity {
         return this;
     }
 
-    /**
-     * Creates a deep copy of this entity.
-     */
-    public abstract RepositoryEntity deepCopy();
-
-    /**
-     * Fills the specified entity with the state of this one.
-     */
-    protected <R extends RepositoryEntity> R fillEntity(R copy) {
-        ((RepositoryEntity) copy).id = this.id;
-        ((RepositoryEntity) copy).name = this.name;
-        ((RepositoryEntity) copy).status = this.status;
-        ((RepositoryEntity) copy).translationsConfiguration = this.translationsConfiguration.deepCopy(copy);
-        ((RepositoryEntity) copy).version = this.version;
-
-        return copy;
-    }
 }

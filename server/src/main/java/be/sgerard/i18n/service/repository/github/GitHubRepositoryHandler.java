@@ -5,16 +5,20 @@ import be.sgerard.i18n.model.repository.RepositoryType;
 import be.sgerard.i18n.model.repository.dto.GitHubRepositoryCreationDto;
 import be.sgerard.i18n.model.repository.dto.GitHubRepositoryPatchDto;
 import be.sgerard.i18n.model.repository.persistence.GitHubRepositoryEntity;
+import be.sgerard.i18n.model.security.auth.RepositoryCredentials;
 import be.sgerard.i18n.model.security.auth.RepositoryTokenCredentials;
 import be.sgerard.i18n.service.repository.RepositoryException;
 import be.sgerard.i18n.service.repository.git.BaseGitRepositoryHandler;
 import be.sgerard.i18n.service.repository.git.DefaultGitRepositoryApi;
 import be.sgerard.i18n.service.repository.git.GitRepositoryApiProvider;
+import be.sgerard.i18n.service.security.UserRole;
 import be.sgerard.i18n.service.security.auth.AuthenticationManager;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 import java.net.URI;
+
+import static java.util.Collections.singletonList;
 
 /**
  * {@link BaseGitRepositoryHandler Repository handler} for GitHub.
@@ -57,6 +61,13 @@ public class GitHubRepositoryHandler extends BaseGitRepositoryHandler<GitHubRepo
         repository.setWebHookSecret(patchDto.getWebHookSecret().or(repository::getWebHookSecret).orElse(null));
 
         return Mono.just(repository);
+    }
+
+    @Override
+    public Mono<RepositoryCredentials> getDefaultCredentials(GitHubRepositoryEntity repository) throws RepositoryException {
+        return Mono
+                .justOrEmpty(repository.getAccessKey())
+                .map(token -> new RepositoryTokenCredentials(repository.getId(), singletonList(UserRole.MEMBER_OF_REPOSITORY), token));
     }
 
     @Override

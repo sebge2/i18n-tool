@@ -28,14 +28,4 @@ public class GitRepositoryEntity extends BaseGitRepositoryEntity {
     public RepositoryType getType() {
         return RepositoryType.GIT;
     }
-
-    @Override
-    public GitRepositoryEntity deepCopy() {
-        return fillEntity(new GitRepositoryEntity());
-    }
-
-    @Override
-    protected GitRepositoryEntity fillEntity(RepositoryEntity copy) {
-        return (GitRepositoryEntity) super.fillEntity(copy);
-    }
 }
