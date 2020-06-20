@@ -5,7 +5,7 @@ import be.sgerard.i18n.model.repository.RepositoryType;
 import be.sgerard.i18n.model.repository.dto.GitHubRepositoryCreationDto;
 import be.sgerard.i18n.model.repository.dto.GitHubRepositoryPatchDto;
 import be.sgerard.i18n.model.repository.persistence.GitHubRepositoryEntity;
-import be.sgerard.i18n.model.security.auth.RepositoryTokenAuthentication;
+import be.sgerard.i18n.model.security.auth.RepositoryTokenCredentials;
 import be.sgerard.i18n.service.repository.RepositoryException;
 import be.sgerard.i18n.service.repository.git.BaseGitRepositoryHandler;
 import be.sgerard.i18n.service.repository.git.DefaultGitRepositoryApi;
@@ -65,8 +65,8 @@ public class GitHubRepositoryHandler extends BaseGitRepositoryHandler<GitHubRepo
                 .setUsername(
                         authenticationManager
                                 .getCurrentUserOrDie()
-                                .getAuthentication(repository.getId(), RepositoryTokenAuthentication.class)
-                                .map(RepositoryTokenAuthentication::getToken)
+                                .getCredentials(repository.getId(), RepositoryTokenCredentials.class)
+                                .map(RepositoryTokenCredentials::getToken)
                                 .orElse(null)
                 )
                 .setPassword(null)

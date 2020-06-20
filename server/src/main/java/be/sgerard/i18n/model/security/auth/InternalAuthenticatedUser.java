@@ -6,34 +6,34 @@ import org.springframework.security.core.CredentialsContainer;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
-import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.*;
 
 /**
+ * {@link AuthenticatedUser Authenticated internal user}.
+ *
  * @author Sebastien Gerard
  */
 public class InternalAuthenticatedUser implements AuthenticatedUser, UserDetails, CredentialsContainer {
 
     private final String id;
     private final UserDto user;
-    private final String gitHubToken;
-    private final Collection<GrantedAuthority> authorities;
+    private final Set<GrantedAuthority> authorities;
+    private final Map<String, RepositoryCredentials> repositoryAuthentications;
+
     private String password;
 
     public InternalAuthenticatedUser(String id,
                                      UserDto user,
                                      String password,
-                                     String gitHubToken,
-                                     Collection<GrantedAuthority> authorities) {
+                                     Collection<GrantedAuthority> authorities,
+                                     Collection<RepositoryCredentials> repositoryCredentials) {
         this.id = id;
         this.user = user;
         this.password = password;
-        this.gitHubToken = gitHubToken;
-        this.authorities = authorities;
+        this.authorities = new HashSet<>(authorities);
+        this.repositoryAuthentications = repositoryCredentials.stream().collect(toMap(RepositoryCredentials::getRepository, auth -> auth));
     }
 
     @Override
@@ -52,11 +52,6 @@ public class InternalAuthenticatedUser implements AuthenticatedUser, UserDetails
     }
 
     @Override
-    public Optional<String> getGitHubToken() {
-        return Optional.ofNullable(gitHubToken);
-    }
-
-    @Override
     public Collection<UserRole> getSessionRoles() {
         return getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
@@ -67,13 +62,13 @@ public class InternalAuthenticatedUser implements AuthenticatedUser, UserDetails
     }
 
     @Override
-    public InternalAuthenticatedUser updateSessionRoles(List<UserRole> roles) {
+    public InternalAuthenticatedUser updateSessionRoles(List<UserRole> sessionRoles) {
         return new InternalAuthenticatedUser(
                 id,
                 user,
                 password,
-                gitHubToken,
-                roles.stream().map(UserRole::toAuthority).collect(toList())
+                sessionRoles.stream().map(UserRole::toAuthority).collect(toSet()),
+                repositoryAuthentications.values()
         );
     }
 
@@ -85,6 +80,12 @@ public class InternalAuthenticatedUser implements AuthenticatedUser, UserDetails
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return authorities;
+    }
+
+    @Override
+    public <A extends RepositoryCredentials> Optional<A> getCredentials(String repository, Class<A> expectedType) {
+        return Optional.ofNullable(repositoryAuthentications.get(repository))
+                .map(expectedType::cast);
     }
 
     @Override

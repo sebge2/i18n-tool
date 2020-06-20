@@ -3,7 +3,7 @@ package be.sgerard.i18n.service.client;
 import be.sgerard.i18n.model.github.GitHubPullRequestDto;
 import be.sgerard.i18n.model.github.GitHubPullRequestStatus;
 import be.sgerard.i18n.model.repository.persistence.GitHubRepositoryEntity;
-import be.sgerard.i18n.model.security.auth.RepositoryTokenAuthentication;
+import be.sgerard.i18n.model.security.auth.RepositoryTokenCredentials;
 import be.sgerard.i18n.service.repository.RepositoryManager;
 import be.sgerard.i18n.service.security.auth.AuthenticationManager;
 import be.sgerard.i18n.service.workspace.WorkspaceException;
@@ -105,8 +105,8 @@ public class GitHubClientImpl implements GitHubClient {
         return new RtGithub(
                 authenticationManager
                         .getCurrentUserOrDie()
-                        .getAuthentication(repository.getId(), RepositoryTokenAuthentication.class)
-                        .map(RepositoryTokenAuthentication::getToken)
+                        .getCredentials(repository.getId(), RepositoryTokenCredentials.class)
+                        .map(RepositoryTokenCredentials::getToken)
                         .orElse(null)
         );
     }

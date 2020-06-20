@@ -5,7 +5,7 @@ import be.sgerard.i18n.model.repository.RepositoryType;
 import be.sgerard.i18n.model.repository.dto.GitRepositoryCreationDto;
 import be.sgerard.i18n.model.repository.dto.GitRepositoryPatchDto;
 import be.sgerard.i18n.model.repository.persistence.GitRepositoryEntity;
-import be.sgerard.i18n.model.security.auth.RepositoryTokenAuthentication;
+import be.sgerard.i18n.model.security.auth.RepositoryTokenCredentials;
 import be.sgerard.i18n.service.repository.RepositoryException;
 import be.sgerard.i18n.service.security.auth.AuthenticationManager;
 import org.springframework.stereotype.Component;
@@ -56,8 +56,8 @@ public class GitRepositoryHandler extends BaseGitRepositoryHandler<GitRepository
                 .setUsername(
                         authenticationManager
                                 .getCurrentUserOrDie()
-                                .getAuthentication(repository.getId(), RepositoryTokenAuthentication.class)
-                                .map(RepositoryTokenAuthentication::getToken)
+                                .getCredentials(repository.getId(), RepositoryTokenCredentials.class)
+                                .map(RepositoryTokenCredentials::getToken)
                                 .orElse(null)
                 )
                 .setPassword(null)
