@@ -5,6 +5,7 @@ import be.sgerard.i18n.model.repository.RepositoryType;
 import be.sgerard.i18n.model.repository.dto.GitRepositoryCreationDto;
 import be.sgerard.i18n.model.repository.dto.GitRepositoryPatchDto;
 import be.sgerard.i18n.model.repository.persistence.GitRepositoryEntity;
+import be.sgerard.i18n.model.security.auth.RepositoryTokenAuthentication;
 import be.sgerard.i18n.service.repository.RepositoryException;
 import be.sgerard.i18n.service.security.auth.AuthenticationManager;
 import org.springframework.stereotype.Component;
@@ -54,8 +55,9 @@ public class GitRepositoryHandler extends BaseGitRepositoryHandler<GitRepository
         return new DefaultGitRepositoryApi.Configuration(appProperties.getRepository().getDirectoryBaseDir(repository.getId()), URI.create(repository.getLocation()))
                 .setUsername(
                         authenticationManager
-                                .getCurrentUserOrFail()
-                                .getGitHubToken()
+                                .getCurrentUserOrDie()
+                                .getAuthentication(repository.getId(), RepositoryTokenAuthentication.class)
+                                .map(RepositoryTokenAuthentication::getToken)
                                 .orElse(null)
                 )
                 .setPassword(null)

@@ -3,6 +3,7 @@ package be.sgerard.i18n.service.client;
 import be.sgerard.i18n.model.github.GitHubPullRequestDto;
 import be.sgerard.i18n.model.github.GitHubPullRequestStatus;
 import be.sgerard.i18n.model.repository.persistence.GitHubRepositoryEntity;
+import be.sgerard.i18n.model.security.auth.RepositoryTokenAuthentication;
 import be.sgerard.i18n.service.repository.RepositoryManager;
 import be.sgerard.i18n.service.security.auth.AuthenticationManager;
 import be.sgerard.i18n.service.workspace.WorkspaceException;
@@ -93,16 +94,21 @@ public class GitHubClientImpl implements GitHubClient {
     /**
      * Returns the {@link Repo GitHub repository} to use for the API.
      */
-    private Repo getGitHubRepo(GitHubRepositoryEntity gitHubRepository) {
-        return getGitHubApi().repos().get(new Coordinates.Simple(gitHubRepository.getName()));
+    private Repo getGitHubRepo(GitHubRepositoryEntity repository) {
+        return getGitHubApi(repository).repos().get(new Coordinates.Simple(repository.getName()));
     }
 
     /**
      * Initializes the {@link Github GitHub API}.
      */
-    private Github getGitHubApi() {
-        // TODO
-        return new RtGithub(/*authenticationManager.getCurrentUserOrFail().getGitHubTokenOrFail()*/);
+    private Github getGitHubApi(GitHubRepositoryEntity repository) {
+        return new RtGithub(
+                authenticationManager
+                        .getCurrentUserOrDie()
+                        .getAuthentication(repository.getId(), RepositoryTokenAuthentication.class)
+                        .map(RepositoryTokenAuthentication::getToken)
+                        .orElse(null)
+        );
     }
 
     /**
