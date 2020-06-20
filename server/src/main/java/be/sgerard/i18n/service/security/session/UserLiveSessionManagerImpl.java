@@ -43,7 +43,7 @@ public class UserLiveSessionManagerImpl implements UserLiveSessionManager {
         this.userManager = userManager;
         this.repository = repository;
         this.eventService = eventService;
-        this.eventService.addListener(new UpdatedAuthenticationUserListener());
+//        this.eventService.addListener(new UpdatedAuthenticationUserListener());
     }
 
     @Override

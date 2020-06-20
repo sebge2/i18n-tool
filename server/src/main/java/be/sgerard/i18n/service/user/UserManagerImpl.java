@@ -85,7 +85,8 @@ public class UserManagerImpl implements UserManager {
 
         internalUserRepository.save(userEntity);
 
-        eventService.broadcastInternally(EventType.UPDATED_USER, UserDto.builder(userEntity).build());
+        // TODO
+//        eventService.broadcastInternally(EventType.UPDATED_USER, UserDto.builder(userEntity).build());
         eventService.sendEventToUsers(UserRole.ADMIN, EventType.UPDATED_USER, UserDto.builder(userEntity).build());
 
         return userEntity;
@@ -105,7 +106,7 @@ public class UserManagerImpl implements UserManager {
 
         final UserDto updatedUserDto = UserDto.builder(userEntity).build();
 
-        eventService.broadcastInternally(EventType.UPDATED_USER, updatedUserDto);
+//        eventService.broadcastInternally(EventType.UPDATED_USER, updatedUserDto);
         eventService.sendEventToUsers(UserRole.ADMIN, EventType.UPDATED_USER, updatedUserDto);
         eventService.sendEventToUser(updatedUserDto, EventType.UPDATED_CURRENT_USER, updatedUserDto);
 
@@ -134,7 +135,7 @@ public class UserManagerImpl implements UserManager {
 
         final UserDto updatedUserDto = UserDto.builder(userEntity).build();
 
-        eventService.broadcastInternally(EventType.UPDATED_USER, updatedUserDto);
+//        eventService.broadcastInternally(EventType.UPDATED_USER, updatedUserDto);
         eventService.sendEventToUsers(UserRole.ADMIN, EventType.UPDATED_USER, updatedUserDto);
         eventService.sendEventToUser(updatedUserDto, EventType.UPDATED_CURRENT_USER, updatedUserDto);
 
@@ -154,7 +155,7 @@ public class UserManagerImpl implements UserManager {
 
                     // TODO delete live sessions + translation modification author
                     userRepository.delete(userEntity);
-                    eventService.broadcastInternally(EventType.DELETED_USER, UserDto.builder(userEntity).build());
+//                    eventService.broadcastInternally(EventType.DELETED_USER, UserDto.builder(userEntity).build());
                     eventService.sendEventToUsers(UserRole.ADMIN, EventType.DELETED_USER, UserDto.builder(userEntity).build());
                 }
         );

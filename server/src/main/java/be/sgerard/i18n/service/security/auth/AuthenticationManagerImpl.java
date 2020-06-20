@@ -50,8 +50,9 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
         this.sessionRepository = (FindByIndexNameSessionRepository<Session>) sessionRepository;
         this.eventService = eventService;
 
-        this.eventService.addListener(new UserUpdateEventListener());
-        this.eventService.addListener(new UserDeletedEventListener());
+        // TODO
+//        this.eventService.addListener(new UserUpdateEventListener());
+//        this.eventService.addListener(new UserDeletedEventListener());
     }
 
     @Override
@@ -137,7 +138,7 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
 
             sessionRepository.save(session);
 
-            eventService.broadcastInternally(UPDATED_AUTHENTICATED_USER, updatedAuthenticatedUserDto);
+//            eventService.broadcastInternally(UPDATED_AUTHENTICATED_USER, updatedAuthenticatedUserDto);
             eventService.sendEventToUsers(UserRole.ADMIN, UPDATED_AUTHENTICATED_USER, updatedAuthenticatedUserDto);
         }
 
