@@ -2,6 +2,7 @@ package be.sgerard.i18n.service.security.auth.external;
 
 import be.sgerard.i18n.model.security.auth.external.OAuthExternalUser;
 import be.sgerard.i18n.model.security.user.dto.ExternalUserDto;
+import be.sgerard.i18n.model.security.user.persistence.ExternalAuthClient;
 import be.sgerard.i18n.service.security.UserRole;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
@@ -10,12 +11,12 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * {@link OAuthExternalUserMapper Mapper} for user coming from Google.
+ * {@link OAuthUserMapper Mapper} for user coming from Google.
  *
  * @author Sebastien Gerard
  */
 @Component
-public class GoogleExternalUser implements OAuthExternalUserMapper {
+public class GoogleUserMapper implements OAuthUserMapper {
 
     /**
      * OAuth attribute containing the email.
@@ -32,19 +33,12 @@ public class GoogleExternalUser implements OAuthExternalUserMapper {
      */
     public static final String EXTERNAL_ID = "sub";
 
-    /**
-     * Name of the Google authentication system.
-     *
-     * @see OAuthExternalUser#getOauthClient()
-     */
-    public static final String GOOGLE = "Google";
-
-    public GoogleExternalUser() {
+    public GoogleUserMapper() {
     }
 
     @Override
     public boolean support(OAuthExternalUser externalUser) {
-        return Objects.equals(externalUser.getOauthClient(), GOOGLE);
+        return externalUser.getOauthClient() == ExternalAuthClient.GOOGLE;
     }
 
     @Override
@@ -52,6 +46,7 @@ public class GoogleExternalUser implements OAuthExternalUserMapper {
         return Mono.just(
                 ExternalUserDto.builder()
                         .externalId(getStringAttribute(externalUser.getAttributes(), EXTERNAL_ID))
+                        .authClient(ExternalAuthClient.GOOGLE)
                         .username(getStringAttribute(externalUser.getAttributes(), EMAIL))
                         .email(getStringAttribute(externalUser.getAttributes(), EMAIL))
                         .avatarUrl(getStringAttribute(externalUser.getAttributes(), AVATAR_URL))

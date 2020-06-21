@@ -1,14 +1,17 @@
 package be.sgerard.i18n.service.security.auth;
 
+import be.sgerard.i18n.model.repository.persistence.RepositoryEntity;
 import be.sgerard.i18n.model.security.auth.AuthenticatedUser;
 import be.sgerard.i18n.model.security.auth.ExternalAuthenticatedUser;
+import be.sgerard.i18n.model.security.auth.RepositoryCredentials;
 import be.sgerard.i18n.model.security.auth.external.OAuthExternalUser;
 import be.sgerard.i18n.model.security.auth.internal.InternalAuthenticatedUser;
 import be.sgerard.i18n.model.security.user.dto.UserDto;
+import be.sgerard.i18n.model.security.user.persistence.ExternalUserEntity;
 import be.sgerard.i18n.model.security.user.persistence.UserEntity;
 import be.sgerard.i18n.service.repository.RepositoryManager;
-import be.sgerard.i18n.service.security.UserRole;
-import be.sgerard.i18n.service.security.auth.external.OAuthExternalUserHandler;
+import be.sgerard.i18n.service.security.auth.external.OAuthUserMapper;
+import be.sgerard.i18n.service.security.auth.external.OAuthUserRepositoryCredentialsHandler;
 import be.sgerard.i18n.service.user.UserManager;
 import be.sgerard.i18n.service.user.listener.UserListener;
 import org.springframework.context.annotation.Lazy;
@@ -27,7 +30,6 @@ import java.util.stream.Stream;
 
 import static be.sgerard.i18n.service.security.auth.AuthenticationUtils.getAuthenticatedUser;
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
 import static org.springframework.security.web.server.context.WebSessionServerSecurityContextRepository.DEFAULT_SPRING_SECURITY_CONTEXT_ATTR_NAME;
 
 /**
@@ -41,25 +43,44 @@ public class AuthenticationManagerImpl implements AuthenticationManager, UserLis
     private final UserManager userManager;
     private final RepositoryManager repositoryManager;
     private final FindByIndexNameSessionRepository<Session> sessionRepository;
-    private final OAuthExternalUserHandler externalUserHandler;
-//    private final AuthenticatedUserListener listener;
+    private final OAuthUserMapper externalUserHandler;
+    private final OAuthUserRepositoryCredentialsHandler credentialsHandler;
 
     @SuppressWarnings("unchecked")
     @Lazy
     public AuthenticationManagerImpl(UserManager userManager,
                                      RepositoryManager repositoryManager,
                                      FindByIndexNameSessionRepository<?> sessionRepository,
-                                     OAuthExternalUserHandler externalUserHandler) {
+                                     OAuthUserMapper externalUserHandler,
+                                     OAuthUserRepositoryCredentialsHandler credentialsHandler) {
         this.userManager = userManager;
         this.repositoryManager = repositoryManager;
         this.sessionRepository = (FindByIndexNameSessionRepository<Session>) sessionRepository;
         this.externalUserHandler = externalUserHandler;
+        this.credentialsHandler = credentialsHandler;
     }
 
     @Override
     @Transactional(readOnly = true)
     public Mono<ExternalAuthenticatedUser> createAuthentication(OAuthExternalUser externalUser) {
-        return externalUserHandler.createAuthentication(externalUser);
+        return externalUserHandler
+                .map(externalUser)
+                .flatMap(userManager::createOrUpdateUser)
+                .flatMap(externalUserEntity ->
+                        repositoryManager
+                                .findAll()
+                                .flatMap(repository -> loadCredentials(externalUser, repository))
+                                .collectList()
+                                .map(credentials ->
+                                        new ExternalAuthenticatedUser(
+                                                UUID.randomUUID().toString(),
+                                                UserDto.builder(externalUserEntity).build(),
+                                                externalUserEntity.getRoles(),
+                                                credentials
+                                        )
+                                )
+
+                );
     }
 
     @Override
@@ -77,7 +98,7 @@ public class AuthenticationManagerImpl implements AuthenticationManager, UserLis
                                                 UUID.randomUUID().toString(),
                                                 UserDto.builder(user).build(),
                                                 user.getPassword(),
-                                                user.getRoles().stream().map(UserRole::toAuthority).collect(toSet()),
+                                                user.getRoles(),
                                                 repositories
                                         )
                                 )
@@ -109,6 +130,18 @@ public class AuthenticationManagerImpl implements AuthenticationManager, UserLis
                 .forEach(session -> sessionRepository.deleteById(session.getId()));
 
         return Mono.empty();
+    }
+
+    /**
+     * Loads the {@link RepositoryCredentials credentails} to use for the specified {@link ExternalUserEntity external user}
+     * and the specified {@link RepositoryEntity repository}.
+     */
+    private Mono<RepositoryCredentials> loadCredentials(OAuthExternalUser externalUser, RepositoryEntity repository) {
+        return credentialsHandler.loadCredentials(
+                externalUser,
+                repository,
+                Mono.defer(() -> repositoryManager.getDefaultCredentials(repository.getId()))
+        );
     }
 
 

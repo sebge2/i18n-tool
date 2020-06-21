@@ -1,5 +1,6 @@
 package be.sgerard.i18n.model.security.user.dto;
 
+import be.sgerard.i18n.model.security.user.persistence.ExternalAuthClient;
 import be.sgerard.i18n.service.security.UserRole;
 
 import java.util.Collection;
@@ -21,6 +22,7 @@ public class ExternalUserDto {
     }
 
     private final String externalId;
+    private final ExternalAuthClient authClient;
     private final String username;
     private final String email;
     private final String avatarUrl;
@@ -28,6 +30,7 @@ public class ExternalUserDto {
 
     private ExternalUserDto(Builder builder) {
         externalId = builder.externalId;
+        authClient = builder.authClient;
         username = builder.username;
         email = builder.email;
         avatarUrl = builder.avatarUrl;
@@ -39,6 +42,13 @@ public class ExternalUserDto {
      */
     public String getExternalId() {
         return externalId;
+    }
+
+    /**
+     * Returns the {@link ExternalAuthClient client} used to authenticate the user.
+     */
+    public ExternalAuthClient getAuthClient() {
+        return authClient;
     }
 
     /**
@@ -80,6 +90,7 @@ public class ExternalUserDto {
     public static final class Builder {
 
         private String externalId;
+        private ExternalAuthClient authClient;
         private String username;
         private String email;
         private String avatarUrl;
@@ -90,6 +101,11 @@ public class ExternalUserDto {
 
         public Builder externalId(String externalId) {
             this.externalId = externalId;
+            return this;
+        }
+
+        public Builder authClient(ExternalAuthClient authClient) {
+            this.authClient = authClient;
             return this;
         }
 

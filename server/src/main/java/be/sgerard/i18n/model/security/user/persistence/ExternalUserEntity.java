@@ -1,9 +1,6 @@
 package be.sgerard.i18n.model.security.user.persistence;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
@@ -22,14 +19,20 @@ public class ExternalUserEntity extends UserEntity {
     @Column(nullable = false)
     private String externalId;
 
+    @NotNull
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private ExternalAuthClient externalAuthClient;
+
     ExternalUserEntity() {
     }
 
-    public ExternalUserEntity(String externalId) {
+    public ExternalUserEntity(String externalId, ExternalAuthClient externalAuthClient) {
         setId(UUID.randomUUID().toString());
         setPreferences(new UserPreferencesEntity(this));
 
         this.externalId = externalId;
+        this.externalAuthClient = externalAuthClient;
     }
 
     public String getExternalId() {
@@ -38,5 +41,14 @@ public class ExternalUserEntity extends UserEntity {
 
     public void setExternalId(String externalId) {
         this.externalId = externalId;
+    }
+
+    public ExternalAuthClient getExternalAuthClient() {
+        return externalAuthClient;
+    }
+
+    public ExternalUserEntity setExternalAuthClient(ExternalAuthClient externalAuthClient) {
+        this.externalAuthClient = externalAuthClient;
+        return this;
     }
 }

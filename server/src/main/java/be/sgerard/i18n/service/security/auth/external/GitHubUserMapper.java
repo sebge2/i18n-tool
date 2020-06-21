@@ -2,6 +2,7 @@ package be.sgerard.i18n.service.security.auth.external;
 
 import be.sgerard.i18n.model.security.auth.external.OAuthExternalUser;
 import be.sgerard.i18n.model.security.user.dto.ExternalUserDto;
+import be.sgerard.i18n.model.security.user.persistence.ExternalAuthClient;
 import be.sgerard.i18n.service.security.UserRole;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
@@ -11,12 +12,12 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * {@link OAuthExternalUserMapper Mapper} for user coming from GitHub.
+ * {@link OAuthUserMapper Mapper} for user coming from GitHub.
  *
  * @author Sebastien Gerard
  */
 @Component
-public class GitHubExternalUserMapper implements OAuthExternalUserMapper {
+public class GitHubUserMapper implements OAuthUserMapper {
 
     /**
      * OAuth attribute containing the username.
@@ -38,19 +39,12 @@ public class GitHubExternalUserMapper implements OAuthExternalUserMapper {
      */
     public static final String EXTERNAL_ID = "node_id";
 
-    /**
-     * Name of the GitHub authentication system.
-     *
-     * @see OAuthExternalUser#getOauthClient()
-     */
-    public static final String GIT_HUB = "GitHub";
-
-    public GitHubExternalUserMapper() {
+    public GitHubUserMapper() {
     }
 
     @Override
     public boolean support(OAuthExternalUser externalUser) {
-        return Objects.equals(externalUser.getOauthClient(), GIT_HUB);
+        return externalUser.getOauthClient() == ExternalAuthClient.GITHUB;
     }
 
     @Override
@@ -59,6 +53,7 @@ public class GitHubExternalUserMapper implements OAuthExternalUserMapper {
         return Mono.just(
                 ExternalUserDto.builder()
                         .externalId(getStringAttribute(externalUser.getAttributes(), EXTERNAL_ID))
+                        .authClient(ExternalAuthClient.GITHUB)
                         .username(getStringAttribute(externalUser.getAttributes(), USERNAME))
                         .email(getStringAttribute(externalUser.getAttributes(), EMAIL))
                         .avatarUrl(getStringAttribute(externalUser.getAttributes(), AVATAR_URL))

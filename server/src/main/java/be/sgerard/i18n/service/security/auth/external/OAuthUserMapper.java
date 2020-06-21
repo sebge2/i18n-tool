@@ -9,7 +9,7 @@ import reactor.core.publisher.Mono;
  *
  * @author Sebastien Gerard
  */
-public interface OAuthExternalUserMapper {
+public interface OAuthUserMapper {
 
     /**
      * Returns whether the specified {@link OAuthExternalUser user} is supported.

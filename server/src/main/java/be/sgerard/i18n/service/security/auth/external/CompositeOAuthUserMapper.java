@@ -9,17 +9,17 @@ import reactor.core.publisher.Mono;
 import java.util.List;
 
 /**
- * Composite {@link OAuthExternalUserMapper OAuth external user handler}.
+ * Composite {@link OAuthUserMapper OAuth external user handler}.
  *
  * @author Sebastien Gerard
  */
 @Primary
 @Component
-public class CompositeOAuthExternalUserMapper implements OAuthExternalUserMapper {
+public class CompositeOAuthUserMapper implements OAuthUserMapper {
 
-    private final List<OAuthExternalUserMapper> handlers;
+    private final List<OAuthUserMapper> handlers;
 
-    public CompositeOAuthExternalUserMapper(List<OAuthExternalUserMapper> handlers) {
+    public CompositeOAuthUserMapper(List<OAuthUserMapper> handlers) {
         this.handlers = handlers;
     }
 

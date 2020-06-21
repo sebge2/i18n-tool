@@ -104,7 +104,7 @@ public class UserManagerImpl implements UserManager {
     public Mono<ExternalUserEntity> createOrUpdateUser(ExternalUserDto externalUserDto) {
         return Mono
                 .justOrEmpty(externalUserRepository.findByExternalId(externalUserDto.getExternalId()))
-                .switchIfEmpty(Mono.just(new ExternalUserEntity(externalUserDto.getExternalId())))
+                .switchIfEmpty(Mono.just(new ExternalUserEntity(externalUserDto.getExternalId(), externalUserDto.getAuthClient())))
                 .flatMap(externalUser ->
                         listener
                                 .beforePersist(externalUserDto)
