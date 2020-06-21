@@ -4,6 +4,7 @@ import be.sgerard.i18n.model.security.user.dto.UserDto;
 import be.sgerard.i18n.service.security.UserRole;
 import org.springframework.security.core.AuthenticatedPrincipal;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -16,6 +17,11 @@ import java.util.Optional;
  * @author Sebastien Gerard
  */
 public interface AuthenticatedUser extends AuthenticatedPrincipal, Serializable {
+
+    /**
+     * {@link GrantedAuthority Authority} that every user has.
+     */
+    GrantedAuthority ROLE_USER = new SimpleGrantedAuthority("ROLE_USER");
 
     /**
      * Returns the unique id of the authenticated user, different from the user's id. Only related to the current

@@ -118,6 +118,7 @@ public class UserManagerImpl implements UserManager {
                     externalUser.setUsername(externalUserDto.getUsername());
                     externalUser.setAvatarUrl(externalUserDto.getAvatarUrl());
                     externalUser.setEmail(externalUserDto.getEmail());
+                    externalUser.setRoles(externalUserDto.getRoles());
 
                     return externalUserRepository.save(externalUser);
                 })

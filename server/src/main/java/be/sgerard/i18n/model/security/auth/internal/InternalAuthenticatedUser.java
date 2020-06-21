@@ -9,8 +9,10 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.*;
+import java.util.stream.Stream;
 
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Collectors.toSet;
 
 /**
  * {@link AuthenticatedUser Authenticated internal user}.
@@ -21,21 +23,21 @@ public class InternalAuthenticatedUser implements AuthenticatedUser, UserDetails
 
     private final String id;
     private final UserDto user;
-    private final Set<GrantedAuthority> authorities;
-    private final Map<String, RepositoryCredentials> repositoryAuthentications;
+    private final Set<UserRole> roles;
+    private final Map<String, RepositoryCredentials> repositoryCredentials;
 
     private String password;
 
     public InternalAuthenticatedUser(String id,
                                      UserDto user,
                                      String password,
-                                     Collection<GrantedAuthority> authorities,
+                                     Collection<UserRole> roles,
                                      Collection<RepositoryCredentials> repositoryCredentials) {
         this.id = id;
         this.user = user;
         this.password = password;
-        this.authorities = new HashSet<>(authorities);
-        this.repositoryAuthentications = repositoryCredentials.stream().collect(toMap(RepositoryCredentials::getRepository, auth -> auth));
+        this.roles = Set.copyOf(roles);
+        this.repositoryCredentials = repositoryCredentials.stream().collect(toMap(RepositoryCredentials::getRepository, auth -> auth));
     }
 
     @Override
@@ -55,12 +57,7 @@ public class InternalAuthenticatedUser implements AuthenticatedUser, UserDetails
 
     @Override
     public Collection<UserRole> getSessionRoles() {
-        return getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .filter(authority -> authority.startsWith(UserRole.ROLE_PREFIX))
-                .map(authority -> authority.substring(UserRole.ROLE_PREFIX.length()))
-                .map(UserRole::valueOf)
-                .collect(toList());
+        return roles;
     }
 
     @Override
@@ -69,8 +66,8 @@ public class InternalAuthenticatedUser implements AuthenticatedUser, UserDetails
                 id,
                 user,
                 password,
-                sessionRoles.stream().map(UserRole::toAuthority).collect(toSet()),
-                repositoryAuthentications.values()
+                sessionRoles,
+                repositoryCredentials.values()
         );
     }
 
@@ -81,12 +78,12 @@ public class InternalAuthenticatedUser implements AuthenticatedUser, UserDetails
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return authorities;
+        return mapToAuthorities(getSessionRoles());
     }
 
     @Override
     public <A extends RepositoryCredentials> Optional<A> getCredentials(String repository, Class<A> expectedType) {
-        return Optional.ofNullable(repositoryAuthentications.get(repository))
+        return Optional.ofNullable(repositoryCredentials.get(repository))
                 .map(expectedType::cast);
     }
 
@@ -139,5 +136,17 @@ public class InternalAuthenticatedUser implements AuthenticatedUser, UserDetails
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), user);
+    }
+
+    /**
+     * Maps the specified roles to authorities.
+     */
+    private static Set<GrantedAuthority> mapToAuthorities(Collection<UserRole> roles) {
+        return Stream
+                .concat(
+                        Stream.of(ROLE_USER),
+                        roles.stream().map(UserRole::toAuthority)
+                )
+                .collect(toSet());
     }
 }

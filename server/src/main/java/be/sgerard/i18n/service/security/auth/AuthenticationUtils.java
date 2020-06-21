@@ -54,7 +54,7 @@ public final class AuthenticationUtils {
                     ((InternalAuthenticatedUser) authenticatedUser).getPassword(),
                     authenticatedUser.getAuthorities()
             );
-        } else if ((authentication instanceof UsernamePasswordAuthenticationToken) && (authenticatedUser instanceof ExternalOAuth2AuthenticatedUser)) {
+        } else if ((authentication instanceof UsernamePasswordAuthenticationToken) && (authenticatedUser instanceof ExternalAuthenticatedUser)) {
             return new UsernamePasswordAuthenticationToken(
                     authenticatedUser,
                     null,
