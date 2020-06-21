@@ -2,7 +2,7 @@ package be.sgerard.i18n.service.security.auth.external;
 
 import be.sgerard.i18n.model.repository.persistence.RepositoryEntity;
 import be.sgerard.i18n.model.security.auth.RepositoryCredentials;
-import be.sgerard.i18n.model.security.auth.external.OAuthExternalUser;
+import be.sgerard.i18n.model.security.user.persistence.ExternalAuthClient;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
@@ -25,17 +25,20 @@ public class CompositeOAuthUserRepositoryCredentialsHandler implements OAuthUser
     }
 
     @Override
-    public boolean support(OAuthExternalUser externalUser, RepositoryEntity repository) {
+    public boolean support(ExternalAuthClient client, RepositoryEntity repository) {
         return handlers.stream()
-                .anyMatch(handler -> handler.support(externalUser, repository));
+                .anyMatch(handler -> handler.support(client, repository));
     }
 
     @Override
-    public Mono<RepositoryCredentials> loadCredentials(OAuthExternalUser externalUser, RepositoryEntity repository, Mono<RepositoryCredentials> defaultCredentials) {
+    public Mono<RepositoryCredentials> loadCredentials(ExternalAuthClient client,
+                                                       String token,
+                                                       RepositoryEntity repository,
+                                                       Mono<RepositoryCredentials> defaultCredentials) {
         return handlers.stream()
-                .filter(handler -> handler.support(externalUser, repository))
+                .filter(handler -> handler.support(client, repository))
                 .findFirst()
-                .orElseThrow(() -> new UnsupportedOperationException("Unsupported user [" + externalUser + "]."))
-                .loadCredentials(externalUser, repository, defaultCredentials);
+                .orElseThrow(() -> new UnsupportedOperationException("Unsupported client [" + client + "]."))
+                .loadCredentials(client, token, repository, defaultCredentials);
     }
 }

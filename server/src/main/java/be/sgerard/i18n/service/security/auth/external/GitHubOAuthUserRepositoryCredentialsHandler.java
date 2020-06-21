@@ -3,7 +3,6 @@ package be.sgerard.i18n.service.security.auth.external;
 import be.sgerard.i18n.model.repository.persistence.RepositoryEntity;
 import be.sgerard.i18n.model.security.auth.RepositoryCredentials;
 import be.sgerard.i18n.model.security.auth.RepositoryTokenCredentials;
-import be.sgerard.i18n.model.security.auth.external.OAuthExternalUser;
 import be.sgerard.i18n.model.security.user.persistence.ExternalAuthClient;
 import be.sgerard.i18n.service.security.UserRole;
 import org.springframework.core.annotation.Order;
@@ -26,16 +25,17 @@ public class GitHubOAuthUserRepositoryCredentialsHandler implements OAuthUserRep
     }
 
     @Override
-    public boolean support(OAuthExternalUser externalUser, RepositoryEntity repository) {
-        return externalUser.getOauthClient() == ExternalAuthClient.GITHUB;
+    public boolean support(ExternalAuthClient client, RepositoryEntity repository) {
+        return client == ExternalAuthClient.GITHUB;
     }
 
     @Override
-    public Mono<RepositoryCredentials> loadCredentials(OAuthExternalUser externalUser,
+    public Mono<RepositoryCredentials> loadCredentials(ExternalAuthClient client,
+                                                       String token,
                                                        RepositoryEntity repository,
                                                        Mono<RepositoryCredentials> defaultCredentials) {
         // TODO check has access
 
-        return Mono.just(new RepositoryTokenCredentials(repository.getId(), singleton(UserRole.MEMBER_OF_REPOSITORY), externalUser.getToken()));
+        return Mono.just(new RepositoryTokenCredentials(repository.getId(), singleton(UserRole.MEMBER_OF_REPOSITORY), token));
     }
 }

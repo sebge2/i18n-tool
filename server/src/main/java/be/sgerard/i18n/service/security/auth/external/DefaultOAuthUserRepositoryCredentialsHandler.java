@@ -2,7 +2,7 @@ package be.sgerard.i18n.service.security.auth.external;
 
 import be.sgerard.i18n.model.repository.persistence.RepositoryEntity;
 import be.sgerard.i18n.model.security.auth.RepositoryCredentials;
-import be.sgerard.i18n.model.security.auth.external.OAuthExternalUser;
+import be.sgerard.i18n.model.security.user.persistence.ExternalAuthClient;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
@@ -20,12 +20,13 @@ public class DefaultOAuthUserRepositoryCredentialsHandler implements OAuthUserRe
     }
 
     @Override
-    public boolean support(OAuthExternalUser externalUser, RepositoryEntity repository) {
+    public boolean support(ExternalAuthClient client, RepositoryEntity repository) {
         return true;
     }
 
     @Override
-    public Mono<RepositoryCredentials> loadCredentials(OAuthExternalUser externalUser,
+    public Mono<RepositoryCredentials> loadCredentials(ExternalAuthClient client,
+                                                       String token,
                                                        RepositoryEntity repository,
                                                        Mono<RepositoryCredentials> defaultCredentials) {
         return defaultCredentials;

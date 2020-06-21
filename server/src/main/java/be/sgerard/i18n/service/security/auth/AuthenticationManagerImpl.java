@@ -75,6 +75,7 @@ public class AuthenticationManagerImpl implements AuthenticationManager, UserLis
                                         new ExternalAuthenticatedUser(
                                                 UUID.randomUUID().toString(),
                                                 UserDto.builder(externalUserEntity).build(),
+                                                externalUser.getToken(),
                                                 externalUserEntity.getRoles(),
                                                 credentials
                                         )
@@ -138,7 +139,8 @@ public class AuthenticationManagerImpl implements AuthenticationManager, UserLis
      */
     private Mono<RepositoryCredentials> loadCredentials(OAuthExternalUser externalUser, RepositoryEntity repository) {
         return credentialsHandler.loadCredentials(
-                externalUser,
+                externalUser.getOauthClient(),
+                externalUser.getToken(),
                 repository,
                 Mono.defer(() -> repositoryManager.getDefaultCredentials(repository.getId()))
         );

@@ -26,17 +26,20 @@ public final class ExternalAuthenticatedUser extends DefaultOAuth2User implement
 
     private final String id;
     private final UserDto user;
+    private final String token;
     private final Set<UserRole> roles;
     private final Map<String, RepositoryCredentials> repositoryCredentials;
 
     public ExternalAuthenticatedUser(String id,
                                      UserDto user,
+                                     String token,
                                      Collection<UserRole> roles,
                                      Collection<RepositoryCredentials> repositoryCredentials) {
         super(mapToAuthorities(roles), singletonMap(NAME_ATTRIBUTE, user.getId()), NAME_ATTRIBUTE);
 
         this.id = id;
         this.user = user;
+        this.token = token;
         this.roles = Set.copyOf(roles);
         this.repositoryCredentials = repositoryCredentials.stream().collect(toMap(RepositoryCredentials::getRepository, auth -> auth));
     }
@@ -72,9 +75,17 @@ public final class ExternalAuthenticatedUser extends DefaultOAuth2User implement
         return new ExternalAuthenticatedUser(
                 id,
                 user,
+                token,
                 sessionRoles,
                 repositoryCredentials.values()
         );
+    }
+
+    /**
+     * Returns the token associated to this authentication.
+     */
+    public String getToken() {
+        return token;
     }
 
     @Override
