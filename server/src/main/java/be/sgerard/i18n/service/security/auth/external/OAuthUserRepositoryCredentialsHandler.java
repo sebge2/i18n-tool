@@ -23,9 +23,6 @@ public interface OAuthUserRepositoryCredentialsHandler {
      * Loads the {@link RepositoryCredentials credentails} to use for the specified token obtained from the specified authentication
      * client  and the specified {@link RepositoryEntity repository}.
      */
-    Mono<RepositoryCredentials> loadCredentials(ExternalAuthClient client,
-                                                String token,
-                                                RepositoryEntity repository,
-                                                Mono<RepositoryCredentials> defaultCredentials);
+    Mono<RepositoryCredentials> loadCredentials(ExternalAuthClient client, String token, RepositoryEntity repository);
 
 }

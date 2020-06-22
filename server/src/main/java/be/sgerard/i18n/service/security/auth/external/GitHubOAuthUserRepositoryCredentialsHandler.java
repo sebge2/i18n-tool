@@ -27,10 +27,7 @@ public class GitHubOAuthUserRepositoryCredentialsHandler implements OAuthUserRep
     }
 
     @Override
-    public Mono<RepositoryCredentials> loadCredentials(ExternalAuthClient client,
-                                                       String token,
-                                                       RepositoryEntity repository,
-                                                       Mono<RepositoryCredentials> defaultCredentials) {
+    public Mono<RepositoryCredentials> loadCredentials(ExternalAuthClient client, String token, RepositoryEntity repository) {
         // TODO check has access
 
         return Mono.just(new RepositoryTokenCredentials(repository.getId(), token));

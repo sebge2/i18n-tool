@@ -92,15 +92,13 @@ public class AuthenticationManagerImpl implements AuthenticationManager, UserLis
                 .flatMap(user ->
                         repositoryManager
                                 .findAll()
-                                .flatMap(repository -> repositoryManager.getDefaultCredentials(repository.getId()))
                                 .collectList()
                                 .map(repositories ->
                                         new InternalAuthenticatedUser(
                                                 UUID.randomUUID().toString(),
                                                 UserDto.builder(user).build(),
                                                 user.getPassword(),
-                                                user.getRoles(),
-                                                repositories
+                                                user.getRoles()
                                         )
                                 )
                 );
@@ -141,8 +139,7 @@ public class AuthenticationManagerImpl implements AuthenticationManager, UserLis
         return credentialsHandler.loadCredentials(
                 externalUser.getOauthClient(),
                 externalUser.getToken(),
-                repository,
-                Mono.defer(() -> repositoryManager.getDefaultCredentials(repository.getId()))
+                repository
         );
     }
 

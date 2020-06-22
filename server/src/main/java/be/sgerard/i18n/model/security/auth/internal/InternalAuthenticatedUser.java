@@ -11,7 +11,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.*;
 import java.util.stream.Stream;
 
-import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
 
 /**
@@ -24,20 +23,17 @@ public class InternalAuthenticatedUser implements AuthenticatedUser, UserDetails
     private final String id;
     private final UserDto user;
     private final Set<UserRole> roles;
-    private final Map<String, RepositoryCredentials> repositoryCredentials;
 
     private String password;
 
     public InternalAuthenticatedUser(String id,
                                      UserDto user,
                                      String password,
-                                     Collection<UserRole> roles,
-                                     Collection<RepositoryCredentials> repositoryCredentials) {
+                                     Collection<UserRole> roles) {
         this.id = id;
         this.user = user;
         this.password = password;
         this.roles = Set.copyOf(roles);
-        this.repositoryCredentials = repositoryCredentials.stream().collect(toMap(RepositoryCredentials::getRepository, auth -> auth));
     }
 
     @Override
@@ -66,8 +62,7 @@ public class InternalAuthenticatedUser implements AuthenticatedUser, UserDetails
                 id,
                 user,
                 password,
-                sessionRoles,
-                repositoryCredentials.values()
+                sessionRoles
         );
     }
 
@@ -83,8 +78,7 @@ public class InternalAuthenticatedUser implements AuthenticatedUser, UserDetails
 
     @Override
     public <A extends RepositoryCredentials> Optional<A> getCredentials(String repository, Class<A> expectedType) {
-        return Optional.ofNullable(repositoryCredentials.get(repository))
-                .map(expectedType::cast);
+        return Optional.empty();
     }
 
     @Override

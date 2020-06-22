@@ -4,7 +4,6 @@ import be.sgerard.i18n.model.repository.RepositoryStatus;
 import be.sgerard.i18n.model.repository.dto.RepositoryCreationDto;
 import be.sgerard.i18n.model.repository.dto.RepositoryPatchDto;
 import be.sgerard.i18n.model.repository.persistence.RepositoryEntity;
-import be.sgerard.i18n.model.security.auth.RepositoryCredentials;
 import be.sgerard.i18n.repository.repository.RepositoryEntityRepository;
 import be.sgerard.i18n.service.LockService;
 import be.sgerard.i18n.service.LockTimeoutException;
@@ -156,13 +155,6 @@ public class RepositoryManagerImpl implements RepositoryManager {
                                                 .thenReturn(rep)
                                 )
                 );
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public Mono<RepositoryCredentials> getDefaultCredentials(String repositoryId) {
-        return findByIdOrDie(repositoryId)
-                .flatMap(handler::getDefaultCredentials);
     }
 
     @Override

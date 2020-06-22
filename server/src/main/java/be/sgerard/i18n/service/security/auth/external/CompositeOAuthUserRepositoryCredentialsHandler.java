@@ -31,14 +31,11 @@ public class CompositeOAuthUserRepositoryCredentialsHandler implements OAuthUser
     }
 
     @Override
-    public Mono<RepositoryCredentials> loadCredentials(ExternalAuthClient client,
-                                                       String token,
-                                                       RepositoryEntity repository,
-                                                       Mono<RepositoryCredentials> defaultCredentials) {
+    public Mono<RepositoryCredentials> loadCredentials(ExternalAuthClient client, String token, RepositoryEntity repository) {
         return handlers.stream()
                 .filter(handler -> handler.support(client, repository))
                 .findFirst()
                 .orElseThrow(() -> new UnsupportedOperationException("Unsupported client [" + client + "]."))
-                .loadCredentials(client, token, repository, defaultCredentials);
+                .loadCredentials(client, token, repository);
     }
 }

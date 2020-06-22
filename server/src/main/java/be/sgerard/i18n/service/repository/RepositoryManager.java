@@ -3,7 +3,6 @@ package be.sgerard.i18n.service.repository;
 import be.sgerard.i18n.model.repository.dto.RepositoryCreationDto;
 import be.sgerard.i18n.model.repository.dto.RepositoryPatchDto;
 import be.sgerard.i18n.model.repository.persistence.RepositoryEntity;
-import be.sgerard.i18n.model.security.auth.RepositoryCredentials;
 import be.sgerard.i18n.service.ResourceNotFoundException;
 import be.sgerard.i18n.service.ValidationException;
 import reactor.core.publisher.Flux;
@@ -61,12 +60,6 @@ public interface RepositoryManager {
      * Removes the {@link RepositoryEntity repository} having the specified id.
      */
     Mono<RepositoryEntity> delete(String id);
-
-    /**
-     * Returns the {@link RepositoryCredentials default credentials} to use to access the repository (if the authenticated user
-     * could not himself access it).
-     */
-    Mono<RepositoryCredentials> getDefaultCredentials(String repositoryId);
 
     /**
      * Applies a function over the content of the specified repository.

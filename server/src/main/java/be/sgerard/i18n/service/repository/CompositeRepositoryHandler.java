@@ -76,13 +76,4 @@ public class CompositeRepositoryHandler implements RepositoryHandler<RepositoryE
                 .orElseThrow(() -> new UnsupportedOperationException("Unsupported repository [" + repository.getType() + "]."))
                 .createAPI(repository);
     }
-
-    @Override
-    public Mono<RepositoryCredentials> getDefaultCredentials(RepositoryEntity repository) throws RepositoryException {
-        return handlers.stream()
-                .filter(handler -> handler.support(repository.getType()))
-                .findFirst()
-                .orElseThrow(() -> new UnsupportedOperationException("Unsupported repository [" + repository.getType() + "]."))
-                .getDefaultCredentials(repository);
-    }
 }

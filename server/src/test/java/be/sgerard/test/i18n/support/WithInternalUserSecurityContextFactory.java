@@ -35,8 +35,7 @@ public class WithInternalUserSecurityContextFactory implements WithSecurityConte
                                 .type(UserDto.Type.INTERNAL)
                                 .build(),
                         null,
-                        roles,
-                        emptyList()
+                        roles
                 ),
                 null,
                 roles.stream().map(UserRole::toAuthority).collect(toSet())

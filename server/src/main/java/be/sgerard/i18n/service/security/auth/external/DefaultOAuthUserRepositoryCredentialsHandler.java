@@ -25,10 +25,7 @@ public class DefaultOAuthUserRepositoryCredentialsHandler implements OAuthUserRe
     }
 
     @Override
-    public Mono<RepositoryCredentials> loadCredentials(ExternalAuthClient client,
-                                                       String token,
-                                                       RepositoryEntity repository,
-                                                       Mono<RepositoryCredentials> defaultCredentials) {
-        return defaultCredentials;
+    public Mono<RepositoryCredentials> loadCredentials(ExternalAuthClient client, String token, RepositoryEntity repository) {
+        return Mono.empty();
     }
 }
