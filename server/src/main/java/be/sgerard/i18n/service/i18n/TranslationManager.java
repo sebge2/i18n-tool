@@ -15,6 +15,18 @@ import java.util.Map;
  * @author Sebastien Gerard
  */
 public interface TranslationManager {
+    /**
+     * Finds the {@link BundleKeyTranslationEntity translation} having the specified id.
+     */
+    Mono<BundleKeyTranslationEntity> findTranslation(String id);
+
+    /**
+     * Finds the {@link BundleKeyTranslationEntity translation} having the specified id.
+     */
+    default Mono<BundleKeyTranslationEntity> findTranslationOrDie(String id) {
+        return findTranslation(id)
+                .switchIfEmpty(Mono.error(ResourceNotFoundException.translationNotFoundException(id)));
+    }
 
     /**
      * Reads all the translations of the specified {@link WorkspaceEntity workspace} using the {@link TranslationRepositoryReadApi read API}.

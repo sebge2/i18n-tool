@@ -6,6 +6,7 @@ import be.sgerard.i18n.model.repository.dto.RepositoryDto;
 import be.sgerard.i18n.model.workspace.WorkspaceDto;
 import be.sgerard.test.i18n.support.JsonHolderResultHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import junit.framework.AssertionFailedError;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 
@@ -68,18 +69,35 @@ public class TranslationsTestHelper {
             this.workspace = workspace;
         }
 
-        public StepWorkspace expectTranslation(String key, Locale locale, String expected) throws Exception {
+        public BundleKeysPageDto get() throws Exception {
             loadTranslations(workspace);
 
-            final Optional<String> actual = translations
+            return translations;
+        }
+
+        public Optional<BundleKeyTranslationDto> find(String key, Locale locale) throws Exception {
+            loadTranslations(workspace);
+
+            return translations
                     .getFiles()
                     .stream()
                     .flatMap(file -> file.getKeys().stream())
                     .filter(keyDto -> Objects.equals(keyDto.getKey(), key))
                     .flatMap(keyDto -> keyDto.getTranslations().stream())
                     .filter(translation -> Objects.equals(translation.getLocale(), locale.toLanguageTag()))
-                    .map(translation -> Optional.ofNullable(translation.getUpdatedValue()).orElse(translation.getOriginalValue()))
                     .findFirst();
+        }
+
+        public BundleKeyTranslationDto findOrDie(String key, Locale locale) throws Exception {
+            return find(key, locale)
+                    .orElseThrow(() -> new AssertionFailedError("There is no translation with key [" + key + "] in locale [" + locale + "]."));
+        }
+
+        public StepWorkspace expectTranslation(String key, Locale locale, String expected) throws Exception {
+            loadTranslations(workspace);
+
+            final Optional<String> actual = find(key, locale)
+                    .map(translation -> Optional.ofNullable(translation.getUpdatedValue()).orElse(translation.getOriginalValue()));
 
             assertThat(actual).contains(expected);
 

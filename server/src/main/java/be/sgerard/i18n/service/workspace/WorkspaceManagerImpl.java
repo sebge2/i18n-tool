@@ -224,7 +224,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
                 .doOnNext(workspace -> {
                     workspace.getRepository().addWorkspace(workspace); // TODO strange
 
-                    logger.info("The workspace {} has been created.", workspace);
+                    logger.info("The workspace {} has been created.", workspace.getId());
                 })
                 .flatMap(workspace -> listener.onCreate(workspace).thenReturn(workspace));
     }

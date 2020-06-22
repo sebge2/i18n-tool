@@ -2,7 +2,6 @@ package be.sgerard.i18n.service.i18n;
 
 import be.sgerard.i18n.controller.AuthenticationController;
 import be.sgerard.i18n.model.i18n.BundleType;
-import be.sgerard.i18n.model.i18n.dto.*;
 import be.sgerard.i18n.model.i18n.file.BundleWalkContext;
 import be.sgerard.i18n.model.i18n.file.ScannedBundleFile;
 import be.sgerard.i18n.model.i18n.file.ScannedBundleFileKey;
@@ -13,11 +12,11 @@ import be.sgerard.i18n.model.i18n.persistence.TranslationLocaleEntity;
 import be.sgerard.i18n.model.security.user.dto.UserDto;
 import be.sgerard.i18n.model.workspace.WorkspaceEntity;
 import be.sgerard.i18n.repository.i18n.BundleKeyTranslationRepository;
-import be.sgerard.i18n.repository.workspace.WorkspaceRepository;
 import be.sgerard.i18n.service.ResourceNotFoundException;
-import be.sgerard.i18n.service.event.EventService;
+import be.sgerard.i18n.service.ValidationException;
 import be.sgerard.i18n.service.i18n.file.BundleHandler;
 import be.sgerard.i18n.service.i18n.file.BundleWalker;
+import be.sgerard.i18n.service.i18n.listener.TranslationsListener;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,7 +29,6 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import static be.sgerard.i18n.model.event.EventType.UPDATED_TRANSLATIONS;
 import static be.sgerard.i18n.service.i18n.file.TranslationFileUtils.mapToNullIfEmpty;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
@@ -43,77 +41,29 @@ import static java.util.stream.Collectors.toMap;
 @Service
 public class TranslationManagerImpl implements TranslationManager {
 
-    private final WorkspaceRepository workspaceRepository;
     private final BundleKeyTranslationRepository keyEntryRepository;
     private final TranslationLocaleManager localeManager;
     private final AuthenticationController authenticationManager;
-    private final EventService eventService;
+    private final TranslationsListener listener;
     private final BundleWalker walker;
     private final List<BundleHandler> handlers;
 
-    public TranslationManagerImpl(WorkspaceRepository workspaceRepository,
-                                  BundleKeyTranslationRepository keyEntryRepository,
+    public TranslationManagerImpl(BundleKeyTranslationRepository keyEntryRepository,
                                   TranslationLocaleManager localeManager,
                                   AuthenticationController authenticationManager,
-                                  EventService eventService,
+                                  TranslationsListener listener,
                                   List<BundleHandler> handlers) {
-        this.workspaceRepository = workspaceRepository;
         this.keyEntryRepository = keyEntryRepository;
         this.localeManager = localeManager;
         this.authenticationManager = authenticationManager;
-        this.eventService = eventService;
+        this.listener = listener;
         this.walker = new BundleWalker(handlers);
         this.handlers = handlers;
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public Mono<BundleKeysPageDto> getTranslations(BundleKeysPageRequestDto searchRequest) {
-        final WorkspaceEntity workspaceEntity = workspaceRepository.findById(searchRequest.getWorkspaceId())
-                .orElseThrow(() -> ResourceNotFoundException.workspaceNotFoundException(searchRequest.getWorkspaceId()));
-
-        final GroupedTranslations groupedEntries = doGetTranslations(searchRequest);
-
-        return Mono.just(
-                BundleKeysPageDto.builder()
-                        .workspaceId(workspaceEntity.getId())
-                        .files(
-                                groupedEntries.getGroups().entrySet().stream()
-                                        .map(file ->
-                                                BundleFileDto.builder()
-                                                        .id(file.getKey().getId())
-                                                        .name(file.getKey().getName())
-                                                        .location(file.getKey().getLocation())
-                                                        .keys(
-                                                                file.getValue().entrySet().stream()
-                                                                        .map(key ->
-                                                                                BundleKeyDto.builder()
-                                                                                        .id(key.getKey().getId())
-                                                                                        .key(key.getKey().getKey())
-                                                                                        .translations(
-                                                                                                key.getValue().stream()
-                                                                                                        .map(keyEntry ->
-                                                                                                                BundleKeyTranslationDto.builder()
-                                                                                                                        .id(keyEntry.getId())
-                                                                                                                        .locale(keyEntry.getLocale())
-                                                                                                                        .originalValue(keyEntry.getOriginalValue().orElse(null))
-                                                                                                                        .updatedValue(keyEntry.getUpdatedValue().orElse(null))
-                                                                                                                        .lastEditor(keyEntry.getLastEditor().orElse(null))
-                                                                                                                        .build()
-                                                                                                        )
-                                                                                                        .collect(toList())
-                                                                                        )
-                                                                                        .build()
-                                                                        )
-                                                                        .collect(toList())
-                                                        )
-                                                        .build()
-                                        )
-                                        .collect(toList())
-                        )
-                        .lastKey(groupedEntries.getLastKey().orElse(null))
-                        .build()
-        );
+    public Mono<BundleKeyTranslationEntity> findTranslation(String id) {
+        return Mono.justOrEmpty(keyEntryRepository.findById(id));
     }
 
     @Override
@@ -138,14 +88,13 @@ public class TranslationManagerImpl implements TranslationManager {
 
     @Override
     @Transactional
-    public Mono<Void> updateTranslations(WorkspaceEntity workspace, Map<String, String> translations) throws ResourceNotFoundException {
-        // TODO
+    public Flux<BundleKeyTranslationEntity> updateTranslations(Map<String, String> translations) throws ResourceNotFoundException {
         final UserDto currentUser = authenticationManager.getCurrentUser().getUser();
 
         return Flux
                 .fromIterable(translations.entrySet())
                 .flatMap(entry ->
-                        findTranslation(entry.getKey())
+                        findTranslationOrDie(entry.getKey())
                                 .map(entity -> Pair.of(entity, entry.getValue()))
                 )
                 .flatMap(entry -> listener
@@ -231,30 +180,15 @@ public class TranslationManagerImpl implements TranslationManager {
                         bundleFile.getFiles().stream().map(File::toString).collect(toList())
                 );
 
-                    groupedTranslations.getGroups().get(bundleFile).get(bundleKey).add(entryEntity);
-                });
+        return keys
+                .doOnNext(entry -> {
+                    final BundleKeyEntity keyEntity = new BundleKeyEntity(bundleFileEntity, entry.getKey());
 
-        return groupedTranslations;
-    }
-
-    private BundleHandler getHandler(ScannedBundleFile bundleFile) {
-        for (BundleHandler handler : handlers) {
-
-            if (handler.support(bundleFile.getType())) {
-                return handler;
-            }
-        }
-
-        throw new IllegalStateException("There is no handler supporting [" + bundleFile + "].");
-    }
-
-    /**
-     * Finds the {@link BundleKeyTranslationEntity translation} having the specified id.
-     */
-    private Mono<BundleKeyTranslationEntity> findTranslation(String id) {
-        return Mono
-                .justOrEmpty(keyEntryRepository.findById(id))
-                .switchIfEmpty(Mono.error(ResourceNotFoundException.translationNotFoundException(id)));
+                    for (Locale locale : bundleFile.getLocales()) {
+                        new BundleKeyTranslationEntity(keyEntity, locale.toLanguageTag(), mapToNullIfEmpty(entry.getTranslations().get(locale)));
+                    }
+                })
+                .then(Mono.just(bundleFileEntity));
     }
 
     /**
@@ -275,35 +209,4 @@ public class TranslationManagerImpl implements TranslationManager {
                 )
                 .collect(toList());
     }
-
-    private static final class GroupedTranslations {
-
-        private final Map<BundleFileEntity, Map<BundleKeyEntity, List<BundleKeyTranslationEntity>>> groups = new LinkedHashMap<>();
-        private String lastKey;
-        private int numberEntries;
-
-        public GroupedTranslations() {
-        }
-
-        public Map<BundleFileEntity, Map<BundleKeyEntity, List<BundleKeyTranslationEntity>>> getGroups() {
-            return groups;
-        }
-
-        public Optional<String> getLastKey() {
-            return Optional.ofNullable(lastKey);
-        }
-
-        public void setLastKey(String lastKey) {
-            this.lastKey = lastKey;
-        }
-
-        public int getNumberEntries() {
-            return numberEntries;
-        }
-
-        public void incrementNumberEntries() {
-            numberEntries++;
-        }
-    }
-
 }
