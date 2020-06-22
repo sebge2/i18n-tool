@@ -7,6 +7,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 /**
+ * Translation of a certain key part of translation bundle.
+ *
  * @author Sebastien Gerard
  */
 @NamedEntityGraph(
@@ -78,68 +80,102 @@ public class BundleKeyTranslationEntity {
         this.originalValue = originalValue;
     }
 
+    /**
+     * Returns the unique id of this translation.
+     */
     public String getId() {
         return id;
     }
 
+    /**
+     * Sets the unique id of this translation.
+     */
     public void setId(String id) {
         this.id = id;
     }
 
+    /**
+     * Returns the associated {@link BundleKeyEntity translation key}.
+     */
     public BundleKeyEntity getBundleKey() {
         return bundleKey;
     }
 
+    /**
+     * Sets the associated {@link BundleKeyEntity translation key}.
+     */
     public void setBundleKey(BundleKeyEntity bundleKey) {
         this.bundleKey = bundleKey;
     }
 
+    /**
+     * Returns the string representation of the locale of the translation.
+     */
     public String getLocale() {
         return locale;
     }
 
-    public Locale getJavaLocale(){
+    /**
+     * Returns the string representation of the locale of the translation.
+     */
+    public Locale getJavaLocale() {
         return Locale.forLanguageTag(getLocale());
     }
 
+    /**
+     * Sets the string representation of the locale of the translation.
+     */
     public void setLocale(String locale) {
         this.locale = locale;
     }
 
+    /**
+     * Returns the original translation.
+     */
     public Optional<String> getOriginalValue() {
         return Optional.ofNullable(originalValue);
     }
 
+    /**
+     * Sets the original translation.
+     */
     public void setOriginalValue(String originalValue) {
         this.originalValue = originalValue;
     }
 
+    /**
+     * Returns the updated translation (if it was edited).
+     */
     public Optional<String> getUpdatedValue() {
         return Optional.ofNullable(updatedValue);
     }
 
+    /**
+     * Sets the updated translation (if it was edited).
+     */
     public void setUpdatedValue(String updatedValue) {
         this.updatedValue = updatedValue;
     }
 
+    /**
+     * Returns the translation value that will be used at the end.
+     */
     public Optional<String> getValue() {
         return getUpdatedValue()
                 .or(this::getOriginalValue);
     }
 
+    /**
+     * Returns the id of the user that edited this translation.
+     */
     public Optional<String> getLastEditor() {
         return Optional.ofNullable(lastEditor);
     }
 
+    /**
+     * Sets the id of the user that edited this translation.
+     */
     public void setLastEditor(String lastEditor) {
         this.lastEditor = lastEditor;
-    }
-
-    public int getVersion() {
-        return version;
-    }
-
-    public void setVersion(int version) {
-        this.version = version;
     }
 }

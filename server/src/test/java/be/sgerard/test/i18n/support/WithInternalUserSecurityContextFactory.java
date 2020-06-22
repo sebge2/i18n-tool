@@ -1,18 +1,19 @@
 package be.sgerard.test.i18n.support;
 
-import be.sgerard.i18n.model.security.auth.InternalAuthenticatedUser;
+import be.sgerard.i18n.model.security.auth.internal.InternalAuthenticatedUser;
 import be.sgerard.i18n.model.security.user.dto.UserDto;
+import be.sgerard.i18n.service.security.UserRole;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithSecurityContextFactory;
-import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.stream.Stream;
+
+import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toSet;
 
 /**
  * @author Sebastien Gerard
@@ -22,15 +23,7 @@ public class WithInternalUserSecurityContextFactory implements WithSecurityConte
     @Override
     public SecurityContext createSecurityContext(WithInternalUser user) {
         final String username = user.username();
-
-        final Collection<GrantedAuthority> authorities = new HashSet<>();
-        for (String role : user.roles()) {
-            if (StringUtils.hasText(role)) {
-                Assert.isTrue(!role.startsWith("ROLE_"), "roles cannot start with ROLE_. Got " + role + ".");
-
-                authorities.add(new SimpleGrantedAuthority("ROLE_" + role));
-            }
-        }
+        final Collection<UserRole> roles = Stream.of(user.roles()).filter(StringUtils::hasText).map(UserRole::valueOf).collect(toSet());
 
         final SecurityContext context = SecurityContextHolder.createEmptyContext();
 
@@ -42,11 +35,11 @@ public class WithInternalUserSecurityContextFactory implements WithSecurityConte
                                 .type(UserDto.Type.INTERNAL)
                                 .build(),
                         null,
-                        null,
-                        authorities
+                        roles,
+                        emptyList()  // TODO repository credentials
                 ),
                 null,
-                authorities
+                roles.stream().map(UserRole::toAuthority).collect(toSet())
         );
 
         context.setAuthentication(authentication);
