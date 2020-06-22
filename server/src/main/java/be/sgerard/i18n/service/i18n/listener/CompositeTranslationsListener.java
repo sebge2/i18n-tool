@@ -8,9 +8,7 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Composite {@link TranslationsListener translations listener}.
@@ -29,19 +27,19 @@ public class CompositeTranslationsListener implements TranslationsListener {
     }
 
     @Override
-    public Mono<ValidationResult> beforeUpdate(Map<String, String> translations) {
+    public Mono<ValidationResult> beforeUpdate(BundleKeyTranslationEntity translation, String updatedValue) {
         return Flux
                 .fromIterable(listeners)
-                .flatMap(listener -> listener.beforeUpdate(translations))
+                .flatMap(listener -> listener.beforeUpdate(translation, updatedValue))
                 .reduce(ValidationResult::merge)
                 .switchIfEmpty(Mono.just(ValidationResult.EMPTY));
     }
 
     @Override
-    public Mono<Void> afterUpdate(Collection<BundleKeyTranslationEntity> translations) {
+    public Mono<Void> afterUpdate(BundleKeyTranslationEntity translation) {
         return Flux
                 .fromIterable(listeners)
-                .flatMap(listener -> listener.afterUpdate(translations))
+                .flatMap(listener -> listener.afterUpdate(translation))
                 .then();
     }
 }

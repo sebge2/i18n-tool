@@ -4,9 +4,6 @@ import be.sgerard.i18n.model.i18n.persistence.BundleKeyTranslationEntity;
 import be.sgerard.i18n.model.validation.ValidationResult;
 import reactor.core.publisher.Mono;
 
-import java.util.Collection;
-import java.util.Map;
-
 /**
  * Listener of the lifecycle of {@link BundleKeyTranslationEntity translations}.
  *
@@ -15,17 +12,16 @@ import java.util.Map;
 public interface TranslationsListener {
 
     /**
-     * Validates before updating the specified translations. The map associates the
-     * {@link be.sgerard.i18n.model.i18n.persistence.BundleKeyTranslationEntity#getId() translation id} to the actual translation value.
+     * Validates before updating the specified {@link BundleKeyTranslationEntity translation}.
      */
-    default Mono<ValidationResult> beforeUpdate(Map<String, String> translations) {
+    default Mono<ValidationResult> beforeUpdate(BundleKeyTranslationEntity translation, String updatedValue) {
         return Mono.empty();
     }
 
     /**
      * Performs an action when the specified {@link BundleKeyTranslationEntity translations} has been updated.
      */
-    default Mono<Void> afterUpdate(Collection<BundleKeyTranslationEntity> translations) {
+    default Mono<Void> afterUpdate(BundleKeyTranslationEntity translation) {
         return Mono.empty();
     }
 }

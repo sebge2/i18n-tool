@@ -12,7 +12,6 @@ import org.springframework.util.StringUtils;
 import java.util.Collection;
 import java.util.stream.Stream;
 
-import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toSet;
 
 /**
@@ -31,8 +30,11 @@ public class WithInternalUserSecurityContextFactory implements WithSecurityConte
                 new InternalAuthenticatedUser(
                         username,
                         UserDto.builder()
+                                .id("fake-user-id")
+                                .email(username + "@acme.com")
                                 .username(username)
                                 .type(UserDto.Type.INTERNAL)
+                                .roles(roles)
                                 .build(),
                         null,
                         roles
