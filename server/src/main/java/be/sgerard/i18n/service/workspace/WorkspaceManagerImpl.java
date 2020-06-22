@@ -174,7 +174,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
     @Override
     @Transactional
     public Mono<WorkspaceEntity> delete(String workspaceId) throws RepositoryException {
-        return findByIdOrDie(workspaceId)
+        return findById(workspaceId)
                 .flatMap(translationsStrategy::onDelete)
                 .map(workspace -> {
                     listener.onDelete(workspace);
