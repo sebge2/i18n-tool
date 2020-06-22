@@ -4,12 +4,9 @@ import be.sgerard.i18n.model.repository.persistence.RepositoryEntity;
 import be.sgerard.i18n.model.security.auth.RepositoryCredentials;
 import be.sgerard.i18n.model.security.auth.RepositoryTokenCredentials;
 import be.sgerard.i18n.model.security.user.persistence.ExternalAuthClient;
-import be.sgerard.i18n.service.security.UserRole;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
-
-import static java.util.Collections.singleton;
 
 /**
  * {@link OAuthUserRepositoryCredentialsHandler Handler} that takes the GitHub OAuth token for accessing the repository if the token
@@ -36,6 +33,6 @@ public class GitHubOAuthUserRepositoryCredentialsHandler implements OAuthUserRep
                                                        Mono<RepositoryCredentials> defaultCredentials) {
         // TODO check has access
 
-        return Mono.just(new RepositoryTokenCredentials(repository.getId(), singleton(UserRole.MEMBER_OF_REPOSITORY), token));
+        return Mono.just(new RepositoryTokenCredentials(repository.getId(), token));
     }
 }

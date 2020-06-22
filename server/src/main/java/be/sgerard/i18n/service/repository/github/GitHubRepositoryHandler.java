@@ -11,14 +11,11 @@ import be.sgerard.i18n.service.repository.RepositoryException;
 import be.sgerard.i18n.service.repository.git.BaseGitRepositoryHandler;
 import be.sgerard.i18n.service.repository.git.DefaultGitRepositoryApi;
 import be.sgerard.i18n.service.repository.git.GitRepositoryApiProvider;
-import be.sgerard.i18n.service.security.UserRole;
 import be.sgerard.i18n.service.security.auth.AuthenticationManager;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 import java.net.URI;
-
-import static java.util.Collections.singletonList;
 
 /**
  * {@link BaseGitRepositoryHandler Repository handler} for GitHub.
@@ -67,7 +64,7 @@ public class GitHubRepositoryHandler extends BaseGitRepositoryHandler<GitHubRepo
     public Mono<RepositoryCredentials> getDefaultCredentials(GitHubRepositoryEntity repository) throws RepositoryException {
         return Mono
                 .justOrEmpty(repository.getAccessKey())
-                .map(token -> new RepositoryTokenCredentials(repository.getId(), singletonList(UserRole.MEMBER_OF_REPOSITORY), token));
+                .map(token -> new RepositoryTokenCredentials(repository.getId(), token));
     }
 
     @Override
@@ -78,6 +75,7 @@ public class GitHubRepositoryHandler extends BaseGitRepositoryHandler<GitHubRepo
                                 .getCurrentUserOrDie()
                                 .getCredentials(repository.getId(), RepositoryTokenCredentials.class)
                                 .map(RepositoryTokenCredentials::getToken)
+                                .or(repository::getAccessKey)
                                 .orElse(null)
                 )
                 .setPassword(null)

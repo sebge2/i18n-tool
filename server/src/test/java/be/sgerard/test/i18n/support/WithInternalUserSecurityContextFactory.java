@@ -36,7 +36,7 @@ public class WithInternalUserSecurityContextFactory implements WithSecurityConte
                                 .build(),
                         null,
                         roles,
-                        emptyList()  // TODO repository credentials
+                        emptyList()
                 ),
                 null,
                 roles.stream().map(UserRole::toAuthority).collect(toSet())

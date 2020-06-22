@@ -6,6 +6,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import static java.util.Collections.singletonList;
+
 /**
  * {@link RepositoryCredentials Repository credentials} based on a token.
  *
@@ -17,9 +19,9 @@ public class RepositoryTokenCredentials implements RepositoryCredentials {
     private final Set<UserRole> sessionRoles;
     private final String token;
 
-    public RepositoryTokenCredentials(String repository, Collection<UserRole> sessionRoles, String token) {
+    public RepositoryTokenCredentials(String repository, String token) {
         this.repository = repository;
-        this.sessionRoles = new HashSet<>(sessionRoles);
+        this.sessionRoles = new HashSet<>(singletonList(UserRole.MEMBER_OF_REPOSITORY));
         this.token = token;
     }
 
