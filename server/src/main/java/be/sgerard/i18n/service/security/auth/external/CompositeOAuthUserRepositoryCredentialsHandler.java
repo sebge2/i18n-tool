@@ -2,7 +2,7 @@ package be.sgerard.i18n.service.security.auth.external;
 
 import be.sgerard.i18n.model.repository.persistence.RepositoryEntity;
 import be.sgerard.i18n.model.security.auth.RepositoryCredentials;
-import be.sgerard.i18n.model.security.user.persistence.ExternalAuthClient;
+import be.sgerard.i18n.model.security.user.persistence.ExternalAuthSystem;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
@@ -25,17 +25,17 @@ public class CompositeOAuthUserRepositoryCredentialsHandler implements OAuthUser
     }
 
     @Override
-    public boolean support(ExternalAuthClient client, RepositoryEntity repository) {
+    public boolean support(ExternalAuthSystem authSystem, RepositoryEntity repository) {
         return handlers.stream()
-                .anyMatch(handler -> handler.support(client, repository));
+                .anyMatch(handler -> handler.support(authSystem, repository));
     }
 
     @Override
-    public Mono<RepositoryCredentials> loadCredentials(ExternalAuthClient client, String token, RepositoryEntity repository) {
+    public Mono<RepositoryCredentials> loadCredentials(ExternalAuthSystem authSystem, String token, RepositoryEntity repository) {
         return handlers.stream()
-                .filter(handler -> handler.support(client, repository))
+                .filter(handler -> handler.support(authSystem, repository))
                 .findFirst()
-                .orElseThrow(() -> new UnsupportedOperationException("Unsupported client [" + client + "]."))
-                .loadCredentials(client, token, repository);
+                .orElseThrow(() -> new UnsupportedOperationException("Unsupported client [" + authSystem + "]."))
+                .loadCredentials(authSystem, token, repository);
     }
 }

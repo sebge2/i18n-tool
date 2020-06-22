@@ -22,33 +22,45 @@ public class ExternalUserEntity extends UserEntity {
     @NotNull
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private ExternalAuthClient externalAuthClient;
+    private ExternalAuthSystem externalAuthSystem;
 
     ExternalUserEntity() {
     }
 
-    public ExternalUserEntity(String externalId, ExternalAuthClient externalAuthClient) {
+    public ExternalUserEntity(String externalId, ExternalAuthSystem externalAuthSystem) {
         setId(UUID.randomUUID().toString());
         setPreferences(new UserPreferencesEntity(this));
 
         this.externalId = externalId;
-        this.externalAuthClient = externalAuthClient;
+        this.externalAuthSystem = externalAuthSystem;
     }
 
+    /**
+     * Returns the unique id of the user in the external system.
+     */
     public String getExternalId() {
         return externalId;
     }
 
+    /**
+     * Sets the unique id of the user in the external system.
+     */
     public void setExternalId(String externalId) {
         this.externalId = externalId;
     }
 
-    public ExternalAuthClient getExternalAuthClient() {
-        return externalAuthClient;
+    /**
+     * Returns the {@link ExternalAuthSystem system} that authenticated the user.
+     */
+    public ExternalAuthSystem getExternalAuthSystem() {
+        return externalAuthSystem;
     }
 
-    public ExternalUserEntity setExternalAuthClient(ExternalAuthClient externalAuthClient) {
-        this.externalAuthClient = externalAuthClient;
+    /**
+     * Sets the {@link ExternalAuthSystem system} that authenticated the user.
+     */
+    public ExternalUserEntity setExternalAuthSystem(ExternalAuthSystem externalAuthSystem) {
+        this.externalAuthSystem = externalAuthSystem;
         return this;
     }
 }

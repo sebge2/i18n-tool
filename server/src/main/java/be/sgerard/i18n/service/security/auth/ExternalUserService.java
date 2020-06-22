@@ -2,7 +2,7 @@ package be.sgerard.i18n.service.security.auth;
 
 import be.sgerard.i18n.model.security.auth.external.ExternalAuthenticatedUser;
 import be.sgerard.i18n.model.security.auth.external.OAuthExternalUser;
-import be.sgerard.i18n.model.security.user.persistence.ExternalAuthClient;
+import be.sgerard.i18n.model.security.user.persistence.ExternalAuthSystem;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -32,7 +32,7 @@ public class ExternalUserService extends DefaultOAuth2UserService {
         return authenticationManager
                 .createAuthentication(
                         new OAuthExternalUser(
-                                ExternalAuthClient.fromName(userRequest.getClientRegistration().getClientName()),
+                                ExternalAuthSystem.fromName(userRequest.getClientRegistration().getClientName()),
                                 userRequest.getAccessToken().getTokenValue(),
                                 oAuth2User.getAttributes()
                         )

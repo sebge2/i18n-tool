@@ -2,7 +2,7 @@ package be.sgerard.i18n.service.security.auth.external;
 
 import be.sgerard.i18n.model.security.auth.external.OAuthExternalUser;
 import be.sgerard.i18n.model.security.user.dto.ExternalUserDto;
-import be.sgerard.i18n.model.security.user.persistence.ExternalAuthClient;
+import be.sgerard.i18n.model.security.user.persistence.ExternalAuthSystem;
 import be.sgerard.i18n.service.security.UserRole;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
@@ -44,7 +44,7 @@ public class GitHubUserMapper implements OAuthUserMapper {
 
     @Override
     public boolean support(OAuthExternalUser externalUser) {
-        return externalUser.getOauthClient() == ExternalAuthClient.GITHUB;
+        return externalUser.getOauthClient() == ExternalAuthSystem.OAUTH_GITHUB;
     }
 
     @Override
@@ -53,7 +53,7 @@ public class GitHubUserMapper implements OAuthUserMapper {
         return Mono.just(
                 ExternalUserDto.builder()
                         .externalId(getStringAttribute(externalUser.getAttributes(), EXTERNAL_ID))
-                        .authClient(ExternalAuthClient.GITHUB)
+                        .authSystem(ExternalAuthSystem.OAUTH_GITHUB)
                         .username(getStringAttribute(externalUser.getAttributes(), USERNAME))
                         .email(getStringAttribute(externalUser.getAttributes(), EMAIL))
                         .avatarUrl(getStringAttribute(externalUser.getAttributes(), AVATAR_URL))

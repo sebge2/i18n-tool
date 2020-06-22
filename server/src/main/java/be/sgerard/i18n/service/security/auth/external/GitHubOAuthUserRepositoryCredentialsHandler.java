@@ -3,7 +3,7 @@ package be.sgerard.i18n.service.security.auth.external;
 import be.sgerard.i18n.model.repository.persistence.RepositoryEntity;
 import be.sgerard.i18n.model.security.auth.RepositoryCredentials;
 import be.sgerard.i18n.model.security.auth.RepositoryTokenCredentials;
-import be.sgerard.i18n.model.security.user.persistence.ExternalAuthClient;
+import be.sgerard.i18n.model.security.user.persistence.ExternalAuthSystem;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
@@ -22,12 +22,12 @@ public class GitHubOAuthUserRepositoryCredentialsHandler implements OAuthUserRep
     }
 
     @Override
-    public boolean support(ExternalAuthClient client, RepositoryEntity repository) {
-        return client == ExternalAuthClient.GITHUB;
+    public boolean support(ExternalAuthSystem authSystem, RepositoryEntity repository) {
+        return authSystem == ExternalAuthSystem.OAUTH_GITHUB;
     }
 
     @Override
-    public Mono<RepositoryCredentials> loadCredentials(ExternalAuthClient client, String token, RepositoryEntity repository) {
+    public Mono<RepositoryCredentials> loadCredentials(ExternalAuthSystem authSystem, String token, RepositoryEntity repository) {
         // TODO check has access
 
         return Mono.just(new RepositoryTokenCredentials(repository.getId(), token));

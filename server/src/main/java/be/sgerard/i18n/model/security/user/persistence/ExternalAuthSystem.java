@@ -6,34 +6,34 @@ import java.util.Objects;
 import java.util.stream.Stream;
 
 /**
- * All supported external authentication clients.
+ * All supported external authentication systems.
  *
  * @author Sebastien Gerard
  */
-public enum ExternalAuthClient {
+public enum ExternalAuthSystem {
 
     /**
      * @see OAuthExternalUser#getOauthClient()
      */
-    GOOGLE("Google"),
+    OAUTH_GOOGLE("Google"),
 
     /**
      * @see OAuthExternalUser#getOauthClient()
      */
-    GITHUB("GitHub");
+    OAUTH_GITHUB("GitHub");
 
     private final String name;
 
-    ExternalAuthClient(String name) {
+    ExternalAuthSystem(String name) {
         this.name = name;
     }
 
     /**
-     * Maps from the client name.
+     * Maps from the system name.
      */
-    public static ExternalAuthClient fromName(String name){
+    public static ExternalAuthSystem fromName(String name){
         return Stream
-                .of(ExternalAuthClient.values())
+                .of(ExternalAuthSystem.values())
                 .filter(client -> Objects.equals(client.getName(), name))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("There is no client named [" + name + "]."));

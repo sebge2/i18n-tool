@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -16,6 +17,8 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableCollection;
 
 /**
+ * Patch update of a user (internal, or external).
+ *
  * @author Sebastien Gerard
  */
 @ApiModel(description = "The update of a user.")
@@ -26,10 +29,19 @@ public class UserPatchDto {
         return new Builder();
     }
 
+    @ApiModelProperty(notes = "The new username.")
     private final String username;
+
+    @ApiModelProperty(notes = "The new email address.")
     private final String email;
+
+    @ApiModelProperty(notes = "The new password.")
     private final String password;
+
+    @ApiModelProperty(notes = "The new avatar URL.")
     private final String avatarUrl;
+
+    @ApiModelProperty(notes = "The roles.")
     private final Collection<UserRole> roles;
 
     private UserPatchDto(Builder builder) {
@@ -40,26 +52,44 @@ public class UserPatchDto {
         avatarUrl = builder.avatarUrl;
     }
 
+    /**
+     * Returns the new username.
+     */
     public Optional<String> getUsername() {
         return Optional.ofNullable(username);
     }
 
+    /**
+     * Returns the new email address.
+     */
     public Optional<String> getEmail() {
         return Optional.ofNullable(email);
     }
 
+    /**
+     * Returns the new password.
+     */
     public Optional<String> getPassword() {
         return Optional.ofNullable(password);
     }
 
+    /**
+     * Returns the new avatar URL.
+     */
     public Optional<String> getAvatarUrl() {
         return Optional.ofNullable(avatarUrl);
     }
 
+    /**
+     * Returns the new roles.
+     */
     public Optional<Collection<UserRole>> getRoles() {
         return Optional.ofNullable(roles);
     }
 
+    /**
+     * Builder of {@link UserPatchDto user patch}.
+     */
     @JsonPOJOBuilder(withPrefix = "")
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder {

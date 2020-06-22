@@ -1,6 +1,6 @@
 package be.sgerard.i18n.model.security.auth.external;
 
-import be.sgerard.i18n.model.security.user.persistence.ExternalAuthClient;
+import be.sgerard.i18n.model.security.user.persistence.ExternalAuthSystem;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,12 +14,12 @@ import static java.util.Collections.unmodifiableMap;
  */
 public class OAuthExternalUser {
 
-    private final ExternalAuthClient oauthClient;
+    private final ExternalAuthSystem oauthClient;
     private final String token;
     private final Map<String, Object> attributes;
 
     @SuppressWarnings("Java9CollectionFactory")
-    public OAuthExternalUser(ExternalAuthClient oauthClient, String token, Map<String, Object> attributes) {
+    public OAuthExternalUser(ExternalAuthSystem oauthClient, String token, Map<String, Object> attributes) {
         this.oauthClient = oauthClient;
         this.token = token;
         this.attributes = unmodifiableMap(new HashMap<>(attributes));
@@ -28,7 +28,7 @@ public class OAuthExternalUser {
     /**
      * Returns the name of the OAuth client (used in the application configuration files).
      */
-    public ExternalAuthClient getOauthClient() {
+    public ExternalAuthSystem getOauthClient() {
         return oauthClient;
     }
 
