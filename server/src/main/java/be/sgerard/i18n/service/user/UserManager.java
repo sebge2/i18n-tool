@@ -1,6 +1,6 @@
 package be.sgerard.i18n.service.user;
 
-import be.sgerard.i18n.model.security.user.dto.ExternalUserDto;
+import be.sgerard.i18n.model.security.user.ExternalUser;
 import be.sgerard.i18n.model.security.user.dto.InternalUserCreationDto;
 import be.sgerard.i18n.model.security.user.dto.UserPatchDto;
 import be.sgerard.i18n.model.security.user.persistence.ExternalUserEntity;
@@ -59,9 +59,9 @@ public interface UserManager {
     Mono<InternalUserEntity> createUser(InternalUserCreationDto info);
 
     /**
-     * Creates a new, or updates the existing {@link ExternalUserEntity external user} based on the specified {@link ExternalUserDto info}.
+     * Creates a new, or updates the existing {@link ExternalUserEntity external user} based on the specified {@link ExternalUser info}.
      */
-    Mono<ExternalUserEntity> createOrUpdateUser(ExternalUserDto externalUser);
+    Mono<ExternalUserEntity> createOrUpdateUser(ExternalUser externalUser);
 
     /**
      * Updates the {@link InternalUserEntity internal user} based on the specified {@link UserPatchDto info}.

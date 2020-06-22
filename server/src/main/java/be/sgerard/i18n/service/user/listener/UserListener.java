@@ -1,6 +1,6 @@
 package be.sgerard.i18n.service.user.listener;
 
-import be.sgerard.i18n.model.security.user.dto.ExternalUserDto;
+import be.sgerard.i18n.model.security.user.ExternalUser;
 import be.sgerard.i18n.model.security.user.dto.InternalUserCreationDto;
 import be.sgerard.i18n.model.security.user.dto.UserPatchDto;
 import be.sgerard.i18n.model.security.user.persistence.UserEntity;
@@ -24,7 +24,7 @@ public interface UserListener {
     /**
      * Validates the creation of an internal user.
      */
-    default Mono<ValidationResult> beforePersist(ExternalUserDto info) {
+    default Mono<ValidationResult> beforePersist(ExternalUser info) {
         return Mono.just(ValidationResult.EMPTY);
     }
 

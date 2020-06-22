@@ -1,6 +1,6 @@
 package be.sgerard.i18n.model.security.auth.external;
 
-import be.sgerard.i18n.model.security.user.persistence.ExternalAuthSystem;
+import be.sgerard.i18n.model.security.user.ExternalAuthSystem;
 
 import java.util.HashMap;
 import java.util.Map;

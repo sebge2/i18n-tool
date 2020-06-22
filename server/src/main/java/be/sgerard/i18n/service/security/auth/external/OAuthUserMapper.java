@@ -1,7 +1,7 @@
 package be.sgerard.i18n.service.security.auth.external;
 
 import be.sgerard.i18n.model.security.auth.external.OAuthExternalUser;
-import be.sgerard.i18n.model.security.user.dto.ExternalUserDto;
+import be.sgerard.i18n.model.security.user.ExternalUser;
 import reactor.core.publisher.Mono;
 
 /**
@@ -17,7 +17,7 @@ public interface OAuthUserMapper {
     boolean support(OAuthExternalUser externalUser);
 
     /**
-     * Maps the specified {@link OAuthExternalUser user} to an {@link ExternalUserDto external user}.
+     * Maps the specified {@link OAuthExternalUser user} to an {@link ExternalUser external user}.
      */
-    Mono<ExternalUserDto> map(OAuthExternalUser externalUser);
+    Mono<ExternalUser> map(OAuthExternalUser externalUser);
 }

@@ -1,7 +1,7 @@
 package be.sgerard.i18n.service.security.auth.external;
 
 import be.sgerard.i18n.model.security.auth.external.OAuthExternalUser;
-import be.sgerard.i18n.model.security.user.dto.ExternalUserDto;
+import be.sgerard.i18n.model.security.user.ExternalUser;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
@@ -30,7 +30,7 @@ public class CompositeOAuthUserMapper implements OAuthUserMapper {
     }
 
     @Override
-    public Mono<ExternalUserDto> map(OAuthExternalUser externalUser) {
+    public Mono<ExternalUser> map(OAuthExternalUser externalUser) {
         return handlers.stream()
                 .filter(handler -> handler.support(externalUser))
                 .findFirst()

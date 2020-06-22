@@ -1,7 +1,7 @@
 package be.sgerard.i18n.service.user;
 
 import be.sgerard.i18n.configuration.AppProperties;
-import be.sgerard.i18n.model.security.user.dto.ExternalUserDto;
+import be.sgerard.i18n.model.security.user.ExternalUser;
 import be.sgerard.i18n.model.security.user.dto.InternalUserCreationDto;
 import be.sgerard.i18n.model.security.user.dto.UserPatchDto;
 import be.sgerard.i18n.model.security.user.persistence.ExternalUserEntity;
@@ -101,7 +101,7 @@ public class UserManagerImpl implements UserManager {
 
     @Override
     @Transactional
-    public Mono<ExternalUserEntity> createOrUpdateUser(ExternalUserDto externalUserDto) {
+    public Mono<ExternalUserEntity> createOrUpdateUser(ExternalUser externalUserDto) {
         return Mono
                 .justOrEmpty(externalUserRepository.findByExternalId(externalUserDto.getExternalId()))
                 .switchIfEmpty(Mono.just(new ExternalUserEntity(externalUserDto.getExternalId(), externalUserDto.getAuthSystem())))

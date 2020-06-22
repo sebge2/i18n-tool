@@ -116,7 +116,7 @@ public class UserDto implements Principal, Serializable {
     }
 
     /**
-     * Returns the user's security roles.
+     * Returns the {@link UserRole#isAssignableByEndUser() assignable} roles.
      */
     public Collection<UserRole> getRoles() {
         return roles;

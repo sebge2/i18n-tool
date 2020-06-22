@@ -1,6 +1,5 @@
-package be.sgerard.i18n.model.security.user.dto;
+package be.sgerard.i18n.model.security.user;
 
-import be.sgerard.i18n.model.security.user.persistence.ExternalAuthSystem;
 import be.sgerard.i18n.service.security.UserRole;
 
 import java.util.Collection;
@@ -15,7 +14,7 @@ import static java.util.Arrays.asList;
  *
  * @author Sebastien Gerard
  */
-public class ExternalUserDto {
+public class ExternalUser {
 
     public static Builder builder() {
         return new Builder();
@@ -28,7 +27,7 @@ public class ExternalUserDto {
     private final String avatarUrl;
     private final Collection<UserRole> roles;
 
-    private ExternalUserDto(Builder builder) {
+    private ExternalUser(Builder builder) {
         externalId = builder.externalId;
         authSystem = builder.authSystem;
         username = builder.username;
@@ -85,7 +84,7 @@ public class ExternalUserDto {
     }
 
     /**
-     * Builder of {@link ExternalUserDto external user}.
+     * Builder of {@link ExternalUser external user}.
      */
     public static final class Builder {
 
@@ -129,8 +128,8 @@ public class ExternalUserDto {
             return this;
         }
 
-        public ExternalUserDto build() {
-            return new ExternalUserDto(this);
+        public ExternalUser build() {
+            return new ExternalUser(this);
         }
     }
 }

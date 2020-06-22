@@ -1,6 +1,6 @@
 package be.sgerard.i18n.service.user.listener;
 
-import be.sgerard.i18n.model.security.user.dto.ExternalUserDto;
+import be.sgerard.i18n.model.security.user.ExternalUser;
 import be.sgerard.i18n.model.security.user.dto.InternalUserCreationDto;
 import be.sgerard.i18n.model.security.user.dto.UserPatchDto;
 import be.sgerard.i18n.model.security.user.persistence.UserEntity;
@@ -39,7 +39,7 @@ public class CompositeUserListener implements UserListener {
     }
 
     @Override
-    public Mono<ValidationResult> beforePersist(ExternalUserDto info) {
+    public Mono<ValidationResult> beforePersist(ExternalUser info) {
         return Flux
                 .fromIterable(listeners)
                 .flatMap(listener -> listener.beforePersist(info))

@@ -2,7 +2,7 @@ package be.sgerard.i18n.service.security.auth;
 
 import be.sgerard.i18n.model.security.auth.external.ExternalAuthenticatedUser;
 import be.sgerard.i18n.model.security.auth.external.OAuthExternalUser;
-import be.sgerard.i18n.model.security.user.persistence.ExternalAuthSystem;
+import be.sgerard.i18n.model.security.user.ExternalAuthSystem;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;

@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -14,6 +15,8 @@ import java.util.HashSet;
 import static java.util.Arrays.asList;
 
 /**
+ * DTO asking the creation of an internal user.
+ *
  * @author Sebastien Gerard
  */
 @ApiModel(description = "The initial information needed to create an internal user.")
@@ -32,10 +35,19 @@ public class InternalUserCreationDto {
                 .roles(userDto.getRoles());
     }
 
+    @ApiModelProperty(notes = "Username used to log in.", required = true)
     private final String username;
+
+    @ApiModelProperty(notes = "User email address", required = true)
     private final String email;
+
+    @ApiModelProperty(notes = "User password (non encoded)", required = true)
     private final String password;
+
+    @ApiModelProperty(notes = "User avatar URL", required = true)
     private final String avatarUrl;
+
+    @ApiModelProperty(notes = "Assignable user roles", required = true)
     private final Collection<UserRole> roles;
 
     private InternalUserCreationDto(Builder builder) {
@@ -46,26 +58,42 @@ public class InternalUserCreationDto {
         avatarUrl = builder.avatarUrl;
     }
 
+    /**
+     * Returns the username used to log in.
+     */
     public String getUsername() {
         return username;
     }
 
+    /**
+     * Returns the email address.
+     */
     public String getEmail() {
         return email;
     }
 
+    /**
+     * Returns the non-encoded password.
+     */
     public String getPassword() {
         return password;
     }
+
 
     public String getAvatarUrl() {
         return avatarUrl;
     }
 
+    /**
+     * Returns the {@link UserRole#isAssignableByEndUser() assignable} new roles.
+     */
     public Collection<UserRole> getRoles() {
         return roles;
     }
 
+    /**
+     * Builder of {@link InternalUserCreationDto internal user creation DTO}.
+     */
     @JsonPOJOBuilder(withPrefix = "")
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder {

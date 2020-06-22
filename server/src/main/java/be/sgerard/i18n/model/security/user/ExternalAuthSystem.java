@@ -1,4 +1,4 @@
-package be.sgerard.i18n.model.security.user.persistence;
+package be.sgerard.i18n.model.security.user;
 
 import be.sgerard.i18n.model.security.auth.external.OAuthExternalUser;
 

@@ -1,10 +1,14 @@
 package be.sgerard.i18n.model.security.user.persistence;
 
+import be.sgerard.i18n.model.security.user.ExternalAuthSystem;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
 /**
+ * External {@link UserEntity user}.
+ *
  * @author Sebastien Gerard
  */
 @Entity(name = "external_user")

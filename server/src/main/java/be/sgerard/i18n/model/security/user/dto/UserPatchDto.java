@@ -81,7 +81,7 @@ public class UserPatchDto {
     }
 
     /**
-     * Returns the new roles.
+     * Returns the {@link UserRole#isAssignableByEndUser() assignable} new roles.
      */
     public Optional<Collection<UserRole>> getRoles() {
         return Optional.ofNullable(roles);

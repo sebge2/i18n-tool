@@ -1,8 +1,8 @@
 package be.sgerard.i18n.service.security.auth.external;
 
 import be.sgerard.i18n.model.security.auth.external.OAuthExternalUser;
-import be.sgerard.i18n.model.security.user.dto.ExternalUserDto;
-import be.sgerard.i18n.model.security.user.persistence.ExternalAuthSystem;
+import be.sgerard.i18n.model.security.user.ExternalUser;
+import be.sgerard.i18n.model.security.user.ExternalAuthSystem;
 import be.sgerard.i18n.service.security.UserRole;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
@@ -42,9 +42,9 @@ public class GoogleUserMapper implements OAuthUserMapper {
     }
 
     @Override
-    public Mono<ExternalUserDto> map(OAuthExternalUser externalUser) {
+    public Mono<ExternalUser> map(OAuthExternalUser externalUser) {
         return Mono.just(
-                ExternalUserDto.builder()
+                ExternalUser.builder()
                         .externalId(getStringAttribute(externalUser.getAttributes(), EXTERNAL_ID))
                         .authSystem(ExternalAuthSystem.OAUTH_GOOGLE)
                         .username(getStringAttribute(externalUser.getAttributes(), EMAIL))
