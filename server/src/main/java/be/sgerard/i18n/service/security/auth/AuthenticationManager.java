@@ -1,11 +1,9 @@
 package be.sgerard.i18n.service.security.auth;
 
 import be.sgerard.i18n.model.security.auth.AuthenticatedUser;
-import be.sgerard.i18n.model.security.auth.ExternalAuthenticatedUser;
+import be.sgerard.i18n.model.security.auth.external.ExternalAuthenticatedUser;
 import be.sgerard.i18n.model.security.auth.external.OAuthExternalUser;
 import be.sgerard.i18n.model.security.auth.internal.InternalAuthenticatedUser;
-import be.sgerard.i18n.model.security.user.dto.ExternalUserDto;
-import be.sgerard.i18n.model.security.user.persistence.ExternalUserEntity;
 import org.springframework.security.access.AccessDeniedException;
 import reactor.core.publisher.Mono;
 
