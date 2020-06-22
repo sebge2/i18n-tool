@@ -105,7 +105,7 @@ public class UserLiveSessionManagerImpl implements UserLiveSessionManager {
         public void onEvent(AuthenticatedUserDto updatedAuthenticatedUser) {
             repository.findByAuthenticatedUserId(updatedAuthenticatedUser.getId())
                     .forEach(liveSession -> {
-                        liveSession.setSessionRoles(updatedAuthenticatedUser.getSessionRoles());
+                        liveSession.addSessionRoles(updatedAuthenticatedUser.getSessionRoles());
 
                         eventService.sendEventToSession(
                                 liveSession.getSimpSessionId(),
