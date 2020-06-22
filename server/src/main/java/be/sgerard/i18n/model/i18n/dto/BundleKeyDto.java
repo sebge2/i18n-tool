@@ -1,5 +1,11 @@
 package be.sgerard.i18n.model.i18n.dto;
 
+import be.sgerard.i18n.model.i18n.persistence.BundleKeyTranslationEntity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -10,10 +16,17 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableList;
 
 /**
+ * Translation key part of a translation bundle.
+ *
  * @author Sebastien Gerard
  */
 @ApiModel(description = "Key in a bundle file associated to translations.")
+@JsonDeserialize(builder = BundleKeyDto.Builder.class)
 public class BundleKeyDto {
+
+    public static Builder builder() {
+        return new Builder();
+    }
 
     @ApiModelProperty(notes = "Unique identifier of a key.", required = true)
     private final String id;
@@ -30,22 +43,32 @@ public class BundleKeyDto {
         translations = unmodifiableList(builder.translations);
     }
 
-    public static Builder builder() {
-        return new Builder();
-    }
-
+    /**
+     * Returns the unique id of this key.
+     */
     public String getId() {
         return id;
     }
 
+    /**
+     * Returns the translation key as specified in bundle files.
+     */
     public String getKey() {
         return key;
     }
 
+    /**
+     * Returns all the {@link BundleKeyTranslationEntity translations} of this key.
+     */
     public List<BundleKeyTranslationDto> getTranslations() {
         return translations;
     }
 
+    /**
+     * Builder of {@link BundleKeyDto bundle key}.
+     */
+    @JsonPOJOBuilder(withPrefix = "")
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder {
         private String id;
         private String key;
@@ -64,11 +87,13 @@ public class BundleKeyDto {
             return this;
         }
 
+        @JsonProperty("translations")
         public Builder translations(List<BundleKeyTranslationDto> translations) {
             this.translations.addAll(translations);
             return this;
         }
 
+        @JsonIgnore
         public Builder translations(BundleKeyTranslationDto... translations) {
             return translations(asList(translations));
         }

@@ -179,12 +179,4 @@ public class BundleFileEntity {
     public void setLocales(Set<Locale> locales) {
         this.locales = locales;
     }
-
-    public int getVersion() {
-        return version;
-    }
-
-    public void setVersion(int version) {
-        this.version = version;
-    }
 }
