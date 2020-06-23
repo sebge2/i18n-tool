@@ -14,7 +14,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.simp.annotation.SendToUser;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -106,8 +108,42 @@ public class ControllerAdvice {
      * Handles the {@link MissingServletRequestParameterException parameter exception}.
      */
     @ExceptionHandler(value = MissingServletRequestParameterException.class)
-    public ResponseEntity<ErrorMessages> handleMissingServletRequestParameterException(MissingServletRequestParameterException original) {
-        return handleBadRequestException(BadRequestException.actionNotSupportedException(null));
+    public ResponseEntity<ErrorMessages> handleMissingServletRequestParameterException(MissingServletRequestParameterException exception) {
+        final ErrorMessages errorMessages = messagesProvider.map(new LocalizedMessageHolder.Simple("MissingServletRequestParameterException.message", exception.getParameterName()));
+
+        if (logger.isDebugEnabled()) {
+            logger.debug(String.format("Missing parameter exception with id %s, message %s.", errorMessages.getId(), exception.getMessage()), exception);
+        }
+
+        return new ResponseEntity<>(errorMessages, HttpStatus.FORBIDDEN);
+    }
+
+    /**
+     * Handles the {@link MissingServletRequestParameterException access denied exception}.
+     */
+    @ExceptionHandler(value = AccessDeniedException.class)
+    public ResponseEntity<ErrorMessages> handleAccessDeniedException(AccessDeniedException exception) {
+        final ErrorMessages errorMessages = messagesProvider.map(new LocalizedMessageHolder.Simple("AccessDeniedException.message"));
+
+        if (logger.isDebugEnabled()) {
+            logger.debug(String.format("Method not allowed exception with id %s, message %s.", errorMessages.getId(), exception.getMessage()), exception);
+        }
+
+        return new ResponseEntity<>(errorMessages, HttpStatus.FORBIDDEN);
+    }
+
+    /**
+     * Handles the {@link HttpRequestMethodNotSupportedException method-not-supported exception}.
+     */
+    @ExceptionHandler(value = HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<ErrorMessages> handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException exception) {
+        final ErrorMessages errorMessages = messagesProvider.map(new LocalizedMessageHolder.Simple("HttpRequestMethodNotSupportedException.message", exception.getMethod()));
+
+        if (logger.isDebugEnabled()) {
+            logger.debug(String.format("Method not allowed exception with id %s, message %s.", errorMessages.getId(), exception.getMessage()), exception);
+        }
+
+        return new ResponseEntity<>(errorMessages, HttpStatus.METHOD_NOT_ALLOWED);
     }
 
     /**
