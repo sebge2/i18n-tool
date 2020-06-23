@@ -5,6 +5,8 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 /**
+ * {@link CrudRepository Repository} of {@link BundleKeyTranslationEntity translation entities}.
+ *
  * @author Sebastien Gerard
  */
 @Repository
