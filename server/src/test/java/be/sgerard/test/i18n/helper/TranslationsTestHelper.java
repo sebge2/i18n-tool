@@ -1,7 +1,7 @@
 package be.sgerard.test.i18n.helper;
 
 import be.sgerard.i18n.model.i18n.dto.BundleKeyTranslationDto;
-import be.sgerard.i18n.model.i18n.dto.BundleKeysPageDto;
+import be.sgerard.i18n.model.i18n.dto.TranslationsPageDto;
 import be.sgerard.i18n.model.repository.dto.RepositoryDto;
 import be.sgerard.i18n.model.workspace.WorkspaceDto;
 import be.sgerard.test.i18n.support.JsonHolderResultHandler;
@@ -63,13 +63,13 @@ public class TranslationsTestHelper {
 
         private final WorkspaceDto workspace;
 
-        private BundleKeysPageDto translations;
+        private TranslationsPageDto translations;
 
         private StepWorkspace(WorkspaceDto workspace) {
             this.workspace = workspace;
         }
 
-        public BundleKeysPageDto get() throws Exception {
+        public TranslationsPageDto get() throws Exception {
             loadTranslations(workspace);
 
             return translations;
@@ -126,7 +126,7 @@ public class TranslationsTestHelper {
                 return;
             }
 
-            final JsonHolderResultHandler<BundleKeysPageDto> handler = new JsonHolderResultHandler<>(objectMapper, BundleKeysPageDto.class);
+            final JsonHolderResultHandler<TranslationsPageDto> handler = new JsonHolderResultHandler<>(objectMapper, TranslationsPageDto.class);
 
             mockMvc
                     .perform(request(HttpMethod.GET, "/api/translation/?workspace={workspace}", workspace.getId()))
