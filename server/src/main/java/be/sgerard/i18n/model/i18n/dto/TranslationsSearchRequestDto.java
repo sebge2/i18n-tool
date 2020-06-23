@@ -104,6 +104,8 @@ public class TranslationsSearchRequestDto {
 
     /**
      * Returns the last key contained in the previous page (nothing if it's the first page).
+     *
+     * @see TranslationsPageDto#getLastKey()
      */
     public Optional<String> getLastKey() {
         return Optional.ofNullable(lastKey);
