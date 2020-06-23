@@ -5,23 +5,6 @@ spring:
     open-in-view: false
     hibernate:
       ddl-auto: update
-  security:
-    oauth2:
-      client:
-        registration:
-#          http://i18n-tool.test.sgerard.be:8080
-          github:
-            client-id: ${GIT_HUB_OAUTH_CLIENT}
-            client-secret: ${GIT_HUB_OAUTH_SECRET}
-            scope: repo
-            redirectUri: "{baseUrl}/auth/oauth2/code/{registrationId}"
-          google:
-            client-id: "870183340495-t9u7mufdj3ero8ltb2a7fo7k38hdt2ou.apps.googleusercontent.com"
-            client-secret: "wGeAqvcjumCxaZCq9aLjCOmT"
-            scope:
-              - email
-              - profile
-            redirectUri: "{baseUrl}/auth/oauth2/code/{registrationId}"
   session:
     jdbc:
       initialize-schema: "ALWAYS"

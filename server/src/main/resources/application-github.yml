@@ -1,0 +1,10 @@
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            client-id: ${GIT_HUB_OAUTH_CLIENT}
+            client-secret: ${GIT_HUB_OAUTH_SECRET}
+            scope: repo
+            redirectUri: "{baseUrl}/auth/oauth2/code/{registrationId}"
