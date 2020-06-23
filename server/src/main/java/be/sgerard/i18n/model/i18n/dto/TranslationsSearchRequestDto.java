@@ -3,8 +3,10 @@ package be.sgerard.i18n.model.i18n.dto;
 import be.sgerard.i18n.model.i18n.persistence.TranslationLocaleEntity;
 import be.sgerard.i18n.model.workspace.WorkspaceEntity;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -14,6 +16,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Optional;
 
+import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableCollection;
 
 /**
@@ -22,8 +25,7 @@ import static java.util.Collections.unmodifiableCollection;
  * @author Sebastien Gerard
  */
 @ApiModel(description = "Request asking the listing of paginated translations.")
-@JsonPOJOBuilder(withPrefix = "")
-@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonDeserialize(builder = TranslationsSearchRequestDto.Builder.class)
 public class TranslationsSearchRequestDto {
 
     /**
@@ -128,9 +130,15 @@ public class TranslationsSearchRequestDto {
         private Builder() {
         }
 
+        @JsonProperty("workspaces")
         public Builder workspaces(Collection<String> workspaces) {
             this.workspaces.addAll(workspaces);
             return this;
+        }
+
+        @JsonIgnore
+        public Builder workspaces(String... workspaces) {
+            return workspaces(asList(workspaces));
         }
 
         public Builder locales(Collection<String> locales) {
