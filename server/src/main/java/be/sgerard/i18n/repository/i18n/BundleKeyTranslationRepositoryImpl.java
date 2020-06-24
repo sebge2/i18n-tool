@@ -1,9 +1,8 @@
 package be.sgerard.i18n.repository.i18n;
 
-import be.sgerard.i18n.model.i18n.dto.BundleKeyEntrySearchRequestDto;
+import be.sgerard.i18n.model.i18n.TranslationsSearchRequest;
 import be.sgerard.i18n.model.i18n.persistence.*;
 import be.sgerard.i18n.model.workspace.WorkspaceEntity;
-import be.sgerard.i18n.model.workspace.WorkspaceEntity_;
 import be.sgerard.i18n.service.security.auth.AuthenticationManager;
 
 import javax.persistence.EntityManager;
@@ -29,7 +28,7 @@ public class BundleKeyTranslationRepositoryImpl implements BundleKeyTranslationR
     }
 
     @Override
-    public Stream<BundleKeyTranslationEntity> searchEntries(BundleKeyEntrySearchRequestDto request) {
+    public Stream<BundleKeyTranslationEntity> search(TranslationsSearchRequest request) {
         final CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
 
         final CriteriaQuery<BundleKeyTranslationEntity> query = criteriaBuilder.createQuery(BundleKeyTranslationEntity.class);
@@ -43,40 +42,40 @@ public class BundleKeyTranslationRepositoryImpl implements BundleKeyTranslationR
 
         final Predicate whereClause = criteriaBuilder.conjunction();
 
-        whereClause.getExpressions().add(workspaceJoin.get(WorkspaceEntity_.id).in(request.getWorkspaceId()));
+//        whereClause.getExpressions().add(workspaceJoin.get(WorkspaceEntity_.id).in(request.getWorkspaceId()));
 
-        request.getLastKey()
-                .ifPresent(lastKey -> whereClause.getExpressions().add(criteriaBuilder.greaterThan(bundleKeyJoin.get(BundleKeyEntity_.id), lastKey)));
+//        request.getLastKey()
+//                .ifPresent(lastKey -> whereClause.getExpressions().add(criteriaBuilder.greaterThan(bundleKeyJoin.get(BundleKeyEntity_.id), lastKey)));
 
         if (!request.getLocales().isEmpty()) {
-            whereClause.getExpressions().add(
-                    selectEntry.get(BundleKeyTranslationEntity_.locale).in(request.getLocales().stream().map(Locale::toString).toArray())
-            );
+//            whereClause.getExpressions().add(
+//                    selectEntry.get(BundleKeyTranslationEntity_.locale).in(request.getLocales().stream().map(Locale::toString).toArray())
+//            );
         }
 
-        switch (request.getCriterion()) {
-            case MISSING_TRANSLATIONS:
-                whereClause.getExpressions().add(selectEntry.get(BundleKeyTranslationEntity_.originalValue).isNull());
-                whereClause.getExpressions().add(selectEntry.get(BundleKeyTranslationEntity_.updatedValue).isNull());
-                break;
-            case UPDATED_TRANSLATIONS:
-                whereClause.getExpressions().add(selectEntry.get(BundleKeyTranslationEntity_.updatedValue).isNotNull());
-                break;
-            case TRANSLATIONS_CURRENT_USER_UPDATED:
-                whereClause.getExpressions().add(selectEntry.get(BundleKeyTranslationEntity_.updatedValue).isNotNull());
-                whereClause.getExpressions().add(selectEntry.get(BundleKeyTranslationEntity_.lastEditor).in(authenticationManager.getCurrentUserOrFail().getUser().getId()));
-                break;
+//        switch (request.getCriterion()) {
+//            case MISSING_TRANSLATIONS:
+//                whereClause.getExpressions().add(selectEntry.get(BundleKeyTranslationEntity_.originalValue).isNull());
+//                whereClause.getExpressions().add(selectEntry.get(BundleKeyTranslationEntity_.updatedValue).isNull());
+//                break;
+//            case UPDATED_TRANSLATIONS:
+//                whereClause.getExpressions().add(selectEntry.get(BundleKeyTranslationEntity_.updatedValue).isNotNull());
+//                break;
+//            case TRANSLATIONS_CURRENT_USER_UPDATED:
+//                whereClause.getExpressions().add(selectEntry.get(BundleKeyTranslationEntity_.updatedValue).isNotNull());
+//                whereClause.getExpressions().add(selectEntry.get(BundleKeyTranslationEntity_.lastEditor).in(authenticationManager.getCurrentUserOrDie().getUser().getId()));
+//                break;
+//
+//        }
 
-        }
-
-        request.getKeyPattern()
-                .ifPresent(keyPattern ->
-                        whereClause.getExpressions().add(criteriaBuilder.like(bundleKeyJoin.get(BundleKeyEntity_.key), keyPattern))
-                );
-
-        if (!whereClause.getExpressions().isEmpty()) {
-            query.where(whereClause);
-        }
+//        request.getKeyPattern()
+//                .ifPresent(keyPattern ->
+//                        whereClause.getExpressions().add(criteriaBuilder.like(bundleKeyJoin.get(BundleKeyEntity_.key), keyPattern))
+//                );
+//
+//        if (!whereClause.getExpressions().isEmpty()) {
+//            query.where(whereClause);
+//        }
 
         query.orderBy(
                 criteriaBuilder.asc(bundleKeyJoin.get(BundleKeyEntity_.bundleFile)),
