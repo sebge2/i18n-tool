@@ -9,6 +9,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 
+import java.util.Locale;
+import java.util.Objects;
 import java.util.Set;
 
 import static org.springframework.http.HttpStatus.CREATED;
@@ -42,6 +44,14 @@ public class TranslationLocaleTestHelper {
                 .andDo(handler);
 
         return handler.getValue();
+    }
+
+    public TranslationLocaleDto findRegisteredLocale(Locale locale) throws Exception {
+        return getLocales()
+                .stream()
+                .filter(existingLocale -> Objects.equals(existingLocale.toLocale(), locale))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Cannot find locale [" + locale + "]."));
     }
 
     public StepCreatedLocale createLocale(TranslationLocaleCreationDto creationDto) throws Exception {

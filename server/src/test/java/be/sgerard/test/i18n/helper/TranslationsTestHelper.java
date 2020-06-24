@@ -1,6 +1,7 @@
 package be.sgerard.test.i18n.helper;
 
 import be.sgerard.i18n.model.i18n.dto.BundleKeyTranslationDto;
+import be.sgerard.i18n.model.i18n.dto.TranslationLocaleDto;
 import be.sgerard.i18n.model.i18n.dto.TranslationsPageDto;
 import be.sgerard.i18n.model.i18n.dto.TranslationsSearchRequestDto;
 import be.sgerard.i18n.model.repository.dto.RepositoryDto;
@@ -30,15 +31,18 @@ public class TranslationsTestHelper {
 
     private final AsyncMockMvcTestHelper mockMvc;
     private final ObjectMapper objectMapper;
+    private final TranslationLocaleTestHelper localeTestHelper;
     private final RepositoryTestHelper repositoryTestHelper;
     private final WorkspaceTestHelper workspaceTestHelper;
 
     public TranslationsTestHelper(AsyncMockMvcTestHelper mockMvc,
                                   ObjectMapper objectMapper,
+                                  TranslationLocaleTestHelper localeTestHelper,
                                   RepositoryTestHelper repositoryTestHelper,
                                   WorkspaceTestHelper workspaceTestHelper) {
         this.mockMvc = mockMvc;
         this.objectMapper = objectMapper;
+        this.localeTestHelper = localeTestHelper;
         this.repositoryTestHelper = repositoryTestHelper;
         this.workspaceTestHelper = workspaceTestHelper;
     }
@@ -60,6 +64,7 @@ public class TranslationsTestHelper {
         }
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public class StepWorkspace {
 
         private final WorkspaceDto workspace;
@@ -79,12 +84,14 @@ public class TranslationsTestHelper {
         public Optional<BundleKeyTranslationDto> find(String key, Locale locale) throws Exception {
             loadTranslations(workspace);
 
+            final TranslationLocaleDto translationLocaleDto = localeTestHelper.findRegisteredLocale(locale);
+
             return  translations.getWorkspaces().stream()
                     .flatMap(workspace -> workspace.getFiles().stream())
                     .flatMap(file -> file.getKeys().stream())
                     .filter(keyDto -> Objects.equals(keyDto.getKey(), key))
                     .flatMap(keyDto -> keyDto.getTranslations().stream())
-                    .filter(translation -> Objects.equals(translation.getLocale(), locale.toLanguageTag()))
+                    .filter(translation -> Objects.equals(translation.getLocale(), translationLocaleDto.getId()))
                     .findFirst();
         }
 
