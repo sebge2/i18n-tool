@@ -4,11 +4,12 @@ import be.sgerard.i18n.controller.AuthenticationController;
 import be.sgerard.i18n.model.i18n.BundleType;
 import be.sgerard.i18n.model.i18n.file.BundleWalkContext;
 import be.sgerard.i18n.model.i18n.file.ScannedBundleFile;
+import be.sgerard.i18n.model.i18n.file.ScannedBundleFileEntry;
 import be.sgerard.i18n.model.i18n.file.ScannedBundleFileKey;
 import be.sgerard.i18n.model.i18n.persistence.BundleFileEntity;
+import be.sgerard.i18n.model.i18n.persistence.BundleFileEntryEntity;
 import be.sgerard.i18n.model.i18n.persistence.BundleKeyEntity;
 import be.sgerard.i18n.model.i18n.persistence.BundleKeyTranslationEntity;
-import be.sgerard.i18n.model.i18n.persistence.TranslationLocaleEntity;
 import be.sgerard.i18n.model.security.user.dto.UserDto;
 import be.sgerard.i18n.model.workspace.WorkspaceEntity;
 import be.sgerard.i18n.repository.i18n.BundleKeyTranslationRepository;
@@ -25,7 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
@@ -177,7 +177,7 @@ public class TranslationManagerImpl implements TranslationManager {
     private Mono<BundleFileEntity> onBundleFound(WorkspaceEntity workspaceEntity,
                                                  ScannedBundleFile bundleFile,
                                                  Flux<ScannedBundleFileKey> keys) {
-        logger.info("A bundle file has been found located in [{}] named [{}] with {} locale(s).", bundleFile.getLocationDirectory(), bundleFile.getName(), bundleFile.getLocales().size());
+        logger.info("A bundle file has been found located in [{}] named [{}] with {} file(s).", bundleFile.getLocationDirectory(), bundleFile.getName(), bundleFile.getFiles().size());
 
         final BundleFileEntity bundleFileEntity =
                 new BundleFileEntity(
@@ -185,16 +185,15 @@ public class TranslationManagerImpl implements TranslationManager {
                         bundleFile.getName(),
                         bundleFile.getLocationDirectory().toString(),
                         bundleFile.getType(),
-                        bundleFile.getLocales(),
-                        bundleFile.getFiles().stream().map(File::toString).collect(toList())
+                        bundleFile.getFiles().stream().map(BundleFileEntryEntity::new).collect(toList())
                 );
 
         return keys
                 .doOnNext(entry -> {
                     final BundleKeyEntity keyEntity = new BundleKeyEntity(bundleFileEntity, entry.getKey());
 
-                    for (TranslationLocaleEntity locale : bundleFile.getLocales()) {
-                        new BundleKeyTranslationEntity(keyEntity, locale, mapToNullIfEmpty(entry.getTranslations().get(locale)));
+                    for (ScannedBundleFileEntry file : bundleFile.getFiles()) {
+                        new BundleKeyTranslationEntity(keyEntity, file.getLocale(), mapToNullIfEmpty(entry.getTranslations().get(file.getLocale())));
                     }
                 })
                 .then(Mono.just(bundleFileEntity));
@@ -210,7 +209,7 @@ public class TranslationManagerImpl implements TranslationManager {
                                 new ScannedBundleFileKey(
                                         keyEntity.getKey(),
                                         keyEntity.getTranslations().stream()
-                                                .map(keyEntryEntity -> Pair.of(keyEntryEntity.getLocale().toLocale(), keyEntryEntity.getValue().orElse(null)))
+                                                .map(keyEntryEntity -> Pair.of(keyEntryEntity.getLocale(), keyEntryEntity.getValue().orElse(null)))
                                                 .collect(HashMap::new, (m, v) -> m.put(v.getKey(), v.getValue()), HashMap::putAll)
                                 )
                 )

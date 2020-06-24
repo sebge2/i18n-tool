@@ -3,13 +3,13 @@ package be.sgerard.i18n.service.i18n.file;
 import be.sgerard.i18n.model.i18n.BundleType;
 import be.sgerard.i18n.model.i18n.file.BundleWalkContext;
 import be.sgerard.i18n.model.i18n.file.ScannedBundleFile;
+import be.sgerard.i18n.model.i18n.file.ScannedBundleFileEntry;
 import be.sgerard.i18n.model.i18n.file.ScannedBundleFileKey;
 import be.sgerard.i18n.model.i18n.persistence.TranslationLocaleEntity;
 import be.sgerard.i18n.service.i18n.TranslationRepositoryWriteApi;
 import be.sgerard.i18n.service.workspace.WorkspaceException;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
-import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -18,14 +18,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 import java.util.PropertyResourceBundle;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static be.sgerard.i18n.service.i18n.file.TranslationFileUtils.mapToNullIfEmpty;
-import static java.util.Collections.singletonList;
+import static java.util.Collections.singleton;
 import static java.util.Collections.singletonMap;
 
 /**
@@ -35,12 +32,6 @@ import static java.util.Collections.singletonMap;
  */
 @Component
 public class JavaPropertiesBundleHandler implements BundleHandler {
-
-    /**
-     * Pattern for a translation bundle file. It's composed of the bundle name, the language (2 letters in lower case) and then
-     * the region (2 letters in upper-case)
-     */
-    private static final Pattern BUNDLE_PATTERN = Pattern.compile("^(.+)_([a-z]{2}(_[A-Z]{2})?)\\.properties$");
 
     /**
      * File extension (including ".").
@@ -67,19 +58,18 @@ public class JavaPropertiesBundleHandler implements BundleHandler {
                 .listNormalFiles(directory)
                 .flatMap(
                         file ->
-                                splitLocaleAndBundle(file, context)
-                                        .map(localeAndBundle ->
+                                findLocales(file, context)
+                                        .map(locale ->
                                                 Mono.just(
                                                         new ScannedBundleFile(
-                                                                localeAndBundle.getValue(),
+                                                                getBundleName(file, locale),
                                                                 BundleType.JAVA_PROPERTIES,
                                                                 directory,
-                                                                singletonList(localeAndBundle.getKey()), singletonList(file)
+                                                                singleton(new ScannedBundleFileEntry(locale, file))
                                                         )
                                                 ))
                                         .orElseGet(Mono::empty)
                 )
-                .filter(bundleFile -> context.getLocales().containsAll(bundleFile.getLocales()))
                 .groupBy(ScannedBundleFile::getName)
                 .flatMap(group -> group.reduce(ScannedBundleFile::merge));
     }
@@ -91,12 +81,12 @@ public class JavaPropertiesBundleHandler implements BundleHandler {
                 .flatMap(file ->
                         context
                                 .getApi()
-                                .openInputStream(file)
-                                .map(inputStream -> readTranslations(file, inputStream))
+                                .openInputStream(file.getFile())
+                                .map(inputStream -> readTranslations(file.getFile(), inputStream))
                                 .flatMapMany(translations ->
                                         Flux.fromStream(
                                                 translations.keySet().stream()
-                                                        .map(key -> new ScannedBundleFileKey(key, singletonMap(getLocale(file), mapToNullIfEmpty(translations.getString(key)))))
+                                                        .map(key -> new ScannedBundleFileKey(key, singletonMap(file.getLocale(), mapToNullIfEmpty(translations.getString(key)))))
                                         )
                                 )
                 )
@@ -110,26 +100,31 @@ public class JavaPropertiesBundleHandler implements BundleHandler {
                                    TranslationRepositoryWriteApi repositoryAPI) {
         return Flux
                 .fromIterable(bundleFile.getFiles())
-                .filter(file -> BUNDLE_PATTERN.matcher(file.getName()).matches())
                 .flatMap(file ->
                         repositoryAPI
-                                .openAsTemp(file)
+                                .openAsTemp(file.getFile())
                                 .doOnNext(outputStream -> writeTranslations(keys, file, outputStream))
                 )
                 .then();
     }
 
     /**
-     * Splits the {@link TranslationLocaleEntity locale} and the bundle name from the specified file. If the file is not a bundle,
+     * Finds the {@link TranslationLocaleEntity locale} from the specified file. If the file is not a bundle,
      * nothing is returned.
      */
-    private Optional<Pair<TranslationLocaleEntity, String>> splitLocaleAndBundle(File file, BundleWalkContext context) {
+    private Optional<TranslationLocaleEntity> findLocales(File file, BundleWalkContext context) {
         return context
                 .getLocales()
                 .stream()
                 .filter(locale -> file.getName().toLowerCase().endsWith(getSuffix(locale)))
-                .map(locale -> Pair.of(locale, file.getName().substring(0, file.getName().length() - getSuffix(locale).length())))
                 .findFirst();
+    }
+
+    /**
+     * Returns the bundle name based on the specified bundle file entry and the locale.
+     */
+    private String getBundleName(File file, TranslationLocaleEntity locale) {
+        return file.getName().substring(0, file.getName().length() - getSuffix(locale).length());
     }
 
     /**
@@ -137,21 +132,6 @@ public class JavaPropertiesBundleHandler implements BundleHandler {
      */
     private String getSuffix(TranslationLocaleEntity locale) {
         return "_" + locale.toLocale().toLanguageTag().toLowerCase() + EXTENSION;
-    }
-
-    /**
-     * Returns the locale based on the file name.
-     *
-     * @see #BUNDLE_PATTERN
-     */
-    private Locale getLocale(File file) {
-        final Matcher matcher = BUNDLE_PATTERN.matcher(file.getName());
-
-        if (!matcher.matches()) {
-            throw new IllegalStateException("The file [" + file + "] is not a resource bundle file.");
-        }
-
-        return Locale.forLanguageTag(matcher.group(2));
     }
 
     /**
@@ -168,17 +148,15 @@ public class JavaPropertiesBundleHandler implements BundleHandler {
     /**
      * Writes the specified keys in the specified file using the output-stream.
      */
-    private void writeTranslations(List<ScannedBundleFileKey> keys, File file, File outputStream) {
+    private void writeTranslations(List<ScannedBundleFileKey> keys, ScannedBundleFileEntry file, File outputStream) {
         try {
-            final Locale locale = getLocale(file);
-
             final PropertiesConfiguration conf = new PropertiesConfiguration(outputStream);
 
-            keys.forEach(key -> conf.setProperty(key.getKey(), key.getTranslations().getOrDefault(locale, null)));
+            keys.forEach(key -> conf.setProperty(key.getKey(), key.getTranslations().getOrDefault(file.getLocale(), null)));
 
             conf.save();
         } catch (ConfigurationException e) {
-            throw WorkspaceException.onFileWriting(file, e);
+            throw WorkspaceException.onFileWriting(file.getFile(), e);
         }
     }
 }

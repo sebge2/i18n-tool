@@ -1,7 +1,8 @@
 package be.sgerard.i18n.model.i18n.file;
 
+import be.sgerard.i18n.model.i18n.persistence.TranslationLocaleEntity;
+
 import java.util.LinkedHashMap;
-import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -21,7 +22,7 @@ public class ScannedBundleFileKey {
             if (second == null) {
                 return first;
             } else {
-                final Map<Locale, String> translations = new LinkedHashMap<>(first.getTranslations());
+                final Map<TranslationLocaleEntity, String> translations = new LinkedHashMap<>(first.getTranslations());
                 translations.putAll(second.getTranslations());
 
                 return new ScannedBundleFileKey(first.getKey(), translations);
@@ -30,9 +31,9 @@ public class ScannedBundleFileKey {
     }
 
     private final String key;
-    private final Map<Locale, String> translations;
+    private final Map<TranslationLocaleEntity, String> translations;
 
-    public ScannedBundleFileKey(String key, Map<Locale, String> translations) {
+    public ScannedBundleFileKey(String key, Map<TranslationLocaleEntity, String> translations) {
         this.key = key;
         this.translations = translations;
     }
@@ -47,7 +48,7 @@ public class ScannedBundleFileKey {
     /**
      * Returns translations by their locales.
      */
-    public Map<Locale, String> getTranslations() {
+    public Map<TranslationLocaleEntity, String> getTranslations() {
         return translations;
     }
 

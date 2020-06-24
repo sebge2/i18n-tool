@@ -22,6 +22,23 @@ public class TranslationLocaleEntity {
         return language + (StringUtils.isEmpty(region) ? "" : "-" + region.toUpperCase()) + (variants.isEmpty() ? "" : " " + variants);
     }
 
+    /**
+     * Returns the Java {@link Locale locale}.
+     *
+     * @param region can be <tt>null</tt>
+     */
+    public static Locale toLocale(String language, String region, List<String> variants) {
+        if (region != null) {
+            if (variants.isEmpty()) {
+                return new Locale(language, region);
+            } else {
+                return new Locale(language, region, String.join("_", variants));
+            }
+        } else {
+            return new Locale(language);
+        }
+    }
+
     @Id
     private String id;
 
@@ -35,7 +52,7 @@ public class TranslationLocaleEntity {
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "translation_locale_variant", joinColumns = @JoinColumn(name = "locale_id"))
     @Column
-    private List<String> variants = new ArrayList<>();
+    private final List<String> variants = new ArrayList<>();
 
     @NotNull
     @Column(nullable = false)
@@ -100,10 +117,16 @@ public class TranslationLocaleEntity {
         return this;
     }
 
+    /**
+     * Returns locale variants.
+     */
     public List<String> getVariants() {
         return variants;
     }
 
+    /**
+     * Sets locale variants.
+     */
     public TranslationLocaleEntity setVariants(Collection<String> variants) {
         this.variants.addAll(variants);
         return this;
@@ -128,15 +151,7 @@ public class TranslationLocaleEntity {
      * Returns this entity as a {@link Locale locale}.
      */
     public Locale toLocale() {
-        if (getRegion().isPresent()) {
-            if (getVariants().isEmpty()) {
-                return new Locale(getLanguage(), getRegion().get());
-            } else {
-                return new Locale(getLanguage(), getRegion().get(), String.join("_", getVariants()));
-            }
-        } else {
-            return new Locale(getLanguage());
-        }
+        return toLocale(getLanguage(), getRegion().orElse(null), getVariants());
     }
 
     /**

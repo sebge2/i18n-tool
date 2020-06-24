@@ -69,7 +69,7 @@ public class TranslationControllerTest extends AbstractControllerTest {
                 .andWaitResult()
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(translation.getId()))
-                .andExpect(jsonPath("$.locale").value("en"))
+                .andExpect(jsonPath("$.locale").value(translation.getLocale()))
                 .andExpect(jsonPath("$.originalValue").value("Another repository is already named [{0}]. Names must be unique."))
                 .andExpect(jsonPath("$.updatedValue").isEmpty())
                 .andExpect(jsonPath("$.lastEditor").isEmpty());

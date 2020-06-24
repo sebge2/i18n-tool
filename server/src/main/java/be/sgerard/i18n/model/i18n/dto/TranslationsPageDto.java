@@ -73,7 +73,7 @@ public class TranslationsPageDto {
             return this;
         }
 
-        @JsonProperty("files")
+        @JsonProperty("workspaces")
         public Builder workspaces(List<TranslationsWorkspaceDto> workspaces) {
             this.workspaces.addAll(workspaces);
             return this;

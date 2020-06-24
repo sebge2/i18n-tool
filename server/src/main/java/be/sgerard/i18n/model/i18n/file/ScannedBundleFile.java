@@ -2,13 +2,11 @@ package be.sgerard.i18n.model.i18n.file;
 
 import be.sgerard.i18n.model.i18n.BundleType;
 import be.sgerard.i18n.model.i18n.persistence.BundleFileEntity;
-import be.sgerard.i18n.model.i18n.persistence.TranslationLocaleEntity;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Locale;
 
 import static java.util.stream.Collectors.toSet;
 
@@ -29,18 +27,14 @@ public class ScannedBundleFile {
             if (second == null) {
                 return first;
             } else {
-                final List<File> files = new ArrayList<>(first.getFiles());
+                final List<ScannedBundleFileEntry> files = new ArrayList<>(first.getFiles());
                 files.addAll(second.getFiles());
 
-                final List<TranslationLocaleEntity> locales = new ArrayList<>(first.getLocales());
-                locales.addAll(second.getLocales());
-
                 return new ScannedBundleFile(
-                    first.getName(),
-                    first.getType(),
-                    first.getLocationDirectory(),
-                    locales,
-                    files
+                        first.getName(),
+                        first.getType(),
+                        first.getLocationDirectory(),
+                        files
                 );
             }
         }
@@ -49,28 +43,24 @@ public class ScannedBundleFile {
     private final String name;
     private final BundleType type;
     private final File locationDirectory;
-    private final Collection<TranslationLocaleEntity> locales;
-    private final Collection<File> files;
+    private final Collection<ScannedBundleFileEntry> files;
 
     public ScannedBundleFile(String name,
                              BundleType type,
                              File locationDirectory,
-                             Collection<TranslationLocaleEntity> locales,
-                             Collection<File> files) {
+                             Collection<ScannedBundleFileEntry> files) {
         this.name = name;
         this.type = type;
         this.locationDirectory = locationDirectory;
-        this.locales = locales;
         this.files = files;
     }
 
     public ScannedBundleFile(BundleFileEntity entity) {
         this(
-            entity.getName(),
-            entity.getType(),
-            new File(entity.getLocation()),
-            entity.getLocales(),
-            entity.getFiles().stream().map(File::new).collect(toSet())
+                entity.getName(),
+                entity.getType(),
+                new File(entity.getLocation()),
+                entity.getFiles().stream().map(file -> new ScannedBundleFileEntry(file.getLocale(), file.getJavaFile())).collect(toSet())
         );
     }
 
@@ -96,16 +86,9 @@ public class ScannedBundleFile {
     }
 
     /**
-     * Returns all the {@link Locale locales} composing the bundle.
+     * Returns all the {@link ScannedBundleFileEntry files} composing the bundle associated by their locales.
      */
-    public Collection<TranslationLocaleEntity> getLocales() {
-        return locales;
-    }
-
-    /**
-     * Returns all the files composing the bundle.
-     */
-    public Collection<File> getFiles() {
+    public Collection<ScannedBundleFileEntry> getFiles() {
         return files;
     }
 

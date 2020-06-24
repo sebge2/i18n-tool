@@ -41,11 +41,8 @@ public class BundleFileEntity {
     @Enumerated(EnumType.STRING)
     private BundleType type;
 
-    @ElementCollection
-    private final Set<String> files = new HashSet<>();
-
-    @ManyToMany
-    private Set<TranslationLocaleEntity> locales = new HashSet<>();
+    @OneToMany(mappedBy = "bundleFile")
+    private final Set<BundleFileEntryEntity> files = new HashSet<>();
 
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
     @OrderColumn(name = "key_index")
@@ -61,8 +58,7 @@ public class BundleFileEntity {
                             String name,
                             String location,
                             BundleType type,
-                            Collection<TranslationLocaleEntity> locales,
-                            Collection<String> files) {
+                            Collection<BundleFileEntryEntity> files) {
         this.id = UUID.randomUUID().toString();
 
         this.workspace = workspace;
@@ -72,8 +68,8 @@ public class BundleFileEntity {
         this.location = location;
         this.type = type;
 
-        this.locales.addAll(locales);
         this.files.addAll(files);
+        this.files.forEach(file -> file.setBundleFile(this));
     }
 
     /**
@@ -162,21 +158,7 @@ public class BundleFileEntity {
     /**
      * Returns all the file paths of this bundle.
      */
-    public Set<String> getFiles() {
+    public Set<BundleFileEntryEntity> getFiles() {
         return files;
-    }
-
-    /**
-     * Returns all the {@link TranslationLocaleEntity locales} of this bundle.
-     */
-    public Set<TranslationLocaleEntity> getLocales() {
-        return locales;
-    }
-
-    /**
-     * Sets all the {@link TranslationLocaleEntity locales} of this bundle.
-     */
-    public void setLocales(Set<TranslationLocaleEntity> locales) {
-        this.locales = locales;
     }
 }

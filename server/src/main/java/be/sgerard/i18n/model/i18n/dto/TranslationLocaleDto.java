@@ -9,10 +9,7 @@ import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableList;
@@ -91,6 +88,13 @@ public class TranslationLocaleDto {
     @ApiModelProperty(notes = "Icon to be displayed for this locale (library flag-icon-css).", required = true)
     public String getIcon() {
         return icon;
+    }
+
+    /**
+     * Returns this DTO as a {@link Locale locale}.
+     */
+    public Locale toLocale() {
+        return TranslationLocaleEntity.toLocale(getLanguage(), getRegion().orElse(null), getVariants());
     }
 
     /**
