@@ -2,7 +2,6 @@ package be.sgerard.i18n.model.i18n.dto;
 
 import be.sgerard.i18n.model.i18n.persistence.TranslationLocaleEntity;
 import be.sgerard.i18n.model.workspace.WorkspaceEntity;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -52,7 +51,7 @@ public class TranslationsSearchRequestDto {
     private final TranslationSearchCriterion criterion;
 
     @ApiModelProperty(notes = "The pattern to use of keys to retrieve.")
-    private final KeyPattern keyPattern;
+    private final TranslationKeyPatternDto keyPattern;
 
     @ApiModelProperty(notes = "The maximum number of keys for the next page.")
     private final int maxKeys;
@@ -77,23 +76,23 @@ public class TranslationsSearchRequestDto {
     }
 
     /**
-     * Returns {@link TranslationLocaleEntity#getId() ids} of translations to look for.
+     * Returns {@link TranslationLocaleEntity#getId() ids} of locales of translations to look for.
      */
     public Collection<String> getLocales() {
         return locales;
     }
 
     /**
-     * Returns the criterion that translations must have.
+     * Returns the {@link TranslationSearchCriterion criterion} that translations must have.
      */
     public TranslationSearchCriterion getCriterion() {
         return criterion;
     }
 
     /**
-     * Returns the pattern to use of keys to retrieve.
+     * Returns the {@link TranslationKeyPatternDto pattern} to use of keys to retrieve.
      */
-    public Optional<KeyPattern> getKeyPattern() {
+    public Optional<TranslationKeyPatternDto> getKeyPattern() {
         return Optional.ofNullable(keyPattern);
     }
 
@@ -123,7 +122,7 @@ public class TranslationsSearchRequestDto {
         private final Collection<String> workspaces = new HashSet<>();
         private final Collection<String> locales = new HashSet<>();
         private TranslationSearchCriterion criterion;
-        private KeyPattern keyPattern;
+        private TranslationKeyPatternDto keyPattern;
         private Integer maxKeys;
         private String lastKey;
 
@@ -151,7 +150,7 @@ public class TranslationsSearchRequestDto {
             return this;
         }
 
-        public Builder keyPattern(KeyPattern keyPattern) {
+        public Builder keyPattern(TranslationKeyPatternDto keyPattern) {
             this.keyPattern = keyPattern;
             return this;
         }
@@ -178,41 +177,4 @@ public class TranslationsSearchRequestDto {
         }
     }
 
-    /**
-     * Pattern of a translation key to search for.
-     */
-    @ApiModel(description = "Pattern of a translation key to search for.")
-    public static class KeyPattern {
-
-        private final KeyPatternStrategy strategy;
-        private final String pattern;
-
-        @JsonCreator
-        public KeyPattern(@JsonProperty("strategy") KeyPatternStrategy strategy,
-                          @JsonProperty("pattern") String pattern) {
-            this.strategy = strategy;
-            this.pattern = pattern;
-        }
-
-        public KeyPatternStrategy getStrategy() {
-            return strategy;
-        }
-
-        public String getPattern() {
-            return pattern;
-        }
-    }
-
-    /**
-     * Strategy of the key pattern matching.
-     */
-    public enum KeyPatternStrategy {
-
-        STARTS_WITH,
-
-        ENDS_WITH,
-
-        CONTAINS
-
-    }
 }

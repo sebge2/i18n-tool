@@ -2,12 +2,13 @@ package be.sgerard.test.i18n.helper;
 
 import be.sgerard.i18n.model.i18n.dto.BundleKeyTranslationDto;
 import be.sgerard.i18n.model.i18n.dto.TranslationsPageDto;
+import be.sgerard.i18n.model.i18n.dto.TranslationsSearchRequestDto;
 import be.sgerard.i18n.model.repository.dto.RepositoryDto;
 import be.sgerard.i18n.model.workspace.WorkspaceDto;
 import be.sgerard.test.i18n.support.JsonHolderResultHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import junit.framework.AssertionFailedError;
-import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -18,7 +19,7 @@ import java.util.Optional;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.OK;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.request;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -78,9 +79,8 @@ public class TranslationsTestHelper {
         public Optional<BundleKeyTranslationDto> find(String key, Locale locale) throws Exception {
             loadTranslations(workspace);
 
-            return translations
-                    .getFiles()
-                    .stream()
+            return  translations.getWorkspaces().stream()
+                    .flatMap(workspace -> workspace.getFiles().stream())
                     .flatMap(file -> file.getKeys().stream())
                     .filter(keyDto -> Objects.equals(keyDto.getKey(), key))
                     .flatMap(keyDto -> keyDto.getTranslations().stream())
@@ -107,9 +107,8 @@ public class TranslationsTestHelper {
         public StepWorkspace expectNoModification() throws Exception {
             loadTranslations(workspace);
 
-            final List<String> updatedTranslations = translations
-                    .getFiles()
-                    .stream()
+            final List<String> updatedTranslations = translations.getWorkspaces().stream()
+                    .flatMap(workspace -> workspace.getFiles().stream())
                     .flatMap(file -> file.getKeys().stream())
                     .flatMap(bundle -> bundle.getTranslations().stream())
                     .map(BundleKeyTranslationDto::getUpdatedValue)
@@ -129,7 +128,15 @@ public class TranslationsTestHelper {
             final JsonHolderResultHandler<TranslationsPageDto> handler = new JsonHolderResultHandler<>(objectMapper, TranslationsPageDto.class);
 
             mockMvc
-                    .perform(request(HttpMethod.GET, "/api/translation/?workspace={workspace}", workspace.getId()))
+                    .perform(
+                            post("/api/translation/do?action=search")
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .content(objectMapper.writeValueAsString(
+                                            TranslationsSearchRequestDto.builder()
+                                                    .workspaces(workspace.getId())
+                                                    .build()
+                                    ))
+                    )
                     .andExpectStarted()
                     .andWaitResult()
                     .andExpect(status().is(OK.value()))
