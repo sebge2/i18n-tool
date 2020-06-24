@@ -2,6 +2,7 @@ package be.sgerard.i18n.model.i18n.file;
 
 import be.sgerard.i18n.model.i18n.BundleType;
 import be.sgerard.i18n.model.i18n.persistence.BundleFileEntity;
+import be.sgerard.i18n.model.i18n.persistence.TranslationLocaleEntity;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -31,7 +32,7 @@ public class ScannedBundleFile {
                 final List<File> files = new ArrayList<>(first.getFiles());
                 files.addAll(second.getFiles());
 
-                final List<Locale> locales = new ArrayList<>(first.getLocales());
+                final List<TranslationLocaleEntity> locales = new ArrayList<>(first.getLocales());
                 locales.addAll(second.getLocales());
 
                 return new ScannedBundleFile(
@@ -48,13 +49,13 @@ public class ScannedBundleFile {
     private final String name;
     private final BundleType type;
     private final File locationDirectory;
-    private final Collection<Locale> locales;
+    private final Collection<TranslationLocaleEntity> locales;
     private final Collection<File> files;
 
     public ScannedBundleFile(String name,
                              BundleType type,
                              File locationDirectory,
-                             Collection<Locale> locales,
+                             Collection<TranslationLocaleEntity> locales,
                              Collection<File> files) {
         this.name = name;
         this.type = type;
@@ -97,7 +98,7 @@ public class ScannedBundleFile {
     /**
      * Returns all the {@link Locale locales} composing the bundle.
      */
-    public Collection<Locale> getLocales() {
+    public Collection<TranslationLocaleEntity> getLocales() {
         return locales;
     }
 

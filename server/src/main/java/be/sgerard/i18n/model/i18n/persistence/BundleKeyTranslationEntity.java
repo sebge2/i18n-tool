@@ -33,9 +33,9 @@ import java.util.UUID;
 )
 @Entity(name = "bundle_key_translation")
 @Table(
-        indexes = {@Index(columnList = "locale")},
+        indexes = {@Index(columnList = "locale_id")},
         uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"bundle_key", "locale"})
+                @UniqueConstraint(columnNames = {"bundle_key", "locale_id"})
         }
 )
 public class BundleKeyTranslationEntity {
@@ -49,9 +49,9 @@ public class BundleKeyTranslationEntity {
     @JoinColumn(name = "bundle_key")
     private BundleKeyEntity bundleKey;
 
-    @NotNull
-    @Column(nullable = false)
-    private String locale;
+    @JoinColumn(name = "locale_id")
+    @ManyToOne(optional = false)
+    private TranslationLocaleEntity locale;
 
     @Column(columnDefinition = "TEXT")
     private String originalValue;
@@ -69,7 +69,7 @@ public class BundleKeyTranslationEntity {
     }
 
     public BundleKeyTranslationEntity(BundleKeyEntity bundleKey,
-                                      String locale,
+                                      TranslationLocaleEntity locale,
                                       String originalValue) {
         this.id = UUID.randomUUID().toString();
 
@@ -109,23 +109,16 @@ public class BundleKeyTranslationEntity {
     }
 
     /**
-     * Returns the string representation of the locale of the translation.
+     * Returns the {@link TranslationLocaleEntity locale} of the translation.
      */
-    public String getLocale() {
+    public TranslationLocaleEntity getLocale() {
         return locale;
     }
 
     /**
-     * Returns the string representation of the locale of the translation.
+     * Sets the {@link TranslationLocaleEntity locale} of the translation.
      */
-    public Locale getJavaLocale() {
-        return Locale.forLanguageTag(getLocale());
-    }
-
-    /**
-     * Sets the string representation of the locale of the translation.
-     */
-    public void setLocale(String locale) {
+    public void setLocale(TranslationLocaleEntity locale) {
         this.locale = locale;
     }
 

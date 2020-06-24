@@ -23,7 +23,7 @@ public class BundleKeyTranslationDto {
     public static Builder builder(BundleKeyTranslationEntity entity) {
         return builder()
                 .id(entity.getId())
-                .locale(entity.getLocale())
+                .locale(entity.getLocale().getId())
                 .originalValue(entity.getOriginalValue().orElse(null))
                 .updatedValue(entity.getUpdatedValue().orElse(null))
                 .lastEditor(entity.getLastEditor().orElse(null));
@@ -32,7 +32,7 @@ public class BundleKeyTranslationDto {
     @ApiModelProperty(notes = "Unique identifier of a translation.", required = true)
     private final String id;
 
-    @ApiModelProperty(notes = "Locale associated to this translation.", required = true)
+    @ApiModelProperty(notes = "Locale id associated to this translation.", required = true)
     private final String locale;
 
     @ApiModelProperty(notes = "The original value found when scanning bundle files (initializing step).", required = true)
@@ -60,7 +60,7 @@ public class BundleKeyTranslationDto {
     }
 
     /**
-     * Returns the string representation of the locale of the translation.
+     * Returns the locale id of the translation.
      */
     public String getLocale() {
         return locale;

@@ -18,6 +18,8 @@ import be.sgerard.i18n.service.i18n.file.BundleHandler;
 import be.sgerard.i18n.service.i18n.file.BundleWalker;
 import be.sgerard.i18n.service.i18n.listener.TranslationsListener;
 import org.apache.commons.lang3.tuple.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
@@ -25,7 +27,10 @@ import reactor.core.publisher.Mono;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -40,6 +45,8 @@ import static java.util.stream.Collectors.toMap;
  */
 @Service
 public class TranslationManagerImpl implements TranslationManager {
+
+    private static final Logger logger = LoggerFactory.getLogger(TranslationManagerImpl.class);
 
     private final BundleKeyTranslationRepository keyEntryRepository;
     private final TranslationLocaleManager localeManager;
@@ -81,6 +88,7 @@ public class TranslationManagerImpl implements TranslationManager {
                 .flatMap(file -> {
                     final ScannedBundleFile bundleFile = new ScannedBundleFile(file);
 
+                    // TODO stream per language
                     return getHandler(bundleFile).updateBundle(bundleFile, getTranslations(file), api);
                 })
                 .then();
@@ -129,7 +137,6 @@ public class TranslationManagerImpl implements TranslationManager {
     private Mono<BundleWalkContext> createContext(WorkspaceEntity workspace, TranslationRepositoryReadApi api) {
         return localeManager
                 .findAll()
-                .map(TranslationLocaleEntity::toLocale)
                 .collectList()
                 .map(locales -> new BundleWalkContext(api, createInclusionPredicates(workspace), locales));
     }
@@ -170,6 +177,8 @@ public class TranslationManagerImpl implements TranslationManager {
     private Mono<BundleFileEntity> onBundleFound(WorkspaceEntity workspaceEntity,
                                                  ScannedBundleFile bundleFile,
                                                  Flux<ScannedBundleFileKey> keys) {
+        logger.info("A bundle file has been found located in [{}] named [{}] with {} locale(s).", bundleFile.getLocationDirectory(), bundleFile.getName(), bundleFile.getLocales().size());
+
         final BundleFileEntity bundleFileEntity =
                 new BundleFileEntity(
                         workspaceEntity,
@@ -184,8 +193,8 @@ public class TranslationManagerImpl implements TranslationManager {
                 .doOnNext(entry -> {
                     final BundleKeyEntity keyEntity = new BundleKeyEntity(bundleFileEntity, entry.getKey());
 
-                    for (Locale locale : bundleFile.getLocales()) {
-                        new BundleKeyTranslationEntity(keyEntity, locale.toLanguageTag(), mapToNullIfEmpty(entry.getTranslations().get(locale)));
+                    for (TranslationLocaleEntity locale : bundleFile.getLocales()) {
+                        new BundleKeyTranslationEntity(keyEntity, locale, mapToNullIfEmpty(entry.getTranslations().get(locale)));
                     }
                 })
                 .then(Mono.just(bundleFileEntity));
@@ -201,9 +210,7 @@ public class TranslationManagerImpl implements TranslationManager {
                                 new ScannedBundleFileKey(
                                         keyEntity.getKey(),
                                         keyEntity.getTranslations().stream()
-                                                .map(keyEntryEntity ->
-                                                        Pair.of(keyEntryEntity.getJavaLocale(), keyEntryEntity.getValue().orElse(null))
-                                                )
+                                                .map(keyEntryEntity -> Pair.of(keyEntryEntity.getLocale().toLocale(), keyEntryEntity.getValue().orElse(null)))
                                                 .collect(HashMap::new, (m, v) -> m.put(v.getKey(), v.getValue()), HashMap::putAll)
                                 )
                 )

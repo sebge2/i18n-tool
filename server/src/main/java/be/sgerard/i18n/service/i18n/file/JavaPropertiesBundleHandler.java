@@ -4,10 +4,12 @@ import be.sgerard.i18n.model.i18n.BundleType;
 import be.sgerard.i18n.model.i18n.file.BundleWalkContext;
 import be.sgerard.i18n.model.i18n.file.ScannedBundleFile;
 import be.sgerard.i18n.model.i18n.file.ScannedBundleFileKey;
+import be.sgerard.i18n.model.i18n.persistence.TranslationLocaleEntity;
 import be.sgerard.i18n.service.i18n.TranslationRepositoryWriteApi;
 import be.sgerard.i18n.service.workspace.WorkspaceException;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -17,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.PropertyResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -39,6 +42,11 @@ public class JavaPropertiesBundleHandler implements BundleHandler {
      */
     private static final Pattern BUNDLE_PATTERN = Pattern.compile("^(.+)_([a-z]{2}(_[A-Z]{2})?)\\.properties$");
 
+    /**
+     * File extension (including ".").
+     */
+    public static final String EXTENSION = ".properties";
+
     public JavaPropertiesBundleHandler() {
     }
 
@@ -58,22 +66,18 @@ public class JavaPropertiesBundleHandler implements BundleHandler {
                 .getApi()
                 .listNormalFiles(directory)
                 .flatMap(
-                        file -> {
-                            final Matcher matcher = BUNDLE_PATTERN.matcher(file.getName());
-                            if (matcher.matches()) {
-                                return Mono.just(
-                                        new ScannedBundleFile(
-                                                matcher.group(1),
-                                                BundleType.JAVA_PROPERTIES,
-                                                directory,
-                                                singletonList(Locale.forLanguageTag(matcher.group(2))),
-                                                singletonList(file)
-                                        )
-                                );
-                            } else {
-                                return Mono.empty();
-                            }
-                        }
+                        file ->
+                                splitLocaleAndBundle(file, context)
+                                        .map(localeAndBundle ->
+                                                Mono.just(
+                                                        new ScannedBundleFile(
+                                                                localeAndBundle.getValue(),
+                                                                BundleType.JAVA_PROPERTIES,
+                                                                directory,
+                                                                singletonList(localeAndBundle.getKey()), singletonList(file)
+                                                        )
+                                                ))
+                                        .orElseGet(Mono::empty)
                 )
                 .filter(bundleFile -> context.getLocales().containsAll(bundleFile.getLocales()))
                 .groupBy(ScannedBundleFile::getName)
@@ -113,6 +117,26 @@ public class JavaPropertiesBundleHandler implements BundleHandler {
                                 .doOnNext(outputStream -> writeTranslations(keys, file, outputStream))
                 )
                 .then();
+    }
+
+    /**
+     * Splits the {@link TranslationLocaleEntity locale} and the bundle name from the specified file. If the file is not a bundle,
+     * nothing is returned.
+     */
+    private Optional<Pair<TranslationLocaleEntity, String>> splitLocaleAndBundle(File file, BundleWalkContext context) {
+        return context
+                .getLocales()
+                .stream()
+                .filter(locale -> file.getName().toLowerCase().endsWith(getSuffix(locale)))
+                .map(locale -> Pair.of(locale, file.getName().substring(0, file.getName().length() - getSuffix(locale).length())))
+                .findFirst();
+    }
+
+    /**
+     * Returns the suffix of the file for the specified locale.
+     */
+    private String getSuffix(TranslationLocaleEntity locale) {
+        return "_" + locale.toLocale().toLanguageTag().toLowerCase() + EXTENSION;
     }
 
     /**

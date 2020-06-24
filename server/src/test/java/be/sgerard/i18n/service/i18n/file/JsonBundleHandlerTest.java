@@ -44,20 +44,20 @@ public class JsonBundleHandlerTest {
 
     @Test
     public void scanKeys() throws IOException {
-        final File directory = new File("/be/sgerard/i18n/service/i18n/file");
-        final ScannedBundleFile bundleFile = new ScannedBundleFile(
-                "file",
-                BundleType.JSON_ICU,
-                directory,
-                singletonList(Locale.FRENCH),
-                singletonList(new File(directory, "fr.json"))
-        );
-
-        final GitRepositoryApi repositoryAPI = mock(GitRepositoryApi.class);
-        when(repositoryAPI.openInputStream(new File(directory, "fr.json")))
-                .then(invocationOnMock -> getClass().getResourceAsStream(invocationOnMock.getArgument(0).toString()));
-
-        final JsonBundleHandler handler = new JsonBundleHandler();
+//        final File directory = new File("/be/sgerard/i18n/service/i18n/file");
+//        final ScannedBundleFile bundleFile = new ScannedBundleFile(
+//                "file",
+//                BundleType.JSON_ICU,
+//                directory,
+//                singletonList(Locale.FRENCH),
+//                singletonList(new File(directory, "fr.json"))
+//        );
+//
+//        final GitRepositoryApi repositoryAPI = mock(GitRepositoryApi.class);
+//        when(repositoryAPI.openInputStream(new File(directory, "fr.json")))
+//                .then(invocationOnMock -> getClass().getResourceAsStream(invocationOnMock.getArgument(0).toString()));
+//
+//        final JsonBundleHandler handler = new JsonBundleHandler();
 
 //        final Collection<ScannedBundleFileKeyDto> actual = handler.scanKeys(bundleFile, repositoryAPI);
 //

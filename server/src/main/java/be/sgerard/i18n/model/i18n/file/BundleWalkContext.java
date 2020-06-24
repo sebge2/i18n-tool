@@ -1,6 +1,7 @@
 package be.sgerard.i18n.model.i18n.file;
 
 import be.sgerard.i18n.model.i18n.BundleType;
+import be.sgerard.i18n.model.i18n.persistence.TranslationLocaleEntity;
 import be.sgerard.i18n.service.i18n.TranslationRepositoryReadApi;
 
 import java.nio.file.Path;
@@ -16,11 +17,11 @@ public class BundleWalkContext {
 
     private final TranslationRepositoryReadApi api;
     private final Map<BundleType, Predicate<Path>> inclusionPredicates;
-    private final Set<Locale> locales;
+    private final Set<TranslationLocaleEntity> locales;
 
     public BundleWalkContext(TranslationRepositoryReadApi api,
                              Map<BundleType, Predicate<Path>> inclusionPredicates,
-                             Collection<Locale> locales) {
+                             Collection<TranslationLocaleEntity> locales) {
         this.inclusionPredicates = inclusionPredicates;
         this.api = api;
         this.locales = new HashSet<>(locales);
@@ -50,7 +51,7 @@ public class BundleWalkContext {
     /**
      * Returns all the locales to look for.
      */
-    public Set<Locale> getLocales() {
+    public Set<TranslationLocaleEntity> getLocales() {
         return locales;
     }
 }

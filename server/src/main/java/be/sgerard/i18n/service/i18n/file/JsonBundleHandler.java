@@ -4,6 +4,7 @@ import be.sgerard.i18n.model.i18n.BundleType;
 import be.sgerard.i18n.model.i18n.file.BundleWalkContext;
 import be.sgerard.i18n.model.i18n.file.ScannedBundleFile;
 import be.sgerard.i18n.model.i18n.file.ScannedBundleFileKey;
+import be.sgerard.i18n.model.i18n.persistence.TranslationLocaleEntity;
 import be.sgerard.i18n.service.i18n.TranslationRepositoryWriteApi;
 import be.sgerard.i18n.service.workspace.WorkspaceException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -18,16 +19,12 @@ import reactor.core.publisher.Mono;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static be.sgerard.i18n.service.i18n.file.TranslationFileUtils.mapToNullIfEmpty;
-import static java.util.Collections.singletonList;
-import static java.util.Collections.singletonMap;
+import static java.util.Collections.*;
 import static org.springframework.util.StringUtils.isEmpty;
 
 /**
@@ -43,6 +40,11 @@ public class JsonBundleHandler implements BundleHandler {
      * the region (2 letters in upper-case)
      */
     private static final Pattern BUNDLE_PATTERN = Pattern.compile("^([a-z]{2}(_[A-Z]{2})?)\\.json$");
+
+    /**
+     * File extension (including ".").
+     */
+    public static final String EXTENSION = ".json";
 
     private final ObjectMapper objectMapper;
 
@@ -71,23 +73,19 @@ public class JsonBundleHandler implements BundleHandler {
                 .getApi()
                 .listNormalFiles(directory)
                 .flatMap(
-                        file -> {
-                            final Matcher matcher = BUNDLE_PATTERN.matcher(file.getName());
-
-                            if (matcher.matches()) {
-                                return Mono.just(
-                                        new ScannedBundleFile(
-                                                directory.getName(),
-                                                BundleType.JSON_ICU,
-                                                directory,
-                                                singletonList(Locale.forLanguageTag(matcher.group(1))),
-                                                singletonList(file)
-                                        )
-                                );
-                            } else {
-                                return Mono.empty();
-                            }
-                        }
+                        file ->
+                                findLocales(file, context)
+                                        .map(locale ->
+                                                Mono.just(
+                                                        new ScannedBundleFile(
+                                                                directory.getName(),
+                                                                BundleType.JSON_ICU,
+                                                                directory,
+                                                                singletonList(locale),
+                                                                singletonList(file)
+                                                        )
+                                                ))
+                                        .orElseGet(Mono::empty)
                 )
                 .filter(bundleFile -> context.getLocales().containsAll(bundleFile.getLocales()))
                 .groupBy(ScannedBundleFile::getName)
@@ -123,6 +121,18 @@ public class JsonBundleHandler implements BundleHandler {
                                 .doOnNext(outputStream -> writeTranslations(keys, file, outputStream))
                 )
                 .then();
+    }
+
+    /**
+     * Finds the {@link TranslationLocaleEntity locale} from the specified file. If the file is not a bundle,
+     * nothing is returned.
+     */
+    private Optional<TranslationLocaleEntity> findLocales(File file, BundleWalkContext context) {
+        return context
+                .getLocales()
+                .stream()
+                .filter(locale -> file.getName().toLowerCase().endsWith(locale.toLocale().toLanguageTag().toLowerCase() + EXTENSION))
+                .findFirst();
     }
 
     /**

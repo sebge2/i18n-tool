@@ -44,8 +44,8 @@ public class BundleFileEntity {
     @ElementCollection
     private final Set<String> files = new HashSet<>();
 
-    @ElementCollection
-    private Set<Locale> locales = new HashSet<>();
+    @ManyToMany
+    private Set<TranslationLocaleEntity> locales = new HashSet<>();
 
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
     @OrderColumn(name = "key_index")
@@ -61,7 +61,7 @@ public class BundleFileEntity {
                             String name,
                             String location,
                             BundleType type,
-                            Collection<Locale> locales,
+                            Collection<TranslationLocaleEntity> locales,
                             Collection<String> files) {
         this.id = UUID.randomUUID().toString();
 
@@ -167,16 +167,16 @@ public class BundleFileEntity {
     }
 
     /**
-     * Returns all the {@link Locale locales} of this bundle.
+     * Returns all the {@link TranslationLocaleEntity locales} of this bundle.
      */
-    public Set<Locale> getLocales() {
+    public Set<TranslationLocaleEntity> getLocales() {
         return locales;
     }
 
     /**
-     * Sets all the {@link Locale locales} of this bundle.
+     * Sets all the {@link TranslationLocaleEntity locales} of this bundle.
      */
-    public void setLocales(Set<Locale> locales) {
+    public void setLocales(Set<TranslationLocaleEntity> locales) {
         this.locales = locales;
     }
 }
