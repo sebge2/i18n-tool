@@ -7,7 +7,6 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
@@ -16,21 +15,15 @@ import java.util.UUID;
  *
  * @author Sebastien Gerard
  */
-@Entity(name = "external_user")
-@Table(
-        uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"externalId"})
-        }
-)
+@Document("user")
+@TypeAlias("external")
 public class ExternalUserEntity extends UserEntity {
 
     @NotNull
-    @Column(nullable = false)
+    @Indexed
     private String externalId;
 
     @NotNull
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
     private ExternalAuthSystem externalAuthSystem;
 
     @PersistenceConstructor

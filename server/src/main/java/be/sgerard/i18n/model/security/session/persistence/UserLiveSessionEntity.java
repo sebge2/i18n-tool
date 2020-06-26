@@ -3,8 +3,11 @@ package be.sgerard.i18n.model.security.session.persistence;
 import be.sgerard.i18n.model.security.auth.AuthenticatedUser;
 import be.sgerard.i18n.model.security.user.persistence.UserEntity;
 import be.sgerard.i18n.service.security.UserRole;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.PersistenceConstructor;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -17,38 +20,27 @@ import java.util.UUID;
  *
  * @author Sebastien Gerard
  */
-@Entity(name = "user_live_session")
-@Table(
-        uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"simpSessionId"})
-        }
-)
+@Document("user_live_session")
 public class UserLiveSessionEntity {
 
     @Id
     private String id;
 
     @NotNull
-    @Column(nullable = false)
     private String authenticatedUserId;
 
     @NotNull
-    @ManyToOne(optional = false)
-    private UserEntity user;
+    private String userId;
 
     @NotNull
-    @Column(nullable = false)
+    @Indexed
     private String simpSessionId;
 
     @NotNull
-    @Column(nullable = false)
     private Instant loginTime;
 
-    @Column
     private Instant logoutTime;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @Enumerated(EnumType.STRING)
     private final List<UserRole> sessionRoles = new ArrayList<>();
 
     @PersistenceConstructor
