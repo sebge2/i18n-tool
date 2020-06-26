@@ -51,20 +51,18 @@ public class UserLiveSessionEntity {
     @Enumerated(EnumType.STRING)
     private final List<UserRole> sessionRoles = new ArrayList<>();
 
-    @Version
-    private int version;
-
+    @PersistenceConstructor
     UserLiveSessionEntity() {
     }
 
-    public UserLiveSessionEntity(UserEntity user,
+    public UserLiveSessionEntity(UserEntity userId,
                                  String authenticatedUserId,
                                  String simpSessionId,
                                  Instant loginTime,
                                  Collection<UserRole> sessionRoles) {
         this.authenticatedUserId = authenticatedUserId;
         this.id = UUID.randomUUID().toString();
-        this.user = user;
+        this.userId = userId.getId();
         this.simpSessionId = simpSessionId;
         this.loginTime = loginTime;
         this.sessionRoles.addAll(sessionRoles);
@@ -101,15 +99,15 @@ public class UserLiveSessionEntity {
     /**
      * Returns the associated {@link UserEntity user}.
      */
-    public UserEntity getUser() {
-        return user;
+    public String getUserId() {
+        return userId;
     }
 
     /**
      * Sets the associated {@link UserEntity user}.
      */
-    public void setUser(UserEntity user) {
-        this.user = user;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     /**

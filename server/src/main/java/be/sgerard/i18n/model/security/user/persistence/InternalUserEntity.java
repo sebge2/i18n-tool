@@ -1,7 +1,9 @@
 package be.sgerard.i18n.model.security.user.persistence;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
+import org.springframework.data.annotation.PersistenceConstructor;
+import org.springframework.data.annotation.TypeAlias;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
@@ -10,11 +12,11 @@ import java.util.UUID;
  *
  * @author Sebastien Gerard
  */
-@Entity(name = "internal_user")
+@Document("user")
+@TypeAlias("internal")
 public class InternalUserEntity extends UserEntity {
 
     @NotNull
-    @Column(nullable = false)
     private String password;
 
     @PersistenceConstructor

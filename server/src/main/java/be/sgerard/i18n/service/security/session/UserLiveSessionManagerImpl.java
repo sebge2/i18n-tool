@@ -2,11 +2,8 @@ package be.sgerard.i18n.service.security.session;
 
 import be.sgerard.i18n.model.security.session.persistence.UserLiveSessionEntity;
 import be.sgerard.i18n.model.security.user.dto.AuthenticatedUserDto;
-import be.sgerard.i18n.model.security.user.dto.UserDto;
-import be.sgerard.i18n.repository.security.UserLiveSessionManagerRepository;
-import be.sgerard.i18n.service.event.EventService;
+import be.sgerard.i18n.repository.security.UserLiveSessionRepository;
 import be.sgerard.i18n.service.user.UserManager;
-import org.springframework.context.event.EventListener;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.messaging.support.NativeMessageHeaderAccessor;
@@ -28,8 +25,8 @@ import static be.sgerard.i18n.model.event.EventType.UPDATED_CURRENT_AUTHENTICATE
 public class UserLiveSessionManagerImpl implements UserLiveSessionManager {
 
     private final UserManager userManager;
-    private final UserLiveSessionManagerRepository repository;
-    private final EventService eventService;
+    private final UserLiveSessionRepository repository;
+//    private final EventService eventService;
 
     public UserLiveSessionManagerImpl(UserManager userManager,
                                       UserLiveSessionManagerRepository repository,
@@ -38,12 +35,13 @@ public class UserLiveSessionManagerImpl implements UserLiveSessionManager {
         this.repository = repository;
         this.eventService = eventService;
 //        this.eventService.addListener(new UpdatedAuthenticationUserListener());
+        this.repository = repository;
     }
 
     @Override
     @Transactional(readOnly = true)
     public Flux<UserLiveSessionEntity> getCurrentLiveSessions() {
-        return Flux.fromIterable(repository.findByLogoutTimeIsNull());
+        return repository.findByLogoutTimeIsNull();
     }
 
     @EventListener
@@ -103,9 +101,9 @@ public class UserLiveSessionManagerImpl implements UserLiveSessionManager {
 //
 //        @Override
         public void onEvent(AuthenticatedUserDto updatedAuthenticatedUser) {
-            repository.findByAuthenticatedUserId(updatedAuthenticatedUser.getId())
-                    .forEach(liveSession -> {
-                        liveSession.addSessionRoles(updatedAuthenticatedUser.getSessionRoles());
+//            repository.findByAuthenticatedUserId(updatedAuthenticatedUser.getId())
+//                    .forEach(liveSession -> {
+//                        liveSession.addSessionRoles(updatedAuthenticatedUser.getSessionRoles());
 
                         eventService.sendEventToSession(
                                 liveSession.getSimpSessionId(),

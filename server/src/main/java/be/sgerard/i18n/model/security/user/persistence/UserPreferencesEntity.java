@@ -1,28 +1,21 @@
 package be.sgerard.i18n.model.security.user.persistence;
 
 import be.sgerard.i18n.model.ToolLocale;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.PersistenceConstructor;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.util.Optional;
-import java.util.UUID;
 
 /**
  * Entity for user preferences.
  *
  * @author Sebastien Gerard
  */
-@Entity(name = "user_preferences")
 public class UserPreferencesEntity {
 
     @Id
     private String id;
 
-    @NotNull
-    @OneToOne
-    private UserEntity user;
-
-    @Enumerated(EnumType.STRING)
     private ToolLocale toolLocale;
 
     @PersistenceConstructor

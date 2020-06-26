@@ -1,8 +1,10 @@
 package be.sgerard.i18n.model.security.user.persistence;
 
 import be.sgerard.i18n.service.security.UserRole;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -13,34 +15,25 @@ import java.util.List;
  *
  * @author Sebastien Gerard
  */
-@Entity(name = "user")
-@Inheritance(strategy = InheritanceType.JOINED)
+@Document("user")
 public abstract class UserEntity {
 
     @Id
     private String id;
 
     @NotNull
-    @Column(nullable = false)
+    @Indexed
     private String username;
 
-    @Column
     private String email;
 
-    @Column
     private String avatarUrl;
 
-    @ElementCollection(fetch = FetchType.LAZY)
-    @Enumerated(EnumType.STRING)
     private List<UserRole> roles = new ArrayList<>();
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private UserPreferencesEntity preferences;
 
-    @Version
-    private int version;
-
-    UserEntity() {
+    protected UserEntity() {
     }
 
     /**
