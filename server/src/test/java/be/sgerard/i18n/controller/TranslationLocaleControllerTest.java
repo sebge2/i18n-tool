@@ -2,26 +2,29 @@ package be.sgerard.i18n.controller;
 
 import be.sgerard.i18n.model.i18n.dto.TranslationLocaleCreationDto;
 import be.sgerard.i18n.model.i18n.dto.TranslationLocaleDto;
+import be.sgerard.test.i18n.support.TransactionalReactiveTest;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.transaction.annotation.Transactional;
 
 import static be.sgerard.test.i18n.model.TranslationLocaleCreationDtoTestUtils.frBeWallonLocaleCreationDto;
 import static be.sgerard.test.i18n.model.TranslationLocaleCreationDtoTestUtils.frLocaleCreationDto;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.request;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * @author Sebastien Gerard
  */
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class TranslationLocaleControllerTest extends AbstractControllerTest {
 
     @Test
-    @Transactional
+    @TransactionalReactiveTest
     @WithMockUser(username = "user-01", roles = {"MEMBER_OF_ORGANIZATION"})
     public void findAllTranslationsNonAdminAllowed() throws Exception {
         asyncMvc
@@ -32,7 +35,7 @@ public class TranslationLocaleControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @Transactional
+    @TransactionalReactiveTest
     @WithMockUser(username = "user-01", roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
     public void findAllTranslations() throws Exception {
         locale.createLocale(frBeWallonLocaleCreationDto());
@@ -48,7 +51,7 @@ public class TranslationLocaleControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @Transactional
+    @TransactionalReactiveTest
     @WithMockUser(username = "user-01", roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
     public void create() throws Exception {
         final TranslationLocaleCreationDto translationLocale = frBeWallonLocaleCreationDto().build();
@@ -61,6 +64,7 @@ public class TranslationLocaleControllerTest extends AbstractControllerTest {
                 )
                 .andExpectStarted()
                 .andWaitResult()
+                .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.language").value("fr"))
                 .andExpect(jsonPath("$.icon").value("flag-icon-fr"))
@@ -69,7 +73,7 @@ public class TranslationLocaleControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @Transactional
+    @TransactionalReactiveTest
     @WithMockUser(username = "user-01", roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
     public void createTwice() throws Exception {
         locale.createLocale(frBeWallonLocaleCreationDto().build());
@@ -87,7 +91,7 @@ public class TranslationLocaleControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @Transactional
+    @TransactionalReactiveTest
     @WithMockUser(username = "user-01", roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
     public void update() throws Exception {
         final TranslationLocaleDto originalLocale = locale.createLocale(TranslationLocaleCreationDto.builder().language("fr").icon("flag-icon-fr")).get();
@@ -116,7 +120,7 @@ public class TranslationLocaleControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @Transactional
+    @TransactionalReactiveTest
     @WithMockUser(username = "user-01", roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
     public void updateConflict() throws Exception {
         final TranslationLocaleDto otherLocale = locale.createLocale(frBeWallonLocaleCreationDto()).get();
@@ -141,7 +145,7 @@ public class TranslationLocaleControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @Transactional
+    @TransactionalReactiveTest
     @WithMockUser(username = "user-01", roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
     public void delete() throws Exception {
         final TranslationLocaleDto translationLocale = locale.createLocale(frBeWallonLocaleCreationDto()).get();

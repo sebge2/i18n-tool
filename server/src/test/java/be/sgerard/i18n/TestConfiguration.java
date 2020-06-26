@@ -2,7 +2,6 @@ package be.sgerard.i18n;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -14,11 +13,10 @@ import static org.springframework.security.test.web.servlet.setup.SecurityMockMv
  * @author Sebastien Gerard
  */
 @Configuration
-@ComponentScan({"be.sgerard.i18n", "be.sgerard.test.i18n"})
 public class TestConfiguration {
 
     @Autowired
-    protected WebApplicationContext webApplicationContext;
+    private WebApplicationContext webApplicationContext;
 
     @Bean
     public MockMvc mockMvc() {

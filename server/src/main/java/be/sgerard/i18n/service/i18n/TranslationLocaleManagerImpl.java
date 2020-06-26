@@ -30,13 +30,13 @@ public class TranslationLocaleManagerImpl implements TranslationLocaleManager {
     @Override
     @Transactional(readOnly = true)
     public Mono<TranslationLocaleEntity> findById(String id) {
-        return Mono.justOrEmpty(repository.findById(id));
+        return repository.findById(id);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Flux<TranslationLocaleEntity> findAll() {
-        return Flux.fromIterable(repository.findAll());
+        return repository.findAll();
     }
 
     @Override
@@ -56,7 +56,7 @@ public class TranslationLocaleManagerImpl implements TranslationLocaleManager {
                             return locale;
                         })
                 )
-                .map(repository::save)
+                .flatMap(repository::save)
                 .flatMap(translationLocale ->
                         localeListener
                                 .onCreatedLocale(translationLocale)
@@ -98,11 +98,11 @@ public class TranslationLocaleManagerImpl implements TranslationLocaleManager {
                                 .onDeletedLocale(translationLocale)
                                 .thenReturn(translationLocale)
                 )
-                .map(translationLocale -> {
-                    repository.delete(translationLocale);
-
-                    return translationLocale;
-                });
+                .flatMap(translationLocale ->
+                        repository
+                                .delete(translationLocale)
+                                .thenReturn(translationLocale)
+                );
     }
 
 }

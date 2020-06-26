@@ -1,9 +1,10 @@
 package be.sgerard.i18n.model.i18n.persistence;
 
 import be.sgerard.i18n.model.i18n.dto.TranslationLocaleDto;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.util.StringUtils;
 
-import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.*;
 
@@ -12,7 +13,7 @@ import java.util.*;
  *
  * @author Sebastien Gerard
  */
-@Entity(name = "translation_locale")
+@Document("translation_locale")
 public class TranslationLocaleEntity {
 
     /**
@@ -39,27 +40,33 @@ public class TranslationLocaleEntity {
         }
     }
 
+    /**
+     * The unique id of this entity.
+     */
     @Id
     private String id;
 
+    /**
+     * The locale language (ex: fr).
+     */
     @NotNull
-    @Column(nullable = false)
     private String language;
 
-    @Column
+    /**
+     * The locale region (ex: BE).
+     */
     private String region;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "translation_locale_variant", joinColumns = @JoinColumn(name = "locale_id"))
-    @Column
-    private final List<String> variants = new ArrayList<>();
+    /**
+     * Locale variants.
+     */
+    private List<String> variants = new ArrayList<>();
 
+    /**
+     * The icon associated to this locale (library flag-icon-css).
+     */
     @NotNull
-    @Column(nullable = false)
     private String icon;
-
-    @Version
-    private int version;
 
     TranslationLocaleEntity() {
     }
