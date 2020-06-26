@@ -1,6 +1,11 @@
 package be.sgerard.i18n.model.security.user.persistence;
 
 import be.sgerard.i18n.model.security.user.ExternalAuthSystem;
+import org.springframework.data.annotation.PersistenceConstructor;
+import org.springframework.data.annotation.TypeAlias;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -28,12 +33,13 @@ public class ExternalUserEntity extends UserEntity {
     @Enumerated(EnumType.STRING)
     private ExternalAuthSystem externalAuthSystem;
 
+    @PersistenceConstructor
     ExternalUserEntity() {
     }
 
     public ExternalUserEntity(String externalId, ExternalAuthSystem externalAuthSystem) {
         setId(UUID.randomUUID().toString());
-        setPreferences(new UserPreferencesEntity(this));
+        setPreferences(new UserPreferencesEntity());
 
         this.externalId = externalId;
         this.externalAuthSystem = externalAuthSystem;

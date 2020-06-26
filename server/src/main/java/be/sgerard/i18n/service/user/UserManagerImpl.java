@@ -21,7 +21,6 @@ import reactor.core.publisher.Mono;
 
 import javax.annotation.PostConstruct;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -62,13 +61,13 @@ public class UserManagerImpl implements UserManager {
     @Override
     @Transactional(readOnly = true)
     public Mono<UserEntity> findById(String id) {
-        return Mono.justOrEmpty(userRepository.findById(id));
+        return userRepository.findById(id);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Flux<UserEntity> findAll() {
-        return Flux.fromIterable(userRepository.findAll());
+        return userRepository.findAll();
     }
 
     @Override
@@ -76,7 +75,7 @@ public class UserManagerImpl implements UserManager {
     public Mono<InternalUserEntity> createUser(InternalUserCreationDto info) {
         return listener
                 .beforePersist(info)
-                .map(validationResult -> {
+                .flatMap(validationResult -> {
                     ValidationException.throwIfFailed(validationResult);
 
                     final InternalUserEntity user = new InternalUserEntity(info.getUsername());
@@ -102,8 +101,8 @@ public class UserManagerImpl implements UserManager {
     @Override
     @Transactional
     public Mono<ExternalUserEntity> createOrUpdateUser(ExternalUser externalUserDto) {
-        return Mono
-                .justOrEmpty(externalUserRepository.findByExternalId(externalUserDto.getExternalId()))
+        return externalUserRepository
+                .findByExternalId(externalUserDto.getExternalId())
                 .switchIfEmpty(Mono.just(new ExternalUserEntity(externalUserDto.getExternalId(), externalUserDto.getAuthSystem())))
                 .flatMap(externalUser ->
                         listener
@@ -114,7 +113,7 @@ public class UserManagerImpl implements UserManager {
                                     return externalUser;
                                 })
                 )
-                .map(externalUser -> {
+                .flatMap(externalUser -> {
                     externalUser.setUsername(externalUserDto.getUsername());
                     externalUser.setAvatarUrl(externalUserDto.getAvatarUrl());
                     externalUser.setEmail(externalUserDto.getEmail());
@@ -171,10 +170,10 @@ public class UserManagerImpl implements UserManager {
 
                                     return user;
                                 })
-                                .map(userEntity -> {
-                                    userRepository.delete(userEntity);
-                                    return userEntity;
-                                })
+                                .flatMap(userEntity ->
+                                        userRepository.delete(userEntity)
+                                                .thenReturn(userEntity)
+                                )
                                 .flatMap(rep ->
                                         listener
                                                 .onDelete(rep)
@@ -185,7 +184,7 @@ public class UserManagerImpl implements UserManager {
 
     @Override
     public Mono<InternalUserEntity> finUserByName(String username) {
-        return Mono.justOrEmpty(internalUserRepository.findByUsername(username));
+        return internalUserRepository.findByUsername(username);
     }
 
     /**
@@ -193,9 +192,9 @@ public class UserManagerImpl implements UserManager {
      */
     @PostConstruct
     @Transactional
-    public Optional<InternalUserEntity> initializeDefaultAdmin() {
-        return Flux
-                .fromIterable(internalUserRepository.findAll())
+    public void initializeDefaultAdmin() {
+        internalUserRepository
+                .findAll()
                 .hasElements()
                 .flatMap(hasUsers -> {
                     if (hasUsers) {
@@ -222,6 +221,6 @@ public class UserManagerImpl implements UserManager {
                                     .build()
                     );
                 })
-                .blockOptional();
+                .subscribe();
     }
 }

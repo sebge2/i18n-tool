@@ -25,15 +25,8 @@ public class UserPreferencesEntity {
     @Enumerated(EnumType.STRING)
     private ToolLocale toolLocale;
 
-    @Version
-    private int version;
-
+    @PersistenceConstructor
     UserPreferencesEntity() {
-    }
-
-    UserPreferencesEntity(UserEntity user) {
-        this.user = user;
-        this.id = UUID.randomUUID().toString();
     }
 
     /**
@@ -48,20 +41,6 @@ public class UserPreferencesEntity {
      */
     public void setId(String id) {
         this.id = id;
-    }
-
-    /**
-     * Returns the associated {@link UserEntity user}.
-     */
-    public UserEntity getUser() {
-        return user;
-    }
-
-    /**
-     * Sets the associated {@link UserEntity user}.
-     */
-    public void setUser(UserEntity user) {
-        this.user = user;
     }
 
     /**

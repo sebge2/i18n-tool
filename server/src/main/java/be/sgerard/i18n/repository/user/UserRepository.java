@@ -1,17 +1,13 @@
 package be.sgerard.i18n.repository.user;
 
 import be.sgerard.i18n.model.security.user.persistence.UserEntity;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.stereotype.Repository;
-
-import java.util.Collection;
+import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 
 /**
+ * {@link ReactiveMongoRepository Repository} of {@link UserEntity users}.
+ *
  * @author Sebastien Gerard
  */
-@Repository
-public interface UserRepository extends CrudRepository<UserEntity, String> {
+public interface UserRepository extends ReactiveMongoRepository<UserEntity, String> {
 
-    @Override
-    Collection<UserEntity> findAll();
 }

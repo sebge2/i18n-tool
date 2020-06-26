@@ -1,17 +1,19 @@
 package be.sgerard.i18n.repository.user;
 
 import be.sgerard.i18n.model.security.user.persistence.InternalUserEntity;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.stereotype.Repository;
-
-import java.util.Optional;
+import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
+import reactor.core.publisher.Mono;
 
 /**
+ * {@link ReactiveMongoRepository Repository} of {@link InternalUserEntity internal users}.
+ *
  * @author Sebastien Gerard
  */
-@Repository
-public interface InternalUserRepository extends CrudRepository<InternalUserEntity, String> {
+public interface InternalUserRepository extends ReactiveMongoRepository<InternalUserEntity, String> {
 
-    Optional<InternalUserEntity> findByUsername(String username);
+    /**
+     * Finds the user having the specified {@link InternalUserEntity#getUsername() username}.
+     */
+    Mono<InternalUserEntity> findByUsername(String username);
 
 }

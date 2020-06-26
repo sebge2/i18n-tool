@@ -17,13 +17,14 @@ public class InternalUserEntity extends UserEntity {
     @Column(nullable = false)
     private String password;
 
+    @PersistenceConstructor
     InternalUserEntity() {
     }
 
     public InternalUserEntity(String username) {
         setId(UUID.randomUUID().toString());
         setUsername(username);
-        setPreferences(new UserPreferencesEntity(this));
+        setPreferences(new UserPreferencesEntity());
     }
 
     /**
