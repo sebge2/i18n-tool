@@ -2,17 +2,14 @@ package be.sgerard.i18n.controller;
 
 import be.sgerard.i18n.model.repository.RepositoryStatus;
 import be.sgerard.i18n.model.repository.dto.*;
+import be.sgerard.test.i18n.support.TransactionalReactiveTest;
 import be.sgerard.test.i18n.support.WithInternalUser;
 import org.junit.jupiter.api.*;
 import org.springframework.http.MediaType;
-import org.springframework.transaction.annotation.Transactional;
 
 import static be.sgerard.test.i18n.model.GitRepositoryCreationDtoTestUtils.*;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.hasSize;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * @author Sebastien Gerard
@@ -45,47 +42,46 @@ public class RepositoryControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @Transactional
+    @TransactionalReactiveTest
     @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
-    public void findAll() throws Exception {
+    public void findAll() {
         final GitRepositoryDto repository = this.repository.create(i18nToolLocalRepositoryCreationDto(), GitRepositoryDto.class).get();
 
-        asyncMvc
-                .perform(get("/api/repository"))
-                .andExpectStarted()
-                .andWaitResult()
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(greaterThanOrEqualTo(1))))
-                .andExpect(jsonPath("$[?(@.id=='" + repository.getId() + "')]").exists());
+        webClient.get()
+                .uri("/api/repository/")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$").value(hasSize(greaterThanOrEqualTo(1)))
+                .jsonPath("$[?(@.id=='" + repository.getId() + "')]").exists();
     }
 
     @Test
-    @Transactional
+    @TransactionalReactiveTest
     @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
-    public void findById() throws Exception {
+    public void findById() {
         final GitRepositoryDto repository = this.repository.create(i18nToolLocalRepositoryCreationDto(), GitRepositoryDto.class).get();
 
-        asyncMvc
-                .perform(get("/api/repository/{id}", repository.getId()))
-                .andExpectStarted()
-                .andWaitResult()
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status").value(RepositoryStatus.NOT_INITIALIZED.name()))
-                .andExpect(jsonPath("$.name").value(repository.getName()))
-                .andExpect(jsonPath("$.location").value(repository.getLocation()));
+        webClient.get()
+                .uri("/api/repository/{id}", repository.getId())
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.status").isEqualTo(RepositoryStatus.NOT_INITIALIZED.name())
+                .jsonPath("$.name").isEqualTo(repository.getName())
+                .jsonPath("$.location").isEqualTo(repository.getLocation());
     }
 
     @Test
-    @Transactional
+    @TransactionalReactiveTest
     @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
-    public void findByIdNotFound() throws Exception {
+    public void findByIdNotFound() {
         repository.create(i18nToolLocalRepositoryCreationDto(), GitRepositoryDto.class);
 
-        asyncMvc
-                .perform(get("/api/repository/{id}", "unknown"))
-                .andExpectStarted()
-                .andWaitResult()
-                .andExpect(status().isNotFound());
+        webClient.get()
+                .uri("/api/repository/{id}", "unknown")
+                .exchange()
+                .expectStatus().isNotFound();
     }
 
     @Nested
@@ -93,163 +89,147 @@ public class RepositoryControllerTest extends AbstractControllerTest {
     class GitHub extends AbstractControllerTest {
 
         @Test
-        @Transactional
+        @TransactionalReactiveTest
         @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
-        public void create() throws Exception {
+        public void create() {
             final GitHubRepositoryCreationDto creationDto = i18nToolRepositoryCreationDto();
 
-            asyncMvc
-                    .perform(
-                            post("/api/repository")
-                                    .contentType(MediaType.APPLICATION_JSON)
-                                    .content(objectMapper.writeValueAsString(creationDto))
-                    )
-                    .andExpectStarted()
-                    .andWaitResult()
-                    .andExpect(status().isCreated())
-                    .andExpect(jsonPath("$.status").value(RepositoryStatus.NOT_INITIALIZED.name()))
-                    .andExpect(jsonPath("$.name").value("sebge2/i18n-tool"))
-                    .andExpect(jsonPath("$.location").value("https://github.com/sebge2/i18n-tool.git"));
+            webClient.post()
+                    .uri("/api/repository/")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(creationDto)
+                    .exchange()
+                    .expectStatus().isCreated()
+                    .expectBody()
+                    .jsonPath("$.status").isEqualTo(RepositoryStatus.NOT_INITIALIZED.name())
+                    .jsonPath("$.name").isEqualTo("sebge2/i18n-tool")
+                    .jsonPath("$.location").isEqualTo("https://github.com/sebge2/i18n-tool.git");
         }
 
         @Test
-        @Transactional
+        @TransactionalReactiveTest
         @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
-        public void createWrongUrl() throws Exception {
+        public void createWrongUrl() {
             final GitHubRepositoryCreationDto creationDto = new GitHubRepositoryCreationDto("unknown", "unknown", null);
 
-            asyncMvc
-                    .perform(
-                            post("/api/repository")
-                                    .contentType(MediaType.APPLICATION_JSON)
-                                    .content(objectMapper.writeValueAsString(creationDto))
-                    )
-                    .andExpectStarted()
-                    .andWaitResult()
-                    .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.messages[0]").value("The Git repository [https://github.com/unknown/unknown.git] has not been found. Please verify the URL."));
+            webClient.post()
+                    .uri("/api/repository/")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(creationDto)
+                    .exchange()
+                    .expectStatus().isBadRequest()
+                    .expectBody()
+                    .jsonPath("$.messages[0]").isEqualTo("The Git repository [https://github.com/unknown/unknown.git] has not been found. Please verify the URL.");
         }
 
         @Test
-        @Transactional
+        @TransactionalReactiveTest
         @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
-        public void createInvalidAccessKeyCredentials() throws Exception {
+        public void createInvalidAccessKeyCredentials() {
             final GitHubRepositoryCreationDto creationDto = new GitHubRepositoryCreationDto("sebge2", "private-i18n-tool", "ZEF");
 
-            asyncMvc
-                    .perform(
-                            post("/api/repository")
-                                    .contentType(MediaType.APPLICATION_JSON)
-                                    .content(objectMapper.writeValueAsString(creationDto))
-                    )
-                    .andExpectStarted()
-                    .andWaitResult()
-                    .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.messages[0]").value("Please verify your credentials for accessing the Git repository [https://github.com/sebge2/private-i18n-tool.git]."));
+            webClient.post()
+                    .uri("/api/repository/")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(creationDto)
+                    .exchange()
+                    .expectStatus().isBadRequest()
+                    .expectBody()
+                    .jsonPath("$.messages[0]").isEqualTo("Please verify your credentials for accessing the Git repository [https://github.com/sebge2/private-i18n-tool.git].");
         }
 
         @Test
-        @Transactional
+        @TransactionalReactiveTest
         @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
-        public void createNoAccessKeyCredentials() throws Exception {
+        public void createNoAccessKeyCredentials() {
             final GitHubRepositoryCreationDto creationDto = new GitHubRepositoryCreationDto("sebge2", "private-i18n-tool", null);
 
-            asyncMvc
-                    .perform(
-                            post("/api/repository")
-                                    .contentType(MediaType.APPLICATION_JSON)
-                                    .content(objectMapper.writeValueAsString(creationDto))
-                    )
-                    .andExpectStarted()
-                    .andWaitResult()
-                    .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.messages[0]").value("Please verify your credentials for accessing the Git repository [https://github.com/sebge2/private-i18n-tool.git]."));
+            webClient.post()
+                    .uri("/api/repository/")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(creationDto)
+                    .exchange()
+                    .expectStatus().isBadRequest()
+                    .expectBody()
+                    .jsonPath("$.messages[0]").isEqualTo("Please verify your credentials for accessing the Git repository [https://github.com/sebge2/private-i18n-tool.git].");
         }
 
         @Test
-        @Transactional
+        @TransactionalReactiveTest
         @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
-        public void createValidAccessKeyCredentials() throws Exception {
+        public void createValidAccessKeyCredentials() {
             final GitHubRepositoryCreationDto creationDto = privateI18nToolRepositoryCreationDto();
 
-            asyncMvc
-                    .perform(
-                            post("/api/repository")
-                                    .contentType(MediaType.APPLICATION_JSON)
-                                    .content(objectMapper.writeValueAsString(creationDto))
-                    )
-                    .andExpectStarted()
-                    .andWaitResult()
-                    .andExpect(status().isCreated());
+            webClient.post()
+                    .uri("/api/repository/")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(creationDto)
+                    .exchange()
+                    .expectStatus().isCreated();
         }
 
         @Test
-        @Transactional
+        @TransactionalReactiveTest
         @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
-        public void createSameName() throws Exception {
+        public void createSameName() {
             final GitHubRepositoryCreationDto creationDto = i18nToolRepositoryCreationDto();
 
-            asyncMvc
-                    .perform(
-                            post("/api/repository")
-                                    .contentType(MediaType.APPLICATION_JSON)
-                                    .content(objectMapper.writeValueAsString(creationDto))
-                    )
-                    .andExpectStarted()
-                    .andWaitResult()
-                    .andExpect(status().isCreated());
+            webClient.post()
+                    .uri("/api/repository/")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(creationDto)
+                    .exchange()
+                    .expectStatus().isCreated();
 
-            asyncMvc
-                    .perform(
-                            post("/api/repository")
-                                    .contentType(MediaType.APPLICATION_JSON)
-                                    .content(objectMapper.writeValueAsString(creationDto))
-                    )
-                    .andExpectStarted()
-                    .andWaitResult()
-                    .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.messages[0]").value("Another repository is already named [sebge2/i18n-tool]. Names must be unique."));
+            webClient.post()
+                    .uri("/api/repository/")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(creationDto)
+                    .exchange()
+                    .expectStatus().isBadRequest()
+                    .expectBody()
+                    .jsonPath("$.messages[0]").isEqualTo("Another repository is already named [sebge2/i18n-tool]. Names must be unique.");
         }
 
         @Test
-        @Transactional
+        @TransactionalReactiveTest
         @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
-        public void initialize() throws Exception {
+        public void initialize() {
             final GitHubRepositoryDto repository = this.repository.create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class).get();
 
-            asyncMvc
-                    .perform(post("/api/repository/{id}/do?action=INITIALIZE", repository.getId()))
-                    .andExpectStarted()
-                    .andWaitResult()
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.status").value(RepositoryStatus.INITIALIZED.name()));
+            webClient.post()
+                    .uri("/api/repository/{id}/do?action=INITIALIZE", repository.getId())
+                    .exchange()
+                    .expectStatus().isOk()
+                    .expectBody()
+                    .jsonPath("$.status").isEqualTo(RepositoryStatus.INITIALIZED.name());
         }
 
         @Test
-        @Transactional
+        @TransactionalReactiveTest
         @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
-        public void initializeTwice() throws Exception {
+        public void initializeTwice() {
             final GitHubRepositoryDto repository = this.repository.create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class).get();
 
-            asyncMvc
-                    .perform(post("/api/repository/{id}/do?action=INITIALIZE", repository.getId()))
-                    .andExpectStarted()
-                    .andWaitResult()
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.status").value(RepositoryStatus.INITIALIZED.name()));
+            webClient.post()
+                    .uri("/api/repository/{id}/do?action=INITIALIZE", repository.getId())
+                    .exchange()
+                    .expectStatus().isOk()
+                    .expectBody()
+                    .jsonPath("$.status").isEqualTo(RepositoryStatus.INITIALIZED.name());
 
-            asyncMvc
-                    .perform(post("/api/repository/{id}/do?action=INITIALIZE", repository.getId()))
-                    .andExpectStarted()
-                    .andWaitResult()
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.status").value(RepositoryStatus.INITIALIZED.name()));
+            webClient.post()
+                    .uri("/api/repository/{id}/do?action=INITIALIZE", repository.getId())
+                    .exchange()
+                    .expectStatus().isOk()
+                    .expectBody()
+                    .jsonPath("$.status").isEqualTo(RepositoryStatus.INITIALIZED.name());
         }
 
         @Test
-        @Transactional
+        @TransactionalReactiveTest
         @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
-        public void update() throws Exception {
+        public void update() {
             final GitHubRepositoryDto repository = this.repository.create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class).get();
 
             final GitHubRepositoryPatchDto patchDto = GitHubRepositoryPatchDto.gitHubBuilder()
@@ -258,36 +238,33 @@ public class RepositoryControllerTest extends AbstractControllerTest {
                     .accessKey("an access key")
                     .build();
 
-            asyncMvc
-                    .perform(
-                            patch("/api/repository/{id}", repository.getId())
-                                    .contentType(MediaType.APPLICATION_JSON)
-                                    .content(objectMapper.writeValueAsString(patchDto))
-                    )
-                    .andExpectStarted()
-                    .andWaitResult()
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.accessKey").value("an access key"))
-                    .andExpect(jsonPath("$.webHookSecret").value("a secret"));
+            webClient
+                    .patch()
+                    .uri("/api/repository/{id}", repository.getId())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(patchDto)
+                    .exchange()
+                    .expectStatus().isOk()
+                    .expectBody()
+                    .jsonPath("$.accessKey").isEqualTo("an access key")
+                    .jsonPath("$.webHookSecret").isEqualTo("a secret");
         }
 
         @Test
-        @Transactional
+        @TransactionalReactiveTest
         @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
-        public void deleteRepository() throws Exception {
+        public void deleteRepository() {
             final GitHubRepositoryDto repository = this.repository.create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class).get();
 
-            asyncMvc
-                    .perform(delete("/api/repository/{id}", repository.getId()))
-                    .andExpectStarted()
-                    .andWaitResult()
-                    .andExpect(status().isNoContent());
+            webClient.delete()
+                    .uri("/api/repository/{id}", repository.getId())
+                    .exchange()
+                    .expectStatus().isNoContent();
 
-            asyncMvc
-                    .perform(get("/api/repository/{id}", repository.getId()))
-                    .andExpectStarted()
-                    .andWaitResult()
-                    .andExpect(status().isNotFound());
+            webClient.get()
+                    .uri("/api/repository/{id}", repository.getId())
+                    .exchange()
+                    .expectStatus().isNotFound();
         }
     }
 
@@ -296,42 +273,41 @@ public class RepositoryControllerTest extends AbstractControllerTest {
     class Git extends AbstractControllerTest {
 
         @Test
-        @Transactional
+        @TransactionalReactiveTest
         @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
-        public void create() throws Exception {
+        public void create() {
             final GitRepositoryCreationDto creationDto = i18nToolLocalRepositoryCreationDto();
 
-            asyncMvc
-                    .perform(
-                            post("/api/repository")
-                                    .contentType(MediaType.APPLICATION_JSON)
-                                    .content(objectMapper.writeValueAsString(creationDto))
-                    )
-                    .andExpectStarted()
-                    .andWaitResult()
-                    .andExpect(status().isCreated())
-                    .andExpect(jsonPath("$.status").value(RepositoryStatus.NOT_INITIALIZED.name()))
-                    .andExpect(jsonPath("$.name").value(creationDto.getName()))
-                    .andExpect(jsonPath("$.location").value(creationDto.getLocation()));
+            webClient.post()
+                    .uri("/api/repository/")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(creationDto)
+                    .exchange()
+                    .expectStatus().isCreated()
+                    .expectBody()
+                    .jsonPath("$.status").isEqualTo(RepositoryStatus.NOT_INITIALIZED.name())
+                    .jsonPath("$.name").isEqualTo(creationDto.getName())
+                    .jsonPath("$.location").isEqualTo(creationDto.getLocation());
         }
 
         @Test
-        @Transactional
+        @TransactionalReactiveTest
         @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
-        public void initialize() throws Exception {
+        public void initialize() {
             final GitRepositoryDto repository = this.repository.create(i18nToolLocalRepositoryCreationDto(), GitRepositoryDto.class).get();
 
-            asyncMvc
-                    .perform(post("/api/repository/{id}/do?action=INITIALIZE", repository.getId()))
-                    .andExpectStarted()
-                    .andWaitResult()
-                    .andExpect(status().isOk());
+            webClient.post()
+                    .uri("/api/repository/{id}/do?action=INITIALIZE", repository.getId())
+                    .exchange()
+                    .expectStatus().isOk()
+                    .expectBody()
+                    .jsonPath("$.status").isEqualTo(RepositoryStatus.INITIALIZED.name());
         }
 
         @Test
-        @Transactional
+        @TransactionalReactiveTest
         @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
-        public void update() throws Exception {
+        public void update() {
             final GitRepositoryDto repository = this.repository.create(i18nToolLocalRepositoryCreationDto(), GitRepositoryDto.class).get();
 
             final GitRepositoryPatchDto patchDto = GitRepositoryPatchDto.gitBuilder()
@@ -339,35 +315,32 @@ public class RepositoryControllerTest extends AbstractControllerTest {
                     .defaultBranch("develop")
                     .build();
 
-            asyncMvc
-                    .perform(
-                            patch("/api/repository/{id}", repository.getId())
-                                    .contentType(MediaType.APPLICATION_JSON)
-                                    .content(objectMapper.writeValueAsString(patchDto))
-                    )
-                    .andExpectStarted()
-                    .andWaitResult()
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.defaultBranch").value("develop"));
+            webClient
+                    .patch()
+                    .uri("/api/repository/{id}", repository.getId())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(patchDto)
+                    .exchange()
+                    .expectStatus().isOk()
+                    .expectBody()
+                    .jsonPath("$.defaultBranch").isEqualTo("develop");
         }
 
         @Test
-        @Transactional
+        @TransactionalReactiveTest
         @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
-        public void deleteRepository() throws Exception {
+        public void deleteRepository() {
             final GitRepositoryDto repository = this.repository.create(i18nToolLocalRepositoryCreationDto(), GitRepositoryDto.class).get();
 
-            asyncMvc
-                    .perform(delete("/api/repository/{id}", repository.getId()))
-                    .andExpectStarted()
-                    .andWaitResult()
-                    .andExpect(status().isNoContent());
+            webClient.delete()
+                    .uri("/api/repository/{id}", repository.getId())
+                    .exchange()
+                    .expectStatus().isNoContent();
 
-            asyncMvc
-                    .perform(get("/api/repository/{id}", repository.getId()))
-                    .andExpectStarted()
-                    .andWaitResult()
-                    .andExpect(status().isNotFound());
+            webClient.get()
+                    .uri("/api/repository/{id}", repository.getId())
+                    .exchange()
+                    .expectStatus().isNotFound();
         }
     }
 }

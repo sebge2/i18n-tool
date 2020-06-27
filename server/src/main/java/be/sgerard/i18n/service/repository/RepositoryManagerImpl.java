@@ -141,10 +141,10 @@ public class RepositoryManagerImpl implements RepositoryManager {
                                     return repo;
                                 })
                                 .flatMap(handler::deleteRepository)
-                                .map(rep -> {
-                                    repository.delete(rep);
-                                    return rep;
-                                })
+                                .flatMap(rep ->
+                                        repository.delete(rep)
+                                                .thenReturn(rep)
+                                )
                                 .flatMap(rep ->
                                         listener
                                                 .onDelete(rep)

@@ -121,7 +121,6 @@ public class TranslationLocaleControllerTest extends AbstractControllerTest {
                 .variants(otherLocale.getVariants())
                 .build();
 
-
         webClient.put()
                 .uri("/api/translation/locale/{id}", currentLocale.getId())
                 .contentType(MediaType.APPLICATION_JSON)
