@@ -1,19 +1,21 @@
 package be.sgerard.i18n.model.repository.persistence;
 
 import be.sgerard.i18n.model.repository.RepositoryType;
+import org.springframework.data.annotation.PersistenceConstructor;
+import org.springframework.data.annotation.TypeAlias;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
 
 /**
  * Git {@link GitRepositoryEntity repository}.
  *
  * @author Sebastien Gerard
  */
-@Entity(name = "git_repository")
-@DiscriminatorValue(value = "GIT")
+@Document("repository")
+@TypeAlias("GIT")
 public class GitRepositoryEntity extends BaseGitRepositoryEntity {
 
+    @PersistenceConstructor
     GitRepositoryEntity() {
         super();
     }

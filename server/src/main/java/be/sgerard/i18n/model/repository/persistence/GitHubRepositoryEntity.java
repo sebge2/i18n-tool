@@ -1,10 +1,11 @@
 package be.sgerard.i18n.model.repository.persistence;
 
 import be.sgerard.i18n.model.repository.RepositoryType;
+import org.springframework.data.annotation.PersistenceConstructor;
+import org.springframework.data.annotation.TypeAlias;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
+import javax.validation.constraints.NotNull;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -15,22 +16,21 @@ import static be.sgerard.i18n.support.GitHubUtils.createGitHubUrl;
  *
  * @author Sebastien Gerard
  */
-@Entity(name = "github_repository")
-@DiscriminatorValue(value = "GITHUB")
+@Document("repository")
+@TypeAlias("GITHUB")
 public class GitHubRepositoryEntity extends BaseGitRepositoryEntity {
 
-    @Column(nullable = false)
+    @NotNull
     private String username;
 
-    @Column(nullable = false)
+    @NotNull
     private String repository;
 
-    @Column
     private String accessKey;
 
-    @Column
     private String webHookSecret;
 
+    @PersistenceConstructor
     GitHubRepositoryEntity() {
         super();
     }

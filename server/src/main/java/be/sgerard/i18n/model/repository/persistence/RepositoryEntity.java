@@ -2,47 +2,30 @@ package be.sgerard.i18n.model.repository.persistence;
 
 import be.sgerard.i18n.model.repository.RepositoryStatus;
 import be.sgerard.i18n.model.repository.RepositoryType;
-import be.sgerard.i18n.model.workspace.WorkspaceEntity;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.UUID;
-
-import static java.util.Collections.unmodifiableCollection;
 
 /**
  * Repository that can be of different type. A repository contains translations.
  *
  * @author Sebastien Gerard
  */
-@Entity(name = "repository")
-@Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
+@Document("repository")
 public abstract class RepositoryEntity {
 
     @Id
     private String id;
 
     @NotNull
-    @Column(nullable = false, length = 1000)
     private String name;
 
     @NotNull
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private RepositoryStatus status = RepositoryStatus.NOT_INITIALIZED;
 
-    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, mappedBy = "repository", fetch = FetchType.EAGER)
-    // TODO lazy
-    private final Collection<WorkspaceEntity> workspaces = new HashSet<>();
-
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "repository")
     private TranslationsConfigurationEntity translationsConfiguration;
-
-    @Version
-    private int version;
 
     RepositoryEntity() {
     }
@@ -50,7 +33,7 @@ public abstract class RepositoryEntity {
     public RepositoryEntity(String name) {
         this.id = UUID.randomUUID().toString();
         this.name = name;
-        this.translationsConfiguration = new TranslationsConfigurationEntity(this);
+        this.translationsConfiguration = new TranslationsConfigurationEntity();
     }
 
     /**
@@ -101,27 +84,6 @@ public abstract class RepositoryEntity {
     public RepositoryEntity setStatus(RepositoryStatus status) {
         this.status = status;
         return this;
-    }
-
-    /**
-     * Returns all the {@link WorkspaceEntity workspaces} based on this repository.
-     */
-    public Collection<WorkspaceEntity> getWorkspaces() {
-        return unmodifiableCollection(workspaces);
-    }
-
-    /**
-     * Adds a {@link WorkspaceEntity workspace} to this repository.
-     */
-    public void addWorkspace(WorkspaceEntity workspace) {
-        this.workspaces.add(workspace);
-    }
-
-    /**
-     * Removes the {@link WorkspaceEntity workspace} from this repository.
-     */
-    public void deleteWorkspace(WorkspaceEntity workspace) {
-        this.workspaces.remove(workspace);
     }
 
     /**

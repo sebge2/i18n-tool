@@ -36,25 +36,21 @@ public class RepositoryManagerImpl implements RepositoryManager {
     private final RepositoryHandler<RepositoryEntity, RepositoryCreationDto, RepositoryPatchDto> handler;
     private final LockService lockService;
     private final RepositoryListener<RepositoryEntity> listener;
-//    private final TransactionTemplate transactionTemplate;
 
     public RepositoryManagerImpl(RepositoryEntityRepository repository,
                                  RepositoryHandler<RepositoryEntity, RepositoryCreationDto, RepositoryPatchDto> handler,
                                  LockService lockService,
-                                 RepositoryListener<RepositoryEntity> listener/*,
-                                 PlatformTransactionManager platformTransactionManager*/) {
+                                 RepositoryListener<RepositoryEntity> listener) {
         this.repository = repository;
         this.handler = handler;
         this.lockService = lockService;
         this.listener = listener;
-//        this.transactionTemplate = new TransactionTemplate(platformTransactionManager);
-//        this.transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
     }
 
     @Transactional(readOnly = true)
     @Override
     public Mono<RepositoryEntity> findById(String id) throws ResourceNotFoundException {
-        return Mono.justOrEmpty(repository.findById(id));
+        return repository.findById(id);
     }
 
     @Transactional(readOnly = true)
@@ -76,7 +72,7 @@ public class RepositoryManagerImpl implements RepositoryManager {
 
                                     return rep;
                                 })
-                                .map(repository::save)
+                                .flatMap(repository::save)
                                 .flatMap(repo ->
                                         listener.onCreate(repo)
                                                 .thenReturn(repo)
@@ -181,9 +177,7 @@ public class RepositoryManagerImpl implements RepositoryManager {
     private Mono<RepositoryEntity> updateAndNotifyInTx(RepositoryEntity updated) {
         return listener
                 .onUpdate(updated)
-                .then(Mono.defer(() -> Mono.just(repository.save(updated))));
-
-//        return this.transactionTemplate.execute(transactionStatus -> Mono.just(repository.save(updated))); TODO
+                .then(Mono.defer(() -> repository.save(updated))); // TODO separate tx
     }
 
     /**
