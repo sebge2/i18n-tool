@@ -16,7 +16,6 @@ import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -40,7 +39,7 @@ public class ControllerAdvice {
      * Handles the {@link ResourceNotFoundException resource not found exception}.
      */
     @ExceptionHandler(value = ResourceNotFoundException.class)
-    public ResponseEntity<ErrorMessages> handleResourceNotFoundException(ResourceNotFoundException exception) {
+    public ResponseEntity<ErrorMessages> handle(ResourceNotFoundException exception) {
         final ErrorMessages errorMessages = messagesProvider.map(exception);
 
         if (logger.isDebugEnabled()) {
@@ -54,7 +53,7 @@ public class ControllerAdvice {
      * Handles the {@link ValidationException validation exception}.
      */
     @ExceptionHandler(value = ValidationException.class)
-    public ResponseEntity<ErrorMessages> handleValidationException(ValidationException exception) {
+    public ResponseEntity<ErrorMessages> handle(ValidationException exception) {
         final ErrorMessages errorMessages = messagesProvider.map(exception.getValidationResult().getMessages());
 
         if (logger.isDebugEnabled()) {
@@ -68,7 +67,7 @@ public class ControllerAdvice {
      * Handles the {@link BadRequestException bad-request exception}.
      */
     @ExceptionHandler(value = BadRequestException.class)
-    public ResponseEntity<ErrorMessages> handleBadRequestException(BadRequestException exception) {
+    public ResponseEntity<ErrorMessages> handle(BadRequestException exception) {
         final ErrorMessages errorMessages = messagesProvider.map(exception);
 
         if (logger.isDebugEnabled()) {
@@ -82,7 +81,7 @@ public class ControllerAdvice {
      * Handles the {@link UnauthorizedRequestException unauthorized exception}.
      */
     @ExceptionHandler(value = UnauthorizedRequestException.class)
-    public ResponseEntity<ErrorMessages> handleUnauthorizedRequestException(UnauthorizedRequestException exception) {
+    public ResponseEntity<ErrorMessages> handle(UnauthorizedRequestException exception) {
         final ErrorMessages errorMessages = messagesProvider.map(exception);
 
         if (logger.isDebugEnabled()) {
@@ -96,7 +95,7 @@ public class ControllerAdvice {
      * Handles the {@link RepositoryException repository exception}.
      */
     @ExceptionHandler(value = RepositoryException.class)
-    public ResponseEntity<ErrorMessages> handleRepositoryException(RepositoryException exception) {
+    public ResponseEntity<ErrorMessages> handle(RepositoryException exception) {
         final ErrorMessages errorMessages = messagesProvider.map(exception);
 
         logger.error(String.format("Repository exception with id %s, message %s.", errorMessages.getId(), exception.getMessage()), exception);
@@ -104,25 +103,25 @@ public class ControllerAdvice {
         return new ResponseEntity<>(errorMessages, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    /**
-     * Handles the {@link MissingServletRequestParameterException parameter exception}.
-     */
-    @ExceptionHandler(value = MissingServletRequestParameterException.class)
-    public ResponseEntity<ErrorMessages> handleMissingServletRequestParameterException(MissingServletRequestParameterException exception) {
-        final ErrorMessages errorMessages = messagesProvider.map(new LocalizedMessageHolder.Simple("MissingServletRequestParameterException.message", exception.getParameterName()));
-
-        if (logger.isDebugEnabled()) {
-            logger.debug(String.format("Missing parameter exception with id %s, message %s.", errorMessages.getId(), exception.getMessage()), exception);
-        }
-
-        return new ResponseEntity<>(errorMessages, HttpStatus.FORBIDDEN);
-    }
+//    /**
+//     * Handles the {@link MissingServletRequestParameterException parameter exception}.
+//     */
+//    @ExceptionHandler(value = MissingServletRequestParameterException.class)
+//    public ResponseEntity<ErrorMessages> handleMissingServletRequestParameterException(MissingServletRequestParameterException exception) {
+//        final ErrorMessages errorMessages = messagesProvider.map(new LocalizedMessageHolder.Simple("MissingServletRequestParameterException.message", exception.getParameterName()));
+//
+//        if (logger.isDebugEnabled()) {
+//            logger.debug(String.format("Missing parameter exception with id %s, message %s.", errorMessages.getId(), exception.getMessage()), exception);
+//        }
+//
+//        return new ResponseEntity<>(errorMessages, HttpStatus.FORBIDDEN);
+//    }
 
     /**
      * Handles the {@link MissingServletRequestParameterException access denied exception}.
      */
     @ExceptionHandler(value = AccessDeniedException.class)
-    public ResponseEntity<ErrorMessages> handleAccessDeniedException(AccessDeniedException exception) {
+    public ResponseEntity<ErrorMessages> handle(AccessDeniedException exception) {
         final ErrorMessages errorMessages = messagesProvider.map(new LocalizedMessageHolder.Simple("AccessDeniedException.message"));
 
         if (logger.isDebugEnabled()) {
@@ -132,19 +131,21 @@ public class ControllerAdvice {
         return new ResponseEntity<>(errorMessages, HttpStatus.FORBIDDEN);
     }
 
-    /**
-     * Handles the {@link HttpRequestMethodNotSupportedException method-not-supported exception}.
-     */
-    @ExceptionHandler(value = HttpRequestMethodNotSupportedException.class)
-    public ResponseEntity<ErrorMessages> handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException exception) {
-        final ErrorMessages errorMessages = messagesProvider.map(new LocalizedMessageHolder.Simple("HttpRequestMethodNotSupportedException.message", exception.getMethod()));
+    // TODO
 
-        if (logger.isDebugEnabled()) {
-            logger.debug(String.format("Method not allowed exception with id %s, message %s.", errorMessages.getId(), exception.getMessage()), exception);
-        }
-
-        return new ResponseEntity<>(errorMessages, HttpStatus.METHOD_NOT_ALLOWED);
-    }
+//    /**
+//     * Handles the {@link MethodNotAllowedException method-not-supported exception}.
+//     */
+//    @ExceptionHandler(value = MethodNotAllowedException.class)
+//    public ResponseEntity<ErrorMessages> handle(MethodNotAllowedException exception) {
+//        final ErrorMessages errorMessages = messagesProvider.map(new LocalizedMessageHolder.Simple("HttpRequestMethodNotSupportedException.message", exception.getHttpMethod()));
+//
+//        if (logger.isDebugEnabled()) {
+//            logger.debug(String.format("Method not allowed exception with id %s, message %s.", errorMessages.getId(), exception.getMessage()), exception);
+//        }
+//
+//        return new ResponseEntity<>(errorMessages, HttpStatus.METHOD_NOT_ALLOWED);
+//    }
 
     /**
      * Handles any {@link Exception exception} that are not handled by the other handlers.

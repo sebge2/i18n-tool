@@ -1,6 +1,5 @@
 package be.sgerard.i18n.controller;
 
-import be.sgerard.i18n.model.security.auth.AuthenticatedUser;
 import be.sgerard.i18n.model.security.user.dto.AuthenticatedUserDto;
 import be.sgerard.i18n.service.ResourceNotFoundException;
 import be.sgerard.i18n.service.security.auth.AuthenticationManager;
@@ -9,6 +8,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Mono;
 
 /**
  * Controller handling authentication.
@@ -31,10 +31,10 @@ public class AuthenticationController {
      */
     @GetMapping("/authentication/user")
     @Operation(summary = "Retrieves the current authenticated user.")
-    public AuthenticatedUserDto getCurrentUser() {
-        final AuthenticatedUser authenticatedUser = authenticationManager.getCurrentUser()
-                .orElseThrow(() -> ResourceNotFoundException.userNotFoundException("current"));
-
-        return AuthenticatedUserDto.builder(authenticatedUser).build();
+    public Mono<AuthenticatedUserDto> getCurrentUser() {
+        return authenticationManager
+                .getCurrentUser()
+                .switchIfEmpty(Mono.error(ResourceNotFoundException.userNotFoundException("current")))
+                .map(user -> AuthenticatedUserDto.builder(user).build());
     }
 }

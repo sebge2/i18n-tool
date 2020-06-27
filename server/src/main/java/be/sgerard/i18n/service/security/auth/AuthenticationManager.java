@@ -7,8 +7,6 @@ import be.sgerard.i18n.model.security.auth.internal.InternalAuthenticatedUser;
 import org.springframework.security.access.AccessDeniedException;
 import reactor.core.publisher.Mono;
 
-import java.util.Optional;
-
 /**
  * Manager of authentication.
  *
@@ -31,14 +29,14 @@ public interface AuthenticationManager {
     /**
      * Returns the current {@link AuthenticatedUser authenticated user}.
      */
-    Optional<AuthenticatedUser> getCurrentUser();
+    Mono<AuthenticatedUser> getCurrentUser();
 
     /**
      * Returns the current {@link AuthenticatedUser authenticated user}.
      */
-    default AuthenticatedUser getCurrentUserOrDie() throws AccessDeniedException {
+    default Mono<AuthenticatedUser> getCurrentUserOrDie() throws AccessDeniedException {
         return getCurrentUser()
-                .orElseThrow(() -> new AccessDeniedException("Please authenticate."));
+                .switchIfEmpty(Mono.error(new AccessDeniedException("Please authenticate.")));
     }
 
 }
