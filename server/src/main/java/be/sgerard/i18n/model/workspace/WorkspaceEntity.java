@@ -2,8 +2,10 @@ package be.sgerard.i18n.model.workspace;
 
 import be.sgerard.i18n.model.i18n.persistence.BundleFileEntity;
 import be.sgerard.i18n.model.repository.persistence.RepositoryEntity;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.PersistenceConstructor;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.HashSet;
@@ -19,40 +21,33 @@ import static java.util.Collections.unmodifiableCollection;
  *
  * @author Sebastien Gerard
  */
-@Entity(name = "translation_workspace")
+@Document("workspace")
 public class WorkspaceEntity {
 
     @Id
     private String id;
 
-    @ManyToOne(optional = false)
-    private RepositoryEntity repository;
+    @NotNull
+    private String repository;
 
     @NotNull
-    @Column(nullable = false)
     private String branch;
 
     @NotNull
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
     private WorkspaceStatus status;
 
-    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
     private final Collection<BundleFileEntity> files = new HashSet<>();
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     private AbstractReviewEntity review;
 
-    @Version
-    private int version;
-
+    @PersistenceConstructor
     WorkspaceEntity() {
     }
 
     public WorkspaceEntity(RepositoryEntity repository, String branch) {
         this.id = UUID.randomUUID().toString();
 
-        this.repository = repository;
+        this.repository = repository.getId();
 
         this.branch = branch;
         this.status = WorkspaceStatus.NOT_INITIALIZED;
@@ -75,14 +70,14 @@ public class WorkspaceEntity {
     /**
      * Returns the associated {@link RepositoryEntity repository}.
      */
-    public RepositoryEntity getRepository() {
+    public String getRepository() {
         return repository;
     }
 
     /**
      * Sets the associated {@link RepositoryEntity repository}.
      */
-    public void setRepository(RepositoryEntity repository) {
+    public void setRepository(String repository) {
         this.repository = repository;
     }
 

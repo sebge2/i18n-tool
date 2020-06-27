@@ -1,30 +1,29 @@
 package be.sgerard.i18n.model.workspace;
 
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
+import org.springframework.data.annotation.PersistenceConstructor;
+import org.springframework.data.annotation.TypeAlias;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * {@link AbstractReviewEntity Review} of a workspace based on a GitHub repository. The review is thanks to a pull request.
  *
  * @author Sebastien Gerard
  */
-@Entity
-@DiscriminatorValue(value = "GITHUB")
+@TypeAlias("GITHUB")
 public class GitHubReviewEntity extends AbstractReviewEntity {
 
-    @Column(nullable = false)
+    @NotNull
     private String pullRequestBranch;
 
-    @Column(nullable = false)
+    @NotNull
     private Integer pullRequestNumber;
 
+    @PersistenceConstructor
     GitHubReviewEntity() {
     }
 
-    public GitHubReviewEntity(WorkspaceEntity workspace, String pullRequestBranch, int pullRequestNumber) {
-        super(workspace);
-
+    public GitHubReviewEntity(String pullRequestBranch, int pullRequestNumber) {
         this.pullRequestBranch = pullRequestBranch;
         this.pullRequestNumber = pullRequestNumber;
     }

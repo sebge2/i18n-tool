@@ -1,10 +1,10 @@
 package be.sgerard.i18n.controller;
 
 import be.sgerard.i18n.model.i18n.dto.BundleKeyTranslationDto;
+import be.sgerard.test.i18n.support.TransactionalReactiveTest;
 import be.sgerard.test.i18n.support.WithInternalUser;
 import org.junit.jupiter.api.*;
 import org.springframework.http.MediaType;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Locale;
 
@@ -13,10 +13,6 @@ import static be.sgerard.test.i18n.model.TranslationLocaleCreationDtoTestUtils.e
 import static be.sgerard.test.i18n.model.TranslationLocaleCreationDtoTestUtils.frLocaleCreationDto;
 import static java.util.Collections.singletonMap;
 import static org.hamcrest.Matchers.hasSize;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * @author Sebastien Gerard
@@ -39,7 +35,7 @@ public class TranslationControllerTest extends AbstractControllerTest {
     }
 
     @BeforeEach
-    public void setupLocales() throws Exception {
+    public void setupLocales() {
         locale
                 .createLocale(frLocaleCreationDto()).and()
                 .createLocale(enLocaleCreationDto());
@@ -55,82 +51,80 @@ public class TranslationControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @Transactional
+    @TransactionalReactiveTest
     @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
-    public void findTranslation() throws Exception {
+    public void findTranslation() {
         final BundleKeyTranslationDto translation = translations
                 .forRepositoryHint("my-repo")
                 .forWorkspaceName("master")
                 .findOrDie("validation.repository.name-not-unique", Locale.ENGLISH);
 
-        asyncMvc
-                .perform(get("/api/translation/{id}", translation.getId()))
-                .andExpectStarted()
-                .andWaitResult()
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(translation.getId()))
-                .andExpect(jsonPath("$.locale").value(translation.getLocale()))
-                .andExpect(jsonPath("$.originalValue").value("Another repository is already named [{0}]. Names must be unique."))
-                .andExpect(jsonPath("$.updatedValue").isEmpty())
-                .andExpect(jsonPath("$.lastEditor").isEmpty());
+        webClient
+                .get()
+                .uri("/api/translation/{id}", translation.getId())
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.id").isEqualTo(translation.getId())
+                .jsonPath("$.locale").isEqualTo(translation.getLocale())
+                .jsonPath("$.originalValue").isEqualTo("Another repository is already named [{0}]. Names must be unique.")
+                .jsonPath("$.updatedValue").isEmpty()
+                .jsonPath("$.lastEditor").isEmpty();
     }
 
     @Test
-    @Transactional
+    @TransactionalReactiveTest
     @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
-    public void findTranslationUnknown() throws Exception {
-        asyncMvc
-                .perform(get("/api/translation/{id}", "unknown-id"))
-                .andExpectStarted()
-                .andWaitResult()
-                .andExpect(status().isNotFound());
+    public void findTranslationUnknown() {
+        webClient
+                .get()
+                .uri("/api/translation/{id}", "unknown-id")
+                .exchange()
+                .expectStatus().isNotFound();
     }
 
     @Test
-    @Transactional
+    @TransactionalReactiveTest
     @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
-    public void writeTranslations() throws Exception {
+    public void writeTranslations() {
         final BundleKeyTranslationDto translation = translations
                 .forRepositoryHint("my-repo")
                 .forWorkspaceName("master")
                 .findOrDie("validation.repository.name-not-unique", Locale.ENGLISH);
 
-        asyncMvc
-                .perform(
-                        patch("/api/translation")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(singletonMap(translation.getId(), "my value updated")))
-                )
-                .andExpectStarted()
-                .andWaitResult()
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].id").value(translation.getId()))
-                .andExpect(jsonPath("$[0].locale").value("en"))
-                .andExpect(jsonPath("$[0].originalValue").value("Another repository is already named [{0}]. Names must be unique."))
-                .andExpect(jsonPath("$[0].updatedValue").value("my value updated"))
-                .andExpect(jsonPath("$[0].lastEditor").value("fake-user-id"));
+        webClient
+                .patch()
+                .uri("/api/translation")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(singletonMap(translation.getId(), "my value updated"))
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$").value(hasSize(1))
+                .jsonPath("$[0].id").isEqualTo(translation.getId())
+                .jsonPath("$[0].locale").isEqualTo("en")
+                .jsonPath("$[0].originalValue").isEqualTo("Another repository is already named [{0}]. Names must be unique.")
+                .jsonPath("$[0].updatedValue").isEqualTo("my value updated")
+                .jsonPath("$[0].lastEditor").isEqualTo("fake-user-id");
     }
 
     @Test
-    @Transactional
+    @TransactionalReactiveTest
     @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
-    public void writeTranslationsUnknownId() throws Exception {
-        asyncMvc
-                .perform(
-                        patch("/api/translation")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(singletonMap("an-unknown-id", "my value updated")))
-                )
-                .andExpectStarted()
-                .andWaitResult()
-                .andExpect(status().isNotFound());
+    public void writeTranslationsUnknownId() {
+        webClient
+                .patch()
+                .uri("/api/translation")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(singletonMap("an-unknown-id", "my value updated"))
+                .exchange()
+                .expectStatus().isNotFound();
     }
 
     @Test
-    @Transactional
+    @TransactionalReactiveTest
     @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
-    public void findTranslations() throws Exception {
+    public void findTranslations() {
         // TODO
     }
 

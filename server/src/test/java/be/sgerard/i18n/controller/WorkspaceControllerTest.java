@@ -5,9 +5,9 @@ import be.sgerard.i18n.model.repository.dto.GitRepositoryDto;
 import be.sgerard.i18n.model.repository.dto.RepositoryDto;
 import be.sgerard.i18n.model.workspace.WorkspaceDto;
 import be.sgerard.i18n.model.workspace.WorkspaceStatus;
+import be.sgerard.test.i18n.support.TransactionalReactiveTest;
 import be.sgerard.test.i18n.support.WithInternalUser;
 import org.junit.jupiter.api.*;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Locale;
 
@@ -16,10 +16,6 @@ import static be.sgerard.test.i18n.model.GitRepositoryCreationDtoTestUtils.i18nT
 import static be.sgerard.test.i18n.model.TranslationLocaleCreationDtoTestUtils.enLocaleCreationDto;
 import static be.sgerard.test.i18n.model.TranslationLocaleCreationDtoTestUtils.frLocaleCreationDto;
 import static org.hamcrest.Matchers.hasSize;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * @author Sebastien Gerard
@@ -45,7 +41,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
     }
 
     @BeforeEach
-    public void setupLocales() throws Exception {
+    public void setupLocales() {
         locale
                 .createLocale(frLocaleCreationDto()).and()
                 .createLocale(enLocaleCreationDto());
@@ -57,27 +53,28 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @Transactional
+    @TransactionalReactiveTest
     @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
-    public void findAll() throws Exception {
+    public void findAll() {
         this.repository
                 .create(i18nToolLocalRepositoryCreationDto())
                 .initialize()
                 .workspaces()
                 .sync();
 
-        asyncMvc
-                .perform(get("/api/repository/workspace"))
-                .andExpectStarted()
-                .andWaitResult()
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(3)));
+        webClient
+                .get()
+                .uri("/api/repository/workspace")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$").value(hasSize(3));
     }
 
     @Test
-    @Transactional
+    @TransactionalReactiveTest
     @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
-    public void findAllOfRepository() throws Exception {
+    public void findAllOfRepository() {
         final RepositoryDto repository = this.repository
                 .create(i18nToolLocalRepositoryCreationDto())
                 .initialize()
@@ -85,18 +82,19 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                 .sync()
                 .getRepo();
 
-        asyncMvc
-                .perform(get("/api/repository/{id}/workspace", repository.getId()))
-                .andExpectStarted()
-                .andWaitResult()
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(3)));
+        webClient
+                .get()
+                .uri("/api/repository/{id}/workspace", repository.getId())
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$").value(hasSize(3));
     }
 
     @Test
-    @Transactional
+    @TransactionalReactiveTest
     @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
-    public void findById() throws Exception {
+    public void findById() {
         final WorkspaceDto masterWorkspace = repository
                 .create(i18nToolRepositoryCreationDto())
                 .initialize()
@@ -105,13 +103,14 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                 .workspaceForBranch("master")
                 .get();
 
-        asyncMvc
-                .perform(get("/api/repository/workspace/{id}", masterWorkspace.getId()))
-                .andExpectStarted()
-                .andWaitResult()
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.branch").value("master"))
-                .andExpect(jsonPath("$.status").value(WorkspaceStatus.NOT_INITIALIZED.name()));
+        webClient
+                .get()
+                .uri("/api/repository/workspace/{id}", masterWorkspace.getId())
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.branch").isEqualTo("master")
+                .jsonPath("$.status").isEqualTo(WorkspaceStatus.NOT_INITIALIZED.name());
     }
 
     @Nested
@@ -119,23 +118,24 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
     class GitHub extends AbstractControllerTest {
 
         @Test
-        @Transactional
+        @TransactionalReactiveTest
         @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
-        public void synchronize() throws Exception {
+        public void synchronize() {
             final GitHubRepositoryDto repository = this.repository.create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class).initialize().get();
 
-            asyncMvc
-                    .perform(post("/api/repository/{id}/workspace/do?action=SYNCHRONIZE", repository.getId()))
-                    .andExpectStarted()
-                    .andWaitResult()
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$", hasSize(3)));
+            webClient
+                    .post()
+                    .uri("/api/repository/{id}/workspace/do?action=SYNCHRONIZE", repository.getId())
+                    .exchange()
+                    .expectStatus().isOk()
+                    .expectBody()
+                    .jsonPath("$").value(hasSize(3));
         }
 
         @Test
-        @Transactional
+        @TransactionalReactiveTest
         @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
-        public void initialize() throws Exception {
+        public void initialize() {
             final WorkspaceDto masterWorkspace = repository
                     .create(i18nToolRepositoryCreationDto())
                     .hint("my-repo")
@@ -145,13 +145,14 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                     .workspaceForBranch("master")
                     .get();
 
-            asyncMvc
-                    .perform(post("/api/repository/workspace/{id}/do?action=INITIALIZE", masterWorkspace.getId()))
-                    .andExpectStarted()
-                    .andWaitResult()
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.branch").value("master"))
-                    .andExpect(jsonPath("$.status").value(WorkspaceStatus.INITIALIZED.name()));
+            webClient
+                    .post()
+                    .uri("/api/repository/workspace/{id}/do?action=INITIALIZE", masterWorkspace.getId())
+                    .exchange()
+                    .expectStatus().isOk()
+                    .expectBody()
+                    .jsonPath("$.branch").isEqualTo("master")
+                    .jsonPath("$.status").isEqualTo(WorkspaceStatus.INITIALIZED.name());
 
             translations
                     .forRepositoryHint("my-repo")
@@ -162,9 +163,9 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
         }
 
         @Test
-        @Transactional
+        @TransactionalReactiveTest
         @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
-        public void publish() throws Exception {
+        public void publish() {
             final WorkspaceDto masterWorkspace = repository
                     .create(i18nToolRepositoryCreationDto())
                     .hint("my-repo")
@@ -175,13 +176,14 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                     .initialize()
                     .get();
 
-            asyncMvc
-                    .perform(post("/api/repository/workspace/{id}/do?action=PUBLISH&message=test", masterWorkspace.getId()))
-                    .andExpectStarted()
-                    .andWaitResult()
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.branch").value("master"))
-                    .andExpect(jsonPath("$.status").value(WorkspaceStatus.IN_REVIEW.name()));
+            webClient
+                    .post()
+                    .uri("/api/repository/workspace/{id}/do?action=PUBLISH&message=test", masterWorkspace.getId())
+                    .exchange()
+                    .expectStatus().isOk()
+                    .expectBody()
+                    .jsonPath("$.branch").isEqualTo("master")
+                    .jsonPath("$.status").isEqualTo(WorkspaceStatus.IN_REVIEW.name());
 
             // TODO assert modifications
 
@@ -192,9 +194,9 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
         }
 
         @Test
-        @Transactional
+        @TransactionalReactiveTest
         @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
-        public void deleteInitialized() throws Exception {
+        public void deleteInitialized() {
             final WorkspaceDto masterWorkspace = repository
                     .create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class)
                     .initialize()
@@ -204,17 +206,17 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                     .initialize()
                     .get();
 
-            asyncMvc
-                    .perform(delete("/api/repository/workspace/{id}", masterWorkspace.getId()))
-                    .andExpectStarted()
-                    .andWaitResult()
-                    .andExpect(status().isNoContent());
+            webClient
+                    .delete()
+                    .uri("/api/repository/workspace/{id}", masterWorkspace.getId())
+                    .exchange()
+                    .expectStatus().isNoContent();
         }
 
         @Test
-        @Transactional
+        @TransactionalReactiveTest
         @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
-        public void deletePublished() throws Exception {
+        public void deletePublished() {
             final WorkspaceDto masterWorkspace = repository
                     .create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class)
                     .initialize()
@@ -225,11 +227,11 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                     .publish("publish message")
                     .get();
 
-            asyncMvc
-                    .perform(delete("/api/repository/workspace/{id}", masterWorkspace.getId()))
-                    .andExpectStarted()
-                    .andWaitResult()
-                    .andExpect(status().isNoContent());
+            webClient
+                    .delete()
+                    .uri("/api/repository/workspace/{id}", masterWorkspace.getId())
+                    .exchange()
+                    .expectStatus().isNoContent();
         }
     }
 
@@ -238,30 +240,32 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
     class Git extends AbstractControllerTest {
 
         @Test
-        @Transactional
+        @TransactionalReactiveTest
         @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
-        public void synchronize() throws Exception {
+        public void synchronize() {
             final GitRepositoryDto repository = this.repository.create(i18nToolLocalRepositoryCreationDto(), GitRepositoryDto.class).initialize().get();
 
-            asyncMvc
-                    .perform(post("/api/repository/{id}/workspace/do?action=SYNCHRONIZE", repository.getId()))
-                    .andExpectStarted()
-                    .andWaitResult()
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$", hasSize(3)));
+            webClient
+                    .post()
+                    .uri("/api/repository/{id}/workspace/do?action=SYNCHRONIZE", repository.getId())
+                    .exchange()
+                    .expectStatus().isOk()
+                    .expectBody()
+                    .jsonPath("$").value(hasSize(3));
 
-            asyncMvc
-                    .perform(get("/api/repository/workspace"))
-                    .andExpectStarted()
-                    .andWaitResult()
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$", hasSize(3)));
+            webClient
+                    .get()
+                    .uri("/api/repository/workspace")
+                    .exchange()
+                    .expectStatus().isOk()
+                    .expectBody()
+                    .jsonPath("$").value(hasSize(3));
         }
 
         @Test
-        @Transactional
+        @TransactionalReactiveTest
         @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
-        public void initialize() throws Exception {
+        public void initialize() {
             final WorkspaceDto masterWorkspace = repository
                     .create(i18nToolLocalRepositoryCreationDto(), GitRepositoryDto.class)
                     .hint("my-repo")
@@ -271,14 +275,14 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                     .workspaceForBranch("master")
                     .get();
 
-            asyncMvc
-                    .perform(post("/api/repository/workspace/{id}/do?action=INITIALIZE", masterWorkspace.getId()))
-                    .andExpectStarted()
-                    .andWaitResult()
-                    .andExpect(status().isOk())
-                    .andDo(print())
-                    .andExpect(jsonPath("$.branch").value("master"))
-                    .andExpect(jsonPath("$.status").value(WorkspaceStatus.INITIALIZED.name()));
+            webClient
+                    .post()
+                    .uri("/api/repository/workspace/{id}/do?action=INITIALIZE", masterWorkspace.getId())
+                    .exchange()
+                    .expectStatus().isOk()
+                    .expectBody()
+                    .jsonPath("$.branch").isEqualTo("master")
+                    .jsonPath("$.status").isEqualTo(WorkspaceStatus.INITIALIZED.name());
 
             translations
                     .forRepositoryHint("my-repo")
@@ -289,9 +293,9 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
         }
 
         @Test
-        @Transactional
+        @TransactionalReactiveTest
         @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
-        public void publish() throws Exception {
+        public void publish() {
             final WorkspaceDto masterWorkspace = repository
                     .create(i18nToolLocalRepositoryCreationDto(), GitRepositoryDto.class)
                     .initialize()
@@ -301,19 +305,20 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                     .initialize()
                     .get();
 
-            asyncMvc
-                    .perform(post("/api/repository/workspace/{id}/do?action=PUBLISH&message=test", masterWorkspace.getId()))
-                    .andExpectStarted()
-                    .andWaitResult()
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.branch").value("master"))
-                    .andExpect(jsonPath("$.status").value(WorkspaceStatus.NOT_INITIALIZED.name()));
+            webClient
+                    .post()
+                    .uri("/api/repository/workspace/{id}/do?action=PUBLISH&message=test", masterWorkspace.getId())
+                    .exchange()
+                    .expectStatus().isOk()
+                    .expectBody()
+                    .jsonPath("$.branch").isEqualTo("master")
+                    .jsonPath("$.status").isEqualTo(WorkspaceStatus.NOT_INITIALIZED.name());
         }
 
         @Test
-        @Transactional
+        @TransactionalReactiveTest
         @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
-        public void deleteInitialized() throws Exception {
+        public void deleteInitialized() {
             final WorkspaceDto masterWorkspace = repository
                     .create(i18nToolLocalRepositoryCreationDto())
                     .initialize()
@@ -323,17 +328,17 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                     .initialize()
                     .get();
 
-            asyncMvc
-                    .perform(delete("/api/repository/workspace/{id}", masterWorkspace.getId()))
-                    .andExpectStarted()
-                    .andWaitResult()
-                    .andExpect(status().isNoContent());
+            webClient
+                    .delete()
+                    .uri("/api/repository/workspace/{id}", masterWorkspace.getId())
+                    .exchange()
+                    .expectStatus().isNoContent();
         }
 
         @Test
-        @Transactional
+        @TransactionalReactiveTest
         @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
-        public void deletePublished() throws Exception {
+        public void deletePublished() {
             final WorkspaceDto masterWorkspace = repository
                     .create(i18nToolLocalRepositoryCreationDto())
                     .initialize()
@@ -344,11 +349,11 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                     .publish("test message")
                     .get();
 
-            asyncMvc
-                    .perform(delete("/api/repository/workspace/{id}", masterWorkspace.getId()))
-                    .andExpectStarted()
-                    .andWaitResult()
-                    .andExpect(status().isNoContent());
+            webClient
+                    .delete()
+                    .uri("/api/repository/workspace/{id}", masterWorkspace.getId())
+                    .exchange()
+                    .expectStatus().isNoContent();
         }
     }
 

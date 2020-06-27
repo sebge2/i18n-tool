@@ -2,8 +2,8 @@ package be.sgerard.i18n.model.repository.persistence;
 
 import be.sgerard.i18n.model.i18n.BundleType;
 import be.sgerard.i18n.model.i18n.persistence.BundleConfigurationEntity;
+import org.springframework.data.annotation.PersistenceConstructor;
 
-import javax.persistence.*;
 import java.util.*;
 
 import static java.util.Collections.unmodifiableCollection;
@@ -13,59 +13,14 @@ import static java.util.Collections.unmodifiableCollection;
  *
  * @author Sebastien Gerard
  */
-@Entity
 public class TranslationsConfigurationEntity {
 
-    @Id
-    private String id;
+    private Collection<BundleConfigurationEntity> bundles = new HashSet<>();
 
-    @OneToOne(optional = false)
-    @JoinColumn(name = "translations_configuration")
-    private RepositoryEntity repository;
-
-    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
-    private final Collection<BundleConfigurationEntity> bundles = new HashSet<>();
-
-    @ElementCollection
-    @CollectionTable(name = "repository_translations_ignored_keys", joinColumns = @JoinColumn(name = "configuration_id"))
     private List<String> ignoredKeys = new ArrayList<>();
 
+    @PersistenceConstructor
     TranslationsConfigurationEntity() {
-    }
-
-    public TranslationsConfigurationEntity(RepositoryEntity repository) {
-        this.id = UUID.randomUUID().toString();
-        this.repository = repository;
-    }
-
-    /**
-     * Returns the unique id of this configuration.
-     */
-    public String getId() {
-        return id;
-    }
-
-    /**
-     * Sets the unique id of this configuration.
-     */
-    public TranslationsConfigurationEntity setId(String id) {
-        this.id = id;
-        return this;
-    }
-
-    /**
-     * Returns the associated {@link RepositoryEntity repository}.
-     */
-    public RepositoryEntity getRepository() {
-        return repository;
-    }
-
-    /**
-     * Sets the associated {@link RepositoryEntity repository}.
-     */
-    public TranslationsConfigurationEntity setRepository(RepositoryEntity repository) {
-        this.repository = repository;
-        return this;
     }
 
     /**
@@ -85,8 +40,8 @@ public class TranslationsConfigurationEntity {
     /**
      * Adds the {@link BundleConfigurationEntity configuration of bundles}.
      */
-    public TranslationsConfigurationEntity addBundles(Collection<BundleConfigurationEntity> bundles) {
-        this.bundles.addAll(bundles);
+    public TranslationsConfigurationEntity setBundles(Collection<BundleConfigurationEntity> bundles) {
+        this.bundles = bundles;
         return this;
     }
 
@@ -120,15 +75,5 @@ public class TranslationsConfigurationEntity {
     public TranslationsConfigurationEntity setIgnoredKeys(List<String> ignoredKeys) {
         this.ignoredKeys = ignoredKeys;
         return this;
-    }
-
-    /**
-     * Creates a deep copy of this entity using the specified repository as the reference to use.
-     */
-    public TranslationsConfigurationEntity deepCopy(RepositoryEntity repository) {
-        return new TranslationsConfigurationEntity(repository)
-                .setId(getId())
-                .setIgnoredKeys(new ArrayList<>(getIgnoredKeys()))
-                .addBundles(getBundles());
     }
 }

@@ -1,28 +1,19 @@
 package be.sgerard.i18n.repository.workspace;
 
 import be.sgerard.i18n.model.workspace.WorkspaceEntity;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.stereotype.Repository;
-
-import java.util.List;
-import java.util.stream.Stream;
+import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
+import reactor.core.publisher.Flux;
 
 /**
- * {@link CrudRepository Repository} of {@link WorkspaceEntity workspace}.
+ * {@link ReactiveMongoRepository Repository} of {@link WorkspaceEntity workspace}.
  *
  * @author Sebastien Gerard
  */
-@Repository
-public interface WorkspaceRepository extends CrudRepository<WorkspaceEntity, String> {
-
-    /**
-     * Finds all {@link WorkspaceEntity workspaces}.
-     */
-    List<WorkspaceEntity> findAll();
+public interface WorkspaceRepository extends ReactiveMongoRepository<WorkspaceEntity, String> {
 
     /**
      * Finds {@link WorkspaceEntity workspaces} of the specified repository.
      */
-    List<WorkspaceEntity> findByRepositoryId(String repositoryId);
+    Flux<WorkspaceEntity> findByRepositoryId(String repositoryId);
 
 }
