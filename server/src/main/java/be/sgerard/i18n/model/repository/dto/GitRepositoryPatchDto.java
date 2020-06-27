@@ -4,8 +4,7 @@ import be.sgerard.i18n.model.repository.RepositoryType;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.Optional;
 
@@ -14,7 +13,7 @@ import java.util.Optional;
  *
  * @author Sebastien Gerard
  */
-@ApiModel(value = "GitRepositoryPatchRequest", description = "Request asking the update of a Git repository")
+@Schema(name = "GitRepositoryPatchRequest", description = "Request asking the update of a Git repository")
 @JsonDeserialize(builder = GitRepositoryPatchDto.Builder.class)
 public class GitRepositoryPatchDto extends RepositoryPatchDto {
 
@@ -22,7 +21,7 @@ public class GitRepositoryPatchDto extends RepositoryPatchDto {
         return new Builder();
     }
 
-    @ApiModelProperty(notes = "The default branch to use", required = true)
+    @Schema(description = "The default branch to use", required = true)
     private final String defaultBranch;
 
     protected GitRepositoryPatchDto(BaseBuilder<?, ?> builder) {

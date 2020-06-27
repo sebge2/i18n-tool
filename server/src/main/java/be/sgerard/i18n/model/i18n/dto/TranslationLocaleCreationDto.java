@@ -5,8 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -21,7 +20,7 @@ import static java.util.Collections.unmodifiableList;
  *
  * @author Sebastien Gerard
  */
-@ApiModel(value = "TranslationLocaleCreation", description = "Description of a new locale associated to a translation (https://tools.ietf.org/html/bcp47)")
+@Schema(name = "TranslationLocaleCreation", description = "Description of a new locale associated to a translation (https://tools.ietf.org/html/bcp47)")
 @JsonDeserialize(builder = TranslationLocaleCreationDto.Builder.class)
 public class TranslationLocaleCreationDto {
 
@@ -44,7 +43,7 @@ public class TranslationLocaleCreationDto {
     /**
      * Returns the language of this locale.
      */
-    @ApiModelProperty(notes = "The language.", required = true)
+    @Schema(description = "The language.", required = true)
     public String getLanguage() {
         return language;
     }
@@ -52,7 +51,7 @@ public class TranslationLocaleCreationDto {
     /**
      * Returns the region of the language.
      */
-    @ApiModelProperty(notes = "The region of the language.")
+    @Schema(description = "The region of the language.")
     public Optional<String> getRegion() {
         return Optional.ofNullable(region);
     }
@@ -60,7 +59,7 @@ public class TranslationLocaleCreationDto {
     /**
      * Returns the variants of the region.
      */
-    @ApiModelProperty(notes = "The variants in the region.")
+    @Schema(description = "The variants in the region.")
     public List<String> getVariants() {
         return variants;
     }
@@ -68,7 +67,7 @@ public class TranslationLocaleCreationDto {
     /**
      * Returns the icon of this locale.
      */
-    @ApiModelProperty(notes = "Icon to be displayed for this locale (library flag-icon-css).", required = true)
+    @Schema(description = "Icon to be displayed for this locale (library flag-icon-css).", required = true)
     public String getIcon() {
         return icon;
     }

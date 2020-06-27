@@ -5,15 +5,14 @@ import be.sgerard.i18n.model.repository.persistence.RepositoryEntity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * Short description of the repository.
  *
  * @author Sebastien Gerard
  */
-@ApiModel(description = "Description of the repository.")
+@Schema(name = "RepositorySummary", description = "Description of the repository.")
 @JsonDeserialize(builder = RepositorySummaryDto.Builder.class)
 public class RepositorySummaryDto {
 
@@ -28,13 +27,13 @@ public class RepositorySummaryDto {
         return new Builder();
     }
 
-    @ApiModelProperty(notes = "Unique id of this repository.", required = true)
+    @Schema(description = "Unique id of this repository.", required = true)
     private final String id;
 
-    @ApiModelProperty(notes = "Current repository status.", required = true)
+    @Schema(description = "Current repository status.", required = true)
     private final RepositoryStatus status;
 
-    @ApiModelProperty(notes = "Repository name", required = true)
+    @Schema(description = "Repository name", required = true)
     private final String name;
 
     private RepositorySummaryDto(Builder builder) {

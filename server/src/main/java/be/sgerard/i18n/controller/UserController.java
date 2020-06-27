@@ -4,8 +4,8 @@ import be.sgerard.i18n.model.security.user.dto.InternalUserCreationDto;
 import be.sgerard.i18n.model.security.user.dto.UserDto;
 import be.sgerard.i18n.model.security.user.dto.UserPatchDto;
 import be.sgerard.i18n.service.user.UserManager;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,7 +20,7 @@ import reactor.core.publisher.Mono;
  */
 @RestController
 @RequestMapping(path = "/api")
-@Api(value = "Controller of users.")
+@Tag(name = "User", description = "Controller of users.")
 public class UserController {
 
     private final UserManager userManager;
@@ -33,7 +33,7 @@ public class UserController {
      * Finds all users.
      */
     @GetMapping("/user")
-    @ApiOperation(value = "Retrieves all users.")
+    @Operation(summary = "Retrieves all users.")
     @PreAuthorize("hasRole('ADMIN')")
     @Transactional(readOnly = true)
     public Flux<UserDto> findAll() {
@@ -46,7 +46,7 @@ public class UserController {
      * Returns the user having the specified id.
      */
     @GetMapping(path = "/user/{id}")
-    @ApiOperation(value = "Returns the user having the specified id.")
+    @Operation(summary = "Returns the user having the specified id.")
     @PreAuthorize("hasRole('ADMIN')")
     @Transactional(readOnly = true)
     public Mono<UserDto> findById(@PathVariable String id) {
@@ -59,7 +59,7 @@ public class UserController {
      * Creates a new internal user.
      */
     @PostMapping(path = "/user")
-    @ApiOperation(value = "Creates a new internal user.")
+    @Operation(summary = "Creates a new internal user.")
     @PreAuthorize("hasRole('ADMIN')")
     @Transactional
     public Mono<UserDto> createUser(@RequestBody InternalUserCreationDto creationDto) {
@@ -72,7 +72,7 @@ public class UserController {
      * Updates the user having the specified id.
      */
     @PatchMapping(path = "/user/{id}")
-    @ApiOperation(value = "Updates the user having the specified id.")
+    @Operation(summary = "Updates the user having the specified id.")
     @PreAuthorize("hasRole('ADMIN')")
     @Transactional
     public Mono<UserDto> updateUser(@PathVariable String id,
@@ -86,7 +86,7 @@ public class UserController {
      * Deletes the user having the specified id.
      */
     @DeleteMapping(path = "/user/{id}")
-    @ApiOperation(value = "Deletes the user having the specified id.")
+    @Operation(summary = "Deletes the user having the specified id.")
     @PreAuthorize("hasRole('ADMIN')")
     @Transactional
     @ResponseStatus(HttpStatus.NO_CONTENT)

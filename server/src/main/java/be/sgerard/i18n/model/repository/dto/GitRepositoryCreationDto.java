@@ -3,8 +3,7 @@ package be.sgerard.i18n.model.repository.dto;
 import be.sgerard.i18n.model.repository.RepositoryType;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.net.URI;
 
@@ -13,13 +12,13 @@ import java.net.URI;
  *
  * @author Sebastien Gerard
  */
-@ApiModel(value = "GitRepositoryCreationRequest", description = "Request asking the creation of a Git repository")
+@Schema(name = "GitRepositoryCreationRequest", description = "Request asking the creation of a Git repository")
 public class GitRepositoryCreationDto extends RepositoryCreationDto {
 
-    @ApiModelProperty(notes = "Location URL of this repository", required = true)
+    @Schema(description = "Location URL of this repository", required = true)
     private final String location;
 
-    @ApiModelProperty(notes = "Name of this repository", required = true)
+    @Schema(description = "Name of this repository", required = true)
     private final String name;
 
     @JsonCreator
@@ -40,6 +39,7 @@ public class GitRepositoryCreationDto extends RepositoryCreationDto {
     public String getLocation() {
         return location;
     }
+
     /**
      * Returns the location URI of this repository.
      */

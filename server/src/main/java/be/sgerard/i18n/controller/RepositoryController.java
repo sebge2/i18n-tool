@@ -7,9 +7,8 @@ import be.sgerard.i18n.model.repository.dto.RepositorySummaryDto;
 import be.sgerard.i18n.service.BadRequestException;
 import be.sgerard.i18n.service.repository.RepositoryDtoMapper;
 import be.sgerard.i18n.service.repository.RepositoryManager;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import org.reactivestreams.Publisher;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +24,7 @@ import java.util.Objects;
  */
 @RestController
 @RequestMapping(path = "/api")
-@Api(value = "Controller handling repositories.")
+@Tag(name = "Repository", description = "Controller handling repositories.")
 public class RepositoryController {
 
     private final RepositoryManager repositoryManager;
@@ -40,7 +39,7 @@ public class RepositoryController {
      * Finds all the {@link RepositorySummaryDto repositories}.
      */
     @GetMapping(path = "/repository")
-    @ApiOperation(value = "Finds all repositories.")
+    @Operation(summary = "Finds all repositories.")
     @PreAuthorize("hasRole('ADMIN')")
     public Flux<RepositorySummaryDto> findAll() {
         return repositoryManager.findAll()
@@ -51,7 +50,7 @@ public class RepositoryController {
      * Returns the {@link RepositoryDto repository} having the specified id.
      */
     @GetMapping(path = "/repository/{id}")
-    @ApiOperation(value = "Finds the repository having the specified id.")
+    @Operation(summary = "Finds the repository having the specified id.")
     @PreAuthorize("hasRole('ADMIN')")
     public Mono<RepositoryDto> findById(@PathVariable String id) {
         return repositoryManager.findByIdOrDie(id)
@@ -62,7 +61,7 @@ public class RepositoryController {
      * Creates a new {@link RepositoryDto repository} based on the {@link RepositoryCreationDto DTO}.
      */
     @PostMapping(path = "/repository")
-    @ApiOperation(value = "Creates a new repository.")
+    @Operation(summary = "Creates a new repository.")
     @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.CREATED)
     public Mono<RepositoryDto> create(@RequestBody RepositoryCreationDto creationDto) {
@@ -74,7 +73,7 @@ public class RepositoryController {
      * Updates the repository as described by the specified {@link RepositoryPatchDto DTO}.
      */
     @PatchMapping(path = "/repository/{id}")
-    @ApiOperation(value = "Updates an existing repository.")
+    @Operation(summary = "Updates an existing repository.")
     @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.OK)
     public Mono<RepositoryDto> update(@PathVariable String id,
@@ -88,7 +87,7 @@ public class RepositoryController {
     }
 
     @PostMapping(path = "/repository/{id}/do")
-    @ApiOperation(value = "Executes an action on a repository.")
+    @Operation(summary = "Executes an action on a repository.")
     @PreAuthorize("hasRole('ADMIN')")
     @SuppressWarnings("SwitchStatementWithTooFewBranches")
     public Mono<RepositoryDto> executeRepositoryAction(@PathVariable String id,
@@ -106,7 +105,7 @@ public class RepositoryController {
      * Removes the {@link RepositoryDto repository} having the specified id.
      */
     @DeleteMapping(path = "/repository/{id}")
-    @ApiOperation(value = "Delete a repository.")
+    @Operation(summary = "Delete a repository.")
     @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public Mono<RepositoryDto> delete(@PathVariable String id) {

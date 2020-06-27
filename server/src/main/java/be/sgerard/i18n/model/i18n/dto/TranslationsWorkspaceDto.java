@@ -5,8 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +18,7 @@ import static java.util.Collections.unmodifiableList;
  *
  * @author Sebastien Gerard
  */
-@ApiModel(description = "List of translations of a workspace.")
+@Schema(name = "TranslationsWorkspace", description = "List of translations of a workspace.")
 @JsonDeserialize(builder = TranslationsWorkspaceDto.Builder.class)
 public class TranslationsWorkspaceDto {
 
@@ -27,10 +26,10 @@ public class TranslationsWorkspaceDto {
         return new Builder();
     }
 
-    @ApiModelProperty(notes = "Unique identifier of the workspace containing those translations.", required = true)
+    @Schema(description = "Unique identifier of the workspace containing those translations.", required = true)
     private final String workspaceId;
 
-    @ApiModelProperty(notes = "All bundle files contained in this workspace page.", required = true)
+    @Schema(description = "All bundle files contained in this workspace page.", required = true)
     private final List<BundleFileDto> files;
 
     private TranslationsWorkspaceDto(Builder builder) {

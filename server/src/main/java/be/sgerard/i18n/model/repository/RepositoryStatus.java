@@ -1,11 +1,11 @@
 package be.sgerard.i18n.model.repository;
 
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * @author Sebastien Gerard
  */
-@ApiModel(description = "All possible repository statuses.")
+@Schema(description = "All possible repository statuses.")
 public enum RepositoryStatus {
 
     NOT_INITIALIZED,

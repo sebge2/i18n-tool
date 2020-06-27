@@ -8,8 +8,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.io.Serializable;
 import java.security.Principal;
@@ -26,7 +25,7 @@ import static java.util.Collections.unmodifiableSet;
  *
  * @author Sebastien Gerard
  */
-@ApiModel(value = "User", description = "Description of the user.")
+@Schema(name = "User", description = "Description of the user.")
 @JsonDeserialize(builder = UserDto.Builder.class)
 public class UserDto implements Principal, Serializable {
 
@@ -54,22 +53,22 @@ public class UserDto implements Principal, Serializable {
                 .type(userEntity instanceof ExternalUserEntity ? Type.EXTERNAL : Type.INTERNAL);
     }
 
-    @ApiModelProperty(notes = "Id of the user.")
+    @Schema(description = "Id of the user.")
     private final String id;
 
-    @ApiModelProperty(notes = "Username of the user.")
+    @Schema(description = "Username of the user.")
     private final String username;
 
-    @ApiModelProperty(notes = "Email of the user.")
+    @Schema(description = "Email of the user.")
     private final String email;
 
-    @ApiModelProperty(notes = "URL of the user avatar.")
+    @Schema(description = "URL of the user avatar.")
     private final String avatarUrl;
 
-    @ApiModelProperty(notes = "User roles.")
+    @Schema(description = "User roles.")
     private final Collection<UserRole> roles;
 
-    @ApiModelProperty(notes = "User type.")
+    @Schema(description = "User type.")
     private final Type type;
 
     private UserDto(Builder builder) {
@@ -215,7 +214,7 @@ public class UserDto implements Principal, Serializable {
     /**
      * All possible user types.
      */
-    @ApiModel(description = "All possible user types.")
+    @Schema(description = "All possible user types.")
     public enum Type {
 
         EXTERNAL,

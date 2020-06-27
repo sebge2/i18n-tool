@@ -5,8 +5,7 @@ import be.sgerard.i18n.model.security.user.persistence.UserPreferencesEntity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.Optional;
 
@@ -15,7 +14,7 @@ import java.util.Optional;
  *
  * @author Sebastien Gerard
  */
-@ApiModel(value = "UserPreferences", description = "Preferences of a user.")
+@Schema(name = "UserPreferences", description = "Preferences of a user.")
 @JsonDeserialize(builder = UserPreferencesDto.Builder.class)
 public class UserPreferencesDto {
 
@@ -28,7 +27,7 @@ public class UserPreferencesDto {
                 .toolLocale(preferencesEntity.getToolLocale().orElse(null));
     }
 
-    @ApiModelProperty(notes = "The locale to use for the user.")
+    @Schema(description = "The locale to use for the user.")
     private final ToolLocale toolLocale;
 
     private UserPreferencesDto(Builder builder) {

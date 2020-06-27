@@ -3,15 +3,14 @@ package be.sgerard.i18n.model.workspace;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * A workspace represents the edition of translations related to a particular branch of a repository.
  *
  * @author Sebastien Gerard
  */
-@ApiModel(value = "Workspace",
+@Schema(name = "Workspace",
         description = "A workspace is a place where users can define translations and then submit them for review. A workspace is based on a particular branch.")
 @JsonDeserialize(builder = WorkspaceDto.Builder.class)
 public class WorkspaceDto {
@@ -27,13 +26,13 @@ public class WorkspaceDto {
                 .status(entity.getStatus());
     }
 
-    @ApiModelProperty(notes = "Unique identifier of a workspace.", required = true)
+    @Schema(description = "Unique identifier of a workspace.", required = true)
     private final String id;
 
-    @ApiModelProperty(notes = "The branch name on which the workspace is based on.", required = true)
+    @Schema(description = "The branch name on which the workspace is based on.", required = true)
     private final String branch;
 
-    @ApiModelProperty(notes = "The current workspace status. First, the workspace is created, but not initialized. Then, " +
+    @Schema(description = "The current workspace status. First, the workspace is created, but not initialized. Then, " +
             "the workspace is initialized and all the translations are retrieved. Once they are edited, they are sent for review.", required = true)
     private final WorkspaceStatus status;
 

@@ -4,8 +4,7 @@ import be.sgerard.i18n.model.repository.RepositoryType;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.Optional;
 
@@ -14,7 +13,7 @@ import java.util.Optional;
  *
  * @author Sebastien Gerard
  */
-@ApiModel(value = "GitHubRepositoryPatchRequest", description = "Request asking the update of a GitHub repository")
+@Schema(name = "GitHubRepositoryPatchRequest", description = "Request asking the update of a GitHub repository")
 @JsonDeserialize(builder = GitHubRepositoryPatchDto.Builder.class)
 public class GitHubRepositoryPatchDto extends GitRepositoryPatchDto {
 
@@ -22,10 +21,10 @@ public class GitHubRepositoryPatchDto extends GitRepositoryPatchDto {
         return new GitHubRepositoryPatchDto.Builder();
     }
 
-    @ApiModelProperty(notes = "Access key to use to access this repository")
+    @Schema(description = "Access key to use to access this repository")
     private final String accessKey;
 
-    @ApiModelProperty(notes = "Access key to use to access this repository")
+    @Schema(description = "Access key to use to access this repository")
     private final String webHookSecret;
 
     private GitHubRepositoryPatchDto(Builder builder) {

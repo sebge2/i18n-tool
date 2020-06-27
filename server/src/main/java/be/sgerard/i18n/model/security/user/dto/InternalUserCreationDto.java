@@ -6,8 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -19,7 +18,7 @@ import static java.util.Arrays.asList;
  *
  * @author Sebastien Gerard
  */
-@ApiModel(description = "The initial information needed to create an internal user.")
+@Schema(name = "InternalUserCreation", description = "The initial information needed to create an internal user.")
 @JsonDeserialize(builder = InternalUserCreationDto.Builder.class)
 public class InternalUserCreationDto {
 
@@ -35,19 +34,19 @@ public class InternalUserCreationDto {
                 .roles(userDto.getRoles());
     }
 
-    @ApiModelProperty(notes = "Username used to log in.", required = true)
+    @Schema(description = "Username used to log in.", required = true)
     private final String username;
 
-    @ApiModelProperty(notes = "User email address", required = true)
+    @Schema(description = "User email address", required = true)
     private final String email;
 
-    @ApiModelProperty(notes = "User password (non encoded)", required = true)
+    @Schema(description = "User password (non encoded)", required = true)
     private final String password;
 
-    @ApiModelProperty(notes = "User avatar URL", required = true)
+    @Schema(description = "User avatar URL", required = true)
     private final String avatarUrl;
 
-    @ApiModelProperty(notes = "Assignable user roles", required = true)
+    @Schema(description = "Assignable user roles", required = true)
     private final Collection<UserRole> roles;
 
     private InternalUserCreationDto(Builder builder) {

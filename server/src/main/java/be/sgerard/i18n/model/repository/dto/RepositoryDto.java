@@ -4,14 +4,14 @@ import be.sgerard.i18n.model.repository.RepositoryStatus;
 import be.sgerard.i18n.model.repository.RepositoryType;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * Repository that can be of different type. A repository contains translations.
  *
  * @author Sebastien Gerard
  */
-@ApiModel(value = "Repository", description = "Repository that can be of different type.")
+@Schema(name = "Repository", description = "Repository that can be of different type.")
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "type")
 @JsonSubTypes({
         @JsonSubTypes.Type(value = GitRepositoryDto.class, name = "GIT"),

@@ -3,8 +3,7 @@ package be.sgerard.i18n.model.repository.dto;
 import be.sgerard.i18n.model.repository.RepositoryType;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.Optional;
 
@@ -13,16 +12,16 @@ import java.util.Optional;
  *
  * @author Sebastien Gerard
  */
-@ApiModel(value = "GitHubRepositoryCreationRequest", description = "Request asking the creation of a GitHub repository")
+@Schema(name = "GitHubRepositoryCreationRequest", description = "Request asking the creation of a GitHub repository")
 public class GitHubRepositoryCreationDto extends RepositoryCreationDto {
 
-    @ApiModelProperty(notes = "GitHub username of this repository", required = true)
+    @Schema(description = "GitHub username of this repository", required = true)
     private final String username;
 
-    @ApiModelProperty(notes = "Repository name", required = true)
+    @Schema(description = "Repository name", required = true)
     private final String repository;
 
-    @ApiModelProperty(notes = "Access key to use to access this repository")
+    @Schema(description = "Access key to use to access this repository")
     private final String accessKey;
 
     @JsonCreator

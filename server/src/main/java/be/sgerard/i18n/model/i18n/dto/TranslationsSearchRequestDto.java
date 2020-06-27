@@ -7,8 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.util.Assert;
 
 import java.util.Collection;
@@ -23,7 +22,7 @@ import static java.util.Collections.unmodifiableCollection;
  *
  * @author Sebastien Gerard
  */
-@ApiModel(description = "Request asking the listing of paginated translations.")
+@Schema(name = "TranslationsSearchRequest", description = "Request asking the listing of paginated translations.")
 @JsonDeserialize(builder = TranslationsSearchRequestDto.Builder.class)
 public class TranslationsSearchRequestDto {
 
@@ -41,22 +40,22 @@ public class TranslationsSearchRequestDto {
         return new Builder();
     }
 
-    @ApiModelProperty(notes = "Search translations only in those workspaces", required = true)
+    @Schema(description = "Search translations only in those workspaces", required = true)
     private final Collection<String> workspaces;
 
-    @ApiModelProperty(notes = "Search translations only in those translations locale ids.")
+    @Schema(description = "Search translations only in those translations locale ids.")
     private final Collection<String> locales;
 
-    @ApiModelProperty(notes = "Specify the criterion that translations must have.")
+    @Schema(description = "Specify the criterion that translations must have.")
     private final TranslationSearchCriterion criterion;
 
-    @ApiModelProperty(notes = "The pattern to use of keys to retrieve.")
+    @Schema(description = "The pattern to use of keys to retrieve.")
     private final TranslationKeyPatternDto keyPattern;
 
-    @ApiModelProperty(notes = "The maximum number of keys for the next page.")
+    @Schema(description = "The maximum number of keys for the next page.")
     private final int maxKeys;
 
-    @ApiModelProperty(notes = "The last key contained in the previous page (nothing if it's the first page).")
+    @Schema(description = "The last key contained in the previous page (nothing if it's the first page).")
     private final String lastKey;
 
     private TranslationsSearchRequestDto(Builder builder) {

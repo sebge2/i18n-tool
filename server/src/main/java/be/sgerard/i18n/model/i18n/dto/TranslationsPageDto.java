@@ -5,8 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +19,7 @@ import static java.util.Collections.unmodifiableList;
  *
  * @author Sebastien Gerard
  */
-@ApiModel(description = "List of paginated translations.")
+@Schema(name = "TranslationsPage", description = "List of paginated translations.")
 @JsonDeserialize(builder = TranslationsPageDto.Builder.class)
 public class TranslationsPageDto {
 
@@ -28,10 +27,10 @@ public class TranslationsPageDto {
         return new Builder();
     }
 
-    @ApiModelProperty(notes = "Last key defined in this page. It can be used to call the next page.", required = true, dataType = "java.lang.String")
+    @Schema(description = "Last key defined in this page. It can be used to call the next page.", required = true, type = "java.lang.String")
     private final String lastKey;
 
-    @ApiModelProperty(notes = "Workspaces", required = true)
+    @Schema(description = "Workspaces", required = true)
     private final List<TranslationsWorkspaceDto> workspaces;
 
     private TranslationsPageDto(Builder builder) {

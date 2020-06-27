@@ -4,8 +4,7 @@ import be.sgerard.i18n.model.repository.RepositoryType;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.Optional;
 
@@ -14,7 +13,7 @@ import java.util.Optional;
  *
  * @author Sebastien Gerard
  */
-@ApiModel(value = "GitHubRepository", description = "GitHub Repository")
+@Schema(name = "GitHubRepository", description = "GitHub Repository")
 @JsonDeserialize(builder = GitHubRepositoryDto.Builder.class)
 public class GitHubRepositoryDto extends GitRepositoryDto {
 
@@ -22,10 +21,10 @@ public class GitHubRepositoryDto extends GitRepositoryDto {
         return new Builder();
     }
 
-    @ApiModelProperty(notes = "Access key to use to access this repository", required = true)
+    @Schema(description = "Access key to use to access this repository", required = true)
     private final String accessKey;
 
-    @ApiModelProperty(notes = "Access key to use to access this repository")
+    @Schema(description = "Access key to use to access this repository")
     private final String webHookSecret;
 
     private GitHubRepositoryDto(Builder builder) {

@@ -4,8 +4,8 @@ import be.sgerard.i18n.model.i18n.dto.TranslationLocaleCreationDto;
 import be.sgerard.i18n.model.i18n.dto.TranslationLocaleDto;
 import be.sgerard.i18n.service.BadRequestException;
 import be.sgerard.i18n.service.i18n.TranslationLocaleManager;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +21,7 @@ import java.util.Objects;
  */
 @RestController
 @RequestMapping(path = "/api")
-@Api(value = "Controller handling locales registered by end-users.")
+@Tag(name = "TranslationLocale", description = "Controller handling locales registered by end-users.")
 public class TranslationLocaleController {
 
     private final TranslationLocaleManager localeManager;
@@ -34,7 +34,7 @@ public class TranslationLocaleController {
      * Returns all the registered {@link TranslationLocaleDto locales}.
      */
     @GetMapping(path = "/translation/locale/")
-    @ApiOperation(value = "Returns all translation locales that have been used so far.")
+    @Operation(summary = "Returns all translation locales that have been used so far.")
     public Flux<TranslationLocaleDto> findAll() {
         return localeManager
                 .findAll()
@@ -45,7 +45,7 @@ public class TranslationLocaleController {
      * Returns the registered {@link TranslationLocaleDto locale}.
      */
     @GetMapping(path = "/translation/locale/{id}")
-    @ApiOperation(value = "Returns the registered locale.")
+    @Operation(summary = "Returns the registered locale.")
     public Mono<TranslationLocaleDto> findById(@PathVariable String id) {
         return localeManager
                 .findByIdOrDie(id)
@@ -57,7 +57,7 @@ public class TranslationLocaleController {
      */
     @PostMapping(path = "/translation/locale")
     @ResponseStatus(HttpStatus.CREATED)
-    @ApiOperation(value = "Creates a new translation locale.")
+    @Operation(summary = "Creates a new translation locale.")
     @PreAuthorize("hasRole('ADMIN')")
     public Mono<TranslationLocaleDto> create(@RequestBody TranslationLocaleCreationDto creationDto) {
         return localeManager
@@ -69,7 +69,7 @@ public class TranslationLocaleController {
      * Updates a {@link TranslationLocaleDto translation locale}.
      */
     @PutMapping(path = "/translation/locale/{id}")
-    @ApiOperation(value = "Updates an existing translation locale.")
+    @Operation(summary = "Updates an existing translation locale.")
     @PreAuthorize("hasRole('ADMIN')")
     public Mono<TranslationLocaleDto> update(@PathVariable String id,
                                              @RequestBody TranslationLocaleDto localeDto) {
@@ -87,7 +87,7 @@ public class TranslationLocaleController {
      */
     @DeleteMapping(path = "/translation/locale/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @ApiOperation(value = "Deletes a translation locale.")
+    @Operation(summary = "Deletes a translation locale.")
     @PreAuthorize("hasRole('ADMIN')")
     public Mono<Void> delete(@PathVariable String id) {
         return localeManager.delete(id).then();

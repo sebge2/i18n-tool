@@ -3,15 +3,14 @@ package be.sgerard.i18n.model.github;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * Pull-request of a GitHub repository.
  *
  * @author Sebastien Gerard
  */
-@ApiModel(value = "GitHubPullRequest", description = "Pull-request on GitHub.")
+@Schema(name = "GitHubPullRequest", description = "Pull-request on GitHub.")
 @JsonDeserialize(builder = GitHubPullRequestDto.Builder.class)
 public class GitHubPullRequestDto {
 
@@ -19,19 +18,19 @@ public class GitHubPullRequestDto {
         return new Builder();
     }
 
-    @ApiModelProperty(notes = "Name of the repository associated to this request", required = true)
+    @Schema(description = "Name of the repository associated to this request", required = true)
     private final String repositoryName;
 
-    @ApiModelProperty(notes = "Unique id number of this request", required = true)
+    @Schema(description = "Unique id number of this request", required = true)
     private final int number;
 
-    @ApiModelProperty(notes = "The name of the branch containing changes", required = true)
+    @Schema(description = "The name of the branch containing changes", required = true)
     private final String currentBranch;
 
-    @ApiModelProperty(notes = "The name of the branch where changes should be applied", required = true)
+    @Schema(description = "The name of the branch where changes should be applied", required = true)
     private final String targetBranch;
 
-    @ApiModelProperty(notes = "Current status of this request", required = true)
+    @Schema(description = "Current status of this request", required = true)
     private final GitHubPullRequestStatus status;
 
     private GitHubPullRequestDto(Builder builder) {

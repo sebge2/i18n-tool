@@ -6,8 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +19,7 @@ import static java.util.Collections.unmodifiableList;
  *
  * @author Sebastien Gerard
  */
-@ApiModel(description = "Key in a bundle file associated to translations.")
+@Schema(name = "BundleKey", description = "Key in a bundle file associated to translations.")
 @JsonDeserialize(builder = BundleKeyDto.Builder.class)
 public class BundleKeyDto {
 
@@ -28,13 +27,13 @@ public class BundleKeyDto {
         return new Builder();
     }
 
-    @ApiModelProperty(notes = "Unique identifier of a key.", required = true)
+    @Schema(description = "Unique identifier of a key.", required = true)
     private final String id;
 
-    @ApiModelProperty(notes = "Key associated to translation entries.", required = true)
+    @Schema(description = "Key associated to translation entries.", required = true)
     private final String key;
 
-    @ApiModelProperty(notes = "All translations associated to this key.", required = true)
+    @Schema(description = "All translations associated to this key.", required = true)
     private final List<BundleKeyTranslationDto> translations;
 
     private BundleKeyDto(Builder builder) {

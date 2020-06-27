@@ -4,15 +4,14 @@ import be.sgerard.i18n.model.i18n.persistence.BundleKeyTranslationEntity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * Translation of a certain key part of translation bundle.
  *
  * @author Sebastien Gerard
  */
-@ApiModel(description = "Translation of a key of a bundle file and associated to a locale.")
+@Schema(name = "BundleKeyTranslation", description = "Translation of a key of a bundle file and associated to a locale.")
 @JsonDeserialize(builder = BundleKeyTranslationDto.Builder.class)
 public class BundleKeyTranslationDto {
 
@@ -29,19 +28,19 @@ public class BundleKeyTranslationDto {
                 .lastEditor(entity.getLastEditor().orElse(null));
     }
 
-    @ApiModelProperty(notes = "Unique identifier of a translation.", required = true)
+    @Schema(description = "Unique identifier of a translation.", required = true)
     private final String id;
 
-    @ApiModelProperty(notes = "Locale id associated to this translation.", required = true)
+    @Schema(description = "Locale id associated to this translation.", required = true)
     private final String locale;
 
-    @ApiModelProperty(notes = "The original value found when scanning bundle files (initializing step).", required = true)
+    @Schema(description = "The original value found when scanning bundle files (initializing step).", required = true)
     private final String originalValue;
 
-    @ApiModelProperty(notes = "Value set by the end-user when editing translations.")
+    @Schema(description = "Value set by the end-user when editing translations.")
     private final String updatedValue;
 
-    @ApiModelProperty(notes = "The username of the end-user that has edited this translation.")
+    @Schema(description = "The username of the end-user that has edited this translation.")
     private final String lastEditor;
 
     private BundleKeyTranslationDto(Builder builder) {

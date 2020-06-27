@@ -4,15 +4,14 @@ import be.sgerard.i18n.model.repository.RepositoryType;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * Git repository.
  *
  * @author Sebastien Gerard
  */
-@ApiModel(value = "GitRepository", description = "Git Repository")
+@Schema(name = "GitRepository", description = "Git Repository")
 @JsonDeserialize(builder = GitRepositoryDto.Builder.class)
 public class GitRepositoryDto extends RepositoryDto {
 
@@ -20,10 +19,10 @@ public class GitRepositoryDto extends RepositoryDto {
         return new Builder();
     }
 
-    @ApiModelProperty(notes = "Location URL of this repository", required = true)
+    @Schema(description = "Location URL of this repository", required = true)
     private final String location;
 
-    @ApiModelProperty(notes = "The name of the default branch used to find translations", required = true)
+    @Schema(description = "The name of the default branch used to find translations", required = true)
     private final String defaultBranch;
 
     protected GitRepositoryDto(BaseBuilder<?, ?> builder) {

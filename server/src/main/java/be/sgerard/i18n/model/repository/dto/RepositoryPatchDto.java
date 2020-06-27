@@ -3,8 +3,7 @@ package be.sgerard.i18n.model.repository.dto;
 import be.sgerard.i18n.model.repository.RepositoryType;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * Request asking the creation of a repository.
@@ -16,10 +15,10 @@ import io.swagger.annotations.ApiModelProperty;
         @JsonSubTypes.Type(value = GitRepositoryPatchDto.class, name = "GIT"),
         @JsonSubTypes.Type(value = GitHubRepositoryPatchDto.class, name = "GITHUB")
 })
-@ApiModel(value = "RepositoryCreationRequest", description = "Request asking the creation of a repository")
+@Schema(name = "RepositoryCreationRequest", description = "Request asking the creation of a repository")
 public abstract class RepositoryPatchDto {
 
-    @ApiModelProperty(notes = "The id of the repository to modify", required = true)
+    @Schema(description = "The id of the repository to modify", required = true)
     private final String id;
 
     protected RepositoryPatchDto(BaseBuilder<?, ?> builder) {
@@ -29,7 +28,7 @@ public abstract class RepositoryPatchDto {
     /**
      * Returns the {@link RepositoryType type} of this repository.
      */
-    @ApiModelProperty(notes = "Type of this repository", required = true)
+    @Schema(description = "Type of this repository", required = true)
     public abstract RepositoryType getType();
 
     /**

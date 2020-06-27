@@ -5,8 +5,7 @@ import be.sgerard.i18n.service.security.UserRole;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -18,7 +17,7 @@ import static java.util.Collections.unmodifiableCollection;
  *
  * @author Sebastien Gerard
  */
-@ApiModel(value = "AuthenticatedUser", description = "Description of an authenticated user.")
+@Schema(name = "AuthenticatedUser", description = "Description of an authenticated user.")
 @JsonDeserialize(builder = AuthenticatedUserDto.Builder.class)
 public class AuthenticatedUserDto {
 
@@ -33,13 +32,13 @@ public class AuthenticatedUserDto {
                 .sessionRoles(authenticatedUser.getSessionRoles());
     }
 
-    @ApiModelProperty(notes = "Unique id of the authenticated user.")
+    @Schema(description = "Unique id of the authenticated user.")
     private final String id;
 
-    @ApiModelProperty(notes = "Description of the user.")
+    @Schema(description = "Description of the user.")
     private final UserDto user;
 
-    @ApiModelProperty(notes = "Roles allowed during this session.")
+    @Schema(description = "Roles allowed during this session.")
     private final Collection<UserRole> sessionRoles;
 
     private AuthenticatedUserDto(Builder builder) {

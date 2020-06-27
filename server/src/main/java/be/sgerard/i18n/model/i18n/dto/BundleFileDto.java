@@ -5,8 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +18,7 @@ import static java.util.Collections.unmodifiableList;
  *
  * @author Sebastien Gerard
  */
-@ApiModel(description = "Bundle file containing translations of keys.")
+@Schema(name = "BundleFile", description = "Bundle file containing translations of keys.")
 @JsonDeserialize(builder = BundleFileDto.Builder.class)
 public class BundleFileDto {
 
@@ -27,16 +26,16 @@ public class BundleFileDto {
         return new Builder();
     }
 
-    @ApiModelProperty(notes = "Unique identifier of a bundle file.", required = true)
+    @Schema(description = "Unique identifier of a bundle file.", required = true)
     private final String id;
 
-    @ApiModelProperty(notes = "Name of this bundle file.", required = true)
+    @Schema(description = "Name of this bundle file.", required = true)
     private final String name;
 
-    @ApiModelProperty(notes = "Directory location of this bundle file.", required = true)
+    @Schema(description = "Directory location of this bundle file.", required = true)
     private final String location;
 
-    @ApiModelProperty(notes = "Keys contained in this bundle file.", required = true)
+    @Schema(description = "Keys contained in this bundle file.", required = true)
     private final List<BundleKeyDto> keys;
 
     private BundleFileDto(Builder builder) {

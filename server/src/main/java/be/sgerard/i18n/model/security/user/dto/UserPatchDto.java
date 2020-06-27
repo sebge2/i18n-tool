@@ -6,8 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -21,7 +20,7 @@ import static java.util.Collections.unmodifiableCollection;
  *
  * @author Sebastien Gerard
  */
-@ApiModel(description = "The update of a user.")
+@Schema(name = "UserPatch", description = "The update of a user.")
 @JsonDeserialize(builder = UserPatchDto.Builder.class)
 public class UserPatchDto {
 
@@ -29,19 +28,19 @@ public class UserPatchDto {
         return new Builder();
     }
 
-    @ApiModelProperty(notes = "The new username.")
+    @Schema(description = "The new username.")
     private final String username;
 
-    @ApiModelProperty(notes = "The new email address.")
+    @Schema(description = "The new email address.")
     private final String email;
 
-    @ApiModelProperty(notes = "The new password.")
+    @Schema(description = "The new password.")
     private final String password;
 
-    @ApiModelProperty(notes = "The new avatar URL.")
+    @Schema(description = "The new avatar URL.")
     private final String avatarUrl;
 
-    @ApiModelProperty(notes = "The roles.")
+    @Schema(description = "The roles.")
     private final Collection<UserRole> roles;
 
     private UserPatchDto(Builder builder) {

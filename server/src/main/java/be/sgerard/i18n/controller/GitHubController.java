@@ -1,7 +1,8 @@
 package be.sgerard.i18n.controller;
 
 import be.sgerard.i18n.service.github.GitHubWebHookService;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.RequestEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +17,7 @@ import reactor.core.publisher.Mono;
  */
 @Controller
 @RequestMapping(path = "/api")
+@Tag(name ="GitHub", description = "Controller exposing the GitHub web-hook")
 public class GitHubController {
 
     private final GitHubWebHookService webHookService;
@@ -28,7 +30,7 @@ public class GitHubController {
      * Handles a notification event coming from GitHub.
      */
     @PostMapping(path = "/git-hub/event")
-    @ApiOperation(value = "GitHub Web-hook notifying events on the repository. Only called by GitHub.com")
+    @Operation(summary = "GitHub Web-hook notifying events on the repository. Only called by GitHub.com")
     @ResponseBody
     public Mono<String> handle(RequestEntity<String> requestEntity) {
         return webHookService.executeWebHook(requestEntity);

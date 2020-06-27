@@ -2,14 +2,14 @@ package be.sgerard.i18n.model.i18n.dto;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * Pattern of a translation key to search for.
  *
  * @author Sebastien Gerard
  */
-@ApiModel(description = "Pattern of a translation key to search for.")
+@Schema(name = "TranslationKeyPattern", description = "Pattern of a translation key to search for.")
 public class TranslationKeyPatternDto {
 
     private final KeyPatternStrategy strategy;
