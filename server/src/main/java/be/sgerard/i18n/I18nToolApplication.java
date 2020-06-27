@@ -11,10 +11,10 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootApplication(exclude = {SecurityAutoConfiguration.class, ManagementWebSecurityAutoConfiguration.class, OAuth2ClientAutoConfiguration.class})
 @EnableAsync
 @EnableScheduling
-public class GithubOauthApplication {
+public class I18nToolApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(GithubOauthApplication.class, args);
+        SpringApplication.run(I18nToolApplication.class, args);
     }
 
 }

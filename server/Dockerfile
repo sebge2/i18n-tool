@@ -12,4 +12,4 @@ COPY ${DEPENDENCY}/BOOT-INF/classes ${CONTAINER_APP_FOLDER}
 
 EXPOSE 8080
 
-CMD java -Dspring.profiles.active=${ACTIVE_SPRING_PROFILE} -cp ${CONTAINER_APP_FOLDER}:${CONTAINER_APP_FOLDER}/lib/* be.sgerard.i18n.GithubOauthApplication
+CMD java -Dspring.profiles.active=${ACTIVE_SPRING_PROFILE} -cp ${CONTAINER_APP_FOLDER}:${CONTAINER_APP_FOLDER}/lib/* be.sgerard.i18n.I18nToolApplication

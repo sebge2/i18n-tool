@@ -27,7 +27,7 @@ public class TranslationLocaleTestHelper {
         return webClient.get()
                 .uri("/api/translation/locale/")
                 .exchange()
-                .expectStatus().isCreated()
+                .expectStatus().isOk()
                 .expectBodyList(TranslationLocaleDto.class)
                 .returnResult()
                 .getResponseBody();
