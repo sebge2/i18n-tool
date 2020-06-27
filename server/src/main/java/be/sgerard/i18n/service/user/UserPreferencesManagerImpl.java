@@ -35,9 +35,7 @@ public class UserPreferencesManagerImpl implements UserPreferencesManager {
     @Override
     public Mono<UserPreferencesEntity> updateUserPreferences(String userId, UserPreferencesDto preferences) throws ResourceNotFoundException {
         return getUserPreferences(userId)
-                .doOnNext(pref -> {
-                    pref.setToolLocale(preferences.getToolLocale().orElse(null));
-                })
+                .doOnNext(pref -> pref.setToolLocale(preferences.getToolLocale().orElse(null)))
                 .flatMap(pref ->
                         listener
                                 .onUpdate(pref)

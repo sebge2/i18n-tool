@@ -61,6 +61,7 @@ public class UserController {
     @PostMapping(path = "/user")
     @Operation(summary = "Creates a new internal user.")
     @PreAuthorize("hasRole('ADMIN')")
+    @ResponseStatus(HttpStatus.CREATED)
     @Transactional
     public Mono<UserDto> createUser(@RequestBody InternalUserCreationDto creationDto) {
         return userManager

@@ -56,7 +56,7 @@ public class RepositoryManagerImpl implements RepositoryManager {
     @Transactional(readOnly = true)
     @Override
     public Flux<RepositoryEntity> findAll() {
-        return Flux.fromStream(repository.findAll().stream());
+        return repository.findAll();
     }
 
     @Transactional

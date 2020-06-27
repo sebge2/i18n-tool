@@ -11,10 +11,6 @@ import org.springframework.security.test.context.support.WithMockUser;
 
 import static be.sgerard.test.i18n.model.UserDtoTestUtils.userJohnDoeCreation;
 import static org.hamcrest.Matchers.*;
-import static org.springframework.http.HttpStatus.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * @author Sebastien Gerard
@@ -24,107 +20,107 @@ public class UserControllerTest extends AbstractControllerTest {
     @Test
     @TransactionalReactiveTest
     @WithMockUser(username = UserManager.ADMIN_USER_NAME, roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
-    public void findAllUsers() throws Exception {
+    public void findAllUsers() {
         final UserDto johnDoe = user.createUser(userJohnDoeCreation().build());
 
-        asyncMvc
-                .perform(get("/api/user"))
-                .andExpectStarted()
-                .andWaitResult()
-                .andExpect(status().is(OK.value()))
-                .andExpect(jsonPath("$", hasSize(greaterThanOrEqualTo(2))))
-                .andExpect(jsonPath("$[?(@.username=='" + johnDoe.getUsername() + "')]").exists())
-                .andExpect(jsonPath("$[?(@.username=='" + UserManager.ADMIN_USER_NAME + "')]").exists());
+        webClient
+                .get()
+                .uri("/api/user")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$").value(hasSize(greaterThanOrEqualTo(2)))
+                .jsonPath("$[?(@.username=='" + johnDoe.getUsername() + "')]").exists()
+                .jsonPath("$[?(@.username=='" + UserManager.ADMIN_USER_NAME + "')]").exists();
     }
 
     @Test
     @TransactionalReactiveTest
     @WithMockUser(username = UserManager.ADMIN_USER_NAME, roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
-    public void getUserById() throws Exception {
+    public void getUserById() {
         final UserDto johnDoe = user.createUser(userJohnDoeCreation().build());
 
-        asyncMvc
-                .perform(get("/api/user/{id}", johnDoe.getId()))
-                .andExpectStarted()
-                .andWaitResult()
-                .andExpect(status().is(OK.value()))
-                .andExpect(jsonPath("$.id").value(johnDoe.getId()))
-                .andExpect(jsonPath("$.username").value(johnDoe.getUsername()))
-                .andExpect(jsonPath("$.email").value(johnDoe.getEmail()))
-                .andExpect(jsonPath("$.roles", containsInAnyOrder(johnDoe.getRoles().stream().map(UserRole::name).toArray())))
-                .andExpect(jsonPath("$.type").value(johnDoe.getType().name()))
-                .andExpect(jsonPath("$.avatarUrl").value(johnDoe.getAvatarUrl()));
+        webClient
+                .get()
+                .uri("/api/user/{id}", johnDoe.getId())
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.id").isEqualTo(johnDoe.getId())
+                .jsonPath("$.username").isEqualTo(johnDoe.getUsername())
+                .jsonPath("$.email").isEqualTo(johnDoe.getEmail())
+                .jsonPath("$.roles").value(containsInAnyOrder(johnDoe.getRoles().stream().map(UserRole::name).toArray()))
+                .jsonPath("$.type").isEqualTo(johnDoe.getType().name())
+                .jsonPath("$.avatarUrl").isEqualTo(johnDoe.getAvatarUrl());
     }
 
     @Test
     @TransactionalReactiveTest
     @WithMockUser(username = UserManager.ADMIN_USER_NAME, roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
-    public void updateUser() throws Exception {
+    public void updateUser() {
         final UserDto johnDoe = user.createUser(userJohnDoeCreation().build());
 
-        asyncMvc
-                .perform(
-                        patch("/api/user/{id}", johnDoe.getId())
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(
-                                        UserPatchDto.builder()
-                                                .username("stay_home")
-                                                .email("john@localhost")
-                                                .avatarUrl("http://localhost/coro.png")
-                                                .roles(UserRole.ADMIN)
-                                                .build()
-                                ))
+        webClient
+                .patch()
+                .uri("/api/user/{id}", johnDoe.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(
+                        UserPatchDto.builder()
+                                .username("stay_home")
+                                .email("john@localhost")
+                                .avatarUrl("http://localhost/coro.png")
+                                .roles(UserRole.ADMIN)
+                                .build()
                 )
-                .andExpectStarted()
-                .andWaitResult()
-                .andExpect(status().is(OK.value()))
-                .andExpect(jsonPath("$.id").value(johnDoe.getId()))
-                .andExpect(jsonPath("$.username").value("stay_home"))
-                .andExpect(jsonPath("$.email").value("john@localhost"))
-                .andExpect(jsonPath("$.roles", containsInAnyOrder(UserRole.ADMIN.name())))
-                .andExpect(jsonPath("$.type").value(johnDoe.getType().name()))
-                .andExpect(jsonPath("$.avatarUrl").value("http://localhost/coro.png"));
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.id").isEqualTo(johnDoe.getId())
+                .jsonPath("$.username").isEqualTo("stay_home")
+                .jsonPath("$.email").isEqualTo("john@localhost")
+                .jsonPath("$.roles").value(containsInAnyOrder(UserRole.ADMIN.name()))
+                .jsonPath("$.type").isEqualTo(johnDoe.getType().name())
+                .jsonPath("$.avatarUrl").isEqualTo("http://localhost/coro.png");
     }
 
     @Test
     @TransactionalReactiveTest
     @WithMockUser(username = UserManager.ADMIN_USER_NAME, roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
-    public void updateUserRoleNotAssignable() throws Exception {
+    public void updateUserRoleNotAssignable() {
         final UserDto johnDoe = user.createUser(userJohnDoeCreation().build());
 
-        asyncMvc
-                .perform(
-                        patch("/api/user/{id}", johnDoe.getId())
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(
-                                        UserPatchDto.builder()
-                                                .roles(UserRole.MEMBER_OF_ORGANIZATION)
-                                                .build()
-                                ))
+        webClient
+                .patch()
+                .uri("/api/user/{id}", johnDoe.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(
+                        UserPatchDto.builder()
+                                .roles(UserRole.MEMBER_OF_ORGANIZATION)
+                                .build()
                 )
-                .andExpectStarted()
-                .andWaitResult()
-                .andExpect(status().is(BAD_REQUEST.value()))
-                .andExpect(jsonPath("$.messages[0]").value("The role MEMBER_OF_ORGANIZATION cannot be assigned."));
+                .exchange()
+                .expectStatus().isBadRequest()
+                .expectBody()
+                .jsonPath("$.messages[0]").isEqualTo("The role MEMBER_OF_ORGANIZATION cannot be assigned.");
     }
 
     @Test
     @TransactionalReactiveTest
     @WithMockUser(username = UserManager.ADMIN_USER_NAME, roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
-    public void deleteUser() throws Exception {
+    public void deleteUser() {
         final UserDto johnDoe = user.createUser(userJohnDoeCreation().build());
 
-        asyncMvc
-                .perform(delete("/api/user/{id}", johnDoe.getId()))
-                .andExpectStarted()
-                .andWaitResult()
-                .andExpect(status().is(NO_CONTENT.value()));
+        webClient
+                .delete()
+                .uri("/api/user/{id}", johnDoe.getId())
+                .exchange()
+                .expectStatus().isNoContent();
 
-        asyncMvc
-                .perform(get("/api/user/{id}", johnDoe.getId()))
-                .andExpectStarted()
-                .andWaitResult()
-                .andExpect(status().is(NOT_FOUND.value()));
+        webClient
+                .get()
+                .uri("/api/user/{id}", johnDoe.getId())
+                .exchange()
+                .expectStatus().isNotFound();
     }
 
 }
