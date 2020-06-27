@@ -2,32 +2,23 @@ package be.sgerard.test.i18n.helper;
 
 import be.sgerard.i18n.model.repository.dto.RepositoryDto;
 import be.sgerard.i18n.model.workspace.WorkspaceDto;
-import be.sgerard.test.i18n.support.JsonHolderResultHandler;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Component;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 /**
  * @author Sebastien Gerard
  */
 @Component
-@SuppressWarnings("unused")
 public class WorkspaceTestHelper {
 
-    private final AsyncMockMvcTestHelper mockMvc;
-    private final ObjectMapper objectMapper;
+    private final WebTestClient webClient;
 
-    public WorkspaceTestHelper(AsyncMockMvcTestHelper mockMvc, ObjectMapper objectMapper) {
-        this.mockMvc = mockMvc;
-        this.objectMapper = objectMapper;
+    public WorkspaceTestHelper(WebTestClient webClient) {
+        this.webClient = webClient;
     }
 
     <R extends RepositoryDto> StepInitializedRepository<R> with(R repository) {
@@ -42,39 +33,39 @@ public class WorkspaceTestHelper {
             this.repository = repository;
         }
 
+        @SuppressWarnings("unused")
         public WorkspaceTestHelper and() {
             return WorkspaceTestHelper.this;
         }
 
-        public Collection<WorkspaceDto> get() throws Exception {
-            final JsonHolderResultHandler<List<WorkspaceDto>> resultHandler = new JsonHolderResultHandler<>(objectMapper, new TypeReference<>() {
-            });
-
-            mockMvc
-                    .perform(MockMvcRequestBuilders.get("/api/repository/{id}/workspace", repository.getId()))
-                    .andExpectStarted()
-                    .andWaitResult()
-                    .andExpect(status().isOk())
-                    .andDo(resultHandler);
-
-            return resultHandler.getValue();
+        public Collection<WorkspaceDto> get() {
+            return webClient.get()
+                    .uri("/api/repository/{id}/workspace", repository.getId())
+                    .exchange()
+                    .expectStatus().isOk()
+                    .expectBodyList(WorkspaceDto.class)
+                    .returnResult()
+                    .getResponseBody();
         }
 
         public RepositoryDto getRepo() {
             return repository;
         }
 
-        public StepInitializedRepository<R> sync() throws Exception {
-            mockMvc
-                    .perform(post("/api/repository/{id}/workspace/do?action=SYNCHRONIZE", repository.getId()))
-                    .andExpectStarted()
-                    .andWaitResult()
-                    .andExpect(status().isOk());
+        @SuppressWarnings("unchecked")
+        public StepInitializedRepository<R> sync() {
+            final R updatedRepository = webClient.post()
+                    .uri("/api/repository/{id}/workspace/do?action=SYNCHRONIZE", this.repository.getId())
+                    .exchange()
+                    .expectStatus().isOk()
+                    .expectBody((Class<R>) this.repository.getClass())
+                    .returnResult()
+                    .getResponseBody();
 
-            return new StepInitializedRepository<>(repository);
+            return new StepInitializedRepository<>(updatedRepository);
         }
 
-        public StepNotInitializedWorkspace<R> workspaceForBranch(String branch) throws Exception {
+        public StepNotInitializedWorkspace<R> workspaceForBranch(String branch) {
             return new StepNotInitializedWorkspace<>(
                     repository,
                     findAll()
@@ -85,18 +76,14 @@ public class WorkspaceTestHelper {
             );
         }
 
-        private List<WorkspaceDto> findAll() throws Exception {
-            final JsonHolderResultHandler<List<WorkspaceDto>> resultHandler = new JsonHolderResultHandler<>(objectMapper, new TypeReference<>() {
-            });
-
-            mockMvc
-                    .perform(MockMvcRequestBuilders.get("/api/repository/{id}/workspace", repository.getId()))
-                    .andExpectStarted()
-                    .andWaitResult()
-                    .andExpect(status().isOk())
-                    .andDo(resultHandler);
-
-            return resultHandler.getValue();
+        private List<WorkspaceDto> findAll() {
+            return webClient.get()
+                    .uri("/api/repository/{id}/workspace", repository.getId())
+                    .exchange()
+                    .expectStatus().isOk()
+                    .expectBodyList(WorkspaceDto.class)
+                    .returnResult()
+                    .getResponseBody();
         }
     }
 
@@ -110,6 +97,7 @@ public class WorkspaceTestHelper {
             this.workspace = workspace;
         }
 
+        @SuppressWarnings("unused")
         public StepInitializedRepository<R> and() {
             return new StepInitializedRepository<>(repository);
         }
@@ -118,14 +106,16 @@ public class WorkspaceTestHelper {
             return workspace;
         }
 
-        public StepInitializedWorkspace<R> initialize() throws Exception {
-            mockMvc
-                    .perform(post("/api/repository/workspace/{id}/do?action=INITIALIZE", workspace.getId()))
-                    .andExpectStarted()
-                    .andWaitResult()
-                    .andExpect(status().isOk());
+        public StepInitializedWorkspace<R> initialize() {
+            final WorkspaceDto updatedWorkspace = webClient.post()
+                    .uri("/api/repository/workspace/{id}/do?action=INITIALIZE", workspace.getId())
+                    .exchange()
+                    .expectStatus().isOk()
+                    .expectBody(WorkspaceDto.class)
+                    .returnResult()
+                    .getResponseBody();
 
-            return new StepInitializedWorkspace<>(repository, workspace);
+            return new StepInitializedWorkspace<>(repository, updatedWorkspace);
         }
     }
 
@@ -139,6 +129,7 @@ public class WorkspaceTestHelper {
             this.workspace = workspace;
         }
 
+        @SuppressWarnings("unused")
         public StepInitializedRepository<R> and() {
             return new StepInitializedRepository<>(repository);
         }
@@ -147,14 +138,16 @@ public class WorkspaceTestHelper {
             return workspace;
         }
 
-        public StepPublishedWorkspace<R> publish(String message) throws Exception {
-            mockMvc
-                    .perform(post("/api/repository/workspace/{id}/do?action=PUBLISH&message={message}", workspace.getId(), message))
-                    .andExpectStarted()
-                    .andWaitResult()
-                    .andExpect(status().isOk());
+        public StepPublishedWorkspace<R> publish(String message) {
+            final WorkspaceDto updatedWorkspace = webClient.put()
+                    .uri("/api/repository/workspace/{id}/do?action=PUBLISH&message={message}", workspace.getId(), message)
+                    .exchange()
+                    .expectStatus().isOk()
+                    .expectBody(WorkspaceDto.class)
+                    .returnResult()
+                    .getResponseBody();
 
-            return new StepPublishedWorkspace<>(repository, workspace);
+            return new StepPublishedWorkspace<>(repository, updatedWorkspace);
         }
     }
 
@@ -168,6 +161,7 @@ public class WorkspaceTestHelper {
             this.workspace = workspace;
         }
 
+        @SuppressWarnings("unused")
         public StepInitializedRepository<R> and() {
             return new StepInitializedRepository<>(repository);
         }

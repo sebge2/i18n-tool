@@ -35,12 +35,10 @@ public class GitHubBranchDeletedEventHandler implements GitHubWebHookEventHandle
             return Mono.empty();
         }
 
-        return repository
-                .getWorkspaces()
-                .stream()
+        return workspaceManager
+                .findAll(repository.getId())
                 .filter(workspace -> Objects.equals(workspace.getBranch(), event.getRef()))
-                .findFirst()
-                .map(workspace -> workspaceManager.delete(workspace.getId()))
-                .orElse(Mono.empty());
+                .last()
+                .flatMap(workspace -> workspaceManager.delete(workspace.getId()));
     }
 }

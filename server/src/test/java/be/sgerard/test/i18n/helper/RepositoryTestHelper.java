@@ -5,18 +5,13 @@ import be.sgerard.i18n.model.repository.dto.GitHubRepositoryDto;
 import be.sgerard.i18n.model.repository.dto.RepositoryCreationDto;
 import be.sgerard.i18n.model.repository.dto.RepositoryDto;
 import be.sgerard.i18n.model.repository.dto.RepositoryPatchDto;
-import be.sgerard.test.i18n.support.JsonHolderResultHandler;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.web.reactive.function.BodyInserters;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * @author Sebastien Gerard
@@ -24,42 +19,35 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Component
 public class RepositoryTestHelper {
 
-    private final AsyncMockMvcTestHelper mockMvc;
-    private final ObjectMapper objectMapper;
+    private final WebTestClient webClient;
     private final WorkspaceTestHelper workspaceTestHelper;
     private final GitHubRepositoryMockTestHelper gitHubTestHelper;
 
     private final Map<String, RepositoryDto> hints = new HashMap<>();
 
-    public RepositoryTestHelper(AsyncMockMvcTestHelper mockMvc,
-                                ObjectMapper objectMapper,
-                                WorkspaceTestHelper workspaceTestHelper, GitHubRepositoryMockTestHelper gitHubTestHelper) {
-        this.mockMvc = mockMvc;
-        this.objectMapper = objectMapper;
+    public RepositoryTestHelper(WebTestClient webClient, WorkspaceTestHelper workspaceTestHelper,
+                                GitHubRepositoryMockTestHelper gitHubTestHelper) {
+        this.webClient = webClient;
         this.workspaceTestHelper = workspaceTestHelper;
         this.gitHubTestHelper = gitHubTestHelper;
     }
 
-    public StepCreatedRepository<RepositoryDto> create(RepositoryCreationDto creationDto) throws Exception {
+    public StepCreatedRepository<RepositoryDto> create(RepositoryCreationDto creationDto) {
         return create(creationDto, RepositoryDto.class);
     }
 
-    public <R extends RepositoryDto> StepCreatedRepository<R> create(RepositoryCreationDto creationDto, Class<R> expectedResult) throws Exception {
-        final JsonHolderResultHandler<R> resultHandler = new JsonHolderResultHandler<>(objectMapper, expectedResult);
+    public <R extends RepositoryDto> StepCreatedRepository<R> create(RepositoryCreationDto creationDto, Class<R> expectedResult) {
+        final R repository = webClient.post()
+                .uri("/api/repository/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromValue(creationDto))
+                .exchange()
+                .expectStatus().isCreated()
+                .expectBody(expectedResult)
+                .returnResult()
+                .getResponseBody();
 
-        mockMvc
-                .perform(
-                        post("/api/repository")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(creationDto))
-                )
-                .andExpectStarted()
-                .andWaitResult()
-                .andExpect(status().isCreated())
-                .andDo(resultHandler)
-                .andExpect(jsonPath("$.status").value(RepositoryStatus.NOT_INITIALIZED.name()));
-
-        return new StepCreatedRepository<>(resultHandler.getValue());
+        return new StepCreatedRepository<>(repository);
     }
 
     public <R extends RepositoryDto> StepCreatedRepository<R> forHint(String hint, Class<R> expectedResult) {
@@ -74,34 +62,6 @@ public class RepositoryTestHelper {
         return forHint(hint, RepositoryDto.class);
     }
 
-//    public void clearAll() throws Exception {
-//        for (RepositorySummaryDto repository : findAll()) {
-//            delete(repository.getId());
-//        }
-//    }
-//
-//    private Collection<RepositorySummaryDto> findAll() throws Exception {
-//        final JsonHolderResultHandler<Collection<RepositorySummaryDto>> resultHandler = new JsonHolderResultHandler<>(objectMapper, new TypeReference<>() {
-//        });
-//
-//        mockMvc
-//                .perform(get("/api/repository"))
-//                .andExpectStarted()
-//                .andWaitResult()
-//                .andExpect(status().isOk())
-//                .andDo(resultHandler);
-//
-//        return resultHandler.getValue();
-//    }
-//
-//    private void delete(String repositoryId) throws Exception {
-//        mockMvc
-//                .perform(MockMvcRequestBuilders.delete("/api/repository/{id}", repositoryId))
-//                .andExpectStarted()
-//                .andWaitResult()
-//                .andExpect(status().isNoContent());
-//    }
-
     public class StepCreatedRepository<R extends RepositoryDto> {
 
         private final R repository;
@@ -111,37 +71,34 @@ public class RepositoryTestHelper {
         }
 
         @SuppressWarnings("unchecked")
-        public StepInitializedRepository<R> initialize() throws Exception {
-            final JsonHolderResultHandler<R> resultHandler = new JsonHolderResultHandler<>(objectMapper, (Class<R>) repository.getClass());
+        public StepInitializedRepository<R> initialize() {
+            final R updatedRepository = webClient.put()
+                    .uri("/api/repository/{id}/do?action=INITIALIZE", this.repository.getId())
+                    .exchange()
+                    .expectStatus().isOk()
+                    .expectBody((Class<R>) this.repository.getClass())
+                    .returnResult()
+                    .getResponseBody();
 
-            mockMvc
-                    .perform(post("/api/repository/{id}/do?action=INITIALIZE", repository.getId()))
-                    .andExpectStarted()
-                    .andWaitResult()
-                    .andExpect(status().isOk())
-                    .andDo(resultHandler);
-
-            return new StepInitializedRepository<>(resultHandler.getValue());
+            return new StepInitializedRepository<>(updatedRepository);
         }
 
         @SuppressWarnings("unchecked")
-        public StepCreatedRepository<R> update(RepositoryPatchDto.BaseBuilder<?, ?> patch) throws Exception {
-            final JsonHolderResultHandler<R> resultHandler = new JsonHolderResultHandler<>(objectMapper, (Class<R>) repository.getClass());
+        public StepCreatedRepository<R> update(RepositoryPatchDto.BaseBuilder<?, ?> patch) {
+            final R updatedRepository = webClient.patch()
+                    .uri("/api/repository/{id}", this.repository.getId())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(BodyInserters.fromValue(patch))
+                    .exchange()
+                    .expectStatus().isOk()
+                    .expectBody((Class<R>) this.repository.getClass())
+                    .returnResult()
+                    .getResponseBody();
 
-            mockMvc
-                    .perform(
-                            patch("/api/repository/{id}", repository.getId())
-                                    .contentType(MediaType.APPLICATION_JSON)
-                                    .content(objectMapper.writeValueAsString(patch.id(repository.getId()).build()))
-                    )
-                    .andExpectStarted()
-                    .andWaitResult()
-                    .andExpect(status().isOk())
-                    .andDo(resultHandler);
-
-            return this;
+            return new StepCreatedRepository<>(updatedRepository);
         }
 
+        @SuppressWarnings("unused")
         public RepositoryTestHelper and() {
             return RepositoryTestHelper.this;
         }
@@ -172,6 +129,7 @@ public class RepositoryTestHelper {
             this.repository = repository;
         }
 
+        @SuppressWarnings("unused")
         public RepositoryTestHelper and() {
             return RepositoryTestHelper.this;
         }
