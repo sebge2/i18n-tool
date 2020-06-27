@@ -31,14 +31,17 @@ public abstract class BaseGitRepositoryHandler<E extends BaseGitRepositoryEntity
     /**
      * Initializes the {@link DefaultGitRepositoryApi.Configuration configuration} to use to access Git.
      */
-    protected abstract DefaultGitRepositoryApi.Configuration createConfiguration(E repository);
+    protected abstract Mono<DefaultGitRepositoryApi.Configuration> createConfiguration(E repository);
 
     @Override
     public Mono<E> initializeRepository(E repository) {
         try {
-            initApiFromEntity(repository).init();
+            return initApiFromEntity(repository)
+                    .map(api -> {
+                        api.init();
 
-            return Mono.just(repository);
+                        return repository;
+                    });
         } catch (Exception e) {
             return Mono.error(e);
         }
@@ -47,9 +50,12 @@ public abstract class BaseGitRepositoryHandler<E extends BaseGitRepositoryEntity
     @Override
     public Mono<E> deleteRepository(E repository) throws RepositoryException {
         try {
-            initApiFromEntity(repository).delete();
+            return initApiFromEntity(repository)
+                    .map(api -> {
+                        api.delete();
 
-            return Mono.just(repository);
+                        return repository;
+                    });
         } catch (Exception e) {
             return Mono.error(e);
         }
@@ -57,7 +63,7 @@ public abstract class BaseGitRepositoryHandler<E extends BaseGitRepositoryEntity
 
     @Override
     public Mono<RepositoryApi> createAPI(E repository) throws RepositoryException {
-        return Mono.just(initApiFromEntity(repository));
+        return initApiFromEntity(repository).map(a -> a);
     }
 
     /**
@@ -65,9 +71,12 @@ public abstract class BaseGitRepositoryHandler<E extends BaseGitRepositoryEntity
      */
     protected Mono<E> validateRepository(E repository) {
         try {
-            initApiFromEntity(repository).validateInfo();
+            return initApiFromEntity(repository)
+                    .map(api -> {
+                        api.validateInfo();
 
-            return Mono.just(repository);
+                        return repository;
+                    });
         } catch (Exception e) {
             return Mono.error(e);
         }
@@ -83,7 +92,7 @@ public abstract class BaseGitRepositoryHandler<E extends BaseGitRepositoryEntity
     /**
      * Returns the {@link GitRepositoryApi Git API} to use for the specified repository.
      */
-    protected GitRepositoryApi initApiFromEntity(E repository) {
-        return apiProvider.createApi(createConfiguration(repository));
+    protected Mono<GitRepositoryApi> initApiFromEntity(E repository) {
+        return createConfiguration(repository).map(apiProvider::createApi);
     }
 }

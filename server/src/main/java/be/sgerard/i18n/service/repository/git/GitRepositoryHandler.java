@@ -51,16 +51,19 @@ public class GitRepositoryHandler extends BaseGitRepositoryHandler<GitRepository
     }
 
     @Override
-    protected DefaultGitRepositoryApi.Configuration createConfiguration(GitRepositoryEntity repository) {
-        return new DefaultGitRepositoryApi.Configuration(appProperties.getRepository().getDirectoryBaseDir(repository.getId()), URI.create(repository.getLocation()))
-                .setUsername(
-                        authenticationManager
-                                .getCurrentUserOrDie()
-                                .getCredentials(repository.getId(), RepositoryTokenCredentials.class)
-                                .map(RepositoryTokenCredentials::getToken)
-                                .orElse(null)
-                )
-                .setPassword(null)
-                .setDefaultBranch(repository.getDefaultBranch());
+    protected Mono<DefaultGitRepositoryApi.Configuration> createConfiguration(GitRepositoryEntity repository) {
+        return authenticationManager
+                .getCurrentUserOrDie()
+                .map(currentUser ->
+                        new DefaultGitRepositoryApi.Configuration(appProperties.getRepository().getDirectoryBaseDir(repository.getId()), URI.create(repository.getLocation()))
+                                .setUsername(
+                                        currentUser
+                                                .getCredentials(repository.getId(), RepositoryTokenCredentials.class)
+                                                .map(RepositoryTokenCredentials::getToken)
+                                                .orElse(null)
+                                )
+                                .setPassword(null)
+                                .setDefaultBranch(repository.getDefaultBranch())
+                );
     }
 }

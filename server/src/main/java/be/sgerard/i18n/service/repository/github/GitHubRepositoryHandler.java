@@ -60,18 +60,20 @@ public class GitHubRepositoryHandler extends BaseGitRepositoryHandler<GitHubRepo
     }
 
     @Override
-    protected DefaultGitRepositoryApi.Configuration createConfiguration(GitHubRepositoryEntity repository) {
-        return new DefaultGitRepositoryApi.Configuration(appProperties.getRepository().getDirectoryBaseDir(repository.getId()), URI.create(repository.getLocation()))
-                .setUsername(
-                        authenticationManager
-                                .getCurrentUserOrDie()
-                                .getCredentials(repository.getId(), RepositoryTokenCredentials.class)
-                                .map(RepositoryTokenCredentials::getToken)
-                                .or(repository::getAccessKey)
-                                .orElse(null)
-                )
-                .setPassword(null)
-                .setDefaultBranch(repository.getDefaultBranch());
+    protected Mono<DefaultGitRepositoryApi.Configuration> createConfiguration(GitHubRepositoryEntity repository) {
+        return authenticationManager
+                .getCurrentUserOrDie()
+                .map(currentUser ->
+                        new DefaultGitRepositoryApi.Configuration(appProperties.getRepository().getDirectoryBaseDir(repository.getId()), URI.create(repository.getLocation()))
+                                .setUsername(
+                                        currentUser
+                                                .getCredentials(repository.getId(), RepositoryTokenCredentials.class)
+                                                .map(RepositoryTokenCredentials::getToken)
+                                                .or(repository::getAccessKey)
+                                                .orElse(null)
+                                )
+                                .setPassword(null)
+                                .setDefaultBranch(repository.getDefaultBranch()));
     }
 
 }

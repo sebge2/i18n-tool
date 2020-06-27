@@ -5,20 +5,14 @@ import be.sgerard.i18n.model.security.user.dto.UserDto;
 import be.sgerard.i18n.model.security.user.dto.UserPreferencesDto;
 import be.sgerard.i18n.service.ResourceNotFoundException;
 import be.sgerard.i18n.service.user.UserManager;
-import be.sgerard.test.i18n.support.JsonHolderResultHandler;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.web.reactive.function.BodyInserters;
 
 import java.util.List;
 import java.util.Objects;
-
-import static org.springframework.http.HttpStatus.OK;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * @author Sebastien Gerard
@@ -26,69 +20,53 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Component
 public class UserTestHelper {
 
-    private final MockMvc mockMvc;
-    private final AsyncMockMvcTestHelper asyncMvc;
-    private final ObjectMapper objectMapper;
+    private final WebTestClient webClient;
 
-    public UserTestHelper(MockMvc mockMvc,
-                          AsyncMockMvcTestHelper asyncMvc,
-                          ObjectMapper objectMapper) {
-        this.mockMvc = mockMvc;
-        this.asyncMvc = asyncMvc;
-        this.objectMapper = objectMapper;
+    public UserTestHelper(WebTestClient webClient) {
+        this.webClient = webClient;
     }
 
-    public List<UserDto> findAllUsers() throws Exception {
-        final JsonHolderResultHandler<List<UserDto>> resultHandler = new JsonHolderResultHandler<>(objectMapper, new TypeReference<List<UserDto>>() {
-        });
-
-        asyncMvc
-                .perform(request(HttpMethod.GET, "/api/user/"))
-                .andExpectStarted()
-                .andWaitResult()
-                .andExpect(status().is(OK.value()))
-                .andDo(resultHandler);
-
-        return resultHandler.getValue();
+    public List<UserDto> findAllUsers() {
+        return webClient.get().uri("/api/user/")
+                .header(HttpHeaders.ACCEPT, "application/json")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBodyList(UserDto.class)
+                .returnResult()
+                .getResponseBody();
     }
 
-    public UserDto getAdminUser() throws Exception {
+    public UserDto getAdminUser() {
         return findByUsernameOrDie(UserManager.ADMIN_USER_NAME);
     }
 
-    public UserDto createUser(InternalUserCreationDto internalUserCreationDto) throws Exception {
-        final JsonHolderResultHandler<UserDto> resultHandler = new JsonHolderResultHandler<>(objectMapper, UserDto.class);
-
-        asyncMvc
-                .perform(
-                        post("/api/user/")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(internalUserCreationDto))
-                )
-                .andExpectStarted()
-                .andWaitResult()
-                .andExpect(status().is(OK.value()))
-                .andDo(resultHandler);
-
-        return resultHandler.getValue();
+    public UserDto createUser(InternalUserCreationDto internalUserCreationDto) {
+        return webClient.post()
+                .uri("/api/user/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromValue(internalUserCreationDto))
+                .exchange()
+                .expectStatus().isCreated()
+                .expectBody(UserDto.class)
+                .returnResult()
+                .getResponseBody();
     }
 
     @SuppressWarnings("UnusedReturnValue")
-    public UserTestHelper resetUserPreferences(String userName) throws Exception {
+    public UserTestHelper resetUserPreferences(String userName) {
         final UserDto user = findByUsernameOrDie(userName);
 
-        mockMvc
-                .perform(
-                        request(HttpMethod.PUT, "/api/user/" + user.getId() + "/preferences")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(UserPreferencesDto.builder().build()))
-                )
-                .andExpect(status().is(OK.value()));
+        webClient.put()
+                .uri("/api/user/{id}/preferences", user.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromValue(UserPreferencesDto.builder().build()))
+                .exchange()
+                .expectStatus().isOk();
 
         return this;
     }
 
-    private UserDto findByUsernameOrDie(String username) throws Exception {
+    private UserDto findByUsernameOrDie(String username) {
         return findAllUsers().stream()
                 .filter(user -> Objects.equals(user.getUsername(), username))
                 .findFirst()
