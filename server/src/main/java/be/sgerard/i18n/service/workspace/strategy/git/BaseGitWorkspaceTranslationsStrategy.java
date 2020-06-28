@@ -53,7 +53,7 @@ public abstract class BaseGitWorkspaceTranslationsStrategy implements WorkspaceT
     public Mono<WorkspaceEntity> onInitialize(WorkspaceEntity workspace) {
         return repositoryManager
                 .applyOnRepository(
-                        workspace.getRepository().getId(),
+                        workspace.getRepository(),
                         GitRepositoryApi.class,
                         api ->
                                 translationManager

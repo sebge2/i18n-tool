@@ -41,7 +41,7 @@ public class BundleFileEntity {
     @Enumerated(EnumType.STRING)
     private BundleType type;
 
-    @OneToMany(mappedBy = "bundleFile")
+    @AccessType(AccessType.Type.PROPERTY)
     private final Set<BundleFileEntryEntity> files = new HashSet<>();
 
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
@@ -54,50 +54,14 @@ public class BundleFileEntity {
     BundleFileEntity() {
     }
 
-    public BundleFileEntity(WorkspaceEntity workspace,
-                            String name,
+    public BundleFileEntity(String name,
                             String location,
                             BundleType type,
                             Collection<BundleFileEntryEntity> files) {
-        this.id = UUID.randomUUID().toString();
-
-        this.workspace = workspace;
-        this.workspace.addFile(this);
-
         this.name = name;
         this.location = location;
         this.type = type;
-
         this.files.addAll(files);
-        this.files.forEach(file -> file.setBundleFile(this));
-    }
-
-    /**
-     * Returns the unique id of this bundle file.
-     */
-    public String getId() {
-        return id;
-    }
-
-    /**
-     * Sets the unique id of this bundle file.
-     */
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    /**
-     * Returns the associated {@link WorkspaceEntity workspace}.
-     */
-    public WorkspaceEntity getWorkspace() {
-        return workspace;
-    }
-
-    /**
-     * Sets the associated {@link WorkspaceEntity workspace}.
-     */
-    public void setWorkspace(WorkspaceEntity workspace) {
-        this.workspace = workspace;
     }
 
     /**
@@ -128,20 +92,6 @@ public class BundleFileEntity {
     }
 
     /**
-     * Returns all the {@link BundleKeyEntity keys} composing this bundle.
-     */
-    public List<BundleKeyEntity> getKeys() {
-        return unmodifiableList(keys);
-    }
-
-    /**
-     * Add the specified {@link BundleKeyEntity key} to this bundle.
-     */
-    void addKey(BundleKeyEntity keyEntity) {
-        this.keys.add(keyEntity);
-    }
-
-    /**
      * Returns the {@link BundleType bundle type}.
      */
     public BundleType getType() {
@@ -160,5 +110,12 @@ public class BundleFileEntity {
      */
     public Set<BundleFileEntryEntity> getFiles() {
         return files;
+    }
+
+    /**
+     * Sets all the file paths of this bundle.
+     */
+    public void setFiles(Set<BundleFileEntryEntity> files) {
+        this.files.addAll(files);
     }
 }

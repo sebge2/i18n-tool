@@ -28,15 +28,12 @@ public class BundleFileEntryEntity {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String file;
 
-    @Version
-    private int version;
-
+    @PersistenceConstructor
     BundleFileEntryEntity() {
     }
 
     public BundleFileEntryEntity(TranslationLocaleEntity locale, String file) {
-        this.id = UUID.randomUUID().toString();
-        this.locale = locale;
+        this.locale = locale.getId();
         this.file = file;
     }
 
@@ -45,45 +42,16 @@ public class BundleFileEntryEntity {
     }
 
     /**
-     * Returns the unique id of this bundle file entry.
-     */
-    public String getId() {
-        return id;
-    }
-
-    /**
-     * Sets the unique id of this bundle file entry.
-     */
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    /**
-     * Returns the {@link BundleFileEntity bundle file} owning this entry.
-     */
-    public BundleFileEntity getBundleFile() {
-        return bundleFile;
-    }
-
-    /**
-     * Sets the {@link BundleFileEntity bundle file} owning this entry.
-     */
-    public BundleFileEntryEntity setBundleFile(BundleFileEntity bundleFile) {
-        this.bundleFile = bundleFile;
-        return this;
-    }
-
-    /**
      * Returns the {@link TranslationLocaleEntity locale} of this file.
      */
-    public TranslationLocaleEntity getLocale() {
+    public String getLocale() {
         return locale;
     }
 
     /**
      * Sets the {@link TranslationLocaleEntity locale} of this file.
      */
-    public BundleFileEntryEntity setLocale(TranslationLocaleEntity locale) {
+    public BundleFileEntryEntity setLocale(String locale) {
         this.locale = locale;
         return this;
     }

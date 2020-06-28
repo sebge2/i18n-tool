@@ -72,7 +72,7 @@ public class RepositoryTestHelper {
 
         @SuppressWarnings("unchecked")
         public StepInitializedRepository<R> initialize() {
-            final R updatedRepository = webClient.put()
+            final R updatedRepository = webClient.post()
                     .uri("/api/repository/{id}/do?action=INITIALIZE", this.repository.getId())
                     .exchange()
                     .expectStatus().isOk()

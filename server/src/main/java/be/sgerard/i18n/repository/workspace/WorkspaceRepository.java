@@ -14,6 +14,6 @@ public interface WorkspaceRepository extends ReactiveMongoRepository<WorkspaceEn
     /**
      * Finds {@link WorkspaceEntity workspaces} of the specified repository.
      */
-    Flux<WorkspaceEntity> findByRepositoryId(String repositoryId);
+    Flux<WorkspaceEntity> findByRepository(String repositoryId);
 
 }

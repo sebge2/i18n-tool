@@ -52,17 +52,16 @@ public class WorkspaceTestHelper {
             return repository;
         }
 
-        @SuppressWarnings("unchecked")
         public StepInitializedRepository<R> sync() {
-            final R updatedRepository = webClient.post()
+            webClient.post()
                     .uri("/api/repository/{id}/workspace/do?action=SYNCHRONIZE", this.repository.getId())
                     .exchange()
                     .expectStatus().isOk()
-                    .expectBody((Class<R>) this.repository.getClass())
+                    .expectBodyList(WorkspaceDto.class)
                     .returnResult()
                     .getResponseBody();
 
-            return new StepInitializedRepository<>(updatedRepository);
+            return new StepInitializedRepository<>(repository);
         }
 
         public StepNotInitializedWorkspace<R> workspaceForBranch(String branch) {
@@ -139,7 +138,7 @@ public class WorkspaceTestHelper {
         }
 
         public StepPublishedWorkspace<R> publish(String message) {
-            final WorkspaceDto updatedWorkspace = webClient.put()
+            final WorkspaceDto updatedWorkspace = webClient.post()
                     .uri("/api/repository/workspace/{id}/do?action=PUBLISH&message={message}", workspace.getId(), message)
                     .exchange()
                     .expectStatus().isOk()

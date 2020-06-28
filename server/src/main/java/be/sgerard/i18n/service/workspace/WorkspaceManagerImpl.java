@@ -1,7 +1,6 @@
 package be.sgerard.i18n.service.workspace;
 
 import be.sgerard.i18n.model.repository.RepositoryStatus;
-import be.sgerard.i18n.model.repository.persistence.RepositoryEntity;
 import be.sgerard.i18n.model.workspace.WorkspaceEntity;
 import be.sgerard.i18n.model.workspace.WorkspaceStatus;
 import be.sgerard.i18n.repository.workspace.WorkspaceRepository;
@@ -40,8 +39,8 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
                                 RepositoryManager repositoryManager,
                                 WorkspaceListener listener,
                                 WorkspaceTranslationsStrategy translationsStrategy) {
-        this.repositoryManager = repositoryManager;
         this.repository = repository;
+        this.repositoryManager = repositoryManager;
         this.listener = listener;
         this.translationsStrategy = translationsStrategy;
     }
@@ -49,19 +48,19 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
     @Override
     @Transactional(readOnly = true)
     public Flux<WorkspaceEntity> findAll() {
-        return Flux.fromStream(repository.findAll().stream());
+        return repository.findAll();
     }
 
     @Override
     @Transactional(readOnly = true)
     public Flux<WorkspaceEntity> findAll(String repositoryId) {
-        return Flux.fromIterable(repository.findByRepositoryId(repositoryId));
+        return repository.findByRepository(repositoryId);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Mono<WorkspaceEntity> findById(String id) {
-        return Mono.justOrEmpty(repository.findById(id));
+        return repository.findById(id);
     }
 
     @Override
@@ -75,7 +74,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
                                     if (pair.getRight() == null) {
                                         return repositoryManager
                                                 .findByIdOrDie(repositoryId)
-                                                .flatMap(repository -> createWorkspace(repository, pair.getLeft()));
+                                                .flatMap(repository -> createWorkspace(repository.getId(), pair.getLeft()));
                                     } else {
                                         switch (pair.getRight().getStatus()) {
                                             case IN_REVIEW:
@@ -176,16 +175,17 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
     public Mono<WorkspaceEntity> delete(String workspaceId) throws RepositoryException {
         return findById(workspaceId)
                 .flatMap(translationsStrategy::onDelete)
-                .map(workspace -> {
-                    listener.onDelete(workspace);
-
+                .flatMap(workspace -> {
                     logger.info("The workspace {} has been deleted.", workspaceId);
 
-                    workspace.getRepository().deleteWorkspace(workspace);
-                    repository.delete(workspace);
-
-                    return workspace;
-                });
+                    return listener
+                            .onDelete(workspace)
+                            .thenReturn(workspace);
+                })
+                .flatMap(workspace ->
+                        repository.delete(workspace)
+                                .thenReturn(workspace)
+                );
     }
 
     /**
@@ -207,8 +207,9 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
      * This new workspace is created only if the branch still exists.
      */
     private Mono<WorkspaceEntity> createWorkspaceIfNeeded(WorkspaceEntity workspace) {
-        return translationsStrategy
-                .listBranches(workspace.getRepository())
+        return repositoryManager
+                .findByIdOrDie(workspace.getRepository())
+                .flatMapMany(translationsStrategy::listBranches)
                 .hasElement(workspace.getBranch())
                 .filter(present -> present)
                 .flatMap(present -> createWorkspace(workspace.getRepository(), workspace.getBranch()));
@@ -217,15 +218,11 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
     /**
      * Creates a new {@link WorkspaceEntity workspace} based on the specified branch.
      */
-    private Mono<WorkspaceEntity> createWorkspace(RepositoryEntity repository, String branch) {
+    private Mono<WorkspaceEntity> createWorkspace(String repository, String branch) {
         return Mono
                 .just(new WorkspaceEntity(repository, branch))
-                .map(this.repository::save)
-                .doOnNext(workspace -> {
-                    workspace.getRepository().addWorkspace(workspace); // TODO strange
-
-                    logger.info("The workspace {} has been created.", workspace.getId());
-                })
+                .flatMap(this.repository::save)
+                .doOnNext(workspace -> logger.info("The workspace {} has been created.", workspace.getId()))
                 .flatMap(workspace -> listener.onCreate(workspace).thenReturn(workspace));
     }
 

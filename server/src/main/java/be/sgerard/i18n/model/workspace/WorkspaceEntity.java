@@ -2,6 +2,7 @@ package be.sgerard.i18n.model.workspace;
 
 import be.sgerard.i18n.model.i18n.persistence.BundleFileEntity;
 import be.sgerard.i18n.model.repository.persistence.RepositoryEntity;
+import org.springframework.data.annotation.AccessType;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -28,7 +29,7 @@ public class WorkspaceEntity {
     private String id;
 
     @NotNull
-    private String repository;
+    private String repository; // TODO
 
     @NotNull
     private String branch;
@@ -36,6 +37,7 @@ public class WorkspaceEntity {
     @NotNull
     private WorkspaceStatus status;
 
+    @AccessType(AccessType.Type.PROPERTY)
     private final Collection<BundleFileEntity> files = new HashSet<>();
 
     private AbstractReviewEntity review;
@@ -44,10 +46,10 @@ public class WorkspaceEntity {
     WorkspaceEntity() {
     }
 
-    public WorkspaceEntity(RepositoryEntity repository, String branch) {
+    public WorkspaceEntity(String repository, String branch) {
         this.id = UUID.randomUUID().toString();
 
-        this.repository = repository.getId();
+        this.repository = repository;
 
         this.branch = branch;
         this.status = WorkspaceStatus.NOT_INITIALIZED;
@@ -114,6 +116,13 @@ public class WorkspaceEntity {
      */
     public Collection<BundleFileEntity> getFiles() {
         return unmodifiableCollection(files);
+    }
+
+    /**
+     * Sets all the {@link BundleFileEntity files} compositing this workspace.
+     */
+    public void setFiles(Collection<BundleFileEntity> files) {
+        this.files.addAll(files);
     }
 
     /**

@@ -30,7 +30,7 @@ public class UserLiveSessionEntity {
     private String authenticatedUserId;
 
     @NotNull
-    private String userId;
+    private String userId; // TODO
 
     @NotNull
     @Indexed

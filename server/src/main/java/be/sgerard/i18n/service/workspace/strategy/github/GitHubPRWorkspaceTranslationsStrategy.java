@@ -47,7 +47,7 @@ public class GitHubPRWorkspaceTranslationsStrategy extends BaseGitWorkspaceTrans
     @Override
     public Mono<Boolean> isReviewFinished(WorkspaceEntity workspace) {
         return gitHubClient
-                .findByNumber(workspace.getRepository().getId(), workspace.getReviewOrDie(GitHubReviewEntity.class).getPullRequestNumber())
+                .findByNumber(workspace.getRepository(), workspace.getReviewOrDie(GitHubReviewEntity.class).getPullRequestNumber())
                 .map(GitHubPullRequestDto::getStatus)
                 .map(GitHubPullRequestStatus::isFinished)
                 .switchIfEmpty(Mono.just(true));
@@ -57,7 +57,7 @@ public class GitHubPRWorkspaceTranslationsStrategy extends BaseGitWorkspaceTrans
     public Mono<WorkspaceEntity> onPublish(WorkspaceEntity workspace, String message) {
         return repositoryManager
                 .applyOnRepository(
-                        workspace.getRepository().getId(),
+                        workspace.getRepository(),
                         GitRepositoryApi.class,
                         api ->
                                 Mono
@@ -68,8 +68,8 @@ public class GitHubPRWorkspaceTranslationsStrategy extends BaseGitWorkspaceTrans
                                                         .doOnSuccess(v -> api.commitAll(message).push())
                                                         .then(Mono.defer(() ->
                                                                 gitHubClient
-                                                                        .createRequest(workspace.getRepository().getId(), message, prBranch, workspace.getBranch())
-                                                                        .map(pr -> workspace.setReview(new GitHubReviewEntity(workspace, prBranch, pr.getNumber()))))
+                                                                        .createRequest(workspace.getRepository(), message, prBranch, workspace.getBranch())
+                                                                        .map(pr -> workspace.setReview(new GitHubReviewEntity(prBranch, pr.getNumber()))))
                                                         )
                                         )
                 )
@@ -80,7 +80,7 @@ public class GitHubPRWorkspaceTranslationsStrategy extends BaseGitWorkspaceTrans
     public Mono<WorkspaceEntity> onDelete(WorkspaceEntity workspace) {
         return repositoryManager
                 .applyOnRepository(
-                        workspace.getRepository().getId(),
+                        workspace.getRepository(),
                         GitRepositoryApi.class,
                         api -> {
                             workspace

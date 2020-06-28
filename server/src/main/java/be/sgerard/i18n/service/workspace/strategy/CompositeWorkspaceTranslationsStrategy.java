@@ -1,8 +1,9 @@
 package be.sgerard.i18n.service.workspace.strategy;
 
-import be.sgerard.i18n.model.workspace.WorkspaceEntity;
 import be.sgerard.i18n.model.repository.persistence.RepositoryEntity;
+import be.sgerard.i18n.model.workspace.WorkspaceEntity;
 import be.sgerard.i18n.service.repository.RepositoryException;
+import be.sgerard.i18n.service.repository.RepositoryManager;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
@@ -19,9 +20,11 @@ import java.util.List;
 @Primary
 public class CompositeWorkspaceTranslationsStrategy implements WorkspaceTranslationsStrategy {
 
+    private final RepositoryManager repositoryManager;
     private final List<WorkspaceTranslationsStrategy> strategies;
 
-    public CompositeWorkspaceTranslationsStrategy(List<WorkspaceTranslationsStrategy> strategies) {
+    public CompositeWorkspaceTranslationsStrategy(RepositoryManager repositoryManager, List<WorkspaceTranslationsStrategy> strategies) {
+        this.repositoryManager = repositoryManager;
         this.strategies = strategies;
     }
 
@@ -47,28 +50,40 @@ public class CompositeWorkspaceTranslationsStrategy implements WorkspaceTranslat
 
     @Override
     public Mono<WorkspaceEntity> onInitialize(WorkspaceEntity workspace) {
-        return strategies.stream()
-                .filter(strategy -> strategy.support(workspace.getRepository()))
-                .findFirst()
-                .orElseThrow(() -> new UnsupportedOperationException("Unsupported workspace [" + workspace + "]. Please make sure that all strategies have been registered."))
-                .onInitialize(workspace);
+        return repositoryManager
+                .findByIdOrDie(workspace.getRepository())
+                .flatMap(repository ->
+                        strategies.stream()
+                                .filter(strategy -> strategy.support(repository))
+                                .findFirst()
+                                .orElseThrow(() -> new UnsupportedOperationException("Unsupported workspace [" + workspace + "]. Please make sure that all strategies have been registered."))
+                                .onInitialize(workspace)
+                );
     }
 
     @Override
     public Mono<WorkspaceEntity> onPublish(WorkspaceEntity workspace, String message) {
-        return strategies.stream()
-                .filter(strategy -> strategy.support(workspace.getRepository()))
-                .findFirst()
-                .orElseThrow(() -> new UnsupportedOperationException("Unsupported workspace [" + workspace + "]. Please make sure that all strategies have been registered."))
-                .onPublish(workspace, message);
+        return repositoryManager
+                .findByIdOrDie(workspace.getRepository())
+                .flatMap(repository ->
+                        strategies.stream()
+                                .filter(strategy -> strategy.support(repository))
+                                .findFirst()
+                                .orElseThrow(() -> new UnsupportedOperationException("Unsupported workspace [" + workspace + "]. Please make sure that all strategies have been registered."))
+                                .onPublish(workspace, message)
+                );
     }
 
     @Override
     public Mono<WorkspaceEntity> onDelete(WorkspaceEntity workspace) {
-        return strategies.stream()
-                .filter(strategy -> strategy.support(workspace.getRepository()))
-                .findFirst()
-                .orElseThrow(() -> new UnsupportedOperationException("Unsupported workspace [" + workspace + "]. Please make sure that all strategies have been registered."))
-                .onDelete(workspace);
+        return repositoryManager
+                .findByIdOrDie(workspace.getRepository())
+                .flatMap(repository ->
+                        strategies.stream()
+                                .filter(strategy -> strategy.support(repository))
+                                .findFirst()
+                                .orElseThrow(() -> new UnsupportedOperationException("Unsupported workspace [" + workspace + "]. Please make sure that all strategies have been registered."))
+                                .onDelete(workspace)
+                );
     }
 }

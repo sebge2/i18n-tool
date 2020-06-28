@@ -11,8 +11,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
-import java.util.Optional;
-
 /**
  * {@link GitHubWebHookEventHandler Event handler} for the {@link GitHubPullRequestEventDto pull-request event}.
  *
@@ -43,11 +41,9 @@ public class GitHubPullRequestEventHandler implements GitHubWebHookEventHandler<
 
         return workspaceManager
                 .findAll(repository.getId())
-                .map(workspace -> workspace.getReview(GitHubReviewEntity.class))
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .filter(review -> review.getPullRequestNumber() == event.getPullRequest().getNumber())
+                .filter(workspace -> workspace.getReview(GitHubReviewEntity.class).isPresent())
+                .filter(workspace -> workspace.getReviewOrDie(GitHubReviewEntity.class).getPullRequestNumber() == event.getPullRequest().getNumber())
                 .last()
-                .flatMap(review -> workspaceManager.finishReview(review.getWorkspace().getId()));
+                .flatMap(workspace -> workspaceManager.finishReview(workspace.getId()));
     }
 }
