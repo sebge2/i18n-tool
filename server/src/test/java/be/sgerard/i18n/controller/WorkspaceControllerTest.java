@@ -47,6 +47,11 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                 .createLocale(enLocaleCreationDto());
     }
 
+    @AfterEach
+    public void clear(){
+        // TODO workaround for TransactionInvocationInterceptor
+    }
+
     @AfterAll
     public void destroy() {
         gitRepo.destroyAll();
