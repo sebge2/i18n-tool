@@ -19,9 +19,9 @@ import static java.util.Arrays.asList;
 public class SinglePageAppFilter implements WebFilter {
 
     /**
-     * All prefixes that are not referrencing the single page application.
+     * All prefixes that are not referencing the single page application.
      */
-    public static final List<String> NON_STATIC_PATHS = asList("/login", "/logout", "/api", "/auth", "/ws");
+    public static final List<String> NON_STATIC_PATHS = asList("/api", "/auth", "/ws", "/swagger-ui.html");
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {

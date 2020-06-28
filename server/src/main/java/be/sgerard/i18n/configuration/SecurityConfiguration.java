@@ -1,19 +1,30 @@
 package be.sgerard.i18n.configuration;
 
 import be.sgerard.i18n.service.security.UserRole;
-import be.sgerard.i18n.service.security.auth.internal.InternalUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.context.annotation.Primary;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.DelegatingReactiveAuthenticationManager;
+import org.springframework.security.authentication.ReactiveAuthenticationManager;
+import org.springframework.security.authentication.UserDetailsRepositoryReactiveAuthenticationManager;
+import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
+import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
+import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.config.annotation.web.configuration.EnableOAuth2Client;
+import org.springframework.security.oauth2.client.registration.ReactiveClientRegistrationRepository;
+import org.springframework.security.web.server.SecurityWebFilterChain;
+import org.springframework.security.web.server.authentication.RedirectServerAuthenticationEntryPoint;
+import org.springframework.security.web.server.authentication.logout.HttpStatusReturningServerLogoutSuccessHandler;
+import org.springframework.security.web.server.context.ServerSecurityContextRepository;
+import org.springframework.security.web.server.context.WebSessionServerSecurityContextRepository;
+import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers;
+import org.springframework.session.data.mongo.ReactiveMongoSessionRepository;
+import org.springframework.session.data.mongo.config.annotation.web.reactive.EnableMongoWebSession;
 
-import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 /**
  * Security configuration.
@@ -21,64 +32,103 @@ import javax.servlet.http.HttpServletResponse;
  * @author Sebastien Gerard
  */
 @Configuration
-@EnableOAuth2Client
-@EnableGlobalMethodSecurity(prePostEnabled = true)
-public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+//@EnableOAuth2Client
+@EnableReactiveMethodSecurity
+@EnableWebFluxSecurity
+@EnableMongoWebSession
+public class SecurityConfiguration {
 
     private final PasswordEncoder passwordEncoder;
-    private final InternalUserDetailsService internalUserDetailsService;
+    private final ReactiveUserDetailsService internalUserDetailsService;
 
     public SecurityConfiguration(PasswordEncoder passwordEncoder,
-                                 InternalUserDetailsService internalUserDetailsService) {
+                                 ReactiveUserDetailsService internalUserDetailsService) {
         this.passwordEncoder = passwordEncoder;
 
         this.internalUserDetailsService = internalUserDetailsService;
     }
 
     @Bean
-    public AuthenticationProvider internalUserAuthenticationProvider() {
-        final DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
+    public ReactiveAuthenticationManager internalAuthenticationManager() {
+        final UserDetailsRepositoryReactiveAuthenticationManager authenticationManager =
+                new UserDetailsRepositoryReactiveAuthenticationManager(internalUserDetailsService);
 
-        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder);
-        daoAuthenticationProvider.setUserDetailsService(internalUserDetailsService);
+        authenticationManager.setPasswordEncoder(passwordEncoder);
 
-        return daoAuthenticationProvider;
+        return authenticationManager;
     }
 
-    @Override
-    public void configure(HttpSecurity http) throws Exception {
-        http
-                .antMatcher("/**")
-                .authorizeRequests()
-                .antMatchers(
-                        "/",
-                        "/*",
-                        "/ws/*",
-                        "/auth/**",
-                        "/api/authentication/authenticated",
-                        "/api/authentication/user",
-                        "/api/git-hub/**"
-                )
-                .permitAll()
-                .anyRequest()
-                .hasAnyRole(UserRole.MEMBER_OF_ORGANIZATION.name())
+    @Bean
+    @Primary
+    public ReactiveAuthenticationManager authenticationManager(List<ReactiveAuthenticationManager> delegates) {
+        return new DelegatingReactiveAuthenticationManager(delegates);
+    }
 
-                .and().logout()
-                .logoutUrl("/auth/logout")
-                .logoutSuccessHandler((httpServletRequest, httpServletResponse, authentication) -> httpServletResponse.setStatus(HttpServletResponse.SC_OK))
-                .permitAll().and()
+    @Bean
+    public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
+        return http
+                .authorizeExchange()
+                .pathMatchers("/").permitAll()
+                .pathMatchers("/*").permitAll()
+                .pathMatchers("/ws/*").permitAll()
+                .pathMatchers("/auth/**").permitAll()
+                .pathMatchers("/api/authentication/authenticated").permitAll()
+                .pathMatchers("/api/authentication/user").permitAll()
+                .pathMatchers("/api/git-hub/**").permitAll()
+                .anyExchange().hasAnyRole(UserRole.MEMBER_OF_ORGANIZATION.name()).and()
+
+                .logout()
+                .requiresLogout(ServerWebExchangeMatchers.pathMatchers(HttpMethod.GET, "/auth/logout"))
+                .logoutSuccessHandler(new HttpStatusReturningServerLogoutSuccessHandler(HttpStatus.OK))
+                .and()
 
                 .csrf().disable()
 
-                .httpBasic().realmName("I18n Tool").and()
+                .httpBasic()
+                .authenticationManager(internalAuthenticationManager())
+                .authenticationEntryPoint(new RedirectServerAuthenticationEntryPoint("/login"))
+                .and()
 
-                .oauth2Login()
-                .authorizationEndpoint().baseUri("/auth/oauth2/authorize-client").and()
-                .redirectionEndpoint().baseUri("/auth/oauth2/code/*");
+                .securityContextRepository(new WebSessionServerSecurityContextRepository())
+
+//                .oauth2Client()
+//                .and()
+//
+//                .oauth2Login()
+//                .authorizationRequestResolver(new DefaultServerOAuth2AuthorizationRequestResolver(repository, ServerWebExchangeMatchers.pathMatchers(("/auth/oauth2/authorize-client/{registrationId}"))))
+//                .authenticationManager(externalAuthenticationManager())
+//                .and()
+                .build();
+
+//                .anyExchange()
+//
+////                .antMatcher("/**")
+////                .authorizeRequests()
+//                .antMatchers(
+//                        "/",
+//                        "/*",
+//                        "/ws/*",
+//                        "/auth/**",
+//                        "/api/authentication/authenticated",
+//                        "/api/authentication/user",
+//                        "/api/git-hub/**"
+//                )
+//                .permitAll()
+//                .anyRequest()
+//                .hasAnyRole(UserRole.MEMBER_OF_ORGANIZATION.name())
+//
+//                .and().logout()
+//                .logoutUrl("/auth/logout")
+//                .logoutSuccessHandler((httpServletRequest, httpServletResponse, authentication) -> httpServletResponse.setStatus(HttpServletResponse.SC_OK))
+//                .permitAll().and()
+//
+//                .csrf().disable()
+//
+//                .httpBasic().realmName("I18n Tool").and()
+//
+//                .oauth2Login()
+//                .authorizationEndpoint().baseUri("/auth/oauth2/authorize-client").and()
+//                .redirectionEndpoint().baseUri("/auth/oauth2/code/*");
     }
 
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) {
-        auth.authenticationProvider(internalUserAuthenticationProvider());
-    }
 }
