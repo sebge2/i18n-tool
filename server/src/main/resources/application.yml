@@ -1,16 +1,6 @@
 spring:
   main:
     banner-mode: "OFF"
-#  jpa:
-#    open-in-view: false
-#    hibernate:
-#      ddl-auto: update
-#  session:
-#    jdbc:
-#      initialize-schema: "ALWAYS"
-#      schema: "classpath:org/springframework/session/jdbc/schema-@@platform@@.sql"
-#      table-name: SPRING_SESSION
-#    store-type: "JDBC"
 
 logging:
   config: "classpath:logback.xml"

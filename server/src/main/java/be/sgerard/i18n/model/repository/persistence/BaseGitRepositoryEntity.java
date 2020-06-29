@@ -1,7 +1,5 @@
 package be.sgerard.i18n.model.repository.persistence;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
 import java.util.regex.Pattern;
 
@@ -10,7 +8,6 @@ import java.util.regex.Pattern;
  *
  * @author Sebastien Gerard
  */
-@Entity
 public abstract class BaseGitRepositoryEntity extends RepositoryEntity {
 
     /**
@@ -19,15 +16,12 @@ public abstract class BaseGitRepositoryEntity extends RepositoryEntity {
     public static final String DEFAULT_BRANCH = "master";
 
     @NotNull
-    @Column(nullable = false)
     private String location;
 
     @NotNull
-    @Column(nullable = false)
     private String defaultBranch = DEFAULT_BRANCH;
 
     @NotNull
-    @Column(nullable = false)
     public Pattern allowedBranches = Pattern.compile("^master|release\\/[0-9]{4}.[0-9]{1,2}$");
 
     protected BaseGitRepositoryEntity() {
