@@ -79,7 +79,7 @@ public class ServerSentEventService implements EventService {
     /**
      * Emits the specified {@link Event event}.
      */
-    private Mono<Void> emit(Event<Object> event) {
+    protected Mono<Void> emit(Event<Object> event) {
         sink.next(event);
 
         return Mono.empty();
@@ -89,7 +89,7 @@ public class ServerSentEventService implements EventService {
      * Internal emitted event.
      */
     @Getter
-    private final static class Event<D> {
+    public final static class Event<D> {
 
         private final EventType type;
         private final D payload;
