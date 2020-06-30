@@ -34,17 +34,16 @@ public class GitHubClientImpl implements GitHubClient {
     public Mono<GitHubPullRequestDto> createRequest(String repositoryId, String message, String currentBranch, String targetBranch) throws WorkspaceException {
         return repositoryManager
                 .findByIdOrDie(repositoryId, GitHubRepositoryEntity.class)
-                .flatMap(repository -> {
-                    try {
-                        return Mono.just(
-                                map(
-                                        getGitHubRepo(repository).pulls().create(message, currentBranch, targetBranch)
-                                )
-                        );
-                    } catch (Exception e) {
-                        return Mono.error(WorkspaceException.onStartingReview(e));
-                    }
-                });
+                .flatMap(repository ->
+                        getGitHubRepo(repository)
+                                .flatMap(gitHub -> {
+                                    try {
+                                        return Mono.just(map(gitHub.pulls().create(message, currentBranch, targetBranch)));
+                                    } catch (Exception e) {
+                                        return Mono.error(WorkspaceException.onStartingReview(e));
+                                    }
+                                })
+                );
     }
 
     @Override
@@ -67,21 +66,24 @@ public class GitHubClientImpl implements GitHubClient {
     public Mono<GitHubPullRequestDto> findByNumber(String repositoryId, int requestNumber) throws WorkspaceException {
         return repositoryManager
                 .findByIdOrDie(repositoryId, GitHubRepositoryEntity.class)
-                .flatMap(repository -> {
-                    try {
-                        return Mono.just(map(getGitHubRepo(repository).pulls().get(requestNumber)));
-                    } catch (Exception e) {
-                        return Mono.error(WorkspaceException.onFetchingReviewInformation(e));
-                    }
-                });
+                .flatMap(repository ->
+                        getGitHubRepo(repository)
+                                .flatMap(gitHub -> {
+                                    try {
+                                        return Mono.just(map(gitHub.pulls().get(requestNumber)));
+                                    } catch (Exception e) {
+                                        return Mono.error(WorkspaceException.onFetchingReviewInformation(e));
+                                    }
+                                })
+                );
     }
 
     /**
      * Finds all {@link GitHubPullRequestDto pull-requests} of the specified repository.
      */
     private Flux<GitHubPullRequestDto> findAll(GitHubRepositoryEntity repository) {
-        return Flux
-                .fromIterable(getGitHubRepo(repository).pulls().iterate(emptyMap()))
+        return getGitHubRepo(repository)
+                .flatMapMany(gitHub -> Flux.fromIterable(gitHub.pulls().iterate(emptyMap())))
                 .flatMap(pullRequest -> {
                     try {
                         return Mono.just(map(pullRequest));
@@ -94,21 +96,24 @@ public class GitHubClientImpl implements GitHubClient {
     /**
      * Returns the {@link Repo GitHub repository} to use for the API.
      */
-    private Repo getGitHubRepo(GitHubRepositoryEntity repository) {
-        return getGitHubApi(repository).repos().get(new Coordinates.Simple(repository.getName()));
+    private Mono<Repo> getGitHubRepo(GitHubRepositoryEntity repository) {
+        return getGitHubApi(repository).map(github -> github.repos().get(new Coordinates.Simple(repository.getName())));
     }
 
     /**
      * Initializes the {@link Github GitHub API}.
      */
-    private Github getGitHubApi(GitHubRepositoryEntity repository) {
-        return new RtGithub(
-                authenticationManager
-                        .getCurrentUserOrDie()
-                        .getCredentials(repository.getId(), RepositoryTokenCredentials.class)
-                        .map(RepositoryTokenCredentials::getToken)
-                        .orElse(null)
-        );
+    private Mono<Github> getGitHubApi(GitHubRepositoryEntity repository) {
+        return authenticationManager
+                .getCurrentUserOrDie()
+                .map(authenticatedUser ->
+                        new RtGithub(
+                                authenticatedUser
+                                        .getCredentials(repository.getId(), RepositoryTokenCredentials.class)
+                                        .map(RepositoryTokenCredentials::getToken)
+                                        .orElse(null)
+                        )
+                );
     }
 
     /**
