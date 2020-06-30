@@ -1,6 +1,7 @@
 package be.sgerard.i18n.service.security.session.listener;
 
 import be.sgerard.i18n.model.security.session.persistence.UserLiveSessionEntity;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
@@ -18,6 +19,7 @@ public class CompositeUserLiveSessionListener implements UserLiveSessionListener
 
     private final List<UserLiveSessionListener> listeners;
 
+    @Lazy
     public CompositeUserLiveSessionListener(List<UserLiveSessionListener> listeners) {
         this.listeners = listeners;
     }

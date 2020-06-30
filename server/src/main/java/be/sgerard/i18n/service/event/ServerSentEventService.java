@@ -39,7 +39,7 @@ public class ServerSentEventService implements EventService {
 
     @Override
     public Mono<Void> broadcastEvent(EventType eventType, Object payload) {
-        return emit(new Event<>(eventType, payload, userLiveSession -> userLiveSession.getSessionRoles().contains(UserRole.MEMBER_OF_REPOSITORY)));
+        return emit(new Event<>(eventType, payload, userLiveSession -> userLiveSession.getSessionRoles().contains(UserRole.MEMBER_OF_ORGANIZATION)));
     }
 
     @Override

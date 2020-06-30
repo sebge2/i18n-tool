@@ -49,14 +49,19 @@ public class UserLiveSessionManagerImpl implements UserLiveSessionManager {
     public Mono<UserLiveSessionEntity> startSession() {
         return authenticationManager
                 .getCurrentUserOrDie()
-                .flatMap(authenticatedUser -> repository.save(new UserLiveSessionEntity(authenticatedUser)));
+                .flatMap(authenticatedUser -> repository.save(new UserLiveSessionEntity(authenticatedUser)))
+                .flatMap(userLiveSession ->
+                        listener
+                                .onNewSession(userLiveSession)
+                                .thenReturn(userLiveSession)
+                );
     }
 
     @Override
     public Mono<UserLiveSessionEntity> getSessionOrDie(String id) {
         return repository
                 .findById(id)
-                .switchIfEmpty(Mono.error(ResourceNotFoundException.translationNotFoundException(id))); // wrong exception
+                .switchIfEmpty(Mono.error(ResourceNotFoundException.userLiveSessionNotFoundException(id)));
     }
 
     @Override
