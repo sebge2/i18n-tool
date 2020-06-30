@@ -13,8 +13,6 @@ import reactor.core.publisher.Mono;
 
 import java.time.Instant;
 
-import static be.sgerard.i18n.model.event.EventType.UPDATED_CURRENT_AUTHENTICATED_USER;
-
 /**
  * Implementation of the {@link UserLiveSessionManager user live session manager}.
  *
@@ -27,13 +25,10 @@ public class UserLiveSessionManagerImpl implements UserLiveSessionManager {
     private final UserLiveSessionRepository repository;
     private final UserLiveSessionListener listener;
 
-    public UserLiveSessionManagerImpl(UserManager userManager,
-                                      UserLiveSessionManagerRepository repository,
-                                      EventService eventService) {
-        this.userManager = userManager;
-        this.repository = repository;
-        this.eventService = eventService;
-//        this.eventService.addListener(new UpdatedAuthenticationUserListener());
+    public UserLiveSessionManagerImpl(AuthenticationManager authenticationManager,
+                                      UserLiveSessionRepository repository,
+                                      UserLiveSessionListener listener) {
+        this.authenticationManager = authenticationManager;
         this.repository = repository;
         this.listener = listener;
     }

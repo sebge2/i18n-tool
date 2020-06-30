@@ -4,15 +4,14 @@ import be.sgerard.i18n.model.security.user.dto.UserDto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * Description of a user live session.
  *
  * @author Sebastien Gerard
  */
-@ApiModel(description = "Description of a user live session.")
+@Schema(name = "UserLiveSession", description = "Description of a user live session.")
 @JsonDeserialize(builder = UserLiveSessionDto.Builder.class)
 public class UserLiveSessionDto {
 
@@ -20,16 +19,10 @@ public class UserLiveSessionDto {
         return new Builder();
     }
 
-    public static Builder builder(UserLiveSessionEntity userSessionEntity) {
-        return builder()
-                .id(userSessionEntity.getId())
-                .user(UserDto.builder(userSessionEntity.getUser()).build());
-    }
-
-    @ApiModelProperty(notes = "Id of this session.", required = true)
+    @Schema(description = "Id of this session.", required = true)
     private final String id;
 
-    @ApiModelProperty(notes = "User associated to this session.", required = true)
+    @Schema(description = "User associated to this session.", required = true)
     private final UserDto user;
 
     private UserLiveSessionDto(Builder builder) {
