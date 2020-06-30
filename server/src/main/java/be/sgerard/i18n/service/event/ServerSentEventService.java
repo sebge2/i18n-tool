@@ -71,8 +71,8 @@ public class ServerSentEventService implements EventService {
                                 .filter(eventAndSession -> eventAndSession.getLeft().getEventFilter().test(eventAndSession.getRight()))
                                 .map(Pair::getLeft)
                                 .map(Event::toDto)
-                        .doOnCancel(() -> userSessionManager.stopSession(userLiveSession).subscribe())
-                        .doOnTerminate(() -> userSessionManager.stopSession(userLiveSession).subscribe())
+                                .doOnCancel(() -> userSessionManager.stopSession(userLiveSession).subscribe())
+                                .doOnTerminate(() -> userSessionManager.stopSession(userLiveSession).subscribe())
                 );
     }
 
