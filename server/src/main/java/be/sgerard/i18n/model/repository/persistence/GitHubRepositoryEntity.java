@@ -2,8 +2,6 @@ package be.sgerard.i18n.model.repository.persistence;
 
 import be.sgerard.i18n.model.repository.RepositoryType;
 import org.springframework.data.annotation.PersistenceConstructor;
-import org.springframework.data.annotation.TypeAlias;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotNull;
 import java.util.Optional;
@@ -16,8 +14,6 @@ import static be.sgerard.i18n.support.GitHubUtils.createGitHubUrl;
  *
  * @author Sebastien Gerard
  */
-@Document("repository")
-@TypeAlias("GITHUB")
 public class GitHubRepositoryEntity extends BaseGitRepositoryEntity {
 
     @NotNull
