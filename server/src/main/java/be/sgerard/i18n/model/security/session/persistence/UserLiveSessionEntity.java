@@ -5,14 +5,12 @@ import be.sgerard.i18n.model.security.user.persistence.UserEntity;
 import be.sgerard.i18n.service.security.UserRole;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
-import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotNull;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.UUID;
 
 /**
@@ -33,15 +31,11 @@ public class UserLiveSessionEntity {
     private String userId; // TODO
 
     @NotNull
-    @Indexed
-    private String simpSessionId;
-
-    @NotNull
     private Instant loginTime;
 
     private Instant logoutTime;
 
-    private final List<UserRole> sessionRoles = new ArrayList<>();
+    private Collection<UserRole> sessionRoles = new ArrayList<>();
 
     @PersistenceConstructor
     UserLiveSessionEntity() {
@@ -49,13 +43,11 @@ public class UserLiveSessionEntity {
 
     public UserLiveSessionEntity(UserEntity userId,
                                  String authenticatedUserId,
-                                 String simpSessionId,
                                  Instant loginTime,
                                  Collection<UserRole> sessionRoles) {
         this.authenticatedUserId = authenticatedUserId;
         this.id = UUID.randomUUID().toString();
         this.userId = userId.getId();
-        this.simpSessionId = simpSessionId;
         this.loginTime = loginTime;
         this.sessionRoles.addAll(sessionRoles);
     }
@@ -103,20 +95,6 @@ public class UserLiveSessionEntity {
     }
 
     /**
-     * Returns the SIMP unique session id.
-     */
-    public String getSimpSessionId() {
-        return simpSessionId;
-    }
-
-    /**
-     * Sets the SIMP unique session id.
-     */
-    public void setSimpSessionId(String simpSessionId) {
-        this.simpSessionId = simpSessionId;
-    }
-
-    /**
      * Returns the time when the user logged in.
      */
     public Instant getLoginTime() {
@@ -147,14 +125,14 @@ public class UserLiveSessionEntity {
     /**
      * Returns all the {@link UserRole roles} that are associated to the user.
      */
-    public List<UserRole> getSessionRoles() {
+    public Collection<UserRole> getSessionRoles() {
         return sessionRoles;
     }
 
     /**
      * Adds all the {@link UserRole roles} that are associated to the user.
      */
-    public void addSessionRoles(Collection<UserRole> sessionRoles) {
-        this.sessionRoles.addAll(sessionRoles);
+    public void setSessionRoles(Collection<UserRole> sessionRoles) {
+        this.sessionRoles = sessionRoles;
     }
 }
