@@ -2,6 +2,7 @@ package be.sgerard.i18n.service.security.session;
 
 import be.sgerard.i18n.model.security.session.persistence.UserLiveSessionEntity;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * Manager of {@link UserLiveSessionEntity user live sessions}.
@@ -14,5 +15,20 @@ public interface UserLiveSessionManager {
      * Returns all the current {@link UserLiveSessionEntity user live session}.
      */
     Flux<UserLiveSessionEntity> getCurrentLiveSessions();
+
+    /**
+     * Creates a new {@link UserLiveSessionEntity session} for the current user.
+     */
+    Mono<UserLiveSessionEntity> startSession();
+
+    /**
+     * Returns the specified {@link UserLiveSessionEntity session} having the specified id.
+     */
+    Mono<UserLiveSessionEntity> getSessionOrDie(String id);
+
+    /**
+     * Stops the specified {@link UserLiveSessionEntity session}.
+     */
+    Mono<Void> stopSession(UserLiveSessionEntity userLiveSession);
 
 }

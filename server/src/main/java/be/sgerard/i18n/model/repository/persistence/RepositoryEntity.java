@@ -4,6 +4,7 @@ import be.sgerard.i18n.model.repository.RepositoryStatus;
 import be.sgerard.i18n.model.repository.RepositoryType;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.validation.constraints.NotNull;
 import java.util.UUID;
@@ -39,6 +40,7 @@ public abstract class RepositoryEntity {
     /**
      * Returns the {@link RepositoryType type} of this repository.
      */
+    @Field(name = "type")
     public abstract RepositoryType getType();
 
     /**

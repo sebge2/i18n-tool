@@ -41,15 +41,12 @@ public class UserLiveSessionEntity {
     UserLiveSessionEntity() {
     }
 
-    public UserLiveSessionEntity(UserEntity userId,
-                                 String authenticatedUserId,
-                                 Instant loginTime,
-                                 Collection<UserRole> sessionRoles) {
-        this.authenticatedUserId = authenticatedUserId;
+    public UserLiveSessionEntity(AuthenticatedUser authenticatedUser) {
+        this.authenticatedUserId = authenticatedUser.getId();
         this.id = UUID.randomUUID().toString();
-        this.userId = userId.getId();
-        this.loginTime = loginTime;
-        this.sessionRoles.addAll(sessionRoles);
+        this.userId = authenticatedUser.getUser().getId();
+        this.loginTime = Instant.now();
+        this.sessionRoles.addAll(authenticatedUser.getSessionRoles());
     }
 
     /**
