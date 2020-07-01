@@ -1,56 +1,34 @@
 package be.sgerard.i18n.model.i18n.persistence;
 
 import be.sgerard.i18n.model.i18n.BundleType;
-import be.sgerard.i18n.model.workspace.WorkspaceEntity;
+import org.springframework.data.annotation.AccessType;
+import org.springframework.data.annotation.PersistenceConstructor;
 
-import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.*;
-
-import static java.util.Collections.unmodifiableList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Translation bundle file part of a workspace of a repository.
  *
  * @author Sebastien Gerard
  */
-@Entity(name = "bundle_file")
-@Table(
-        uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"workspace", "location"})
-        }
-)
 public class BundleFileEntity {
 
-    @Id
-    private String id;
-
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "workspace")
-    private WorkspaceEntity workspace;
-
     @NotNull
-    @Column(nullable = false, length = 1000)
     private String name;
 
     @NotNull
-    @Column(nullable = false, columnDefinition = "TEXT")
     private String location;
 
     @NotNull
-    @Enumerated(EnumType.STRING)
     private BundleType type;
 
     @AccessType(AccessType.Type.PROPERTY)
     private final Set<BundleFileEntryEntity> files = new HashSet<>();
 
-    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
-    @OrderColumn(name = "key_index")
-    private final List<BundleKeyEntity> keys = new ArrayList<>();
-
-    @Version
-    private int version;
-
+    @PersistenceConstructor
     BundleFileEntity() {
     }
 
@@ -84,6 +62,7 @@ public class BundleFileEntity {
     public String getLocation() {
         return location;
     }
+
     /**
      * Sets the path location of this bundle in the repository.
      */

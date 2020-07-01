@@ -1,31 +1,22 @@
 package be.sgerard.i18n.model.i18n.persistence;
 
 import be.sgerard.i18n.model.i18n.file.ScannedBundleFileEntry;
+import org.springframework.data.annotation.PersistenceConstructor;
 
-import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.File;
-import java.util.UUID;
 
 /**
  * File composing a {@link BundleFileEntity bundle file}.
  *
  * @author Sebastien Gerard
  */
-@Entity(name = "bundle_file_entry")
 public class BundleFileEntryEntity {
 
-    @Id
-    private String id;
-
-    @ManyToOne(optional = false)
-    private BundleFileEntity bundleFile;
-
-    @ManyToOne(optional = false)
-    private TranslationLocaleEntity locale;
+    @NotNull
+    private String locale; // TODO
 
     @NotNull
-    @Column(nullable = false, columnDefinition = "TEXT")
     private String file;
 
     @PersistenceConstructor

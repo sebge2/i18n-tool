@@ -1,7 +1,6 @@
 package be.sgerard.i18n.model.workspace;
 
 import org.springframework.data.annotation.PersistenceConstructor;
-import org.springframework.data.annotation.TypeAlias;
 
 import javax.validation.constraints.NotNull;
 
@@ -10,7 +9,6 @@ import javax.validation.constraints.NotNull;
  *
  * @author Sebastien Gerard
  */
-@TypeAlias("GITHUB")
 public class GitHubReviewEntity extends AbstractReviewEntity {
 
     @NotNull

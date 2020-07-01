@@ -1,64 +1,34 @@
 package be.sgerard.i18n.model.i18n.persistence;
 
 import be.sgerard.i18n.model.i18n.BundleType;
-import be.sgerard.i18n.model.repository.persistence.RepositoryEntity;
+import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.util.AntPathMatcher;
 
-import javax.persistence.*;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Configurations of bundles of a repository.
  *
  * @author Sebastien Gerard
  */
-@Entity
 public class BundleConfigurationEntity {
 
     private static final AntPathMatcher PATH_MATCHER = new AntPathMatcher();
 
-    @Id
-    private String id;
-
-    @Enumerated(EnumType.STRING)
     private BundleType bundleType;
 
-    @ManyToOne
-    private RepositoryEntity repository;
-
-    @ElementCollection
-    @CollectionTable(name = "repository_translations_included_path", joinColumns = @JoinColumn(name = "bundle_configuration_id"))
     private List<String> includedPaths = new ArrayList<>();
 
-    @ElementCollection
-    @CollectionTable(name = "repository_translations_ignored_path", joinColumns = @JoinColumn(name = "bundle_configuration_id"))
     private List<String> ignoredPaths = new ArrayList<>();
 
+    @PersistenceConstructor
     BundleConfigurationEntity() {
     }
-// TODO
-    public BundleConfigurationEntity(BundleType bundleType, RepositoryEntity repository) {
-        this.id = UUID.randomUUID().toString();
+
+    public BundleConfigurationEntity(BundleType bundleType) {
         this.bundleType = bundleType;
-        this.repository = repository;
-    }
-
-    /**
-     * Returns the unique id of this configuration.
-     */
-    public String getId() {
-        return id;
-    }
-
-    /**
-     * Sets the unique id of this configuration.
-     */
-    public BundleConfigurationEntity setId(String id) {
-        this.id = id;
-        return this;
     }
 
     /**
@@ -73,21 +43,6 @@ public class BundleConfigurationEntity {
      */
     public BundleConfigurationEntity setBundleType(BundleType bundleType) {
         this.bundleType = bundleType;
-        return this;
-    }
-
-    /**
-     * Returns the associated {@link RepositoryEntity repository}.
-     */
-    public RepositoryEntity getRepository() {
-        return repository;
-    }
-
-    /**
-     * Sets the associated {@link RepositoryEntity repository}.
-     */
-    public BundleConfigurationEntity setRepository(RepositoryEntity repository) {
-        this.repository = repository;
         return this;
     }
 
