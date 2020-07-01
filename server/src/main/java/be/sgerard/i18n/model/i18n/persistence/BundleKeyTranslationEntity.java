@@ -1,8 +1,13 @@
 package be.sgerard.i18n.model.i18n.persistence;
 
-import javax.persistence.*;
+import be.sgerard.i18n.model.workspace.WorkspaceEntity;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.PersistenceConstructor;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import javax.validation.constraints.NotNull;
-import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -11,143 +16,77 @@ import java.util.UUID;
  *
  * @author Sebastien Gerard
  */
-@NamedEntityGraph(
-        name = BundleKeyTranslationEntity.GRAPH_FETCH_ENTRIES_TO_WORKSPACE,
-        attributeNodes = {
-                @NamedAttributeNode(value = "bundleKey", subgraph = "bundleKey-subgraph"),
-        },
-        subgraphs = {
-                @NamedSubgraph(
-                        name = "bundleKey-subgraph",
-                        attributeNodes = {
-                                @NamedAttributeNode(value = "bundleFile", subgraph = "workspace-subgraph")
-                        }
-                ),
-                @NamedSubgraph(
-                        name = "workspace-subgraph",
-                        attributeNodes = {
-                                @NamedAttributeNode(value = "workspace")
-                        }
-                )
-        }
-)
-@Entity(name = "bundle_key_translation")
-@Table(
-        indexes = {@Index(columnList = "locale_id")},
-        uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"bundle_key", "locale_id"})
-        }
-)
+@Document("bundle_key_translation")
+@Getter
+@Setter
 public class BundleKeyTranslationEntity {
 
-    public static final String GRAPH_FETCH_ENTRIES_TO_WORKSPACE = "fetch-entry-with-bundles";
-
+    /**
+     * The unique translation key id.
+     */
     @Id
     private String id;
 
-    @ManyToOne
-    @JoinColumn(name = "bundle_key")
-    private BundleKeyEntity bundleKey;
+    /**
+     * The associated {@link be.sgerard.i18n.model.workspace.WorkspaceEntity workspace}. // TODO
+     */
+    @NotNull
+    private String workspace;
 
-    @JoinColumn(name = "locale_id")
-    @ManyToOne(optional = false)
-    private TranslationLocaleEntity locale;
+    /**
+     * The associated translation key.
+     */
+    @NotNull
+    private String bundleKey;
 
-    @Column(columnDefinition = "TEXT")
+    /**
+     * The {@link TranslationLocaleEntity locale} of the translation.
+     */
+    @NotNull
+    private String locale; // TODO
+
+    /**
+     * The original translation has found in the repository.
+     */
     private String originalValue;
 
-    @Column(columnDefinition = "TEXT")
+    /**
+     * The updated translation (if it was edited).
+     */
     private String updatedValue;
 
-    @Column(length = 1000)
-    private String lastEditor;
+    /**
+     * The {@link be.sgerard.i18n.model.security.user.persistence.UserEntity user} that edited this translation.
+     */
+    private String lastEditor; // TODO
 
-    @Version
-    private int version;
-
+    @PersistenceConstructor
     BundleKeyTranslationEntity() {
     }
 
-    public BundleKeyTranslationEntity(BundleKeyEntity bundleKey,
+    public BundleKeyTranslationEntity(WorkspaceEntity workspace,
+                                      String bundleKey,
                                       TranslationLocaleEntity locale,
                                       String originalValue) {
         this.id = UUID.randomUUID().toString();
-
+        this.workspace = workspace.getId();
         this.bundleKey = bundleKey;
-        this.bundleKey.addTranslation(this);
-
-        this.locale = locale;
+        this.locale = locale.getId();
         this.originalValue = originalValue;
     }
 
     /**
-     * Returns the unique id of this translation.
-     */
-    public String getId() {
-        return id;
-    }
-
-    /**
-     * Sets the unique id of this translation.
-     */
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    /**
-     * Returns the associated {@link BundleKeyEntity translation key}.
-     */
-    public BundleKeyEntity getBundleKey() {
-        return bundleKey;
-    }
-
-    /**
-     * Sets the associated {@link BundleKeyEntity translation key}.
-     */
-    public void setBundleKey(BundleKeyEntity bundleKey) {
-        this.bundleKey = bundleKey;
-    }
-
-    /**
-     * Returns the {@link TranslationLocaleEntity locale} of the translation.
-     */
-    public TranslationLocaleEntity getLocale() {
-        return locale;
-    }
-
-    /**
-     * Sets the {@link TranslationLocaleEntity locale} of the translation.
-     */
-    public void setLocale(TranslationLocaleEntity locale) {
-        this.locale = locale;
-    }
-
-    /**
-     * Returns the original translation.
+     * @see #originalValue
      */
     public Optional<String> getOriginalValue() {
         return Optional.ofNullable(originalValue);
     }
 
     /**
-     * Sets the original translation.
-     */
-    public void setOriginalValue(String originalValue) {
-        this.originalValue = originalValue;
-    }
-
-    /**
-     * Returns the updated translation (if it was edited).
+     * @see #updatedValue
      */
     public Optional<String> getUpdatedValue() {
         return Optional.ofNullable(updatedValue);
-    }
-
-    /**
-     * Sets the updated translation (if it was edited).
-     */
-    public void setUpdatedValue(String updatedValue) {
-        this.updatedValue = updatedValue;
     }
 
     /**
@@ -159,16 +98,9 @@ public class BundleKeyTranslationEntity {
     }
 
     /**
-     * Returns the id of the user that edited this translation.
+     * @see #lastEditor
      */
     public Optional<String> getLastEditor() {
         return Optional.ofNullable(lastEditor);
-    }
-
-    /**
-     * Sets the id of the user that edited this translation.
-     */
-    public void setLastEditor(String lastEditor) {
-        this.lastEditor = lastEditor;
     }
 }

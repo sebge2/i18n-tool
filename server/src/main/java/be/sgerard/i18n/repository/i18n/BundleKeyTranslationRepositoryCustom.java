@@ -1,9 +1,8 @@
 package be.sgerard.i18n.repository.i18n;
 
-import be.sgerard.i18n.model.i18n.TranslationsSearchRequest;
+import be.sgerard.i18n.model.i18n.dto.TranslationsSearchRequestDto;
 import be.sgerard.i18n.model.i18n.persistence.BundleKeyTranslationEntity;
-
-import java.util.stream.Stream;
+import reactor.core.publisher.Flux;
 
 /**
  * Custom {@link BundleKeyTranslationRepository translation repository}.
@@ -13,7 +12,7 @@ import java.util.stream.Stream;
 public interface BundleKeyTranslationRepositoryCustom {
 
     /**
-     * Searches {@link BundleKeyTranslationEntity translations} satisfying the specified {@link TranslationsSearchRequest request}.
+     * Searches {@link BundleKeyTranslationEntity translations} satisfying the specified {@link TranslationsSearchRequestDto request}.
      */
-    Stream<BundleKeyTranslationEntity> search(TranslationsSearchRequest request);
+    Flux<BundleKeyTranslationEntity> search(TranslationsSearchRequestDto request);
 }

@@ -54,7 +54,7 @@ public class TranslationController {
     /**
      * Updates translations. The maps associated {@link BundleKeyTranslationDto#getId() translation ids} to their translations.
      */
-    @RequestMapping(path = "/translation", method = RequestMethod.PATCH)
+    @PatchMapping(path = "/translation")
     @Operation(summary = "Updates translations of the workspace having the specified id.")
     public Flux<BundleKeyTranslationDto> updateWorkspaceTranslations(@RequestBody Map<String, String> translations) {
         return translationManager

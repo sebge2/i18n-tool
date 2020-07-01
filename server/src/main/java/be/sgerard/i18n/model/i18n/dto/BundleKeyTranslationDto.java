@@ -22,7 +22,8 @@ public class BundleKeyTranslationDto {
     public static Builder builder(BundleKeyTranslationEntity entity) {
         return builder()
                 .id(entity.getId())
-                .locale(entity.getLocale().getId())
+                .workspace(entity.getWorkspace())
+                .locale(entity.getLocale())
                 .originalValue(entity.getOriginalValue().orElse(null))
                 .updatedValue(entity.getUpdatedValue().orElse(null))
                 .lastEditor(entity.getLastEditor().orElse(null));
@@ -30,6 +31,9 @@ public class BundleKeyTranslationDto {
 
     @Schema(description = "Unique identifier of a translation.", required = true)
     private final String id;
+
+    @Schema(description = "Workspace id associated to this translation.", required = true)
+    private final String workspace;
 
     @Schema(description = "Locale id associated to this translation.", required = true)
     private final String locale;
@@ -45,6 +49,7 @@ public class BundleKeyTranslationDto {
 
     private BundleKeyTranslationDto(Builder builder) {
         id = builder.id;
+        workspace = builder.workspace;
         locale = builder.locale;
         originalValue = builder.originalValue;
         updatedValue = builder.updatedValue;
@@ -56,6 +61,13 @@ public class BundleKeyTranslationDto {
      */
     public String getId() {
         return id;
+    }
+
+    /**
+     * Returns the workspace id associated to this translation.
+     */
+    public String getWorkspace() {
+        return workspace;
     }
 
     /**
@@ -93,6 +105,7 @@ public class BundleKeyTranslationDto {
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder {
         private String id;
+        private String workspace;
         private String locale;
         private String originalValue;
         private String updatedValue;
@@ -103,6 +116,11 @@ public class BundleKeyTranslationDto {
 
         public Builder id(String id) {
             this.id = id;
+            return this;
+        }
+
+        public Builder workspace(String workspace) {
+            this.workspace = workspace;
             return this;
         }
 
