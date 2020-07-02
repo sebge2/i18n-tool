@@ -4,6 +4,8 @@ import be.sgerard.i18n.model.i18n.BundleType;
 import be.sgerard.i18n.model.i18n.file.BundleWalkContext;
 import be.sgerard.i18n.model.i18n.file.ScannedBundleFile;
 import be.sgerard.i18n.model.i18n.file.ScannedBundleFileKey;
+import be.sgerard.i18n.model.i18n.file.ScannedBundleTranslation;
+import be.sgerard.i18n.model.i18n.file.ScannedBundleFileEntry;
 import be.sgerard.i18n.service.i18n.TranslationRepositoryWriteApi;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -34,9 +36,10 @@ public interface BundleHandler {
     Flux<ScannedBundleFile> scanBundles(File directory, BundleWalkContext context);
 
     /**
-     * Scans all the {@link ScannedBundleFileKey translation keys} of the specified {@link ScannedBundleFile bundle file}.
+     * Scans all the {@link ScannedBundleTranslation translations} of all the {@link ScannedBundleFileEntry entries}
+     * composing the specified {@link ScannedBundleFile bundle file}.
      */
-    Flux<ScannedBundleFileKey> scanKeys(ScannedBundleFile bundleFile, BundleWalkContext context);
+    Flux<ScannedBundleTranslation> scanTranslations(ScannedBundleFile bundleFile, BundleWalkContext context);
 
     /**
      * Writes the specified {@link ScannedBundleFileKey translation keys} into the specified {@link ScannedBundleFile bundle file}.

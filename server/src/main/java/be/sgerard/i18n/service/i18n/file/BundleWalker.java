@@ -2,7 +2,7 @@ package be.sgerard.i18n.service.i18n.file;
 
 import be.sgerard.i18n.model.i18n.file.BundleWalkContext;
 import be.sgerard.i18n.model.i18n.file.ScannedBundleFile;
-import be.sgerard.i18n.model.i18n.file.ScannedBundleFileKey;
+import be.sgerard.i18n.model.i18n.file.ScannedBundleTranslation;
 import be.sgerard.i18n.model.i18n.persistence.BundleFileEntity;
 import be.sgerard.i18n.service.i18n.TranslationRepositoryReadApi;
 import reactor.core.publisher.Flux;
@@ -56,7 +56,7 @@ public class BundleWalker {
                         .flatMap(handler ->
                                 handler
                                         .scanBundles(directory, context)
-                                        .flatMap(bundle -> consumer.onBundleFound(bundle, handler.scanKeys(bundle, context)))
+                                        .flatMap(bundle -> consumer.onBundleFound(bundle, handler.scanTranslations(bundle, context)))
                         ),
                 context.getApi()
                         .listDirectories(directory)
@@ -72,9 +72,9 @@ public class BundleWalker {
 
         /**
          * Callbacks when the specified {@link ScannedBundleFile bundle file} has been found containing
-         * the specified {@link ScannedBundleFileKey keys}.
+         * the specified {@link ScannedBundleTranslation translations}.
          */
-        Mono<BundleFileEntity> onBundleFound(ScannedBundleFile bundleFile, Flux<ScannedBundleFileKey> keys);
+        Mono<BundleFileEntity> onBundleFound(ScannedBundleFile bundleFile, Flux<ScannedBundleTranslation> translations);
 
     }
 

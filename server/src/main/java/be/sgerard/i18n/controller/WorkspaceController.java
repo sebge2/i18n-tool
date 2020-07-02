@@ -85,7 +85,7 @@ public class WorkspaceController {
     @PostMapping(path = "/repository/workspace/{id}/do", params = "action=INITIALIZE")
     @Operation(summary = "Executes an action on the specified workspace.")
     @PreAuthorize("hasRole('ADMIN')")
-    public Mono<WorkspaceDto> synchronizeWorkspace(@PathVariable String id) {
+    public Mono<WorkspaceDto> initializeWorkspace(@PathVariable String id) {
         return workspaceManager.initialize(id)
                 .map(workspace -> WorkspaceDto.builder(workspace).build());
     }

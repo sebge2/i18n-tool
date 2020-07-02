@@ -1,10 +1,7 @@
 package be.sgerard.i18n.service.i18n.file;
 
 import be.sgerard.i18n.model.i18n.BundleType;
-import be.sgerard.i18n.model.i18n.file.BundleWalkContext;
-import be.sgerard.i18n.model.i18n.file.ScannedBundleFile;
-import be.sgerard.i18n.model.i18n.file.ScannedBundleFileEntry;
-import be.sgerard.i18n.model.i18n.file.ScannedBundleFileKey;
+import be.sgerard.i18n.model.i18n.file.*;
 import be.sgerard.i18n.model.i18n.persistence.TranslationLocaleEntity;
 import be.sgerard.i18n.service.i18n.TranslationRepositoryWriteApi;
 import be.sgerard.i18n.service.workspace.WorkspaceException;
@@ -21,9 +18,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.PropertyResourceBundle;
 
-import static be.sgerard.i18n.service.i18n.file.TranslationFileUtils.mapToNullIfEmpty;
 import static java.util.Collections.singleton;
-import static java.util.Collections.singletonMap;
 
 /**
  * {@link BundleHandler Bundle handler} for bundle file based on Java properties.
@@ -75,7 +70,7 @@ public class JavaPropertiesBundleHandler implements BundleHandler {
     }
 
     @Override
-    public Flux<ScannedBundleFileKey> scanKeys(ScannedBundleFile bundleFile, BundleWalkContext context) {
+    public Flux<ScannedBundleTranslation> scanTranslations(ScannedBundleFile bundleFile, BundleWalkContext context) {
         return Flux
                 .fromStream(bundleFile.getFiles().stream())
                 .flatMap(file ->
@@ -86,12 +81,10 @@ public class JavaPropertiesBundleHandler implements BundleHandler {
                                 .flatMapMany(translations ->
                                         Flux.fromStream(
                                                 translations.keySet().stream()
-                                                        .map(key -> new ScannedBundleFileKey(key, singletonMap(file.getLocale(), mapToNullIfEmpty(translations.getString(key)))))
+                                                        .map(key -> new ScannedBundleTranslation(file, key, translations.getString(key)))
                                         )
                                 )
-                )
-                .groupBy(ScannedBundleFileKey::getKey)
-                .flatMap(group -> group.reduce(ScannedBundleFileKey::merge));
+                );
     }
 
     @Override
