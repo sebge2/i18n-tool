@@ -10,4 +10,38 @@ import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
  */
 public interface BundleKeyTranslationRepository extends ReactiveMongoRepository<BundleKeyTranslationEntity, String>, BundleKeyTranslationRepositoryCustom {
 
+    /**
+     * @see BundleKeyTranslationEntity#getWorkspace()
+     */
+    String FIELD_WORKSPACE = "workspace";
+
+    /**
+     * @see BundleKeyTranslationEntity#getOriginalValue()
+     */
+    String FIELD_ORIGINAL_VALUE = "originalValue";
+
+    /**
+     * @see BundleKeyTranslationEntity#getUpdatedValue()
+     */
+    String FIELD_UPDATED_VALUE = "updatedValue";
+
+    /**
+     * @see BundleKeyTranslationEntity#getLastEditor()
+     */
+    String FIELD_LAST_EDITOR = "lastEditor";
+
+    /**
+     * @see BundleKeyTranslationEntity#getBundleKey()
+     */
+    String FIELD_BUNDLE_KEY = "bundleKey";
+
+    /**
+     * @see BundleKeyTranslationEntity#getBundleFile()
+     */
+    String FIELD_BUNDLE_FILE = "bundleFile";
+
+    /**
+     * @see BundleKeyTranslationEntity#getLocale()
+     */
+    String FIELD_LOCALE = "locale";
 }

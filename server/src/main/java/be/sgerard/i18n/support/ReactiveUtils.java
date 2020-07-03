@@ -36,7 +36,7 @@ public final class ReactiveUtils {
                         return emptyList();
                     }
                     if (buf.size() == 2) {
-                        if ((buf.get(0).getLeft() != null) && Objects.equals(buf.get(0).getLeft(), buf.get(1).getRight())) {
+                        if ((buf.get(0).getLeft() != null) && (buf.get(1).getRight() != null) && (comparator.apply(buf.get(0).getLeft(), buf.get(1).getRight()) == 0)) {
                             skip.set(true);
 
                             return singletonList(

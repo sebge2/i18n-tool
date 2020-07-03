@@ -15,6 +15,7 @@ import reactor.core.publisher.Flux;
 
 import java.lang.reflect.Constructor;
 
+import static be.sgerard.i18n.repository.i18n.BundleKeyTranslationRepository.*;
 import static org.springframework.data.domain.ExampleMatcher.GenericPropertyMatchers.*;
 
 /**
@@ -24,41 +25,6 @@ import static org.springframework.data.domain.ExampleMatcher.GenericPropertyMatc
  */
 @SuppressWarnings("unused")
 public class BundleKeyTranslationRepositoryImpl implements BundleKeyTranslationRepositoryCustom {
-
-    /**
-     * @see BundleKeyTranslationEntity#getWorkspace()
-     */
-    public static final String FIELD_WORKSPACE = "workspace";
-
-    /**
-     * @see BundleKeyTranslationEntity#getOriginalValue()
-     */
-    public static final String FIELD_ORIGINAL_VALUE = "originalValue";
-
-    /**
-     * @see BundleKeyTranslationEntity#getUpdatedValue()
-     */
-    public static final String FIELD_UPDATED_VALUE = "updatedValue";
-
-    /**
-     * @see BundleKeyTranslationEntity#getLastEditor()
-     */
-    public static final String FIELD_LAST_EDITOR = "lastEditor";
-
-    /**
-     * @see BundleKeyTranslationEntity#getBundleKey()
-     */
-    public static final String FIELD_BUNDLE_KEY = "bundleKey";
-
-    /**
-     * @see BundleKeyTranslationEntity#getBundleFile()
-     */
-    public static final String FIELD_BUNDLE_ID = "bundleId";
-
-    /**
-     * @see BundleKeyTranslationEntity#getLocale()
-     */
-    public static final String FIELD_LOCALE = "locale";
 
     private final ReactiveMongoTemplate template;
     private final AuthenticationManager authenticationManager;
@@ -76,7 +42,12 @@ public class BundleKeyTranslationRepositoryImpl implements BundleKeyTranslationR
     public Flux<BundleKeyTranslationEntity> search(TranslationsSearchRequestDto request) {
         return authenticationManager
                 .getCurrentUserOrDie()
-                .flatMapMany(currentUser -> template.find(createQuery(request, currentUser), BundleKeyTranslationEntity.class));
+                .flatMapMany(currentUser -> search(createQuery(request, currentUser)));
+    }
+
+    @Override
+    public Flux<BundleKeyTranslationEntity> search(Query query) {
+        return template.find(query, BundleKeyTranslationEntity.class);
     }
 
     /**
@@ -129,12 +100,12 @@ public class BundleKeyTranslationRepositoryImpl implements BundleKeyTranslationR
         }
 
         return query
-                .with(Sort.by(FIELD_WORKSPACE, FIELD_BUNDLE_ID, FIELD_BUNDLE_KEY, FIELD_LOCALE))
+                .with(Sort.by(FIELD_WORKSPACE, FIELD_BUNDLE_FILE, FIELD_BUNDLE_KEY, FIELD_LOCALE))
                 .limit(request.getMaxKeys());
     }
 
     /**
-     * Creates a {@link Criteria criteria} for filtering the {@link #FIELD_BUNDLE_KEY bundle key} field.
+     * Creates a {@link Criteria criteria} for filtering the {@link BundleKeyTranslationRepository#FIELD_BUNDLE_KEY bundle key} field.
      */
     private Criteria createCriteriaOnKey(TranslationKeyPatternDto pattern, ExampleMatcher.GenericPropertyMatcher matcher) {
         try {
