@@ -253,7 +253,6 @@ public class TranslationManagerImpl implements TranslationManager {
                                                                long index,
                                                                String bundleKey,
                                                                String translation) {
-        System.out.println("create " + bundleKey + " " + index);
         return translationRepository.save(new BundleKeyTranslationEntity(
                 workspaceEntity.getId(),
                 bundleFileEntity.getId(),
