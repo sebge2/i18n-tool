@@ -1,7 +1,6 @@
 package be.sgerard.i18n.model.i18n.persistence;
 
-import be.sgerard.i18n.model.i18n.file.ScannedBundleTranslation;
-import be.sgerard.i18n.model.workspace.WorkspaceEntity;
+import be.sgerard.i18n.model.workspace.persistence.WorkspaceEntity;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
@@ -11,8 +10,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import javax.validation.constraints.NotNull;
 import java.util.Optional;
 import java.util.UUID;
-
-import static be.sgerard.i18n.service.i18n.file.TranslationFileUtils.mapToNullIfEmpty;
 
 /**
  * Translation of a certain key part of translation bundle.
@@ -31,7 +28,7 @@ public class BundleKeyTranslationEntity {
     private String id;
 
     /**
-     * The associated {@link be.sgerard.i18n.model.workspace.WorkspaceEntity workspace}. // TODO
+     * The associated {@link WorkspaceEntity workspace}. // TODO
      */
     @NotNull
     private String workspace;
@@ -73,15 +70,13 @@ public class BundleKeyTranslationEntity {
     BundleKeyTranslationEntity() {
     }
 
-    public BundleKeyTranslationEntity(WorkspaceEntity workspace,
-                                      BundleFileEntity bundleFile,
-                                      ScannedBundleTranslation translation) {
+    public BundleKeyTranslationEntity( String workspace, String bundleFile, String bundleKey, String locale, String originalValue) {
         this.id = UUID.randomUUID().toString();
-        this.workspace = workspace.getId();
-        this.bundleFile = bundleFile.getId();
-        this.bundleKey = translation.getKey();
-        this.locale = translation.getFileEntry().getLocale().getId();
-        this.originalValue = mapToNullIfEmpty(translation.getValue().orElse(null));
+        this.workspace = workspace;
+        this.bundleFile = bundleFile;
+        this.bundleKey = bundleKey;
+        this.locale = locale;
+        this.originalValue = originalValue;
     }
 
     /**

@@ -5,7 +5,7 @@ import be.sgerard.i18n.model.security.session.dto.UserLiveSessionDto;
 import be.sgerard.i18n.model.security.user.dto.AuthenticatedUserDto;
 import be.sgerard.i18n.model.security.user.dto.UserDto;
 import be.sgerard.i18n.model.security.user.dto.UserPreferencesDto;
-import be.sgerard.i18n.model.workspace.WorkspaceDto;
+import be.sgerard.i18n.model.workspace.dto.WorkspaceDto;
 
 /**
  * @author Sebastien Gerard

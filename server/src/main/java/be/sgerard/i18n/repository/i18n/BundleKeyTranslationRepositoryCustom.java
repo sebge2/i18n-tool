@@ -1,6 +1,6 @@
 package be.sgerard.i18n.repository.i18n;
 
-import be.sgerard.i18n.model.i18n.dto.TranslationsSearchRequestDto;
+import be.sgerard.i18n.model.i18n.TranslationsSearchRequest;
 import be.sgerard.i18n.model.i18n.persistence.BundleKeyTranslationEntity;
 import org.springframework.data.mongodb.core.query.Query;
 import reactor.core.publisher.Flux;
@@ -13,9 +13,9 @@ import reactor.core.publisher.Flux;
 public interface BundleKeyTranslationRepositoryCustom {
 
     /**
-     * Searches {@link BundleKeyTranslationEntity translations} satisfying the specified {@link TranslationsSearchRequestDto request}.
+     * Searches {@link BundleKeyTranslationEntity translations} satisfying the specified {@link TranslationsSearchRequest request}.
      */
-    Flux<BundleKeyTranslationEntity> search(TranslationsSearchRequestDto request);
+    Flux<BundleKeyTranslationEntity> search(TranslationsSearchRequest request);
 
     /**
      * Searches {@link BundleKeyTranslationEntity translations} satisfying the specified {@link Query query}.

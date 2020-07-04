@@ -1,7 +1,7 @@
 package be.sgerard.i18n.repository.i18n;
 
+import be.sgerard.i18n.model.i18n.TranslationsSearchRequest;
 import be.sgerard.i18n.model.i18n.dto.TranslationKeyPatternDto;
-import be.sgerard.i18n.model.i18n.dto.TranslationsSearchRequestDto;
 import be.sgerard.i18n.model.i18n.persistence.BundleKeyTranslationEntity;
 import be.sgerard.i18n.model.security.auth.AuthenticatedUser;
 import be.sgerard.i18n.service.security.auth.AuthenticationManager;
@@ -39,7 +39,7 @@ public class BundleKeyTranslationRepositoryImpl implements BundleKeyTranslationR
     }
 
     @Override
-    public Flux<BundleKeyTranslationEntity> search(TranslationsSearchRequestDto request) {
+    public Flux<BundleKeyTranslationEntity> search(TranslationsSearchRequest request) {
         return authenticationManager
                 .getCurrentUserOrDie()
                 .flatMapMany(currentUser -> search(createQuery(request, currentUser)));
@@ -51,9 +51,9 @@ public class BundleKeyTranslationRepositoryImpl implements BundleKeyTranslationR
     }
 
     /**
-     * Creates the {@link Query query} for the specified {@link TranslationsSearchRequestDto request}.
+     * Creates the {@link Query query} for the specified {@link TranslationsSearchRequest request}.
      */
-    private Query createQuery(TranslationsSearchRequestDto request, AuthenticatedUser currentUser) {
+    private Query createQuery(TranslationsSearchRequest request, AuthenticatedUser currentUser) {
         final Query query = new Query();
 
         if (!request.getWorkspaces().isEmpty()) {
@@ -101,7 +101,7 @@ public class BundleKeyTranslationRepositoryImpl implements BundleKeyTranslationR
 
         return query
                 .with(Sort.by(FIELD_WORKSPACE, FIELD_BUNDLE_FILE, FIELD_BUNDLE_KEY, FIELD_LOCALE))
-                .limit(request.getMaxKeys());
+                .limit(request.getMaxTranslations());
     }
 
     /**

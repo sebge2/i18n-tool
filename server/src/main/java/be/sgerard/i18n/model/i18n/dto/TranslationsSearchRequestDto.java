@@ -1,7 +1,7 @@
 package be.sgerard.i18n.model.i18n.dto;
 
 import be.sgerard.i18n.model.i18n.persistence.TranslationLocaleEntity;
-import be.sgerard.i18n.model.workspace.WorkspaceEntity;
+import be.sgerard.i18n.model.workspace.persistence.WorkspaceEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -10,12 +10,13 @@ import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.util.Assert;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 
 import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableCollection;
+import static java.util.Collections.unmodifiableList;
 
 /**
  * Request asking the listing of paginated translations.
@@ -41,10 +42,10 @@ public class TranslationsSearchRequestDto {
     }
 
     @Schema(description = "Search translations only in those workspaces", required = true)
-    private final Collection<String> workspaces;
+    private final List<String> workspaces;
 
     @Schema(description = "Search translations only in those translations locale ids.")
-    private final Collection<String> locales;
+    private final List<String> locales;
 
     @Schema(description = "Specify the criterion that translations must have.")
     private final TranslationSearchCriterion criterion;
@@ -59,8 +60,8 @@ public class TranslationsSearchRequestDto {
     private final String lastKey;
 
     private TranslationsSearchRequestDto(Builder builder) {
-        workspaces = unmodifiableCollection(builder.workspaces);
-        locales = unmodifiableCollection(builder.locales);
+        workspaces = unmodifiableList(builder.workspaces);
+        locales = unmodifiableList(builder.locales);
         criterion = (builder.criterion != null) ? builder.criterion : TranslationSearchCriterion.ALL;
         keyPattern = builder.keyPattern;
         maxKeys = (builder.maxKeys != null) ? builder.maxKeys : DEFAULT_MAX_KEYS;
@@ -70,14 +71,14 @@ public class TranslationsSearchRequestDto {
     /**
      * Returns {@link WorkspaceEntity#getId() ids} of workspaces to search inside.
      */
-    public Collection<String> getWorkspaces() {
+    public List<String> getWorkspaces() {
         return workspaces;
     }
 
     /**
      * Returns {@link TranslationLocaleEntity#getId() ids} of locales of translations to look for.
      */
-    public Collection<String> getLocales() {
+    public List<String> getLocales() {
         return locales;
     }
 
@@ -118,8 +119,8 @@ public class TranslationsSearchRequestDto {
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder {
 
-        private final Collection<String> workspaces = new HashSet<>();
-        private final Collection<String> locales = new HashSet<>();
+        private final List<String> workspaces = new ArrayList<>();
+        private final List<String> locales = new ArrayList<>();
         private TranslationSearchCriterion criterion;
         private TranslationKeyPatternDto keyPattern;
         private Integer maxKeys;

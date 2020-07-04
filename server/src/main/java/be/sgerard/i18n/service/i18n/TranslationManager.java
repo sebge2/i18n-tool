@@ -2,7 +2,7 @@ package be.sgerard.i18n.service.i18n;
 
 import be.sgerard.i18n.model.i18n.persistence.BundleFileEntity;
 import be.sgerard.i18n.model.i18n.persistence.BundleKeyTranslationEntity;
-import be.sgerard.i18n.model.workspace.WorkspaceEntity;
+import be.sgerard.i18n.model.workspace.persistence.WorkspaceEntity;
 import be.sgerard.i18n.service.ResourceNotFoundException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;

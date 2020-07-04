@@ -4,10 +4,12 @@ import be.sgerard.i18n.model.security.auth.internal.InternalAuthenticatedUser;
 import be.sgerard.i18n.model.security.user.dto.UserDto;
 import be.sgerard.i18n.service.security.UserRole;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.security.test.context.support.WithSecurityContextFactory;
 import org.springframework.util.StringUtils;
+import reactor.core.publisher.Mono;
 
 import java.util.Collection;
 import java.util.stream.Stream;
@@ -23,8 +25,6 @@ public class WithInternalUserSecurityContextFactory implements WithSecurityConte
     public SecurityContext createSecurityContext(WithInternalUser user) {
         final String username = user.username();
         final Collection<UserRole> roles = Stream.of(user.roles()).filter(StringUtils::hasText).map(UserRole::valueOf).collect(toSet());
-
-        final SecurityContext context = SecurityContextHolder.createEmptyContext();
 
         final UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                 new InternalAuthenticatedUser(
@@ -43,7 +43,9 @@ public class WithInternalUserSecurityContextFactory implements WithSecurityConte
                 roles.stream().map(UserRole::toAuthority).collect(toSet())
         );
 
-        context.setAuthentication(authentication);
+        final SecurityContext context = new SecurityContextImpl(authentication);
+
+        ReactiveSecurityContextHolder.withSecurityContext(Mono.just(context));
 
         return context;
     }

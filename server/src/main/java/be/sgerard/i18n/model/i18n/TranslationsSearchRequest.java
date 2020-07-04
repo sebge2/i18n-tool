@@ -4,7 +4,7 @@ import be.sgerard.i18n.model.i18n.dto.TranslationKeyPatternDto;
 import be.sgerard.i18n.model.i18n.dto.TranslationSearchCriterion;
 import be.sgerard.i18n.model.i18n.dto.TranslationsPageDto;
 import be.sgerard.i18n.model.i18n.persistence.TranslationLocaleEntity;
-import be.sgerard.i18n.model.workspace.WorkspaceEntity;
+import be.sgerard.i18n.model.workspace.persistence.WorkspaceEntity;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,11 +25,11 @@ public class TranslationsSearchRequest {
         return new Builder();
     }
 
-    private final List<WorkspaceEntity> workspaces;
-    private final List<TranslationLocaleEntity> locales;
+    private final List<String> workspaces;
+    private final List<String> locales;
     private final TranslationSearchCriterion criterion;
     private final TranslationKeyPatternDto keyPattern;
-    private final int maxKeyEntries;
+    private final int maxTranslations;
     private final String lastKey;
 
     private TranslationsSearchRequest(Builder builder) {
@@ -37,21 +37,21 @@ public class TranslationsSearchRequest {
         locales = unmodifiableList(builder.locales);
         criterion = builder.criterion;
         keyPattern = builder.keyPattern;
-        maxKeyEntries = builder.maxKeyEntries;
+        maxTranslations = builder.maxTranslations;
         lastKey = builder.lastKey;
     }
 
     /**
      * Returns {@link WorkspaceEntity workspaces} to search inside.
      */
-    public List<WorkspaceEntity> getWorkspaces() {
+    public List<String> getWorkspaces() {
         return workspaces;
     }
 
     /**
      * Returns {@link TranslationLocaleEntity locales} of translations to look for.
      */
-    public Collection<TranslationLocaleEntity> getLocales() {
+    public Collection<String> getLocales() {
         return locales;
     }
 
@@ -70,10 +70,10 @@ public class TranslationsSearchRequest {
     }
 
     /**
-     * Returns the maximum number of keys for the next page.
+     * Returns the maximum number of translations for the next page.
      */
-    public int getMaxKeyEntries() {
-        return maxKeyEntries;
+    public int getMaxTranslations() {
+        return maxTranslations;
     }
 
     /**
@@ -90,31 +90,31 @@ public class TranslationsSearchRequest {
      */
     public static final class Builder {
 
-        private final List<WorkspaceEntity> workspaces = new ArrayList<>();
-        private final List<TranslationLocaleEntity> locales = new ArrayList<>();
+        private final List<String> workspaces = new ArrayList<>();
+        private final List<String> locales = new ArrayList<>();
         private TranslationSearchCriterion criterion;
         private TranslationKeyPatternDto keyPattern;
-        private int maxKeyEntries;
+        private int maxTranslations;
         private String lastKey;
 
         private Builder() {
         }
 
-        public Builder workspaces(Collection<WorkspaceEntity> workspaces) {
+        public Builder workspaces(Collection<String> workspaces) {
             this.workspaces.addAll(workspaces);
             return this;
         }
 
-        public Builder workspaces(WorkspaceEntity... workspaces) {
+        public Builder workspaces(String... workspaces) {
             return workspaces(asList(workspaces));
         }
 
-        public Builder locales(Collection<TranslationLocaleEntity> locales) {
+        public Builder locales(Collection<String> locales) {
             this.locales.addAll(locales);
             return this;
         }
 
-        public Builder locales(TranslationLocaleEntity... locales) {
+        public Builder locales(String... locales) {
             return locales(asList(locales));
         }
 
@@ -128,8 +128,8 @@ public class TranslationsSearchRequest {
             return this;
         }
 
-        public Builder maxKeyEntries(int maxKeyEntries) {
-            this.maxKeyEntries = maxKeyEntries;
+        public Builder maxTranslations(int maxTranslations) {
+            this.maxTranslations = maxTranslations;
 
             return this;
         }

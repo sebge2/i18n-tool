@@ -1,5 +1,7 @@
-package be.sgerard.i18n.model.workspace;
+package be.sgerard.i18n.model.workspace.dto;
 
+import be.sgerard.i18n.model.workspace.WorkspaceStatus;
+import be.sgerard.i18n.model.workspace.persistence.WorkspaceEntity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;

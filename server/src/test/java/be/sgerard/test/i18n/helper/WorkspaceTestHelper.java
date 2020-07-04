@@ -1,7 +1,7 @@
 package be.sgerard.test.i18n.helper;
 
 import be.sgerard.i18n.model.repository.dto.RepositoryDto;
-import be.sgerard.i18n.model.workspace.WorkspaceDto;
+import be.sgerard.i18n.model.workspace.dto.WorkspaceDto;
 import org.springframework.stereotype.Component;
 import org.springframework.test.web.reactive.server.WebTestClient;
 

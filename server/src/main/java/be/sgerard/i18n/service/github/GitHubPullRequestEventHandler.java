@@ -1,8 +1,8 @@
 package be.sgerard.i18n.service.github;
 
 import be.sgerard.i18n.model.repository.persistence.GitHubRepositoryEntity;
-import be.sgerard.i18n.model.workspace.GitHubReviewEntity;
-import be.sgerard.i18n.model.workspace.WorkspaceEntity;
+import be.sgerard.i18n.model.workspace.persistence.GitHubReviewEntity;
+import be.sgerard.i18n.model.workspace.persistence.WorkspaceEntity;
 import be.sgerard.i18n.service.github.external.BaseGitHubWebHookEventDto;
 import be.sgerard.i18n.service.github.external.GitHubPullRequestEventDto;
 import be.sgerard.i18n.service.workspace.WorkspaceManager;

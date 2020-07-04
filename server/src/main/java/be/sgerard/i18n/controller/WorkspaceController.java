@@ -1,6 +1,6 @@
 package be.sgerard.i18n.controller;
 
-import be.sgerard.i18n.model.workspace.WorkspaceDto;
+import be.sgerard.i18n.model.workspace.dto.WorkspaceDto;
 import be.sgerard.i18n.service.workspace.WorkspaceManager;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

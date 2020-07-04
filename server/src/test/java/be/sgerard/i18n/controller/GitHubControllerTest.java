@@ -1,7 +1,7 @@
 package be.sgerard.i18n.controller;
 
 import be.sgerard.i18n.model.repository.dto.GitHubRepositoryDto;
-import be.sgerard.i18n.model.workspace.WorkspaceDto;
+import be.sgerard.i18n.model.workspace.dto.WorkspaceDto;
 import be.sgerard.i18n.model.workspace.WorkspaceStatus;
 import be.sgerard.i18n.service.github.GitHubWebHookService;
 import be.sgerard.i18n.service.github.external.GitHubEventType;

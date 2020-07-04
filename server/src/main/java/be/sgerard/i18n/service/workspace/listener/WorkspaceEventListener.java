@@ -1,7 +1,7 @@
 package be.sgerard.i18n.service.workspace.listener;
 
-import be.sgerard.i18n.model.workspace.WorkspaceDto;
-import be.sgerard.i18n.model.workspace.WorkspaceEntity;
+import be.sgerard.i18n.model.workspace.dto.WorkspaceDto;
+import be.sgerard.i18n.model.workspace.persistence.WorkspaceEntity;
 import be.sgerard.i18n.service.event.EventService;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;

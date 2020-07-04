@@ -1,4 +1,4 @@
-package be.sgerard.i18n.model.workspace;
+package be.sgerard.i18n.model.workspace.persistence;
 
 /**
  * Information about the current review of a workspace.

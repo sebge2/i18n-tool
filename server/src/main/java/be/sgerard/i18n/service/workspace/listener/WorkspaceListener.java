@@ -1,7 +1,7 @@
 package be.sgerard.i18n.service.workspace.listener;
 
 import be.sgerard.i18n.model.validation.ValidationResult;
-import be.sgerard.i18n.model.workspace.WorkspaceEntity;
+import be.sgerard.i18n.model.workspace.persistence.WorkspaceEntity;
 import reactor.core.publisher.Mono;
 
 /**

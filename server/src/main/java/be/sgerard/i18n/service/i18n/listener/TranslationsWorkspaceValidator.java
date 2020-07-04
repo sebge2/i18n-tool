@@ -2,8 +2,6 @@ package be.sgerard.i18n.service.i18n.listener;
 
 import be.sgerard.i18n.model.i18n.persistence.BundleKeyTranslationEntity;
 import be.sgerard.i18n.model.validation.ValidationResult;
-import be.sgerard.i18n.model.workspace.WorkspaceEntity;
-import be.sgerard.i18n.model.workspace.WorkspaceStatus;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 

@@ -1,7 +1,8 @@
-package be.sgerard.i18n.model.workspace;
+package be.sgerard.i18n.model.workspace.persistence;
 
 import be.sgerard.i18n.model.i18n.persistence.BundleFileEntity;
 import be.sgerard.i18n.model.repository.persistence.RepositoryEntity;
+import be.sgerard.i18n.model.workspace.WorkspaceStatus;
 import org.springframework.data.annotation.AccessType;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
