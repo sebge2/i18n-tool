@@ -88,7 +88,7 @@ public class RepositoryTestHelper {
             final R updatedRepository = webClient.patch()
                     .uri("/api/repository/{id}", this.repository.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .body(BodyInserters.fromValue(patch))
+                    .body(BodyInserters.fromValue(patch.id(repository.getId()).build()))
                     .exchange()
                     .expectStatus().isOk()
                     .expectBody((Class<R>) this.repository.getClass())

@@ -5,6 +5,7 @@ import be.sgerard.i18n.model.workspace.dto.WorkspaceDto;
 import be.sgerard.i18n.model.workspace.WorkspaceStatus;
 import be.sgerard.i18n.service.github.GitHubWebHookService;
 import be.sgerard.i18n.service.github.external.GitHubEventType;
+import be.sgerard.test.i18n.support.TransactionalReactiveTest;
 import be.sgerard.test.i18n.support.WithInternalUser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.codec.digest.HmacAlgorithms;
@@ -17,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 
@@ -54,7 +54,7 @@ public class GitHubControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @Transactional
+    @TransactionalReactiveTest
     @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
     public void deletedBranchEvent() throws Exception {
         repository
@@ -87,7 +87,7 @@ public class GitHubControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @Transactional
+    @TransactionalReactiveTest
     @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
     public void createdBranchEvent() throws Exception {
         repository
@@ -116,7 +116,7 @@ public class GitHubControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @Transactional
+    @TransactionalReactiveTest
     @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
     public void pullRequestEvent() throws Exception {
         repository
@@ -144,7 +144,7 @@ public class GitHubControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @Transactional
+    @TransactionalReactiveTest
     @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
     public void wrongCredentials() throws Exception {
         repository
@@ -160,7 +160,7 @@ public class GitHubControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @Transactional
+    @TransactionalReactiveTest
     @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
     public void noCredentialsNeeded() throws Exception {
         repository
