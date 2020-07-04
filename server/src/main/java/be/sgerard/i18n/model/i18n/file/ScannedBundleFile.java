@@ -2,19 +2,18 @@ package be.sgerard.i18n.model.i18n.file;
 
 import be.sgerard.i18n.model.i18n.BundleType;
 import be.sgerard.i18n.model.i18n.persistence.BundleFileEntity;
+import be.sgerard.i18n.model.i18n.persistence.BundleFileEntryEntity;
+import lombok.Getter;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
-import static java.util.stream.Collectors.toSet;
+import java.util.*;
 
 /**
  * A translation bundle file that have been scanned.
  *
  * @author Sebastien Gerard
  */
+@Getter
 public class ScannedBundleFile {
 
     /**
@@ -40,9 +39,24 @@ public class ScannedBundleFile {
         }
     }
 
+    /**
+     * The bundle name (based on file names).
+     */
     private final String name;
+
+    /**
+     * The {@link BundleType type} of bundle.
+     */
     private final BundleType type;
+
+    /**
+     * The directory containing bundle files.
+     */
     private final File locationDirectory;
+
+    /**
+     * All the {@link ScannedBundleFileEntry files} composing the bundle associated by their locales.
+     */
     private final Collection<ScannedBundleFileEntry> files;
 
     public ScannedBundleFile(String name,
@@ -55,45 +69,15 @@ public class ScannedBundleFile {
         this.files = files;
     }
 
-    public ScannedBundleFile(BundleFileEntity entity) {
-        this(
-                entity.getName(),
-                entity.getType(),
-                new File(entity.getLocation()),
-                entity.getFiles().stream().map(file -> new ScannedBundleFileEntry(file.getLocale(), file.getJavaFile())).collect(toSet())
-        );
-    }
-
-    /**
-     * Returns the bundle name (based on file names).
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Returns the {@link BundleType type} of bundle.
-     */
-    public BundleType getType() {
-        return type;
-    }
-
-    /**
-     * Returns the directory containing bundle files.
-     */
-    public File getLocationDirectory() {
-        return locationDirectory;
-    }
-
-    /**
-     * Returns all the {@link ScannedBundleFileEntry files} composing the bundle associated by their locales.
-     */
-    public Collection<ScannedBundleFileEntry> getFiles() {
-        return files;
-    }
-
     @Override
     public String toString() {
         return "ScannedBundleFile(" + name + ":" + locationDirectory + ")";
+    }
+
+    /**
+     * Finds the {@link ScannedBundleFileEntry entry} for the specified locale id.
+     */
+    private static Optional<BundleFileEntryEntity> getFileEntry(BundleFileEntity entity, String locale) {
+        return entity.getFiles().stream().filter(file -> Objects.equals(file.getLocale(), locale)).findFirst();
     }
 }
