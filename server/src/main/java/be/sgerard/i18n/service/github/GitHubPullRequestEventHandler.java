@@ -11,6 +11,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
+import java.util.NoSuchElementException;
+
 /**
  * {@link GitHubWebHookEventHandler Event handler} for the {@link GitHubPullRequestEventDto pull-request event}.
  *
@@ -44,6 +46,7 @@ public class GitHubPullRequestEventHandler implements GitHubWebHookEventHandler<
                 .filter(workspace -> workspace.getReview(GitHubReviewEntity.class).isPresent())
                 .filter(workspace -> workspace.getReviewOrDie(GitHubReviewEntity.class).getPullRequestNumber() == event.getPullRequest().getNumber())
                 .last()
+                .onErrorResume(NoSuchElementException.class, e -> Mono.empty())
                 .flatMap(workspace -> workspaceManager.finishReview(workspace.getId()));
     }
 }

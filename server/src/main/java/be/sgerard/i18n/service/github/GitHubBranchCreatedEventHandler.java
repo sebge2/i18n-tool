@@ -40,12 +40,6 @@ public class GitHubBranchCreatedEventHandler implements GitHubWebHookEventHandle
                 .synchronize(repository.getId())
                 .filter(workspace -> Objects.equals(workspace.getBranch(), event.getRef()))
                 .last()
-                .onErrorResume(throwable -> {
-                    if (throwable instanceof NoSuchElementException) {
-                        return Mono.empty();
-                    } else {
-                        return Mono.error(throwable);
-                    }
-                });
+                .onErrorResume(NoSuchElementException.class, e -> Mono.empty());
     }
 }

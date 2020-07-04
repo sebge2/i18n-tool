@@ -8,6 +8,7 @@ import be.sgerard.i18n.service.workspace.WorkspaceManager;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
+import java.util.NoSuchElementException;
 import java.util.Objects;
 
 /**
@@ -39,6 +40,7 @@ public class GitHubBranchDeletedEventHandler implements GitHubWebHookEventHandle
                 .findAll(repository.getId())
                 .filter(workspace -> Objects.equals(workspace.getBranch(), event.getRef()))
                 .last()
+                .onErrorResume(NoSuchElementException.class, e -> Mono.empty())
                 .flatMap(workspace -> workspaceManager.delete(workspace.getId()));
     }
 }
