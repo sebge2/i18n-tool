@@ -1,6 +1,8 @@
 package be.sgerard.i18n.model.i18n.persistence;
 
 import be.sgerard.i18n.model.i18n.BundleType;
+import be.sgerard.i18n.model.i18n.file.ScannedBundleFile;
+import be.sgerard.i18n.model.i18n.file.ScannedBundleFileLocation;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.AccessType;
@@ -8,10 +10,13 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
 
 import javax.validation.constraints.NotNull;
+import java.io.File;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * Translation bundle file part of a workspace of a repository.
@@ -65,5 +70,21 @@ public class BundleFileEntity {
         this.location = location;
         this.type = type;
         this.files.addAll(files);
+    }
+
+    public BundleFileEntity(ScannedBundleFile bundleFile) {
+        this(
+                bundleFile.getName(),
+                bundleFile.getLocationDirectory().toString(),
+                bundleFile.getType(),
+                bundleFile.getFiles().stream().map(BundleFileEntryEntity::new).collect(toList())
+        );
+    }
+
+    /**
+     * Returns the {@link ScannedBundleFileLocation location} of the scanned bundle file.
+     */
+    public ScannedBundleFileLocation toLocation() {
+        return new ScannedBundleFileLocation(new File(getLocation()), getName());
     }
 }

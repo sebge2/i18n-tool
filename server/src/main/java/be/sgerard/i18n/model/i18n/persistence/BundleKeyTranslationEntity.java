@@ -52,6 +52,14 @@ public class BundleKeyTranslationEntity {
     private String locale; // TODO
 
     /**
+     * The unique index of this translation has defined in the original file.
+     *
+     * If the index is negative, it means that this translation was not originally defined in the file.
+     */
+    @NotNull
+    private long index;
+
+    /**
      * The original translation has found in the repository.
      */
     private String originalValue;
@@ -70,12 +78,18 @@ public class BundleKeyTranslationEntity {
     BundleKeyTranslationEntity() {
     }
 
-    public BundleKeyTranslationEntity( String workspace, String bundleFile, String bundleKey, String locale, String originalValue) {
+    public BundleKeyTranslationEntity(String workspace,
+                                      String bundleFile,
+                                      String bundleKey,
+                                      String locale,
+                                      long index,
+                                      String originalValue) {
         this.id = UUID.randomUUID().toString();
         this.workspace = workspace;
         this.bundleFile = bundleFile;
         this.bundleKey = bundleKey;
         this.locale = locale;
+        this.index = index;
         this.originalValue = originalValue;
     }
 

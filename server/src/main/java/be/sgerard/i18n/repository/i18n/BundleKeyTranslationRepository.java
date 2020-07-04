@@ -49,4 +49,9 @@ public interface BundleKeyTranslationRepository extends ReactiveMongoRepository<
      * @see BundleKeyTranslationEntity#getLocale()
      */
     String FIELD_LOCALE = "locale";
+
+    /**
+     * @see BundleKeyTranslationEntity#getIndex() ()
+     */
+    String FIELD_INDEX = "index";
 }

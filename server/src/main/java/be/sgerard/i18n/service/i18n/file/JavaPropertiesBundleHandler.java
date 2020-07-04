@@ -4,12 +4,15 @@ import be.sgerard.i18n.model.i18n.BundleType;
 import be.sgerard.i18n.model.i18n.file.BundleWalkContext;
 import be.sgerard.i18n.model.i18n.file.ScannedBundleFile;
 import be.sgerard.i18n.model.i18n.file.ScannedBundleFileEntry;
-import be.sgerard.i18n.model.i18n.file.ScannedBundleTranslation;
+import be.sgerard.i18n.model.i18n.file.ScannedBundleFileLocation;
 import be.sgerard.i18n.model.i18n.persistence.TranslationLocaleEntity;
 import be.sgerard.i18n.service.i18n.TranslationRepositoryWriteApi;
 import be.sgerard.i18n.service.workspace.WorkspaceException;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.commons.lang3.tuple.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -34,6 +37,8 @@ public class JavaPropertiesBundleHandler implements BundleHandler {
      * File extension (including ".").
      */
     public static final String EXTENSION = ".properties";
+
+    private static final Logger logger = LoggerFactory.getLogger(JavaPropertiesBundleHandler.class);
 
     public JavaPropertiesBundleHandler() {
     }
@@ -64,7 +69,8 @@ public class JavaPropertiesBundleHandler implements BundleHandler {
                                                                 directory,
                                                                 singleton(new ScannedBundleFileEntry(locale, file))
                                                         )
-                                                ))
+                                                )
+                                        )
                                         .orElseGet(Mono::empty)
                 )
                 .groupBy(ScannedBundleFile::getName)
@@ -72,31 +78,43 @@ public class JavaPropertiesBundleHandler implements BundleHandler {
     }
 
     @Override
-    public Flux<ScannedBundleTranslation> scanTranslations(ScannedBundleFile bundleFile, BundleWalkContext context) {
-        return Flux
-                .fromStream(bundleFile.getFiles().stream())
-                .flatMap(file ->
-                        context
-                                .getApi()
-                                .openInputStream(file.getFile())
-                                .map(inputStream -> readTranslations(file.getFile(), inputStream))
+    public Flux<Pair<String, String>> scanTranslations(ScannedBundleFileLocation bundleFile,
+                                                       TranslationLocaleEntity locale,
+                                                       BundleWalkContext context) {
+        final File bundleFileEntry = getBundleFileEntry(bundleFile, locale);
+
+        return context
+                .getApi()
+                .openInputStream(bundleFileEntry)
+                .flatMapMany(inputStream ->
+                        Mono
+                                .just(readTranslations(bundleFileEntry, inputStream))
                                 .flatMapMany(translations ->
                                         Flux.fromStream(
                                                 translations.keySet().stream()
-                                                        .map(key -> new ScannedBundleTranslation(file, key, translations.getString(key)))
+                                                        .map(key -> Pair.of(key, translations.getString(key)))
                                         )
                                 )
+                                .doOnTerminate(() -> {
+                                    try {
+                                        inputStream.close();
+                                    } catch (IOException e) {
+                                        logger.info("Error while closing stream.", e);
+                                    }
+                                })
                 );
     }
 
     @Override
-    public Mono<Void> updateBundle(ScannedBundleFile bundleFile,
-                                   ScannedBundleFileEntry bundleFileEntry,
-                                   Flux<ScannedBundleTranslation> translations,
-                                   TranslationRepositoryWriteApi repositoryAPI) {
+    public Mono<Void> updateTranslations(ScannedBundleFileLocation bundleFile,
+                                         TranslationLocaleEntity locale,
+                                         Flux<Pair<String, String>> translations,
+                                         TranslationRepositoryWriteApi repositoryAPI) {
+        final File bundleFileEntry = getBundleFileEntry(bundleFile, locale);
+
         return repositoryAPI
-                .openAsTemp(bundleFileEntry.getFile())
-                .flatMap(outputStream -> writeTranslations(translations, bundleFileEntry, outputStream));
+                .openAsTemp(bundleFileEntry)
+                .flatMap(outputFile -> writeTranslations(translations, bundleFileEntry, outputFile));
     }
 
     /**
@@ -107,7 +125,7 @@ public class JavaPropertiesBundleHandler implements BundleHandler {
         return context
                 .getLocales()
                 .stream()
-                .filter(locale -> file.getName().toLowerCase().endsWith(getSuffix(locale)))
+                .filter(locale -> file.getName().endsWith(getSuffix(locale)))
                 .findFirst();
     }
 
@@ -122,7 +140,17 @@ public class JavaPropertiesBundleHandler implements BundleHandler {
      * Returns the suffix of the file for the specified locale.
      */
     private String getSuffix(TranslationLocaleEntity locale) {
-        return "_" + locale.toLocale().toLanguageTag().toLowerCase() + EXTENSION;
+        return "_" + locale.toLocale().toLanguageTag() + EXTENSION;
+    }
+
+    /**
+     * Returns the location of the bundle file entry.
+     */
+    private File getBundleFileEntry(ScannedBundleFileLocation bundleFileLocation, TranslationLocaleEntity locale) {
+        return new File(
+                bundleFileLocation.getDirectory(),
+                bundleFileLocation.getName() + getSuffix(locale)
+        );
     }
 
     /**
@@ -139,11 +167,11 @@ public class JavaPropertiesBundleHandler implements BundleHandler {
     /**
      * Writes the specified translations in the specified file using the output-stream.
      */
-    private Mono<Void> writeTranslations(Flux<ScannedBundleTranslation> translations, ScannedBundleFileEntry file, File outputStream) {
+    private Mono<Void> writeTranslations(Flux<Pair<String, String>> translations, File file, File outputFile) {
         return Flux
                 .using(
-                        () -> new PropertiesConfiguration(outputStream),
-                        conf -> translations.doOnNext(translation -> conf.setProperty(translation.getKey(), translation.getValue().orElse(null))),
+                        () -> new PropertiesConfiguration(outputFile),
+                        conf -> translations.doOnNext(translation -> conf.setProperty(translation.getKey(), translation.getValue())),
                         conf -> {
                             try {
                                 conf.save();
@@ -152,7 +180,7 @@ public class JavaPropertiesBundleHandler implements BundleHandler {
                             }
                         }
                 )
-                .onErrorResume(e -> Mono.error(WorkspaceException.onFileWriting(file.getFile(), e)))
+                .onErrorResume(e -> Mono.error(WorkspaceException.onFileWriting(file, e)))
                 .then();
     }
 }

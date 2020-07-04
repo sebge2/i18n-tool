@@ -4,7 +4,7 @@ import be.sgerard.i18n.model.i18n.BundleType;
 import be.sgerard.i18n.model.i18n.file.BundleWalkContext;
 import be.sgerard.i18n.model.i18n.file.ScannedBundleFile;
 import be.sgerard.i18n.model.i18n.file.ScannedBundleFileEntry;
-import be.sgerard.i18n.model.i18n.file.ScannedBundleTranslation;
+import be.sgerard.i18n.model.i18n.file.ScannedBundleFileLocation;
 import be.sgerard.i18n.model.i18n.persistence.TranslationLocaleEntity;
 import be.sgerard.i18n.service.i18n.TranslationRepositoryWriteApi;
 import be.sgerard.i18n.service.workspace.WorkspaceException;
@@ -12,6 +12,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apache.commons.lang3.tuple.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
@@ -41,6 +43,8 @@ public class JsonBundleHandler implements BundleHandler {
      * File extension (including ".").
      */
     public static final String EXTENSION = ".json";
+
+    private static final Logger logger = LoggerFactory.getLogger(JsonBundleHandler.class);
 
     private final ObjectMapper objectMapper;
 
@@ -87,29 +91,41 @@ public class JsonBundleHandler implements BundleHandler {
     }
 
     @Override
-    public Flux<ScannedBundleTranslation> scanTranslations(ScannedBundleFile bundleFile, BundleWalkContext context) {
-        return Flux
-                .fromStream(bundleFile.getFiles().stream())
-                .flatMap(file ->
-                        context
-                                .getApi()
-                                .openInputStream(file.getFile())
-                                .map(inputStream -> readTranslations(file.getFile(), inputStream))
+    public Flux<Pair<String, String>> scanTranslations(ScannedBundleFileLocation bundleFile,
+                                                       TranslationLocaleEntity locale,
+                                                       BundleWalkContext context) {
+        final File bundleFileEntry = getBundleFileEntry(bundleFile, locale);
+
+        return context
+                .getApi()
+                .openInputStream(bundleFileEntry)
+                .flatMapMany(inputStream ->
+                        Mono
+                                .just(readTranslations(bundleFileEntry, inputStream))
                                 .flatMapMany(translations ->
                                         inlineValues(translations)
-                                                .map(entry -> new ScannedBundleTranslation(file, entry.getKey(), entry.getValue()))
+                                                .map(entry -> Pair.of(entry.getKey(), entry.getValue()))
                                 )
+                                .doOnTerminate(() -> {
+                                    try {
+                                        inputStream.close();
+                                    } catch (IOException e) {
+                                        logger.info("Error while closing stream.", e);
+                                    }
+                                })
                 );
     }
 
     @Override
-    public Mono<Void> updateBundle(ScannedBundleFile bundleFile,
-                                   ScannedBundleFileEntry bundleFileEntry,
-                                   Flux<ScannedBundleTranslation> translations,
-                                   TranslationRepositoryWriteApi repositoryAPI) {
+    public Mono<Void> updateTranslations(ScannedBundleFileLocation bundleFile,
+                                         TranslationLocaleEntity locale,
+                                         Flux<Pair<String, String>> translations,
+                                         TranslationRepositoryWriteApi repositoryAPI) {
+        final File bundleFileEntry = getBundleFileEntry(bundleFile, locale);
+
         return repositoryAPI
-                .openAsTemp(bundleFileEntry.getFile())
-                .flatMap(outputStream -> writeTranslations(translations, bundleFileEntry, outputStream));
+                .openAsTemp(bundleFileEntry)
+                .flatMap(outputFile -> writeTranslations(translations, bundleFileEntry, outputFile));
     }
 
     /**
@@ -120,8 +136,25 @@ public class JsonBundleHandler implements BundleHandler {
         return context
                 .getLocales()
                 .stream()
-                .filter(locale -> file.getName().toLowerCase().endsWith(locale.toLocale().toLanguageTag().toLowerCase() + EXTENSION))
+                .filter(locale -> file.getName().endsWith(getFileName(locale)))
                 .findFirst();
+    }
+
+    /**
+     * Returns the suffix of the file for the specified locale.
+     */
+    private String getFileName(TranslationLocaleEntity locale) {
+        return locale.toLocale().toLanguageTag() + EXTENSION;
+    }
+
+    /**
+     * Returns the location of the bundle file entry.
+     */
+    private File getBundleFileEntry(ScannedBundleFileLocation bundleFileLocation, TranslationLocaleEntity locale) {
+        return new File(
+                bundleFileLocation.getDirectory(),
+                getFileName(locale)
+        );
     }
 
     /**
@@ -179,9 +212,9 @@ public class JsonBundleHandler implements BundleHandler {
     }
 
     /**
-     * Writes the specified keys in the specified file using the output-stream.
+     * Writes the specified translations in the specified file using the output-stream.
      */
-    private Mono<Void> writeTranslations(Flux<ScannedBundleTranslation> translations, ScannedBundleFileEntry file, File outputStream) {
+    private Mono<Void> writeTranslations(Flux<Pair<String, String>> translations, File file, File outputStream) {
         return translations
                 .collectList()
                 .map(this::toStructuredMap)
@@ -189,7 +222,7 @@ public class JsonBundleHandler implements BundleHandler {
                     try {
                         objectMapper.writeValue(outputStream, structuredMap);
                     } catch (IOException e) {
-                        throw WorkspaceException.onFileWriting(file.getFile(), e);
+                        throw WorkspaceException.onFileWriting(file, e);
                     }
                 })
                 .then();
@@ -201,7 +234,7 @@ public class JsonBundleHandler implements BundleHandler {
      * @see #inlineValues(Map)
      */
     @SuppressWarnings("unchecked")
-    private Map<String, Object> toStructuredMap(List<ScannedBundleTranslation> translations) {
+    private Map<String, Object> toStructuredMap(List<Pair<String, String>> translations) {
         final Map<String, Object> map = new LinkedHashMap<>();
 
         translations.forEach(
@@ -211,7 +244,7 @@ public class JsonBundleHandler implements BundleHandler {
                     final String[] parts = translation.getKey().split("\\.");
                     for (int i = 0; i < parts.length; i++) {
                         if (i == (parts.length - 1)) {
-                            currentMap.put(parts[i], translation.getValue().orElse(null));
+                            currentMap.put(parts[i], translation.getValue());
                         } else {
                             currentMap.putIfAbsent(parts[i], new LinkedHashMap<>());
                             currentMap = (Map<String, Object>) currentMap.get(parts[i]);

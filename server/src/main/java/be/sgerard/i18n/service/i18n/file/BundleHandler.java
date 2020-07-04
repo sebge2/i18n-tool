@@ -1,17 +1,14 @@
 package be.sgerard.i18n.service.i18n.file;
 
 import be.sgerard.i18n.model.i18n.BundleType;
-import be.sgerard.i18n.model.i18n.file.BundleWalkContext;
-import be.sgerard.i18n.model.i18n.file.ScannedBundleFile;
-import be.sgerard.i18n.model.i18n.file.ScannedBundleFileKey;
-import be.sgerard.i18n.model.i18n.file.ScannedBundleTranslation;
-import be.sgerard.i18n.model.i18n.file.ScannedBundleFileEntry;
+import be.sgerard.i18n.model.i18n.file.*;
+import be.sgerard.i18n.model.i18n.persistence.TranslationLocaleEntity;
 import be.sgerard.i18n.service.i18n.TranslationRepositoryWriteApi;
+import org.apache.commons.lang3.tuple.Pair;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.io.File;
-import java.util.List;
 
 /**
  * Handler of a particular kind of translation bundle file.
@@ -36,17 +33,20 @@ public interface BundleHandler {
     Flux<ScannedBundleFile> scanBundles(File directory, BundleWalkContext context);
 
     /**
-     * Scans all the {@link ScannedBundleTranslation translations} of all the {@link ScannedBundleFileEntry entries}
-     * composing the specified {@link ScannedBundleFile bundle file}.
+     * Scans all the translations in the specified locale and associated to the specified
+     * {@link ScannedBundleFileLocation bundle file location}. Translations are nullable and are associated to their bundle keys.
      */
-    Flux<ScannedBundleTranslation> scanTranslations(ScannedBundleFile bundleFile, BundleWalkContext context);
+    Flux<Pair<String, String>> scanTranslations(ScannedBundleFileLocation bundleFile,
+                                                TranslationLocaleEntity locale,
+                                                BundleWalkContext context);
 
     /**
-     * Writes the specified {@link ScannedBundleFileKey translation keys} into the specified {@link ScannedBundleFile bundle file}.
+     * Writes all the translations into the specified locale and associated to the specified
+     * {@link ScannedBundleFileLocation bundle file location}. Translations are nullable and are associated to their bundle keys.
      */
-    Mono<Void> updateBundle(ScannedBundleFile bundleFile,
-                            ScannedBundleFileEntry bundleFileEntry,
-                            Flux<ScannedBundleTranslation> translations,
-                            TranslationRepositoryWriteApi repositoryAPI);
+    Mono<Void> updateTranslations(ScannedBundleFileLocation bundleFile,
+                                  TranslationLocaleEntity locale,
+                                  Flux<Pair<String, String>> translations,
+                                  TranslationRepositoryWriteApi repositoryAPI);
 
 }
