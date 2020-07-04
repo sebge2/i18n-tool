@@ -1,20 +1,20 @@
 package be.sgerard.i18n.service.i18n;
 
 import be.sgerard.i18n.model.i18n.TranslationsSearchRequest;
-import be.sgerard.i18n.model.i18n.dto.*;
-import be.sgerard.i18n.model.i18n.persistence.BundleFileEntity;
-import be.sgerard.i18n.model.i18n.persistence.BundleKeyEntity;
-import be.sgerard.i18n.model.i18n.persistence.BundleKeyTranslationEntity;
-import be.sgerard.i18n.model.workspace.WorkspaceEntity;
+import be.sgerard.i18n.model.i18n.dto.BundleKeyTranslationDto;
+import be.sgerard.i18n.model.i18n.dto.TranslationsPageDto;
+import be.sgerard.i18n.model.i18n.dto.TranslationsPageRowDto;
+import be.sgerard.i18n.model.i18n.dto.TranslationsSearchRequestDto;
+import be.sgerard.i18n.model.i18n.persistence.TranslationLocaleEntity;
+import be.sgerard.i18n.model.workspace.persistence.WorkspaceEntity;
 import be.sgerard.i18n.repository.i18n.BundleKeyTranslationRepository;
-import be.sgerard.i18n.repository.workspace.WorkspaceRepository;
+import be.sgerard.i18n.service.workspace.WorkspaceManager;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import reactor.core.publisher.GroupedFlux;
 import reactor.core.publisher.Mono;
 
-import java.util.*;
-
-import static java.util.stream.Collectors.toList;
+import java.util.List;
 
 /**
  * Implementation of the {@link TranslationSearchManager search manager}.
@@ -25,7 +25,8 @@ import static java.util.stream.Collectors.toList;
 public class TranslationSearchManagerImpl implements TranslationSearchManager {
 
     private final BundleKeyTranslationRepository keyEntryRepository;
-    private final WorkspaceRepository workspaceRepository;
+    private final TranslationLocaleManager localeManager;
+    private final WorkspaceManager workspaceManager;
 
     public TranslationSearchManagerImpl(BundleKeyTranslationRepository keyEntryRepository, WorkspaceRepository workspaceRepository) {
         this.keyEntryRepository = keyEntryRepository;
@@ -35,124 +36,78 @@ public class TranslationSearchManagerImpl implements TranslationSearchManager {
     @Override
     @Transactional(readOnly = true)
     public Mono<TranslationsPageDto> search(TranslationsSearchRequestDto searchRequest) {
-        final WorkspaceEntity workspaceEntity = workspaceRepository
-                .findAll().iterator().next();
-//                .findById(searchRequest.getWorkspaces())
-//                .orElseThrow(() -> ResourceNotFoundException.workspaceNotFoundException(searchRequest.getWorkspaces()));
+        return Mono
+                .zip(getWorkspaces(searchRequest), getLocales(searchRequest))
+                .map(input -> createRequest(searchRequest, input.getT1(), input.getT2()))
+                .flatMap(request ->
+                        keyEntryRepository
+                                .search(request)
+                                .map(translation -> BundleKeyTranslationDto.builder(translation).build())
+                                .groupBy(BundleKeyTranslationDto::getBundleKey)
+                                .flatMap(this::createRow)
+                                .collectList()
+                                .map(this::createPage)
+                );
+    }
 
-        final GroupedTranslations groupedEntries = doGetTranslations(searchRequest);
+    /**
+     * Returns {@link WorkspaceEntity workspaces} involved in the request.
+     */
+    private Mono<List<String>> getWorkspaces(TranslationsSearchRequestDto searchRequest) {
+        if (searchRequest.getWorkspaces().isEmpty()) {
+            return workspaceManager.findAll().map(WorkspaceEntity::getId).collectList();
+        } else {
+            return Mono.just(searchRequest.getWorkspaces());
+        }
+    }
 
-        return Mono.just(
-                TranslationsPageDto.builder()
-                        .workspaces(
-                              TranslationsWorkspaceDto.builder()
-                                      .workspaceId(workspaceEntity.getId())
-                                      .files(
-                                              groupedEntries.getGroups().entrySet().stream()
-                                                      .map(file ->
-                                                              BundleFileDto.builder()
-                                                                      .id(file.getKey().getId())
-                                                                      .name(file.getKey().getName())
-                                                                      .location(file.getKey().getLocation())
-                                                                      .keys(
-                                                                              file.getValue().entrySet().stream()
-                                                                                      .map(key ->
-                                                                                              BundleKeyDto.builder()
-                                                                                                      .id(key.getKey().getId())
-                                                                                                      .key(key.getKey().getKey())
-                                                                                                      .translations(
-                                                                                                              key.getValue().stream()
-                                                                                                                      .map(keyEntry ->
-                                                                                                                              BundleKeyTranslationDto.builder()
-                                                                                                                                      .id(keyEntry.getId())
-                                                                                                                                      .locale(keyEntry.getLocale().getId())
-                                                                                                                                      .originalValue(keyEntry.getOriginalValue().orElse(null))
-                                                                                                                                      .updatedValue(keyEntry.getUpdatedValue().orElse(null))
-                                                                                                                                      .lastEditor(keyEntry.getLastEditor().orElse(null))
-                                                                                                                                      .build()
-                                                                                                                      )
-                                                                                                                      .collect(toList())
-                                                                                                      )
-                                                                                                      .build()
-                                                                                      )
-                                                                                      .collect(toList())
-                                                                      )
-                                                                      .build()
-                                                      )
-                                                      .collect(toList())
-                                      )
-                                      .build()
-                        )
-//                        .workspaceId(workspaceEntity.getId())
-//                        .files(
+    /**
+     * Returns {@link TranslationLocaleEntity locales} involved in the request.
+     */
+    private Mono<List<String>> getLocales(TranslationsSearchRequestDto searchRequest) {
+        if (searchRequest.getLocales().isEmpty()) {
+            return localeManager.findAll().map(TranslationLocaleEntity::getId).collectList();
+        } else {
+            return Mono.just(searchRequest.getLocales());
+        }
+    }
 
-//                        )
-                        .lastKey(groupedEntries.getLastKey().orElse(null))
+    /**
+     * Creates the {@link TranslationsSearchRequest request} based on the current workspaces and locales.
+     */
+    private TranslationsSearchRequest createRequest(TranslationsSearchRequestDto searchRequest,
+                                                    List<String> workspaces,
+                                                    List<String> locales) {
+        return TranslationsSearchRequest.builder()
+                .workspaces(workspaces)
+                .locales(locales)
+                .criterion(searchRequest.getCriterion())
+                .keyPattern(searchRequest.getKeyPattern().orElse(null))
+                .maxTranslations(searchRequest.getMaxKeys() * locales.size())
+                .lastKey(searchRequest.getLastKey().orElse(null))
+                .build();
+    }
+
+    /**
+     * Creates the {@link TranslationsPageRowDto row} for the grouped flow by bundle key.
+     */
+    private Mono<TranslationsPageRowDto> createRow(GroupedFlux<String, BundleKeyTranslationDto> group) {
+        return group
+                .collectList()
+                .map(translations -> TranslationsPageRowDto.builder()
+                        .bundleKey(group.key())
+                        .translations(translations)
                         .build()
-        );
+                );
     }
 
-    private GroupedTranslations doGetTranslations(TranslationsSearchRequestDto searchRequest) {
-        final GroupedTranslations groupedTranslations = new GroupedTranslations();
-
-        keyEntryRepository
-                .search(
-                        TranslationsSearchRequest.builder()
-//                                .locales(searchRequest.getLocales())
-                                .criterion(searchRequest.getCriterion())
-//                                .keyPattern(searchRequest.getKeyPattern().orElse(null))
-                                .lastKey(searchRequest.getLastKey().orElse(null))
-                                .maxKeyEntries(Integer.MAX_VALUE)
-//                                .maxKeyEntries(searchRequest.getMaxKeys() * localeManager.findAll().size()) TODO
-                                .build()
-                )
-                .filter(entryEntity -> groupedTranslations.getNumberEntries() <= searchRequest.getMaxKeys())
-                .forEach(entryEntity -> {
-                    final BundleKeyEntity bundleKey = entryEntity.getBundleKey();
-                    final BundleFileEntity bundleFile = bundleKey.getBundleFile();
-
-                    groupedTranslations.getGroups().putIfAbsent(bundleFile, new LinkedHashMap<>());
-
-                    if (!groupedTranslations.getGroups().get(bundleFile).containsKey(bundleKey)) {
-                        groupedTranslations.incrementNumberEntries();
-                        groupedTranslations.setLastKey(bundleKey.getId());
-
-                        groupedTranslations.getGroups().get(bundleFile).putIfAbsent(bundleKey, new ArrayList<>());
-                    }
-
-                    groupedTranslations.getGroups().get(bundleFile).get(bundleKey).add(entryEntity);
-                });
-
-        return groupedTranslations;
-    }
-
-    private static final class GroupedTranslations {
-
-        private final Map<BundleFileEntity, Map<BundleKeyEntity, List<BundleKeyTranslationEntity>>> groups = new LinkedHashMap<>();
-        private String lastKey;
-        private int numberEntries;
-
-        public GroupedTranslations() {
-        }
-
-        public Map<BundleFileEntity, Map<BundleKeyEntity, List<BundleKeyTranslationEntity>>> getGroups() {
-            return groups;
-        }
-
-        public Optional<String> getLastKey() {
-            return Optional.ofNullable(lastKey);
-        }
-
-        public void setLastKey(String lastKey) {
-            this.lastKey = lastKey;
-        }
-
-        public int getNumberEntries() {
-            return numberEntries;
-        }
-
-        public void incrementNumberEntries() {
-            numberEntries++;
-        }
+    /**
+     * Creates the {@link TranslationsPageDto page} with the specified rows.
+     */
+    private TranslationsPageDto createPage(List<TranslationsPageRowDto> rows) {
+        return TranslationsPageDto.builder()
+                .lastKey(rows.isEmpty() ? null : rows.get(rows.size() - 1).getBundleKey())
+                .rows(rows)
+                .build();
     }
 }

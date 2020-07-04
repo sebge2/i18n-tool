@@ -1,17 +1,15 @@
 package be.sgerard.i18n.model.i18n.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableList;
 
 /**
@@ -21,6 +19,7 @@ import static java.util.Collections.unmodifiableList;
  */
 @Schema(name = "TranslationsPage", description = "List of paginated translations.")
 @JsonDeserialize(builder = TranslationsPageDto.Builder.class)
+@Getter
 public class TranslationsPageDto {
 
     public static Builder builder() {
@@ -30,19 +29,12 @@ public class TranslationsPageDto {
     @Schema(description = "Last key defined in this page. It can be used to call the next page.", required = true, type = "java.lang.String")
     private final String lastKey;
 
-    @Schema(description = "Workspaces", required = true)
-    private final List<TranslationsWorkspaceDto> workspaces;
+    @Schema(description = "Rows where every row is associated to a bundle key", required = true)
+    private final List<TranslationsPageRowDto> rows;
 
     private TranslationsPageDto(Builder builder) {
         lastKey = builder.lastKey;
-        workspaces = unmodifiableList(builder.workspaces);
-    }
-
-    /**
-     * Returns {@link TranslationsWorkspaceDto translations of a workspace.}
-     */
-    public List<TranslationsWorkspaceDto> getWorkspaces() {
-        return workspaces;
+        rows = unmodifiableList(builder.rows);
     }
 
     /**
@@ -61,7 +53,7 @@ public class TranslationsPageDto {
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder {
 
-        private final List<TranslationsWorkspaceDto> workspaces = new ArrayList<>();
+        private final List<TranslationsPageRowDto> rows = new ArrayList<>();
         private String lastKey;
 
         private Builder() {
@@ -72,15 +64,9 @@ public class TranslationsPageDto {
             return this;
         }
 
-        @JsonProperty("workspaces")
-        public Builder workspaces(List<TranslationsWorkspaceDto> workspaces) {
-            this.workspaces.addAll(workspaces);
+        public Builder rows(List<TranslationsPageRowDto> rows) {
+            this.rows.addAll(rows);
             return this;
-        }
-
-        @JsonIgnore
-        public Builder workspaces(TranslationsWorkspaceDto... workspaces) {
-            return workspaces(asList(workspaces));
         }
 
         public TranslationsPageDto build() {

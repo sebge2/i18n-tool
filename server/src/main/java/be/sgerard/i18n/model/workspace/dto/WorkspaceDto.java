@@ -6,6 +6,13 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Getter;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static java.util.Collections.unmodifiableList;
+import static java.util.stream.Collectors.toList;
 
 /**
  * A workspace represents the edition of translations related to a particular branch of a repository.
@@ -15,6 +22,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Schema(name = "Workspace",
         description = "A workspace is a place where users can define translations and then submit them for review. A workspace is based on a particular branch.")
 @JsonDeserialize(builder = WorkspaceDto.Builder.class)
+@Getter
 public class WorkspaceDto {
 
     public static Builder builder() {
@@ -25,7 +33,8 @@ public class WorkspaceDto {
         return builder()
                 .id(entity.getId())
                 .branch(entity.getBranch())
-                .status(entity.getStatus());
+                .status(entity.getStatus())
+                .files(entity.getFiles().stream().map(file -> BundleFileDto.builder(file).build()).collect(toList()));
     }
 
     @Schema(description = "Unique identifier of a workspace.", required = true)
@@ -38,31 +47,14 @@ public class WorkspaceDto {
             "the workspace is initialized and all the translations are retrieved. Once they are edited, they are sent for review.", required = true)
     private final WorkspaceStatus status;
 
+    @Schema(description = "All the bundle files contained in this workspace.", required = true)
+    private final List<BundleFileDto> files;
+
     private WorkspaceDto(Builder builder) {
         id = builder.id;
         branch = builder.branch;
         status = builder.status;
-    }
-
-    /**
-     * Returns the unique id of this workspace.
-     */
-    public String getId() {
-        return id;
-    }
-
-    /**
-     * Returns the branch name of the repository containing those translations.
-     */
-    public String getBranch() {
-        return branch;
-    }
-
-    /**
-     * Returns the current {@link WorkspaceStatus status}.
-     */
-    public WorkspaceStatus getStatus() {
-        return status;
+        files = unmodifiableList(builder.files);
     }
 
     /**
@@ -74,6 +66,7 @@ public class WorkspaceDto {
         private String id;
         private String branch;
         private WorkspaceStatus status;
+        private final List<BundleFileDto> files = new ArrayList<>();
 
         private Builder() {
         }
@@ -90,6 +83,11 @@ public class WorkspaceDto {
 
         public Builder status(WorkspaceStatus status) {
             this.status = status;
+            return this;
+        }
+
+        public Builder files(List<BundleFileDto> files) {
+            this.files.addAll(files);
             return this;
         }
 

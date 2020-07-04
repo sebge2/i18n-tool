@@ -5,7 +5,7 @@ import be.sgerard.i18n.model.i18n.dto.TranslationLocaleDto;
 import be.sgerard.i18n.model.i18n.dto.TranslationsPageDto;
 import be.sgerard.i18n.model.i18n.dto.TranslationsSearchRequestDto;
 import be.sgerard.i18n.model.repository.dto.RepositoryDto;
-import be.sgerard.i18n.model.workspace.WorkspaceDto;
+import be.sgerard.i18n.model.workspace.dto.WorkspaceDto;
 import junit.framework.AssertionFailedError;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -79,11 +79,9 @@ public class TranslationsTestHelper {
 
             final TranslationLocaleDto translationLocaleDto = localeTestHelper.findRegisteredLocale(locale);
 
-            return translations.getWorkspaces().stream()
-                    .flatMap(workspace -> workspace.getFiles().stream())
-                    .flatMap(file -> file.getKeys().stream())
-                    .filter(keyDto -> Objects.equals(keyDto.getKey(), key))
-                    .flatMap(keyDto -> keyDto.getTranslations().stream())
+            return translations.getRows().stream()
+                    .filter(row -> Objects.equals(row.getBundleKey(), key))
+                    .flatMap(row -> row.getTranslations().stream())
                     .filter(translation -> Objects.equals(translation.getLocale(), translationLocaleDto.getId()))
                     .findFirst();
         }
@@ -97,7 +95,7 @@ public class TranslationsTestHelper {
             loadTranslations(workspace);
 
             final Optional<String> actual = find(key, locale)
-                    .map(translation -> Optional.ofNullable(translation.getUpdatedValue()).orElse(translation.getOriginalValue()));
+                    .flatMap(translation -> translation.getUpdatedValue().or(translation::getOriginalValue));
 
             assertThat(actual).contains(expected);
 
@@ -107,12 +105,11 @@ public class TranslationsTestHelper {
         public StepWorkspace expectNoModification() {
             loadTranslations(workspace);
 
-            final List<String> updatedTranslations = translations.getWorkspaces().stream()
-                    .flatMap(workspace -> workspace.getFiles().stream())
-                    .flatMap(file -> file.getKeys().stream())
-                    .flatMap(bundle -> bundle.getTranslations().stream())
+            final List<String> updatedTranslations = translations.getRows().stream()
+                    .flatMap(row -> row.getTranslations().stream())
                     .map(BundleKeyTranslationDto::getUpdatedValue)
-                    .filter(Objects::nonNull)
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
                     .collect(toList());
 
             assertThat(updatedTranslations).isEmpty();
@@ -131,6 +128,7 @@ public class TranslationsTestHelper {
                     .body(BodyInserters.fromValue(
                             TranslationsSearchRequestDto.builder()
                                     .workspaces(workspace.getId())
+                                    .maxKeys(500)
                                     .build()
                     ))
                     .exchange()

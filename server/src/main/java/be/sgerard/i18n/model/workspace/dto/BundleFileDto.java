@@ -1,17 +1,11 @@
-package be.sgerard.i18n.model.i18n.dto;
+package be.sgerard.i18n.model.workspace.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import be.sgerard.i18n.model.i18n.persistence.BundleFileEntity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import io.swagger.v3.oas.annotations.media.Schema;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
+import lombok.Getter;
 
 /**
  * Bundle file containing translations of keys.
@@ -20,10 +14,18 @@ import static java.util.Collections.unmodifiableList;
  */
 @Schema(name = "BundleFile", description = "Bundle file containing translations of keys.")
 @JsonDeserialize(builder = BundleFileDto.Builder.class)
+@Getter
 public class BundleFileDto {
 
     public static Builder builder() {
         return new Builder();
+    }
+
+    public static Builder builder(BundleFileEntity entity) {
+        return builder()
+                .id(entity.getId())
+                .name(entity.getName())
+                .location(entity.getLocation());
     }
 
     @Schema(description = "Unique identifier of a bundle file.", required = true)
@@ -35,42 +37,10 @@ public class BundleFileDto {
     @Schema(description = "Directory location of this bundle file.", required = true)
     private final String location;
 
-    @Schema(description = "Keys contained in this bundle file.", required = true)
-    private final List<BundleKeyDto> keys;
-
     private BundleFileDto(Builder builder) {
         id = builder.id;
         name = builder.name;
         location = builder.location;
-        keys = unmodifiableList(builder.keys);
-    }
-
-    /**
-     * Returns the unique identifier of a bundle file.
-     */
-    public String getId() {
-        return id;
-    }
-
-    /**
-     * Returns the name of this bundle file.
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Returns the directory location of this bundle file.
-     */
-    public String getLocation() {
-        return location;
-    }
-
-    /**
-     * Returns {@link BundleKeyDto keys} contained in this bundle file.
-     */
-    public List<BundleKeyDto> getKeys() {
-        return keys;
     }
 
     /**
@@ -83,7 +53,6 @@ public class BundleFileDto {
         private String id;
         private String name;
         private String location;
-        private final List<BundleKeyDto> keys = new ArrayList<>();
 
         private Builder() {
         }
@@ -101,17 +70,6 @@ public class BundleFileDto {
         public Builder location(String location) {
             this.location = location;
             return this;
-        }
-
-        @JsonProperty("keys")
-        public Builder keys(List<BundleKeyDto> keys) {
-            this.keys.addAll(keys);
-            return this;
-        }
-
-        @JsonIgnore
-        public Builder keys(BundleKeyDto... keys) {
-            return keys(asList(keys));
         }
 
         public BundleFileDto build() {

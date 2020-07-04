@@ -5,6 +5,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Getter;
+
+import java.util.Optional;
 
 /**
  * Translation of a certain key part of translation bundle.
@@ -13,6 +16,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
  */
 @Schema(name = "BundleKeyTranslation", description = "Translation of a key of a bundle file and associated to a locale.")
 @JsonDeserialize(builder = BundleKeyTranslationDto.Builder.class)
+@Getter
 public class BundleKeyTranslationDto {
 
     public static Builder builder() {
@@ -23,6 +27,8 @@ public class BundleKeyTranslationDto {
         return builder()
                 .id(entity.getId())
                 .workspace(entity.getWorkspace())
+                .bundleFile(entity.getBundleFile())
+                .bundleKey(entity.getBundleKey())
                 .locale(entity.getLocale())
                 .originalValue(entity.getOriginalValue().orElse(null))
                 .updatedValue(entity.getUpdatedValue().orElse(null))
@@ -34,6 +40,12 @@ public class BundleKeyTranslationDto {
 
     @Schema(description = "Workspace id associated to this translation.", required = true)
     private final String workspace;
+
+    @Schema(description = "Bundle id associated to this translation.", required = true)
+    private final String bundleFile;
+
+    @Schema(description = "Bundle key associated to this translation.", required = true)
+    private final String bundleKey;
 
     @Schema(description = "Locale id associated to this translation.", required = true)
     private final String locale;
@@ -50,6 +62,8 @@ public class BundleKeyTranslationDto {
     private BundleKeyTranslationDto(Builder builder) {
         id = builder.id;
         workspace = builder.workspace;
+        bundleFile = builder.bundleFile;
+        bundleKey = builder.bundleKey;
         locale = builder.locale;
         originalValue = builder.originalValue;
         updatedValue = builder.updatedValue;
@@ -57,45 +71,24 @@ public class BundleKeyTranslationDto {
     }
 
     /**
-     * Returns the unique id of this translation.
-     */
-    public String getId() {
-        return id;
-    }
-
-    /**
-     * Returns the workspace id associated to this translation.
-     */
-    public String getWorkspace() {
-        return workspace;
-    }
-
-    /**
-     * Returns the locale id of the translation.
-     */
-    public String getLocale() {
-        return locale;
-    }
-
-    /**
      * Returns the original translation.
      */
-    public String getOriginalValue() {
-        return originalValue;
+    public Optional<String> getOriginalValue() {
+        return Optional.ofNullable(originalValue);
     }
 
     /**
      * Returns the updated translation (if it was edited).
      */
-    public String getUpdatedValue() {
-        return updatedValue;
+    public Optional<String> getUpdatedValue() {
+        return Optional.ofNullable(updatedValue);
     }
 
     /**
      * Returns the id of the user that edited this translation.
      */
-    public String getLastEditor() {
-        return lastEditor;
+    public Optional<String> getLastEditor() {
+        return Optional.ofNullable(lastEditor);
     }
 
     /**
@@ -106,6 +99,8 @@ public class BundleKeyTranslationDto {
     public static final class Builder {
         private String id;
         private String workspace;
+        private String bundleFile;
+        private String bundleKey;
         private String locale;
         private String originalValue;
         private String updatedValue;
@@ -121,6 +116,16 @@ public class BundleKeyTranslationDto {
 
         public Builder workspace(String workspace) {
             this.workspace = workspace;
+            return this;
+        }
+
+        public Builder bundleFile(String bundleFile) {
+            this.bundleFile = bundleFile;
+            return this;
+        }
+
+        public Builder bundleKey(String bundleKey) {
+            this.bundleKey = bundleKey;
             return this;
         }
 
