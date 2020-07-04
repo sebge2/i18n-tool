@@ -1,7 +1,10 @@
 package be.sgerard.i18n.service.i18n.file;
 
 import be.sgerard.i18n.model.i18n.BundleType;
-import be.sgerard.i18n.model.i18n.file.*;
+import be.sgerard.i18n.model.i18n.file.BundleWalkContext;
+import be.sgerard.i18n.model.i18n.file.ScannedBundleFile;
+import be.sgerard.i18n.model.i18n.file.ScannedBundleFileEntry;
+import be.sgerard.i18n.model.i18n.file.ScannedBundleTranslation;
 import be.sgerard.i18n.model.i18n.persistence.TranslationLocaleEntity;
 import be.sgerard.i18n.service.i18n.TranslationRepositoryWriteApi;
 import be.sgerard.i18n.service.workspace.WorkspaceException;
@@ -14,7 +17,6 @@ import reactor.core.publisher.Mono;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 import java.util.Optional;
 import java.util.PropertyResourceBundle;
 
@@ -89,16 +91,12 @@ public class JavaPropertiesBundleHandler implements BundleHandler {
 
     @Override
     public Mono<Void> updateBundle(ScannedBundleFile bundleFile,
-                                   List<ScannedBundleFileKey> keys,
+                                   ScannedBundleFileEntry bundleFileEntry,
+                                   Flux<ScannedBundleTranslation> translations,
                                    TranslationRepositoryWriteApi repositoryAPI) {
-        return Flux
-                .fromIterable(bundleFile.getFiles())
-                .flatMap(file ->
-                        repositoryAPI
-                                .openAsTemp(file.getFile())
-                                .doOnNext(outputStream -> writeTranslations(keys, file, outputStream))
-                )
-                .then();
+        return repositoryAPI
+                .openAsTemp(bundleFileEntry.getFile())
+                .flatMap(outputStream -> writeTranslations(translations, bundleFileEntry, outputStream));
     }
 
     /**
@@ -139,17 +137,22 @@ public class JavaPropertiesBundleHandler implements BundleHandler {
     }
 
     /**
-     * Writes the specified keys in the specified file using the output-stream.
+     * Writes the specified translations in the specified file using the output-stream.
      */
-    private void writeTranslations(List<ScannedBundleFileKey> keys, ScannedBundleFileEntry file, File outputStream) {
-        try {
-            final PropertiesConfiguration conf = new PropertiesConfiguration(outputStream);
-
-            keys.forEach(key -> conf.setProperty(key.getKey(), key.getTranslations().getOrDefault(file.getLocale(), null)));
-
-            conf.save();
-        } catch (ConfigurationException e) {
-            throw WorkspaceException.onFileWriting(file.getFile(), e);
-        }
+    private Mono<Void> writeTranslations(Flux<ScannedBundleTranslation> translations, ScannedBundleFileEntry file, File outputStream) {
+        return Flux
+                .using(
+                        () -> new PropertiesConfiguration(outputStream),
+                        conf -> translations.doOnNext(translation -> conf.setProperty(translation.getKey(), translation.getValue().orElse(null))),
+                        conf -> {
+                            try {
+                                conf.save();
+                            } catch (ConfigurationException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                )
+                .onErrorResume(e -> Mono.error(WorkspaceException.onFileWriting(file.getFile(), e)))
+                .then();
     }
 }

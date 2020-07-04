@@ -45,7 +45,8 @@ public interface BundleHandler {
      * Writes the specified {@link ScannedBundleFileKey translation keys} into the specified {@link ScannedBundleFile bundle file}.
      */
     Mono<Void> updateBundle(ScannedBundleFile bundleFile,
-                            List<ScannedBundleFileKey> keys,
+                            ScannedBundleFileEntry bundleFileEntry,
+                            Flux<ScannedBundleTranslation> translations,
                             TranslationRepositoryWriteApi repositoryAPI);
 
 }

@@ -1,7 +1,10 @@
 package be.sgerard.i18n.service.i18n.file;
 
 import be.sgerard.i18n.model.i18n.BundleType;
-import be.sgerard.i18n.model.i18n.file.*;
+import be.sgerard.i18n.model.i18n.file.BundleWalkContext;
+import be.sgerard.i18n.model.i18n.file.ScannedBundleFile;
+import be.sgerard.i18n.model.i18n.file.ScannedBundleFileEntry;
+import be.sgerard.i18n.model.i18n.file.ScannedBundleTranslation;
 import be.sgerard.i18n.model.i18n.persistence.TranslationLocaleEntity;
 import be.sgerard.i18n.service.i18n.TranslationRepositoryWriteApi;
 import be.sgerard.i18n.service.workspace.WorkspaceException;
@@ -100,15 +103,13 @@ public class JsonBundleHandler implements BundleHandler {
     }
 
     @Override
-    public Mono<Void> updateBundle(ScannedBundleFile bundleFile, List<ScannedBundleFileKey> keys, TranslationRepositoryWriteApi repositoryAPI) {
-        return Flux
-                .fromIterable(bundleFile.getFiles())
-                .flatMap(file ->
-                        repositoryAPI
-                                .openAsTemp(file.getFile())
-                                .doOnNext(outputStream -> writeTranslations(keys, file, outputStream))
-                )
-                .then();
+    public Mono<Void> updateBundle(ScannedBundleFile bundleFile,
+                                   ScannedBundleFileEntry bundleFileEntry,
+                                   Flux<ScannedBundleTranslation> translations,
+                                   TranslationRepositoryWriteApi repositoryAPI) {
+        return repositoryAPI
+                .openAsTemp(bundleFileEntry.getFile())
+                .flatMap(outputStream -> writeTranslations(translations, bundleFileEntry, outputStream));
     }
 
     /**
@@ -139,7 +140,7 @@ public class JsonBundleHandler implements BundleHandler {
     /**
      * Inlines all values from the specified structured translations.
      *
-     * @see #toStructuredMap(List, TranslationLocaleEntity)
+     * @see #toStructuredMap(List)
      */
     private Flux<Pair<String, String>> inlineValues(Map<String, Object> translations) {
         return inlineValues(translations, "");
@@ -180,12 +181,18 @@ public class JsonBundleHandler implements BundleHandler {
     /**
      * Writes the specified keys in the specified file using the output-stream.
      */
-    private void writeTranslations(List<ScannedBundleFileKey> keys, ScannedBundleFileEntry file, File outputStream) {
-        try {
-            objectMapper.writeValue(outputStream, toStructuredMap(keys, file.getLocale()));
-        } catch (IOException e) {
-            throw WorkspaceException.onFileWriting(file.getFile(), e);
-        }
+    private Mono<Void> writeTranslations(Flux<ScannedBundleTranslation> translations, ScannedBundleFileEntry file, File outputStream) {
+        return translations
+                .collectList()
+                .map(this::toStructuredMap)
+                .doOnNext(structuredMap -> {
+                    try {
+                        objectMapper.writeValue(outputStream, structuredMap);
+                    } catch (IOException e) {
+                        throw WorkspaceException.onFileWriting(file.getFile(), e);
+                    }
+                })
+                .then();
     }
 
     /**
@@ -194,17 +201,17 @@ public class JsonBundleHandler implements BundleHandler {
      * @see #inlineValues(Map)
      */
     @SuppressWarnings("unchecked")
-    private Map<String, Object> toStructuredMap(List<ScannedBundleFileKey> keys, TranslationLocaleEntity locale) {
+    private Map<String, Object> toStructuredMap(List<ScannedBundleTranslation> translations) {
         final Map<String, Object> map = new LinkedHashMap<>();
 
-        keys.forEach(
-                key -> {
+        translations.forEach(
+                translation -> {
                     Map<String, Object> currentMap = map;
 
-                    final String[] parts = key.getKey().split("\\.");
+                    final String[] parts = translation.getKey().split("\\.");
                     for (int i = 0; i < parts.length; i++) {
                         if (i == (parts.length - 1)) {
-                            currentMap.put(parts[i], key.getTranslations().get(locale));
+                            currentMap.put(parts[i], translation.getValue().orElse(null));
                         } else {
                             currentMap.putIfAbsent(parts[i], new LinkedHashMap<>());
                             currentMap = (Map<String, Object>) currentMap.get(parts[i]);
