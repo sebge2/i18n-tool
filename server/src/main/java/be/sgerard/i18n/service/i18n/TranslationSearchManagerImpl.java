@@ -16,6 +16,9 @@ import reactor.core.publisher.Mono;
 
 import java.util.List;
 
+import static be.sgerard.i18n.repository.i18n.BundleKeyTranslationRepository.*;
+import static be.sgerard.i18n.repository.i18n.BundleKeyTranslationRepository.FIELD_LOCALE;
+
 /**
  * Implementation of the {@link TranslationSearchManager search manager}.
  *
@@ -88,6 +91,7 @@ public class TranslationSearchManagerImpl implements TranslationSearchManager {
                 .keyPattern(searchRequest.getKeyPattern().orElse(null))
                 .maxTranslations(searchRequest.getMaxKeys() * locales.size())
                 .lastKey(searchRequest.getLastKey().orElse(null))
+                .sortBy(FIELD_WORKSPACE, FIELD_BUNDLE_FILE, FIELD_BUNDLE_KEY, FIELD_LOCALE)
                 .build();
     }
 
@@ -108,8 +112,17 @@ public class TranslationSearchManagerImpl implements TranslationSearchManager {
      * Creates the {@link TranslationsPageDto page} with the specified rows.
      */
     private TranslationsPageDto createPage(List<TranslationsPageRowDto> rows) {
+        String lastKey = null;
+        if (!rows.isEmpty()) {
+            final TranslationsPageRowDto lastRow = rows.get(rows.size() - 1);
+
+            if (!lastRow.getTranslations().isEmpty()) {
+                lastKey = lastRow.getTranslations().get(lastRow.getTranslations().size() - 1).getId();
+            }
+        }
+
         return TranslationsPageDto.builder()
-                .lastKey(rows.isEmpty() ? null : rows.get(rows.size() - 1).getBundleKey())
+                .lastKey(lastKey)
                 .rows(rows)
                 .build();
     }

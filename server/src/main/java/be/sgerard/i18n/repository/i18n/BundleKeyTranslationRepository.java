@@ -11,6 +11,11 @@ import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 public interface BundleKeyTranslationRepository extends ReactiveMongoRepository<BundleKeyTranslationEntity, String>, BundleKeyTranslationRepositoryCustom {
 
     /**
+     * @see BundleKeyTranslationEntity#getId()
+     */
+    String FIELD_ID = "id";
+
+    /**
      * @see BundleKeyTranslationEntity#getWorkspace()
      */
     String FIELD_WORKSPACE = "workspace";

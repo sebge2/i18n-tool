@@ -61,11 +61,11 @@ public class BundleKeyTranslationRepositoryImpl implements BundleKeyTranslationR
         }
 
         if (!request.getLocales().isEmpty()) {
-            query.addCriteria(Criteria.where("locale").in(request.getLocales()));
+            query.addCriteria(Criteria.where(FIELD_LOCALE).in(request.getLocales()));
         }
 
         request.getLastKey()
-                .ifPresent(lastKey -> query.addCriteria(Criteria.where("id").gt(lastKey)));
+                .ifPresent(lastKey -> query.addCriteria(Criteria.where(FIELD_ID).gt(lastKey)));
 
         switch (request.getCriterion()) {
             case MISSING_TRANSLATIONS:
@@ -103,7 +103,7 @@ public class BundleKeyTranslationRepositoryImpl implements BundleKeyTranslationR
         }
 
         return query
-                .with(Sort.by(FIELD_WORKSPACE, FIELD_BUNDLE_FILE, FIELD_BUNDLE_KEY, FIELD_LOCALE))
+                .with(Sort.by(request.getSortBy().toArray(new String[0])))
                 .limit(request.getMaxTranslations());
     }
 
