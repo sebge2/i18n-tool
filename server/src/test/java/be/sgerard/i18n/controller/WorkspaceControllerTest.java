@@ -3,8 +3,8 @@ package be.sgerard.i18n.controller;
 import be.sgerard.i18n.model.repository.dto.GitHubRepositoryDto;
 import be.sgerard.i18n.model.repository.dto.GitRepositoryDto;
 import be.sgerard.i18n.model.repository.dto.RepositoryDto;
-import be.sgerard.i18n.model.workspace.WorkspaceDto;
 import be.sgerard.i18n.model.workspace.WorkspaceStatus;
+import be.sgerard.i18n.model.workspace.dto.WorkspaceDto;
 import be.sgerard.test.i18n.support.TransactionalReactiveTest;
 import be.sgerard.test.i18n.support.WithInternalUser;
 import org.junit.jupiter.api.*;
@@ -45,11 +45,6 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
         locale
                 .createLocale(frLocaleCreationDto()).and()
                 .createLocale(enLocaleCreationDto());
-    }
-
-    @AfterEach
-    public void clear(){
-        // TODO workaround for TransactionInvocationInterceptor
     }
 
     @AfterAll

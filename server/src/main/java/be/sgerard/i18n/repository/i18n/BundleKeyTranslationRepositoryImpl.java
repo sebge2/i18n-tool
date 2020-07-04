@@ -85,6 +85,9 @@ public class BundleKeyTranslationRepositoryImpl implements BundleKeyTranslationR
             final TranslationKeyPatternDto pattern = request.getKeyPattern().get();
 
             switch (pattern.getStrategy()) {
+                case EQUAL:
+                    query.addCriteria(createCriteriaOnKey(pattern, exact().ignoreCase()));
+                    break;
                 case CONTAINS:
                     query.addCriteria(createCriteriaOnKey(pattern, contains().ignoreCase()));
                     break;

@@ -47,7 +47,7 @@ public class TranslationController {
      */
     @PostMapping(path = "/translation/do", params = "action=search")
     @Operation(summary = "Returns translations of the workspace having the specified id.")
-    public Mono<TranslationsPageDto> getWorkspaceTranslations(@RequestBody TranslationsSearchRequestDto searchRequest) {
+    public Mono<TranslationsPageDto> searchTranslations(@RequestBody TranslationsSearchRequestDto searchRequest) {
         return translationSearchManager.search(searchRequest);
     }
 

@@ -35,6 +35,8 @@ public class TranslationKeyPatternDto {
      */
     public enum KeyPatternStrategy {
 
+        EQUAL,
+
         STARTS_WITH,
 
         ENDS_WITH,

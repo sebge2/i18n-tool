@@ -140,9 +140,15 @@ public class TranslationsSearchRequestDto {
             return workspaces(asList(workspaces));
         }
 
+        @JsonProperty("locales")
         public Builder locales(Collection<String> locales) {
             this.locales.addAll(locales);
             return this;
+        }
+
+        @JsonIgnore
+        public Builder locales(String... locales) {
+            return locales(asList(locales));
         }
 
         public Builder criterion(TranslationSearchCriterion criterion) {
