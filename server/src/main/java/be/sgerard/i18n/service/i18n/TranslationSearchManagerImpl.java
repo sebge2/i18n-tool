@@ -28,9 +28,12 @@ public class TranslationSearchManagerImpl implements TranslationSearchManager {
     private final TranslationLocaleManager localeManager;
     private final WorkspaceManager workspaceManager;
 
-    public TranslationSearchManagerImpl(BundleKeyTranslationRepository keyEntryRepository, WorkspaceRepository workspaceRepository) {
+    public TranslationSearchManagerImpl(BundleKeyTranslationRepository keyEntryRepository,
+                                        TranslationLocaleManager localeManager,
+                                        WorkspaceManager workspaceManager) {
         this.keyEntryRepository = keyEntryRepository;
-        this.workspaceRepository = workspaceRepository;
+        this.localeManager = localeManager;
+        this.workspaceManager = workspaceManager;
     }
 
     @Override
