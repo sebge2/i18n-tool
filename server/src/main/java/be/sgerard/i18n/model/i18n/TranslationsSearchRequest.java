@@ -2,7 +2,6 @@ package be.sgerard.i18n.model.i18n;
 
 import be.sgerard.i18n.model.i18n.dto.TranslationKeyPatternDto;
 import be.sgerard.i18n.model.i18n.dto.TranslationSearchCriterion;
-import be.sgerard.i18n.model.i18n.dto.TranslationsPageDto;
 import be.sgerard.i18n.model.i18n.persistence.TranslationLocaleEntity;
 import be.sgerard.i18n.model.workspace.persistence.WorkspaceEntity;
 
@@ -31,7 +30,7 @@ public class TranslationsSearchRequest {
     private final TranslationSearchCriterion criterion;
     private final TranslationKeyPatternDto keyPattern;
     private final int maxTranslations;
-    private final String lastKey;
+    private final int pageIndex;
 
     private TranslationsSearchRequest(Builder builder) {
         workspaces = unmodifiableList(builder.workspaces);
@@ -40,7 +39,7 @@ public class TranslationsSearchRequest {
         criterion = builder.criterion;
         keyPattern = builder.keyPattern;
         maxTranslations = builder.maxTranslations;
-        lastKey = builder.lastKey;
+        pageIndex = builder.pageIndex;
     }
 
     /**
@@ -53,7 +52,7 @@ public class TranslationsSearchRequest {
     /**
      * Returns {@link TranslationLocaleEntity locales} of translations to look for.
      */
-    public Collection<String> getLocales() {
+    public List<String> getLocales() {
         return locales;
     }
 
@@ -86,12 +85,10 @@ public class TranslationsSearchRequest {
     }
 
     /**
-     * Returns the last key contained in the previous page (nothing if it's the first page).
-     *
-     * @see TranslationsPageDto#getLastKey()
+     * Returns the index of the page to look for. The first page has the index 0.
      */
-    public Optional<String> getLastKey() {
-        return Optional.ofNullable(lastKey);
+    public int getPageIndex() {
+        return pageIndex;
     }
 
     /**
@@ -105,7 +102,7 @@ public class TranslationsSearchRequest {
         private TranslationSearchCriterion criterion;
         private TranslationKeyPatternDto keyPattern;
         private int maxTranslations;
-        private String lastKey;
+        private int pageIndex = 0;
 
         private Builder() {
         }
@@ -153,8 +150,8 @@ public class TranslationsSearchRequest {
             return this;
         }
 
-        public Builder lastKey(String lastKey) {
-            this.lastKey = lastKey;
+        public Builder pageIndex(int pageIndex) {
+            this.pageIndex = pageIndex;
             return this;
         }
 

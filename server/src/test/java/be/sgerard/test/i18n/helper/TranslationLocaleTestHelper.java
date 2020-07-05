@@ -7,9 +7,13 @@ import org.springframework.stereotype.Component;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.BodyInserters;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+
+import static be.sgerard.i18n.model.i18n.persistence.TranslationLocaleEntity.toUserString;
+import static java.util.stream.Collectors.toList;
 
 /**
  * @author Sebastien Gerard
@@ -21,6 +25,12 @@ public class TranslationLocaleTestHelper {
 
     public TranslationLocaleTestHelper(WebTestClient webClient) {
         this.webClient = webClient;
+    }
+
+    public List<TranslationLocaleDto> getSortedLocales() {
+        return getLocales().stream()
+                .sorted(Comparator.comparing(locale -> toUserString(locale.getLanguage(), locale.getRegion().orElse(null), locale.getVariants())))
+                .collect(toList());
     }
 
     public List<TranslationLocaleDto> getLocales() {

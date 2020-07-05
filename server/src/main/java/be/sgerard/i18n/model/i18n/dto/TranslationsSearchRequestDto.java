@@ -56,8 +56,8 @@ public class TranslationsSearchRequestDto {
     @Schema(description = "The maximum number of keys for the next page.")
     private final int maxKeys;
 
-    @Schema(description = "The last key contained in the previous page (nothing if it's the first page).")
-    private final String lastKey;
+    @Schema(description = "The index of the page to look for (the first page has the index 0)")
+    private final int pageIndex;
 
     private TranslationsSearchRequestDto(Builder builder) {
         workspaces = unmodifiableList(builder.workspaces);
@@ -65,7 +65,7 @@ public class TranslationsSearchRequestDto {
         criterion = (builder.criterion != null) ? builder.criterion : TranslationSearchCriterion.ALL;
         keyPattern = builder.keyPattern;
         maxKeys = (builder.maxKeys != null) ? builder.maxKeys : DEFAULT_MAX_KEYS;
-        lastKey = builder.lastKey;
+        pageIndex = builder.pageIndex;
     }
 
     /**
@@ -104,12 +104,12 @@ public class TranslationsSearchRequestDto {
     }
 
     /**
-     * Returns the last key contained in the previous page (nothing if it's the first page).
+     * Returns the index of the page to look for. The first page has the index 0.
      *
-     * @see TranslationsPageDto#getLastKey()
+     * @see TranslationsPageDto#getPageIndex()
      */
-    public Optional<String> getLastKey() {
-        return Optional.ofNullable(lastKey);
+    public int getPageIndex() {
+        return pageIndex;
     }
 
     /**
@@ -124,7 +124,7 @@ public class TranslationsSearchRequestDto {
         private TranslationSearchCriterion criterion;
         private TranslationKeyPatternDto keyPattern;
         private Integer maxKeys;
-        private String lastKey;
+        private int pageIndex;
 
         private Builder() {
         }
@@ -173,8 +173,8 @@ public class TranslationsSearchRequestDto {
             return this;
         }
 
-        public Builder lastKey(String lastKey) {
-            this.lastKey = lastKey;
+        public Builder pageIndex(int pageIndex) {
+            this.pageIndex = pageIndex;
             return this;
         }
 

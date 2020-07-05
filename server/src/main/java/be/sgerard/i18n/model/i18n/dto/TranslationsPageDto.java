@@ -8,7 +8,6 @@ import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static java.util.Collections.unmodifiableList;
 
@@ -26,24 +25,22 @@ public class TranslationsPageDto {
         return new Builder();
     }
 
-    @Schema(description = "Last key defined in this page. It can be used to call the next page.", required = true, type = "java.lang.String")
-    private final String lastKey;
-
     @Schema(description = "Rows where every row is associated to a bundle key", required = true)
     private final List<TranslationsPageRowDto> rows;
 
-    private TranslationsPageDto(Builder builder) {
-        lastKey = builder.lastKey;
-        rows = unmodifiableList(builder.rows);
-    }
+    @Schema(description = "All the ordered locales (i.e., columns order)", required = true)
+    private final List<String> locales;
 
     /**
-     * Returns the last translation key of this page.
-     *
-     * @see TranslationsSearchRequestDto#getLastKey()
+     * @see TranslationsSearchRequestDto#getPageIndex()
      */
-    public Optional<String> getLastKey() {
-        return Optional.ofNullable(lastKey);
+    @Schema(description = "The index of the page to look for (the first page has the index 0)", required = true)
+    private final int pageIndex;
+
+    private TranslationsPageDto(Builder builder) {
+        pageIndex = builder.pageIndex;
+        rows = unmodifiableList(builder.rows);
+        locales = unmodifiableList(builder.locales);
     }
 
     /**
@@ -54,18 +51,24 @@ public class TranslationsPageDto {
     public static final class Builder {
 
         private final List<TranslationsPageRowDto> rows = new ArrayList<>();
-        private String lastKey;
+        private final List<String> locales = new ArrayList<>();
+        private int pageIndex = 0;
 
         private Builder() {
         }
 
-        public Builder lastKey(String lastKey) {
-            this.lastKey = lastKey;
+        public Builder pageIndex(int pageIndex) {
+            this.pageIndex = pageIndex;
             return this;
         }
 
         public Builder rows(List<TranslationsPageRowDto> rows) {
             this.rows.addAll(rows);
+            return this;
+        }
+
+        public Builder locales(List<String> locales) {
+            this.locales.addAll(locales);
             return this;
         }
 

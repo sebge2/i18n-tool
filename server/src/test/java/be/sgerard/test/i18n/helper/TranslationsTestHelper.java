@@ -1,9 +1,6 @@
 package be.sgerard.test.i18n.helper;
 
-import be.sgerard.i18n.model.i18n.dto.BundleKeyTranslationDto;
-import be.sgerard.i18n.model.i18n.dto.TranslationLocaleDto;
-import be.sgerard.i18n.model.i18n.dto.TranslationsPageDto;
-import be.sgerard.i18n.model.i18n.dto.TranslationsSearchRequestDto;
+import be.sgerard.i18n.model.i18n.dto.*;
 import be.sgerard.i18n.model.repository.dto.RepositoryDto;
 import be.sgerard.i18n.model.workspace.dto.WorkspaceDto;
 import junit.framework.AssertionFailedError;
@@ -74,19 +71,18 @@ public class TranslationsTestHelper {
             return translations;
         }
 
-        public Optional<BundleKeyTranslationDto> find(String key, Locale locale) {
+        public Optional<TranslationsPageTranslationDto> find(String key, Locale locale) {
             loadTranslations(workspace);
 
             final TranslationLocaleDto translationLocaleDto = localeTestHelper.findRegisteredLocale(locale);
 
             return translations.getRows().stream()
                     .filter(row -> Objects.equals(row.getBundleKey(), key))
-                    .flatMap(row -> row.getTranslations().stream())
-                    .filter(translation -> Objects.equals(translation.getLocale(), translationLocaleDto.getId()))
+                    .map(row -> row.getTranslations().get(translations.getLocales().indexOf(translationLocaleDto.getId())))
                     .findFirst();
         }
 
-        public BundleKeyTranslationDto findOrDie(String key, Locale locale) {
+        public TranslationsPageTranslationDto findOrDie(String key, Locale locale) {
             return find(key, locale)
                     .orElseThrow(() -> new AssertionFailedError("There is no translation with key [" + key + "] in locale [" + locale + "]."));
         }
@@ -107,7 +103,7 @@ public class TranslationsTestHelper {
 
             final List<String> updatedTranslations = translations.getRows().stream()
                     .flatMap(row -> row.getTranslations().stream())
-                    .map(BundleKeyTranslationDto::getUpdatedValue)
+                    .map(TranslationsPageTranslationDto::getUpdatedValue)
                     .filter(Optional::isPresent)
                     .map(Optional::get)
                     .collect(toList());
