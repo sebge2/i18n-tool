@@ -135,6 +135,7 @@ public class TranslationManagerImpl implements TranslationManager {
                                     translation.setLastEditor(translation.getUpdatedValue().isEmpty() ? null : currentUser.getId());
                                 })
                                 .map(Pair::getKey)
+                                .flatMap(translationRepository::save)
                                 .flatMap(updates ->
                                         listener.afterUpdate(updates)
                                                 .thenReturn(updates)
