@@ -25,9 +25,11 @@ import org.springframework.security.oauth2.client.web.server.DefaultServerOAuth2
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.authentication.RedirectServerAuthenticationEntryPoint;
+import org.springframework.security.web.server.authentication.RedirectServerAuthenticationFailureHandler;
 import org.springframework.security.web.server.authentication.logout.HttpStatusReturningServerLogoutSuccessHandler;
 import org.springframework.security.web.server.context.WebSessionServerSecurityContextRepository;
 import org.springframework.security.web.server.util.matcher.PathPatternParserServerWebExchangeMatcher;
+import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatcher;
 import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers;
 import org.springframework.session.data.mongo.config.annotation.web.reactive.EnableMongoWebSession;
 
@@ -114,14 +116,19 @@ public class SecurityConfiguration {
 
                 .securityContextRepository(new WebSessionServerSecurityContextRepository())
 
-                .oauth2Login(oAuth2LoginSpec ->
-                        oAuth2LoginSpec
+                .oauth2Login(oAuth2Login ->
+                        oAuth2Login
                                 .authorizationRequestResolver(new DefaultServerOAuth2AuthorizationRequestResolver(repository, ServerWebExchangeMatchers.pathMatchers(("/auth/oauth2/authorize-client/{registrationId}"))))
                                 .authenticationMatcher(new PathPatternParserServerWebExchangeMatcher("/auth/oauth2/code/{registrationId}"))
                                 .authenticationManager(externalAuthenticationManager())
                 )
 
-                // TODO login
+                .formLogin(formLogin ->
+                        formLogin
+                                .authenticationEntryPoint(new RedirectServerAuthenticationEntryPoint("/login"))
+                                .requiresAuthenticationMatcher(exchange -> ServerWebExchangeMatcher.MatchResult.notMatch())
+                                .authenticationFailureHandler(new RedirectServerAuthenticationFailureHandler("/login?error"))
+                )
 
                 .build();
     }
