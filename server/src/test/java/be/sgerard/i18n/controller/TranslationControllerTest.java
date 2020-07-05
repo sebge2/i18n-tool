@@ -128,7 +128,7 @@ public class TranslationControllerTest extends AbstractControllerTest {
                 .jsonPath("$.rows").value(hasSize(1))
                 .jsonPath("$.rows[0].bundleKey").isEqualTo(key)
                 .jsonPath("$.rows[0].translations").value(hasSize(2))
-                .jsonPath("$.rows[0].translations[?(@.originalValue=='Répertoire.')]").exists();
+                .jsonPath("$.rows[0].translations[?(@.originalValue=='Répertoire')]").exists();
     }
 
     @Test

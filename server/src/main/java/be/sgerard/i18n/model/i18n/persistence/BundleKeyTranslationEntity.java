@@ -57,7 +57,7 @@ public class BundleKeyTranslationEntity {
      * If the index is negative, it means that this translation was not originally defined in the file.
      */
     @NotNull
-    private long index;
+    private Long index;
 
     /**
      * The original translation has found in the repository.
