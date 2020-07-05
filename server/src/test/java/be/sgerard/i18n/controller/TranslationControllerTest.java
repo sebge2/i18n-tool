@@ -1,6 +1,6 @@
 package be.sgerard.i18n.controller;
 
-import be.sgerard.i18n.model.i18n.dto.BundleKeyTranslationDto;
+import be.sgerard.i18n.model.i18n.dto.*;
 import be.sgerard.test.i18n.support.TransactionalReactiveTest;
 import be.sgerard.test.i18n.support.WithInternalUser;
 import org.junit.jupiter.api.*;
@@ -352,7 +352,7 @@ public class TranslationControllerTest extends AbstractControllerTest {
                 .expectBody()
                 .jsonPath("$").value(hasSize(1))
                 .jsonPath("$[0].id").isEqualTo(translation.getId())
-                .jsonPath("$[0].locale").isEqualTo("en")
+                .jsonPath("$[0].locale").isEqualTo(locale.findRegisteredLocale(Locale.ENGLISH).getId())
                 .jsonPath("$[0].originalValue").isEqualTo("Another repository is already named [{0}]. Names must be unique.")
                 .jsonPath("$[0].updatedValue").isEqualTo("my value updated")
                 .jsonPath("$[0].lastEditor").isEqualTo("fake-user-id");
@@ -370,12 +370,4 @@ public class TranslationControllerTest extends AbstractControllerTest {
                 .exchange()
                 .expectStatus().isNotFound();
     }
-
-    @Test
-    @TransactionalReactiveTest
-    @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
-    public void findTranslations() {
-        // TODO
-    }
-
 }

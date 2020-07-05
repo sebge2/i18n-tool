@@ -1,7 +1,8 @@
 package be.sgerard.i18n.configuration;
 
 import be.sgerard.i18n.service.security.UserRole;
-import org.springframework.beans.factory.annotation.Autowired;
+import be.sgerard.i18n.service.security.auth.AuthenticationManager;
+import be.sgerard.i18n.service.security.auth.ExternalUserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -13,18 +14,14 @@ import org.springframework.security.authentication.UserDetailsRepositoryReactive
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.authentication.OAuth2LoginReactiveAuthenticationManager;
 import org.springframework.security.oauth2.client.endpoint.WebClientReactiveAuthorizationCodeTokenResponseClient;
 import org.springframework.security.oauth2.client.registration.ReactiveClientRegistrationRepository;
-import org.springframework.security.oauth2.client.userinfo.DefaultReactiveOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.ReactiveOAuth2UserService;
 import org.springframework.security.oauth2.client.web.server.DefaultServerOAuth2AuthorizationRequestResolver;
-import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
-import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.authentication.RedirectServerAuthenticationEntryPoint;
@@ -33,9 +30,7 @@ import org.springframework.security.web.server.context.WebSessionServerSecurityC
 import org.springframework.security.web.server.util.matcher.PathPatternParserServerWebExchangeMatcher;
 import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers;
 import org.springframework.session.data.mongo.config.annotation.web.reactive.EnableMongoWebSession;
-import reactor.core.publisher.Mono;
 
-import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -51,14 +46,24 @@ public class SecurityConfiguration {
 
     private final PasswordEncoder passwordEncoder;
     private final ReactiveUserDetailsService internalUserDetailsService;
+    private final AuthenticationManager authenticationManager;
     private final ReactiveClientRegistrationRepository repository;
 
     public SecurityConfiguration(PasswordEncoder passwordEncoder,
-                                 ReactiveUserDetailsService internalUserDetailsService, ReactiveClientRegistrationRepository repository) {
+                                 ReactiveUserDetailsService internalUserDetailsService,
+                                 AuthenticationManager authenticationManager,
+                                 ReactiveClientRegistrationRepository repository) {
         this.passwordEncoder = passwordEncoder;
 
         this.internalUserDetailsService = internalUserDetailsService;
+        this.authenticationManager = authenticationManager;
         this.repository = repository;
+    }
+
+    @Bean
+    @Primary
+    public ReactiveAuthenticationManager authenticationManager(List<ReactiveAuthenticationManager> delegates) {
+        return new DelegatingReactiveAuthenticationManager(delegates);
     }
 
     @Bean
@@ -72,39 +77,17 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    @Primary
-    public ReactiveAuthenticationManager authenticationManager(List<ReactiveAuthenticationManager> delegates) {
-        return new DelegatingReactiveAuthenticationManager(delegates);
-    }
-
-    @Autowired
-    ReactiveClientRegistrationRepository clientRegistrationRepository;
-
-    @Bean
-    public ReactiveOAuth2UserService reactiveOAuth2UserService() {
-        return new DefaultReactiveOAuth2UserService() {
-
-            @Override
-            public Mono<OAuth2User> loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-                return super.loadUser(userRequest)
-                        .map(user -> {
-                            final HashSet<GrantedAuthority> authorities = new HashSet<>();
-                            authorities.addAll(user.getAuthorities());
-                            authorities.add(UserRole.MEMBER_OF_ORGANIZATION.toAuthority());
-                            authorities.add(UserRole.ADMIN.toAuthority());
-
-                            return new DefaultOAuth2User(authorities, user.getAttributes(), "id");
-                        });
-            }
-        };
+    public OAuth2LoginReactiveAuthenticationManager externalAuthenticationManager() {
+        return new OAuth2LoginReactiveAuthenticationManager(
+                new WebClientReactiveAuthorizationCodeTokenResponseClient(),
+                reactiveOAuth2UserService()
+        );
     }
 
     @Bean
-    public OAuth2LoginReactiveAuthenticationManager manager() {
-        return new OAuth2LoginReactiveAuthenticationManager(new WebClientReactiveAuthorizationCodeTokenResponseClient(),
-                new OAuth2UserRequestOAuth2UserReactiveOAuth2UserService());
+    public ReactiveOAuth2UserService<OAuth2UserRequest, OAuth2User> reactiveOAuth2UserService() {
+        return new ExternalUserService(authenticationManager);
     }
-
 
     @Bean
     public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
@@ -135,52 +118,12 @@ public class SecurityConfiguration {
                         oAuth2LoginSpec
                                 .authorizationRequestResolver(new DefaultServerOAuth2AuthorizationRequestResolver(repository, ServerWebExchangeMatchers.pathMatchers(("/auth/oauth2/authorize-client/{registrationId}"))))
                                 .authenticationMatcher(new PathPatternParserServerWebExchangeMatcher("/auth/oauth2/code/{registrationId}"))
+                                .authenticationManager(externalAuthenticationManager())
                 )
 
                 // TODO login
 
                 .build();
-
-//                .anyExchange()
-//
-////                .antMatcher("/**")
-////                .authorizeRequests()
-//                .antMatchers(
-//                        "/",
-//                        "/*",
-//                        "/ws/*",
-//                        "/auth/**",
-//                        "/api/authentication/authenticated",
-//                        "/api/authentication/user",
-//                        "/api/git-hub/**"
-//                )
-//                .permitAll()
-//                .anyRequest()
-//                .hasAnyRole(UserRole.MEMBER_OF_ORGANIZATION.name())
-//
-//                .and().logout()
-//                .logoutUrl("/auth/logout")
-//                .logoutSuccessHandler((httpServletRequest, httpServletResponse, authentication) -> httpServletResponse.setStatus(HttpServletResponse.SC_OK))
-//                .permitAll().and()
-//
-//                .csrf().disable()
-//
-//                .httpBasic().realmName("I18n Tool").and()
-//
-//                .oauth2Login()
-//                .authorizationEndpoint().baseUri("/auth/oauth2/authorize-client").and()
-//                .redirectionEndpoint().baseUri("/auth/oauth2/code/*");
-    }
-
-    private static class OAuth2UserRequestOAuth2UserReactiveOAuth2UserService extends DefaultReactiveOAuth2UserService {
-        @Override
-        public Mono<OAuth2User> loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-            return super.loadUser(userRequest)
-
-                    .doOnNext(user -> {
-                        System.out.println(user);
-                    });
-        }
     }
 
 }

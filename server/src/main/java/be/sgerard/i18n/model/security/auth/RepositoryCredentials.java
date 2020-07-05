@@ -3,6 +3,7 @@ package be.sgerard.i18n.model.security.auth;
 import be.sgerard.i18n.model.repository.persistence.RepositoryEntity;
 import be.sgerard.i18n.service.security.UserRole;
 
+import java.io.Serializable;
 import java.util.Collection;
 
 /**
@@ -10,7 +11,7 @@ import java.util.Collection;
  *
  * @author Sebastien Gerard
  */
-public interface RepositoryCredentials {
+public interface RepositoryCredentials extends Serializable {
 
     /**
      * Returns the repository id.
