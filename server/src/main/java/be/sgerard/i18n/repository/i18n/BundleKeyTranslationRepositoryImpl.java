@@ -7,6 +7,7 @@ import be.sgerard.i18n.model.security.auth.AuthenticatedUser;
 import be.sgerard.i18n.service.security.auth.AuthenticationManager;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -64,9 +65,6 @@ public class BundleKeyTranslationRepositoryImpl implements BundleKeyTranslationR
             query.addCriteria(Criteria.where(FIELD_LOCALE).in(request.getLocales()));
         }
 
-        request.getLastKey()
-                .ifPresent(lastKey -> query.addCriteria(Criteria.where(FIELD_ID).gt(lastKey)));
-
         switch (request.getCriterion()) {
             case MISSING_TRANSLATIONS:
                 query.addCriteria(Criteria.where(FIELD_ORIGINAL_VALUE).is(null));
@@ -86,16 +84,16 @@ public class BundleKeyTranslationRepositoryImpl implements BundleKeyTranslationR
 
             switch (pattern.getStrategy()) {
                 case EQUAL:
-                    query.addCriteria(createCriteriaOnKey(pattern, exact().ignoreCase()));
+                    query.addCriteria(createCriteriaOnBundleKey(pattern, exact().ignoreCase()));
                     break;
                 case CONTAINS:
-                    query.addCriteria(createCriteriaOnKey(pattern, contains().ignoreCase()));
+                    query.addCriteria(createCriteriaOnBundleKey(pattern, contains().ignoreCase()));
                     break;
                 case ENDS_WITH:
-                    query.addCriteria(createCriteriaOnKey(pattern, endsWith().ignoreCase()));
+                    query.addCriteria(createCriteriaOnBundleKey(pattern, endsWith().ignoreCase()));
                     break;
                 case STARTS_WITH:
-                    query.addCriteria(createCriteriaOnKey(pattern, startsWith().ignoreCase()));
+                    query.addCriteria(createCriteriaOnBundleKey(pattern, startsWith().ignoreCase()));
                     break;
                 default:
                     throw new UnsupportedOperationException("Unsupported pattern strategy [" + pattern.getStrategy() + "].");
@@ -103,14 +101,13 @@ public class BundleKeyTranslationRepositoryImpl implements BundleKeyTranslationR
         }
 
         return query
-                .with(Sort.by(request.getSortBy().toArray(new String[0])))
-                .limit(request.getMaxTranslations());
+                .with(PageRequest.of(request.getPageIndex(), request.getMaxTranslations(), Sort.by(request.getSortBy().toArray(new String[0]))));
     }
 
     /**
      * Creates a {@link Criteria criteria} for filtering the {@link BundleKeyTranslationRepository#FIELD_BUNDLE_KEY bundle key} field.
      */
-    private Criteria createCriteriaOnKey(TranslationKeyPatternDto pattern, ExampleMatcher.GenericPropertyMatcher matcher) {
+    private Criteria createCriteriaOnBundleKey(TranslationKeyPatternDto pattern, ExampleMatcher.GenericPropertyMatcher matcher) {
         try {
             final BundleKeyTranslationEntity entity = entityConstructor.newInstance();
             entity.setBundleKey(pattern.getPattern());

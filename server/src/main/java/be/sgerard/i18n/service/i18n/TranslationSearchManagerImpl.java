@@ -14,13 +14,13 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import reactor.core.publisher.GroupedFlux;
 import reactor.core.publisher.Mono;
 
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static be.sgerard.i18n.repository.i18n.BundleKeyTranslationRepository.*;
+import static java.util.stream.Collectors.toList;
 
 /**
  * Implementation of the {@link TranslationSearchManager search manager}.
@@ -51,10 +51,8 @@ public class TranslationSearchManagerImpl implements TranslationSearchManager {
                 .flatMap(request ->
                         keyEntryRepository
                                 .search(request)
-                                .groupBy(this::toGroupKey)
-                                .flatMap(groupedTranslation -> createRow(groupedTranslation, request))
                                 .collectList()
-                                .map(rows -> createPage(rows, request))
+                                .map(translations -> createPage(createRows(translations, request), request))
                 );
     }
 
@@ -105,28 +103,34 @@ public class TranslationSearchManagerImpl implements TranslationSearchManager {
     }
 
     /**
+     * Creates the {@link TranslationsPageRowDto rows} for {@link BundleKeyTranslationEntity translations} by grouping them.
+     */
+    private List<TranslationsPageRowDto> createRows(List<BundleKeyTranslationEntity> translations, TranslationsSearchRequest request) {
+        return translations
+                .stream()
+                .collect(Collectors.groupingBy(this::toGroupKey, LinkedHashMap::new, toList()))
+                .entrySet()
+                .stream()
+                .map(group -> createRow(group, request))
+                .collect(toList());
+    }
+
+    /**
      * Creates the {@link TranslationsPageRowDto row} for the grouped flow by bundle key.
      */
-    private Mono<TranslationsPageRowDto> createRow(GroupedFlux<FoundTranslationGroupKey, BundleKeyTranslationEntity> group,
-                                                   TranslationsSearchRequest searchRequest) {
-        final FoundTranslationGroupKey key = group.key();
+    private TranslationsPageRowDto createRow(Map.Entry<FoundTranslationGroupKey, List<BundleKeyTranslationEntity>> group,
+                                             TranslationsSearchRequest searchRequest) {
+        final FoundTranslationGroupKey key = group.getKey();
 
-        if (key == null) {
-            throw new IllegalStateException("The grouping key is null.");
-        }
+        final List<BundleKeyTranslationEntity> orderedTranslations = new ArrayList<>(group.getValue());
+        orderedTranslations.sort(Comparator.comparingInt(translation -> searchRequest.getLocales().indexOf(translation.getLocale())));
 
-        return group
-                .sort(Comparator.comparingInt(translation -> searchRequest.getLocales().indexOf(translation.getLocale())))
-                .map(translation -> TranslationsPageTranslationDto.builder(translation).build())
-                .collectList()
-                .map(translations ->
-                        TranslationsPageRowDto.builder()
-                                .workspace(key.getWorkspace())
-                                .bundleFile(key.getBundleFile())
-                                .bundleKey(key.getBundleKey())
-                                .translations(translations)
-                                .build()
-                );
+        return TranslationsPageRowDto.builder()
+                .workspace(key.getWorkspace())
+                .bundleFile(key.getBundleFile())
+                .bundleKey(key.getBundleKey())
+                .translations(orderedTranslations.stream().map(translation -> TranslationsPageTranslationDto.builder(translation).build()).collect(toList()))
+                .build();
     }
 
     /**
