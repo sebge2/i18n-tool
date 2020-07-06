@@ -19,6 +19,7 @@ import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.session.data.mongo.ReactiveMongoSessionRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.UUID;
@@ -52,6 +53,22 @@ public class AuthenticationManagerImpl implements AuthenticationManager, UserLis
         this.sessionRepository = sessionRepository;
         this.externalUserHandler = externalUserHandler;
         this.credentialsHandler = credentialsHandler;
+    }
+
+    @Override
+    public Mono<AuthenticatedUser> getCurrentUser() {
+        return ReactiveSecurityContextHolder.getContext()
+                .flatMap(securityContext -> Mono.justOrEmpty(getAuthenticatedUser(securityContext.getAuthentication())));
+    }
+
+    @Override
+    public Flux<AuthenticatedUser> findAll() {
+        return Flux.empty(); // TODO
+    }
+
+    @Override
+    public Flux<AuthenticatedUser> findAll(String userId) {
+        return null;
     }
 
     @Override
@@ -100,15 +117,9 @@ public class AuthenticationManagerImpl implements AuthenticationManager, UserLis
     }
 
     @Override
-    public Mono<AuthenticatedUser> getCurrentUser() {
-        return ReactiveSecurityContextHolder.getContext()
-                .flatMap(securityContext -> Mono.justOrEmpty(getAuthenticatedUser(securityContext.getAuthentication())));
-    }
-
-    @Override
     public Mono<Void> onUpdate(UserEntity user) {
         // TODO
-//        sessionRepository.findByPrincipalName(user.getId()).values().stream()
+
 //                .map(Session.class::cast)
 //                .filter(session -> session.getAttributeNames().contains(DEFAULT_SPRING_SECURITY_CONTEXT_ATTR_NAME))
 //                .filter(session -> ((SecurityContext) session.getAttribute(DEFAULT_SPRING_SECURITY_CONTEXT_ATTR_NAME)).getAuthentication().getPrincipal() instanceof AuthenticatedUser)

@@ -20,6 +20,7 @@ public final class AuthenticationUtils {
     private AuthenticationUtils() {
     }
 
+    // TODO
     public static AuthenticatedUser getAuthenticatedUserOrFail(Principal principal) {
         if (principal instanceof OAuth2AuthenticationToken && ((OAuth2AuthenticationToken) principal).getPrincipal() instanceof AuthenticatedUser) {
             return (AuthenticatedUser) ((OAuth2AuthenticationToken) principal).getPrincipal();

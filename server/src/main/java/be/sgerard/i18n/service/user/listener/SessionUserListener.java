@@ -5,6 +5,6 @@ package be.sgerard.i18n.service.user.listener;
  */
 public class SessionUserListener implements UserListener {
 
-    // TODO kill user's sessions
+    // TODO kill authenticated users
 
 }
