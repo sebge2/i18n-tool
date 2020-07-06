@@ -61,12 +61,17 @@ public interface UserManager {
     /**
      * Creates a new, or updates the existing {@link ExternalUserEntity external user} based on the specified {@link ExternalUser info}.
      */
-    Mono<ExternalUserEntity> createOrUpdateUser(ExternalUser externalUser);
+    Mono<ExternalUserEntity> createOrUpdate(ExternalUser externalUser);
 
     /**
-     * Updates the {@link InternalUserEntity internal user} based on the specified {@link UserPatchDto info}.
+     * Updates the {@link UserEntity user} based on the specified {@link UserPatchDto info}.
      */
-    Mono<UserEntity> updateUser(String id, UserPatchDto patch);
+    Mono<UserEntity> update(String id, UserPatchDto patch);
+
+    /**
+     * Updates the {@link UserEntity user} based on the specified {@link UserPatchDto info}.
+     */
+    Mono<UserEntity> update(UserEntity user);
 
     /**
      * Deletes the {@link UserEntity user} having the specified id.

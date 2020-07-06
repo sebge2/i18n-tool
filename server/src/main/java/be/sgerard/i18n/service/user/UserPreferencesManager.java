@@ -15,11 +15,11 @@ public interface UserPreferencesManager {
     /**
      * Returns {@link UserPreferencesManager preferences} of the specified user.
      */
-    Mono<UserPreferencesEntity> getUserPreferences(String userId) throws ResourceNotFoundException;
+    Mono<UserPreferencesEntity> find(String userId) throws ResourceNotFoundException;
 
     /**
      * Updates {@link UserPreferencesManager preferences} for user having the specified id.
      */
-    Mono<UserPreferencesEntity> updateUserPreferences(String userId, UserPreferencesDto preferences) throws ResourceNotFoundException;
+    Mono<UserPreferencesEntity> update(String userId, UserPreferencesDto preferences) throws ResourceNotFoundException;
 
 }

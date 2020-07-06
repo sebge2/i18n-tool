@@ -31,7 +31,7 @@ public class UserPreferencesController {
     @Operation(summary = "Returns preferences for user having the specified id.")
     @Transactional(readOnly = true)
     public Mono<UserPreferencesDto> getPreferencesByUserId(@PathVariable String id) {
-        return userPreferencesManager.getUserPreferences(id)
+        return userPreferencesManager.find(id)
                 .map(pref -> UserPreferencesDto.builder(pref).build());
     }
 
@@ -44,7 +44,7 @@ public class UserPreferencesController {
     public Mono<UserPreferencesDto> updateUserPreferences(@PathVariable String id,
                                                           @RequestBody UserPreferencesDto userPreferences) {
         return userPreferencesManager
-                .updateUserPreferences(id, userPreferences)
+                .update(id, userPreferences)
                 .map(pref -> UserPreferencesDto.builder(pref).build());
     }
 }

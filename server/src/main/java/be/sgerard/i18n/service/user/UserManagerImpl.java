@@ -100,7 +100,7 @@ public class UserManagerImpl implements UserManager {
 
     @Override
     @Transactional
-    public Mono<ExternalUserEntity> createOrUpdateUser(ExternalUser externalUserDto) {
+    public Mono<ExternalUserEntity> createOrUpdate(ExternalUser externalUserDto) {
         return externalUserRepository
                 .findByExternalId(externalUserDto.getExternalId())
                 .switchIfEmpty(Mono.just(new ExternalUserEntity(externalUserDto.getExternalId(), externalUserDto.getAuthSystem())))
@@ -130,7 +130,7 @@ public class UserManagerImpl implements UserManager {
 
     @Override
     @Transactional
-    public Mono<UserEntity> updateUser(String id, UserPatchDto patch) {
+    public Mono<UserEntity> update(String id, UserPatchDto patch) {
         return findById(id)
                 .flatMap(user ->
                         listener
@@ -151,10 +151,18 @@ public class UserManagerImpl implements UserManager {
 
                     patch.getRoles().ifPresent(userEntity::setRoles);
                 })
-                .flatMap(user ->
+                .flatMap(this::update);
+    }
+
+    @Override
+    @Transactional
+    public Mono<UserEntity> update(UserEntity user) {
+        return userRepository
+                .save(user)
+                .flatMap(u ->
                         listener
-                                .onUpdate(user)
-                                .thenReturn(user)
+                                .onUpdate(u)
+                                .thenReturn(u)
                 );
     }
 

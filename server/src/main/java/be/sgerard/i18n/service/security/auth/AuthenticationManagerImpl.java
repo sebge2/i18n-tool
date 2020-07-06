@@ -59,7 +59,7 @@ public class AuthenticationManagerImpl implements AuthenticationManager, UserLis
     public Mono<ExternalAuthenticatedUser> createAuthentication(OAuthExternalUser externalUser) {
         return externalUserHandler
                 .map(externalUser)
-                .flatMap(userManager::createOrUpdateUser)
+                .flatMap(userManager::createOrUpdate)
                 .flatMap(externalUserEntity ->
                         repositoryManager
                                 .findAll()

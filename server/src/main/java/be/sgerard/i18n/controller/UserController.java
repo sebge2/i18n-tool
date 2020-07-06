@@ -79,7 +79,7 @@ public class UserController {
     public Mono<UserDto> updateUser(@PathVariable String id,
                                     @RequestBody UserPatchDto userUpdate) {
         return userManager
-                .updateUser(id, userUpdate)
+                .update(id, userUpdate)
                 .map(entity -> UserDto.builder(entity).build());
     }
 

@@ -27,15 +27,18 @@ public class UserPreferencesManagerImpl implements UserPreferencesManager {
 
     @Override
     @Transactional(readOnly = true)
-    public Mono<UserPreferencesEntity> getUserPreferences(String userId) throws ResourceNotFoundException {
+    public Mono<UserPreferencesEntity> find(String userId) throws ResourceNotFoundException {
         return findUserOrDie(userId)
                 .map(UserEntity::getPreferences);
     }
 
     @Override
-    public Mono<UserPreferencesEntity> updateUserPreferences(String userId, UserPreferencesDto preferences) throws ResourceNotFoundException {
-        return getUserPreferences(userId)
-                .doOnNext(pref -> pref.setToolLocale(preferences.getToolLocale().orElse(null)))
+    public Mono<UserPreferencesEntity> update(String userId, UserPreferencesDto preferences) throws ResourceNotFoundException {
+        return userManager
+                .findByIdOrDie(userId)
+                .doOnNext(user -> user.getPreferences().setToolLocale(preferences.getToolLocale().orElse(null)))
+                .flatMap(userManager::update)
+                .map(UserEntity::getPreferences)
                 .flatMap(pref ->
                         listener
                                 .onUpdate(pref)
