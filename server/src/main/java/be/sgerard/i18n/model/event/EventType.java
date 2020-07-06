@@ -6,8 +6,12 @@ import be.sgerard.i18n.model.security.user.dto.AuthenticatedUserDto;
 import be.sgerard.i18n.model.security.user.dto.UserDto;
 import be.sgerard.i18n.model.security.user.dto.UserPreferencesDto;
 import be.sgerard.i18n.model.workspace.dto.WorkspaceDto;
+import be.sgerard.i18n.model.i18n.dto.TranslationLocaleDto;
+import be.sgerard.i18n.model.i18n.dto.TranslationsUpdateEventDto;
 
 /**
+ * All possible kind of events.
+ *
  * @author Sebastien Gerard
  */
 public enum EventType {
@@ -15,110 +19,90 @@ public enum EventType {
     /**
      * @see UserLiveSessionDto
      */
-    CONNECTED_USER_SESSION("connected-user-session"),
+    CONNECTED_USER_SESSION,
 
     /**
-     * @see be.sgerard.i18n.model.i18n.dto.TranslationLocaleDto
+     * @see TranslationLocaleDto
      */
-    ADDED_TRANSLATION_LOCALE("added-translation-locale"),
+    ADDED_TRANSLATION_LOCALE,
 
     /**
-     * @see be.sgerard.i18n.model.i18n.dto.TranslationLocaleDto
+     * @see TranslationLocaleDto
      */
-    UPDATED_TRANSLATION_LOCALE("updated-translation-locale"),
+    UPDATED_TRANSLATION_LOCALE,
 
     /**
-     * @see be.sgerard.i18n.model.i18n.dto.TranslationLocaleDto
+     * @see TranslationLocaleDto
      */
-    DELETED_TRANSLATION_LOCALE("deleted-translation-locale"),
+    DELETED_TRANSLATION_LOCALE,
 
     /**
      * @see UserLiveSessionDto
      */
-    DISCONNECTED_USER_SESSION("disconnected-user-session"),
+    DISCONNECTED_USER_SESSION,
 
     /**
      * @see WorkspaceDto
      */
-    ADDED_WORKSPACE("added-workspace"),
+    ADDED_WORKSPACE,
 
     /**
      * @see WorkspaceDto
      */
-    UPDATED_WORKSPACE("updated-workspace"),
+    UPDATED_WORKSPACE,
 
     /**
      * @see WorkspaceDto
      */
-    DELETED_WORKSPACE("deleted-workspace"),
+    DELETED_WORKSPACE,
 
     /**
-     * @see be.sgerard.i18n.model.i18n.dto.TranslationsUpdateEventDto
+     * @see TranslationsUpdateEventDto
      */
-    UPDATED_TRANSLATIONS("updated-translations"),
-
-    /**
-     * @see RepositorySummaryDto
-     */
-    ADDED_REPOSITORY("added-repository"),
+    UPDATED_TRANSLATIONS,
 
     /**
      * @see RepositorySummaryDto
      */
-    UPDATED_REPOSITORY("updated-repository"),
+    ADDED_REPOSITORY,
 
     /**
      * @see RepositorySummaryDto
      */
-    DELETED_REPOSITORY("deleted-repository"),
+    UPDATED_REPOSITORY,
+
+    /**
+     * @see RepositorySummaryDto
+     */
+    DELETED_REPOSITORY,
 
     /**
      * @see UserDto
      */
-    UPDATED_USER("updated-user"),
+    UPDATED_USER,
 
     /**
      * @see UserDto
      */
-    DELETED_USER("deleted-user"),
+    DELETED_USER,
 
     /**
      * @see UserDto
      */
-    UPDATED_CURRENT_USER("updated-current-user"),
+    UPDATED_CURRENT_USER,
 
     /**
      * @see AuthenticatedUserDto
      */
-    UPDATED_AUTHENTICATED_USER("updated-authenticated-user"),
+    UPDATED_AUTHENTICATED_USER,
 
     /**
      * @see AuthenticatedUserDto
      */
-    UPDATED_CURRENT_AUTHENTICATED_USER("updated-current-authenticated-user"),
+    UPDATED_CURRENT_AUTHENTICATED_USER,
 
     /**
      * @see UserPreferencesDto
      */
-    UPDATED_USER_PREFERENCES("updated-current-user-preferences");
-
-    public static final String QUEUE_BROADCAST = "/topic/";
-
-    public static final String QUEUE_USER = "/queue/";
-
-    public static final String QUEUE_APP = "/app/";
-
-    private final String name;
-
-    EventType(String name) {
-        this.name = name;
-    }
-
-    public String toBroadcastQueue() {
-        return QUEUE_BROADCAST + "/" + name;
-    }
-
-    public String toUserQueue() {
-        return QUEUE_USER + "/" + name;
-    }
+    UPDATED_USER_PREFERENCES;
 }

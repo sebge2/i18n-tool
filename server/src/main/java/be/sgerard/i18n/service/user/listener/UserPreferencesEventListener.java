@@ -1,6 +1,9 @@
 package be.sgerard.i18n.service.user.listener;
 
-import be.sgerard.i18n.model.security.user.persistence.UserPreferencesEntity;
+import be.sgerard.i18n.model.event.EventType;
+import be.sgerard.i18n.model.security.user.dto.UserDto;
+import be.sgerard.i18n.model.security.user.dto.UserPreferencesDto;
+import be.sgerard.i18n.model.security.user.persistence.UserEntity;
 import be.sgerard.i18n.service.event.EventService;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
@@ -20,10 +23,11 @@ public class UserPreferencesEventListener implements UserPreferencesListener {
     }
 
     @Override
-    public Mono<Void> onUpdate(UserPreferencesEntity preferences) {
-        // TODO
-        //        eventService.sendEventToUser(UserDto.builder(existingPreferences.getUser()).build(), EventType.UPDATED_USER_PREFERENCES, preferences);
-
-        return Mono.empty();
+    public Mono<Void> onUpdate(UserEntity user) {
+        return eventService.sendEventToUser(
+                UserDto.builder(user).build(),
+                EventType.UPDATED_USER_PREFERENCES,
+                UserPreferencesDto.builder(user.getPreferences()).build()
+        );
     }
 }

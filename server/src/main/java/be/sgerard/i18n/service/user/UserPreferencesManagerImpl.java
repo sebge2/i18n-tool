@@ -38,11 +38,10 @@ public class UserPreferencesManagerImpl implements UserPreferencesManager {
                 .findByIdOrDie(userId)
                 .doOnNext(user -> user.getPreferences().setToolLocale(preferences.getToolLocale().orElse(null)))
                 .flatMap(userManager::update)
-                .map(UserEntity::getPreferences)
-                .flatMap(pref ->
+                .flatMap(user ->
                         listener
-                                .onUpdate(pref)
-                                .thenReturn(pref)
+                                .onUpdate(user)
+                                .thenReturn(user.getPreferences())
                 );
 
     }

@@ -1,6 +1,6 @@
 package be.sgerard.i18n.service.user.listener;
 
-import be.sgerard.i18n.model.security.user.persistence.UserPreferencesEntity;
+import be.sgerard.i18n.model.security.user.persistence.UserEntity;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
@@ -26,10 +26,10 @@ public class CompositeUserPreferencesListener implements UserPreferencesListener
     }
 
     @Override
-    public Mono<Void> onUpdate(UserPreferencesEntity preferences) {
+    public Mono<Void> onUpdate(UserEntity user) {
         return Flux
                 .fromIterable(listeners)
-                .flatMap(listener -> listener.onUpdate(preferences))
+                .flatMap(listener -> listener.onUpdate(user))
                 .then();
     }
 }
