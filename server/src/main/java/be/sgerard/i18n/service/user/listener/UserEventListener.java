@@ -1,7 +1,10 @@
 package be.sgerard.i18n.service.user.listener;
 
+import be.sgerard.i18n.model.event.EventType;
+import be.sgerard.i18n.model.security.user.dto.UserDto;
 import be.sgerard.i18n.model.security.user.persistence.UserEntity;
 import be.sgerard.i18n.service.event.EventService;
+import be.sgerard.i18n.service.security.UserRole;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
@@ -19,30 +22,26 @@ public class UserEventListener implements UserListener {
         this.eventService = eventService;
     }
 
-    // TODO delete live sessions + translation modification author
-
     @Override
     public Mono<Void> onCreate(UserEntity user) {
-        //        eventService.broadcastInternally(EventType.UPDATED_USER, UserDto.builder(userEntity).build());
-//        eventService.sendEventToUsers(UserRole.ADMIN, EventType.UPDATED_USER, UserDto.builder(userEntity).build());
-
-        return Mono.empty();
+        return eventService.sendEventToUsers(UserRole.ADMIN, EventType.UPDATED_USER, UserDto.builder(user).build());
     }
 
     @Override
     public Mono<Void> onUpdate(UserEntity user) {
-        //        eventService.broadcastInternally(EventType.UPDATED_USER, updatedUserDto);
-//        eventService.sendEventToUsers(UserRole.ADMIN, EventType.UPDATED_USER, updatedUserDto);
-//        eventService.sendEventToUser(updatedUserDto, EventType.UPDATED_CURRENT_USER, updatedUserDto);
-
-        return Mono.empty();
+        final UserDto updatedUserDto = UserDto.builder(user).build();
+        return Mono
+                .zip(
+                        eventService.sendEventToUsers(UserRole.ADMIN, EventType.UPDATED_USER, updatedUserDto),
+                        eventService.sendEventToUser(updatedUserDto, EventType.UPDATED_CURRENT_USER, updatedUserDto)
+                )
+                .then();
     }
 
     @Override
     public Mono<Void> onDelete(UserEntity user) {
-        //                    eventService.broadcastInternally(EventType.DELETED_USER, UserDto.builder(userEntity).build());
-//        eventService.sendEventToUsers(UserRole.ADMIN, EventType.DELETED_USER, UserDto.builder(userEntity).build());
-
-        return Mono.empty();
+        return eventService
+                .sendEventToUsers(UserRole.ADMIN, EventType.DELETED_USER, UserDto.builder(user).build())
+                .then();
     }
 }
