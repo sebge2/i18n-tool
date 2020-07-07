@@ -136,7 +136,8 @@ export class TranslationsTableComponent implements OnInit, OnDestroy {
                 );
 
                 for (let i = 0; i < this.getSearchedLocales().length; i++) {
-                    const translation: BundleKeyTranslation = key.findTranslation(this.getSearchedLocales()[i]);
+                    // TODO
+                    const translation: BundleKeyTranslation = key.findTranslation(/*this.getSearchedLocales()[i]*/ null);
 
                     const formGroup = this.formBuilder.group({translation});
 
@@ -186,8 +187,8 @@ export class TranslationsTableComponent implements OnInit, OnDestroy {
                     (formArray: FormArray) => <FormGroup>formArray.controls[i + 1],
                     (formArray: FormArray) => {
                         const bundleKey = <BundleKey>(<FormGroup>formArray.controls[0]).value.key;
-
-                        return (bundleKey).findTranslation(locale) != null
+                        // TODO
+                        return (bundleKey).findTranslation(/*locale*/ null) != null
                             ? CellType.TRANSLATION : CellType.EMPTY;
                     }
                 )
