@@ -1,6 +1,6 @@
 spring:
-  datasource:
-    url: jdbc:h2:file:/tmp/i18n-tool/database/db;DB_CLOSE_ON_EXIT=FALSE;
+#  datasource:
+#    url: jdbc:h2:file:/tmp/i18n-tool/database/db;DB_CLOSE_ON_EXIT=FALSE;
   security:
     oauth2:
       client:
@@ -13,4 +13,4 @@ be:
     i18n:
       base-directory: /tmp/i18n-tool
       security:
-        default-admin-password: adminPassword
+        default-admin-password: admin
