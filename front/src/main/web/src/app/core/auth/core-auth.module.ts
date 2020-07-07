@@ -5,7 +5,6 @@ import {LogoutComponent} from './component/logout/logout.component';
 import {LoginComponent} from './component/login/login.component';
 import {LoginUserPasswordComponent} from './component/login/login-user-password/login-user-password.component';
 import {CoreSharedModule} from "../shared/core-shared-module";
-import {LoginAuthKeyComponent} from './component/login/login-auth-key/login-auth-key.component';
 import {LoginProviderComponent} from './component/login/login-provider/login-provider.component';
 import {HasRoleDirective} from "./directive/has-role.directive";
 import {LogoutGuard} from "./service/guard/logout.guard";
@@ -30,7 +29,6 @@ const appRoutes: Routes = [
         LogoutComponent,
         LoginComponent,
         LoginUserPasswordComponent,
-        LoginAuthKeyComponent,
         LoginProviderComponent,
 
         HasRoleDirective
