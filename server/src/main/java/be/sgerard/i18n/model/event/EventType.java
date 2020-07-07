@@ -99,6 +99,11 @@ public enum EventType {
     /**
      * @see AuthenticatedUserDto
      */
+    DELETED_AUTHENTICATED_USER,
+
+    /**
+     * @see AuthenticatedUserDto
+     */
     UPDATED_CURRENT_AUTHENTICATED_USER,
 
     /**

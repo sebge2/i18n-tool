@@ -6,27 +6,36 @@ import be.sgerard.i18n.model.security.auth.RepositoryCredentials;
 import be.sgerard.i18n.model.security.auth.external.ExternalAuthenticatedUser;
 import be.sgerard.i18n.model.security.auth.external.OAuthExternalUser;
 import be.sgerard.i18n.model.security.auth.internal.InternalAuthenticatedUser;
+import be.sgerard.i18n.model.security.user.dto.AuthenticatedUserDto;
 import be.sgerard.i18n.model.security.user.dto.UserDto;
 import be.sgerard.i18n.model.security.user.persistence.ExternalUserEntity;
-import be.sgerard.i18n.model.security.user.persistence.UserEntity;
+import be.sgerard.i18n.service.ResourceNotFoundException;
+import be.sgerard.i18n.service.event.EventService;
 import be.sgerard.i18n.service.repository.RepositoryManager;
+import be.sgerard.i18n.service.security.UserRole;
 import be.sgerard.i18n.service.security.auth.external.OAuthUserMapper;
 import be.sgerard.i18n.service.security.auth.external.OAuthUserRepositoryCredentialsHandler;
+import be.sgerard.i18n.service.security.session.repository.SessionRepository;
 import be.sgerard.i18n.service.user.UserManager;
 import be.sgerard.i18n.service.user.listener.UserListener;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
-import org.springframework.session.data.mongo.ReactiveMongoSessionRepository;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.session.data.mongo.MongoSession;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.WebSession;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Stream;
 
+import static be.sgerard.i18n.model.event.EventType.DELETED_AUTHENTICATED_USER;
+import static be.sgerard.i18n.model.event.EventType.UPDATED_AUTHENTICATED_USER;
 import static be.sgerard.i18n.service.security.auth.AuthenticationUtils.getAuthenticatedUser;
-import static java.util.stream.Collectors.toList;
+import static org.springframework.security.web.server.context.WebSessionServerSecurityContextRepository.DEFAULT_SPRING_SECURITY_CONTEXT_ATTR_NAME;
 
 /**
  * Implementation of the {@link AuthenticationManager authentication manager}.
@@ -38,41 +47,86 @@ public class AuthenticationManagerImpl implements AuthenticationManager, UserLis
 
     private final UserManager userManager;
     private final RepositoryManager repositoryManager;
-    private final ReactiveMongoSessionRepository sessionRepository;
+    private final SessionRepository sessionRepository;
     private final OAuthUserMapper externalUserHandler;
     private final OAuthUserRepositoryCredentialsHandler credentialsHandler;
+    private final EventService eventService;
 
     @Lazy
     public AuthenticationManagerImpl(UserManager userManager,
                                      RepositoryManager repositoryManager,
-                                     ReactiveMongoSessionRepository sessionRepository,
+                                     SessionRepository sessionRepository,
                                      OAuthUserMapper externalUserHandler,
-                                     OAuthUserRepositoryCredentialsHandler credentialsHandler) {
+                                     OAuthUserRepositoryCredentialsHandler credentialsHandler,
+                                     EventService eventService) {
         this.userManager = userManager;
         this.repositoryManager = repositoryManager;
         this.sessionRepository = sessionRepository;
         this.externalUserHandler = externalUserHandler;
         this.credentialsHandler = credentialsHandler;
+        this.eventService = eventService;
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Mono<AuthenticatedUser> getCurrentUser() {
         return ReactiveSecurityContextHolder.getContext()
                 .flatMap(securityContext -> Mono.justOrEmpty(getAuthenticatedUser(securityContext.getAuthentication())));
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Flux<AuthenticatedUser> findAll() {
-        return Flux.empty(); // TODO
-    }
-
-    @Override
-    public Flux<AuthenticatedUser> findAll(String userId) {
-        return null;
+        return sessionRepository
+                .findAll()
+                .flatMap(session -> Mono.justOrEmpty(session.getAttribute(DEFAULT_SPRING_SECURITY_CONTEXT_ATTR_NAME)))
+                .map(SecurityContext.class::cast)
+                .map(context -> getAuthenticatedUser(context.getAuthentication()))
+                .filter(Optional::isPresent)
+                .map(Optional::get);
     }
 
     @Override
     @Transactional(readOnly = true)
+    public Flux<AuthenticatedUser> findAll(String userId) {
+        return findAll()
+                .filter(authenticatedUser -> Objects.equals(userId, authenticatedUser.getUser().getId()));
+    }
+
+    @Override
+    @Transactional
+    public Mono<AuthenticatedUser> update(AuthenticatedUser authenticatedUser) {
+        final AuthenticatedUserDto dto = AuthenticatedUserDto.builder(authenticatedUser).build();
+
+        return findSession(authenticatedUser)
+                .switchIfEmpty(Mono.error(ResourceNotFoundException.authenticatedUserNotFoundException(authenticatedUser.getId())))
+                .flatMap(webSession -> sessionRepository.deleteById(webSession.getId()))
+                .then(
+                        Mono
+                                .zip(
+                                        eventService.sendEventToUser(authenticatedUser, UPDATED_AUTHENTICATED_USER, dto),
+                                        eventService.sendEventToUsers(UserRole.ADMIN, UPDATED_AUTHENTICATED_USER, dto)
+                                )
+                                .then(Mono.just(authenticatedUser))
+                );
+    }
+
+    @Override
+    @Transactional
+    public Mono<AuthenticatedUser> delete(AuthenticatedUser authenticatedUser) {
+        final AuthenticatedUserDto dto = AuthenticatedUserDto.builder(authenticatedUser).build();
+
+        return findSession(authenticatedUser)
+                .switchIfEmpty(Mono.empty())
+                .then(
+                        eventService
+                                .sendEventToUsers(UserRole.ADMIN, DELETED_AUTHENTICATED_USER, dto)
+                                .then(Mono.just(authenticatedUser))
+                );
+    }
+
+    @Override
+    @Transactional
     public Mono<ExternalAuthenticatedUser> createAuthentication(OAuthExternalUser externalUser) {
         return externalUserHandler
                 .map(externalUser)
@@ -96,7 +150,7 @@ public class AuthenticationManagerImpl implements AuthenticationManager, UserLis
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public Mono<InternalAuthenticatedUser> createAuthentication(String username) {
         return userManager
                 .finUserByNameOrDie(username)
@@ -116,27 +170,6 @@ public class AuthenticationManagerImpl implements AuthenticationManager, UserLis
 
     }
 
-    @Override
-    public Mono<Void> onUpdate(UserEntity user) {
-        // TODO
-
-//                .map(Session.class::cast)
-//                .filter(session -> session.getAttributeNames().contains(DEFAULT_SPRING_SECURITY_CONTEXT_ATTR_NAME))
-//                .filter(session -> ((SecurityContext) session.getAttribute(DEFAULT_SPRING_SECURITY_CONTEXT_ATTR_NAME)).getAuthentication().getPrincipal() instanceof AuthenticatedUser)
-//                .forEach(session -> update(session, user));
-
-        return Mono.empty();
-    }
-
-    @Override
-    public Mono<Void> onDelete(UserEntity user) {
-//        sessionRepository.findByPrincipalName(user.getId()).values().stream()
-//                .map(Session.class::cast)
-//                .forEach(session -> sessionRepository.deleteById(session.getId()));
-
-        return Mono.empty();
-    }
-
     /**
      * Loads the {@link RepositoryCredentials credentails} to use for the specified {@link ExternalUserEntity external user}
      * and the specified {@link RepositoryEntity repository}.
@@ -149,33 +182,23 @@ public class AuthenticationManagerImpl implements AuthenticationManager, UserLis
         );
     }
 
-
-//    private void update(Session session, UserEntity updatedUser) {
-//        final SecurityContext securityContext = session.getAttribute(DEFAULT_SPRING_SECURITY_CONTEXT_ATTR_NAME);
-//        final AuthenticatedUser authenticatedUser = (AuthenticatedUser) securityContext.getAuthentication().getPrincipal();
-
-//        final AuthenticatedUser updatedAuthenticatedUser = updateAuthenticatedUser(authenticatedUser, updatedUser);
-//        final AuthenticatedUserDto updatedAuthenticatedUserDto = AuthenticatedUserDto.builder(updatedAuthenticatedUser).build();
-
-//        final SecurityContextImpl updatedSecurityContext = new SecurityContextImpl();
-//        updatedSecurityContext.setAuthentication(updateAuthentication(securityContext.getAuthentication(), updatedAuthenticatedUser));
-//        session.setAttribute(DEFAULT_SPRING_SECURITY_CONTEXT_ATTR_NAME, updatedSecurityContext);
-
-//        sessionRepository.save(session);
-
-//            eventService.broadcastInternally(UPDATED_AUTHENTICATED_USER, updatedAuthenticatedUserDto);
-//        eventService.sendEventToUsers(UserRole.ADMIN, UPDATED_AUTHENTICATED_USER, updatedAuthenticatedUserDto);
-//    }
-
-    private AuthenticatedUser updateAuthenticatedUser(AuthenticatedUser authenticatedUser, UserDto updatedUser) {
-        return authenticatedUser.updateSessionRoles(
-                Stream
-                        .concat(
-                                authenticatedUser.getSessionRoles().stream().filter(role -> !role.isAssignableByEndUser()),
-                                updatedUser.getRoles().stream()
-                        )
-                        .collect(toList())
-        );
+    /**
+     * Returns the {@link WebSession session} for the specified user.
+     */
+    private Mono<MongoSession> findSession(AuthenticatedUser authenticatedUser) {
+        return sessionRepository
+                .findAll()
+                .flatMap(session ->
+                        Mono
+                                .justOrEmpty(session.getAttribute(DEFAULT_SPRING_SECURITY_CONTEXT_ATTR_NAME))
+                                .map(SecurityContext.class::cast)
+                                .map(context -> getAuthenticatedUser(context.getAuthentication()))
+                                .filter(Optional::isPresent)
+                                .map(Optional::get)
+                                .filter(user -> Objects.equals(authenticatedUser.getId(), user.getId()))
+                                .thenReturn(session)
+                )
+                .next();
     }
 
 }

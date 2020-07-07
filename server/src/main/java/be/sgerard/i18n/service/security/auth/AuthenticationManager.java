@@ -50,4 +50,14 @@ public interface AuthenticationManager {
     // TODO in the other method the user is authenticated, find a better way
     Mono<InternalAuthenticatedUser> createAuthentication(String username);
 
+    /**
+     * Updates the specified {@link AuthenticatedUser user}.
+     */
+    Mono<AuthenticatedUser> update(AuthenticatedUser authenticatedUser);
+
+    /**
+     * Deletes the specified {@link AuthenticatedUser user}.
+     */
+    Mono<AuthenticatedUser> delete(AuthenticatedUser authenticatedUser);
+
 }

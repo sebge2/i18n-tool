@@ -2,6 +2,7 @@ package be.sgerard.i18n.service.event;
 
 import be.sgerard.i18n.model.event.EventDto;
 import be.sgerard.i18n.model.event.EventType;
+import be.sgerard.i18n.model.security.auth.AuthenticatedUser;
 import be.sgerard.i18n.model.security.user.dto.UserDto;
 import be.sgerard.i18n.service.security.UserRole;
 import reactor.core.publisher.Flux;
@@ -32,7 +33,7 @@ public interface EventService {
     /**
      * Broadcasts the specified event to to the specified user session (a user may have multiple sessions).
      */
-    Mono<Void> sendEventToSession(String sessionId, EventType eventType, Object payload);
+    Mono<Void> sendEventToUser(AuthenticatedUser authenticatedUser, EventType eventType, Object payload);
 
     /**
      * Returns all the {@link EventDto events}.

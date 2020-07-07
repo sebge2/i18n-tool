@@ -2,6 +2,7 @@ package be.sgerard.i18n.service.event;
 
 import be.sgerard.i18n.model.event.EventDto;
 import be.sgerard.i18n.model.event.EventType;
+import be.sgerard.i18n.model.security.auth.AuthenticatedUser;
 import be.sgerard.i18n.model.security.session.persistence.UserLiveSessionEntity;
 import be.sgerard.i18n.model.security.user.dto.UserDto;
 import be.sgerard.i18n.service.security.UserRole;
@@ -53,8 +54,8 @@ public class ServerSentEventService implements EventService {
     }
 
     @Override
-    public Mono<Void> sendEventToSession(String sessionId, EventType eventType, Object payload) {
-        return emit(new Event<>(eventType, payload, userLiveSession -> Objects.equals(userLiveSession.getId(), sessionId)));
+    public Mono<Void> sendEventToUser(AuthenticatedUser authenticatedUser, EventType eventType, Object payload) {
+        return emit(new Event<>(eventType, payload, userLiveSession -> Objects.equals(userLiveSession.getAuthenticatedUserId(), authenticatedUser.getId())));
     }
 
     @Override
