@@ -14,9 +14,22 @@ import {TranslateHttpLoader} from '@ngx-translate/http-loader';
 import {MESSAGE_FORMAT_CONFIG, TranslateMessageFormatCompiler} from "ngx-translate-messageformat-compiler";
 import {CoreNotificationModule} from './core/notification/core-notification.module';
 import {ALL_LOCALES} from "./core/ui/service/tool-locale.service";
+import {ApiModule, Configuration, ConfigurationParameters} from "./api";
 
 export function HttpLoaderFactory(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
+}
+
+export function configurationFactory() {
+    return new SwaggerConfiguration({
+        basePath: '/',
+    });
+}
+
+export class SwaggerConfiguration extends Configuration {
+    constructor(configurationParameters: ConfigurationParameters = {}) {
+        super(configurationParameters);
+    }
 }
 
 @NgModule({
@@ -37,6 +50,8 @@ export function HttpLoaderFactory(http: HttpClient) {
                 useClass: TranslateMessageFormatCompiler
             }
         }),
+
+        ApiModule.forRoot(configurationFactory),
 
         CoreUiModule,
         CoreAuthModule,
