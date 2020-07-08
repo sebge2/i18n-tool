@@ -1,5 +1,7 @@
 package be.sgerard.i18n.model.support;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
@@ -9,6 +11,7 @@ import java.util.UUID;
  *
  * @author Sebastien Gerard
  */
+@Tag(name = "ErrorMessages", description = "List of error messages.")
 public class ErrorMessages {
 
     private final String id;

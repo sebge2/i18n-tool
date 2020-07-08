@@ -32,9 +32,7 @@ public class EventController {
      */
     @GetMapping(value = "/event", produces = MediaType.APPLICATION_STREAM_JSON_VALUE)
     @Operation(summary = "Returns all incoming events.")
-    public Flux<ServerSentEvent<EventDto<Object>>> getEvents() {
-        return eventService
-                .getEvents()
-                .map(event -> ServerSentEvent.builder(event).build());
+    public Flux<EventDto<Object>> getEvents() {
+        return eventService.getEvents();
     }
 }

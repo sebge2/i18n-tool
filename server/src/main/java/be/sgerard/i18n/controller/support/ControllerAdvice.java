@@ -39,6 +39,7 @@ public class ControllerAdvice {
      * Handles the {@link ResourceNotFoundException resource not found exception}.
      */
     @ExceptionHandler(value = ResourceNotFoundException.class)
+    @ResponseStatus
     public ResponseEntity<ErrorMessages> handle(ResourceNotFoundException exception) {
         final ErrorMessages errorMessages = messagesProvider.map(exception);
 
@@ -53,6 +54,7 @@ public class ControllerAdvice {
      * Handles the {@link ValidationException validation exception}.
      */
     @ExceptionHandler(value = ValidationException.class)
+    @ResponseStatus
     public ResponseEntity<ErrorMessages> handle(ValidationException exception) {
         final ErrorMessages errorMessages = messagesProvider.map(exception.getValidationResult().getMessages());
 
@@ -67,6 +69,7 @@ public class ControllerAdvice {
      * Handles the {@link BadRequestException bad-request exception}.
      */
     @ExceptionHandler(value = BadRequestException.class)
+    @ResponseStatus
     public ResponseEntity<ErrorMessages> handle(BadRequestException exception) {
         final ErrorMessages errorMessages = messagesProvider.map(exception);
 
@@ -81,6 +84,7 @@ public class ControllerAdvice {
      * Handles the {@link UnauthorizedRequestException unauthorized exception}.
      */
     @ExceptionHandler(value = UnauthorizedRequestException.class)
+    @ResponseStatus
     public ResponseEntity<ErrorMessages> handle(UnauthorizedRequestException exception) {
         final ErrorMessages errorMessages = messagesProvider.map(exception);
 
@@ -95,6 +99,7 @@ public class ControllerAdvice {
      * Handles the {@link RepositoryException repository exception}.
      */
     @ExceptionHandler(value = RepositoryException.class)
+    @ResponseStatus
     public ResponseEntity<ErrorMessages> handle(RepositoryException exception) {
         final ErrorMessages errorMessages = messagesProvider.map(exception);
 
@@ -121,6 +126,7 @@ public class ControllerAdvice {
      * Handles the {@link MissingServletRequestParameterException access denied exception}.
      */
     @ExceptionHandler(value = AccessDeniedException.class)
+    @ResponseStatus
     public ResponseEntity<ErrorMessages> handle(AccessDeniedException exception) {
         final ErrorMessages errorMessages = messagesProvider.map(new LocalizedMessageHolder.Simple("AccessDeniedException.message"));
 
@@ -151,6 +157,7 @@ public class ControllerAdvice {
      * Handles any {@link Exception exception} that are not handled by the other handlers.
      */
     @ExceptionHandler(value = Exception.class)
+    @ResponseStatus
     public ResponseEntity<ErrorMessages> handleException(Exception exception) {
         final ErrorMessages errorMessages = messagesProvider.map(new LocalizedMessageHolder.Simple("InternalException.message"));
 

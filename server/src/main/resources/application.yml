@@ -6,6 +6,8 @@ logging:
   config: "classpath:logback.xml"
 
 springdoc:
+  swagger-ui:
+    path: "/api/index.html"
   api-docs:
     path: "/api/api-docs"
 

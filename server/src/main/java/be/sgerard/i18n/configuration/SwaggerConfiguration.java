@@ -29,7 +29,6 @@ public class SwaggerConfiguration {
                         .title("i18n Tool")
                         .version("1.0")
                         .description("Web API of the i18n tool")
-                        .termsOfService("http://swagger.io/terms/")
                         .contact(new Contact().name("Sébastien Gérard").url("www.sgerard.be"))
                         .license(new License().name("Apache 2.0"))
                 );
