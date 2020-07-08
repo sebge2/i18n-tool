@@ -17,8 +17,8 @@ import { CustomHttpUrlEncodingCodec }                        from '../encoder';
 
 import { Observable }                                        from 'rxjs';
 
-import { ErrorMessages } from '../model/errorMessages';
-import { UserLiveSession } from '../model/userLiveSession';
+import { ErrorMessagesDtoDto } from '../model/errorMessagesDtoDto';
+import { UserLiveSessionDtoDto } from '../model/userLiveSessionDtoDto';
 
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
 import { Configuration }                                     from '../configuration';
@@ -62,9 +62,9 @@ export class UserLiveSessionService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getCurrentLiveSessions(observe?: 'body', reportProgress?: boolean): Observable<Array<UserLiveSession>>;
-    public getCurrentLiveSessions(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<UserLiveSession>>>;
-    public getCurrentLiveSessions(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<UserLiveSession>>>;
+    public getCurrentLiveSessions(observe?: 'body', reportProgress?: boolean): Observable<Array<UserLiveSessionDto>>;
+    public getCurrentLiveSessions(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<UserLiveSessionDto>>>;
+    public getCurrentLiveSessions(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<UserLiveSessionDto>>>;
     public getCurrentLiveSessions(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         let headers = this.defaultHeaders;
@@ -82,7 +82,7 @@ export class UserLiveSessionService {
         const consumes: string[] = [
         ];
 
-        return this.httpClient.request<Array<UserLiveSession>>('get',`${this.basePath}/api/user-live-session/`,
+        return this.httpClient.request<Array<UserLiveSessionDto>>('get',`${this.basePath}/api/user-live-session/`,
             {
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,

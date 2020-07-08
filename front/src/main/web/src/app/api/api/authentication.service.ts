@@ -17,8 +17,8 @@ import { CustomHttpUrlEncodingCodec }                        from '../encoder';
 
 import { Observable }                                        from 'rxjs';
 
-import { AuthenticatedUser } from '../model/authenticatedUser';
-import { ErrorMessages } from '../model/errorMessages';
+import { AuthenticatedUserDtoDto } from '../model/authenticatedUserDtoDto';
+import { ErrorMessagesDtoDto } from '../model/errorMessagesDtoDto';
 
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
 import { Configuration }                                     from '../configuration';
@@ -98,9 +98,9 @@ export class AuthenticationService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getCurrentUser(observe?: 'body', reportProgress?: boolean): Observable<AuthenticatedUser>;
-    public getCurrentUser(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<AuthenticatedUser>>;
-    public getCurrentUser(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<AuthenticatedUser>>;
+    public getCurrentUser(observe?: 'body', reportProgress?: boolean): Observable<AuthenticatedUserDto>;
+    public getCurrentUser(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<AuthenticatedUserDto>>;
+    public getCurrentUser(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<AuthenticatedUserDto>>;
     public getCurrentUser(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         let headers = this.defaultHeaders;
@@ -123,7 +123,7 @@ export class AuthenticationService {
         const consumes: string[] = [
         ];
 
-        return this.httpClient.request<AuthenticatedUser>('get',`${this.basePath}/api/authentication/user`,
+        return this.httpClient.request<AuthenticatedUserDto>('get',`${this.basePath}/api/authentication/user`,
             {
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,

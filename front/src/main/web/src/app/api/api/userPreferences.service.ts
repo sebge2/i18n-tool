@@ -17,8 +17,8 @@ import { CustomHttpUrlEncodingCodec }                        from '../encoder';
 
 import { Observable }                                        from 'rxjs';
 
-import { ErrorMessages } from '../model/errorMessages';
-import { UserPreferences } from '../model/userPreferences';
+import { ErrorMessagesDtoDto } from '../model/errorMessagesDtoDto';
+import { UserPreferencesDtoDto } from '../model/userPreferencesDtoDto';
 
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
 import { Configuration }                                     from '../configuration';
@@ -63,9 +63,9 @@ export class UserPreferencesService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getPreferencesByUserId(id: string, observe?: 'body', reportProgress?: boolean): Observable<UserPreferences>;
-    public getPreferencesByUserId(id: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<UserPreferences>>;
-    public getPreferencesByUserId(id: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<UserPreferences>>;
+    public getPreferencesByUserId(id: string, observe?: 'body', reportProgress?: boolean): Observable<UserPreferencesDto>;
+    public getPreferencesByUserId(id: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<UserPreferencesDto>>;
+    public getPreferencesByUserId(id: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<UserPreferencesDto>>;
     public getPreferencesByUserId(id: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (id === null || id === undefined) {
@@ -87,7 +87,7 @@ export class UserPreferencesService {
         const consumes: string[] = [
         ];
 
-        return this.httpClient.request<UserPreferences>('get',`${this.basePath}/api/user/${encodeURIComponent(String(id))}/preferences`,
+        return this.httpClient.request<UserPreferencesDto>('get',`${this.basePath}/api/user/${encodeURIComponent(String(id))}/preferences`,
             {
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
@@ -105,10 +105,10 @@ export class UserPreferencesService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public updateUserPreferences(body: UserPreferences, id: string, observe?: 'body', reportProgress?: boolean): Observable<UserPreferences>;
-    public updateUserPreferences(body: UserPreferences, id: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<UserPreferences>>;
-    public updateUserPreferences(body: UserPreferences, id: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<UserPreferences>>;
-    public updateUserPreferences(body: UserPreferences, id: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public updateUserPreferences(body: UserPreferencesDto, id: string, observe?: 'body', reportProgress?: boolean): Observable<UserPreferencesDto>;
+    public updateUserPreferences(body: UserPreferencesDto, id: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<UserPreferencesDto>>;
+    public updateUserPreferences(body: UserPreferencesDto, id: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<UserPreferencesDto>>;
+    public updateUserPreferences(body: UserPreferencesDto, id: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (body === null || body === undefined) {
             throw new Error('Required parameter body was null or undefined when calling updateUserPreferences.');
@@ -138,7 +138,7 @@ export class UserPreferencesService {
             headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
-        return this.httpClient.request<UserPreferences>('put',`${this.basePath}/api/user/${encodeURIComponent(String(id))}/preferences`,
+        return this.httpClient.request<UserPreferencesDto>('put',`${this.basePath}/api/user/${encodeURIComponent(String(id))}/preferences`,
             {
                 body: body,
                 withCredentials: this.configuration.withCredentials,

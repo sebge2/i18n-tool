@@ -17,8 +17,8 @@ import { CustomHttpUrlEncodingCodec }                        from '../encoder';
 
 import { Observable }                                        from 'rxjs';
 
-import { ErrorMessages } from '../model/errorMessages';
-import { Workspace } from '../model/workspace';
+import { ErrorMessagesDtoDto } from '../model/errorMessagesDtoDto';
+import { WorkspaceDtoDto } from '../model/workspaceDtoDto';
 
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
 import { Configuration }                                     from '../configuration';
@@ -104,9 +104,9 @@ export class WorkspaceService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public findAll3(id: string, observe?: 'body', reportProgress?: boolean): Observable<Array<Workspace>>;
-    public findAll3(id: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<Workspace>>>;
-    public findAll3(id: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<Workspace>>>;
+    public findAll3(id: string, observe?: 'body', reportProgress?: boolean): Observable<Array<WorkspaceDto>>;
+    public findAll3(id: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<WorkspaceDto>>>;
+    public findAll3(id: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<WorkspaceDto>>>;
     public findAll3(id: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (id === null || id === undefined) {
@@ -128,7 +128,7 @@ export class WorkspaceService {
         const consumes: string[] = [
         ];
 
-        return this.httpClient.request<Array<Workspace>>('get',`${this.basePath}/api/repository/${encodeURIComponent(String(id))}/workspace`,
+        return this.httpClient.request<Array<WorkspaceDto>>('get',`${this.basePath}/api/repository/${encodeURIComponent(String(id))}/workspace`,
             {
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
@@ -144,9 +144,9 @@ export class WorkspaceService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public findAll4(observe?: 'body', reportProgress?: boolean): Observable<Array<Workspace>>;
-    public findAll4(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<Workspace>>>;
-    public findAll4(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<Workspace>>>;
+    public findAll4(observe?: 'body', reportProgress?: boolean): Observable<Array<WorkspaceDto>>;
+    public findAll4(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<WorkspaceDto>>>;
+    public findAll4(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<WorkspaceDto>>>;
     public findAll4(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         let headers = this.defaultHeaders;
@@ -164,7 +164,7 @@ export class WorkspaceService {
         const consumes: string[] = [
         ];
 
-        return this.httpClient.request<Array<Workspace>>('get',`${this.basePath}/api/repository/workspace`,
+        return this.httpClient.request<Array<WorkspaceDto>>('get',`${this.basePath}/api/repository/workspace`,
             {
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
@@ -181,9 +181,9 @@ export class WorkspaceService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public findById4(id: string, observe?: 'body', reportProgress?: boolean): Observable<Workspace>;
-    public findById4(id: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Workspace>>;
-    public findById4(id: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Workspace>>;
+    public findById4(id: string, observe?: 'body', reportProgress?: boolean): Observable<WorkspaceDto>;
+    public findById4(id: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<WorkspaceDto>>;
+    public findById4(id: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<WorkspaceDto>>;
     public findById4(id: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (id === null || id === undefined) {
@@ -205,7 +205,7 @@ export class WorkspaceService {
         const consumes: string[] = [
         ];
 
-        return this.httpClient.request<Workspace>('get',`${this.basePath}/api/repository/workspace/${encodeURIComponent(String(id))}`,
+        return this.httpClient.request<WorkspaceDto>('get',`${this.basePath}/api/repository/workspace/${encodeURIComponent(String(id))}`,
             {
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
@@ -223,9 +223,9 @@ export class WorkspaceService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public initializeWorkspace1(id: string, message: string, observe?: 'body', reportProgress?: boolean): Observable<Workspace>;
-    public initializeWorkspace1(id: string, message: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Workspace>>;
-    public initializeWorkspace1(id: string, message: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Workspace>>;
+    public initializeWorkspace1(id: string, message: string, observe?: 'body', reportProgress?: boolean): Observable<WorkspaceDto>;
+    public initializeWorkspace1(id: string, message: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<WorkspaceDto>>;
+    public initializeWorkspace1(id: string, message: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<WorkspaceDto>>;
     public initializeWorkspace1(id: string, message: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (id === null || id === undefined) {
@@ -256,7 +256,7 @@ export class WorkspaceService {
         const consumes: string[] = [
         ];
 
-        return this.httpClient.request<Workspace>('post',`${this.basePath}/api/repository/workspace/${encodeURIComponent(String(id))}/do`,
+        return this.httpClient.request<WorkspaceDto>('post',`${this.basePath}/api/repository/workspace/${encodeURIComponent(String(id))}/do`,
             {
                 params: queryParameters,
                 withCredentials: this.configuration.withCredentials,
@@ -274,9 +274,9 @@ export class WorkspaceService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public synchronizeWorkspaces(repositoryId: string, observe?: 'body', reportProgress?: boolean): Observable<Array<Workspace>>;
-    public synchronizeWorkspaces(repositoryId: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<Workspace>>>;
-    public synchronizeWorkspaces(repositoryId: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<Workspace>>>;
+    public synchronizeWorkspaces(repositoryId: string, observe?: 'body', reportProgress?: boolean): Observable<Array<WorkspaceDto>>;
+    public synchronizeWorkspaces(repositoryId: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<WorkspaceDto>>>;
+    public synchronizeWorkspaces(repositoryId: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<WorkspaceDto>>>;
     public synchronizeWorkspaces(repositoryId: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (repositoryId === null || repositoryId === undefined) {
@@ -298,7 +298,7 @@ export class WorkspaceService {
         const consumes: string[] = [
         ];
 
-        return this.httpClient.request<Array<Workspace>>('post',`${this.basePath}/api/repository/${encodeURIComponent(String(repositoryId))}/workspace/do`,
+        return this.httpClient.request<Array<WorkspaceDto>>('post',`${this.basePath}/api/repository/${encodeURIComponent(String(repositoryId))}/workspace/do`,
             {
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,

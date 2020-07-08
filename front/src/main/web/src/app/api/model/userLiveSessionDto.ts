@@ -9,7 +9,15 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
-import { GitHubRepositoryCreationRequest } from './gitHubRepositoryCreationRequest';
-import { GitRepositoryCreationRequest } from './gitRepositoryCreationRequest';
+import { UserDto } from './userDtoDto';
 
-export type Body1 = GitHubRepositoryCreationRequest | GitRepositoryCreationRequest;
+/**
+ * Description of a user live session.
+ */
+export interface UserLiveSessionDto { 
+    /**
+     * Id of this session.
+     */
+    id: string;
+    user: UserDto;
+}

@@ -17,10 +17,10 @@ import { CustomHttpUrlEncodingCodec }                        from '../encoder';
 
 import { Observable }                                        from 'rxjs';
 
-import { ErrorMessages } from '../model/errorMessages';
-import { InternalUserCreation } from '../model/internalUserCreation';
-import { User } from '../model/user';
-import { UserPatch } from '../model/userPatch';
+import { ErrorMessagesDtoDto } from '../model/errorMessagesDtoDto';
+import { InternalUserCreationDtoDto } from '../model/internalUserCreationDtoDto';
+import { UserDtoDto } from '../model/userDtoDto';
+import { UserPatchDtoDto } from '../model/userPatchDtoDto';
 
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
 import { Configuration }                                     from '../configuration';
@@ -65,10 +65,10 @@ export class UserService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public createUser(body: InternalUserCreation, observe?: 'body', reportProgress?: boolean): Observable<User>;
-    public createUser(body: InternalUserCreation, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<User>>;
-    public createUser(body: InternalUserCreation, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<User>>;
-    public createUser(body: InternalUserCreation, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public createUser(body: InternalUserCreationDto, observe?: 'body', reportProgress?: boolean): Observable<UserDto>;
+    public createUser(body: InternalUserCreationDto, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<UserDto>>;
+    public createUser(body: InternalUserCreationDto, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<UserDto>>;
+    public createUser(body: InternalUserCreationDto, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (body === null || body === undefined) {
             throw new Error('Required parameter body was null or undefined when calling createUser.');
@@ -94,7 +94,7 @@ export class UserService {
             headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
-        return this.httpClient.request<User>('post',`${this.basePath}/api/user`,
+        return this.httpClient.request<UserDto>('post',`${this.basePath}/api/user`,
             {
                 body: body,
                 withCredentials: this.configuration.withCredentials,
@@ -112,9 +112,9 @@ export class UserService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public deleteUserById(id: string, observe?: 'body', reportProgress?: boolean): Observable<User>;
-    public deleteUserById(id: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<User>>;
-    public deleteUserById(id: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<User>>;
+    public deleteUserById(id: string, observe?: 'body', reportProgress?: boolean): Observable<UserDto>;
+    public deleteUserById(id: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<UserDto>>;
+    public deleteUserById(id: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<UserDto>>;
     public deleteUserById(id: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (id === null || id === undefined) {
@@ -136,7 +136,7 @@ export class UserService {
         const consumes: string[] = [
         ];
 
-        return this.httpClient.request<User>('delete',`${this.basePath}/api/user/${encodeURIComponent(String(id))}`,
+        return this.httpClient.request<UserDto>('delete',`${this.basePath}/api/user/${encodeURIComponent(String(id))}`,
             {
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
@@ -152,9 +152,9 @@ export class UserService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public findAll2(observe?: 'body', reportProgress?: boolean): Observable<Array<User>>;
-    public findAll2(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<User>>>;
-    public findAll2(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<User>>>;
+    public findAll2(observe?: 'body', reportProgress?: boolean): Observable<Array<UserDto>>;
+    public findAll2(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<UserDto>>>;
+    public findAll2(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<UserDto>>>;
     public findAll2(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         let headers = this.defaultHeaders;
@@ -172,7 +172,7 @@ export class UserService {
         const consumes: string[] = [
         ];
 
-        return this.httpClient.request<Array<User>>('get',`${this.basePath}/api/user`,
+        return this.httpClient.request<Array<UserDto>>('get',`${this.basePath}/api/user`,
             {
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
@@ -189,9 +189,9 @@ export class UserService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public findById3(id: string, observe?: 'body', reportProgress?: boolean): Observable<User>;
-    public findById3(id: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<User>>;
-    public findById3(id: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<User>>;
+    public findById3(id: string, observe?: 'body', reportProgress?: boolean): Observable<UserDto>;
+    public findById3(id: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<UserDto>>;
+    public findById3(id: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<UserDto>>;
     public findById3(id: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (id === null || id === undefined) {
@@ -213,7 +213,7 @@ export class UserService {
         const consumes: string[] = [
         ];
 
-        return this.httpClient.request<User>('get',`${this.basePath}/api/user/${encodeURIComponent(String(id))}`,
+        return this.httpClient.request<UserDto>('get',`${this.basePath}/api/user/${encodeURIComponent(String(id))}`,
             {
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
@@ -231,10 +231,10 @@ export class UserService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public updateUser(body: UserPatch, id: string, observe?: 'body', reportProgress?: boolean): Observable<User>;
-    public updateUser(body: UserPatch, id: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<User>>;
-    public updateUser(body: UserPatch, id: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<User>>;
-    public updateUser(body: UserPatch, id: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public updateUser(body: UserPatchDto, id: string, observe?: 'body', reportProgress?: boolean): Observable<UserDto>;
+    public updateUser(body: UserPatchDto, id: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<UserDto>>;
+    public updateUser(body: UserPatchDto, id: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<UserDto>>;
+    public updateUser(body: UserPatchDto, id: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (body === null || body === undefined) {
             throw new Error('Required parameter body was null or undefined when calling updateUser.');
@@ -264,7 +264,7 @@ export class UserService {
             headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
-        return this.httpClient.request<User>('patch',`${this.basePath}/api/user/${encodeURIComponent(String(id))}`,
+        return this.httpClient.request<UserDto>('patch',`${this.basePath}/api/user/${encodeURIComponent(String(id))}`,
             {
                 body: body,
                 withCredentials: this.configuration.withCredentials,

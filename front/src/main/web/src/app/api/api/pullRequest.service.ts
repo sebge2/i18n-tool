@@ -17,8 +17,8 @@ import { CustomHttpUrlEncodingCodec }                        from '../encoder';
 
 import { Observable }                                        from 'rxjs';
 
-import { ErrorMessages } from '../model/errorMessages';
-import { GitHubPullRequest } from '../model/gitHubPullRequest';
+import { ErrorMessagesDtoDto } from '../model/errorMessagesDtoDto';
+import { GitHubPullRequestDtoDto } from '../model/gitHubPullRequestDtoDto';
 
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
 import { Configuration }                                     from '../configuration';
@@ -108,9 +108,9 @@ export class PullRequestService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public listRequests(observe?: 'body', reportProgress?: boolean): Observable<Array<GitHubPullRequest>>;
-    public listRequests(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<GitHubPullRequest>>>;
-    public listRequests(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<GitHubPullRequest>>>;
+    public listRequests(observe?: 'body', reportProgress?: boolean): Observable<Array<GitHubPullRequestDto>>;
+    public listRequests(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<GitHubPullRequestDto>>>;
+    public listRequests(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<GitHubPullRequestDto>>>;
     public listRequests(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         let headers = this.defaultHeaders;
@@ -128,7 +128,7 @@ export class PullRequestService {
         const consumes: string[] = [
         ];
 
-        return this.httpClient.request<Array<GitHubPullRequest>>('get',`${this.basePath}/api/github-pull-request`,
+        return this.httpClient.request<Array<GitHubPullRequestDto>>('get',`${this.basePath}/api/github-pull-request`,
             {
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
@@ -145,9 +145,9 @@ export class PullRequestService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public listRequests1(repositoryId: string, observe?: 'body', reportProgress?: boolean): Observable<Array<GitHubPullRequest>>;
-    public listRequests1(repositoryId: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<GitHubPullRequest>>>;
-    public listRequests1(repositoryId: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<GitHubPullRequest>>>;
+    public listRequests1(repositoryId: string, observe?: 'body', reportProgress?: boolean): Observable<Array<GitHubPullRequestDto>>;
+    public listRequests1(repositoryId: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<GitHubPullRequestDto>>>;
+    public listRequests1(repositoryId: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<GitHubPullRequestDto>>>;
     public listRequests1(repositoryId: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (repositoryId === null || repositoryId === undefined) {
@@ -169,7 +169,7 @@ export class PullRequestService {
         const consumes: string[] = [
         ];
 
-        return this.httpClient.request<Array<GitHubPullRequest>>('get',`${this.basePath}/api/repository/${encodeURIComponent(String(repositoryId))}/github-pull-request`,
+        return this.httpClient.request<Array<GitHubPullRequestDto>>('get',`${this.basePath}/api/repository/${encodeURIComponent(String(repositoryId))}/github-pull-request`,
             {
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,

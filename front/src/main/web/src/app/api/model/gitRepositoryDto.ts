@@ -9,12 +9,12 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
-import { Repository } from './repository';
+import { RepositoryDto } from './repositoryDtoDto';
 
 /**
- * GitHub Repository
+ * Git Repository
  */
-export interface GitHubRepository extends Repository { 
+export interface GitRepositoryDto extends RepositoryDto { 
     /**
      * Location URL of this repository
      */
@@ -23,14 +23,6 @@ export interface GitHubRepository extends Repository {
      * The name of the default branch used to find translations
      */
     defaultBranch: string;
-    /**
-     * Access key to use to access this repository
-     */
-    accessKey: string;
-    /**
-     * Access key to use to access this repository
-     */
-    webHookSecret?: string;
 }
-export namespace GitHubRepository {
+export namespace GitRepositoryDto {
 }

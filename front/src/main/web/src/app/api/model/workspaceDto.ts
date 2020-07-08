@@ -9,12 +9,12 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
-import { BundleFile } from './bundleFile';
+import { BundleFileDto } from './bundleFileDtoDto';
 
 /**
  * A workspace is a place where users can define translations and then submit them for review. A workspace is based on a particular branch.
  */
-export interface Workspace { 
+export interface WorkspaceDto { 
     /**
      * Unique identifier of a workspace.
      */
@@ -26,17 +26,17 @@ export interface Workspace {
     /**
      * The current workspace status. First, the workspace is created, but not initialized. Then, the workspace is initialized and all the translations are retrieved. Once they are edited, they are sent for review.
      */
-    status: Workspace.StatusEnum;
+    status: WorkspaceDto.StatusDtoEnum;
     /**
      * All the bundle files contained in this workspace.
      */
-    files: Array<BundleFile>;
+    files: Array<BundleFileDto>;
 }
-export namespace Workspace {
-    export type StatusEnum = 'NOT_INITIALIZED' | 'INITIALIZED' | 'IN_REVIEW';
-    export const StatusEnum = {
-        NOTINITIALIZED: 'NOT_INITIALIZED' as StatusEnum,
-        INITIALIZED: 'INITIALIZED' as StatusEnum,
-        INREVIEW: 'IN_REVIEW' as StatusEnum
+export namespace WorkspaceDto {
+    export type StatusDtoEnum = 'NOT_INITIALIZED' | 'INITIALIZED' | 'IN_REVIEW';
+    export const StatusDtoEnum = {
+        NOTINITIALIZED: 'NOT_INITIALIZED' as StatusDtoEnum,
+        INITIALIZED: 'INITIALIZED' as StatusDtoEnum,
+        INREVIEW: 'IN_REVIEW' as StatusDtoEnum
     };
 }

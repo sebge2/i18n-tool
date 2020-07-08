@@ -9,7 +9,7 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
-import { GitHubRepositoryPatchRequest } from './gitHubRepositoryPatchRequest';
-import { GitRepositoryPatchRequest } from './gitRepositoryPatchRequest';
+import { GitHubRepositoryDto } from './gitHubRepositoryDtoDto';
+import { GitRepositoryDto } from './gitRepositoryDtoDto';
 
-export type Body = GitHubRepositoryPatchRequest | GitRepositoryPatchRequest;
+export type InlineResponse200Dto = GitHubRepositoryDto | GitRepositoryDto;

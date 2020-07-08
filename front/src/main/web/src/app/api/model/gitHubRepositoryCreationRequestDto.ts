@@ -9,12 +9,12 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
-import { RepositoryCreationRequest } from './repositoryCreationRequest';
+import { RepositoryCreationRequestDto } from './repositoryCreationRequestDtoDto';
 
 /**
  * Request asking the creation of a GitHub repository
  */
-export interface GitHubRepositoryCreationRequest extends RepositoryCreationRequest { 
+export interface GitHubRepositoryCreationRequestDto extends RepositoryCreationRequestDto { 
     /**
      * GitHub username of this repository
      */
@@ -28,5 +28,5 @@ export interface GitHubRepositoryCreationRequest extends RepositoryCreationReque
      */
     accessKey?: string;
 }
-export namespace GitHubRepositoryCreationRequest {
+export namespace GitHubRepositoryCreationRequestDto {
 }

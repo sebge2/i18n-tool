@@ -9,7 +9,9 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
-import { GitHubRepository } from './gitHubRepository';
-import { GitRepository } from './gitRepository';
 
-export type InlineResponse200 = GitHubRepository | GitRepository;
+export interface ErrorMessagesDto { 
+    id?: string;
+    time?: Date;
+    messages?: Array<string>;
+}

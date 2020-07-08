@@ -13,7 +13,7 @@
 /**
  * Description of the user.
  */
-export interface User { 
+export interface UserDto { 
     /**
      * Id of the user.
      */
@@ -33,22 +33,22 @@ export interface User {
     /**
      * User roles.
      */
-    roles?: Array<User.RolesEnum>;
+    roles?: Array<UserDto.RolesDtoEnum>;
     /**
      * All possible user types.
      */
-    type?: User.TypeEnum;
+    type?: UserDto.TypeDtoEnum;
 }
-export namespace User {
-    export type RolesEnum = 'MEMBER_OF_ORGANIZATION' | 'MEMBER_OF_REPOSITORY' | 'ADMIN';
-    export const RolesEnum = {
-        MEMBEROFORGANIZATION: 'MEMBER_OF_ORGANIZATION' as RolesEnum,
-        MEMBEROFREPOSITORY: 'MEMBER_OF_REPOSITORY' as RolesEnum,
-        ADMIN: 'ADMIN' as RolesEnum
+export namespace UserDto {
+    export type RolesDtoEnum = 'MEMBER_OF_ORGANIZATION' | 'MEMBER_OF_REPOSITORY' | 'ADMIN';
+    export const RolesDtoEnum = {
+        MEMBEROFORGANIZATION: 'MEMBER_OF_ORGANIZATION' as RolesDtoEnum,
+        MEMBEROFREPOSITORY: 'MEMBER_OF_REPOSITORY' as RolesDtoEnum,
+        ADMIN: 'ADMIN' as RolesDtoEnum
     };
-    export type TypeEnum = 'EXTERNAL' | 'INTERNAL';
-    export const TypeEnum = {
-        EXTERNAL: 'EXTERNAL' as TypeEnum,
-        INTERNAL: 'INTERNAL' as TypeEnum
+    export type TypeDtoEnum = 'EXTERNAL' | 'INTERNAL';
+    export const TypeDtoEnum = {
+        EXTERNAL: 'EXTERNAL' as TypeDtoEnum,
+        INTERNAL: 'INTERNAL' as TypeDtoEnum
     };
 }

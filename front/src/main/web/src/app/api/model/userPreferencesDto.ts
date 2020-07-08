@@ -13,16 +13,16 @@
 /**
  * Preferences of a user.
  */
-export interface UserPreferences { 
+export interface UserPreferencesDto { 
     /**
      * The locale to use for the user.
      */
-    toolLocale?: UserPreferences.ToolLocaleEnum;
+    toolLocale?: UserPreferencesDto.ToolLocaleDtoEnum;
 }
-export namespace UserPreferences {
-    export type ToolLocaleEnum = 'ENGLISH' | 'FRENCH';
-    export const ToolLocaleEnum = {
-        ENGLISH: 'ENGLISH' as ToolLocaleEnum,
-        FRENCH: 'FRENCH' as ToolLocaleEnum
+export namespace UserPreferencesDto {
+    export type ToolLocaleDtoEnum = 'ENGLISH' | 'FRENCH';
+    export const ToolLocaleDtoEnum = {
+        ENGLISH: 'ENGLISH' as ToolLocaleDtoEnum,
+        FRENCH: 'FRENCH' as ToolLocaleDtoEnum
     };
 }

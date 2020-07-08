@@ -13,11 +13,11 @@
 /**
  * List of paginated translations.
  */
-export interface TranslationsPage { 
+export interface TranslationsPageDto { 
     /**
      * Rows where every row is associated to a bundle key
      */
-    rows: Array<TranslationsPage>;
+    rows: Array<TranslationsPageDto>;
     /**
      * All the ordered locales (i.e., columns order)
      */

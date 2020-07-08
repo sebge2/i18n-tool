@@ -9,12 +9,12 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
-import { TranslationKeyPattern } from './translationKeyPattern';
+import { TranslationKeyPatternDto } from './translationKeyPatternDtoDto';
 
 /**
  * Request asking the listing of paginated translations.
  */
-export interface TranslationsSearchRequest { 
+export interface TranslationsSearchRequestDto { 
     /**
      * Search translations only in those workspaces
      */
@@ -26,8 +26,8 @@ export interface TranslationsSearchRequest {
     /**
      * Specify the criterion that translations must have.
      */
-    criterion?: TranslationsSearchRequest.CriterionEnum;
-    keyPattern?: TranslationKeyPattern;
+    criterion?: TranslationsSearchRequestDto.CriterionDtoEnum;
+    keyPattern?: TranslationKeyPatternDto;
     /**
      * The maximum number of keys for the next page.
      */
@@ -37,12 +37,12 @@ export interface TranslationsSearchRequest {
      */
     pageIndex?: number;
 }
-export namespace TranslationsSearchRequest {
-    export type CriterionEnum = 'ALL' | 'MISSING_TRANSLATIONS' | 'TRANSLATIONS_CURRENT_USER_UPDATED' | 'UPDATED_TRANSLATIONS';
-    export const CriterionEnum = {
-        ALL: 'ALL' as CriterionEnum,
-        MISSINGTRANSLATIONS: 'MISSING_TRANSLATIONS' as CriterionEnum,
-        TRANSLATIONSCURRENTUSERUPDATED: 'TRANSLATIONS_CURRENT_USER_UPDATED' as CriterionEnum,
-        UPDATEDTRANSLATIONS: 'UPDATED_TRANSLATIONS' as CriterionEnum
+export namespace TranslationsSearchRequestDto {
+    export type CriterionDtoEnum = 'ALL' | 'MISSING_TRANSLATIONS' | 'TRANSLATIONS_CURRENT_USER_UPDATED' | 'UPDATED_TRANSLATIONS';
+    export const CriterionDtoEnum = {
+        ALL: 'ALL' as CriterionDtoEnum,
+        MISSINGTRANSLATIONS: 'MISSING_TRANSLATIONS' as CriterionDtoEnum,
+        TRANSLATIONSCURRENTUSERUPDATED: 'TRANSLATIONS_CURRENT_USER_UPDATED' as CriterionDtoEnum,
+        UPDATEDTRANSLATIONS: 'UPDATED_TRANSLATIONS' as CriterionDtoEnum
     };
 }

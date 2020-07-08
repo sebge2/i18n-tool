@@ -9,15 +9,21 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
-import { User } from './user';
 
 /**
- * Description of a user live session.
+ * Bundle file containing translations of keys.
  */
-export interface UserLiveSession { 
+export interface BundleFileDto { 
     /**
-     * Id of this session.
+     * Unique identifier of a bundle file.
      */
     id: string;
-    user: User;
+    /**
+     * Name of this bundle file.
+     */
+    name: string;
+    /**
+     * Directory location of this bundle file.
+     */
+    location: string;
 }

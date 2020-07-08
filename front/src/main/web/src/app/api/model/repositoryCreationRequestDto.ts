@@ -13,7 +13,7 @@
 /**
  * Request asking the creation of a repository
  */
-export interface RepositoryCreationRequest { 
+export interface RepositoryCreationRequestDto { 
     /**
      * The id of the repository to modify
      */
@@ -21,12 +21,12 @@ export interface RepositoryCreationRequest {
     /**
      * Type of this repository
      */
-    type: RepositoryCreationRequest.TypeEnum;
+    type: RepositoryCreationRequestDto.TypeDtoEnum;
 }
-export namespace RepositoryCreationRequest {
-    export type TypeEnum = 'GIT' | 'GITHUB';
-    export const TypeEnum = {
-        GIT: 'GIT' as TypeEnum,
-        GITHUB: 'GITHUB' as TypeEnum
+export namespace RepositoryCreationRequestDto {
+    export type TypeDtoEnum = 'GIT' | 'GITHUB';
+    export const TypeDtoEnum = {
+        GIT: 'GIT' as TypeDtoEnum,
+        GITHUB: 'GITHUB' as TypeDtoEnum
     };
 }

@@ -9,9 +9,7 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
+import { GitHubRepositoryPatchRequestDto } from './gitHubRepositoryPatchRequestDtoDto';
+import { GitRepositoryPatchRequestDto } from './gitRepositoryPatchRequestDtoDto';
 
-export interface ErrorMessages { 
-    id?: string;
-    time?: Date;
-    messages?: Array<string>;
-}
+export type BodyDto = GitHubRepositoryPatchRequestDto | GitRepositoryPatchRequestDto;

@@ -13,7 +13,7 @@
 /**
  * Translation of a key of a bundle file and associated to a locale.
  */
-export interface BundleKeyTranslation { 
+export interface BundleKeyTranslationDto { 
     /**
      * Unique identifier of a translation.
      */

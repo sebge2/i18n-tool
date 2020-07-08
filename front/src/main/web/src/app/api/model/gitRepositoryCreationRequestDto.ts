@@ -9,20 +9,21 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
-import { Repository } from './repository';
+import { RepositoryCreationRequestDto } from './repositoryCreationRequestDtoDto';
 
 /**
- * Git Repository
+ * Request asking the creation of a Git repository
  */
-export interface GitRepository extends Repository { 
+export interface GitRepositoryCreationRequestDto extends RepositoryCreationRequestDto { 
     /**
      * Location URL of this repository
      */
     location: string;
     /**
-     * The name of the default branch used to find translations
+     * Name of this repository
      */
-    defaultBranch: string;
+    name: string;
+    locationAsURI?: string;
 }
-export namespace GitRepository {
+export namespace GitRepositoryCreationRequestDto {
 }

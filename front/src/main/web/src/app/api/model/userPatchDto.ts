@@ -13,7 +13,7 @@
 /**
  * The update of a user.
  */
-export interface UserPatch { 
+export interface UserPatchDto { 
     /**
      * The new username.
      */
@@ -33,13 +33,13 @@ export interface UserPatch {
     /**
      * The roles.
      */
-    roles?: Array<UserPatch.RolesEnum>;
+    roles?: Array<UserPatchDto.RolesDtoEnum>;
 }
-export namespace UserPatch {
-    export type RolesEnum = 'MEMBER_OF_ORGANIZATION' | 'MEMBER_OF_REPOSITORY' | 'ADMIN';
-    export const RolesEnum = {
-        MEMBEROFORGANIZATION: 'MEMBER_OF_ORGANIZATION' as RolesEnum,
-        MEMBEROFREPOSITORY: 'MEMBER_OF_REPOSITORY' as RolesEnum,
-        ADMIN: 'ADMIN' as RolesEnum
+export namespace UserPatchDto {
+    export type RolesDtoEnum = 'MEMBER_OF_ORGANIZATION' | 'MEMBER_OF_REPOSITORY' | 'ADMIN';
+    export const RolesDtoEnum = {
+        MEMBEROFORGANIZATION: 'MEMBER_OF_ORGANIZATION' as RolesDtoEnum,
+        MEMBEROFREPOSITORY: 'MEMBER_OF_REPOSITORY' as RolesDtoEnum,
+        ADMIN: 'ADMIN' as RolesDtoEnum
     };
 }

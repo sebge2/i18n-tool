@@ -9,16 +9,16 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
-import { RepositoryCreationRequest } from './repositoryCreationRequest';
+import { RepositoryCreationRequestDto } from './repositoryCreationRequestDtoDto';
 
 /**
  * Request asking the update of a Git repository
  */
-export interface GitRepositoryPatchRequest extends RepositoryCreationRequest { 
+export interface GitRepositoryPatchRequestDto extends RepositoryCreationRequestDto { 
     /**
      * The default branch to use
      */
     defaultBranch: string;
 }
-export namespace GitRepositoryPatchRequest {
+export namespace GitRepositoryPatchRequestDto {
 }

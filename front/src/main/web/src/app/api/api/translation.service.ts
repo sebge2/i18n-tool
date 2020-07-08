@@ -17,10 +17,10 @@ import { CustomHttpUrlEncodingCodec }                        from '../encoder';
 
 import { Observable }                                        from 'rxjs';
 
-import { BundleKeyTranslation } from '../model/bundleKeyTranslation';
-import { ErrorMessages } from '../model/errorMessages';
-import { TranslationsPage } from '../model/translationsPage';
-import { TranslationsSearchRequest } from '../model/translationsSearchRequest';
+import { BundleKeyTranslationDtoDto } from '../model/bundleKeyTranslationDtoDto';
+import { ErrorMessagesDtoDto } from '../model/errorMessagesDtoDto';
+import { TranslationsPageDtoDto } from '../model/translationsPageDtoDto';
+import { TranslationsSearchRequestDtoDto } from '../model/translationsSearchRequestDtoDto';
 
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
 import { Configuration }                                     from '../configuration';
@@ -65,9 +65,9 @@ export class TranslationService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public findById1(id: string, observe?: 'body', reportProgress?: boolean): Observable<BundleKeyTranslation>;
-    public findById1(id: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<BundleKeyTranslation>>;
-    public findById1(id: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<BundleKeyTranslation>>;
+    public findById1(id: string, observe?: 'body', reportProgress?: boolean): Observable<BundleKeyTranslationDto>;
+    public findById1(id: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<BundleKeyTranslationDto>>;
+    public findById1(id: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<BundleKeyTranslationDto>>;
     public findById1(id: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (id === null || id === undefined) {
@@ -89,7 +89,7 @@ export class TranslationService {
         const consumes: string[] = [
         ];
 
-        return this.httpClient.request<BundleKeyTranslation>('get',`${this.basePath}/api/translation/${encodeURIComponent(String(id))}`,
+        return this.httpClient.request<BundleKeyTranslationDto>('get',`${this.basePath}/api/translation/${encodeURIComponent(String(id))}`,
             {
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
@@ -106,10 +106,10 @@ export class TranslationService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public searchTranslations(body: TranslationsSearchRequest, observe?: 'body', reportProgress?: boolean): Observable<TranslationsPage>;
-    public searchTranslations(body: TranslationsSearchRequest, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<TranslationsPage>>;
-    public searchTranslations(body: TranslationsSearchRequest, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<TranslationsPage>>;
-    public searchTranslations(body: TranslationsSearchRequest, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public searchTranslations(body: TranslationsSearchRequestDto, observe?: 'body', reportProgress?: boolean): Observable<TranslationsPageDto>;
+    public searchTranslations(body: TranslationsSearchRequestDto, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<TranslationsPageDto>>;
+    public searchTranslations(body: TranslationsSearchRequestDto, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<TranslationsPageDto>>;
+    public searchTranslations(body: TranslationsSearchRequestDto, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (body === null || body === undefined) {
             throw new Error('Required parameter body was null or undefined when calling searchTranslations.');
@@ -135,7 +135,7 @@ export class TranslationService {
             headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
-        return this.httpClient.request<TranslationsPage>('post',`${this.basePath}/api/translation/do`,
+        return this.httpClient.request<TranslationsPageDto>('post',`${this.basePath}/api/translation/do`,
             {
                 body: body,
                 withCredentials: this.configuration.withCredentials,
@@ -153,9 +153,9 @@ export class TranslationService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public updateWorkspaceTranslations(body: { [key: string]: string; }, observe?: 'body', reportProgress?: boolean): Observable<Array<BundleKeyTranslation>>;
-    public updateWorkspaceTranslations(body: { [key: string]: string; }, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<BundleKeyTranslation>>>;
-    public updateWorkspaceTranslations(body: { [key: string]: string; }, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<BundleKeyTranslation>>>;
+    public updateWorkspaceTranslations(body: { [key: string]: string; }, observe?: 'body', reportProgress?: boolean): Observable<Array<BundleKeyTranslationDto>>;
+    public updateWorkspaceTranslations(body: { [key: string]: string; }, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<BundleKeyTranslationDto>>>;
+    public updateWorkspaceTranslations(body: { [key: string]: string; }, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<BundleKeyTranslationDto>>>;
     public updateWorkspaceTranslations(body: { [key: string]: string; }, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (body === null || body === undefined) {
@@ -182,7 +182,7 @@ export class TranslationService {
             headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
-        return this.httpClient.request<Array<BundleKeyTranslation>>('patch',`${this.basePath}/api/translation`,
+        return this.httpClient.request<Array<BundleKeyTranslationDto>>('patch',`${this.basePath}/api/translation`,
             {
                 body: body,
                 withCredentials: this.configuration.withCredentials,

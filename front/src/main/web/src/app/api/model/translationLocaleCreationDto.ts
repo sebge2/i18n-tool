@@ -11,13 +11,9 @@
  */
 
 /**
- * Description of a locale associated to a translation (https://tools.ietf.org/html/bcp47)
+ * Description of a new locale associated to a translation (https://tools.ietf.org/html/bcp47)
  */
-export interface TranslationLocale { 
-    /**
-     * The unique id of this locale
-     */
-    id: string;
+export interface TranslationLocaleCreationDto { 
     /**
      * The language.
      */

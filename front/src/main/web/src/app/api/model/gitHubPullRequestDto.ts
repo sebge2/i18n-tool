@@ -13,7 +13,7 @@
 /**
  * Pull-request on GitHub.
  */
-export interface GitHubPullRequest { 
+export interface GitHubPullRequestDto { 
     /**
      * Name of the repository associated to this request
      */
@@ -33,13 +33,13 @@ export interface GitHubPullRequest {
     /**
      * Current status of this request
      */
-    status: GitHubPullRequest.StatusEnum;
+    status: GitHubPullRequestDto.StatusDtoEnum;
 }
-export namespace GitHubPullRequest {
-    export type StatusEnum = 'OPEN' | 'CLOSED' | 'MERGED';
-    export const StatusEnum = {
-        OPEN: 'OPEN' as StatusEnum,
-        CLOSED: 'CLOSED' as StatusEnum,
-        MERGED: 'MERGED' as StatusEnum
+export namespace GitHubPullRequestDto {
+    export type StatusDtoEnum = 'OPEN' | 'CLOSED' | 'MERGED';
+    export const StatusDtoEnum = {
+        OPEN: 'OPEN' as StatusDtoEnum,
+        CLOSED: 'CLOSED' as StatusDtoEnum,
+        MERGED: 'MERGED' as StatusDtoEnum
     };
 }

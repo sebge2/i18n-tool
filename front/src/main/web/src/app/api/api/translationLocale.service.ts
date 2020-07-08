@@ -17,9 +17,9 @@ import { CustomHttpUrlEncodingCodec }                        from '../encoder';
 
 import { Observable }                                        from 'rxjs';
 
-import { ErrorMessages } from '../model/errorMessages';
-import { TranslationLocale } from '../model/translationLocale';
-import { TranslationLocaleCreation } from '../model/translationLocaleCreation';
+import { ErrorMessagesDtoDto } from '../model/errorMessagesDtoDto';
+import { TranslationLocaleCreationDtoDto } from '../model/translationLocaleCreationDtoDto';
+import { TranslationLocaleDtoDto } from '../model/translationLocaleDtoDto';
 
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
 import { Configuration }                                     from '../configuration';
@@ -64,10 +64,10 @@ export class TranslationLocaleService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public create1(body: TranslationLocaleCreation, observe?: 'body', reportProgress?: boolean): Observable<TranslationLocale>;
-    public create1(body: TranslationLocaleCreation, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<TranslationLocale>>;
-    public create1(body: TranslationLocaleCreation, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<TranslationLocale>>;
-    public create1(body: TranslationLocaleCreation, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public create1(body: TranslationLocaleCreationDto, observe?: 'body', reportProgress?: boolean): Observable<TranslationLocaleDto>;
+    public create1(body: TranslationLocaleCreationDto, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<TranslationLocaleDto>>;
+    public create1(body: TranslationLocaleCreationDto, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<TranslationLocaleDto>>;
+    public create1(body: TranslationLocaleCreationDto, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (body === null || body === undefined) {
             throw new Error('Required parameter body was null or undefined when calling create1.');
@@ -93,7 +93,7 @@ export class TranslationLocaleService {
             headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
-        return this.httpClient.request<TranslationLocale>('post',`${this.basePath}/api/translation/locale`,
+        return this.httpClient.request<TranslationLocaleDto>('post',`${this.basePath}/api/translation/locale`,
             {
                 body: body,
                 withCredentials: this.configuration.withCredentials,
@@ -151,9 +151,9 @@ export class TranslationLocaleService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public findAll1(observe?: 'body', reportProgress?: boolean): Observable<Array<TranslationLocale>>;
-    public findAll1(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<TranslationLocale>>>;
-    public findAll1(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<TranslationLocale>>>;
+    public findAll1(observe?: 'body', reportProgress?: boolean): Observable<Array<TranslationLocaleDto>>;
+    public findAll1(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<TranslationLocaleDto>>>;
+    public findAll1(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<TranslationLocaleDto>>>;
     public findAll1(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         let headers = this.defaultHeaders;
@@ -171,7 +171,7 @@ export class TranslationLocaleService {
         const consumes: string[] = [
         ];
 
-        return this.httpClient.request<Array<TranslationLocale>>('get',`${this.basePath}/api/translation/locale/`,
+        return this.httpClient.request<Array<TranslationLocaleDto>>('get',`${this.basePath}/api/translation/locale/`,
             {
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
@@ -188,9 +188,9 @@ export class TranslationLocaleService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public findById2(id: string, observe?: 'body', reportProgress?: boolean): Observable<TranslationLocale>;
-    public findById2(id: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<TranslationLocale>>;
-    public findById2(id: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<TranslationLocale>>;
+    public findById2(id: string, observe?: 'body', reportProgress?: boolean): Observable<TranslationLocaleDto>;
+    public findById2(id: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<TranslationLocaleDto>>;
+    public findById2(id: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<TranslationLocaleDto>>;
     public findById2(id: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (id === null || id === undefined) {
@@ -212,7 +212,7 @@ export class TranslationLocaleService {
         const consumes: string[] = [
         ];
 
-        return this.httpClient.request<TranslationLocale>('get',`${this.basePath}/api/translation/locale/${encodeURIComponent(String(id))}`,
+        return this.httpClient.request<TranslationLocaleDto>('get',`${this.basePath}/api/translation/locale/${encodeURIComponent(String(id))}`,
             {
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
@@ -230,10 +230,10 @@ export class TranslationLocaleService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public update1(body: TranslationLocale, id: string, observe?: 'body', reportProgress?: boolean): Observable<TranslationLocale>;
-    public update1(body: TranslationLocale, id: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<TranslationLocale>>;
-    public update1(body: TranslationLocale, id: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<TranslationLocale>>;
-    public update1(body: TranslationLocale, id: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public update1(body: TranslationLocaleDto, id: string, observe?: 'body', reportProgress?: boolean): Observable<TranslationLocaleDto>;
+    public update1(body: TranslationLocaleDto, id: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<TranslationLocaleDto>>;
+    public update1(body: TranslationLocaleDto, id: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<TranslationLocaleDto>>;
+    public update1(body: TranslationLocaleDto, id: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (body === null || body === undefined) {
             throw new Error('Required parameter body was null or undefined when calling update1.');
@@ -263,7 +263,7 @@ export class TranslationLocaleService {
             headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
-        return this.httpClient.request<TranslationLocale>('put',`${this.basePath}/api/translation/locale/${encodeURIComponent(String(id))}`,
+        return this.httpClient.request<TranslationLocaleDto>('put',`${this.basePath}/api/translation/locale/${encodeURIComponent(String(id))}`,
             {
                 body: body,
                 withCredentials: this.configuration.withCredentials,
