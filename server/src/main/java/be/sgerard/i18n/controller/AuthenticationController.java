@@ -4,6 +4,8 @@ import be.sgerard.i18n.model.security.user.dto.AuthenticatedUserDto;
 import be.sgerard.i18n.service.ResourceNotFoundException;
 import be.sgerard.i18n.service.security.auth.AuthenticationManager;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.InMemoryReactiveClientRegistrationRepository;
@@ -39,7 +41,7 @@ public class AuthenticationController {
      * Retrieves the current authenticated user.
      */
     @GetMapping("/authentication/user")
-    @Operation(summary = "Retrieves the current authenticated user.")
+    @Operation(summary = "Retrieves the current authenticated user.", security = @SecurityRequirement(name = "basicAuth"), parameters = {@Parameter})
     public Mono<AuthenticatedUserDto> getCurrentUser() {
         return authenticationManager
                 .getCurrentUser()

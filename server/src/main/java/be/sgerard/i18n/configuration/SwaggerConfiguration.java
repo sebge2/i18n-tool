@@ -1,9 +1,11 @@
 package be.sgerard.i18n.configuration;
 
+import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.server.RouterFunction;
@@ -16,6 +18,8 @@ import static org.springframework.web.reactive.function.server.RouterFunctions.r
 
 /**
  * Swagger configuration for all the REST API.
+ *
+ * <a href="https://github.com/springdoc/springdoc-openapi-demos/blob/master/springdoc-openapi-spring-boot-2-webflux">Documentation</a>
  *
  * @author Sebastien Gerard
  */
@@ -31,6 +35,9 @@ public class SwaggerConfiguration {
                         .description("Web API of the i18n tool")
                         .contact(new Contact().name("Sébastien Gérard").url("www.sgerard.be"))
                         .license(new License().name("Apache 2.0"))
+                )
+                .components(
+                        new Components().addSecuritySchemes("basicScheme", new SecurityScheme().type(SecurityScheme.Type.HTTP).scheme("basic"))
                 );
     }
 

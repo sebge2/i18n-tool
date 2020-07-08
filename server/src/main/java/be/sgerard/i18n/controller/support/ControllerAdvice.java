@@ -12,12 +12,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
-import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
  * {@link org.springframework.web.bind.annotation.ControllerAdvice Controller advice} for the whole application.
@@ -111,6 +110,20 @@ public class ControllerAdvice {
 //    /**
 //     * Handles the {@link MissingServletRequestParameterException parameter exception}.
 //     */
+//    @ExceptionHandler(value = ResponseStatusException.class)
+//    public ResponseEntity<ErrorMessages> handleMissingServletRequestParameterException(ResponseStatusException exception) {
+////        final ErrorMessages errorMessages = messagesProvider.map(new LocalizedMessageHolder.Simple("MissingServletRequestParameterException.message", exception.getParameterName()));
+////
+////        if (logger.isDebugEnabled()) {
+////            logger.debug(String.format("Missing parameter exception with id %s, message %s.", errorMessages.getId(), exception.getMessage()), exception);
+////        }
+//
+//        return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
+//    }
+
+//    /**
+//     * Handles the {@link MissingServletRequestParameterException parameter exception}.
+//     */
 //    @ExceptionHandler(value = MissingServletRequestParameterException.class)
 //    public ResponseEntity<ErrorMessages> handleMissingServletRequestParameterException(MissingServletRequestParameterException exception) {
 //        final ErrorMessages errorMessages = messagesProvider.map(new LocalizedMessageHolder.Simple("MissingServletRequestParameterException.message", exception.getParameterName()));
@@ -120,6 +133,21 @@ public class ControllerAdvice {
 //        }
 //
 //        return new ResponseEntity<>(errorMessages, HttpStatus.FORBIDDEN);
+//    }
+
+//    /**
+//     * Handles the {@link ResponseStatusException parameter exception}.
+//     */
+//    @ExceptionHandler(value = ResponseStatusException.class)
+//    public ResponseEntity<ErrorMessages> handleResponseStatusException(ResponseStatusException exception) {
+//        // TODO
+//        final ErrorMessages errorMessages = messagesProvider.map(new LocalizedMessageHolder.Simple("MissingServletRequestParameterException.message"));
+//
+//        if (logger.isDebugEnabled()) {
+//            logger.debug(String.format("Missing parameter exception with id %s, message %s.", errorMessages.getId(), exception.getMessage()), exception);
+//        }
+//
+//        return new ResponseEntity<>(errorMessages, exception.getStatus());
 //    }
 
     /**
@@ -171,13 +199,4 @@ public class ControllerAdvice {
         return "forward:/login";
     }
 
-    @MessageExceptionHandler
-    @SendToUser("/user/event/errors")
-    @SuppressWarnings("unused")
-    public String handleException(Throwable exception) {
-        // TODO
-        logger.debug("Exception occurred when processing STOMP message.", exception);
-
-        return exception.getMessage();
-    }
 }

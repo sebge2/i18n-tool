@@ -1,7 +1,6 @@
 package be.sgerard.i18n.model.event;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.Getter;
 
 /**
@@ -9,7 +8,7 @@ import lombok.Getter;
  *
  * @author Sebastien Gerard
  */
-@Tag(name = "Event", description = "Application event notifying that an object changed")
+@Schema(name = "Event", description = "Application event notifying that an object changed")
 @Getter
 public class EventDto<D> {
 
