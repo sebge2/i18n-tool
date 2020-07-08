@@ -19,6 +19,7 @@ import { Observable }                                        from 'rxjs';
 
 import { Body } from '../model/body';
 import { Body1 } from '../model/body1';
+import { ErrorMessages } from '../model/errorMessages';
 import { InlineResponse200 } from '../model/inlineResponse200';
 import { RepositorySummary } from '../model/repositorySummary';
 

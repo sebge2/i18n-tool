@@ -17,6 +17,7 @@ import { CustomHttpUrlEncodingCodec }                        from '../encoder';
 
 import { Observable }                                        from 'rxjs';
 
+import { ErrorMessages } from '../model/errorMessages';
 import { UserLiveSession } from '../model/userLiveSession';
 
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';

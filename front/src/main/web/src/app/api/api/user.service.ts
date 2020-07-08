@@ -17,6 +17,7 @@ import { CustomHttpUrlEncodingCodec }                        from '../encoder';
 
 import { Observable }                                        from 'rxjs';
 
+import { ErrorMessages } from '../model/errorMessages';
 import { InternalUserCreation } from '../model/internalUserCreation';
 import { User } from '../model/user';
 import { UserPatch } from '../model/userPatch';

@@ -18,6 +18,7 @@ import { CustomHttpUrlEncodingCodec }                        from '../encoder';
 import { Observable }                                        from 'rxjs';
 
 import { BundleKeyTranslation } from '../model/bundleKeyTranslation';
+import { ErrorMessages } from '../model/errorMessages';
 import { TranslationsPage } from '../model/translationsPage';
 import { TranslationsSearchRequest } from '../model/translationsSearchRequest';
 

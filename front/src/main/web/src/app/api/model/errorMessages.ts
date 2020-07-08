@@ -10,5 +10,8 @@
  * Do not edit the class manually.
  */
 
-export interface ServerSentEventEventDtoObject { 
+export interface ErrorMessages { 
+    id?: string;
+    time?: Date;
+    messages?: Array<string>;
 }

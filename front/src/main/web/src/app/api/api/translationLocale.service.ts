@@ -17,6 +17,7 @@ import { CustomHttpUrlEncodingCodec }                        from '../encoder';
 
 import { Observable }                                        from 'rxjs';
 
+import { ErrorMessages } from '../model/errorMessages';
 import { TranslationLocale } from '../model/translationLocale';
 import { TranslationLocaleCreation } from '../model/translationLocaleCreation';
 
@@ -123,6 +124,7 @@ export class TranslationLocaleService {
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
+            '*/*'
         ];
         const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {

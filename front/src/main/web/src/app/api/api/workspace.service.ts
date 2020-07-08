@@ -17,6 +17,7 @@ import { CustomHttpUrlEncodingCodec }                        from '../encoder';
 
 import { Observable }                                        from 'rxjs';
 
+import { ErrorMessages } from '../model/errorMessages';
 import { Workspace } from '../model/workspace';
 
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
@@ -75,6 +76,7 @@ export class WorkspaceService {
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
+            '*/*'
         ];
         const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {

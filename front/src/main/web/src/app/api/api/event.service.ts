@@ -17,7 +17,8 @@ import { CustomHttpUrlEncodingCodec }                        from '../encoder';
 
 import { Observable }                                        from 'rxjs';
 
-import { ServerSentEventEventDtoObject } from '../model/serverSentEventEventDtoObject';
+import { ErrorMessages } from '../model/errorMessages';
+import { EventObject } from '../model/eventObject';
 
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
 import { Configuration }                                     from '../configuration';
@@ -61,15 +62,16 @@ export class EventService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getEvents(observe?: 'body', reportProgress?: boolean): Observable<Array<ServerSentEventEventDtoObject>>;
-    public getEvents(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<ServerSentEventEventDtoObject>>>;
-    public getEvents(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<ServerSentEventEventDtoObject>>>;
+    public getEvents(observe?: 'body', reportProgress?: boolean): Observable<Array<EventObject>>;
+    public getEvents(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<EventObject>>>;
+    public getEvents(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<EventObject>>>;
     public getEvents(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         let headers = this.defaultHeaders;
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
+            '*/*',
             'application/stream+json'
         ];
         const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
@@ -81,7 +83,7 @@ export class EventService {
         const consumes: string[] = [
         ];
 
-        return this.httpClient.request<Array<ServerSentEventEventDtoObject>>('get',`${this.basePath}/api/event`,
+        return this.httpClient.request<Array<EventObject>>('get',`${this.basePath}/api/event`,
             {
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
