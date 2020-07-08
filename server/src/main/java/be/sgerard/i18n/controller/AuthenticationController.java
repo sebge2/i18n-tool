@@ -41,7 +41,7 @@ public class AuthenticationController {
      * Retrieves the current authenticated user.
      */
     @GetMapping("/authentication/user")
-    @Operation(summary = "Retrieves the current authenticated user.", security = @SecurityRequirement(name = "basicAuth"), parameters = {@Parameter})
+    @Operation(summary = "Retrieves the current authenticated user.", security = @SecurityRequirement(name = "basicScheme"))
     public Mono<AuthenticatedUserDto> getCurrentUser() {
         return authenticationManager
                 .getCurrentUser()
