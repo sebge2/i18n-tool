@@ -22,7 +22,7 @@ export function HttpLoaderFactory(http: HttpClient) {
 
 export function configurationFactory() {
     return new SwaggerConfiguration({
-        basePath: '/',
+        basePath: `${window.location.protocol}//${window.location.host}`,
     });
 }
 
