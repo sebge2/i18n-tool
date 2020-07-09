@@ -4,9 +4,9 @@ import be.sgerard.i18n.model.security.user.dto.AuthenticatedUserDto;
 import be.sgerard.i18n.service.ResourceNotFoundException;
 import be.sgerard.i18n.service.security.auth.AuthenticationManager;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.InMemoryReactiveClientRegistrationRepository;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +17,7 @@ import reactor.core.publisher.Mono;
 import java.util.List;
 import java.util.stream.StreamSupport;
 
+import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -30,11 +31,12 @@ import static java.util.stream.Collectors.toList;
 public class AuthenticationController {
 
     private final AuthenticationManager authenticationManager;
-    private final InMemoryReactiveClientRegistrationRepository registrationRepository;
+    private final Iterable<ClientRegistration> registrationRepository;
 
-    public AuthenticationController(AuthenticationManager authenticationManager, InMemoryReactiveClientRegistrationRepository registrationRepository) {
+    public AuthenticationController(AuthenticationManager authenticationManager,
+                                    @Autowired(required = false) InMemoryReactiveClientRegistrationRepository registrationRepository) {
         this.authenticationManager = authenticationManager;
-        this.registrationRepository = registrationRepository;
+        this.registrationRepository = (registrationRepository != null) ? registrationRepository : emptyList();
     }
 
     /**

@@ -8,6 +8,7 @@ import {AuthenticationService as ApiAuthenticationService, Configuration} from "
 import {EventService} from "../../event/service/event.service";
 import {Events} from "../../event/model/events.model";
 import {AuthenticatedUser} from '../model/authenticated-user.model';
+import {OAuthClient} from "../model/oauth-client.model";
 
 @Injectable({
     providedIn: 'root'
@@ -61,6 +62,12 @@ export class AuthenticationService implements OnDestroy {
 
     currentUser(): Observable<AuthenticatedUser> {
         return this._user.pipe(skipWhile(val => !this.initialized));
+    }
+
+    getSupportedOauthClients(): Observable<OAuthClient[]> {
+        return this.authenticationService
+            .getAuthenticationClients()
+            .pipe(map(clients => clients.map(client => OAuthClient[client.toUpperCase()])));
     }
 
     authenticateWithUserPassword(username: string, password: string): Observable<AuthenticatedUser> {

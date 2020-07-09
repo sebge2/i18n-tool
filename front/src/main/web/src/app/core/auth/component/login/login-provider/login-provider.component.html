@@ -1,10 +1,10 @@
-<mat-card class="card">
+<mat-card class="card" *ngIf="hasProvider()">
     <mat-card-header>
         <mat-card-title><i class="fas fa-cloud"></i> Providers</mat-card-title>
     </mat-card-header>
     <mat-card-content>
         <div class="providers">
-            <a href="/auth/oauth2/authorize-client/github">
+            <a href="/auth/oauth2/authorize-client/github" *ngIf="isGitHubSupported()">
                 <svg version="1.1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
                      width="438.549px" height="438.549px" viewBox="0 0 438.549 438.549"
                      style="enable-background:new 0 0 438.549 438.549;"
@@ -33,7 +33,7 @@
                     </g>
                 </svg>
             </a>
-            <a href="/auth/oauth2/authorize-client/google">
+            <a href="/auth/oauth2/authorize-client/google" *ngIf="isGoogleSupported()">
                 <svg version="1.0" xmlns="http://www.w3.org/2000/svg"
                      width="980.000000pt" height="980.000000pt" viewBox="0 0 980.000000 980.000000"
                      style="enable-background:new 0 0 438.549 438.549;"

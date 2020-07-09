@@ -3,6 +3,7 @@ package be.sgerard.i18n.configuration;
 import be.sgerard.i18n.service.security.UserRole;
 import be.sgerard.i18n.service.security.auth.AuthenticationManager;
 import be.sgerard.i18n.service.security.auth.ExternalUserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -54,7 +55,7 @@ public class SecurityConfiguration {
     public SecurityConfiguration(PasswordEncoder passwordEncoder,
                                  ReactiveUserDetailsService internalUserDetailsService,
                                  AuthenticationManager authenticationManager,
-                                 ReactiveClientRegistrationRepository repository) {
+                                 @Autowired(required = false) ReactiveClientRegistrationRepository repository) {
         this.passwordEncoder = passwordEncoder;
 
         this.internalUserDetailsService = internalUserDetailsService;
@@ -93,7 +94,7 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
-        return http
+        final ServerHttpSecurity httpSecurity = http
                 .authorizeExchange()
                 .pathMatchers("/").permitAll()
                 .pathMatchers("/*").permitAll()
@@ -116,21 +117,24 @@ public class SecurityConfiguration {
 
                 .securityContextRepository(new WebSessionServerSecurityContextRepository())
 
-                .oauth2Login(oAuth2Login ->
-                        oAuth2Login
-                                .authorizationRequestResolver(new DefaultServerOAuth2AuthorizationRequestResolver(repository, ServerWebExchangeMatchers.pathMatchers(("/auth/oauth2/authorize-client/{registrationId}"))))
-                                .authenticationMatcher(new PathPatternParserServerWebExchangeMatcher("/auth/oauth2/code/{registrationId}"))
-                                .authenticationManager(externalAuthenticationManager())
-                )
-
                 .formLogin(formLogin ->
                         formLogin
                                 .authenticationEntryPoint(new RedirectServerAuthenticationEntryPoint("/login"))
                                 .requiresAuthenticationMatcher(exchange -> ServerWebExchangeMatcher.MatchResult.notMatch())
                                 .authenticationFailureHandler(new RedirectServerAuthenticationFailureHandler("/login?error"))
-                )
+                );
 
-                .build();
+
+        if (repository != null) {
+            httpSecurity.oauth2Login(oAuth2Login ->
+                    oAuth2Login
+                            .authorizationRequestResolver(new DefaultServerOAuth2AuthorizationRequestResolver(repository, ServerWebExchangeMatchers.pathMatchers(("/auth/oauth2/authorize-client/{registrationId}"))))
+                            .authenticationMatcher(new PathPatternParserServerWebExchangeMatcher("/auth/oauth2/code/{registrationId}"))
+                            .authenticationManager(externalAuthenticationManager())
+            );
+        }
+
+        return httpSecurity.build();
     }
 
 }
