@@ -9,7 +9,7 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
-import { BundleFileDto } from './bundleFileDtoDto';
+import { BundleFileDto } from './bundleFileDto';
 
 /**
  * A workspace is a place where users can define translations and then submit them for review. A workspace is based on a particular branch.

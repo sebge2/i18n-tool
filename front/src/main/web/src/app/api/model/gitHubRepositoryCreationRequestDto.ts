@@ -9,7 +9,7 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
-import { RepositoryCreationRequestDto } from './repositoryCreationRequestDtoDto';
+import { RepositoryCreationRequestDto } from './repositoryCreationRequestDto';
 
 /**
  * Request asking the creation of a GitHub repository

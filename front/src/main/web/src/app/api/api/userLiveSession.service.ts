@@ -17,8 +17,8 @@ import { CustomHttpUrlEncodingCodec }                        from '../encoder';
 
 import { Observable }                                        from 'rxjs';
 
-import { ErrorMessagesDtoDto } from '../model/errorMessagesDtoDto';
-import { UserLiveSessionDtoDto } from '../model/userLiveSessionDtoDto';
+import { ErrorMessagesDto } from '../model/errorMessagesDto';
+import { UserLiveSessionDto } from '../model/userLiveSessionDto';
 
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
 import { Configuration }                                     from '../configuration';

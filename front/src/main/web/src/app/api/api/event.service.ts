@@ -17,8 +17,8 @@ import { CustomHttpUrlEncodingCodec }                        from '../encoder';
 
 import { Observable }                                        from 'rxjs';
 
-import { ErrorMessagesDtoDto } from '../model/errorMessagesDtoDto';
-import { EventObjectDtoDto } from '../model/eventObjectDtoDto';
+import { ErrorMessagesDto } from '../model/errorMessagesDto';
+import { EventObjectDto } from '../model/eventObjectDto';
 
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
 import { Configuration }                                     from '../configuration';

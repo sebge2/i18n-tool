@@ -9,7 +9,7 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
-import { UserDto } from './userDtoDto';
+import { UserDto } from './userDto';
 
 /**
  * Description of an authenticated user.

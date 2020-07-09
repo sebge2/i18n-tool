@@ -17,10 +17,10 @@ import { CustomHttpUrlEncodingCodec }                        from '../encoder';
 
 import { Observable }                                        from 'rxjs';
 
-import { BundleKeyTranslationDtoDto } from '../model/bundleKeyTranslationDtoDto';
-import { ErrorMessagesDtoDto } from '../model/errorMessagesDtoDto';
-import { TranslationsPageDtoDto } from '../model/translationsPageDtoDto';
-import { TranslationsSearchRequestDtoDto } from '../model/translationsSearchRequestDtoDto';
+import { BundleKeyTranslationDto } from '../model/bundleKeyTranslationDto';
+import { ErrorMessagesDto } from '../model/errorMessagesDto';
+import { TranslationsPageDto } from '../model/translationsPageDto';
+import { TranslationsSearchRequestDto } from '../model/translationsSearchRequestDto';
 
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
 import { Configuration }                                     from '../configuration';

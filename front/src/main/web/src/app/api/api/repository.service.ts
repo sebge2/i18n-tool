@@ -17,11 +17,11 @@ import { CustomHttpUrlEncodingCodec }                        from '../encoder';
 
 import { Observable }                                        from 'rxjs';
 
-import { Body1DtoDto } from '../model/body1DtoDto';
-import { BodyDtoDto } from '../model/bodyDtoDto';
-import { ErrorMessagesDtoDto } from '../model/errorMessagesDtoDto';
-import { InlineResponse200DtoDto } from '../model/inlineResponse200DtoDto';
-import { RepositorySummaryDtoDto } from '../model/repositorySummaryDtoDto';
+import { Body1Dto } from '../model/body1Dto';
+import { BodyDto } from '../model/bodyDto';
+import { ErrorMessagesDto } from '../model/errorMessagesDto';
+import { InlineResponse200Dto } from '../model/inlineResponse200Dto';
+import { RepositorySummaryDto } from '../model/repositorySummaryDto';
 
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
 import { Configuration }                                     from '../configuration';

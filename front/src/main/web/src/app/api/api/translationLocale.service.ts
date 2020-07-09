@@ -17,9 +17,9 @@ import { CustomHttpUrlEncodingCodec }                        from '../encoder';
 
 import { Observable }                                        from 'rxjs';
 
-import { ErrorMessagesDtoDto } from '../model/errorMessagesDtoDto';
-import { TranslationLocaleCreationDtoDto } from '../model/translationLocaleCreationDtoDto';
-import { TranslationLocaleDtoDto } from '../model/translationLocaleDtoDto';
+import { ErrorMessagesDto } from '../model/errorMessagesDto';
+import { TranslationLocaleCreationDto } from '../model/translationLocaleCreationDto';
+import { TranslationLocaleDto } from '../model/translationLocaleDto';
 
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
 import { Configuration }                                     from '../configuration';

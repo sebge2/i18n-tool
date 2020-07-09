@@ -17,8 +17,8 @@ import { CustomHttpUrlEncodingCodec }                        from '../encoder';
 
 import { Observable }                                        from 'rxjs';
 
-import { ErrorMessagesDtoDto } from '../model/errorMessagesDtoDto';
-import { GitHubPullRequestDtoDto } from '../model/gitHubPullRequestDtoDto';
+import { ErrorMessagesDto } from '../model/errorMessagesDto';
+import { GitHubPullRequestDto } from '../model/gitHubPullRequestDto';
 
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
 import { Configuration }                                     from '../configuration';

@@ -17,10 +17,10 @@ import { CustomHttpUrlEncodingCodec }                        from '../encoder';
 
 import { Observable }                                        from 'rxjs';
 
-import { ErrorMessagesDtoDto } from '../model/errorMessagesDtoDto';
-import { InternalUserCreationDtoDto } from '../model/internalUserCreationDtoDto';
-import { UserDtoDto } from '../model/userDtoDto';
-import { UserPatchDtoDto } from '../model/userPatchDtoDto';
+import { ErrorMessagesDto } from '../model/errorMessagesDto';
+import { InternalUserCreationDto } from '../model/internalUserCreationDto';
+import { UserDto } from '../model/userDto';
+import { UserPatchDto } from '../model/userPatchDto';
 
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
 import { Configuration }                                     from '../configuration';

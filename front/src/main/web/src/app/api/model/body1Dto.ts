@@ -9,7 +9,7 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
-import { GitHubRepositoryCreationRequestDto } from './gitHubRepositoryCreationRequestDtoDto';
-import { GitRepositoryCreationRequestDto } from './gitRepositoryCreationRequestDtoDto';
+import { GitHubRepositoryCreationRequestDto } from './gitHubRepositoryCreationRequestDto';
+import { GitRepositoryCreationRequestDto } from './gitRepositoryCreationRequestDto';
 
 export type Body1Dto = GitHubRepositoryCreationRequestDto | GitRepositoryCreationRequestDto;

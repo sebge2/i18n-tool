@@ -9,7 +9,7 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
-import { TranslationKeyPatternDto } from './translationKeyPatternDtoDto';
+import { TranslationKeyPatternDto } from './translationKeyPatternDto';
 
 /**
  * Request asking the listing of paginated translations.
