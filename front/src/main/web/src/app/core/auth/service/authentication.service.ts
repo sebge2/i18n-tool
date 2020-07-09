@@ -20,9 +20,12 @@ export class AuthenticationService implements OnDestroy {
 
     constructor(private httpClient: HttpClient,
                 private eventService: EventService,
-                private notificationService: NotificationService) {
-        this.httpClient.get<AuthenticatedUser>('/api/authentication/user')
-            .pipe(map(user => new AuthenticatedUser(user)))
+                private notificationService: NotificationService,
+                private configuration: Configuration,
+                private authenticationService: ApiAuthenticationService) {
+        this.authenticationService
+            .getCurrentUser()
+            .pipe(map(userDto => new AuthenticatedUser(userDto)))
             .toPromise()
             .then(user => {
                 console.debug('There is an existing authenticated user, send next user.', user);
