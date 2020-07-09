@@ -30,9 +30,11 @@ public class EventController {
     /**
      * Returns all the events that now occurs (hot event source).
      */
-    @GetMapping(value = "/event", produces = MediaType.APPLICATION_STREAM_JSON_VALUE)
+    @GetMapping(value = "/event", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     @Operation(summary = "Returns all incoming events.")
-    public Flux<EventDto<Object>> getEvents() {
-        return eventService.getEvents();
+    public Flux<ServerSentEvent<EventDto<Object>>> getEvents() {
+        return eventService
+                .getEvents()
+                .map(event -> ServerSentEvent.builder(event).build());
     }
 }

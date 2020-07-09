@@ -1,19 +1,17 @@
-import {Injectable} from '@angular/core';
-import {RxStompService} from '@stomp/ng2-stompjs';
-import {Message} from '@stomp/stompjs';
-import {Observable} from "rxjs";
-import {map, merge} from "rxjs/operators";
+import {Injectable, NgZone} from '@angular/core';
+import {EMPTY, Observable} from "rxjs";
 import {NotificationService} from "../../notification/service/notification.service";
-import {RxStompState} from '@stomp/rx-stomp';
+import {EventObjectDto} from "../../../api";
+import {catchError, filter, map} from "rxjs/operators";
 
 @Injectable({
     providedIn: 'root'
 })
 export class EventService {
 
-    private opened: boolean;
+    private _observable: Observable<EventObjectDto>;
 
-    constructor(private rxStompService: RxStompService,
+    constructor(private _zone: NgZone,
                 private notificationService: NotificationService) {
         rxStompService.connectionState$.subscribe((event: RxStompState) => {
             if (event == RxStompState.CLOSED) {
