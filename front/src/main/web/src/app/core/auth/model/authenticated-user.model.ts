@@ -1,18 +1,21 @@
 import {UserRole} from "./user-role.model";
 import {User} from "./user.model";
+import {AuthenticatedUserDto} from "../../../api";
 
 export class AuthenticatedUser {
 
+    public static from(user: AuthenticatedUser) { // TODO
+        return new AuthenticatedUser({});
+    }
+
     readonly user: User;
-    readonly sessionRoles: UserRole[];
 
-    constructor(user: AuthenticatedUser = <AuthenticatedUser>{}) {
-        Object.assign(this, user);
+    constructor(private dto: AuthenticatedUserDto) {
+        this.user = new User(dto.user);
+    }
 
-        this.sessionRoles =
-            (user.sessionRoles != null)
-                ? user.sessionRoles
-                : [];
+    get sessionRoles(): UserRole[] {
+        return this.dto.sessionRoles.map(role => UserRole[role]);
     }
 
     hasRole(role: UserRole): boolean {

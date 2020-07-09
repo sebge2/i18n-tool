@@ -1,22 +1,37 @@
 import {UserRole} from "./user-role.model";
+import {UserDto} from "../../../api";
 
 export class User {
 
-    readonly id: string;
-    readonly username: string;
-    readonly email: string;
-    readonly avatarUrl: string;
-    readonly roles: UserRole[];
-    readonly type: UserType;
+    constructor(private dto: UserDto) {
+    }
 
-    constructor(user: User = <User>{}) {
-        Object.assign(this, user);
+    get id() : string {
+        return this.dto.id;
+    }
 
-        this.roles = (user.roles != null) ? user.roles : [];
+    get username() : string {
+        return this.dto.username;
+    }
+
+    get email() : string {
+        return this.dto.email;
+    }
+
+    get avatarUrl() : string {
+        return this.dto.avatarUrl;
+    }
+
+    get roles(): UserRole[]  {
+        return this.dto.roles.map(role => UserRole[role]);
     }
 
     hasRole(role: UserRole): boolean {
         return this.roles.includes(role);
+    }
+
+    get type(): UserType {
+        return UserType[this.dto.type];
     }
 
     isInternal(): boolean {
