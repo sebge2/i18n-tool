@@ -37,6 +37,14 @@ public class CompositeTranslationLocaleListener implements TranslationLocaleList
     }
 
     @Override
+    public Mono<Void> onCreatedLocale(TranslationLocaleEntity locale) {
+        return Flux
+                .fromIterable(listeners)
+                .flatMap(listener -> listener.onCreatedLocale(locale))
+                .then();
+    }
+
+    @Override
     public Mono<ValidationResult> beforeUpdate(TranslationLocaleEntity original, TranslationLocaleDto update) {
         return Flux
                 .fromIterable(listeners)
@@ -46,19 +54,20 @@ public class CompositeTranslationLocaleListener implements TranslationLocaleList
     }
 
     @Override
-    public Mono<Void> onCreatedLocale(TranslationLocaleEntity locale) {
-        return Flux
-                .fromIterable(listeners)
-                .flatMap(listener -> listener.onCreatedLocale(locale))
-                .then();
-    }
-
-    @Override
     public Mono<Void> onUpdatedLocale(TranslationLocaleEntity locale) {
         return Flux
                 .fromIterable(listeners)
                 .flatMap(listener -> listener.onUpdatedLocale(locale))
                 .then();
+    }
+
+    @Override
+    public Mono<ValidationResult> beforeDelete(TranslationLocaleEntity locale) {
+        return Flux
+                .fromIterable(listeners)
+                .flatMap(listener -> listener.beforeDelete(locale))
+                .reduce(ValidationResult::merge)
+                .switchIfEmpty(Mono.just(ValidationResult.EMPTY));
     }
 
     @Override

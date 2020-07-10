@@ -93,6 +93,13 @@ public class TranslationLocaleManagerImpl implements TranslationLocaleManager {
     @Transactional
     public Mono<TranslationLocaleEntity> delete(String localeId) {
         return findById(localeId)
+                .flatMap(translationLocale -> localeListener.beforeDelete(translationLocale)
+                        .map(validationResult -> {
+                            ValidationException.throwIfFailed(validationResult);
+
+                            return translationLocale;
+                        })
+                )
                 .flatMap(translationLocale ->
                         localeListener
                                 .onDeletedLocale(translationLocale)

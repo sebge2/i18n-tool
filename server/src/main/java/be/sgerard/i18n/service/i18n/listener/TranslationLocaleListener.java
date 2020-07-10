@@ -42,6 +42,13 @@ public interface TranslationLocaleListener {
     }
 
     /**
+     * Validates before the specified {@link TranslationLocaleEntity original locale} will be deleted.
+     */
+    default Mono<ValidationResult> beforeDelete(TranslationLocaleEntity locale) {
+        return Mono.empty();
+    }
+
+    /**
      * Performs an action when the specified {@link TranslationLocaleEntity locale} has been deleted.
      */
     default Mono<Void> onDeletedLocale(TranslationLocaleEntity locale) {
