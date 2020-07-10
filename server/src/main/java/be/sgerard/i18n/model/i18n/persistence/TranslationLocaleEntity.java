@@ -1,7 +1,12 @@
 package be.sgerard.i18n.model.i18n.persistence;
 
 import be.sgerard.i18n.model.i18n.dto.TranslationLocaleDto;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
+import org.springframework.data.annotation.AccessType;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.util.StringUtils;
 
@@ -14,6 +19,9 @@ import java.util.*;
  * @author Sebastien Gerard
  */
 @Document("translation_locale")
+@Getter
+@Setter
+@Accessors(chain = true)
 public class TranslationLocaleEntity {
 
     /**
@@ -60,7 +68,8 @@ public class TranslationLocaleEntity {
     /**
      * Locale variants.
      */
-    private List<String> variants = new ArrayList<>();
+    @AccessType(AccessType.Type.PROPERTY)
+    private final List<String> variants = new ArrayList<>();
 
     /**
      * The icon associated to this locale (library flag-icon-css).
@@ -68,6 +77,7 @@ public class TranslationLocaleEntity {
     @NotNull
     private String icon;
 
+    @PersistenceConstructor
     TranslationLocaleEntity() {
     }
 
@@ -80,55 +90,10 @@ public class TranslationLocaleEntity {
     }
 
     /**
-     * Returns the unique id of this entity.
-     */
-    public String getId() {
-        return id;
-    }
-
-    /**
-     * Sets the unique id of this entity.
-     */
-    public TranslationLocaleEntity setId(String id) {
-        this.id = id;
-        return this;
-    }
-
-    /**
-     * Returns the locale language (ex: fr).
-     */
-    public String getLanguage() {
-        return language;
-    }
-
-    /**
-     * Sets the locale language (ex: fr).
-     */
-    public TranslationLocaleEntity setLanguage(String language) {
-        this.language = language;
-        return this;
-    }
-
-    /**
-     * Returns the locale region (ex: BE).
+     * @see #getRegion()
      */
     public Optional<String> getRegion() {
         return Optional.ofNullable(region);
-    }
-
-    /**
-     * Sets the locale region (ex: BE).
-     */
-    public TranslationLocaleEntity setRegion(String region) {
-        this.region = region;
-        return this;
-    }
-
-    /**
-     * Returns locale variants.
-     */
-    public List<String> getVariants() {
-        return variants;
     }
 
     /**
@@ -136,21 +101,6 @@ public class TranslationLocaleEntity {
      */
     public TranslationLocaleEntity setVariants(Collection<String> variants) {
         this.variants.addAll(variants);
-        return this;
-    }
-
-    /**
-     * Returns the icon associated to this locale (library flag-icon-css).
-     */
-    public String getIcon() {
-        return icon;
-    }
-
-    /**
-     * Sets the icon associated to this locale (library flag-icon-css).
-     */
-    public TranslationLocaleEntity setIcon(String icon) {
-        this.icon = icon;
         return this;
     }
 
