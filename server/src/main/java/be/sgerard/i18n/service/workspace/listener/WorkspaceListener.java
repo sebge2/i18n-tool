@@ -59,6 +59,22 @@ public interface WorkspaceListener {
     }
 
     /**
+     * Validates that the specified workspace can be updated.
+     */
+    default Mono<ValidationResult> beforeUpdate(WorkspaceEntity workspace) {
+        return Mono.just(ValidationResult.EMPTY);
+    }
+
+    /**
+     * Performs an action when the specified workspace has been updated. Called before
+     * {@link #onInitialize(WorkspaceEntity) on-initialize} and {@link #onReview(WorkspaceEntity) on-review}.
+     *
+     */
+    default Mono<Void> onUpdate(WorkspaceEntity workspace) {
+        return Mono.empty();
+    }
+
+    /**
      * Performs an action after the deletion of the specified workspace.
      */
     default Mono<Void> onDelete(WorkspaceEntity workspace) {

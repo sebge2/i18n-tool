@@ -87,6 +87,25 @@ public class CompositeWorkspaceListener implements WorkspaceListener {
     }
 
     @Override
+    public Mono<ValidationResult> beforeUpdate(WorkspaceEntity workspace) {
+        return Flux
+                .fromIterable(listeners)
+                .filter(listener -> listener.support(workspace))
+                .flatMap(listener -> listener.beforeUpdate(workspace))
+                .reduce(ValidationResult::merge)
+                .switchIfEmpty(Mono.just(ValidationResult.EMPTY));
+    }
+
+    @Override
+    public Mono<Void> onUpdate(WorkspaceEntity workspace) {
+        return Flux
+                .fromIterable(listeners)
+                .filter(listener -> listener.support(workspace))
+                .flatMap(listener -> listener.onUpdate(workspace))
+                .then();
+    }
+
+    @Override
     public Mono<Void> onDelete(WorkspaceEntity workspace) {
         return Flux
                 .fromIterable(listeners)
