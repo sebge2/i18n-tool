@@ -1,21 +1,22 @@
 import {Injectable, OnDestroy} from '@angular/core';
 import {TranslationLocale} from "../model/translation-locale.model";
-import {HttpClient} from "@angular/common/http";
+import {TranslationLocaleService as ApiTranslationLocaleService} from "../../api";
 import {NotificationService} from "../../core/notification/service/notification.service";
 import {BehaviorSubject, Subject} from "rxjs";
 
 @Injectable({
     providedIn: 'root'
 })
-export class LocalesTranslationsService implements OnDestroy {
+export class TranslationLocaleService implements OnDestroy {
 
     private _availableLocales: BehaviorSubject<TranslationLocale[]> = new BehaviorSubject<TranslationLocale[]>([]);
 
     private destroy$ = new Subject();
 
-    constructor(private httpClient: HttpClient,
+    constructor(private apiService: ApiTranslationLocaleService,
                 private notificationService: NotificationService) {
-        this.httpClient.get<TranslationLocale[]>('/api/translation/locale/')
+        this.apiService
+            .findAll1()
             .toPromise()
             .then(locales => this._availableLocales.next(locales.map(locale => new TranslationLocale(locale))))
             .catch(reason => {
@@ -29,6 +30,6 @@ export class LocalesTranslationsService implements OnDestroy {
     }
 
     getAvailableLocales(): TranslationLocale[] {
-        return this._availableLocales.getValue(); // TODO
+        return this._availableLocales.getValue();
     }
 }
