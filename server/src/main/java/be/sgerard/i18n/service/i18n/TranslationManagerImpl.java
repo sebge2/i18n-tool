@@ -199,8 +199,7 @@ public class TranslationManagerImpl implements TranslationManager {
                 bundleFile.getLocationDirectory(), bundleFile.getName(), bundleFile.getFiles().size());
 
         final BundleFileEntity bundleFileEntity = new BundleFileEntity(bundleFile);
-
-        workspaceEntity.addFile(bundleFileEntity);// TODO save
+        workspaceEntity.addFile(bundleFileEntity);
 
         final SortedSet<String> keys = new TreeSet<>(String::compareTo);
 

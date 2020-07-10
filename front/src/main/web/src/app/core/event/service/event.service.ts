@@ -13,27 +13,33 @@ export class EventService {
 
     constructor(private _zone: NgZone,
                 private notificationService: NotificationService) {
-        rxStompService.connectionState$.subscribe((event: RxStompState) => {
-            if (event == RxStompState.CLOSED) {
-                if (this.opened) {
-                    notificationService.displayErrorMessage('Connection issue to the server. Please check your internet connection.');
-                }
-                this.opened = false;
-            } else if (event == RxStompState.OPEN) {
-                this.opened = true;
-            }
+        const eventSource = new EventSource("./api/event", {withCredentials: true});
+
+        this._observable = new Observable(observer => {
+            eventSource.addEventListener('message', function (e) {
+                _zone.run(() => {
+                    observer.next(<EventObjectDto>JSON.parse(e.data));
+                });
+            }, false);
+
+            eventSource.addEventListener('error', function (e) {
+                _zone.run(() => observer.error(e));
+            }, false);
         });
     }
 
     public subscribe<T>(eventType: string, type: { new(raw: T): T; }): Observable<T> {
-        return this.rxStompService.watch("/topic/" + eventType)
+        return this._observable
             .pipe(
-                merge(this.rxStompService.watch("/user/queue/" + eventType)),
-                map((message: Message) => new type(<T>JSON.parse(message.body)))
-            );
-    }
+                catchError((e) => {
+                    // TODO display once
+                    this.notificationService.displayErrorMessage('Connection issue to the server. Please check your internet connection.');
 
-    public publish(eventType: string, payload: any): void {
-        this.rxStompService.publish({destination: "/app/" + eventType, body: JSON.stringify(payload)});
+                    return EMPTY;
+                }),
+                filter(event => !!event),
+                filter(event => event.type === eventType),
+                map(event => new type(<T>JSON.parse(JSON.stringify(event.payload)))),
+            );
     }
 }

@@ -1,7 +1,7 @@
 package be.sgerard.i18n.service.workspace;
 
-import be.sgerard.i18n.model.workspace.WorkspaceDto;
-import be.sgerard.i18n.model.workspace.WorkspaceEntity;
+import be.sgerard.i18n.model.workspace.dto.WorkspaceDto;
+import be.sgerard.i18n.model.workspace.persistence.WorkspaceEntity;
 import be.sgerard.i18n.service.ResourceNotFoundException;
 import be.sgerard.i18n.service.repository.RepositoryException;
 import reactor.core.publisher.Flux;
@@ -58,6 +58,11 @@ public interface WorkspaceManager {
      * Terminates the review of the specified workspace. The workspace will be removed and a new fresh workspace will be created and returned.
      */
     Mono<WorkspaceEntity> finishReview(String workspaceId) throws ResourceNotFoundException, RepositoryException;
+
+    /**
+     * Updates the specified workspace. The status cannot be updated.
+     */
+    Mono<WorkspaceEntity> update(WorkspaceEntity workspaceEntity) throws ResourceNotFoundException, RepositoryException;
 
     /**
      * Removes the {@link WorkspaceEntity workspace} having the specified id.

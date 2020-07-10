@@ -1,8 +1,8 @@
 package be.sgerard.i18n.service.workspace;
 
 import be.sgerard.i18n.model.repository.RepositoryStatus;
-import be.sgerard.i18n.model.workspace.WorkspaceEntity;
 import be.sgerard.i18n.model.workspace.WorkspaceStatus;
+import be.sgerard.i18n.model.workspace.persistence.WorkspaceEntity;
 import be.sgerard.i18n.repository.workspace.WorkspaceRepository;
 import be.sgerard.i18n.service.ResourceNotFoundException;
 import be.sgerard.i18n.service.ValidationException;
@@ -125,6 +125,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
                             })
                             .flatMap(translationsStrategy::onInitialize)
                             .doOnNext(wk -> wk.setStatus(WorkspaceStatus.INITIALIZED))
+                            .flatMap(this::update)
                             .flatMap(wk -> listener.onInitialize(wk).thenReturn(wk));
                 });
     }
@@ -154,7 +155,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
 
                                     listener.onReview(workspace);
 
-                                    return Mono.just(workspace);
+                                    return update(workspace);
                                 } else {
                                     return delete(workspace.getId())
                                             .then(createWorkspaceIfNeeded(workspace));
@@ -168,6 +169,21 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
     public Mono<WorkspaceEntity> finishReview(String workspaceId) throws ResourceNotFoundException, RepositoryException {
         return findByIdOrDie(workspaceId)
                 .flatMap(this::doFinishReview);
+    }
+
+    @Override
+    @Transactional
+    public Mono<WorkspaceEntity> update(WorkspaceEntity workspace) throws ResourceNotFoundException, RepositoryException {
+        return listener
+                .beforeUpdate(workspace)
+                .then(
+                        repository
+                                .save(workspace)
+                                .flatMap(w ->
+                                        listener.onUpdate(w)
+                                                .thenReturn(w)
+                                )
+                );
     }
 
     @Override
