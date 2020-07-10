@@ -34,7 +34,7 @@ public class ServerSentEventService implements EventService {
     @Lazy
     public ServerSentEventService(UserLiveSessionManager userSessionManager) {
         this.userSessionManager = userSessionManager;
-        this.emitter = EmitterProcessor.create();
+        this.emitter = EmitterProcessor.create(false);
         this.sink = emitter.sink();
     }
 
