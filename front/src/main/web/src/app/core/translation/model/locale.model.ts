@@ -4,6 +4,10 @@ import * as _ from "lodash";
 export class Locale {
 
     public static fromString(value: string): Locale {
+        if (value === null) {
+            return null;
+        }
+
         const parsed = bcp47.parse(value);
 
         return new Locale(parsed.language, parsed.region, parsed.variants);
@@ -12,6 +16,8 @@ export class Locale {
     constructor(public language: string,
                 public region?: string,
                 public variants: string[] = []) {
+        this.region = _.isEmpty(this.region) ? null : this.region;
+        this.variants = (this.variants !== null) ? this.variants : [];
     }
 
     public toString() {
@@ -22,19 +28,32 @@ export class Locale {
         });
     }
 
-    public matchLanguage(locale: Locale): boolean {
-        return locale.language == this.language;
+    public matchLanguage(other: Locale): boolean {
+        if (other === null) {
+            return false;
+        }
+
+        return other.language == this.language;
     }
 
-    public matchLanguageAndRegion(locale: Locale): boolean {
-        return (locale.language == this.language)
-            && (locale.region === this.region);
+    public matchLanguageAndRegion(other: Locale): boolean {
+        if (other === null) {
+            return false;
+        }
+
+        return (other.language == this.language)
+            && (other.region === this.region);
     }
 
-    public matchStrictly(locale: Locale): boolean {
-        return (locale.language === this.language)
-            && (locale.region === this.region)
-            && (_.intersection(locale.variants, this.variants).length > 0);
+    public matchStrictly(other: Locale): boolean {
+        if (other === null) {
+            return false;
+        }
+
+        return (other.language === this.language)
+            && (other.region === this.region)
+            && ((_.intersection(other.variants, this.variants).length > 0)
+                || ((other.variants.length == 0) && (this.variants.length == 0)));
     }
 
 }

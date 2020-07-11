@@ -1,5 +1,4 @@
 import {Component} from '@angular/core';
-import {ToolLocaleService} from "./core/ui/service/tool-locale.service";
 
 @Component({
     selector: 'app-root',
@@ -8,7 +7,6 @@ import {ToolLocaleService} from "./core/ui/service/tool-locale.service";
 })
 export class AppComponent {
 
-    constructor(private localeService: ToolLocaleService) {
-        localeService.initialize();
+    constructor() {
     }
 }

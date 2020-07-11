@@ -1,10 +1,10 @@
 import {Injectable} from '@angular/core';
 import {ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot} from '@angular/router';
-import {Observable} from 'rxjs';
+import {combineLatest, Observable} from 'rxjs';
 import {AuthenticationService} from "../../../auth/service/authentication.service";
 import {map} from "rxjs/operators";
 import {UserRole} from "../../../auth/model/user-role.model";
-import {AuthenticatedUser} from 'src/app/core/auth/model/authenticated-user.model';
+import {ToolLocaleService} from "../tool-locale.service";
 
 @Injectable({
     providedIn: 'root'
@@ -12,13 +12,14 @@ import {AuthenticatedUser} from 'src/app/core/auth/model/authenticated-user.mode
 export class GlobalAuthGuard implements CanActivate {
 
     constructor(private router: Router,
-                private authenticationService: AuthenticationService) {
+                private authenticationService: AuthenticationService,
+                private toolLocaleService: ToolLocaleService) {
     }
 
     canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
-        return this.authenticationService.currentUser()
+        return combineLatest([this.authenticationService.currentUser(), this.toolLocaleService.getCurrentLocale()])
             .pipe(
-                map((user: AuthenticatedUser) => {
+                map(([user, toolLocale]) => {
                         if (user == null) {
                             this.router.navigate(['/login'], {});
                             return false;
