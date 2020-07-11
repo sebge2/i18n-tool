@@ -1,21 +1,18 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject, combineLatest, Observable, Subject} from "rxjs";
-import {ToolLocale} from "../../../translations/model/tool-locale.model";
+import {ALL_LOCALES, DEFAULT_LOCALE, ToolLocale} from "../../translation/model/tool-locale.model";
 import {TranslateService} from "@ngx-translate/core";
 import {UserSettingsService} from "../../../settings/service/user-settings.service";
 import {map} from "rxjs/operators";
 import {ActivatedRoute, Params} from "@angular/router";
-
-export const EN_LOCALE = new ToolLocale(<ToolLocale>{language: 'en', icon: 'flag-icon-gb'});
-export const FR_LOCALE = new ToolLocale(<ToolLocale>{language: 'fr', icon: 'flag-icon-fr'});
-export const DEFAULT_LOCALE = EN_LOCALE;
-
-export const ALL_LOCALES = [EN_LOCALE, FR_LOCALE];
+import {Locale} from "../../translation/model/locale.model";
 
 @Injectable({
     providedIn: 'root'
 })
 export class ToolLocaleService {
+
+    public static FORCE_LOCALE = 'forceLocale';
 
     private _currentLocale: Subject<ToolLocale> = new Subject();
     private _forceLocale: Subject<ToolLocale> = new BehaviorSubject(null);
@@ -52,7 +49,7 @@ export class ToolLocaleService {
             );
 
         this.route.queryParamMap
-            .pipe(map((params: Params) => this.findLocaleFromString(params.get('forceLocale'))))
+            .pipe(map((params: Params) => this.findLocaleFromString(params.get(ToolLocaleService.FORCE_LOCALE))))
             .subscribe(forceLocale => this.forceLocale(forceLocale));
     }
 
@@ -69,25 +66,15 @@ export class ToolLocaleService {
     }
 
     private findLocaleFromString(value: string): ToolLocale {
-        return this.getToolLocales().find(locale => locale.toString() === value);
+        return this.getToolLocales().find(locale => locale.toLocale().matchStrictly(Locale.fromString(value)));
     }
 
     private getLocaleFromBrowserPreference(): ToolLocale {
         for (const browserLanguage of navigator.languages) {
-            let nonStrictMatching: ToolLocale = null;
-
             for (const locale of this.getToolLocales()) {
-                if (locale.matchStrictlyBcp47(browserLanguage)) {
+                if (locale.toLocale().matchLanguage(Locale.fromString(browserLanguage))) {
                     return locale;
                 }
-
-                if (locale.matchLanguageBcp47(browserLanguage)) {
-                    nonStrictMatching = locale;
-                }
-            }
-
-            if (nonStrictMatching) {
-                return nonStrictMatching;
             }
         }
 
