@@ -2,7 +2,7 @@ import {Injectable, NgZone} from '@angular/core';
 import {EMPTY, Observable} from "rxjs";
 import {NotificationService} from "../../notification/service/notification.service";
 import {EventObjectDto} from "../../../api";
-import {catchError, filter, map} from "rxjs/operators";
+import {catchError, filter, map, tap} from "rxjs/operators";
 
 @Injectable({
     providedIn: 'root'
@@ -28,7 +28,7 @@ export class EventService {
         });
     }
 
-    public subscribe<T>(eventType: string, type: { new(raw: T): T; }): Observable<T> {
+    public subscribeDto<D>(eventType: string): Observable<D> {
         return this._observable
             .pipe(
                 catchError((e) => {
@@ -37,9 +37,16 @@ export class EventService {
 
                     return EMPTY;
                 }),
-                filter(event => !!event),
+                filter(event => event !== null),
                 filter(event => event.type === eventType),
-                map(event => new type(<T>JSON.parse(JSON.stringify(event.payload)))),
+                map(event => <D> event.payload),
+            );
+    }
+
+    public subscribe<T>(eventType: string, type: { new(raw: any): T; }): Observable<T> {
+        return this.subscribeDto(eventType)
+            .pipe(
+                map(event => new type(<T> event)),
             );
     }
 }
