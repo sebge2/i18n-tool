@@ -79,7 +79,7 @@ public enum EventType {
     /**
      * @see UserDto
      */
-    CREATED_USER,
+    ADDED_USER,
 
     /**
      * @see UserDto

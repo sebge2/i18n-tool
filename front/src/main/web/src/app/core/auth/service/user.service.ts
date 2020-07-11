@@ -1,81 +1,55 @@
-import {Injectable, OnDestroy} from '@angular/core';
-import {BehaviorSubject, Observable, Subject, throwError} from "rxjs";
+import {Injectable} from '@angular/core';
+import {Observable} from "rxjs";
 import {User} from "../model/user.model";
-import {HttpClient, HttpResponse} from "@angular/common/http";
 import {NotificationService} from "../../notification/service/notification.service";
 import {Events} from "../../event/model/events.model";
-import {catchError, map, takeUntil} from "rxjs/operators";
+import {catchError} from "rxjs/operators";
 import {EventService} from "../../event/service/event.service";
 import {UserUpdate} from "../model/user-update.model";
+import {UserService as ApiUserService} from "../../../api";
+import {synchronizedCollection} from "../../shared/utils/synchronized-observable-utils";
 
 @Injectable({
     providedIn: 'root'
 })
-export class UserService implements OnDestroy {
+export class UserService {
 
-    private _users: BehaviorSubject<User[]> = new BehaviorSubject<User[]>([]);
-    private destroy$ = new Subject();
+    private readonly _users: Observable<User[]>;
 
-    constructor(private httpClient: HttpClient,
+    constructor(private apiUserService: ApiUserService,
                 private eventService: EventService,
                 private notificationService: NotificationService) {
-        this.httpClient.get<User[]>('/api/user').toPromise()
-            .then(users => this._users.next(users.map(user => new User(user))))
-            .catch(reason => {
+        this._users = synchronizedCollection(
+            this.apiUserService.findAll2(),
+            this.eventService.subscribeDto(Events.ADDED_USER),
+            this.eventService.subscribeDto(Events.UPDATED_USER),
+            this.eventService.subscribeDto(Events.DELETED_USER),
+            dto => new User(dto),
+            (first, second) => first.id === second.id
+        )
+            .pipe(catchError((reason) => {
                 console.error("Error while retrieving users.", reason);
-                this.notificationService.displayErrorMessage("Error while retrieving users.")
-            });
-
-        this.eventService.subscribe(Events.UPDATED_USER, User)
-            .pipe(takeUntil(this.destroy$))
-            .subscribe(
-                (user: User) => {
-                    const users = this._users.getValue().slice();
-
-                    const index = users.findIndex(current => user.id === current.id);
-                    if (index >= 0) {
-                        users[index] = user;
-                    } else {
-                        users.push(user);
-                    }
-
-                    this._users.next(users);
-                }
-            );
-
-        this.eventService.subscribe(Events.DELETED_USER, User)
-            .pipe(takeUntil(this.destroy$))
-            .subscribe(
-                (user: User) => {
-                    const users = this._users.getValue().slice();
-
-                    const index = users.findIndex(current => user.id === current.id);
-                    if (index >= 0) {
-                        users.splice(index, 1);
-                    }
-
-                    this._users.next(users);
-                }
-            );
+                this.notificationService.displayErrorMessage("Error while retrieving users.");
+                return [];
+            }));
     }
 
+    // TODO
     updateUser(id: string, update: UserUpdate): Observable<User> {
-        return this.httpClient
-            .patch('/api/user/' + id, update)
-            .pipe(
-                map((user: User) => new User(user)),
-                catchError((result: HttpResponse<any>) => {
-                        console.error('Error while updating user.', result);
-                        this.notificationService.displayErrorMessage('Error while updating user.');
-
-                        return throwError(result);
-                    }
-                )
-            );
-    }
-
-    ngOnDestroy(): void {
-        this.destroy$.complete();
+        return null;
+        // return this.apiUserService
+        //     .updateUser()
+        //     .patch('/api/user/' + id, update)
+        //     .pipe(
+        //         map((user: User) => new User(user)),
+        //         catchError((result: HttpResponse<any>) => {
+        //                 console.error('Error while updating user.', result);
+        //                 this.notificationService.displayErrorMessage('Error while updating user.');
+        //
+        //                 return throwError(result);
+        //             }
+        //         )
+        //     );
     }
 
     getUsers(): Observable<User[]> {
