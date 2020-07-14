@@ -1,4 +1,4 @@
-import {BehaviorSubject, Observable} from "rxjs";
+import {BehaviorSubject, Observable, Subject} from "rxjs";
 import {map} from "rxjs/operators";
 
 export function synchronizedCollection<I, O>(originalCollection: Observable<I[]>,
@@ -59,4 +59,27 @@ export function synchronizedCollection<I, O>(originalCollection: Observable<I[]>
         });
 
     return collection;
+}
+
+export function synchronizedObject<I, O>(original: Observable<I>,
+                                         updated: Observable<I>,
+                                         deleted: Observable<I>,
+                                         mapper: ((I) => O)): Observable<O> {
+    const subject = new Subject<O>();
+
+    original
+        .pipe(map((value: I) => mapper(value)))
+        .toPromise()
+        .then(value => subject.next(value))
+        .catch(reason => subject.error(reason));
+
+    updated
+        .pipe(map(value => mapper(value)))
+        .subscribe((value: O) => subject.next(value));
+
+    deleted
+        .pipe(map(value => mapper(value)))
+        .subscribe((_: O) => subject.next(null));
+
+    return subject;
 }

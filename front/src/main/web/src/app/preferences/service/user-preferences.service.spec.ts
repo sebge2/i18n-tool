@@ -1,6 +1,6 @@
 import {TestBed} from '@angular/core/testing';
 
-import {UserSettingsService} from './user-settings.service';
+import {UserPreferencesService} from './user-preferences.service';
 
 describe('UserSettingsService', () => {
     beforeEach(() => {
@@ -8,7 +8,7 @@ describe('UserSettingsService', () => {
     });
 
     it('should be created', () => {
-        const service: UserSettingsService = TestBed.get(UserSettingsService);
+        const service: UserPreferencesService = TestBed.get(UserPreferencesService);
 
         expect(service).toBeTruthy();
     });

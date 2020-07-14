@@ -2,21 +2,21 @@ import {getTestBed, TestBed} from '@angular/core/testing';
 
 import {ToolLocaleService} from './tool-locale.service';
 import {TranslateService} from "@ngx-translate/core";
-import {UserSettingsService} from "../../../settings/service/user-settings.service";
+import {UserPreferencesService} from "../../../preferences/service/user-preferences.service";
 import {ActivatedRoute} from "@angular/router";
 
 describe('LocaleService', () => {
     let injector: TestBed;
     let service: ToolLocaleService;
     let translateService: TranslateService;
-    let settingsService: UserSettingsService;
+    let preferencesService: UserPreferencesService;
     let route: ActivatedRoute;
 
     beforeEach(() => {
         TestBed.configureTestingModule({
             providers: [
                 {provide: TranslateService, useValue: translateService},
-                {provide: UserSettingsService, useValue: settingsService},
+                {provide: UserPreferencesService, useValue: preferencesService},
                 {provide: ActivatedRoute, useValue: route}
             ]
         });

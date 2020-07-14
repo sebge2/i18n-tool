@@ -15,8 +15,8 @@ const routes: Routes = [
                 loadChildren: () => import('./translations/translations.module').then(m => m.TranslationsModule)
             },
             {
-                path: 'settings',
-                loadChildren: () => import('./settings/settings.module').then(m => m.SettingsModule)
+                path: 'preferences',
+                loadChildren: () => import('./preferences/preferences.module').then(m => m.PreferencesModule)
             },
             {
                 path: 'admin',

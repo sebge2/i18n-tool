@@ -1,19 +1,19 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {SettingsComponent} from './component/settings/settings.component';
+import {PreferencesComponent} from './component/preferences/preferences.component';
 import {RouterModule, Routes} from "@angular/router";
 
 const appRoutes: Routes = [
-    {path: '', pathMatch: 'full', component: SettingsComponent}
+    {path: '', pathMatch: 'full', component: PreferencesComponent}
 ];
 
 @NgModule({
-    declarations: [SettingsComponent],
+    declarations: [PreferencesComponent],
     imports: [
         CommonModule,
         RouterModule.forChild(appRoutes)
     ],
     exports: [RouterModule]
 })
-export class SettingsModule {
+export class PreferencesModule {
 }
