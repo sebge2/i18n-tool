@@ -18,6 +18,10 @@ export interface UserPreferencesDto {
      * The locale to use for the user.
      */
     toolLocale?: UserPreferencesDto.ToolLocaleDtoEnum;
+    /**
+     * Locales that are preferred/spoken by the end-user.
+     */
+    preferredLocales?: Array<string>;
 }
 export namespace UserPreferencesDto {
     export type ToolLocaleDtoEnum = 'ENGLISH' | 'FRENCH';
