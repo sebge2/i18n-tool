@@ -1,9 +1,16 @@
 package be.sgerard.i18n.model.security.user.persistence;
 
 import be.sgerard.i18n.model.ToolLocale;
-import org.springframework.data.annotation.Id;
+import be.sgerard.i18n.model.i18n.persistence.TranslationLocaleEntity;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
+import org.springframework.data.annotation.AccessType;
 import org.springframework.data.annotation.PersistenceConstructor;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -11,42 +18,39 @@ import java.util.Optional;
  *
  * @author Sebastien Gerard
  */
+@Getter
+@Setter
+@Accessors(chain = true)
 public class UserPreferencesEntity {
 
-    @Id
-    private String id;
-
+    /**
+     * The {@link ToolLocale locale} to use for this user.
+     */
     private ToolLocale toolLocale;
+
+    /**
+     * Locales that are preferred/spoken by the end-user.
+     */
+    @AccessType(AccessType.Type.PROPERTY)
+    @DBRef
+    private final List<TranslationLocaleEntity> preferredLocales = new ArrayList<>(); // TODO
 
     @PersistenceConstructor
     UserPreferencesEntity() {
     }
 
     /**
-     * Returns the unique id of this entity.
-     */
-    public String getId() {
-        return id;
-    }
-
-    /**
-     * Sets the unique id of this entity.
-     */
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    /**
-     * Returns the {@link ToolLocale locale} to use for this user.
+     * @see #toolLocale
      */
     public Optional<ToolLocale> getToolLocale() {
         return Optional.ofNullable(toolLocale);
     }
 
     /**
-     * Sets the {@link ToolLocale locale} to use for this user.
+     * @see #preferredLocales
      */
-    public void setToolLocale(ToolLocale toolLocale) {
-        this.toolLocale = toolLocale;
+    public void setPreferredLocales(List<TranslationLocaleEntity> preferredLocales) {
+        this.preferredLocales.clear();
+        this.preferredLocales.addAll(preferredLocales);
     }
 }
