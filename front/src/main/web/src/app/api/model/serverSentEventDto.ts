@@ -9,6 +9,11 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
+import { EventObjectDto } from './eventObjectDto';
 
-export interface ServerSentEventEventObjectDto { 
+/**
+ * Application event notifying that an object changed
+ */
+export interface ServerSentEventDto { 
+    data?: EventObjectDto;
 }

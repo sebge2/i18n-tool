@@ -8,7 +8,7 @@ import lombok.Getter;
  *
  * @author Sebastien Gerard
  */
-@Schema(name = "Event", description = "Application event notifying that an object changed")
+@Schema(name = "Event", description = "Application event notifying that an event occurred")
 @Getter
 public class EventDto<D> {
 

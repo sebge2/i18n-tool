@@ -25,10 +25,7 @@ export class ToolLocaleService {
         this.translateService.addLangs(ALL_LOCALES.map(locale => locale.toString()));
 
         this._forceLocale = this.route.queryParamMap
-            .pipe(map((params: Params) => {
-                console.log(params);
-                return this.findLocaleFromString(params.get(ToolLocaleService.FORCE_LOCALE));
-            }));
+            .pipe(map((params: Params) => this.findLocaleFromString(params.get(ToolLocaleService.FORCE_LOCALE))));
 
         this._currentLocale = combineLatest([this.preferencesServices.getToolLocale(), this._forceLocale, this._browserLocalePreference])
             .pipe(

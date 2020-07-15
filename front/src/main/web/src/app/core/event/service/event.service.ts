@@ -1,8 +1,8 @@
 import {Injectable, NgZone} from '@angular/core';
 import {EMPTY, Observable} from "rxjs";
 import {NotificationService} from "../../notification/service/notification.service";
-import {EventObjectDto} from "../../../api";
-import {catchError, filter, map, tap} from "rxjs/operators";
+import {EventObjectDto, ServerSentEventDto} from "../../../api";
+import {catchError, filter, map} from "rxjs/operators";
 
 @Injectable({
     providedIn: 'root'
@@ -37,7 +37,7 @@ export class EventService {
 
                     return EMPTY;
                 }),
-                filter(event => event !== null),
+                filter(event => event),
                 filter(event => event.type === eventType),
                 map(event => <D> event.payload),
             );
