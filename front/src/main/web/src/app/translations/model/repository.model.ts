@@ -1,23 +1,25 @@
 import {RepositoryStatus} from "./repository-status.model";
+import {RepositoryDto} from "../../api";
 
 export class Repository {
 
-    readonly status: RepositoryStatus;
+    constructor(private dto: RepositoryDto) {
+    }
 
-    constructor(repository: Repository = <Repository>{}) {
-        Object.assign(this, repository);
+    get id(): string {
+        return this.dto.id;
     }
 
     isNotInitialized(): boolean {
-        return this.status == RepositoryStatus.NOT_INITIALIZED;
+        return this.dto.status == RepositoryStatus.NOT_INITIALIZED;
     }
 
     isInitializing(): boolean {
-        return this.status == RepositoryStatus.INITIALIZING;
+        return this.dto.status == RepositoryStatus.INITIALIZING;
     }
 
     isInitialized(): boolean {
-        return this.status == RepositoryStatus.INITIALIZED;
+        return this.dto.status == RepositoryStatus.INITIALIZED;
     }
 
 }

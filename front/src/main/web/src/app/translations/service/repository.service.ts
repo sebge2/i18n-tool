@@ -1,65 +1,64 @@
 import {Injectable, OnDestroy} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {EventService} from "../../core/event/service/event.service";
-import {BehaviorSubject, Observable, Subject} from "rxjs";
+import {Observable, Subject} from "rxjs";
 import {Repository} from "../model/repository.model";
-import {Events} from "../../core/event/model/events.model";
-import {RepositoryStatus} from "../model/repository-status.model";
-import {takeUntil} from "rxjs/operators";
+import {RepositoryService as ApiRepositoryService} from "../../api";
 import {NotificationService} from "../../core/notification/service/notification.service";
+import {synchronizedCollection} from "../../core/shared/utils/synchronized-observable-utils";
+import {Events} from "../../core/event/model/events.model";
+import {catchError} from "rxjs/operators";
 
 @Injectable({
     providedIn: 'root'
 })
 export class RepositoryService implements OnDestroy {
 
-    private _repository: BehaviorSubject<Repository> = new BehaviorSubject<Repository>(new Repository(<Repository>{status: RepositoryStatus.NOT_INITIALIZED}));
-    private destroy$ = new Subject();
+    private readonly _repositories$: Observable<Repository[]>;
+    private readonly _destroyed$ = new Subject();
 
-    constructor(private httpClient: HttpClient,
+    constructor(private apiRepositoryService: ApiRepositoryService,
                 private eventService: EventService,
                 private notificationService: NotificationService) {
-        this.httpClient.get<Repository>('/api/repository')
-            .pipe(takeUntil(this.destroy$))
-            .toPromise()
-            .then(repository => this._repository.next(new Repository(repository)))
-            .catch(reason => {
-                console.error("Error while retrieving the repository.", reason);
-                this.notificationService.displayErrorMessage("Error while retrieving the repository.");
-            });
-
-        this.eventService.subscribe(Events.UPDATED_REPOSITORY, Repository)
-            .pipe(takeUntil(this.destroy$))
-            .subscribe(
-                (repository: Repository) => {
-                    this._repository.next(repository);
-                }
-            );
+        this._repositories$ = synchronizedCollection(
+            apiRepositoryService.findAll(),
+            this.eventService.subscribeDto(Events.ADDED_REPOSITORY),
+            this.eventService.subscribeDto(Events.UPDATED_REPOSITORY),
+            this.eventService.subscribeDto(Events.DELETED_REPOSITORY),
+            dto => new Repository(dto),
+            ((first, second) => first.id === second.id)
+        )
+            .pipe(catchError((reason) => {
+                console.error("Error while retrieving repositories.", reason);
+                this.notificationService.displayErrorMessage("Error while retrieving repositories.");
+                return [];
+            }));
     }
 
     ngOnDestroy(): void {
-        this.destroy$.complete();
+        this._destroyed$.next();
+        this._destroyed$.complete();
     }
 
-    getRepository(): Observable<Repository> {
-        return this._repository;
+    getRepositories(): Observable<Repository[]> {
+        return this._repositories$;
     }
 
-    initialize(): Promise<any> {
-        return this.httpClient
-            .put(
-                '/api/repository',
-                null,
-                {
-                    params: {
-                        do: 'INITIALIZE'
-                    }
-                }
-            )
-            .toPromise()
-            .catch(reason => {
-                console.error("Error while initializing the repository.", reason);
-                this.notificationService.displayErrorMessage("Error while initializing the repository.");
-            });
-    }
+    // initialize(): Promise<any> {
+    //     return this.httpClient
+    //         .put(
+    //             '/api/repository',
+    //             null,
+    //             {
+    //                 params: {
+    //                     do: 'INITIALIZE'
+    //                 }
+    //             }
+    //         )
+    //         .toPromise()
+    //         .catch(reason => {
+    //             console.error("Error while initializing the repository.", reason);
+    //             this.notificationService.displayErrorMessage("Error while initializing the repository.");
+    //         });
+    // }
 }
