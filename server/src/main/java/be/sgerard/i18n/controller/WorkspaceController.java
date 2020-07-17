@@ -3,6 +3,8 @@ package be.sgerard.i18n.controller;
 import be.sgerard.i18n.model.workspace.dto.WorkspaceDto;
 import be.sgerard.i18n.service.workspace.WorkspaceManager;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -61,7 +63,13 @@ public class WorkspaceController {
      * that are no more relevant (branch does not exist anymore) are deleted.
      */
     @PostMapping(path = "/repository/{repositoryId}/workspace/do", params = "action=SYNCHRONIZE")
-    @Operation(summary = "Executes an action on workspaces of a particular repository.")
+    @Operation(summary = "Executes an action on workspaces of a particular repository.",
+            parameters = {@Parameter(name = "action", examples = {
+                    @ExampleObject(value = "SYNCHRONIZE"),
+                    @ExampleObject(value = "INITIALIZE"),
+                    @ExampleObject(value = "PUBLISH") // TODO find a better way
+            })}
+    )
     @PreAuthorize("hasRole('ADMIN')")
     public Flux<WorkspaceDto> synchronizeWorkspaces(@PathVariable String repositoryId) {
         return workspaceManager.synchronize(repositoryId)

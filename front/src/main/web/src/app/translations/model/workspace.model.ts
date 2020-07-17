@@ -1,25 +1,33 @@
 import {WorkspaceStatus} from './workspace-status.model';
+import {WorkspaceDto} from "../../api";
 
 export class Workspace {
 
-    readonly id: string;
-    readonly branch: string;
-    readonly status: WorkspaceStatus;
+    constructor(private dto: WorkspaceDto) {
+    }
 
-    constructor(workspace: Workspace = <Workspace>{}) {
-        Object.assign(this, workspace);
+    get id(): string {
+        return this.dto.id;
+    }
+
+    get branch(): string {
+        return this.dto.branch;
+    }
+
+    get status(): WorkspaceStatus {
+        return WorkspaceStatus[this.dto.status];
     }
 
     isNotInitialized(): boolean {
-        return this.status == WorkspaceStatus.NOT_INITIALIZED;
+        return this.dto.status == WorkspaceStatus.NOT_INITIALIZED;
     }
 
     isInitialized(): boolean {
-        return this.status == WorkspaceStatus.INITIALIZED;
+        return this.dto.status == WorkspaceStatus.INITIALIZED;
     }
 
     isInReview(): boolean {
-        return this.status == WorkspaceStatus.IN_REVIEW;
+        return this.dto.status == WorkspaceStatus.IN_REVIEW;
     }
 
 }

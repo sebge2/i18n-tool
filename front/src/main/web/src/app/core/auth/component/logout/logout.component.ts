@@ -8,7 +8,7 @@ import {AuthenticationService} from "../../service/authentication.service";
 })
 export class LogoutComponent implements OnInit {
 
-    private loggedOut: boolean = null;
+    loggedOut: boolean = null;
 
     constructor(private authenticationService: AuthenticationService) {
     }
@@ -16,14 +16,8 @@ export class LogoutComponent implements OnInit {
     ngOnInit() {
         this.authenticationService
             .logout()
-            .subscribe(
-                (result: any) => {
-                    this.loggedOut = true;
-                },
-                (error: any) => {
-                    this.loggedOut = false;
-                }
-            )
+            .then((_) => this.loggedOut = true)
+            .catch((error: any) => this.loggedOut = false);
     }
 
 }
