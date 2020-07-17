@@ -11,9 +11,7 @@ export function synchronizedCollection<I, O>(originalCollection: Observable<I[]>
 
     originalCollection
         .pipe(map((values: I[]) => values.map(value => mapper(value))))
-        .toPromise()
-        .then(values => collection.next(values))
-        .catch(reason => collection.error(reason));
+        .subscribe(values => collection.next(values), error => collection.error(error));
 
     created
         .pipe(map(value => mapper(value)))
@@ -69,9 +67,7 @@ export function synchronizedObject<I, O>(original: Observable<I>,
 
     original
         .pipe(map((value: I) => mapper(value)))
-        .toPromise()
-        .then(value => subject.next(value))
-        .catch(reason => subject.error(reason));
+        .subscribe(value => subject.next(value), error => subject.error(error));
 
     updated
         .pipe(map(value => mapper(value)))

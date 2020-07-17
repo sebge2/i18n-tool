@@ -39,13 +39,13 @@ export class UserPreferencesService {
                 return [];
             }));
 
-        this._toolLocale$ = this._userPreferences$
+        this._toolLocale$ = this.getUserPreferences()
             .pipe(
                 map(preferences => preferences.toolLocale),
                 distinctUntilChanged()
             );
 
-        this._preferredLocales$ = combineLatest([this.translationLocaleService.getAvailableLocales(), this._userPreferences$])
+        this._preferredLocales$ = combineLatest([this.translationLocaleService.getAvailableLocales(), this.getUserPreferences()])
             .pipe(
                 map(([availableLocales, userPreferences]) =>
                     availableLocales.filter(availableLocale => _.some(userPreferences.preferredLocales, availableLocale))

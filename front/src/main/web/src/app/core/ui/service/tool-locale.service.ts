@@ -14,9 +14,9 @@ export class ToolLocaleService {
 
     public static FORCE_LOCALE = 'forceLocale';
 
-    private readonly _currentLocale: Observable<ToolLocale>;
-    private readonly _forceLocale: Observable<ToolLocale>;
-    private readonly _browserLocalePreference = new BehaviorSubject(this.getLocaleFromBrowserPreference());
+    private readonly _currentLocale$: Observable<ToolLocale>;
+    private readonly _forceLocale$: Observable<ToolLocale>;
+    private readonly _browserLocalePreference$ = new BehaviorSubject(this.getLocaleFromBrowserPreference());
 
     constructor(private translateService: TranslateService,
                 private preferencesServices: UserPreferencesService,
@@ -24,10 +24,10 @@ export class ToolLocaleService {
         this.translateService.setDefaultLang(DEFAULT_LOCALE.toString());
         this.translateService.addLangs(ALL_LOCALES.map(locale => locale.toString()));
 
-        this._forceLocale = this.route.queryParamMap
+        this._forceLocale$ = this.route.queryParamMap
             .pipe(map((params: Params) => this.findLocaleFromString(params.get(ToolLocaleService.FORCE_LOCALE))));
 
-        this._currentLocale = combineLatest([this.preferencesServices.getToolLocale(), this._forceLocale, this._browserLocalePreference])
+        this._currentLocale$ = combineLatest([this.preferencesServices.getToolLocale(), this._forceLocale$, this._browserLocalePreference$])
             .pipe(
                 map(([userPreferredLocale, forceLocale, browserLocalePreference]) => {
                     if (forceLocale != null) {
@@ -49,7 +49,7 @@ export class ToolLocaleService {
     }
 
     getCurrentLocale(): Observable<ToolLocale> {
-        return this._currentLocale;
+        return this._currentLocale$;
     }
 
     getToolLocales(): ToolLocale[] {
