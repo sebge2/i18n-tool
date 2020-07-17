@@ -79,7 +79,7 @@ public class AuthenticationManagerImpl implements AuthenticationManager, UserLis
     public Flux<AuthenticatedUser> findAll() {
         return sessionRepository
                 .findAll()
-                .flatMap(session -> Mono.justOrEmpty(session.getAttribute(DEFAULT_SPRING_SECURITY_CONTEXT_ATTR_NAME)))
+                .flatMap(session -> Mono.justOrEmpty((Object) session.getAttribute(DEFAULT_SPRING_SECURITY_CONTEXT_ATTR_NAME)))
                 .map(SecurityContext.class::cast)
                 .map(context -> getAuthenticatedUser(context.getAuthentication()))
                 .filter(Optional::isPresent)
@@ -190,7 +190,7 @@ public class AuthenticationManagerImpl implements AuthenticationManager, UserLis
                 .findAll()
                 .flatMap(session ->
                         Mono
-                                .justOrEmpty(session.getAttribute(DEFAULT_SPRING_SECURITY_CONTEXT_ATTR_NAME))
+                                .justOrEmpty((Object) session.getAttribute(DEFAULT_SPRING_SECURITY_CONTEXT_ATTR_NAME))
                                 .map(SecurityContext.class::cast)
                                 .map(context -> getAuthenticatedUser(context.getAuthentication()))
                                 .filter(Optional::isPresent)
