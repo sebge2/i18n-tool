@@ -1,8 +1,8 @@
-import { LocaleIconPipe } from './locale-icon.pipe';
+import { ToolLocaleIconPipe } from './tool-locale-icon.pipe';
 
 describe('LocaleIconPipe', () => {
   it('create an instance', () => {
-    const pipe = new LocaleIconPipe();
+    const pipe = new ToolLocaleIconPipe();
     expect(pipe).toBeTruthy(); // TODO
   });
 });
