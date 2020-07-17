@@ -1,6 +1,6 @@
 import {Injectable, OnDestroy} from '@angular/core';
 import {HttpClient, HttpResponse} from "@angular/common/http";
-import {Observable, Subject} from "rxjs";
+import {Observable, ReplaySubject, Subject} from "rxjs";
 import {map, takeUntil} from "rxjs/operators";
 import {NotificationService} from "../../notification/service/notification.service";
 import {AuthenticationErrorType} from "../model/authentication-error-type.model";
@@ -15,8 +15,8 @@ import {OAuthClient} from "../model/oauth-client.model";
 })
 export class AuthenticationService implements OnDestroy {
 
-    private _user$: Subject<AuthenticatedUser> = new Subject<AuthenticatedUser>();
-    private _destroyed$ = new Subject();
+    private readonly _user$: Subject<AuthenticatedUser> = new ReplaySubject<AuthenticatedUser>();
+    private readonly _destroyed$ = new Subject();
 
     constructor(private httpClient: HttpClient,
                 private eventService: EventService,
