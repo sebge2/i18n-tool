@@ -4,7 +4,6 @@ import {AuthenticationService} from "../../../service/authentication.service";
 import {AuthenticationErrorType} from "../../../model/authentication-error-type.model";
 import {Router} from "@angular/router";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {AuthenticatedUser} from '../../../model/authenticated-user.model';
 
 @Component({
     selector: 'app-login-user-password',
@@ -51,23 +50,12 @@ export class LoginUserPasswordComponent implements OnInit {
         }
 
         this.authenticationService.authenticateWithUserPassword(this.form.get('username').value, this.form.get('password').value)
-            .toPromise()
-            .then(
-                (user: AuthenticatedUser) => {
-                    this.router.navigate(['/translations']);
+            .then((_) => this.router.navigate(['/translations']))
+            .catch((errorType: AuthenticationErrorType) => {
+                if (errorType == AuthenticationErrorType.WRONG_CREDENTIALS) {
+                    this.form.setErrors({'authFailed': true});
                 }
-            )
-            .catch(
-                (errorType: AuthenticationErrorType) => {
-                    if (errorType == AuthenticationErrorType.WRONG_CREDENTIALS) {
-                        this.form.setErrors({'authFailed': true});
-                    }
-                }
-            )
-            .finally(
-                () => {
-                    this.buttonOptions.active = false;
-                }
-            );
+            })
+            .finally(() => this.buttonOptions.active = false);
     }
 }

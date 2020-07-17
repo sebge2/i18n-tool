@@ -15,9 +15,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
     @Input() sideBar: MatSidenav;
 
+    private readonly _destroyed$ = new Subject();
     private _currentUser: User = null;
-    private destroy$ = new Subject();
-
     private _smallSize: boolean;
 
     constructor(private authService: AuthenticationService,
@@ -26,22 +25,19 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.mediaService.smallSize
-            .pipe(takeUntil(this.destroy$))
-            .subscribe(
-                smallSize => this._smallSize = smallSize
-            );
+            .pipe(takeUntil(this._destroyed$))
+            .subscribe(smallSize => this._smallSize = smallSize);
 
         this.authService.currentUser()
-            .pipe(takeUntil(this.destroy$))
-            .subscribe(
-                user => {
-                    this._currentUser = (user != null) ? user.user : null;
-                }
-            );
+            .pipe(takeUntil(this._destroyed$))
+            .subscribe(user => {
+                this._currentUser = (user != null) ? user.user : null;
+            });
     }
 
     ngOnDestroy(): void {
-        this.destroy$.complete();
+        this._destroyed$.next();
+        this._destroyed$.complete();
     }
 
     get currentUser(): User {

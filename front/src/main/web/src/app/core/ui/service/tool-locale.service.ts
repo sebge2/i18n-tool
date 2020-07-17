@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {BehaviorSubject, combineLatest, Observable} from "rxjs";
+import {BehaviorSubject, combineLatest, Observable, ReplaySubject} from "rxjs";
 import {ALL_LOCALES, DEFAULT_LOCALE, ToolLocale} from "../../translation/model/tool-locale.model";
 import {TranslateService} from "@ngx-translate/core";
 import {UserPreferencesService} from "../../../preferences/service/user-preferences.service";
@@ -14,7 +14,7 @@ export class ToolLocaleService {
 
     public static FORCE_LOCALE = 'forceLocale';
 
-    private readonly _currentLocale$: Observable<ToolLocale>;
+    private readonly _currentLocale$ = new ReplaySubject<ToolLocale>();
     private readonly _forceLocale$: Observable<ToolLocale>;
     private readonly _browserLocalePreference$ = new BehaviorSubject(this.getLocaleFromBrowserPreference());
 
@@ -27,7 +27,7 @@ export class ToolLocaleService {
         this._forceLocale$ = this.route.queryParamMap
             .pipe(map((params: Params) => this.findLocaleFromString(params.get(ToolLocaleService.FORCE_LOCALE))));
 
-        this._currentLocale$ = combineLatest([this.preferencesServices.getToolLocale(), this._forceLocale$, this._browserLocalePreference$])
+        combineLatest([this.preferencesServices.getToolLocale(), this._forceLocale$, this._browserLocalePreference$])
             .pipe(
                 map(([userPreferredLocale, forceLocale, browserLocalePreference]) => {
                     if (forceLocale != null) {
@@ -40,12 +40,16 @@ export class ToolLocaleService {
                         return DEFAULT_LOCALE;
                     }
                 }),
-                flatMap(locale => {
-                    return this.translateService.use(locale.toString()).pipe(map(_ => {
-                        return locale;
-                    }))
-                })
-            );
+                flatMap(locale =>
+                    this.translateService
+                        .use(locale.toString())
+                        .pipe(map(_ => locale))
+                )
+            )
+            .subscribe(locale => {
+                this._currentLocale$.next(locale);
+                console.debug(`Locale set to ${locale}.`);
+            });
     }
 
     getCurrentLocale(): Observable<ToolLocale> {
