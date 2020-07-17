@@ -28,10 +28,10 @@ export class UserPreferencesService {
                 private eventService: EventService,
                 private notificationService: NotificationService) {
         this._userPreferences$ = synchronizedObject(
-            this.authService.currentUser().pipe(flatMap(currentUser => this.apiService.getPreferencesByUserId(currentUser.user.id))),
-            this.eventService.subscribeDto(Events.UPDATED_TRANSLATION_LOCALE),
+            this.authService.currentUser().pipe(flatMap(currentUser => currentUser ? this.apiService.getPreferencesByUserId(currentUser.user.id) : of(null))),
+            this.eventService.subscribeDto(Events.UPDATED_USER_PREFERENCES),
             of(),
-            dto => new UserPreferences(dto)
+            dto => (dto != null) ? new UserPreferences(dto) : null
         )
             .pipe(catchError((reason) => {
                 console.error("Error while retrieving user preferences.", reason);
@@ -41,7 +41,7 @@ export class UserPreferencesService {
 
         this._toolLocale$ = this.getUserPreferences()
             .pipe(
-                map(preferences => preferences.toolLocale),
+                map(preferences => (preferences != null) ? preferences.toolLocale : null),
                 distinctUntilChanged()
             );
 
