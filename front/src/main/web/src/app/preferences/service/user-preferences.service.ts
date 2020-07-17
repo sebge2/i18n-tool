@@ -48,7 +48,12 @@ export class UserPreferencesService {
         this._preferredLocales$ = combineLatest([this.translationLocaleService.getAvailableLocales(), this.getUserPreferences()])
             .pipe(
                 map(([availableLocales, userPreferences]) =>
-                    availableLocales.filter(availableLocale => _.some(userPreferences.preferredLocales, availableLocale))
+                    availableLocales.filter(availableLocale =>
+                        _.some(
+                            _.get(userPreferences, 'preferredLocales', []),
+                            (preferredLocale => preferredLocale === availableLocale.id)
+                        )
+                    )
                 ),
                 distinctUntilChanged()
             );
