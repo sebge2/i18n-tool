@@ -16,7 +16,8 @@ export class Locale {
     constructor(public language: string,
                 public region?: string,
                 public variants: string[] = []) {
-        this.region = _.isEmpty(this.region) ? null : this.region;
+        this.language = _.isEmpty(this.language) ? null : this.language.toLowerCase();
+        this.region = _.isEmpty(this.region) ? null : this.region.toUpperCase();
         this.variants = (this.variants !== null) ? this.variants : [];
     }
 
@@ -33,7 +34,7 @@ export class Locale {
             return false;
         }
 
-        return other.language == this.language;
+        return other.language === this.language;
     }
 
     public matchLanguageAndRegion(other: Locale): boolean {
@@ -56,4 +57,15 @@ export class Locale {
                 || ((other.variants.length == 0) && (this.variants.length == 0)));
     }
 
+    public hasOnlyLanguage() : boolean {
+        return !_.isNil(this.language) && _.isNil(this.region) && _.isEmpty(this.variants);
+    }
+
+    public hasOnlyLanguageAndRegion() : boolean {
+        return !_.isNil(this.language) && !_.isNil(this.region) && _.isEmpty(this.variants);
+    }
+
+    public hasLanguageAndRegionAndVariants() : boolean {
+        return !_.isNil(this.language) && !_.isNil(this.region) && !_.isEmpty(this.variants);
+    }
 }

@@ -1,5 +1,6 @@
 import bcp47 from "bcp-47";
 import {TranslationLocaleDto} from "../../api";
+import {Locale} from "../../core/translation/model/locale.model";
 
 export class TranslationLocale {
 
@@ -28,6 +29,10 @@ export class TranslationLocale {
 
     public get icon(): string {
         return this.dto.icon;
+    }
+
+    public toLocale(): Locale {
+        return new Locale(this.language, this.region, this.variants);
     }
 
     public toString() {
