@@ -3,7 +3,7 @@ import {BehaviorSubject, combineLatest, Observable, ReplaySubject} from "rxjs";
 import {ALL_LOCALES, DEFAULT_LOCALE, ToolLocale} from "../../translation/model/tool-locale.model";
 import {TranslateService} from "@ngx-translate/core";
 import {UserPreferencesService} from "../../../preferences/service/user-preferences.service";
-import {flatMap, map} from "rxjs/operators";
+import {distinctUntilChanged, flatMap, map} from "rxjs/operators";
 import {ActivatedRoute, Params} from "@angular/router";
 import {Locale} from "../../translation/model/locale.model";
 
@@ -16,6 +16,7 @@ export class ToolLocaleService {
 
     private readonly _currentLocale$ = new ReplaySubject<ToolLocale>();
     private readonly _forceLocale$: Observable<ToolLocale>;
+    private readonly _toolLocale$: Observable<ToolLocale>;
     private readonly _browserLocalePreference$ = new BehaviorSubject(this.getLocaleFromBrowserPreference());
 
     constructor(private translateService: TranslateService,
@@ -27,7 +28,13 @@ export class ToolLocaleService {
         this._forceLocale$ = this.route.queryParamMap
             .pipe(map((params: Params) => this.findLocaleFromString(params.get(ToolLocaleService.FORCE_LOCALE))));
 
-        combineLatest([this.preferencesServices.getToolLocale(), this._forceLocale$, this._browserLocalePreference$])
+        this._toolLocale$ = this.preferencesServices.getUserPreferences()
+            .pipe(
+                map(preferences => (preferences != null) ? preferences.toolLocale : null),
+                distinctUntilChanged()
+            );
+
+        combineLatest([this.getToolLocale(), this._forceLocale$, this._browserLocalePreference$])
             .pipe(
                 map(([userPreferredLocale, forceLocale, browserLocalePreference]) => {
                     if (forceLocale != null) {
@@ -58,6 +65,10 @@ export class ToolLocaleService {
 
     getToolLocales(): ToolLocale[] {
         return ALL_LOCALES;
+    }
+
+    getToolLocale(): Observable<ToolLocale> {
+        return this._toolLocale$;
     }
 
     private findLocaleFromString(value: string): ToolLocale {
