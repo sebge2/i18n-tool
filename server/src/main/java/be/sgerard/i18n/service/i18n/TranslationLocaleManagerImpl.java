@@ -82,6 +82,7 @@ public class TranslationLocaleManagerImpl implements TranslationLocaleManager {
                                 .setVariants(localeDto.getVariants())
                                 .setIcon(localeDto.getIcon())
                 )
+                .flatMap(repository::save)
                 .flatMap(translationLocale ->
                         localeListener
                                 .onUpdatedLocale(translationLocale)

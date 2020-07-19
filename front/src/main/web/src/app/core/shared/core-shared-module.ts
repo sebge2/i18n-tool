@@ -7,6 +7,7 @@ import {WorkspaceIconCssPipe} from "./pipe/workspace-icon-css.pipe";
 import {ToolLocaleIconPipe} from "./pipe/tool-locale-icon.pipe";
 import {TranslateModule} from "@ngx-translate/core";
 import {CoreSharedLibModule} from "./core-shared-lib.module";
+import {TranslationLocaleIconPipe} from "./pipe/translation-locale-icon.pipe";
 
 @NgModule({
     declarations: [
@@ -15,6 +16,7 @@ import {CoreSharedLibModule} from "./core-shared-lib.module";
         WorkspaceIconPipe,
         WorkspaceIconCssPipe,
         ToolLocaleIconPipe,
+        TranslationLocaleIconPipe
     ],
     imports: [
         CommonModule
@@ -27,7 +29,8 @@ import {CoreSharedLibModule} from "./core-shared-lib.module";
         MainMessageComponent,
         WorkspaceIconPipe,
         WorkspaceIconCssPipe,
-        ToolLocaleIconPipe
+        ToolLocaleIconPipe,
+        TranslationLocaleIconPipe
     ]
 })
 export class CoreSharedModule {
