@@ -10,6 +10,7 @@ import be.sgerard.i18n.service.ResourceNotFoundException;
 import be.sgerard.i18n.service.ValidationException;
 import be.sgerard.i18n.service.i18n.TranslationLocaleManager;
 import be.sgerard.i18n.service.user.listener.UserPreferencesListener;
+import be.sgerard.i18n.service.security.auth.AuthenticationManager;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
@@ -31,13 +32,16 @@ public class UserPreferencesManagerImpl implements UserPreferencesManager {
      */
     public static final String MISSING_VALIDATION_LOCALE = "validation.locale.missing";
 
+    private final AuthenticationManager authenticationManager;
     private final UserManager userManager;
     private final UserPreferencesListener listener;
     private final TranslationLocaleManager translationLocaleManager;
 
-    public UserPreferencesManagerImpl(UserManager userManager,
+    public UserPreferencesManagerImpl(AuthenticationManager authenticationManager,
+                                      UserManager userManager,
                                       UserPreferencesListener listener,
                                       TranslationLocaleManager translationLocaleManager) {
+        this.authenticationManager = authenticationManager;
         this.userManager = userManager;
         this.listener = listener;
         this.translationLocaleManager = translationLocaleManager;
@@ -45,15 +49,14 @@ public class UserPreferencesManagerImpl implements UserPreferencesManager {
 
     @Override
     @Transactional(readOnly = true)
-    public Mono<UserPreferencesEntity> find(String userId) throws ResourceNotFoundException {
-        return findUserOrDie(userId)
+    public Mono<UserPreferencesEntity> get() throws ResourceNotFoundException {
+        return getCurrentUserOrDie()
                 .map(UserEntity::getPreferences);
     }
 
     @Override
-    public Mono<UserPreferencesEntity> update(String userId, UserPreferencesDto preferences) throws ResourceNotFoundException {
-        return userManager
-                .findByIdOrDie(userId)
+    public Mono<UserPreferencesEntity> update(UserPreferencesDto preferences) throws ResourceNotFoundException {
+        return getCurrentUserOrDie()
                 .flatMap(user ->
                         mapLocales(preferences.getPreferredLocales())
                                 .doOnNext(preferredLocales ->
@@ -73,10 +76,12 @@ public class UserPreferencesManagerImpl implements UserPreferencesManager {
     }
 
     /**
-     * Returns the {@link UserEntity user} having the specified id.
+     * Returns the current {@link UserEntity user}.
      */
-    private Mono<UserEntity> findUserOrDie(String userId) {
-        return userManager.findByIdOrDie(userId);
+    private Mono<UserEntity> getCurrentUserOrDie() {
+        return authenticationManager
+                .getCurrentUserOrDie()
+                .flatMap(authenticatedUser -> userManager.findByIdOrDie(authenticatedUser.getUser().getId()));
     }
 
     /**

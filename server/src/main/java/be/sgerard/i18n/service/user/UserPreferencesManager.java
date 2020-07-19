@@ -13,13 +13,13 @@ import reactor.core.publisher.Mono;
 public interface UserPreferencesManager {
 
     /**
-     * Returns {@link UserPreferencesManager preferences} of the specified user.
+     * Returns {@link UserPreferencesManager preferences} of the current user.
      */
-    Mono<UserPreferencesEntity> find(String userId) throws ResourceNotFoundException;
+    Mono<UserPreferencesEntity> get() throws ResourceNotFoundException;
 
     /**
-     * Updates {@link UserPreferencesManager preferences} for user having the specified id.
+     * Updates {@link UserPreferencesManager preferences} for the current user.
      */
-    Mono<UserPreferencesEntity> update(String userId, UserPreferencesDto preferences) throws ResourceNotFoundException;
+    Mono<UserPreferencesEntity> update(UserPreferencesDto preferences) throws ResourceNotFoundException;
 
 }

@@ -25,26 +25,25 @@ public class UserPreferencesController {
     }
 
     /**
-     * Returns preferences for user having the specified id.
+     * Returns preferences for the current user.
      */
-    @GetMapping(path = "/user/{id}/preferences")
-    @Operation(summary = "Returns preferences for user having the specified id.")
+    @GetMapping(path = "/user/current/preferences")
+    @Operation(summary = "Returns preferences for the current user.")
     @Transactional(readOnly = true)
-    public Mono<UserPreferencesDto> getPreferencesByUserId(@PathVariable String id) {
-        return userPreferencesManager.find(id)
+    public Mono<UserPreferencesDto> getCurrentUserPreferences() {
+        return userPreferencesManager.get()
                 .map(pref -> UserPreferencesDto.builder(pref).build());
     }
 
     /**
-     * Updates preferences for user having the specified id.
+     * Updates preferences for the current user.
      */
-    @PutMapping(path = "/user/{id}/preferences")
-    @Operation(summary = "Updates preferences for user having the specified id.")
+    @PutMapping(path = "/user/current/preferences")
+    @Operation(summary = "Updates preferences for the current user.")
     @Transactional
-    public Mono<UserPreferencesDto> updateUserPreferences(@PathVariable String id,
-                                                          @RequestBody UserPreferencesDto userPreferences) {
+    public Mono<UserPreferencesDto> updateCurrentUserPreferences(@RequestBody UserPreferencesDto userPreferences) {
         return userPreferencesManager
-                .update(id, userPreferences)
+                .update(userPreferences)
                 .map(pref -> UserPreferencesDto.builder(pref).build());
     }
 }

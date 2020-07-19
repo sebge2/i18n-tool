@@ -57,20 +57,15 @@ export class UserPreferencesService {
 
 
     /**
-     * Returns preferences for user having the specified id.
+     * Returns preferences for the current user.
      * 
-     * @param id 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getPreferencesByUserId(id: string, observe?: 'body', reportProgress?: boolean): Observable<UserPreferencesDto>;
-    public getPreferencesByUserId(id: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<UserPreferencesDto>>;
-    public getPreferencesByUserId(id: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<UserPreferencesDto>>;
-    public getPreferencesByUserId(id: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
-
-        if (id === null || id === undefined) {
-            throw new Error('Required parameter id was null or undefined when calling getPreferencesByUserId.');
-        }
+    public getCurrentUserPreferences(observe?: 'body', reportProgress?: boolean): Observable<UserPreferencesDto>;
+    public getCurrentUserPreferences(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<UserPreferencesDto>>;
+    public getCurrentUserPreferences(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<UserPreferencesDto>>;
+    public getCurrentUserPreferences(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         let headers = this.defaultHeaders;
 
@@ -87,7 +82,7 @@ export class UserPreferencesService {
         const consumes: string[] = [
         ];
 
-        return this.httpClient.request<UserPreferencesDto>('get',`${this.basePath}/api/user/${encodeURIComponent(String(id))}/preferences`,
+        return this.httpClient.request<UserPreferencesDto>('get',`${this.basePath}/api/user/current/preferences`,
             {
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
@@ -98,24 +93,19 @@ export class UserPreferencesService {
     }
 
     /**
-     * Updates preferences for user having the specified id.
+     * Updates preferences for the current user.
      * 
      * @param body 
-     * @param id 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public updateUserPreferences(body: UserPreferencesDto, id: string, observe?: 'body', reportProgress?: boolean): Observable<UserPreferencesDto>;
-    public updateUserPreferences(body: UserPreferencesDto, id: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<UserPreferencesDto>>;
-    public updateUserPreferences(body: UserPreferencesDto, id: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<UserPreferencesDto>>;
-    public updateUserPreferences(body: UserPreferencesDto, id: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public updateCurrentUserPreferences(body: UserPreferencesDto, observe?: 'body', reportProgress?: boolean): Observable<UserPreferencesDto>;
+    public updateCurrentUserPreferences(body: UserPreferencesDto, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<UserPreferencesDto>>;
+    public updateCurrentUserPreferences(body: UserPreferencesDto, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<UserPreferencesDto>>;
+    public updateCurrentUserPreferences(body: UserPreferencesDto, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (body === null || body === undefined) {
-            throw new Error('Required parameter body was null or undefined when calling updateUserPreferences.');
-        }
-
-        if (id === null || id === undefined) {
-            throw new Error('Required parameter id was null or undefined when calling updateUserPreferences.');
+            throw new Error('Required parameter body was null or undefined when calling updateCurrentUserPreferences.');
         }
 
         let headers = this.defaultHeaders;
@@ -138,7 +128,7 @@ export class UserPreferencesService {
             headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
-        return this.httpClient.request<UserPreferencesDto>('put',`${this.basePath}/api/user/${encodeURIComponent(String(id))}/preferences`,
+        return this.httpClient.request<UserPreferencesDto>('put',`${this.basePath}/api/user/current/preferences`,
             {
                 body: body,
                 withCredentials: this.configuration.withCredentials,

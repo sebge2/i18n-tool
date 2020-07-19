@@ -11,7 +11,7 @@
  */
 
 /**
- * Application event notifying that an object changed
+ * Application event notifying that an event occurred
  */
 export interface EventObjectDto { 
     /**
