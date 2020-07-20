@@ -1,11 +1,11 @@
 <mat-nav-list>
-    <a id="menuTranslations" matSubheader routerLink="/translations">Translations</a>
+    <a id="menuTranslations" matSubheader routerLink="/translations">{{'MENU.TRANSLATIONS_LABEL' | translate}}</a>
 
     <mat-divider></mat-divider>
 
-    <a id="menuSettings" matSubheader routerLink="/preferences">Preferences</a>
+    <a id="menuSettings" matSubheader routerLink="/preferences">{{'MENU.PREFERENCES_LABEL' | translate}}</a>
 
     <mat-divider *hasRole="['ADMIN']"></mat-divider>
 
-    <a id="menuAdmin" matSubheader routerLink="/admin" *hasRole="['ADMIN']">Admin</a>
+    <a id="menuAdmin" matSubheader routerLink="/admin" *hasRole="['ADMIN']">{{'MENU.ADMIN_LABEL' | translate}}</a>
 </mat-nav-list>

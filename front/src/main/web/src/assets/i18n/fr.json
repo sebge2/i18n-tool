@@ -30,7 +30,17 @@
     "START_REVIEW_BUTTON" : "Publier et demander une révision"
   },
   "PREFERENCES": {
-    "TITLE": "Mes Préférences"
+    "TITLE": "Mes Préférences",
+    "TOOL_LOCALE": {
+      "LABEL": "Langue de l'outil",
+      "AUTO_DETECTED": "Valeur auto-détectée"
+    },
+    "SAVE": "Sauvegarder"
+  },
+  "MENU": {
+    "PREFERENCES_LABEL": "Préférences",
+    "ADMIN_LABEL": "Admin",
+    "TRANSLATIONS_LABEL": "Traductions"
   },
   "ADMIN" : {
     "WORKSPACES" : {

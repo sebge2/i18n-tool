@@ -31,7 +31,17 @@
     "START_REVIEW_BUTTON" : "Publish and ask a review"
   },
   "PREFERENCES": {
-    "TITLE": "My Preferences"
+    "TITLE": "My Preferences",
+    "TOOL_LOCALE": {
+      "LABEL": "Tool Locale",
+      "AUTO_DETECTED": "Auto-detected value"
+    },
+    "SAVE": "Save"
+  },
+  "MENU": {
+    "PREFERENCES_LABEL": "Preferences",
+    "ADMIN_LABEL": "Admin",
+    "TRANSLATIONS_LABEL": "Translations"
   },
   "ADMIN" : {
     "WORKSPACES" : {

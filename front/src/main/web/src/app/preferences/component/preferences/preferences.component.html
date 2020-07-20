@@ -4,7 +4,7 @@
     <form [formGroup]="form">
         <p>
             <mat-form-field appearance="standard">
-                <mat-label>Tool Locale</mat-label>
+                <mat-label>{{'PREFERENCES.TOOL_LOCALE.LABEL' | translate}}</mat-label>
                 <mat-select formControlName="toolLocale">
                     <mat-select-trigger>
                         <span [class]="toolLocale | toolLocaleIcon"></span> {{toolLocale.displayName}}
@@ -13,7 +13,7 @@
                         <span [class]="toolLocale | toolLocaleIcon"></span> {{toolLocale.displayName}}
                     </mat-option>
                 </mat-select>
-                <mat-hint *ngIf="!preferredToolLocale">Auto-detected value</mat-hint>
+                <mat-hint *ngIf="!preferredToolLocale">{{'PREFERENCES.TOOL_LOCALE.AUTO_DETECTED' | translate}}</mat-hint>
             </mat-form-field>
         </p>
 <!--        <p>-->
@@ -31,7 +31,7 @@
                     color="primary"
                     [disabled]="!form.valid || !form.dirty || loading"
                     (click)="onSave()"
-                    [class.spinner]="loading">Save</button>
+                    [class.spinner]="loading">{{'PREFERENCES.SAVE' | translate}}</button>
         </p>
     </form>
 </mat-card-content>

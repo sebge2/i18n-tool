@@ -55,7 +55,7 @@ export class PreferencesComponent implements OnInit, OnDestroy {
 
         this.userPreferencesService
             .updateUserPreferences(new UserPreferences(this.toolLocale, []))// TODO public translationLocaleService: TranslationLocaleService
-            .toPromise()
+            .toPromise() // TODO error
             .finally(() => {
                 this.form.markAsPristine();
                 this.loading = false;
