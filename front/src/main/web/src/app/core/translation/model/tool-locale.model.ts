@@ -17,8 +17,8 @@ export class ToolLocale {
     }
 }
 
-export const EN_LOCALE = new ToolLocale('en', 'flag-icon-gb', "ENGLISH");
-export const FR_LOCALE = new ToolLocale('fr', 'flag-icon-fr', "FRENCH");
+export const EN_LOCALE = new ToolLocale('en', 'flag-icon-gb', "English", "ENGLISH");
+export const FR_LOCALE = new ToolLocale('fr', 'flag-icon-fr', "Français", "FRENCH");
 export const DEFAULT_LOCALE = EN_LOCALE;
 
 export const ALL_LOCALES = [EN_LOCALE, FR_LOCALE];

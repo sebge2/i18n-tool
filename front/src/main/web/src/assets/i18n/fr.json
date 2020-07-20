@@ -29,6 +29,9 @@
     },
     "START_REVIEW_BUTTON" : "Publier et demander une révision"
   },
+  "PREFERENCES": {
+    "TITLE": "Mes Préférences"
+  },
   "ADMIN" : {
     "WORKSPACES" : {
       "CONFIRM_DELETION" : {

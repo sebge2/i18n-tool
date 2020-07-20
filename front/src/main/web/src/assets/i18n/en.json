@@ -30,6 +30,9 @@
     },
     "START_REVIEW_BUTTON" : "Publish and ask a review"
   },
+  "PREFERENCES": {
+    "TITLE": "My Preferences"
+  },
   "ADMIN" : {
     "WORKSPACES" : {
       "CONFIRM_DELETION" : {
