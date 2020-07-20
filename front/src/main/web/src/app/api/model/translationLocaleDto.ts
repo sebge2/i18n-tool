@@ -31,6 +31,10 @@ export interface TranslationLocaleDto {
      */
     variants?: Array<string>;
     /**
+     * The user friendly name for this locale.
+     */
+    displayName?: string;
+    /**
      * Icon to be displayed for this locale (library flag-icon-css).
      */
     icon: string;
