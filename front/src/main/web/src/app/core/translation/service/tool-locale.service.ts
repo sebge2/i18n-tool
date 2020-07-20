@@ -1,11 +1,11 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject, combineLatest, Observable, ReplaySubject} from "rxjs";
-import {ALL_LOCALES, DEFAULT_LOCALE, ToolLocale} from "../../translation/model/tool-locale.model";
+import {ALL_LOCALES, DEFAULT_LOCALE, ToolLocale} from "../model/tool-locale.model";
 import {TranslateService} from "@ngx-translate/core";
 import {UserPreferencesService} from "../../../preferences/service/user-preferences.service";
 import {distinctUntilChanged, flatMap, map} from "rxjs/operators";
 import {ActivatedRoute, Params} from "@angular/router";
-import {Locale} from "../../translation/model/locale.model";
+import {Locale} from "../model/locale.model";
 
 @Injectable({
     providedIn: 'root'

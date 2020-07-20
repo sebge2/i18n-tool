@@ -36,6 +36,10 @@
       "LABEL": "Tool Locale",
       "AUTO_DETECTED": "Auto-detected value"
     },
+    "PREFERRED_LOCALES": {
+      "LABEL": "My Spoken Languages",
+      "AUTO_DETECTED": "Auto-detected value"
+    },
     "SAVE": "Save"
   },
   "MENU": {

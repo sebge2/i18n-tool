@@ -4,7 +4,7 @@ import {combineLatest, from, Observable, of} from 'rxjs';
 import {AuthenticationService} from "../../../auth/service/authentication.service";
 import {flatMap} from "rxjs/operators";
 import {UserRole} from "../../../auth/model/user-role.model";
-import {ToolLocaleService} from "../tool-locale.service";
+import {ToolLocaleService} from "../../../translation/service/tool-locale.service";
 
 @Injectable({
     providedIn: 'root'
