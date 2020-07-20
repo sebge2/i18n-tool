@@ -10,6 +10,7 @@ import be.sgerard.i18n.service.error.ErrorMessagesProvider;
 import be.sgerard.i18n.service.repository.RepositoryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.codec.DecodingException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -17,6 +18,9 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.server.ServerWebInputException;
+
+import static java.util.Collections.emptyList;
 
 /**
  * {@link org.springframework.web.bind.annotation.ControllerAdvice Controller advice} for the whole application.
@@ -180,6 +184,24 @@ public class ControllerAdvice {
 //
 //        return new ResponseEntity<>(errorMessages, HttpStatus.METHOD_NOT_ALLOWED);
 //    }
+
+    /**
+     * Handles the {@link ServerWebInputException web-input exception}.
+     */
+    @ExceptionHandler(value = ServerWebInputException.class)
+    @ResponseStatus
+    public ResponseEntity<ErrorMessages> handleServerWebInputException(ServerWebInputException exception) {
+        final ErrorMessages errorMessages;
+        if (exception.getCause() instanceof DecodingException) {
+            errorMessages = messagesProvider.map(new LocalizedMessageHolder.Simple("ServerWebInputException.DecodingException.message"));
+        } else {
+            errorMessages = messagesProvider.map(emptyList());
+        }
+
+        logger.error(String.format("Exception with id %s, message %s.", errorMessages.getId(), exception.getMessage()), exception);
+
+        return new ResponseEntity<>(errorMessages, HttpStatus.BAD_REQUEST);
+    }
 
     /**
      * Handles any {@link Exception exception} that are not handled by the other handlers.
