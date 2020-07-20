@@ -5,6 +5,7 @@ import {RouterModule, Routes} from "@angular/router";
 import {CoreSharedModule} from "../core/shared/core-shared-module";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {CoreSharedLibModule} from "../core/shared/core-shared-lib.module";
+import {CoreTranslationModule} from "../core/translation/core-translation-module";
 
 const appRoutes: Routes = [
     {path: '', pathMatch: 'full', component: PreferencesComponent}
@@ -18,7 +19,8 @@ const appRoutes: Routes = [
         ReactiveFormsModule,
         FormsModule,
         CoreSharedLibModule,
-        CoreSharedModule
+        CoreSharedModule,
+        CoreTranslationModule
     ],
     exports: [RouterModule]
 })

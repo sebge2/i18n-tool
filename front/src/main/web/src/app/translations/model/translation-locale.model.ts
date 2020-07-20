@@ -31,8 +31,16 @@ export class TranslationLocale {
         return this.dto.icon;
     }
 
+    public get displayName(): string {
+        return this.toLocale().toString(); // TODO
+    }
+
     public toLocale(): Locale {
         return new Locale(this.language, this.region, this.variants);
+    }
+
+    public equals(other: TranslationLocale): boolean {
+        return this.id === other.id;
     }
 
     public toString() {

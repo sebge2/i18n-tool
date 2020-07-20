@@ -4,7 +4,6 @@ import {TranslationsComponent} from "./component/translations/translations.compo
 import {RouterModule, Routes} from "@angular/router";
 import {WorkspaceSelectorComponent} from './component/translations-search-bar/workspace-selector/workspace-selector.component';
 import {TranslationsSearchBarComponent} from './component/translations-search-bar/translations-search-bar.component';
-import {TranslationLocalesSelectorComponent} from "./component/translations-search-bar/translation-locales-selector/translation-locales-selector.component";
 import {TranslationCriterionSelectorComponent} from './component/translations-search-bar/translation-criterion-selector/translation-criterion-selector.component';
 import {TranslationsTableComponent} from './component/translations-table/translations-table.component';
 import {TranslationEditingCellComponent} from './component/translations-table/translation-editing-cell/translation-editing-cell.component';
@@ -23,7 +22,6 @@ const appRoutes: Routes = [
         TranslationsComponent,
         WorkspaceSelectorComponent,
         TranslationsSearchBarComponent,
-        TranslationLocalesSelectorComponent,
         TranslationCriterionSelectorComponent,
         TranslationsTableComponent,
         TranslationEditingCellComponent,
