@@ -13,6 +13,7 @@ public final class TranslationLocaleCreationDtoTestUtils {
     public static TranslationLocaleCreationDto.Builder enLocaleCreationDto() {
         return TranslationLocaleCreationDto.builder()
                 .language("en")
+                .displayName("English")
                 .icon("flag-icon-gb");
     }
 
@@ -20,12 +21,14 @@ public final class TranslationLocaleCreationDtoTestUtils {
         return TranslationLocaleCreationDto.builder()
                 .language("en")
                 .region("GB")
+                .displayName("English (GB)")
                 .icon("flag-icon-gb");
     }
 
     public static TranslationLocaleCreationDto.Builder frLocaleCreationDto() {
         return TranslationLocaleCreationDto.builder()
                 .language("fr")
+                .displayName("Français")
                 .icon("flag-icon-fr");
     }
 
@@ -34,6 +37,7 @@ public final class TranslationLocaleCreationDtoTestUtils {
                 .language("fr")
                 .region("BE")
                 .variants("wallon")
+                .displayName("Français (Wallon)")
                 .icon("flag-icon-fr");
     }
 }

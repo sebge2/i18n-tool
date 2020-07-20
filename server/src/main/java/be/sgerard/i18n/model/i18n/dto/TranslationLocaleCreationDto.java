@@ -31,12 +31,14 @@ public class TranslationLocaleCreationDto {
     private final String language;
     private final String region;
     private final List<String> variants;
+    private final String displayName;
     private final String icon;
 
     private TranslationLocaleCreationDto(Builder builder) {
         language = builder.language;
         region = builder.region;
         variants = unmodifiableList(builder.variants);
+        displayName = builder.displayName;
         icon = builder.icon;
     }
 
@@ -65,6 +67,14 @@ public class TranslationLocaleCreationDto {
     }
 
     /**
+     * Returns the user friendly name for this locale.
+     */
+    @Schema(description = "The user friendly name for this locale.")
+    public Optional<String> getDisplayName() {
+        return Optional.ofNullable(displayName);
+    }
+
+    /**
      * Returns the icon of this locale.
      */
     @Schema(description = "Icon to be displayed for this locale (library flag-icon-css).", required = true)
@@ -81,6 +91,7 @@ public class TranslationLocaleCreationDto {
         private String language;
         private String region;
         private final List<String> variants = new ArrayList<>();
+        private String displayName;
         private String icon;
 
         private Builder() {
@@ -105,6 +116,11 @@ public class TranslationLocaleCreationDto {
         @JsonIgnore
         public Builder variants(String... variants) {
             this.variants.addAll(asList(variants));
+            return this;
+        }
+
+        public Builder displayName(String displayName) {
+            this.displayName = displayName;
             return this;
         }
 

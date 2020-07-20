@@ -47,6 +47,7 @@ public class TranslationLocaleManagerImpl implements TranslationLocaleManager {
                         creationDto.getLanguage(),
                         creationDto.getRegion().orElse(null),
                         creationDto.getVariants(),
+                        creationDto.getDisplayName().orElse(null),
                         creationDto.getIcon()
                 ))
                 .flatMap(locale -> localeListener.beforePersist(locale)
@@ -81,6 +82,7 @@ public class TranslationLocaleManagerImpl implements TranslationLocaleManager {
                                 .setRegion(localeDto.getRegion().orElse(null))
                                 .setVariants(localeDto.getVariants())
                                 .setIcon(localeDto.getIcon())
+                                .setDisplayName(localeDto.getDisplayName().orElse(null))
                 )
                 .flatMap(repository::save)
                 .flatMap(translationLocale ->

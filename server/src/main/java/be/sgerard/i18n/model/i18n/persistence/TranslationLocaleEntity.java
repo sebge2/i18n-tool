@@ -72,6 +72,11 @@ public class TranslationLocaleEntity {
     private final List<String> variants = new ArrayList<>();
 
     /**
+     * The user friendly name for this locale.
+     */
+    private String displayName;
+
+    /**
      * The icon associated to this locale (library flag-icon-css).
      */
     @NotNull
@@ -81,16 +86,21 @@ public class TranslationLocaleEntity {
     TranslationLocaleEntity() {
     }
 
-    public TranslationLocaleEntity(String language, String region, Collection<String> variants, String icon) {
+    public TranslationLocaleEntity(String language,
+                                   String region,
+                                   Collection<String> variants,
+                                   String displayName,
+                                   String icon) {
         this.id = UUID.randomUUID().toString();
         this.language = language;
         this.region = region;
         this.variants.addAll(variants);
+        this.displayName = displayName;
         this.icon = icon;
     }
 
     /**
-     * @see #getRegion()
+     * @see #region
      */
     public Optional<String> getRegion() {
         return Optional.ofNullable(region);
@@ -102,6 +112,13 @@ public class TranslationLocaleEntity {
     public TranslationLocaleEntity setVariants(Collection<String> variants) {
         this.variants.addAll(variants);
         return this;
+    }
+
+    /**
+     * @see #displayName
+     */
+    public Optional<String> getDisplayName() {
+        return Optional.ofNullable(displayName);
     }
 
     /**

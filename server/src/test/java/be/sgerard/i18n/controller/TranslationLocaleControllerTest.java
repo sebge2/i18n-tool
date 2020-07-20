@@ -42,6 +42,7 @@ public class TranslationLocaleControllerTest extends AbstractControllerTest {
                 .expectBody()
                 .jsonPath("$[?(@.language=='fr')]").exists()
                 .jsonPath("$[?(@.icon=='flag-icon-fr')]").exists()
+                .jsonPath("$[?(@.displayName=='Français (Wallon)')]").exists()
                 .jsonPath("$[?(@.region=='BE')]").exists();
     }
 
@@ -61,7 +62,8 @@ public class TranslationLocaleControllerTest extends AbstractControllerTest {
                 .jsonPath("$.language").isEqualTo("fr")
                 .jsonPath("$.icon").isEqualTo("flag-icon-fr")
                 .jsonPath("$.region").isEqualTo("BE")
-                .jsonPath("$.variants[0]").isEqualTo("wallon");
+                .jsonPath("$.variants[0]").isEqualTo("wallon")
+                .jsonPath("$.displayName").isEqualTo("Français (Wallon)");
     }
 
     @Test
@@ -92,6 +94,7 @@ public class TranslationLocaleControllerTest extends AbstractControllerTest {
                 .region("BE")
                 .variants("wallon")
                 .icon("flag-icon-fr")
+                .displayName("Français (Wallon)")
                 .build();
 
         webClient.put()
@@ -104,7 +107,8 @@ public class TranslationLocaleControllerTest extends AbstractControllerTest {
                 .jsonPath("$.language").isEqualTo("fr")
                 .jsonPath("$.icon").isEqualTo("flag-icon-fr")
                 .jsonPath("$.region").isEqualTo("BE")
-                .jsonPath("$.variants[0]").isEqualTo("wallon");
+                .jsonPath("$.variants[0]").isEqualTo("wallon")
+                .jsonPath("$.displayName").isEqualTo("Français (Wallon)");
     }
 
     @Test
