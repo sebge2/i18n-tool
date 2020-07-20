@@ -3,20 +3,22 @@ import {ALL_LOCALES, DEFAULT_LOCALE, ToolLocale} from "../../core/translation/mo
 
 export class UserPreferences {
 
-    constructor(private dto: UserPreferencesDto) {
+    public static fromDto(dto: UserPreferencesDto): UserPreferences {
+        const toolLocale = ALL_LOCALES.find(toolLocale => toolLocale.toDto() === dto.toolLocale);
+
+        return new UserPreferences(
+            toolLocale ? toolLocale : DEFAULT_LOCALE,
+            dto.preferredLocales ? dto.preferredLocales : []
+        )
     }
 
-    get toolLocale(): ToolLocale {
-        const toolLocale = ALL_LOCALES.find(toolLocale => toolLocale.dtoEnum === this.dto.toolLocale);
+    constructor(public toolLocale: ToolLocale, public preferredLocales: string[]) {
+    }
 
-        if (toolLocale) {
-            return toolLocale;
+    toDto(): UserPreferencesDto {
+        return {
+            toolLocale: this.toolLocale.toDto(),
+            preferredLocales: this.preferredLocales
         }
-
-        return DEFAULT_LOCALE;
-    }
-
-    get preferredLocales(): string[] {
-        return this.dto.preferredLocales;
     }
 }

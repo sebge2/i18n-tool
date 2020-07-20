@@ -3,7 +3,7 @@ import {Observable, of} from "rxjs";
 import {UserPreferencesService as ApiUserPreferencesService} from "../../api";
 import {synchronizedObject} from "../../core/shared/utils/synchronized-observable-utils";
 import {Events} from "../../core/event/model/events.model";
-import {catchError, flatMap} from "rxjs/operators";
+import {catchError, flatMap, map} from "rxjs/operators";
 import {EventService} from "../../core/event/service/event.service";
 import {NotificationService} from "../../core/notification/service/notification.service";
 import {AuthenticationService} from "../../core/auth/service/authentication.service";
@@ -24,7 +24,7 @@ export class UserPreferencesService {
             this.authService.currentUser().pipe(flatMap(currentUser => currentUser ? this.apiService.getCurrentUserPreferences() : of(null))),
             this.eventService.subscribeDto(Events.UPDATED_USER_PREFERENCES),
             of(),
-            dto => (dto != null) ? new UserPreferences(dto) : null
+            dto => (dto != null) ? UserPreferences.fromDto(dto) : null
         )
             .pipe(catchError((reason) => {
                 console.error("Error while retrieving user preferences.", reason);
@@ -33,8 +33,14 @@ export class UserPreferencesService {
             }));
     }
 
-    getUserPreferences(): Observable<UserPreferences> {
+    public getUserPreferences(): Observable<UserPreferences> {
         return this._userPreferences$;
+    }
+
+    public updateUserPreferences(userPreferences: UserPreferences): Observable<UserPreferences> {
+        return this.apiService
+            .updateCurrentUserPreferences(userPreferences.toDto())
+            .pipe(map(userPreferences => UserPreferences.fromDto(userPreferences)));
     }
 
 }
