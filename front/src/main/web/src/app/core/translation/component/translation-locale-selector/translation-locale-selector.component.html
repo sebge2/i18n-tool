@@ -5,23 +5,24 @@
                 [selectable]="true"
                 [removable]="true"
                 (removed)="remove(locale)">
-            <span [class]="locale | localeIcon"></span>
-            {{locale.toString()}}
+            <span [class]="locale | translationLocaleIcon"></span>
+            {{locale.displayName}}
             <mat-icon matChipRemove>cancel</mat-icon>
         </mat-chip>
+
         <input
-                [placeholder]="'SHARED.LOCALES_LABEL' | translate"
+                [placeholder]="labelKey | translate"
                 #localeInput
                 [formControl]="localeInputCtrl"
                 [matAutocomplete]="auto"
                 [matChipInputFor]="localesList"
                 [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
                 [matChipInputAddOnBlur]="true"
-                (matChipInputTokenEnd)="add($event)">
+                (matChipInputTokenEnd)="onTokenEnd($event)">
     </mat-chip-list>
     <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
-        <mat-option *ngFor="let locale of filteredLocales | async" [value]="locale">
-            <span [class]="locale | localeIcon"></span> {{locale.toString()}}
+        <mat-option *ngFor="let locale of filteredLocales$ | async" [value]="locale">
+            <span [class]="locale | translationLocaleIcon"></span> {{locale.displayName}}
         </mat-option>
     </mat-autocomplete>
 </mat-form-field>
