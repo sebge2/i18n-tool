@@ -32,7 +32,7 @@ export class TranslationLocale {
     }
 
     public get displayName(): string {
-        return this.toLocale().toString(); // TODO
+        return this.dto.displayName ? this.dto.displayName : this.toLocale().toString();
     }
 
     public toLocale(): Locale {
