@@ -1,9 +1,13 @@
 <div class="container" fxLayout="row wrap" fxLayoutAlign="flex-start" fxLayoutGap="10px grid">
-    <div>
-        <app-locale-add-card></app-locale-add-card>
-    </div>
-
     <div *ngFor="let locale of (translationLocaleService.getAvailableLocales() | async)">
         <app-locale-view-card [locale]="locale"></app-locale-view-card>
     </div>
+
+    <button mat-fab color="primary" class="add-button" aria-label="">
+        <mat-icon>add</mat-icon>
+    </button>
+
+<!--    <button class="float">-->
+<!--        <mat-icon class="my-float">add</mat-icon>-->
+<!--    </button>-->
 </div>

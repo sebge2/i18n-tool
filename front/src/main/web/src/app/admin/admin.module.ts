@@ -11,7 +11,6 @@ import {UserTableDetailsComponent} from './component/user-table/user-table-detai
 import {UsersComponent} from './component/users/users.component';
 import {RepositoriesComponent} from './component/repositories/repositories.component';
 import {LocalesComponent} from './component/locales/locales.component';
-import { LocaleAddCardComponent } from './component/locales/locale-add-card/locale-add-card.component';
 import { LocaleViewCardComponent } from './component/locales/locale-view-card/locale-view-card.component';
 
 const appRoutes: Routes = [
@@ -30,7 +29,6 @@ const appRoutes: Routes = [
         UsersComponent,
         RepositoriesComponent,
         LocalesComponent,
-        LocaleAddCardComponent,
         LocaleViewCardComponent
     ],
     entryComponents: [
