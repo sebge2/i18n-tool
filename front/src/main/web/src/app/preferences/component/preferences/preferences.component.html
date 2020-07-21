@@ -19,14 +19,15 @@
             </mat-form-field>
         </p>
         <p>
-<!--            <mat-form-field appearance="standard">-->
+            <mat-form-field appearance="standard">
                 <app-translation-locale-selector
+                        formControlName="preferredLocales"
                         [labelKey]="'PREFERENCES.PREFERRED_LOCALES.LABEL'">
                 </app-translation-locale-selector>
                 <mat-hint *ngIf="preferredLocales.length == 0">
                     {{'PREFERENCES.PREFERRED_LOCALES.AUTO_DETECTED' | translate}}
                 </mat-hint>
-<!--            </mat-form-field>-->
+            </mat-form-field>
         </p>
         <p>
             <button mat-flat-button
