@@ -1,6 +1,6 @@
-import {Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, ElementRef, EventEmitter, forwardRef, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {BehaviorSubject, combineLatest, Observable, Subject} from "rxjs";
-import {FormControl} from "@angular/forms";
+import {ControlValueAccessor, DefaultValueAccessor, FormControl, NG_VALUE_ACCESSOR} from "@angular/forms";
 import {COMMA, ENTER} from "@angular/cdk/keycodes";
 import {TranslationLocaleService} from "../../../../translations/service/translation-locale.service";
 import {MatChipInputEvent} from "@angular/material/chips";
@@ -8,19 +8,29 @@ import {MatAutocompleteSelectedEvent} from "@angular/material/autocomplete";
 import {TranslationLocale} from "../../../../translations/model/translation-locale.model";
 import {map, startWith, takeUntil} from "rxjs/operators";
 import * as _ from "lodash";
+import {MatFormFieldControl} from "@angular/material/form-field";
 
 @Component({
     selector: 'app-translation-locale-selector',
     templateUrl: './translation-locale-selector.component.html',
     styleUrls: ['./translation-locale-selector.component.css'],
+    providers: [
+        {
+            provide: NG_VALUE_ACCESSOR,
+            useExisting: forwardRef(() => TranslationLocaleSelectorComponent),
+            multi: true
+        },
+        {provide: MatFormFieldControl, useExisting: TranslationLocaleSelectorComponent}
+    ]
 })
-export class TranslationLocaleSelectorComponent implements OnInit {
+export class TranslationLocaleSelectorComponent implements OnInit, ControlValueAccessor {
 
     @Input() public value: TranslationLocale[] = [];
     @Output() public valueChange: EventEmitter<TranslationLocale[]> = new EventEmitter();
 
     @Input() public labelKey: string = 'SHARED.LOCALES_LABEL';
 
+    @ViewChild(DefaultValueAccessor, {static: false}) valueAccessor: DefaultValueAccessor;
     @ViewChild('localeInput', {static: false}) private localeInput: ElementRef<HTMLInputElement>;
     @ViewChild('auto', {static: false}) private matAutocomplete;
 
@@ -57,6 +67,22 @@ export class TranslationLocaleSelectorComponent implements OnInit {
     ngOnDestroy(): void {
         this._destroyed$.next();
         this._destroyed$.complete();
+    }
+
+    writeValue(obj: any) {
+        this.valueAccessor.writeValue(obj);
+    }
+
+    registerOnChange(fn: any) {
+        this.valueAccessor.registerOnChange(fn);
+    }
+
+    registerOnTouched(fn: any) {
+        this.valueAccessor.registerOnTouched(fn);
+    }
+
+    setDisabledState(isDisabled: boolean) {
+        this.valueAccessor.setDisabledState(isDisabled);
     }
 
     selected(event: MatAutocompleteSelectedEvent): void {
