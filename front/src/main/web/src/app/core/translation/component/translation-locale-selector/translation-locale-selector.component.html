@@ -1,4 +1,6 @@
-<mat-chip-list #localesList aria-label="Locales selection" aria-orientation="horizontal" class="locales-list">
+<mat-chip-list #localesList
+               aria-orientation="horizontal"
+               class="locales-list">
     <mat-chip
             *ngFor="let locale of value"
             [selectable]="true"

@@ -20,36 +20,35 @@ import {MatFormFieldControl} from "@angular/material/form-field";
             useExisting: forwardRef(() => TranslationLocaleSelectorComponent),
             multi: true
         },
-        {provide: MatFormFieldControl, useExisting: TranslationLocaleSelectorComponent}
+        // {provide: MatFormFieldControl, useExisting: TranslationLocaleSelectorComponent}
     ]
 })
-export class TranslationLocaleSelectorComponent implements OnInit, ControlValueAccessor {
+export class TranslationLocaleSelectorComponent implements OnInit/*, ControlValueAccessor*/ {
 
     @Input() public value: TranslationLocale[] = [];
-    @Output() public valueChange: EventEmitter<TranslationLocale[]> = new EventEmitter();
+    @Output() public readonly valueChange: EventEmitter<TranslationLocale[]> = new EventEmitter();
 
     @Input() public labelKey: string = 'SHARED.LOCALES_LABEL';
 
-    @ViewChild(DefaultValueAccessor, {static: false}) valueAccessor: DefaultValueAccessor;
-    @ViewChild('localeInput', {static: false}) private localeInput: ElementRef<HTMLInputElement>;
-    @ViewChild('auto', {static: false}) private matAutocomplete;
+    // @ViewChild('localesList', {static: false}) public valueAccessor: DefaultValueAccessor;
+    @ViewChild('localeInput', {static: false}) public localeInput: ElementRef<HTMLInputElement>;
+    @ViewChild('auto', {static: false}) public matAutocomplete;
 
     public filteredLocales$: Observable<TranslationLocale[]>;
-    public localeInputCtrl = new FormControl();
-    public separatorKeysCodes: number[] = [ENTER, COMMA];
+    public readonly localeInputCtrl = new FormControl();
+    public readonly separatorKeysCodes: number[] = [ENTER, COMMA];
 
-    private _remainingAvailableLocales$ = new BehaviorSubject<TranslationLocale[]>([]);
+    private readonly _remainingAvailableLocales$ = new BehaviorSubject<TranslationLocale[]>([]);
     private readonly _destroyed$ = new Subject();
 
     constructor(private _localeService: TranslationLocaleService) {
     }
 
     ngOnInit() {
-        this._localeService
-            .getDefaultLocales()
+        combineLatest([this._localeService.getAvailableLocales(), this._localeService.getDefaultLocales()])
             .pipe(takeUntil(this._destroyed$))
-            .subscribe(availableLocales => {
-                this.value = this.filterOutUnknown(this.value, availableLocales);
+            .subscribe(([availableLocales, defaultLocales]) => {
+                this.value = this.filterOutUnknown(defaultLocales, availableLocales);
                 this.valueChange.emit(this.value.slice());
 
                 this._remainingAvailableLocales$.next(this.filterOutPresent(availableLocales, this.value));
@@ -69,21 +68,21 @@ export class TranslationLocaleSelectorComponent implements OnInit, ControlValueA
         this._destroyed$.complete();
     }
 
-    writeValue(obj: any) {
-        this.valueAccessor.writeValue(obj);
-    }
-
-    registerOnChange(fn: any) {
-        this.valueAccessor.registerOnChange(fn);
-    }
-
-    registerOnTouched(fn: any) {
-        this.valueAccessor.registerOnTouched(fn);
-    }
-
-    setDisabledState(isDisabled: boolean) {
-        this.valueAccessor.setDisabledState(isDisabled);
-    }
+    // writeValue(obj: any) {
+    //     this.valueAccessor.writeValue(obj);
+    // }
+    //
+    // registerOnChange(fn: any) {
+    //     this.valueAccessor.registerOnChange(fn);
+    // }
+    //
+    // registerOnTouched(fn: any) {
+    //     this.valueAccessor.registerOnTouched(fn);
+    // }
+    //
+    // setDisabledState(isDisabled: boolean) {
+    //     this.valueAccessor.setDisabledState(isDisabled);
+    // }
 
     selected(event: MatAutocompleteSelectedEvent): void {
         this.add(<TranslationLocale><unknown>event.option.value);

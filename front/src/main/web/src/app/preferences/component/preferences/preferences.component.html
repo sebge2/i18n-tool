@@ -9,7 +9,7 @@
                     <mat-select-trigger>
                         <span [class]="toolLocale | toolLocaleIcon"></span> {{toolLocale.displayName}}
                     </mat-select-trigger>
-                    <mat-option *ngFor="let toolLocale of toolLocaleService.getToolLocales()" [value]="toolLocale">
+                    <mat-option *ngFor="let toolLocale of toolLocaleService.getAvailableToolLocales()" [value]="toolLocale">
                         <span [class]="toolLocale | toolLocaleIcon"></span> {{toolLocale.displayName}}
                     </mat-option>
                 </mat-select>
@@ -19,14 +19,14 @@
             </mat-form-field>
         </p>
         <p>
-            <mat-form-field appearance="standard">
+<!--            <mat-form-field appearance="standard">-->
                 <app-translation-locale-selector
                         [labelKey]="'PREFERENCES.PREFERRED_LOCALES.LABEL'">
                 </app-translation-locale-selector>
-                <mat-hint *ngIf="preferredLocales.length > 0">
+                <mat-hint *ngIf="preferredLocales.length == 0">
                     {{'PREFERENCES.PREFERRED_LOCALES.AUTO_DETECTED' | translate}}
                 </mat-hint>
-            </mat-form-field>
+<!--            </mat-form-field>-->
         </p>
         <p>
             <button mat-flat-button

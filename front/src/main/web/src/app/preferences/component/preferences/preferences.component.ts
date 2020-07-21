@@ -48,7 +48,7 @@ export class PreferencesComponent implements OnInit, OnDestroy {
         this.translationLocaleService
             .getDefaultLocales()
             .pipe(takeUntil(this._destroyed$))
-            .subscribe(preferredLocales => this.form.controls['preferredLocales'].setValue(preferredLocales));
+            .subscribe(defaultLocales => this.form.controls['preferredLocales'].setValue(defaultLocales));
 
         this.translationLocaleService
             .getPreferredLocales()
