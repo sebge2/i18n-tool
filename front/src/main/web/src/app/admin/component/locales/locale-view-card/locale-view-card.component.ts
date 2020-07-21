@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {TranslationLocale} from "../../../../translations/model/translation-locale.model";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {TranslationLocaleService} from "../../../../translations/service/translation-locale.service";
@@ -11,6 +11,8 @@ import * as _ from "lodash";
     styleUrls: ['./locale-view-card.component.css']
 })
 export class LocaleViewCardComponent implements OnInit {
+
+    @Output() save = new EventEmitter<TranslationLocale>();
 
     public readonly form: FormGroup;
     public loading: boolean = false;
@@ -85,6 +87,7 @@ export class LocaleViewCardComponent implements OnInit {
                 .updateLocale(this.toUpdatedLocale())
                 .toPromise()
                 .then(translationLocale => this.locale = translationLocale)
+                .then(translationLocale => this.save.emit(translationLocale))
                 .catch(error => {
                     console.error('Error while updating language.', error);
                     this.notificationService.displayErrorMessage("Error while updating language.");
@@ -95,6 +98,7 @@ export class LocaleViewCardComponent implements OnInit {
                 .createLocale(this.toNewLocale())
                 .toPromise()
                 .then(translationLocale => this.locale = translationLocale)
+                .then(translationLocale => this.save.emit(translationLocale))
                 .catch(error => {
                     console.error('Error while saving language.', error);
                     this.notificationService.displayErrorMessage("Error while saving language.");

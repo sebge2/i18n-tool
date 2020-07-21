@@ -1,6 +1,6 @@
 <div class="container" fxLayout="row wrap" fxLayoutAlign="flex-start" fxLayoutGap="10px grid">
     <div *ngFor="let locale of locales">
-        <app-locale-view-card [locale]="locale"></app-locale-view-card>
+        <app-locale-view-card [locale]="locale" (save)="onSave(locale)"></app-locale-view-card>
     </div>
 
     <button mat-fab color="primary" class="add-button" (click)="onAdd()">

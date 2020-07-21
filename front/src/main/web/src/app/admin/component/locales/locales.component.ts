@@ -41,4 +41,14 @@ export class LocalesComponent implements OnInit, OnDestroy {
 
         this._addedLocales.next(locales);
     }
+
+    public onSave(locale: TranslationLocale) {
+        const locales = this._addedLocales.getValue();
+        const indexOf = locales.indexOf(locale);
+
+        if (indexOf >= 0) {
+            locales.splice(indexOf, 1);
+            this._addedLocales.next(locales);
+        }
+    }
 }
