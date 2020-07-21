@@ -9,9 +9,14 @@ import {ConfirmWorkspaceDeletionComponent} from './component/workspace-table/con
 import {CoreAuthModule} from "../core/auth/core-auth.module";
 import {UserTableComponent} from './component/user-table/user-table.component';
 import {UserTableDetailsComponent} from './component/user-table/user-table-details/user-table-details.component';
+import {UsersComponent} from './component/users/users.component';
+import {RepositoriesComponent} from './component/repositories/repositories.component';
+import {LocalesComponent} from './component/locales/locales.component';
 
 const appRoutes: Routes = [
-    {path: '', pathMatch: 'full', component: AdminComponent}
+    {path: 'users', component: UsersComponent},
+    {path: 'repositories', component: UsersComponent},
+    {path: 'locales', component: LocalesComponent}
 ];
 
 @NgModule({
@@ -21,7 +26,10 @@ const appRoutes: Routes = [
         RepositoryInitializerComponent,
         ConfirmWorkspaceDeletionComponent,
         UserTableComponent,
-        UserTableDetailsComponent
+        UserTableDetailsComponent,
+        UsersComponent,
+        RepositoriesComponent,
+        LocalesComponent
     ],
     entryComponents: [
         ConfirmWorkspaceDeletionComponent
