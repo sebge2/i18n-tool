@@ -6,49 +6,49 @@
         <form [formGroup]="form" (ngSubmit)="onSave()">
             <p>
                 <mat-form-field appearance="standard">
-                    <mat-label>Display Name</mat-label>
+                    <mat-label>{{'ADMIN.LOCALES.DISPLAY_NAME' | translate}}</mat-label>
                     <input matInput formControlName="displayName">
-                    <mat-hint>Example: English.</mat-hint>
+                    <mat-hint>{{'ADMIN.LOCALES.DISPLAY_NAME_EXAMPLE' | translate}}</mat-hint>
                 </mat-form-field>
             </p>
             <p>
                 <mat-form-field appearance="standard">
-                    <mat-label>Language Code</mat-label>
+                    <mat-label>{{'ADMIN.LOCALES.LANGUAGE' | translate}}</mat-label>
                     <input matInput formControlName="language">
                     <mat-hint>
-                        Example: en, fr.
-                        <a href="https://tools.ietf.org/html/bcp47#section-2.2.1" target="_blank"><mat-icon>help_outline</mat-icon></a>
+                        {{'ADMIN.LOCALES.LANGUAGE_EXAMPLE' | translate}}
+                        <a href="https://tools.ietf.org/html/bcp47#section-2.2.1" target="_blank"><mat-icon class="help">help_outline</mat-icon></a>
                     </mat-hint>
                 </mat-form-field>
             </p>
             <p>
                 <mat-form-field appearance="standard">
-                    <mat-label>Region</mat-label>
+                    <mat-label>{{'ADMIN.LOCALES.REGION' | translate}}</mat-label>
                     <input matInput formControlName="region">
                     <mat-hint>
-                        Example: US, GB.
-                        <a href="https://tools.ietf.org/html/bcp47#section-2.2.4" target="_blank"><mat-icon>help_outline</mat-icon></a>
+                        {{'ADMIN.LOCALES.REGION_EXAMPLE' | translate}}
+                        <a href="https://tools.ietf.org/html/bcp47#section-2.2.4" target="_blank"><mat-icon class="help">help_outline</mat-icon></a>
                     </mat-hint>
                 </mat-form-field>
             </p>
             <p>
                 <mat-form-field appearance="standard">
-                    <mat-label>Variants</mat-label>
+                    <mat-label>{{'ADMIN.LOCALES.VARIANTS' | translate}}</mat-label>
                     <input matInput formControlName="variants">
                     <mat-hint>
-                        Example: de-CH-1996.
-                        <a href="https://tools.ietf.org/html/bcp47#section-2.2.5" target="_blank"><mat-icon>help_outline</mat-icon></a>
+                        {{'ADMIN.LOCALES.VARIANTS_EXAMPLE' | translate}}
+                        <a href="https://tools.ietf.org/html/bcp47#section-2.2.5" target="_blank"><mat-icon class="help">help_outline</mat-icon></a>
                     </mat-hint>
                 </mat-form-field>
             </p>
             <p>
                 <mat-form-field appearance="standard" class="field-icon">
-                    <mat-label>Icon</mat-label>
+                    <mat-label>{{'ADMIN.LOCALES.ICON' | translate}}</mat-label>
                     <span matPrefix [class]="iconClass"></span>
                     <input matInput formControlName="icon">
                     <mat-hint>
-                        Example: flag-icon-fr.
-                        <a href="https://github.com/lipis/flag-icon-css/tree/master/flags/1x1" target="_blank"><mat-icon>help_outline</mat-icon></a>.
+                        {{'ADMIN.LOCALES.ICON_EXAMPLE' | translate}}
+                        <a href="https://github.com/lipis/flag-icon-css/tree/master/flags/1x1" target="_blank"><mat-icon class="help">help_outline</mat-icon></a>.
                     </mat-hint>
                 </mat-form-field>
             </p>

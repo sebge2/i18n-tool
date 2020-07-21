@@ -6,8 +6,6 @@
         <mat-icon mat-list-icon>settings</mat-icon>{{'MENU.PREFERENCES_LABEL' | translate}}
     </a>
 
-    <mat-divider *hasRole="['ADMIN']"></mat-divider>
-
     <a mat-list-item (click)="toggleAdmin()" *hasRole="['ADMIN']">
         <mat-icon mat-list-icon>admin_panel_settings</mat-icon>
         {{'MENU.ADMIN_LABEL' | translate}}

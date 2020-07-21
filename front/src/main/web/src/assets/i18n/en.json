@@ -51,6 +51,19 @@
     "TRANSLATIONS_LABEL": "Translations"
   },
   "ADMIN" : {
+    "LOCALES": {
+      "DISPLAY_NAME": "Display Name",
+      "DISPLAY_NAME_EXAMPLE": "Example: English.",
+      "LANGUAGE": "Language Code",
+      "LANGUAGE_EXAMPLE": "Example: en, fr.",
+      "REGION": "Region",
+      "REGION_EXAMPLE": "Example: US, GB.",
+      "VARIANTS": "Variants",
+      "VARIANTS_EXAMPLE": "Example: de-CH-1996.",
+      "ICON": "Icon",
+      "ICON_EXAMPLE": "Example: flag-icon-fr."
+    },
+
     "WORKSPACES" : {
       "CONFIRM_DELETION" : {
         "ERASE_ACTION" : "Erase",
