@@ -1,0 +1,47 @@
+<mat-card>
+    <mat-card-header>
+        <mat-card-title><span mat-card-image [class]="locale | translationLocaleIcon"></span> {{locale.displayName}}</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+        <form [formGroup]="form" (ngSubmit)="onSave()">
+            <p>
+                <mat-form-field appearance="standard">
+                    <mat-label>Language Code</mat-label>
+                    <input matInput formControlName="language">
+                    <mat-hint><a href="https://tools.ietf.org/html/bcp47#section-2.2.1" target="_blank">Documentation</a>. Example: en, fr.</mat-hint>
+                </mat-form-field>
+            </p>
+            <p>
+                <mat-form-field appearance="standard">
+                    <mat-label>Region</mat-label>
+                    <input matInput formControlName="region">
+                    <mat-hint><a href="https://tools.ietf.org/html/bcp47#section-2.2.4" target="_blank">Documentation</a>. Example: US, GB.</mat-hint>
+                </mat-form-field>
+            </p>
+            <p>
+                <mat-form-field appearance="standard">
+                    <mat-label>Variants</mat-label>
+                    <input matInput formControlName="variants">
+                    <mat-hint><a href="https://tools.ietf.org/html/bcp47#section-2.2.5" target="_blank">Documentation</a>. Example: de-CH-1996.</mat-hint>
+                </mat-form-field>
+            </p>
+            <p>
+                <mat-form-field appearance="standard" class="field-icon">
+                    <mat-label>Icon</mat-label>
+                    <span matPrefix [class]="iconClass"></span>
+                    <input matInput formControlName="icon">
+                    <mat-hint><a href="https://github.com/lipis/flag-icon-css/tree/master/flags/1x1" target="_blank">Documentation</a>. Example: flag-icon-fr.</mat-hint>
+                </mat-form-field>
+            </p>
+        </form>
+    </mat-card-content>
+    <mat-card-actions [align]="'end'">
+        <button mat-icon-button
+                color="primary"
+                [disabled]="!form.valid || !form.dirty || loading"
+                (click)="onSave()"
+                [class.spinner]="loading">
+            <mat-icon>save</mat-icon>
+        </button>
+    </mat-card-actions>
+</mat-card>
