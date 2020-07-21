@@ -3,6 +3,7 @@ import {TranslationLocale} from "../../../../translations/model/translation-loca
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {TranslationLocaleService} from "../../../../translations/service/translation-locale.service";
 import {NotificationService} from "../../../../core/notification/service/notification.service";
+import * as _ from "lodash";
 
 @Component({
     selector: 'app-locale-view-card',
@@ -22,8 +23,8 @@ export class LocaleViewCardComponent implements OnInit {
         this.form = this.formBuilder.group(
             {
                 displayName: this.formBuilder.control('', []),
-                language: this.formBuilder.control('', [Validators.required]),
-                region: this.formBuilder.control('', []),
+                language: this.formBuilder.control('', [Validators.required, Validators.minLength(2), Validators.maxLength(2)]),
+                region: this.formBuilder.control('', [Validators.minLength(2), Validators.maxLength(2)]),
                 variants: this.formBuilder.control('', []),
                 icon: this.formBuilder.control('', [Validators.required]),
             }
@@ -80,13 +81,35 @@ export class LocaleViewCardComponent implements OnInit {
     }
 
     private toLocale(): TranslationLocale {
-        return new TranslationLocale(
-            this.locale.id,
-            this.form.controls['language'].value,
-            this.form.controls['icon'].value,
-            this.form.controls['displayName'].value,
-            this.form.controls['region'].value,
-            this.form.controls['variants'].value // TODO
-        );
+        const id = this.locale.id;
+        const icon = this.form.controls['icon'].value;
+
+        let language = this.form.controls['language'].value.trim();
+        if (_.isEmpty(language)) {
+            language = null;
+        } else {
+            language = language.toLowerCase();
+        }
+
+        let displayName = this.form.controls['displayName'].value;
+        if (_.isEmpty(displayName)) {
+            displayName = null;
+        }
+
+        let region = this.form.controls['region'].value;
+        if (_.isEmpty(region)) {
+            region = null;
+        } else {
+            region = region.toUpperCase();
+        }
+
+        let variants = this.form.controls['variants'].value;
+        if (_.isEmpty(variants)) {
+            variants = [];
+        } else {
+            variants = variants.trim().split(' ');
+        }
+
+        return new TranslationLocale(id, language, icon, displayName, region, variants);
     }
 }

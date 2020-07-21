@@ -58,7 +58,7 @@
       "LANGUAGE_EXAMPLE": "Example: en, fr.",
       "REGION": "Region",
       "REGION_EXAMPLE": "Example: US, GB.",
-      "VARIANTS": "Variants",
+      "VARIANTS": "Variants (space separated)",
       "VARIANTS_EXAMPLE": "Example: de-CH-1996.",
       "ICON": "Icon",
       "ICON_EXAMPLE": "Example: flag-icon-fr."
