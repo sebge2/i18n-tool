@@ -45,6 +45,9 @@
   "MENU": {
     "PREFERENCES_LABEL": "Preferences",
     "ADMIN_LABEL": "Admin",
+    "LOCALES_LABEL": "Languages",
+    "REPOSITORIES_LABEL": "Repositories",
+    "USERS_LABEL": "Users",
     "TRANSLATIONS_LABEL": "Translations"
   },
   "ADMIN" : {
