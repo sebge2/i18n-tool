@@ -31,7 +31,7 @@ export class TranslationLocaleService {
             this.eventService.subscribeDto(Events.ADDED_TRANSLATION_LOCALE),
             this.eventService.subscribeDto(Events.UPDATED_TRANSLATION_LOCALE),
             this.eventService.subscribeDto(Events.DELETED_TRANSLATION_LOCALE),
-            dto => new TranslationLocale(dto),
+            dto => TranslationLocale.fromDto(dto),
             (first, second) => first.id === second.id
         )
             .pipe(catchError((reason) => {
@@ -74,16 +74,22 @@ export class TranslationLocaleService {
             );
     }
 
-    getAvailableLocales(): Observable<TranslationLocale[]> {
+    public getAvailableLocales(): Observable<TranslationLocale[]> {
         return this._availableLocales$;
     }
 
-    getDefaultLocales(): Observable<TranslationLocale[]> {
+    public getDefaultLocales(): Observable<TranslationLocale[]> {
         return this._defaultLocales$;
     }
 
-    getPreferredLocales(): Observable<TranslationLocale[]> {
+    public getPreferredLocales(): Observable<TranslationLocale[]> {
         return this._preferredLocales$;
+    }
+
+    public updateLocale(translationLocale: TranslationLocale): Observable<TranslationLocale> {
+        return this.apiService
+            .update1(translationLocale.toDto(), translationLocale.id)
+            .pipe(map(dto => TranslationLocale.fromDto(dto)));
     }
 
     private static getLocalesFromBrowserPreferences(): Locale[] {

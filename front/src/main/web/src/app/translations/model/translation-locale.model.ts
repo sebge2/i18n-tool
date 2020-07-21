@@ -1,38 +1,25 @@
-import bcp47 from "bcp-47";
 import {TranslationLocaleDto} from "../../api";
 import {Locale} from "../../core/translation/model/locale.model";
 
 export class TranslationLocale {
 
-    public static from(locale: TranslationLocale) { // TODO
-        return new TranslationLocale(null);
+    public static fromDto(locale: TranslationLocaleDto) {
+        return new TranslationLocale(
+            locale.id,
+            locale.language,
+            locale.icon,
+            locale.displayName,
+            locale.region,
+            locale.variants
+        );
     }
 
-    constructor(private dto: TranslationLocaleDto) {
-    }
-
-    public get id(): string {
-        return this.dto.id;
-    }
-
-    public get language(): string {
-        return this.dto.language;
-    }
-
-    public get region(): string | null {
-        return this.dto.region;
-    }
-
-    public get variants(): string[] {
-        return this.dto.variants || [];
-    }
-
-    public get icon(): string {
-        return this.dto.icon;
-    }
-
-    public get displayName(): string {
-        return this.dto.displayName ? this.dto.displayName : this.toLocale().toString();
+    constructor(public id: string,
+                public language: string,
+                public icon: string,
+                public displayName?: string,
+                public region?: string,
+                public variants: string[] = []) {
     }
 
     public toLocale(): Locale {
@@ -44,10 +31,17 @@ export class TranslationLocale {
     }
 
     public toString() {
-        return bcp47.stringify({
+        return this.displayName ? this.displayName : this.toLocale().toString();
+    }
+
+    public toDto(): TranslationLocaleDto {
+        return {
+            id: this.id,
             language: this.language,
+            icon: this.icon,
+            displayName: this.displayName,
             region: this.region,
             variants: this.variants
-        });
+        }
     }
 }
