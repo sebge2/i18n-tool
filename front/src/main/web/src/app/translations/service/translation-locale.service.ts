@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {TranslationLocale} from "../model/translation-locale.model";
-import {TranslationLocaleService as ApiTranslationLocaleService} from "../../api";
+import {TranslationLocaleCreationDto, TranslationLocaleService as ApiTranslationLocaleService} from "../../api";
 import {NotificationService} from "../../core/notification/service/notification.service";
 import {combineLatest, Observable} from "rxjs";
 import {synchronizedCollection} from "../../core/shared/utils/synchronized-observable-utils";
@@ -84,6 +84,12 @@ export class TranslationLocaleService {
 
     public getPreferredLocales(): Observable<TranslationLocale[]> {
         return this._preferredLocales$;
+    }
+
+    public createLocale(creationTranslationLocale: TranslationLocaleCreationDto): Observable<TranslationLocale> {
+        return this.apiService
+            .create1(creationTranslationLocale)
+            .pipe(map(dto => TranslationLocale.fromDto(dto)));
     }
 
     public updateLocale(translationLocale: TranslationLocale): Observable<TranslationLocale> {

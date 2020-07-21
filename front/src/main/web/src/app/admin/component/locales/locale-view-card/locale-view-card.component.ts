@@ -46,7 +46,27 @@ export class LocaleViewCardComponent implements OnInit {
     }
 
     public get displayName(): string {
-        return this.form.controls['displayName'].value;
+        let displayName = this.form.controls['displayName'].value;
+
+        return _.isEmpty(displayName) ? null : displayName.trim();
+    }
+
+    public get language(): string {
+        let language = this.form.controls['language'].value;
+
+        return _.isEmpty(language) ? null : language.trim().toLowerCase();
+    }
+
+    public get region(): string {
+        let region = this.form.controls['region'].value;
+
+        return _.isEmpty(region) ? null : region.trim().toUpperCase();
+    }
+
+    public get variants(): string[] {
+        let variants = this.form.controls['variants'].value;
+
+        return _.isEmpty(variants) ? [] : variants.trim().split(' ');
     }
 
     public get icon(): string {
@@ -60,14 +80,27 @@ export class LocaleViewCardComponent implements OnInit {
     public onSave() {
         this.loading = true;
 
-        this.translationLocaleService
-            .updateLocale(this.toLocale())
-            .toPromise()
-            .catch(error => {
-                console.error('Error while saving language.', error);
-                this.notificationService.displayErrorMessage("Error while saving language.");
-            })
-            .finally(() => this.loading = false);
+        if (this.locale.id) {
+            this.translationLocaleService
+                .updateLocale(this.toUpdatedLocale())
+                .toPromise()
+                .then(translationLocale => this.locale = translationLocale)
+                .catch(error => {
+                    console.error('Error while updating language.', error);
+                    this.notificationService.displayErrorMessage("Error while updating language.");
+                })
+                .finally(() => this.loading = false);
+        } else {
+            this.translationLocaleService
+                .createLocale(this.toNewLocale())
+                .toPromise()
+                .then(translationLocale => this.locale = translationLocale)
+                .catch(error => {
+                    console.error('Error while saving language.', error);
+                    this.notificationService.displayErrorMessage("Error while saving language.");
+                })
+                .finally(() => this.loading = false);
+        }
     }
 
     public resetForm() {
@@ -80,36 +113,17 @@ export class LocaleViewCardComponent implements OnInit {
         this.form.markAsPristine();
     }
 
-    private toLocale(): TranslationLocale {
-        const id = this.locale.id;
-        const icon = this.form.controls['icon'].value;
+    private toNewLocale() {
+        return {
+            language: this.language,
+            displayName: this.displayName,
+            region: this.region,
+            variants: this.variants,
+            icon: this.icon
+        };
+    }
 
-        let language = this.form.controls['language'].value.trim();
-        if (_.isEmpty(language)) {
-            language = null;
-        } else {
-            language = language.toLowerCase();
-        }
-
-        let displayName = this.form.controls['displayName'].value;
-        if (_.isEmpty(displayName)) {
-            displayName = null;
-        }
-
-        let region = this.form.controls['region'].value;
-        if (_.isEmpty(region)) {
-            region = null;
-        } else {
-            region = region.toUpperCase();
-        }
-
-        let variants = this.form.controls['variants'].value;
-        if (_.isEmpty(variants)) {
-            variants = [];
-        } else {
-            variants = variants.trim().split(' ');
-        }
-
-        return new TranslationLocale(id, language, icon, displayName, region, variants);
+    private toUpdatedLocale(): TranslationLocale {
+        return new TranslationLocale(this.locale.id, this.language, this.icon, this.displayName, this.region, this.variants);
     }
 }
