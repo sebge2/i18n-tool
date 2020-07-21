@@ -33,12 +33,12 @@
   "PREFERENCES": {
     "TITLE": "My Preferences",
     "TOOL_LOCALE": {
-      "LABEL": "Tool Locale",
-      "AUTO_DETECTED": "Auto-detected value"
+      "LABEL": "Tool Language",
+      "AUTO_DETECTED": "Auto-detected language"
     },
     "PREFERRED_LOCALES": {
       "LABEL": "My Spoken Languages",
-      "AUTO_DETECTED": "Auto-detected value"
+      "AUTO_DETECTED": "Auto-detected languages"
     },
     "SAVE": "Save"
   },

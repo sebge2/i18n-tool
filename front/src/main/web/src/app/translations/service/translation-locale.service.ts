@@ -57,7 +57,12 @@ export class TranslationLocaleService {
 
         this._autoDetectedLocales$ = this.getAvailableLocales()
             .pipe(map(availableLocales =>
-                availableLocales.filter(availableLocale => this.isMatchingBrowserLocale(availableLocale, this._browserLocales))
+                _.uniqBy(
+                    this._browserLocales
+                        .map(browserLocale => TranslationLocaleService.findMatchingLocale(browserLocale, availableLocales))
+                        .filter(locale => locale),
+                    'id'
+                )
             ));
 
         this._defaultLocales$ = combineLatest([this.getPreferredLocales(), this.getAutoDetectedLocales()])
@@ -85,21 +90,25 @@ export class TranslationLocaleService {
         return navigator.languages.map(browserLanguage => Locale.fromString(browserLanguage));
     }
 
-    private getAutoDetectedLocales(): Observable<TranslationLocale[]> {
-        return this._autoDetectedLocales$;
+    private static findMatchingLocale(browserLocale: Locale, translationLocales: TranslationLocale[]): TranslationLocale {
+        return _.find(translationLocales, translationLocale => TranslationLocaleService.isMatchingBrowserLocale(translationLocale, browserLocale));
     }
 
-    private isMatchingBrowserLocale(availableTranslationLocale: TranslationLocale, browserLocales: Locale[]): boolean {
-        const availableLocale = availableTranslationLocale.toLocale();
+    private static isMatchingBrowserLocale(translationLocale: TranslationLocale, browserLocale: Locale): boolean {
+        const locale = translationLocale.toLocale();
 
-        if (availableLocale.hasOnlyLanguage()) {
-            return _.some(browserLocales, browserLocale => browserLocale.matchLanguage(availableLocale));
-        } else if (availableLocale.hasOnlyLanguageAndRegion()) {
-            return _.some(browserLocales, browserLocale => browserLocale.matchLanguageAndRegion(availableLocale));
-        } else if (availableLocale.hasLanguageAndRegionAndVariants()) {
-            return _.some(browserLocales, browserLocale => browserLocale.matchStrictly(availableLocale));
+        if (locale.hasOnlyLanguage()) {
+            return browserLocale.matchLanguage(locale);
+        } else if (locale.hasOnlyLanguageAndRegion()) {
+            return browserLocale.matchLanguageAndRegion(locale);
+        } else if (locale.hasLanguageAndRegionAndVariants()) {
+            return browserLocale.matchStrictly(locale);
         } else {
             return false;
         }
+    }
+
+    private getAutoDetectedLocales(): Observable<TranslationLocale[]> {
+        return this._autoDetectedLocales$;
     }
 }
