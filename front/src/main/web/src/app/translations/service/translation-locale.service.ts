@@ -81,12 +81,12 @@ export class TranslationLocaleService {
         return this._preferredLocales$;
     }
 
-    getAutoDetectedLocales(): Observable<TranslationLocale[]> {
-        return this._autoDetectedLocales$;
-    }
-
     private static getLocalesFromBrowserPreferences(): Locale[] {
         return navigator.languages.map(browserLanguage => Locale.fromString(browserLanguage));
+    }
+
+    private getAutoDetectedLocales(): Observable<TranslationLocale[]> {
+        return this._autoDetectedLocales$;
     }
 
     private isMatchingBrowserLocale(availableTranslationLocale: TranslationLocale, browserLocales: Locale[]): boolean {

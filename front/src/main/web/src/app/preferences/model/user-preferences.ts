@@ -1,13 +1,11 @@
 import {UserPreferencesDto} from "../../api";
-import {ALL_LOCALES, DEFAULT_LOCALE, ToolLocale} from "../../core/translation/model/tool-locale.model";
+import {ALL_LOCALES, ToolLocale} from "../../core/translation/model/tool-locale.model";
 
 export class UserPreferences {
 
     public static fromDto(dto: UserPreferencesDto): UserPreferences {
-        const toolLocale = ALL_LOCALES.find(toolLocale => toolLocale.toDto() === dto.toolLocale);
-
         return new UserPreferences(
-            toolLocale ? toolLocale : DEFAULT_LOCALE,
+            ALL_LOCALES.find(toolLocale => toolLocale.toDto() === dto.toolLocale),
             dto.preferredLocales ? dto.preferredLocales : []
         )
     }

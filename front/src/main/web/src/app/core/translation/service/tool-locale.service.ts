@@ -34,7 +34,7 @@ export class ToolLocaleService {
                 distinctUntilChanged()
             );
 
-        combineLatest([this.getToolLocale(), this._forceLocale$, this._browserLocalePreference$])
+        combineLatest([this.getPreferredToolLocale(), this._forceLocale$, this._browserLocalePreference$])
             .pipe(
                 map(([userPreferredLocale, forceLocale, browserLocalePreference]) => {
                     if (forceLocale != null) {
@@ -59,25 +59,25 @@ export class ToolLocaleService {
             });
     }
 
+    getAvailableToolLocales(): ToolLocale[] {
+        return ALL_LOCALES;
+    }
+
     getCurrentLocale(): Observable<ToolLocale> {
         return this._currentLocale$;
     }
 
-    getToolLocales(): ToolLocale[] {
-        return ALL_LOCALES;
-    }
-
-    getToolLocale(): Observable<ToolLocale> {
+    getPreferredToolLocale(): Observable<ToolLocale> {
         return this._toolLocale$;
     }
 
     private findLocaleFromString(value: string): ToolLocale {
-        return this.getToolLocales().find(locale => locale.toLocale().matchStrictly(Locale.fromString(value)));
+        return this.getAvailableToolLocales().find(locale => locale.toLocale().matchStrictly(Locale.fromString(value)));
     }
 
     private getLocaleFromBrowserPreference(): ToolLocale {
         for (const browserLanguage of navigator.languages) {
-            for (const locale of this.getToolLocales()) {
+            for (const locale of this.getAvailableToolLocales()) {
                 if (locale.toLocale().matchLanguage(Locale.fromString(browserLanguage))) {
                     return locale;
                 }
