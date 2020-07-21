@@ -1,0 +1,13 @@
+mat-card {
+    width: 250px;
+    height: 250px;
+}
+
+mat-icon {
+    font-size: 150px;
+    padding: 50px;
+}
+
+mat-icon:hover {
+    opacity: 0.5;
+}

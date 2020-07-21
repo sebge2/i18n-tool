@@ -1,10 +1,20 @@
 .field-icon  :host ::ng-deep .mat-form-field-label-wrapper {
-    left: -24px; /* this is the width of image */
+    left: -24px;
 }
 
 .field-icon :host ::ng-deep .mat-input-element {
-    margin-left: 5px; /* adding a margin to left of input you can remove it if you want */
+    margin-left: 5px;
 }
+
 .field-icon span {
     margin-bottom: -5px;
+}
+
+mat-form-field {
+    width: 250px;
+}
+
+mat-card {
+    width: 250px;
+    height: 430px;
 }
