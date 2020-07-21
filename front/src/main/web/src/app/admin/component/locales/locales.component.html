@@ -1,1 +1,9 @@
-<p>locales works!</p>
+<div class="container" fxLayout="row" fxLayout.md="column" fxLayout.sm="column" fxLayout.xs="column"  fxLayoutWrap fxLayoutGap="10px" fxLayoutAlign="start center">
+    <div>
+        <app-locale-add-card></app-locale-add-card>
+    </div>
+
+    <div *ngFor="let locale of (translationLocaleService.getAvailableLocales() | async)">
+        <app-locale-view-card [locale]="locale"></app-locale-view-card>
+    </div>
+</div>

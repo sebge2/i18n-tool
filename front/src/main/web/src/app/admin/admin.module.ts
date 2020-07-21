@@ -1,7 +1,6 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {RouterModule, Routes} from "@angular/router";
-import {AdminComponent} from './component/admin/admin.component';
 import {WorkspaceTableComponent} from './component/workspace-table/workspace-table.component';
 import {RepositoryInitializerComponent} from './component/repository-initializer/repository-initializer.component';
 import {CoreSharedModule} from "../core/shared/core-shared-module";
@@ -12,6 +11,8 @@ import {UserTableDetailsComponent} from './component/user-table/user-table-detai
 import {UsersComponent} from './component/users/users.component';
 import {RepositoriesComponent} from './component/repositories/repositories.component';
 import {LocalesComponent} from './component/locales/locales.component';
+import { LocaleAddCardComponent } from './component/locales/locale-add-card/locale-add-card.component';
+import { LocaleViewCardComponent } from './component/locales/locale-view-card/locale-view-card.component';
 
 const appRoutes: Routes = [
     {path: 'users', component: UsersComponent},
@@ -21,7 +22,6 @@ const appRoutes: Routes = [
 
 @NgModule({
     declarations: [
-        AdminComponent,
         WorkspaceTableComponent,
         RepositoryInitializerComponent,
         ConfirmWorkspaceDeletionComponent,
@@ -29,7 +29,9 @@ const appRoutes: Routes = [
         UserTableDetailsComponent,
         UsersComponent,
         RepositoriesComponent,
-        LocalesComponent
+        LocalesComponent,
+        LocaleAddCardComponent,
+        LocaleViewCardComponent
     ],
     entryComponents: [
         ConfirmWorkspaceDeletionComponent

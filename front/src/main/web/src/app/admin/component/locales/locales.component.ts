@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import {TranslationLocaleService} from "../../../translations/service/translation-locale.service";
 
 @Component({
   selector: 'app-locales',
@@ -7,7 +8,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class LocalesComponent implements OnInit {
 
-  constructor() { }
+  constructor(public translationLocaleService: TranslationLocaleService) { }
 
   ngOnInit() {
   }
