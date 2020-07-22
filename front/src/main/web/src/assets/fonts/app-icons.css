@@ -1,0 +1,29 @@
+@font-face {
+    font-family: "app-icons";
+    src: url("./app-icons.eot?7246d1a12fdfe33e058a2a3c9e278998?#iefix") format("embedded-opentype"),
+url("./app-icons.woff2?7246d1a12fdfe33e058a2a3c9e278998") format("woff2"),
+url("./app-icons.woff?7246d1a12fdfe33e058a2a3c9e278998") format("woff"),
+url("./app-icons.ttf?7246d1a12fdfe33e058a2a3c9e278998") format("truetype"),
+url("./app-icons.svg?7246d1a12fdfe33e058a2a3c9e278998#app-icons") format("svg");
+}
+
+*[class^="app-icon-"]:before, *[class*=" app-icon-"]:before {
+    font-family: app-icons !important;
+    font-style: normal;
+    font-weight: normal !important;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.app-icon-git:before {
+    content: "\f101";
+}
+.app-icon-github:before {
+    content: "\f102";
+}
+.app-icon-google:before {
+    content: "\f103";
+}

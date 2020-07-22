@@ -12,7 +12,8 @@
     "webdriver-start": "webdriver-manager update --versions.chrome=$(google-chrome --version | cut -d ' ' -f 3) && webdriver-manager  start --detach --versions.chrome=$(google-chrome --version | cut -d ' ' -f 3)",
     "webdriver-local-start": "webdriver-manager update --versions.chrome=$(google-chrome --version | cut -d ' ' -f 3) && webdriver-manager  start --versions.chrome=$(google-chrome --version | cut -d ' ' -f 3)",
     "e2e-local": "ng e2e --protractorConfig=./e2e/protractor.local-conf.js",
-    "generate-api": "cross-env API_URL='http://127.0.0.1:8080/api/api-docs' ts-node --project=../../../scripts/tsconfig.json ../../../scripts/generate-api.ts"
+    "generate-api": "cross-env API_URL='http://127.0.0.1:8080/api/api-docs' ts-node --project=../../../scripts/tsconfig.json ../../../scripts/generate-api.ts",
+    "generate-font": "icon-font-generator ./src/app-fonts/*.svg -o ./src/assets/fonts -p app-icon -n app-icons --tag \"*\""
   },
   "private": true,
   "dependencies": {
@@ -68,6 +69,7 @@
     "ts-node": "~7.0.0",
     "tslint": "~5.11.0",
     "tslib": "^1.9.0",
-    "typescript": "~3.4.5"
+    "typescript": "~3.4.5",
+    "icon-font-generator": "^2.1.10"
   }
 }
