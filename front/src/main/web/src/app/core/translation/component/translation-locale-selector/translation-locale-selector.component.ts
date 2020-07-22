@@ -38,21 +38,32 @@ export class TranslationLocaleSelectorComponent implements OnInit/*, ControlValu
     public readonly localeInputCtrl = new FormControl();
     public readonly separatorKeysCodes: number[] = [ENTER, COMMA];
 
-    private readonly _remainingAvailableLocales$ = new BehaviorSubject<TranslationLocale[]>([]);
+    private static nextId = 0;
+
+    private _remainingAvailableLocales$: Observable<TranslationLocale[]>;
+
+    private onChange = (_: any) => {};
+    private onTouched = () => {};
+    private _placeholder: string;
+    private _disabled = false;
+    private _required = false;
     private readonly _destroyed$ = new Subject();
 
     constructor(private _localeService: TranslationLocaleService) {
     }
 
     ngOnInit() {
-        combineLatest([this._localeService.getAvailableLocales(), this._localeService.getDefaultLocales()])
-            .pipe(takeUntil(this._destroyed$))
-            .subscribe(([availableLocales, defaultLocales]) => {
-                this.value = this.filterOutUnknown(defaultLocales, availableLocales);
-                this.valueChange.emit(this.value.slice());
+        this.ngControl = this.injector.get(NgControl);
 
-                this._remainingAvailableLocales$.next(this.filterOutPresent(availableLocales, this.value));
-            });
+        if (this.ngControl != null) {
+            this.ngControl.valueAccessor = this;
+        }
+
+        this._remainingAvailableLocales$ = combineLatest([this._localeService.getAvailableLocales(), this.parts.valueChanges.pipe(startWith(<string>null))])
+            .pipe(
+                takeUntil(this._destroyed$),
+                map(([availableLocales, _]) => this.filterOutPresent(availableLocales, this.value))
+            );
 
         this.filteredLocales$ = combineLatest([this.localeInputCtrl.valueChanges.pipe(startWith(<string>null)), this._remainingAvailableLocales$])
             .pipe(
@@ -92,25 +103,20 @@ export class TranslationLocaleSelectorComponent implements OnInit/*, ControlValu
         this.localeInput.nativeElement.value = '';
         this.localeInputCtrl.setValue(null);
 
-        this.value.push(selectedLocale);
+        const copy = _.clone(this.value);
+        copy.push(selectedLocale);
 
-        const remainingAvailableLocales = this._remainingAvailableLocales$.getValue();
-        remainingAvailableLocales.splice(this.getIndex(selectedLocale, remainingAvailableLocales), 1);
-
-        this.valueChange.emit(this.value.slice());
+        this.setValue(copy);
     }
 
     remove(locale: TranslationLocale): void {
         const index = this.getIndex(locale, this.value);
 
         if (index >= 0) {
-            this.value.splice(index, 1);
+            const copy = _.clone(this.value);
+            copy.splice(index, 1);
 
-            const remainingAvailableLocales = this._remainingAvailableLocales$.getValue();
-            remainingAvailableLocales.push(locale);
-
-            this._remainingAvailableLocales$.next(remainingAvailableLocales);
-            this.valueChange.emit(this.value.slice());
+            this.setValue(copy);
         }
     }
 
@@ -128,10 +134,6 @@ export class TranslationLocaleSelectorComponent implements OnInit/*, ControlValu
 
     private getIndex(locale: TranslationLocale, locales: TranslationLocale[]) {
         return _.findIndex(locales, first => locale.equals(first));
-    }
-
-    private filterOutUnknown(localesToFilter: TranslationLocale[], availableLocales: TranslationLocale[]): TranslationLocale[] {
-        return localesToFilter.filter(locale => this.getIndex(locale, availableLocales) >= 0);
     }
 
     private filterOutPresent(localesToFilter: TranslationLocale[], others: TranslationLocale[]): TranslationLocale[] {
