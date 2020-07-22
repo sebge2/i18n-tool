@@ -61,7 +61,11 @@
       "VARIANTS": "Variants (space separated)",
       "VARIANTS_EXAMPLE": "Example: de-CH-1996.",
       "ICON": "Icon",
-      "ICON_EXAMPLE": "Example: flag-icon-fr."
+      "ICON_EXAMPLE": "Example: flag-icon-fr.",
+      "ERROR": {
+        "SAVE": "Error while saving language",
+        "UPDATE": "Error while updating language"
+      }
     },
 
     "WORKSPACES" : {

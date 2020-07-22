@@ -1,0 +1,15 @@
+<div mat-dialog-title>
+    <i class="fas fa-exclamation-triangle icon"></i> <span class="snack-bar-title"> {{message}}</span>
+</div>
+
+<div mat-dialog-content>
+    <mat-list class="list">
+        <mat-list-item class="item" *ngFor="let errorMessage of errorMessages.messages">
+            <mat-icon mat-list-icon class="item-bullet">close</mat-icon>
+            {{errorMessage}}
+        </mat-list-item>
+    </mat-list>
+</div>
+<div mat-dialog-actions align="end">
+    <button mat-raised-button class="snack-bar-close" (click)="snackBarRef.dismiss()">Ok</button>
+</div>

@@ -89,8 +89,7 @@ export class LocaleViewCardComponent implements OnInit {
                 .then(translationLocale => this.locale = translationLocale)
                 .then(translationLocale => this.save.emit(translationLocale))
                 .catch(error => {
-                    console.error('Error while updating language.', error);
-                    this.notificationService.displayErrorMessage("Error while updating language.");
+                    this.notificationService.displayErrorMessage('ADMIN.LOCALES.ERROR.UPDATE', error);
                 })
                 .finally(() => this.loading = false);
         } else {
@@ -100,8 +99,7 @@ export class LocaleViewCardComponent implements OnInit {
                 .then(translationLocale => this.locale = translationLocale)
                 .then(translationLocale => this.save.emit(translationLocale))
                 .catch(error => {
-                    console.error('Error while saving language.', error);
-                    this.notificationService.displayErrorMessage("Error while saving language.");
+                    this.notificationService.displayErrorMessage('ADMIN.LOCALES.ERROR.SAVE', error);
                 })
                 .finally(() => this.loading = false);
         }

@@ -1,0 +1,46 @@
+.mat-snack-bar-container {
+    width: 800px;
+}
+
+.mat-dialog-title .icon {
+    color: red;
+}
+
+.snack-bar-title {
+    font-size: larger;
+    color: white;
+    font-weight: bold;
+}
+
+.snack-container .text {
+    color: white;
+    font-weight: bold;
+}
+
+.list {
+    max-height: 600px;
+    overflow: auto;
+}
+
+.item {
+    color: white !important;
+    font-weight: bold;
+}
+
+.item-bullet {
+    color: red;
+    font-weight: normal;
+}
+
+.item:hover .item-bullet {
+    color: white;
+}
+
+.snack-bar-close {
+    background-color: white;
+    color: black;
+}
+
+.snack-bar-close:hover {
+    opacity: 0.9;
+}

@@ -12,10 +12,10 @@ import {
     MatDialogModule,
     MatDividerModule,
     MatExpansionModule,
+    MatFormFieldModule,
     MatGridListModule,
     MatIconModule,
     MatInputModule,
-    MatFormFieldModule,
     MatListModule,
     MatMenuModule,
     MatNativeDateModule,
@@ -84,7 +84,6 @@ import {FlexLayoutModule} from "@angular/flex-layout";
         ReactiveFormsModule,
         FlexLayoutModule
     ],
-    declarations: []
 })
 export class CoreSharedLibModule {
 
