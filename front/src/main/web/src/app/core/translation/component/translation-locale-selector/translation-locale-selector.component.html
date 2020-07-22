@@ -1,28 +1,31 @@
-<mat-chip-list #localesList
-               aria-orientation="horizontal"
-               class="locales-list">
-    <mat-chip
-            *ngFor="let locale of value"
-            [selectable]="true"
-            [removable]="true"
-            (removed)="remove(locale)">
-        <span [class]="locale | translationLocaleIcon"></span>
-        {{locale.displayName}}
-        <mat-icon matChipRemove>cancel</mat-icon>
-    </mat-chip>
+<form [formGroup]="parts">
+    <mat-chip-list #localesList
+                   aria-orientation="horizontal"
+                   class="locales-list"
+                   [formControlName]="'list'">
+        <mat-chip
+                *ngFor="let locale of value"
+                [selectable]="true"
+                [removable]="true"
+                (removed)="remove(locale)">
+            <span [class]="locale | translationLocaleIcon"></span>
+            {{locale.displayName}}
+            <mat-icon matChipRemove>cancel</mat-icon>
+        </mat-chip>
 
-    <input
-            [placeholder]="labelKey | translate"
-            #localeInput
-            [formControl]="localeInputCtrl"
-            [matAutocomplete]="auto"
-            [matChipInputFor]="localesList"
-            [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-            [matChipInputAddOnBlur]="true"
-            (matChipInputTokenEnd)="onTokenEnd($event)">
-</mat-chip-list>
-<mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
-    <mat-option *ngFor="let locale of filteredLocales$ | async" [value]="locale">
-        <span [class]="locale | translationLocaleIcon"></span> {{locale.displayName}}
-    </mat-option>
-</mat-autocomplete>
+        <input
+                [placeholder]="labelKey | translate"
+                #localeInput
+                [formControlName]="'input'"
+                [matAutocomplete]="auto"
+                [matChipInputFor]="localesList"
+                [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                [matChipInputAddOnBlur]="true"
+                (matChipInputTokenEnd)="onTokenEnd($event)">
+    </mat-chip-list>
+    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
+        <mat-option *ngFor="let locale of filteredLocales$ | async" [value]="locale">
+            <span [class]="locale | translationLocaleIcon"></span> {{locale.displayName}}
+        </mat-option>
+    </mat-autocomplete>
+</form>

@@ -62,7 +62,7 @@ export class NotificationService {
     }
 
     private static instanceOfErrorMessages(object: any): object is ErrorMessagesDto {
-        return 'messages' in object && 'id' in object && 'time' in object;
+        return object && 'messages' in object && 'id' in object && 'time' in object;
     }
 
     private static instanceOfHttpError(error: any): error is HttpErrorResponse {
