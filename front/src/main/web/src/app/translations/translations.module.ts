@@ -10,6 +10,7 @@ import {TranslationEditingCellComponent} from './component/translations-table/tr
 import {TranslationsStartReviewComponent} from './component/translations-start-review/translations-start-review.component';
 import {CoreSharedModule} from "../core/shared/core-shared-module";
 import {CoreAuthModule} from "../core/auth/core-auth.module";
+import {CoreTranslationModule} from "../core/translation/core-translation-module";
 
 const appRoutes: Routes = [
     {
@@ -20,7 +21,6 @@ const appRoutes: Routes = [
 @NgModule({
     declarations: [
         TranslationsComponent,
-        WorkspaceSelectorComponent,
         TranslationsSearchBarComponent,
         TranslationCriterionSelectorComponent,
         TranslationsTableComponent,
@@ -34,6 +34,7 @@ const appRoutes: Routes = [
         CommonModule,
         CoreSharedModule,
         CoreAuthModule,
+        CoreTranslationModule,
 
         RouterModule.forChild(appRoutes)
     ],

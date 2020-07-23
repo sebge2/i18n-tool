@@ -7,11 +7,13 @@
         </mat-panel-description>
     </mat-expansion-panel-header>
 
-
+    <form [formGroup]="form">
     <div class="container">
-        <app-workspace-selector (valueChange)="onSelectedWorkspace($event)"></app-workspace-selector>
+<!--        (valueChange)="onSelectedWorkspace($event)"-->
+        <app-workspace-selector [formControlName]="'workspaces'"></app-workspace-selector>
 
-        <app-translation-locales-selector (valueChange)="onSelectedLocales($event)"></app-translation-locales-selector>
+<!--        (valueChange)="onSelectedLocales($event)"-->
+        <app-translation-locale-selector [formControlName]="'locales'"></app-translation-locale-selector>
 
         <div>
             <app-translation-criterion-selector (valueChange)="onSelectedCriterion($event)"></app-translation-criterion-selector>
@@ -21,4 +23,5 @@
             <button mat-raised-button (click)="onSearch()"><i class="fas fa-search"></i> {{'TRANSLATIONS.SEARCH_BAR.SEARCH_BUTTON' | translate}}</button>
         </div>
     </div>
+    </form>
 </mat-expansion-panel>

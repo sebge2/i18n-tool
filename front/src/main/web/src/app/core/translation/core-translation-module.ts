@@ -3,10 +3,12 @@ import {CommonModule} from '@angular/common';
 import {TranslationLocaleSelectorComponent} from "./component/translation-locale-selector/translation-locale-selector.component";
 import {CoreSharedModule} from "../shared/core-shared-module";
 import {CoreSharedLibModule} from "../shared/core-shared-lib.module";
+import {WorkspaceSelectorComponent} from "./component/workspace-selector/workspace-selector.component";
 
 @NgModule({
     declarations: [
-        TranslationLocaleSelectorComponent
+        TranslationLocaleSelectorComponent,
+        WorkspaceSelectorComponent
     ],
     imports: [
         CommonModule,
@@ -14,7 +16,8 @@ import {CoreSharedLibModule} from "../shared/core-shared-lib.module";
         CoreSharedModule,
     ],
     exports: [
-        TranslationLocaleSelectorComponent
+        TranslationLocaleSelectorComponent,
+        WorkspaceSelectorComponent
     ]
 })
 export class CoreTranslationModule {

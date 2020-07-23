@@ -6,28 +6,31 @@ export class Workspace {
     constructor(private dto: WorkspaceDto) {
     }
 
-    get id(): string {
+    public get id(): string {
         return this.dto.id;
     }
 
-    get branch(): string {
+    public get branch(): string {
         return this.dto.branch;
     }
 
-    get status(): WorkspaceStatus {
+    public get status(): WorkspaceStatus {
         return WorkspaceStatus[this.dto.status];
     }
 
-    isNotInitialized(): boolean {
+    public isNotInitialized(): boolean {
         return this.dto.status == WorkspaceStatus.NOT_INITIALIZED;
     }
 
-    isInitialized(): boolean {
+    public isInitialized(): boolean {
         return this.dto.status == WorkspaceStatus.INITIALIZED;
     }
 
-    isInReview(): boolean {
+    public isInReview(): boolean {
         return this.dto.status == WorkspaceStatus.IN_REVIEW;
     }
 
+    public equals(other: Workspace): boolean {
+        return this.id === other.id;
+    }
 }
