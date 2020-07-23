@@ -12,7 +12,7 @@ import {
     ViewChild
 } from '@angular/core';
 import {combineLatest, Observable, Subject} from "rxjs";
-import {ControlValueAccessor, FormBuilder, FormControl, FormGroup, NG_VALUE_ACCESSOR, NgControl} from "@angular/forms";
+import {ControlValueAccessor, FormBuilder, FormGroup, NG_VALUE_ACCESSOR, NgControl} from "@angular/forms";
 import {COMMA, ENTER} from "@angular/cdk/keycodes";
 import {TranslationLocaleService} from "../../../../translations/service/translation-locale.service";
 import {MatChipInputEvent} from "@angular/material/chips";
@@ -43,8 +43,6 @@ export class TranslationLocaleSelectorComponent implements OnInit, OnDestroy, Af
 
     @Input() public labelKey: string = 'SHARED.LOCALES_LABEL';
 
-    @ViewChild('localesList', {static: false}) public localesList: ElementRef<HTMLInputElement>;
-    @ViewChild('localeInput', {static: false}) public localeInput: ElementRef<HTMLInputElement>;
     @ViewChild('auto', {static: false}) public matAutocomplete: MatAutocomplete;
     @HostBinding('attr.aria-describedby') public describedBy = '';
     @HostBinding() public id = `app-translation-locale-selector-${TranslationLocaleSelectorComponent.nextId++}`;
@@ -57,7 +55,6 @@ export class TranslationLocaleSelectorComponent implements OnInit, OnDestroy, Af
 
     public readonly parts: FormGroup;
     public filteredLocales$: Observable<TranslationLocale[]>;
-    public readonly localeInputCtrl = new FormControl();
     public readonly separatorKeysCodes: number[] = [ENTER, COMMA];
 
     private static nextId = 0;
@@ -95,7 +92,7 @@ export class TranslationLocaleSelectorComponent implements OnInit, OnDestroy, Af
                 map(([availableLocales, _]) => this.filterOutPresent(availableLocales, this.value))
             );
 
-        this.filteredLocales$ = combineLatest([this.localeInputCtrl.valueChanges.pipe(startWith(<string>null)), this._remainingAvailableLocales$])
+        this.filteredLocales$ = combineLatest([this.parts.controls['input'].valueChanges.pipe(startWith(<string>null)), this._remainingAvailableLocales$])
             .pipe(
                 takeUntil(this._destroyed$),
                 map(([locale, remainingAvailableLocales]) => locale ? this.filterRemaining(locale, remainingAvailableLocales) : remainingAvailableLocales)
@@ -208,8 +205,7 @@ export class TranslationLocaleSelectorComponent implements OnInit, OnDestroy, Af
     }
 
     add(selectedLocale: TranslationLocale) {
-        this.localeInput.nativeElement.value = '';
-        this.localeInputCtrl.setValue(null);
+        this.parts.controls['input'].setValue(null);
 
         const copy = _.clone(this.value);
         copy.push(selectedLocale);
@@ -235,8 +231,6 @@ export class TranslationLocaleSelectorComponent implements OnInit, OnDestroy, Af
             if (input) {
                 input.value = '';
             }
-
-            this.localeInputCtrl.setValue(null);
         }
     }
 
