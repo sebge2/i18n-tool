@@ -9,10 +9,20 @@ import {TranslateModule} from "@ngx-translate/core";
 import {CoreSharedLibModule} from "./core-shared-lib.module";
 import {TranslationLocaleIconPipe} from "./pipe/translation-locale-icon.pipe";
 import {RepositoryIconPipe} from "./pipe/repository-icon.pipe";
+import {CardGridComponent} from "./component/card-grid/card-grid.component";
+import {CardGridItemComponent} from "./component/card-grid/card-grid-item/card-grid-item.component";
+import {FormCancelButtonComponent} from "./component/form-cancel-button/form-cancel-button.component";
+import {FormSaveButtonComponent} from "./component/form-save-button/form-save-button.component";
+import {FormDeleteButtonComponent} from "./component/form-delete-button/form-delete-button.component";
 
 @NgModule({
     declarations: [
         MainMessageComponent,
+        CardGridComponent,
+        CardGridItemComponent,
+        FormCancelButtonComponent,
+        FormSaveButtonComponent,
+        FormDeleteButtonComponent,
 
         WorkspaceIconPipe,
         WorkspaceIconCssPipe,
@@ -21,7 +31,8 @@ import {RepositoryIconPipe} from "./pipe/repository-icon.pipe";
         RepositoryIconPipe,
     ],
     imports: [
-        CommonModule
+        CommonModule,
+        CoreSharedLibModule,
     ],
     exports: [
         CommonModule,
@@ -29,6 +40,12 @@ import {RepositoryIconPipe} from "./pipe/repository-icon.pipe";
         CoreSharedLibModule,
 
         MainMessageComponent,
+        CardGridComponent,
+        CardGridItemComponent,
+        FormCancelButtonComponent,
+        FormSaveButtonComponent,
+        FormDeleteButtonComponent,
+
         WorkspaceIconPipe,
         WorkspaceIconCssPipe,
         ToolLocaleIconPipe,
