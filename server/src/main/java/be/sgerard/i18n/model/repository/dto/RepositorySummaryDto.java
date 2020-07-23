@@ -1,6 +1,7 @@
 package be.sgerard.i18n.model.repository.dto;
 
 import be.sgerard.i18n.model.repository.RepositoryStatus;
+import be.sgerard.i18n.model.repository.RepositoryType;
 import be.sgerard.i18n.model.repository.persistence.RepositoryEntity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -20,7 +21,8 @@ public class RepositorySummaryDto {
         return builder()
                 .id(repositoryEntity.getId())
                 .name(repositoryEntity.getName())
-                .status(repositoryEntity.getStatus());
+                .status(repositoryEntity.getStatus())
+                .type(repositoryEntity.getType());
     }
 
     public static Builder builder() {
@@ -36,10 +38,14 @@ public class RepositorySummaryDto {
     @Schema(description = "Repository name", required = true)
     private final String name;
 
+    @Schema(description = "Repository type", required = true)
+    public final RepositoryType type;
+
     private RepositorySummaryDto(Builder builder) {
         id = builder.id;
         status = builder.status;
         name = builder.name;
+        type = builder.type;
     }
 
     /**
@@ -72,6 +78,7 @@ public class RepositorySummaryDto {
         private String id;
         private RepositoryStatus status;
         private String name;
+        public RepositoryType type;
 
         private Builder() {
         }
@@ -88,6 +95,11 @@ public class RepositorySummaryDto {
 
         public Builder name(String name) {
             this.name = name;
+            return this;
+        }
+
+        public Builder type(RepositoryType type) {
+            this.type = type;
             return this;
         }
 
