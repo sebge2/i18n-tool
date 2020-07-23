@@ -11,11 +11,12 @@ import {UserTableDetailsComponent} from './component/user-table/user-table-detai
 import {UsersComponent} from './component/users/users.component';
 import {RepositoriesComponent} from './component/repositories/repositories.component';
 import {LocalesComponent} from './component/locales/locales.component';
-import { LocaleViewCardComponent } from './component/locales/locale-view-card/locale-view-card.component';
+import {LocaleViewCardComponent} from './component/locales/locale-view-card/locale-view-card.component';
+import { RepositoryViewCardComponent } from './component/repositories/repository-view-card/repository-view-card.component';
 
 const appRoutes: Routes = [
     {path: 'users', component: UsersComponent},
-    {path: 'repositories', component: UsersComponent},
+    {path: 'repositories', component: RepositoriesComponent},
     {path: 'locales', component: LocalesComponent}
 ];
 
@@ -29,7 +30,8 @@ const appRoutes: Routes = [
         UsersComponent,
         RepositoriesComponent,
         LocalesComponent,
-        LocaleViewCardComponent
+        LocaleViewCardComponent,
+        RepositoryViewCardComponent
     ],
     entryComponents: [
         ConfirmWorkspaceDeletionComponent
