@@ -20,7 +20,7 @@ export class LocalesComponent implements OnInit, OnDestroy {
     constructor(public translationLocaleService: TranslationLocaleService) {
     }
 
-    ngOnInit() {
+    public ngOnInit() {
         combineLatest([this.translationLocaleService.getAvailableLocales(), this._addedLocales])
             .pipe(takeUntil(this._destroyed$))
             .subscribe(([availableLocales, addedLocales]) => {
@@ -30,7 +30,7 @@ export class LocalesComponent implements OnInit, OnDestroy {
             });
     }
 
-    ngOnDestroy(): void {
+    public ngOnDestroy(): void {
         this._destroyed$.next();
         this._destroyed$.complete();
     }

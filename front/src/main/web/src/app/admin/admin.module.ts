@@ -13,6 +13,7 @@ import {RepositoriesComponent} from './component/repositories/repositories.compo
 import {LocalesComponent} from './component/locales/locales.component';
 import {LocaleViewCardComponent} from './component/locales/locale-view-card/locale-view-card.component';
 import { RepositoryViewCardComponent } from './component/repositories/repository-view-card/repository-view-card.component';
+import { UserViewCardComponent } from './component/users/user-view-card/user-view-card.component';
 
 const appRoutes: Routes = [
     {path: 'users', component: UsersComponent},
@@ -31,7 +32,8 @@ const appRoutes: Routes = [
         RepositoriesComponent,
         LocalesComponent,
         LocaleViewCardComponent,
-        RepositoryViewCardComponent
+        RepositoryViewCardComponent,
+        UserViewCardComponent
     ],
     entryComponents: [
         ConfirmWorkspaceDeletionComponent

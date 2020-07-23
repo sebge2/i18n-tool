@@ -29,7 +29,7 @@ export class RepositoriesComponent implements OnInit, OnDestroy {
     this._destroyed$.complete();
   }
 
-  public onSave(locale: any) {
+  public onSave(locale: Repository) {
 
   }
 
