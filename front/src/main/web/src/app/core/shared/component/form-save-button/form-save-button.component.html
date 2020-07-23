@@ -1,0 +1,7 @@
+<button mat-icon-button
+        color="primary"
+        [disabled]="!form.valid || !form.dirty || loading"
+        (click)="onSave()"
+        [class.spinner]="loading">
+    <mat-icon>save</mat-icon>
+</button>
