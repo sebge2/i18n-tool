@@ -4,6 +4,9 @@ import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {TranslationLocaleService} from "../../../../translations/service/translation-locale.service";
 import {NotificationService} from "../../../../core/notification/service/notification.service";
 import * as _ from "lodash";
+import {TranslationLocaleCreationDto} from "../../../../api";
+import {Locale} from "../../../../core/translation/model/locale.model";
+import {startWith} from "rxjs/operators";
 
 @Component({
     selector: 'app-locale-view-card',
@@ -17,6 +20,7 @@ export class LocaleViewCardComponent implements OnInit {
     public readonly form: FormGroup;
     public loading: boolean = false;
 
+    private _title: string;
     private _locale: TranslationLocale;
 
     constructor(private formBuilder: FormBuilder,
@@ -34,6 +38,7 @@ export class LocaleViewCardComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.form.valueChanges.pipe(startWith(<Object>null)).subscribe(_ => this.resetTitle());
     }
 
     @Input()
@@ -45,6 +50,10 @@ export class LocaleViewCardComponent implements OnInit {
         this._locale = value;
 
         this.resetForm();
+    }
+
+    public get title(): string {
+        return this._title;
     }
 
     public get displayName(): string {
@@ -109,13 +118,20 @@ export class LocaleViewCardComponent implements OnInit {
         this.form.controls['displayName'].setValue(this.locale.displayName);
         this.form.controls['language'].setValue(this.locale.language);
         this.form.controls['region'].setValue(this.locale.region);
-        this.form.controls['variants'].setValue(this.locale.variants);
+        this.form.controls['variants'].setValue(!_.isEmpty(this.locale.variants) ? _.join(this.locale.variants, ' ') : '');
         this.form.controls['icon'].setValue(this.locale.icon);
 
         this.form.markAsPristine();
     }
 
-    private toNewLocale() {
+    private resetTitle() {
+        this._title = !_.isEmpty(this.displayName)
+            ? this.displayName
+            : this.toLocale().toString();
+    }
+
+
+    private toNewLocale(): TranslationLocaleCreationDto {
         return {
             language: this.language,
             displayName: this.displayName,
@@ -127,5 +143,9 @@ export class LocaleViewCardComponent implements OnInit {
 
     private toUpdatedLocale(): TranslationLocale {
         return new TranslationLocale(this.locale.id, this.language, this.icon, this.displayName, this.region, this.variants);
+    }
+
+    private toLocale(): Locale {
+        return new Locale(this.language, this.region, this.variants)
     }
 }
