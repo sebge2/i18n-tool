@@ -25,7 +25,7 @@ export class RepositoryService implements OnDestroy {
             this.eventService.subscribeDto(Events.ADDED_REPOSITORY),
             this.eventService.subscribeDto(Events.UPDATED_REPOSITORY),
             this.eventService.subscribeDto(Events.DELETED_REPOSITORY),
-            dto => new Repository(dto),
+            dto => Repository.fromDto(dto),
             ((first, second) => first.id === second.id)
         )
             .pipe(catchError((reason) => {
