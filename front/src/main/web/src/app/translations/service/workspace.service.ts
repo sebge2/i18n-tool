@@ -1,10 +1,9 @@
 import {Injectable, OnDestroy} from '@angular/core';
-import {HttpClient} from "@angular/common/http";
 import {EventService} from "../../core/event/service/event.service";
 import {Workspace} from "../model/workspace.model";
-import {BehaviorSubject, Observable, Subject} from "rxjs";
+import {Observable, Subject} from "rxjs";
 import {Events} from 'src/app/core/event/model/events.model';
-import {catchError, takeUntil} from "rxjs/operators";
+import {catchError} from "rxjs/operators";
 import {NotificationService} from "../../core/notification/service/notification.service";
 import {synchronizedCollection} from "../../core/shared/utils/synchronized-observable-utils";
 import {WorkspaceService as ApiWorkspaceService} from "../../api";
@@ -25,7 +24,7 @@ export class WorkspaceService implements OnDestroy {
             this.eventService.subscribeDto(Events.ADDED_WORKSPACE),
             this.eventService.subscribeDto(Events.UPDATED_WORKSPACE),
             this.eventService.subscribeDto(Events.DELETED_WORKSPACE),
-            dto => new Workspace(dto),
+            dto => Workspace.fromDto(dto),
             ((first, second) => first.id === second.id)
         )
             .pipe(catchError((reason) => {
@@ -33,7 +32,6 @@ export class WorkspaceService implements OnDestroy {
                 this.notificationService.displayErrorMessage("Error while retrieving workspaces.");
                 return [];
             }));
-
 
 
         // this.httpClient.get<Workspace[]>('/api/workspace').toPromise()
