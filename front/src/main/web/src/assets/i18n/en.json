@@ -43,7 +43,7 @@
     "SAVE": "Save"
   },
   "MENU": {
-    "PREFERENCES_LABEL": "Preferences",
+    "ACCOUNT_LABEL": "Account",
     "ADMIN_LABEL": "Admin",
     "LOCALES_LABEL": "Languages",
     "REPOSITORIES_LABEL": "Repositories",

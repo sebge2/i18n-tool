@@ -2,8 +2,8 @@
     <a mat-list-item routerLink="/translations">
         <mat-icon mat-list-icon>translate</mat-icon>{{'MENU.TRANSLATIONS_LABEL' | translate}}
     </a>
-    <a mat-list-item routerLink="/preferences">
-        <mat-icon mat-list-icon>settings</mat-icon>{{'MENU.PREFERENCES_LABEL' | translate}}
+    <a mat-list-item routerLink="/account">
+        <mat-icon mat-list-icon>person</mat-icon>{{'MENU.ACCOUNT_LABEL' | translate}}
     </a>
 
     <a mat-list-item (click)="toggleAdmin()" *hasRole="['ADMIN']">

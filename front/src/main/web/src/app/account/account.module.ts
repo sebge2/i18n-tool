@@ -6,13 +6,16 @@ import {CoreSharedModule} from "../core/shared/core-shared-module";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {CoreSharedLibModule} from "../core/shared/core-shared-lib.module";
 import {CoreTranslationModule} from "../core/translation/core-translation-module";
+import { EditProfileComponent } from './component/preferences/edit-profile/edit-profile.component';
+import { EditPasswordComponent } from './component/preferences/edit-password/edit-password.component';
+import { EditPreferencesComponent } from './component/preferences/edit-preferences/edit-preferences.component';
 
 const appRoutes: Routes = [
     {path: '', pathMatch: 'full', component: PreferencesComponent}
 ];
 
 @NgModule({
-    declarations: [PreferencesComponent],
+    declarations: [PreferencesComponent, EditProfileComponent, EditPasswordComponent, EditPreferencesComponent],
     imports: [
         CommonModule,
         RouterModule.forChild(appRoutes),
@@ -24,5 +27,5 @@ const appRoutes: Routes = [
     ],
     exports: [RouterModule]
 })
-export class PreferencesModule {
+export class AccountModule {
 }

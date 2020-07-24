@@ -2,7 +2,7 @@ import {getTestBed, TestBed} from '@angular/core/testing';
 
 import {ToolLocaleService} from './tool-locale.service';
 import {TranslateService} from "@ngx-translate/core";
-import {UserPreferencesService} from "../../../preferences/service/user-preferences.service";
+import {UserPreferencesService} from "../../../account/service/user-preferences.service";
 import {ActivatedRoute} from "@angular/router";
 
 describe('LocaleService', () => {

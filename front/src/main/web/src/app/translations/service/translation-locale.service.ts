@@ -9,7 +9,7 @@ import {catchError, distinctUntilChanged, map} from "rxjs/operators";
 import {EventService} from "../../core/event/service/event.service";
 import {Locale} from "../../core/translation/model/locale.model";
 import * as _ from "lodash";
-import {UserPreferencesService} from "../../preferences/service/user-preferences.service";
+import {UserPreferencesService} from "../../account/service/user-preferences.service";
 
 @Injectable({
     providedIn: 'root'

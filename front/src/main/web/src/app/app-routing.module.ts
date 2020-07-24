@@ -15,8 +15,8 @@ const routes: Routes = [
                 loadChildren: () => import('./translations/translations.module').then(m => m.TranslationsModule)
             },
             {
-                path: 'preferences',
-                loadChildren: () => import('./preferences/preferences.module').then(m => m.PreferencesModule)
+                path: 'account',
+                loadChildren: () => import('./account/account.module').then(m => m.AccountModule)
             },
             {
                 path: 'admin',
