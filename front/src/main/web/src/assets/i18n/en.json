@@ -64,7 +64,8 @@
       "ICON_EXAMPLE": "Example: flag-icon-fr.",
       "ERROR": {
         "SAVE": "Error while saving language",
-        "UPDATE": "Error while updating language"
+        "UPDATE": "Error while updating language",
+        "DELETE": "Error while deleting language"
       }
     },
 

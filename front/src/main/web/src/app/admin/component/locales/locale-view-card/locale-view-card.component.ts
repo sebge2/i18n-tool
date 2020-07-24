@@ -16,6 +16,7 @@ import {startWith} from "rxjs/operators";
 export class LocaleViewCardComponent implements OnInit {
 
     @Output() save = new EventEmitter<TranslationLocale>();
+    @Output() delete = new EventEmitter<TranslationLocale>();
 
     public readonly form: FormGroup;
     public loading: boolean = false;
@@ -124,12 +125,28 @@ export class LocaleViewCardComponent implements OnInit {
         this.form.markAsPristine();
     }
 
+    public onDelete() {
+        if (this.locale.id) {
+            this.loading = true;
+            this.translationLocaleService
+                .deleteLocale(this.locale.id)
+                .toPromise()
+                .then(translationLocale => this.locale = translationLocale)
+                .then(translationLocale => this.save.emit(translationLocale))
+                .catch(error => {
+                    this.notificationService.displayErrorMessage('ADMIN.LOCALES.ERROR.DELETE', error);
+                })
+                .finally(() => this.loading = false);
+        } else {
+            this.delete.emit();
+        }
+    }
+
     private resetTitle() {
         this._title = !_.isEmpty(this.displayName)
             ? this.displayName
             : this.toLocale().toString();
     }
-
 
     private toNewLocale(): TranslationLocaleCreationDto {
         return {

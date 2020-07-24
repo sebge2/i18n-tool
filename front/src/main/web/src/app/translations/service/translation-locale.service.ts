@@ -98,6 +98,12 @@ export class TranslationLocaleService {
             .pipe(map(dto => TranslationLocale.fromDto(dto)));
     }
 
+    public deleteLocale(translationLocale: string): Observable<TranslationLocale> {
+        return this.apiService
+            .delete1(translationLocale)
+            .pipe(map(dto => TranslationLocale.fromDto(dto)));
+    }
+
     private static getLocalesFromBrowserPreferences(): Locale[] {
         return navigator.languages.map(browserLanguage => Locale.fromString(browserLanguage));
     }

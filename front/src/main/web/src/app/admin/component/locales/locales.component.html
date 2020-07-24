@@ -1,5 +1,5 @@
 <app-card-grid (add)="onAdd()">
     <app-card-grid-item *ngFor="let locale of locales">
-        <app-locale-view-card [locale]="locale" (save)="onSave(locale)"></app-locale-view-card>
+        <app-locale-view-card [locale]="locale" (save)="onSave(locale)" (delete)="onDelete(locale)"></app-locale-view-card>
     </app-card-grid-item>
 </app-card-grid>

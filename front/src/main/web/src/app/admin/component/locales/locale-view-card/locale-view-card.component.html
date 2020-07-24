@@ -17,7 +17,9 @@
                     <input matInput formControlName="language">
                     <mat-hint>
                         {{'ADMIN.LOCALES.LANGUAGE_EXAMPLE' | translate}}
-                        <a href="https://tools.ietf.org/html/bcp47#section-2.2.1" target="_blank"><mat-icon class="help">help_outline</mat-icon></a>
+                        <a href="https://tools.ietf.org/html/bcp47#section-2.2.1" target="_blank">
+                            <mat-icon class="help">help_outline</mat-icon>
+                        </a>
                     </mat-hint>
                 </mat-form-field>
             </p>
@@ -27,7 +29,9 @@
                     <input matInput formControlName="region">
                     <mat-hint>
                         {{'ADMIN.LOCALES.REGION_EXAMPLE' | translate}}
-                        <a href="https://tools.ietf.org/html/bcp47#section-2.2.4" target="_blank"><mat-icon class="help">help_outline</mat-icon></a>
+                        <a href="https://tools.ietf.org/html/bcp47#section-2.2.4" target="_blank">
+                            <mat-icon class="help">help_outline</mat-icon>
+                        </a>
                     </mat-hint>
                 </mat-form-field>
             </p>
@@ -37,7 +41,9 @@
                     <input matInput formControlName="variants">
                     <mat-hint>
                         {{'ADMIN.LOCALES.VARIANTS_EXAMPLE' | translate}}
-                        <a href="https://tools.ietf.org/html/bcp47#section-2.2.5" target="_blank"><mat-icon class="help">help_outline</mat-icon></a>
+                        <a href="https://tools.ietf.org/html/bcp47#section-2.2.5" target="_blank">
+                            <mat-icon class="help">help_outline</mat-icon>
+                        </a>
                     </mat-hint>
                 </mat-form-field>
             </p>
@@ -48,25 +54,17 @@
                     <input matInput formControlName="icon">
                     <mat-hint>
                         {{'ADMIN.LOCALES.ICON_EXAMPLE' | translate}}
-                        <a href="https://github.com/lipis/flag-icon-css/tree/master/flags/1x1" target="_blank"><mat-icon class="help">help_outline</mat-icon></a>.
+                        <a href="https://github.com/lipis/flag-icon-css/tree/master/flags/1x1" target="_blank">
+                            <mat-icon class="help">help_outline</mat-icon>
+                        </a>.
                     </mat-hint>
                 </mat-form-field>
             </p>
         </form>
     </mat-card-content>
     <mat-card-actions [align]="'end'">
-        <button mat-icon-button
-                color="warn"
-                [disabled]="!form.dirty || loading"
-                (click)="resetForm()">
-            <mat-icon>settings_backup_restore</mat-icon>
-        </button>
-        <button mat-icon-button
-                color="primary"
-                [disabled]="!form.valid || !form.dirty || loading"
-                (click)="onSave()"
-                [class.spinner]="loading">
-            <mat-icon>save</mat-icon>
-        </button>
+        <app-form-cancel-button [form]="form" [loading]="loading" (reset)="resetForm()"></app-form-cancel-button>
+        <app-form-delete-button [loading]="loading" (delete)="onDelete()"></app-form-delete-button>
+        <app-form-save-button [form]="form" [loading]="loading" (save)="onSave()"></app-form-save-button>
     </mat-card-actions>
 </mat-card>
