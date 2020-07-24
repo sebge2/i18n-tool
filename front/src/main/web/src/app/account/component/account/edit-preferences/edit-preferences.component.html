@@ -1,1 +1,38 @@
-<p>edit-preferences works!</p>
+<mat-card-content>
+    <form [formGroup]="form">
+        <p>
+            <mat-form-field appearance="standard">
+                <mat-label>{{'PREFERENCES.TOOL_LOCALE.LABEL' | translate}}</mat-label>
+                <mat-select formControlName="toolLocale">
+                    <mat-select-trigger>
+                        <span [class]="toolLocale | toolLocaleIcon"></span> {{toolLocale.displayName}}
+                    </mat-select-trigger>
+                    <mat-option *ngFor="let toolLocale of toolLocaleService.getAvailableToolLocales()" [value]="toolLocale">
+                        <span [class]="toolLocale | toolLocaleIcon"></span> {{toolLocale.displayName}}
+                    </mat-option>
+                </mat-select>
+                <mat-hint *ngIf="!preferredToolLocale">
+                    {{'PREFERENCES.TOOL_LOCALE.AUTO_DETECTED' | translate}}
+                </mat-hint>
+            </mat-form-field>
+        </p>
+        <p>
+            <mat-form-field appearance="standard">
+                <app-translation-locale-selector
+                        formControlName="preferredLocales"
+                        [labelKey]="'PREFERENCES.PREFERRED_LOCALES.LABEL'">
+                </app-translation-locale-selector>
+                <mat-hint *ngIf="preferredLocales.length == 0">
+                    {{'PREFERENCES.PREFERRED_LOCALES.AUTO_DETECTED' | translate}}
+                </mat-hint>
+            </mat-form-field>
+        </p>
+        <p>
+            <button mat-flat-button
+                    color="primary"
+                    [disabled]="!form.valid || !form.dirty || loading"
+                    (click)="onSave()"
+                    [class.spinner]="loading">{{'PREFERENCES.SAVE' | translate}}</button>
+        </p>
+    </form>
+</mat-card-content>
