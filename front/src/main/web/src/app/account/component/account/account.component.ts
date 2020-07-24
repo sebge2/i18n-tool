@@ -11,11 +11,11 @@ import {TranslationLocale} from "../../../translations/model/translation-locale.
 import {NotificationService} from "../../../core/notification/service/notification.service";
 
 @Component({
-    selector: 'app-preferences',
-    templateUrl: './preferences.component.html',
-    styleUrls: ['./preferences.component.css']
+    selector: 'app-account',
+    templateUrl: './account.component.html',
+    styleUrls: ['./account.component.css']
 })
-export class PreferencesComponent implements OnInit, OnDestroy {
+export class AccountComponent implements OnInit, OnDestroy {
 
     public form: FormGroup;
 
