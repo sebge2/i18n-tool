@@ -2,7 +2,6 @@ import {UserRole} from "./user-role.model";
 import {UserDto} from "../../../api";
 
 export class User {
-
     constructor(private dto: UserDto) {
     }
 
@@ -12,6 +11,10 @@ export class User {
 
     get username() : string {
         return this.dto.username;
+    }
+
+    get displayName(): string{
+        return this.username;
     }
 
     get email() : string {

@@ -6,13 +6,6 @@
     flex: 1 1 auto;
 }
 
-.profile-img {
-    margin-right: 5px;
-    background-size: 30px;
-    width: 30px;
-    height: 30px;
-}
-
 .user-name {
     font-size: 15px;
 }
@@ -21,95 +14,9 @@
     padding-left: 5px;
 }
 
-/*https://freefrontend.com/css-border-animations/*/
-.image-cropper {
-    width: 30px;
-    height: 30px;
-    position: relative;
-    overflow: hidden;
-    border-radius: 50%;
-}
-
-.profile-pic {
-    display: inline;
-    margin: 0 auto;
-    margin-left: -25%;
-    height: 100%;
-    width: auto;
-}
-
-
-
-/*
-<section class="svg-container">
-  <svg class="circle" xmlns="http://www.w3.org/2000/svg">
-    <g>
-      <ellipse class="background" ry="60" rx="60" cy="62.5" cx="62.5" stroke-width="2"/>
-      <ellipse class="foreground" ry="60" rx="60" cy="62.5" cx="62.5" stroke-width="2"/>
-      <line class="line line1" x1="52" y1="62" x2="74" y2="62" />
-      <line class="line line2" x1="52" y1="62" x2="74" y2="62" />
-    </g>
-  </svg>
-</section>
-
-@import url(https://fonts.googleapis.com/css?family=Source+Sans+Pro:300);
-
-body {
-  align-items: center;
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  justify-content: center;
-}
-
-.svg-container {
-  height: 124px;
-  position: relative;
-  width: 124px;
-}
-
-.circle {
-  height: 124px;
-  width: 124px;
-
-  .background {
-    fill: transparent;
-    stroke: red;
-    transition: all 200ms ease;
-  }
-
-  .foreground {
-    fill: transparent;
-    stroke-dasharray: 377;
-    stroke-dashoffset: 377;
-    stroke: firebrick;
-    transform-origin: 50% 50%;
-    transform: rotate(-270deg);
-    transition: all 800ms ease;
-  }
-
-
-
-  &:hover {
-    cursor: pointer;
-
-    .background {
-      stroke: transparent;
-    }
-
-    .foreground {
-      stroke-dashoffset: 0;
-      transform: rotate(-90deg);
-    }
-
-
-    .line {
-      transform: rotate(180deg);
-    }
-
-    .line2 {
-      transform: rotate(0);
-    }
-  }
-}
- */
+/*.profile-img {*/
+/*    margin-right: 5px;*/
+/*    background-size: 30px;*/
+/*    width: 30px;*/
+/*    height: 30px;*/
+/*}*/
