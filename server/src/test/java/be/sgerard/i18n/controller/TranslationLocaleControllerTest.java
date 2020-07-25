@@ -4,10 +4,14 @@ import be.sgerard.i18n.model.i18n.dto.TranslationLocaleCreationDto;
 import be.sgerard.i18n.model.i18n.dto.TranslationLocaleDto;
 import be.sgerard.test.i18n.support.TransactionalReactiveTest;
 import be.sgerard.test.i18n.support.WithInternalUser;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.http.MediaType;
 
+import static be.sgerard.test.i18n.model.GitRepositoryCreationDtoTestUtils.i18nToolLocalRepositoryCreationDto;
+import static be.sgerard.test.i18n.model.GitRepositoryCreationDtoTestUtils.i18nToolRepositoryCreationDto;
 import static be.sgerard.test.i18n.model.TranslationLocaleCreationDtoTestUtils.frBeWallonLocaleCreationDto;
 import static be.sgerard.test.i18n.model.TranslationLocaleCreationDtoTestUtils.frLocaleCreationDto;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -17,6 +21,20 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class TranslationLocaleControllerTest extends AbstractControllerTest {
+
+    @BeforeAll
+    public void setupRepo() throws Exception {
+        gitRepo
+                .createMockFor(i18nToolRepositoryCreationDto())
+                .allowAnonymousRead()
+                .onCurrentGitProject()
+                .create();
+    }
+
+    @AfterAll
+    public void destroy() {
+        gitRepo.destroyAll();
+    }
 
     @Test
     @TransactionalReactiveTest
@@ -123,6 +141,7 @@ public class TranslationLocaleControllerTest extends AbstractControllerTest {
                 .language(otherLocale.getLanguage())
                 .region(otherLocale.getRegion().orElse(null))
                 .variants(otherLocale.getVariants())
+                .icon(otherLocale.getIcon())
                 .build();
 
         webClient.put()
@@ -149,6 +168,28 @@ public class TranslationLocaleControllerTest extends AbstractControllerTest {
         final int numberLocalesAfter = locale.getLocales().size();
 
         assertThat(numberLocalesAfter).isEqualTo(numberLocalesBefore - 1);
+    }
+
+    @Test
+    @TransactionalReactiveTest
+    @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
+    public void deleteForbiddenTranslationsAssociated() {
+        final TranslationLocaleDto translationLocale = locale.createLocale(frLocaleCreationDto()).get();
+
+        this.repository
+                .create(i18nToolRepositoryCreationDto())
+                .initialize()
+                .workspaces()
+                .sync()
+                .workspaceForBranch("master")
+                .initialize();
+
+        webClient.delete()
+                .uri("/api/translation/locale/{id}", translationLocale.getId())
+                .exchange()
+                .expectStatus().isBadRequest()
+                .expectBody()
+                .jsonPath("$.messages[0]").isEqualTo("The locale cannot be modified/deleted because some translations are relying on it.");
     }
 
 }
