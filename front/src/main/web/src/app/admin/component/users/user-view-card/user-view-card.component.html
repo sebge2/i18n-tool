@@ -1,9 +1,13 @@
 <mat-card>
     <mat-card-header>
-        <mat-card-title><!--<span mat-card-image [class]="user | repositoryIcon"></span>--> {{user.username}}</mat-card-title>
+        <mat-card-title>
+            <app-user-avatar [user]="user" class="mat-card-image"></app-user-avatar>
+            {{user.displayName}}
+        </mat-card-title>
     </mat-card-header>
     <mat-card-content>
-        <p>Name: {{user.username}}</p>
+        <p>Username: {{user.username}}</p>
+        <p>Display name: {{user.displayName}}</p>
         <p>Status: {{user.email}}</p>
         <p>Type: {{user.type | titlecase}}</p>
         <p>Roles: {{user.roles}}</p>

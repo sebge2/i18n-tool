@@ -26,6 +26,10 @@ export interface RepositorySummaryDto {
      * Repository name
      */
     name: string;
+    /**
+     * Repository type
+     */
+    type: RepositorySummaryDto.TypeDtoEnum;
 }
 export namespace RepositorySummaryDto {
     export type StatusDtoEnum = 'NOT_INITIALIZED' | 'INITIALIZING' | 'INITIALIZED' | 'INITIALIZATION_ERROR';
@@ -34,5 +38,10 @@ export namespace RepositorySummaryDto {
         INITIALIZING: 'INITIALIZING' as StatusDtoEnum,
         INITIALIZED: 'INITIALIZED' as StatusDtoEnum,
         INITIALIZATIONERROR: 'INITIALIZATION_ERROR' as StatusDtoEnum
+    };
+    export type TypeDtoEnum = 'GIT' | 'GITHUB';
+    export const TypeDtoEnum = {
+        GIT: 'GIT' as TypeDtoEnum,
+        GITHUB: 'GITHUB' as TypeDtoEnum
     };
 }

@@ -27,10 +27,6 @@ export interface UserPatchDto {
      */
     password?: string;
     /**
-     * The new avatar URL.
-     */
-    avatarUrl?: string;
-    /**
      * The roles.
      */
     roles?: Array<UserPatchDto.RolesDtoEnum>;

@@ -23,13 +23,13 @@ export interface UserDto {
      */
     username?: string;
     /**
+     * Name to display for this user (typically: first and last name).
+     */
+    displayName?: string;
+    /**
      * Email of the user.
      */
     email?: string;
-    /**
-     * URL of the user avatar.
-     */
-    avatarUrl?: string;
     /**
      * User roles.
      */

@@ -27,10 +27,6 @@ export interface InternalUserCreationDto {
      */
     password: string;
     /**
-     * User avatar URL
-     */
-    avatarUrl: string;
-    /**
      * Assignable user roles
      */
     roles: Array<InternalUserCreationDto.RolesDtoEnum>;
