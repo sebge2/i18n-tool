@@ -29,7 +29,7 @@ public class GitHubPullRequestClientTest extends AbstractControllerTest {
 //
 //    @Test
 //    @Transactional
-//    @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
+//    @WithInternalUser(roles = { "ADMIN"})
 //    public void findAll() throws Exception {
 //        final GitHubRepositoryDto repository = this.repository.create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class).get();
 //

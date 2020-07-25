@@ -3,8 +3,6 @@ package be.sgerard.test.i18n.helper;
 import be.sgerard.i18n.model.security.user.dto.InternalUserCreationDto;
 import be.sgerard.i18n.model.security.user.dto.UserDto;
 import be.sgerard.i18n.model.security.user.dto.UserPreferencesDto;
-import be.sgerard.i18n.service.ResourceNotFoundException;
-import be.sgerard.i18n.service.user.UserManager;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -12,7 +10,6 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.BodyInserters;
 
 import java.util.List;
-import java.util.Objects;
 
 /**
  * @author Sebastien Gerard
@@ -36,10 +33,6 @@ public class UserTestHelper {
                 .getResponseBody();
     }
 
-    public UserDto getAdminUser() {
-        return findByUsernameOrDie(UserManager.ADMIN_USER_NAME);
-    }
-
     public UserDto createUser(InternalUserCreationDto internalUserCreationDto) {
         return webClient.post()
                 .uri("/api/user/")
@@ -53,23 +46,14 @@ public class UserTestHelper {
     }
 
     @SuppressWarnings("UnusedReturnValue")
-    public UserTestHelper resetUserPreferences(String userName) {
-        final UserDto user = findByUsernameOrDie(userName);
-
+    public UserTestHelper resetUserPreferences() {
         webClient.put()
-                .uri("/api/user/{id}/preferences", user.getId())
+                .uri("/api/user/current/preferences")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue(UserPreferencesDto.builder().build()))
                 .exchange()
                 .expectStatus().isOk();
 
         return this;
-    }
-
-    private UserDto findByUsernameOrDie(String username) {
-        return findAllUsers().stream()
-                .filter(user -> Objects.equals(user.getUsername(), username))
-                .findFirst()
-                .orElseThrow(() -> ResourceNotFoundException.userNotFoundException(username));
     }
 }

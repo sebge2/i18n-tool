@@ -5,9 +5,9 @@ import be.sgerard.i18n.model.security.user.dto.UserPatchDto;
 import be.sgerard.i18n.service.security.UserRole;
 import be.sgerard.i18n.service.user.UserManager;
 import be.sgerard.test.i18n.support.TransactionalReactiveTest;
+import be.sgerard.test.i18n.support.WithAdminUser;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
 
 import static be.sgerard.test.i18n.model.UserDtoTestUtils.userJohnDoeCreation;
 import static org.hamcrest.Matchers.*;
@@ -19,7 +19,7 @@ public class UserControllerTest extends AbstractControllerTest {
 
     @Test
     @TransactionalReactiveTest
-    @WithMockUser(username = UserManager.ADMIN_USER_NAME, roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
+    @WithAdminUser
     public void findAllUsers() {
         final UserDto johnDoe = user.createUser(userJohnDoeCreation().build());
 
@@ -36,7 +36,7 @@ public class UserControllerTest extends AbstractControllerTest {
 
     @Test
     @TransactionalReactiveTest
-    @WithMockUser(username = UserManager.ADMIN_USER_NAME, roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
+    @WithAdminUser
     public void getUserById() {
         final UserDto johnDoe = user.createUser(userJohnDoeCreation().build());
 
@@ -56,7 +56,7 @@ public class UserControllerTest extends AbstractControllerTest {
 
     @Test
     @TransactionalReactiveTest
-    @WithMockUser(username = UserManager.ADMIN_USER_NAME, roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
+    @WithAdminUser
     public void updateUser() {
         final UserDto johnDoe = user.createUser(userJohnDoeCreation().build());
 
@@ -85,7 +85,7 @@ public class UserControllerTest extends AbstractControllerTest {
 
     @Test
     @TransactionalReactiveTest
-    @WithMockUser(username = UserManager.ADMIN_USER_NAME, roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
+    @WithAdminUser
     public void updateUserRoleNotAssignable() {
         final UserDto johnDoe = user.createUser(userJohnDoeCreation().build());
 
@@ -106,7 +106,7 @@ public class UserControllerTest extends AbstractControllerTest {
 
     @Test
     @TransactionalReactiveTest
-    @WithMockUser(username = UserManager.ADMIN_USER_NAME, roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
+    @WithAdminUser
     public void deleteUser() {
         final UserDto johnDoe = user.createUser(userJohnDoeCreation().build());
 

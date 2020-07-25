@@ -43,7 +43,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
 
     @Test
     @TransactionalReactiveTest
-    @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
+    @WithInternalUser(roles = {"ADMIN"})
     public void findAll() {
         final GitRepositoryDto repository = this.repository.create(i18nToolLocalRepositoryCreationDto(), GitRepositoryDto.class).get();
 
@@ -58,7 +58,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
 
     @Test
     @TransactionalReactiveTest
-    @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
+    @WithInternalUser(roles = {"ADMIN"})
     public void findById() {
         final GitRepositoryDto repository = this.repository.create(i18nToolLocalRepositoryCreationDto(), GitRepositoryDto.class).get();
 
@@ -74,7 +74,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
 
     @Test
     @TransactionalReactiveTest
-    @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
+    @WithInternalUser(roles = {"ADMIN"})
     public void findByIdNotFound() {
         repository.create(i18nToolLocalRepositoryCreationDto(), GitRepositoryDto.class);
 
@@ -90,7 +90,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
 
         @Test
         @TransactionalReactiveTest
-        @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
+        @WithInternalUser(roles = {"ADMIN"})
         public void create() {
             final GitHubRepositoryCreationDto creationDto = i18nToolRepositoryCreationDto();
 
@@ -108,7 +108,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
 
         @Test
         @TransactionalReactiveTest
-        @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
+        @WithInternalUser(roles = {"ADMIN"})
         public void createWrongUrl() {
             final GitHubRepositoryCreationDto creationDto = new GitHubRepositoryCreationDto("unknown", "unknown", null);
 
@@ -124,7 +124,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
 
         @Test
         @TransactionalReactiveTest
-        @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
+        @WithInternalUser(roles = {"ADMIN"})
         public void createInvalidAccessKeyCredentials() {
             final GitHubRepositoryCreationDto creationDto = new GitHubRepositoryCreationDto("sebge2", "private-i18n-tool", "ZEF");
 
@@ -140,7 +140,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
 
         @Test
         @TransactionalReactiveTest
-        @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
+        @WithInternalUser(roles = {"ADMIN"})
         public void createNoAccessKeyCredentials() {
             final GitHubRepositoryCreationDto creationDto = new GitHubRepositoryCreationDto("sebge2", "private-i18n-tool", null);
 
@@ -156,7 +156,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
 
         @Test
         @TransactionalReactiveTest
-        @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
+        @WithInternalUser(roles = {"ADMIN"})
         public void createValidAccessKeyCredentials() {
             final GitHubRepositoryCreationDto creationDto = privateI18nToolRepositoryCreationDto();
 
@@ -170,7 +170,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
 
         @Test
         @TransactionalReactiveTest
-        @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
+        @WithInternalUser(roles = {"ADMIN"})
         public void createSameName() {
             final GitHubRepositoryCreationDto creationDto = i18nToolRepositoryCreationDto();
 
@@ -193,7 +193,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
 
         @Test
         @TransactionalReactiveTest
-        @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
+        @WithInternalUser(roles = {"ADMIN"})
         public void initialize() {
             final GitHubRepositoryDto repository = this.repository.create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class).get();
 
@@ -207,7 +207,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
 
         @Test
         @TransactionalReactiveTest
-        @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
+        @WithInternalUser(roles = {"ADMIN"})
         public void initializeTwice() {
             final GitHubRepositoryDto repository = this.repository.create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class).get();
 
@@ -228,7 +228,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
 
         @Test
         @TransactionalReactiveTest
-        @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
+        @WithInternalUser(roles = {"ADMIN"})
         public void update() {
             final GitHubRepositoryDto repository = this.repository.create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class).get();
 
@@ -252,7 +252,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
 
         @Test
         @TransactionalReactiveTest
-        @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
+        @WithInternalUser(roles = {"ADMIN"})
         public void deleteRepository() {
             final GitHubRepositoryDto repository = this.repository.create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class).get();
 
@@ -274,7 +274,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
 
         @Test
         @TransactionalReactiveTest
-        @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
+        @WithInternalUser(roles = {"ADMIN"})
         public void create() {
             final GitRepositoryCreationDto creationDto = i18nToolLocalRepositoryCreationDto();
 
@@ -292,7 +292,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
 
         @Test
         @TransactionalReactiveTest
-        @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
+        @WithInternalUser(roles = {"ADMIN"})
         public void initialize() {
             final GitRepositoryDto repository = this.repository.create(i18nToolLocalRepositoryCreationDto(), GitRepositoryDto.class).get();
 
@@ -306,7 +306,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
 
         @Test
         @TransactionalReactiveTest
-        @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
+        @WithInternalUser(roles = {"ADMIN"})
         public void update() {
             final GitRepositoryDto repository = this.repository.create(i18nToolLocalRepositoryCreationDto(), GitRepositoryDto.class).get();
 
@@ -328,7 +328,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
 
         @Test
         @TransactionalReactiveTest
-        @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
+        @WithInternalUser(roles = {"ADMIN"})
         public void deleteRepository() {
             final GitRepositoryDto repository = this.repository.create(i18nToolLocalRepositoryCreationDto(), GitRepositoryDto.class).get();
 

@@ -1,8 +1,8 @@
 package be.sgerard.i18n.controller;
 
 import be.sgerard.i18n.model.repository.dto.GitHubRepositoryDto;
-import be.sgerard.i18n.model.workspace.dto.WorkspaceDto;
 import be.sgerard.i18n.model.workspace.WorkspaceStatus;
+import be.sgerard.i18n.model.workspace.dto.WorkspaceDto;
 import be.sgerard.i18n.service.github.GitHubWebHookService;
 import be.sgerard.i18n.service.github.external.GitHubEventType;
 import be.sgerard.test.i18n.support.TransactionalReactiveTest;
@@ -55,7 +55,7 @@ public class GitHubControllerTest extends AbstractControllerTest {
 
     @Test
     @TransactionalReactiveTest
-    @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
+    @WithInternalUser(roles = {"ADMIN"})
     public void deletedBranchEvent() throws Exception {
         repository
                 .create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class)
@@ -88,7 +88,7 @@ public class GitHubControllerTest extends AbstractControllerTest {
 
     @Test
     @TransactionalReactiveTest
-    @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
+    @WithInternalUser(roles = {"ADMIN"})
     public void createdBranchEvent() throws Exception {
         repository
                 .create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class)
@@ -117,7 +117,7 @@ public class GitHubControllerTest extends AbstractControllerTest {
 
     @Test
     @TransactionalReactiveTest
-    @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
+    @WithInternalUser(roles = {"ADMIN"})
     public void pullRequestEvent() throws Exception {
         repository
                 .create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class)
@@ -145,7 +145,7 @@ public class GitHubControllerTest extends AbstractControllerTest {
 
     @Test
     @TransactionalReactiveTest
-    @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
+    @WithInternalUser(roles = {"ADMIN"})
     public void wrongCredentials() throws Exception {
         repository
                 .create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class)
@@ -161,7 +161,7 @@ public class GitHubControllerTest extends AbstractControllerTest {
 
     @Test
     @TransactionalReactiveTest
-    @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
+    @WithInternalUser(roles = {"ADMIN"})
     public void noCredentialsNeeded() throws Exception {
         repository
                 .create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class)

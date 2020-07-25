@@ -38,7 +38,7 @@ public class TranslationLocaleControllerTest extends AbstractControllerTest {
 
     @Test
     @TransactionalReactiveTest
-    @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION"})
+    @WithInternalUser()
     public void findAllTranslationsNonAdminAllowed() {
         webClient.get()
                 .uri("/api/translation/locale/")
@@ -49,7 +49,7 @@ public class TranslationLocaleControllerTest extends AbstractControllerTest {
 
     @Test
     @TransactionalReactiveTest
-    @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
+    @WithInternalUser(roles = { "ADMIN"})
     public void findAllTranslations() {
         locale.createLocale(frBeWallonLocaleCreationDto());
 
@@ -66,7 +66,7 @@ public class TranslationLocaleControllerTest extends AbstractControllerTest {
 
     @Test
     @TransactionalReactiveTest
-    @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
+    @WithInternalUser(roles = { "ADMIN"})
     public void create() {
         final TranslationLocaleCreationDto translationLocale = frBeWallonLocaleCreationDto().build();
 
@@ -86,7 +86,7 @@ public class TranslationLocaleControllerTest extends AbstractControllerTest {
 
     @Test
     @TransactionalReactiveTest
-    @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
+    @WithInternalUser(roles = { "ADMIN"})
     public void createTwice() {
         locale.createLocale(frBeWallonLocaleCreationDto().build());
 
@@ -102,7 +102,7 @@ public class TranslationLocaleControllerTest extends AbstractControllerTest {
 
     @Test
     @TransactionalReactiveTest
-    @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
+    @WithInternalUser(roles = { "ADMIN"})
     public void update() {
         final TranslationLocaleDto originalLocale = locale.createLocale(TranslationLocaleCreationDto.builder().language("fr").icon("flag-icon-fr")).get();
 
@@ -131,7 +131,7 @@ public class TranslationLocaleControllerTest extends AbstractControllerTest {
 
     @Test
     @TransactionalReactiveTest
-    @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
+    @WithInternalUser(roles = { "ADMIN"})
     public void updateConflict() {
         final TranslationLocaleDto otherLocale = locale.createLocale(frBeWallonLocaleCreationDto()).get();
 
@@ -154,7 +154,7 @@ public class TranslationLocaleControllerTest extends AbstractControllerTest {
 
     @Test
     @TransactionalReactiveTest
-    @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
+    @WithInternalUser(roles = { "ADMIN"})
     public void delete() {
         final TranslationLocaleDto translationLocale = locale.createLocale(frBeWallonLocaleCreationDto()).get();
 
@@ -172,7 +172,7 @@ public class TranslationLocaleControllerTest extends AbstractControllerTest {
 
     @Test
     @TransactionalReactiveTest
-    @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
+    @WithInternalUser(roles = { "ADMIN"})
     public void deleteForbiddenTranslationsAssociated() {
         final TranslationLocaleDto translationLocale = locale.createLocale(frLocaleCreationDto()).get();
 

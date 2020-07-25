@@ -33,7 +33,7 @@ public class UserPreferencesEntity {
      */
     @AccessType(AccessType.Type.PROPERTY)
     @DBRef
-    private final List<TranslationLocaleEntity> preferredLocales = new ArrayList<>(); // TODO
+    private final List<TranslationLocaleEntity> preferredLocales = new ArrayList<>();
 
     @PersistenceConstructor
     UserPreferencesEntity() {

@@ -69,6 +69,15 @@ public class TranslationLocaleTestHelper {
         return createLocale(creationDto.build());
     }
 
+    public TranslationLocaleTestHelper deleteLocale(TranslationLocaleDto locale) {
+        webClient.delete()
+                .uri("/api/translation/locale/{id}", locale.getId())
+                .exchange()
+                .expectStatus().isNoContent();
+
+        return this;
+    }
+
     public final class StepCreatedLocale {
 
         private final TranslationLocaleDto locale;
