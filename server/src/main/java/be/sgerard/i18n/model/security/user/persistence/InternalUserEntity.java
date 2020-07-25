@@ -28,6 +28,12 @@ public class InternalUserEntity extends UserEntity {
     @NotNull
     private String password;
 
+    /**
+     * The avatar image (PNG image).
+     */
+    @NotNull
+    private byte[] avatar;
+
     @PersistenceConstructor
     InternalUserEntity() {
     }
@@ -36,5 +42,12 @@ public class InternalUserEntity extends UserEntity {
         setId(UUID.randomUUID().toString());
         setUsername(username);
         setPreferences(new UserPreferencesEntity());
+    }
+
+    /**
+     * Returns whether an avatar is available.
+     */
+    public boolean hasAvatar(){
+        return (getAvatar() != null) && (getAvatar().length > 0);
     }
 }
