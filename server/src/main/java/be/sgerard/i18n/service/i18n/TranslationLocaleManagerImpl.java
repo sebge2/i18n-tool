@@ -11,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import static org.springframework.util.StringUtils.isEmpty;
+
 /**
  * Implementation of the {@link TranslationLocaleManager translation locale manager}.
  *
@@ -44,8 +46,8 @@ public class TranslationLocaleManagerImpl implements TranslationLocaleManager {
     public Mono<TranslationLocaleEntity> create(TranslationLocaleCreationDto creationDto) {
         return Mono
                 .just(new TranslationLocaleEntity(
-                        creationDto.getLanguage(),
-                        creationDto.getRegion().orElse(null),
+                        creationDto.getLanguage().toLowerCase(),
+                        creationDto.getRegion().map(String::toUpperCase).orElse(null),
                         creationDto.getVariants(),
                         creationDto.getDisplayName().orElse(null),
                         creationDto.getIcon()
@@ -78,8 +80,8 @@ public class TranslationLocaleManagerImpl implements TranslationLocaleManager {
                 )
                 .map(entity ->
                         entity
-                                .setLanguage(localeDto.getLanguage())
-                                .setRegion(localeDto.getRegion().orElse(null))
+                                .setLanguage(localeDto.getLanguage().toLowerCase())
+                                .setRegion(localeDto.getRegion().map(String::toUpperCase).orElse(null))
                                 .setVariants(localeDto.getVariants())
                                 .setIcon(localeDto.getIcon())
                                 .setDisplayName(localeDto.getDisplayName().orElse(null))
