@@ -50,8 +50,7 @@ public class UserControllerTest extends AbstractControllerTest {
                 .jsonPath("$.username").isEqualTo(johnDoe.getUsername())
                 .jsonPath("$.email").isEqualTo(johnDoe.getEmail())
                 .jsonPath("$.roles").value(containsInAnyOrder(johnDoe.getRoles().stream().map(UserRole::name).toArray()))
-                .jsonPath("$.type").isEqualTo(johnDoe.getType().name())
-                .jsonPath("$.avatarUrl").isEqualTo(johnDoe.getAvatarUrl());
+                .jsonPath("$.type").isEqualTo(johnDoe.getType().name());
     }
 
     @Test
@@ -68,7 +67,6 @@ public class UserControllerTest extends AbstractControllerTest {
                         UserPatchDto.builder()
                                 .username("stay_home")
                                 .email("john@localhost")
-                                .avatarUrl("http://localhost/coro.png")
                                 .roles(UserRole.ADMIN)
                                 .build()
                 )
@@ -79,8 +77,7 @@ public class UserControllerTest extends AbstractControllerTest {
                 .jsonPath("$.username").isEqualTo("stay_home")
                 .jsonPath("$.email").isEqualTo("john@localhost")
                 .jsonPath("$.roles").value(containsInAnyOrder(UserRole.ADMIN.name()))
-                .jsonPath("$.type").isEqualTo(johnDoe.getType().name())
-                .jsonPath("$.avatarUrl").isEqualTo("http://localhost/coro.png");
+                .jsonPath("$.type").isEqualTo(johnDoe.getType().name());
     }
 
     @Test

@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Getter;
 
 import java.io.Serializable;
 import java.security.Principal;
@@ -27,6 +28,7 @@ import static java.util.Collections.unmodifiableSet;
  */
 @Schema(name = "User", description = "Description of the user.")
 @JsonDeserialize(builder = UserDto.Builder.class)
+@Getter
 public class UserDto implements Principal, Serializable {
 
     public static Builder builder() {
@@ -37,8 +39,8 @@ public class UserDto implements Principal, Serializable {
         return builder()
                 .id(userDto.id)
                 .username(userDto.username)
+                .displayName(userDto.displayName)
                 .email(userDto.email)
-                .avatarUrl(userDto.avatarUrl)
                 .roles(userDto.roles)
                 .type(userDto.type);
     }
@@ -47,8 +49,8 @@ public class UserDto implements Principal, Serializable {
         return builder()
                 .id(userEntity.getId())
                 .username(userEntity.getUsername())
+                .displayName(userEntity.getDisplayName())
                 .email(userEntity.getEmail())
-                .avatarUrl(userEntity.getAvatarUrl())
                 .roles(userEntity.getRoles())
                 .type(userEntity instanceof ExternalUserEntity ? Type.EXTERNAL : Type.INTERNAL);
     }
@@ -59,11 +61,11 @@ public class UserDto implements Principal, Serializable {
     @Schema(description = "Username of the user.")
     private final String username;
 
+    @Schema(description = "Name to display for this user (typically: first and last name).")
+    private final String displayName;
+
     @Schema(description = "Email of the user.")
     private final String email;
-
-    @Schema(description = "URL of the user avatar.")
-    private final String avatarUrl;
 
     @Schema(description = "User roles.")
     private final Collection<UserRole> roles;
@@ -74,8 +76,8 @@ public class UserDto implements Principal, Serializable {
     private UserDto(Builder builder) {
         id = builder.id;
         username = builder.username;
+        displayName = builder.displayName;
         email = builder.email;
-        avatarUrl = builder.avatarUrl;
         roles = unmodifiableSet(builder.roles);
         type = builder.type;
     }
@@ -84,48 +86,6 @@ public class UserDto implements Principal, Serializable {
     @JsonIgnore
     public String getName() {
         return getId();
-    }
-
-    /**
-     * Returns the unique id of this user.
-     */
-    public String getId() {
-        return id;
-    }
-
-    /**
-     * Returns the unique username.
-     */
-    public String getUsername() {
-        return username;
-    }
-
-    /**
-     * Returns the user's email.
-     */
-    public String getEmail() {
-        return email;
-    }
-
-    /**
-     * Returns the URL of the user avatar..
-     */
-    public String getAvatarUrl() {
-        return avatarUrl;
-    }
-
-    /**
-     * Returns the {@link UserRole#isAssignableByEndUser() assignable} roles.
-     */
-    public Collection<UserRole> getRoles() {
-        return roles;
-    }
-
-    /**
-     * Returns the {@link Type type} of user.
-     */
-    public Type getType() {
-        return type;
     }
 
     @Override
@@ -162,8 +122,8 @@ public class UserDto implements Principal, Serializable {
 
         private String id;
         private String username;
+        private String displayName;
         private String email;
-        private String avatarUrl;
         private final Set<UserRole> roles = new HashSet<>();
         private Type type;
 
@@ -180,13 +140,13 @@ public class UserDto implements Principal, Serializable {
             return this;
         }
 
-        public Builder email(String email) {
-            this.email = email;
+        public Builder displayName(String displayName) {
+            this.displayName = displayName;
             return this;
         }
 
-        public Builder avatarUrl(String avatarUrl) {
-            this.avatarUrl = avatarUrl;
+        public Builder email(String email) {
+            this.email = email;
             return this;
         }
 

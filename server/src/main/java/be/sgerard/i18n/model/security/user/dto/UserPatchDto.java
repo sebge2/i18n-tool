@@ -37,9 +37,6 @@ public class UserPatchDto {
     @Schema(description = "The new password.")
     private final String password;
 
-    @Schema(description = "The new avatar URL.")
-    private final String avatarUrl;
-
     @Schema(description = "The roles.")
     private final Collection<UserRole> roles;
 
@@ -48,7 +45,6 @@ public class UserPatchDto {
         username = builder.username;
         email = builder.email;
         password = builder.password;
-        avatarUrl = builder.avatarUrl;
     }
 
     /**
@@ -73,13 +69,6 @@ public class UserPatchDto {
     }
 
     /**
-     * Returns the new avatar URL.
-     */
-    public Optional<String> getAvatarUrl() {
-        return Optional.ofNullable(avatarUrl);
-    }
-
-    /**
      * Returns the {@link UserRole#isAssignableByEndUser() assignable} new roles.
      */
     public Optional<Collection<UserRole>> getRoles() {
@@ -96,7 +85,6 @@ public class UserPatchDto {
         private String username;
         private String email;
         private String password;
-        private String avatarUrl;
         private Collection<UserRole> roles;
 
         private Builder() {
@@ -114,11 +102,6 @@ public class UserPatchDto {
 
         public Builder password(String password) {
             this.password = password;
-            return this;
-        }
-
-        public Builder avatarUrl(String avatarUrl) {
-            this.avatarUrl = avatarUrl;
             return this;
         }
 

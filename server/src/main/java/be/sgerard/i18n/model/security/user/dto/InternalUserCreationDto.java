@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Getter;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -20,6 +21,7 @@ import static java.util.Arrays.asList;
  */
 @Schema(name = "InternalUserCreation", description = "The initial information needed to create an internal user.")
 @JsonDeserialize(builder = InternalUserCreationDto.Builder.class)
+@Getter
 public class InternalUserCreationDto {
 
     public static Builder builder() {
@@ -30,7 +32,6 @@ public class InternalUserCreationDto {
         return builder()
                 .username(userDto.getUsername())
                 .email(userDto.getEmail())
-                .avatarUrl(userDto.getAvatarUrl())
                 .roles(userDto.getRoles());
     }
 
@@ -43,9 +44,6 @@ public class InternalUserCreationDto {
     @Schema(description = "User password (non encoded)", required = true)
     private final String password;
 
-    @Schema(description = "User avatar URL", required = true)
-    private final String avatarUrl;
-
     @Schema(description = "Assignable user roles", required = true)
     private final Collection<UserRole> roles;
 
@@ -54,40 +52,6 @@ public class InternalUserCreationDto {
         username = builder.username;
         email = builder.email;
         password = builder.password;
-        avatarUrl = builder.avatarUrl;
-    }
-
-    /**
-     * Returns the username used to log in.
-     */
-    public String getUsername() {
-        return username;
-    }
-
-    /**
-     * Returns the email address.
-     */
-    public String getEmail() {
-        return email;
-    }
-
-    /**
-     * Returns the non-encoded password.
-     */
-    public String getPassword() {
-        return password;
-    }
-
-
-    public String getAvatarUrl() {
-        return avatarUrl;
-    }
-
-    /**
-     * Returns the {@link UserRole#isAssignableByEndUser() assignable} new roles.
-     */
-    public Collection<UserRole> getRoles() {
-        return roles;
     }
 
     /**
@@ -100,7 +64,6 @@ public class InternalUserCreationDto {
         private String username;
         private String email;
         private String password;
-        private String avatarUrl;
         private final Collection<UserRole> roles = new HashSet<>();
 
         private Builder() {
@@ -118,11 +81,6 @@ public class InternalUserCreationDto {
 
         public Builder password(String password) {
             this.password = password;
-            return this;
-        }
-
-        public Builder avatarUrl(String avatarUrl) {
-            this.avatarUrl = avatarUrl;
             return this;
         }
 

@@ -85,8 +85,6 @@ public class UserManagerImpl implements UserManager {
                     final Set<UserRole> roles = new HashSet<>(info.getRoles());
                     roles.add(UserRole.MEMBER_OF_ORGANIZATION);
                     user.setRoles(roles);
-
-                    user.setAvatarUrl(info.getAvatarUrl());
                     user.setEmail(info.getEmail());
 
                     return internalUserRepository.save(user);
@@ -145,7 +143,6 @@ public class UserManagerImpl implements UserManager {
                     if (userEntity instanceof InternalUserEntity) {
                         patch.getUsername().ifPresent(((InternalUserEntity) userEntity)::setUsername);
                         patch.getEmail().ifPresent(((InternalUserEntity) userEntity)::setEmail);
-                        patch.getAvatarUrl().ifPresent(((InternalUserEntity) userEntity)::setAvatarUrl);
                         patch.getPassword().ifPresent(((InternalUserEntity) userEntity)::setPassword);
                     }
 
@@ -225,7 +222,6 @@ public class UserManagerImpl implements UserManager {
                                     .username(ADMIN_USER_NAME)
                                     .password(password)
                                     .roles(UserRole.ADMIN)
-                                    .avatarUrl(ADMIN_AVATAR)
                                     .build()
                     );
                 })
