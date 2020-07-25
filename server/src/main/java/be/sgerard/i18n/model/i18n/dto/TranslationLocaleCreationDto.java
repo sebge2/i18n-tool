@@ -1,5 +1,6 @@
 package be.sgerard.i18n.model.i18n.dto;
 
+import be.sgerard.i18n.support.StringUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -98,34 +99,44 @@ public class TranslationLocaleCreationDto {
         }
 
         public Builder language(String language) {
-            this.language = language;
+            this.language = StringUtils.isEmptyString(language);
             return this;
         }
 
         public Builder region(String region) {
-            this.region = region;
+            this.region = StringUtils.isEmptyString(region);
             return this;
         }
 
         @JsonProperty("variants")
         public Builder variants(Collection<String> variants) {
+            if (variants == null) {
+                return this;
+            }
+
             this.variants.addAll(variants);
+
             return this;
         }
 
         @JsonIgnore
         public Builder variants(String... variants) {
+            if (variants == null) {
+                return this;
+            }
+
             this.variants.addAll(asList(variants));
+
             return this;
         }
 
         public Builder displayName(String displayName) {
-            this.displayName = displayName;
+            this.displayName = StringUtils.isEmptyString(displayName);
             return this;
         }
 
         public Builder icon(String icon) {
-            this.icon = icon;
+            this.icon = StringUtils.isEmptyString(icon);
             return this;
         }
 
