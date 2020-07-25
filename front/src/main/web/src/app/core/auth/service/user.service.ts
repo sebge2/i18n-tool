@@ -24,7 +24,7 @@ export class UserService {
             this.eventService.subscribeDto(Events.ADDED_USER),
             this.eventService.subscribeDto(Events.UPDATED_USER),
             this.eventService.subscribeDto(Events.DELETED_USER),
-            dto => new User(dto),
+            dto => User.fromDto(dto),
             (first, second) => first.id === second.id
         )
             .pipe(catchError((reason) => {

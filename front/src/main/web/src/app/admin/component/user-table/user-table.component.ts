@@ -51,6 +51,7 @@ export class UserTableComponent implements OnInit, OnDestroy {
     }
 
     getAvatarUrl(user: User) {
-        return (user.avatarUrl != null) ? user.avatarUrl: "/assets/unknown-user-avatar.png";
+        return null;
+        // return (user.avatarUrl != null) ? user.avatarUrl: "/assets/unknown-user-avatar.png";
     }
 }

@@ -11,7 +11,7 @@ export class AuthenticatedUser {
     readonly user: User;
 
     constructor(private dto: AuthenticatedUserDto) {
-        this.user = new User(dto.user);
+        this.user = User.fromDto(dto.user);
     }
 
     get sessionRoles(): UserRole[] {
