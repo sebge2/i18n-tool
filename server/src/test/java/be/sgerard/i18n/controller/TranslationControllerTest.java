@@ -2,7 +2,7 @@ package be.sgerard.i18n.controller;
 
 import be.sgerard.i18n.model.i18n.dto.*;
 import be.sgerard.test.i18n.support.TransactionalReactiveTest;
-import be.sgerard.test.i18n.support.WithInternalUser;
+import be.sgerard.test.i18n.support.WithAdminUser;
 import org.junit.jupiter.api.*;
 import org.springframework.http.MediaType;
 
@@ -54,7 +54,7 @@ public class TranslationControllerTest extends AbstractControllerTest {
 
     @Test
     @TransactionalReactiveTest
-    @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
+    @WithAdminUser
     public void findTranslation() {
         final TranslationsPageTranslationDto translation = translations
                 .forRepositoryHint("my-repo")
@@ -76,7 +76,7 @@ public class TranslationControllerTest extends AbstractControllerTest {
 
     @Test
     @TransactionalReactiveTest
-    @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
+    @WithAdminUser
     public void findTranslationUnknown() {
         webClient
                 .get()
@@ -87,7 +87,7 @@ public class TranslationControllerTest extends AbstractControllerTest {
 
     @Test
     @TransactionalReactiveTest
-    @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
+    @WithAdminUser
     public void searchTranslationsFromJavaProperties() {
         final String key = "validation.repository.name-not-unique";
         webClient
@@ -110,7 +110,7 @@ public class TranslationControllerTest extends AbstractControllerTest {
 
     @Test
     @TransactionalReactiveTest
-    @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
+    @WithAdminUser
     public void searchTranslationsFromJson() {
         final String key = "SHARED.REPOSITORY_TITLE";
         webClient
@@ -133,7 +133,7 @@ public class TranslationControllerTest extends AbstractControllerTest {
 
     @Test
     @TransactionalReactiveTest
-    @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
+    @WithAdminUser
     public void searchTranslationsByKeyEqual() {
         final String key = "validation.repository.name-not-unique";
         webClient
@@ -156,7 +156,7 @@ public class TranslationControllerTest extends AbstractControllerTest {
 
     @Test
     @TransactionalReactiveTest
-    @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
+    @WithAdminUser
     public void searchTranslationsByKeyStartWith() {
         final String key = "validation.repository.name-not-unique";
 
@@ -180,7 +180,7 @@ public class TranslationControllerTest extends AbstractControllerTest {
 
     @Test
     @TransactionalReactiveTest
-    @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
+    @WithAdminUser
     public void searchTranslationsByKeyEndWith() {
         final String key = "validation.repository.name-not-unique";
 
@@ -204,7 +204,7 @@ public class TranslationControllerTest extends AbstractControllerTest {
 
     @Test
     @TransactionalReactiveTest
-    @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
+    @WithAdminUser
     public void searchTranslationsByLocale() {
         webClient
                 .post()
@@ -223,7 +223,7 @@ public class TranslationControllerTest extends AbstractControllerTest {
 
     @Test
     @TransactionalReactiveTest
-    @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
+    @WithAdminUser
     public void searchTranslationsMax1Key() {
         webClient
                 .post()
@@ -242,7 +242,7 @@ public class TranslationControllerTest extends AbstractControllerTest {
 
     @Test
     @TransactionalReactiveTest
-    @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
+    @WithAdminUser
     public void searchTranslationsPagination() {
         final TranslationsPageDto workspaceTranslations = translations
                 .forRepositoryHint("my-repo")
@@ -302,7 +302,7 @@ public class TranslationControllerTest extends AbstractControllerTest {
 
     @Test
     @TransactionalReactiveTest
-    @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
+    @WithAdminUser
     public void searchTranslationsUpdated() {
         final TranslationsPageTranslationDto translation = translations
                 .forRepositoryHint("my-repo")
@@ -335,7 +335,7 @@ public class TranslationControllerTest extends AbstractControllerTest {
 
     @Test
     @TransactionalReactiveTest
-    @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
+    @WithAdminUser
     public void writeTranslations() {
         final TranslationsPageTranslationDto translation = translations
                 .forRepositoryHint("my-repo")
@@ -355,12 +355,12 @@ public class TranslationControllerTest extends AbstractControllerTest {
                 .jsonPath("$[0].locale").isEqualTo(locale.findRegisteredLocale(Locale.ENGLISH).getId())
                 .jsonPath("$[0].originalValue").isEqualTo("Another repository is already named [{0}]. Names must be unique.")
                 .jsonPath("$[0].updatedValue").isEqualTo("my value updated")
-                .jsonPath("$[0].lastEditor").isEqualTo("fake-user-id");
+                .jsonPath("$[0].lastEditor").isNotEmpty();
     }
 
     @Test
     @TransactionalReactiveTest
-    @WithInternalUser(roles = {"MEMBER_OF_ORGANIZATION", "ADMIN"})
+    @WithAdminUser
     public void writeTranslationsUnknownId() {
         webClient
                 .patch()

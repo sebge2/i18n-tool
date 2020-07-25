@@ -11,6 +11,7 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -51,6 +52,6 @@ public class UserPreferencesEntity {
      */
     public void setPreferredLocales(List<TranslationLocaleEntity> preferredLocales) {
         this.preferredLocales.clear();
-        this.preferredLocales.addAll(preferredLocales);
+        preferredLocales.stream().filter(Objects::nonNull).forEach(this.preferredLocales::add);
     }
 }
