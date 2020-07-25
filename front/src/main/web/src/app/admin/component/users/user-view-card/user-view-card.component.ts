@@ -16,4 +16,9 @@ export class UserViewCardComponent implements OnInit {
   ngOnInit() {
   }
 
+    getUrl() {
+      return (this.user != null)
+          ? `/api/user/${this.user.id}/avatar`
+          : null;
+    }
 }

@@ -6,8 +6,12 @@ import be.sgerard.i18n.model.security.user.dto.UserPatchDto;
 import be.sgerard.i18n.model.security.user.persistence.ExternalUserEntity;
 import be.sgerard.i18n.model.security.user.persistence.InternalUserEntity;
 import be.sgerard.i18n.service.user.UserManager;
+import be.sgerard.i18n.service.user.UserManagerImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.buffer.DefaultDataBuffer;
 import org.springframework.core.io.buffer.DefaultDataBufferFactory;
@@ -25,6 +29,8 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.io.IOException;
+
 /**
  * Controller managing users.
  *
@@ -35,10 +41,19 @@ import reactor.core.publisher.Mono;
 @Tag(name = "User", description = "Controller of users.")
 public class UserController {
 
+    /**
+     * Default user avatar.
+     */
+    public static final String UNKNOWN_USER_AVATAR = "/images/unknown-user-avatar.png";
+
+    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+
     private final UserManager userManager;
+    private final byte[] defaultUserAvatar;
 
     public UserController(UserManager userManager) {
         this.userManager = userManager;
+        this.defaultUserAvatar = loadDefaultUserAvatar();
     }
 
     /**
@@ -107,17 +122,18 @@ public class UserController {
                         .flatMap(userEntity -> {
                             if (userEntity instanceof InternalUserEntity) {
                                 final InternalUserEntity internalUserEntity = (InternalUserEntity) userEntity;
-                                if (internalUserEntity.hasAvatar()) {
-                                    final DefaultDataBuffer buffer = new DefaultDataBufferFactory().wrap(internalUserEntity.getAvatar());
 
-                                    return ServerResponse
-                                            .ok()
-                                            .contentType(MediaType.IMAGE_PNG)
-                                            .body(BodyInserters.fromDataBuffers(Flux.just(buffer)));
+                                final DefaultDataBuffer buffer;
+                                if (internalUserEntity.hasAvatar()) {
+                                    buffer = new DefaultDataBufferFactory().wrap(internalUserEntity.getAvatar());
                                 } else {
-                                    return ServerResponse.noContent()
-                                            .build();
+                                    buffer = new DefaultDataBufferFactory().wrap(defaultUserAvatar);
                                 }
+
+                                return ServerResponse
+                                        .ok()
+                                        .contentType(MediaType.IMAGE_PNG)
+                                        .body(BodyInserters.fromDataBuffers(Flux.just(buffer)));
                             } else {
                                 final ExternalUserEntity externalUserEntity = (ExternalUserEntity) userEntity;
 
@@ -145,5 +161,18 @@ public class UserController {
         return userManager
                 .delete(id)
                 .map(entity -> UserDto.builder(entity).build());
+    }
+
+    /**
+     * Loads the default user avatar.
+     */
+    private static byte[] loadDefaultUserAvatar() {
+        try {
+            return  IOUtils.toByteArray(UserManagerImpl.class.getResourceAsStream(UNKNOWN_USER_AVATAR));
+        } catch (IOException e) {
+            logger.error("Error while loading default user avatar.", e);
+
+            return new byte[0];
+        }
     }
 }
