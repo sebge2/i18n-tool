@@ -39,6 +39,9 @@ public abstract class UserEntity {
     @Indexed
     private String username;
 
+    /**
+     * The name to be displayed to the end-user (ideally composed of the first name, last name).
+     */
     @NotNull
     private String displayName;
 
@@ -46,11 +49,6 @@ public abstract class UserEntity {
      * The user's email.
      */
     private String email;
-
-    /**
-     * The user's avatar URL to be displayed to the end-user.
-     */
-    private String avatarUrl;
 
     /**
      * The {@link UserRole#isAssignableByEndUser() assigned} {@link UserRole roles}.

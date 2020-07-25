@@ -37,6 +37,11 @@ public class ExternalUserEntity extends UserEntity {
     @NotNull
     private ExternalAuthSystem externalAuthSystem;
 
+    /**
+     * The user's avatar URL to be displayed to the end-user.
+     */
+    private String avatarUrl;
+
     @PersistenceConstructor
     ExternalUserEntity() {
     }
