@@ -9,6 +9,7 @@ import {TranslateModule} from "@ngx-translate/core";
 import {CoreSharedLibModule} from "./core-shared-lib.module";
 import {TranslationLocaleIconPipe} from "./pipe/translation-locale-icon.pipe";
 import {RepositoryIconPipe} from "./pipe/repository-icon.pipe";
+import {ImagePreloadDirective} from "./directive/image-preload.directive";
 import {CardGridComponent} from "./component/card-grid/card-grid.component";
 import {CardGridItemComponent} from "./component/card-grid/card-grid-item/card-grid-item.component";
 import {FormCancelButtonComponent} from "./component/form-cancel-button/form-cancel-button.component";
@@ -29,6 +30,7 @@ import {FormDeleteButtonComponent} from "./component/form-delete-button/form-del
         ToolLocaleIconPipe,
         TranslationLocaleIconPipe,
         RepositoryIconPipe,
+        ImagePreloadDirective,
     ],
     imports: [
         CommonModule,
@@ -51,6 +53,7 @@ import {FormDeleteButtonComponent} from "./component/form-delete-button/form-del
         ToolLocaleIconPipe,
         TranslationLocaleIconPipe,
         RepositoryIconPipe,
+        ImagePreloadDirective,
     ]
 })
 export class CoreSharedModule {

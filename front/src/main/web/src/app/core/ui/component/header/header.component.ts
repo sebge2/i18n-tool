@@ -46,7 +46,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
     getUrl(): string {
         return (this.currentUser != null)
-            ? this.currentUser.avatarUrl
+            ? `/api/user/${this.currentUser.id}/avatar`
             : null;
     }
 

@@ -9,7 +9,7 @@
 
   <div *ngIf="currentUser != null">
     <button id="currentUserButtonAction" mat-button [matMenuTriggerFor]="loginMenu">
-      <img [src]="getUrl()" class="img-rounded profile-img" alt="{{getDisplayName()}}">
+      <img [src]="getUrl()" default="/assets/unknown-user-avatar.png" class="img-rounded profile-img" alt="{{getDisplayName()}}">
 
       <ng-template [ngIf]="!smallSize">
         <span class="user-name" id="currentUserName">{{getDisplayName()}}</span>
