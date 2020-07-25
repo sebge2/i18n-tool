@@ -1,5 +1,8 @@
 package be.sgerard.i18n.model.security.user.persistence;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -14,8 +17,14 @@ import java.util.UUID;
  */
 @Document("user")
 @TypeAlias("internal")
+@Getter
+@Setter
+@Accessors(chain = true)
 public class InternalUserEntity extends UserEntity {
 
+    /**
+     * The encoded password.
+     */
     @NotNull
     private String password;
 
@@ -27,19 +36,5 @@ public class InternalUserEntity extends UserEntity {
         setId(UUID.randomUUID().toString());
         setUsername(username);
         setPreferences(new UserPreferencesEntity());
-    }
-
-    /**
-     * Returns the encoded password.
-     */
-    public String getPassword() {
-        return password;
-    }
-
-    /**
-     * Sets the encoded password.
-     */
-    public void setPassword(String password) {
-        this.password = password;
     }
 }
