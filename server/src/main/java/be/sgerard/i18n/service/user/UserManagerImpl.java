@@ -13,6 +13,9 @@ import be.sgerard.i18n.repository.user.UserRepository;
 import be.sgerard.i18n.service.ValidationException;
 import be.sgerard.i18n.service.security.UserRole;
 import be.sgerard.i18n.service.user.listener.UserListener;
+import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +23,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import javax.annotation.PostConstruct;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -35,7 +39,9 @@ public class UserManagerImpl implements UserManager {
     /**
      * Avatar of the default admin user.
      */
-    public static final String ADMIN_AVATAR = "/assets/admin-icon.png";
+    public static final String ADMIN_AVATAR = "/images/admin-icon.png";
+
+    private static final Logger logger = LoggerFactory.getLogger(UserManagerImpl.class);
 
     private final UserRepository userRepository;
     private final InternalUserRepository internalUserRepository;
@@ -217,13 +223,24 @@ public class UserManagerImpl implements UserManager {
                                 return generatedPassword;
                             });
 
-                    return createUser(
-                            InternalUserCreationDto.builder()
-                                    .username(ADMIN_USER_NAME)
-                                    .password(password)
-                                    .roles(UserRole.ADMIN)
-                                    .build()
-                    );
+                    return this
+                            .createUser(
+                                    InternalUserCreationDto.builder()
+                                            .username(ADMIN_USER_NAME)
+                                            .password(password)
+                                            .roles(UserRole.ADMIN)
+                                            .build()
+                            )
+                            .map(user -> {
+                                try {
+                                    user.setAvatar(IOUtils.toByteArray(UserManagerImpl.class.getResourceAsStream(ADMIN_AVATAR)));
+                                } catch (IOException e) {
+                                    logger.error("Error while loading admin avatar.", e);
+                                }
+
+                                return user;
+                            })
+                            .flatMap(internalUserRepository::save);
                 })
                 .subscribe();
     }
