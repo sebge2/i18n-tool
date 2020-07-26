@@ -1,7 +1,8 @@
 <button mat-icon-button
         color="warn"
-        [disabled]="loading"
+        [disabled]="disabled || loading"
         (click)="onDelete()"
+        [class.enabled]="!disabled"
         [class.spinner]="loading">
 <!--    <mat-icon *ngIf="confirmationInProgress">-->
 <!--        <mat-progress-spinner color="accent" diameter="20" [mode]="'determinate'" [value]="progressbarValue"></mat-progress-spinner>-->

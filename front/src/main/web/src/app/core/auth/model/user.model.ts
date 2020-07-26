@@ -1,6 +1,8 @@
 import {UserRole} from "./user-role.model";
 import {UserDto} from "../../../api";
 
+export const ADMIN_USERNAME = 'admin';
+
 export class User {
 
     public static fromDto(dto: UserDto): User {
@@ -22,20 +24,24 @@ export class User {
                 public type: UserType) {
     }
 
-    hasRole(role: UserRole): boolean {
+    public hasRole(role: UserRole): boolean {
         return this.roles.includes(role);
     }
 
-    isInternal(): boolean {
+    public isInternal(): boolean {
         return this.type == UserType.INTERNAL;
     }
 
-    isExternal(): boolean {
+    public isExternal(): boolean {
         return this.type == UserType.EXTERNAL;
     }
 
-    hasAdminRole(): boolean {
+    public hasAdminRole(): boolean {
         return this.hasRole(UserRole.ADMIN);
+    }
+
+    public isAdminUser(): boolean {
+        return this.username === ADMIN_USERNAME;
     }
 }
 

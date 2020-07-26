@@ -44,7 +44,7 @@
     </mat-card-content>
     <mat-card-actions [align]="'end'">
         <app-form-cancel-button [form]="form" [loading]="loading" (reset)="resetForm()"></app-form-cancel-button>
-        <app-form-delete-button [loading]="loading" (delete)="onDelete()"></app-form-delete-button>
+        <app-form-delete-button [loading]="loading" (delete)="onDelete()" [disabled]="this.form.disabled"></app-form-delete-button>
         <app-form-save-button [form]="form" [loading]="loading" (save)="onSave()"></app-form-save-button>
     </mat-card-actions>
 </mat-card>

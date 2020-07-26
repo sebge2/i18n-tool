@@ -63,12 +63,27 @@ export class UserViewCardComponent implements OnInit {
 
     public resetForm() {
         this.form.controls['username'].setValue(this.user.username);
+        if (this.user.isExternal()) {
+            this.form.controls['username'].disable();
+        }
+
         this.form.controls['displayName'].setValue(this.user.displayName);
+        if (this.user.isExternal()) {
+            this.form.controls['displayName'].disable();
+        }
+
         this.form.controls['email'].setValue(this.user.email);
+        if (this.user.isExternal()) {
+            this.form.controls['email'].disable();
+        }
 
         this.form.controls['adminRole'].setValue(
             _.some(this.user.roles, role => role === UserRole.ADMIN) ? this.roleOptionAdminPrivilege : this.roleOptionNoPrivilege
         );
+
+        if (this.user.isAdminUser()) {
+            this.form.disable()
+        }
 
         this.form.markAsPristine();
     }
