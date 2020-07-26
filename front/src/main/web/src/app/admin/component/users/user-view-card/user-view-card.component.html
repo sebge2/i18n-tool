@@ -38,9 +38,9 @@
             <p>
                 <mat-form-field appearance="standard">
                     <mat-label>{{'ADMIN.USERS.ADMIN_ROLE' | translate}}</mat-label>
-                    <mat-select formControlName="adminRole" #adminRole>
+                    <mat-select formControlName="adminRole">
                         <mat-select-trigger>
-                            <mat-icon>{{adminRole.value?.icon}}</mat-icon> {{adminRole.value?.label | translate}}
+                            <mat-icon>{{form.controls['adminRole'].value?.icon}}</mat-icon> {{form.controls['adminRole'].value?.label | translate}}
                         </mat-select-trigger>
                         <mat-option *ngFor="let roleOption of roleOptions" [value]="roleOption">
                             <mat-icon>{{roleOption.icon}}</mat-icon> {{roleOption.label | translate}}
