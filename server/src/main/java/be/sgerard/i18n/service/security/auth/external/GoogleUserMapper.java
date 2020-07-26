@@ -24,6 +24,11 @@ public class GoogleUserMapper implements OAuthUserMapper {
     public static final String EMAIL = "email";
 
     /**
+     * OAuth attribute containing the name.
+     */
+    public static final String NAME = "name";
+
+    /**
      * OAuth attribute containing the avatar URL.
      */
     public static final String AVATAR_URL = "picture";
@@ -48,6 +53,7 @@ public class GoogleUserMapper implements OAuthUserMapper {
                         .externalId(getStringAttribute(externalUser.getAttributes(), EXTERNAL_ID))
                         .authSystem(ExternalAuthSystem.OAUTH_GOOGLE)
                         .username(getStringAttribute(externalUser.getAttributes(), EMAIL))
+                        .displayName(getStringAttribute(externalUser.getAttributes(), NAME))
                         .email(getStringAttribute(externalUser.getAttributes(), EMAIL))
                         .avatarUrl(getStringAttribute(externalUser.getAttributes(), AVATAR_URL))
                         .roles(UserRole.MEMBER_OF_ORGANIZATION)
