@@ -1,8 +1,10 @@
 <mat-card>
     <mat-card-header>
+        <img mat-card-avatar [src]="getAvatarUrl()" class="profile-img" *ngIf="getAvatarUrl()"/>
+        <mat-icon mat-card-avatar *ngIf="!getAvatarUrl()" class="profile-img">perm_identity</mat-icon>
+
         <mat-card-title>
-<!--            <div mat-card-avatar class="profile-img" [style.background-image]="getUrl()"></div>-->
-            <mat-card-title><mat-icon mat-card-avatar>perm_identity</mat-icon> {{displayName.value}}</mat-card-title>
+            <mat-card-title>{{displayName.value}}</mat-card-title>
         </mat-card-title>
     </mat-card-header>
     <mat-card-content>

@@ -87,9 +87,9 @@ export class UserViewCardComponent implements OnInit {
         }
     }
 
-    public avatarUrl(): string {
-        return (this._user != null)
-            ? `url('/api/user/${this.user.id}/avatar')`
+    public getAvatarUrl(): string {
+        return (this.user != null) && this.isExistingUser()
+            ? `/api/user/${this.user.id}/avatar`
             : null;
     }
 
