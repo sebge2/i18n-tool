@@ -5,12 +5,46 @@
         </mat-card-title>
     </mat-card-header>
     <mat-card-content>
-        <p>Username: {{user.username}}</p>
-        <p>Display name: {{user.displayName}}</p>
-        <p>Status: {{user.email}}</p>
-        <p>Type: {{user.type | titlecase}}</p>
-        <p>Roles: {{user.roles}}</p>
+        <form [formGroup]="form" (ngSubmit)="onSave()">
+            <p>
+                <mat-form-field appearance="standard">
+                    <mat-label>{{'ADMIN.USERS.USER_NAME' | translate}}</mat-label>
+                    <input matInput formControlName="username">
+                    <mat-hint>{{'ADMIN.USERS.USER_NAME_EXAMPLE' | translate}}</mat-hint>
+                </mat-form-field>
+            </p>
+            <p>
+                <mat-form-field appearance="standard">
+                    <mat-label>{{'ADMIN.USERS.DISPLAY_NAME' | translate}}</mat-label>
+                    <input matInput formControlName="displayName">
+                    <mat-hint>{{'ADMIN.USERS.DISPLAY_NAME_EXAMPLE' | translate}}</mat-hint>
+                </mat-form-field>
+            </p>
+            <p>
+                <mat-form-field appearance="standard">
+                    <mat-label>{{'ADMIN.USERS.EMAIL' | translate}}</mat-label>
+                    <input matInput formControlName="email">
+                    <mat-hint>{{'ADMIN.USERS.EMAIL_EXAMPLE' | translate}}</mat-hint>
+                </mat-form-field>
+            </p>
+            <p>
+                <mat-form-field appearance="standard">
+                    <mat-label>{{'ADMIN.USERS.ADMIN_ROLE' | translate}}</mat-label>
+                    <mat-select formControlName="adminRole" #adminRole>
+                        <mat-select-trigger>
+                            <mat-icon>{{adminRole.value?.icon}}</mat-icon> {{adminRole.value?.label | translate}}
+                        </mat-select-trigger>
+                        <mat-option *ngFor="let roleOption of roleOptions" [value]="roleOption">
+                            <mat-icon>{{roleOption.icon}}</mat-icon> {{roleOption.label | translate}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </p>
+        </form>
     </mat-card-content>
     <mat-card-actions [align]="'end'">
+        <app-form-cancel-button [form]="form" [loading]="loading" (reset)="resetForm()"></app-form-cancel-button>
+        <app-form-delete-button [loading]="loading" (delete)="onDelete()"></app-form-delete-button>
+        <app-form-save-button [form]="form" [loading]="loading" (save)="onSave()"></app-form-save-button>
     </mat-card-actions>
 </mat-card>

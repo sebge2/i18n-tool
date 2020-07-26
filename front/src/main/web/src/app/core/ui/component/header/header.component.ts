@@ -51,7 +51,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     }
 
     getDisplayName(): string {
-        return (this.currentUser) != null ? this.currentUser.username : null;
+        return (this.currentUser) != null ? this.currentUser.displayName : null;
     }
 
     get smallSize(): boolean {

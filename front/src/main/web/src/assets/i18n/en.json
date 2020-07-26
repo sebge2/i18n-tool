@@ -68,7 +68,19 @@
         "DELETE": "Error while deleting language"
       }
     },
-
+    "USERS": {
+      "USER_NAME": "Username",
+      "USER_NAME_EXAMPLE": "Example: john.doe",
+      "DISPLAY_NAME": "Display Name",
+      "DISPLAY_NAME_EXAMPLE": "Example: John Doe",
+      "EMAIL": "Email",
+      "EMAIL_EXAMPLE": "Example: john.doe@acme.com",
+      "ADMIN_ROLE": "Privilege",
+      "ROLES": {
+        "NO_PRIVILEGE": "No privilege",
+        "ADMIN_PRIVILEGE" : "Administrator"
+      }
+    },
     "WORKSPACES" : {
       "CONFIRM_DELETION" : {
         "ERASE_ACTION" : "Erase",
