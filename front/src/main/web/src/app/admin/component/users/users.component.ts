@@ -1,8 +1,9 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {User} from "../../../core/auth/model/user.model";
-import {Subject} from "rxjs";
+import {User, UserType} from "../../../core/auth/model/user.model";
+import {BehaviorSubject, combineLatest, Subject} from "rxjs";
 import {takeUntil} from "rxjs/operators";
 import {UserService} from "../../../core/auth/service/user.service";
+import * as _ from "lodash";
 
 @Component({
     selector: 'app-users',
@@ -13,16 +14,20 @@ export class UsersComponent implements OnInit, OnDestroy {
 
     public users: User[] = [];
 
+    private readonly _addedUsers = new BehaviorSubject<User[]>([]);
     private _destroyed$ = new Subject<void>();
 
     constructor(private _userService: UserService) {
     }
 
     public ngOnInit() {
-        this._userService
-            .getUsers()
+        combineLatest([this._userService.getUsers(), this._addedUsers])
             .pipe(takeUntil(this._destroyed$))
-            .subscribe(rep => this.users = rep);
+            .subscribe(([availableUsers, addedUsers]) => {
+                this.users = [];
+                this.users = _.concat(this.users, availableUsers);
+                this.users = _.concat(this.users, addedUsers);
+            });
     }
 
     public ngOnDestroy(): void {
@@ -30,11 +35,28 @@ export class UsersComponent implements OnInit, OnDestroy {
         this._destroyed$.complete();
     }
 
-    public onSave(user: User) {
+    public onAdd() {
+        const locales = this._addedUsers.getValue();
+        locales.push(new User(null, null, null, null, [], UserType.INTERNAL));
 
+        this._addedUsers.next(locales);
     }
 
-    public onAdd() {
+    public onSave(user: User) {
+        this.removeFromAddedUsers(user);
+    }
 
+    public onDelete(user: User) {
+        this.removeFromAddedUsers(user);
+    }
+
+    private removeFromAddedUsers(user: User) {
+        const locales = this._addedUsers.getValue();
+        const indexOf = locales.indexOf(user);
+
+        if (indexOf >= 0) {
+            locales.splice(indexOf, 1);
+            this._addedUsers.next(locales);
+        }
     }
 }

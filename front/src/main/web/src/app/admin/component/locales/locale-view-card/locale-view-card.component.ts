@@ -89,6 +89,16 @@ export class LocaleViewCardComponent implements OnInit {
         return `flag-icon ${this.form.controls['icon'].value}`;
     }
 
+    public resetForm() {
+        this.form.controls['displayName'].setValue(this.locale.displayName);
+        this.form.controls['language'].setValue(this.locale.language);
+        this.form.controls['region'].setValue(this.locale.region);
+        this.form.controls['variants'].setValue(!_.isEmpty(this.locale.variants) ? _.join(this.locale.variants, ' ') : '');
+        this.form.controls['icon'].setValue(this.locale.icon);
+
+        this.form.markAsPristine();
+    }
+
     public onSave() {
         this.loading = true;
 
@@ -113,16 +123,6 @@ export class LocaleViewCardComponent implements OnInit {
                 })
                 .finally(() => this.loading = false);
         }
-    }
-
-    public resetForm() {
-        this.form.controls['displayName'].setValue(this.locale.displayName);
-        this.form.controls['language'].setValue(this.locale.language);
-        this.form.controls['region'].setValue(this.locale.region);
-        this.form.controls['variants'].setValue(!_.isEmpty(this.locale.variants) ? _.join(this.locale.variants, ' ') : '');
-        this.form.controls['icon'].setValue(this.locale.icon);
-
-        this.form.markAsPristine();
     }
 
     public onDelete() {

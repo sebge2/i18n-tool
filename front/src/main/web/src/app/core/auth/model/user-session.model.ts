@@ -10,7 +10,7 @@ export class UserSession {
 
     constructor(userSession: UserSession = <UserSession>{}) {
         this.id = userSession.id;
-        this.user = User.fromDto(userSession.user);
+        this.user = userSession.user;
         this.simpSessionId = userSession.simpSessionId;
         this.loginTime = userSession.loginTime;
         this.logoutTime = userSession.logoutTime;

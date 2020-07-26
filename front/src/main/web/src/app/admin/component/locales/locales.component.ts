@@ -47,13 +47,7 @@ export class LocalesComponent implements OnInit, OnDestroy {
     }
 
     public onDelete(locale: TranslationLocale) {
-        const locales = this._addedLocales.getValue();
-        const indexOf = locales.indexOf(locale);
-
-        if (indexOf >= 0) {
-            locales.splice(indexOf, 1);
-            this._addedLocales.next(locales);
-        }
+        this.removeFromAddedLocales(locale);
     }
 
     private removeFromAddedLocales(locale: TranslationLocale) {
