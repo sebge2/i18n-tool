@@ -31,6 +31,9 @@ public class UserPatchDto {
     @Schema(description = "The new username.")
     private final String username;
 
+    @Schema(description = "Name to display for this user (typically: first and last name).")
+    private final String displayName;
+
     @Schema(description = "The new email address.")
     private final String email;
 
@@ -43,6 +46,7 @@ public class UserPatchDto {
     private UserPatchDto(Builder builder) {
         roles = builder.roles;
         username = builder.username;
+        displayName = builder.displayName;
         email = builder.email;
         password = builder.password;
     }
@@ -52,6 +56,13 @@ public class UserPatchDto {
      */
     public Optional<String> getUsername() {
         return Optional.ofNullable(username);
+    }
+
+    /**
+     * Returns the name to display for this user.
+     */
+    public Optional<String> getDisplayName() {
+        return Optional.ofNullable(displayName);
     }
 
     /**
@@ -83,6 +94,7 @@ public class UserPatchDto {
     public static final class Builder {
 
         private String username;
+        private String displayName;
         private String email;
         private String password;
         private Collection<UserRole> roles;
@@ -92,6 +104,11 @@ public class UserPatchDto {
 
         public Builder username(String username) {
             this.username = username;
+            return this;
+        }
+
+        public Builder displayName(String displayName) {
+            this.displayName = displayName;
             return this;
         }
 

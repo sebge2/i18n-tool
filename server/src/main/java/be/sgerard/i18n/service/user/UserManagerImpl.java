@@ -149,6 +149,7 @@ public class UserManagerImpl implements UserManager {
                 .doOnNext(userEntity -> {
                     if (userEntity instanceof InternalUserEntity) {
                         patch.getUsername().ifPresent(((InternalUserEntity) userEntity)::setUsername);
+                        patch.getDisplayName().ifPresent(((InternalUserEntity) userEntity)::setDisplayName);
                         patch.getEmail().ifPresent(((InternalUserEntity) userEntity)::setEmail);
                         patch.getPassword().ifPresent(((InternalUserEntity) userEntity)::setPassword);
                     }

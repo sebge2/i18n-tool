@@ -107,9 +107,7 @@ export class LocaleViewCardComponent implements OnInit {
                 .toPromise()
                 .then(translationLocale => this.locale = translationLocale)
                 .then(translationLocale => this.save.emit(translationLocale))
-                .catch(error => {
-                    this.notificationService.displayErrorMessage('ADMIN.LOCALES.ERROR.UPDATE', error);
-                })
+                .catch(error => this.notificationService.displayErrorMessage('ADMIN.LOCALES.ERROR.UPDATE', error))
                 .finally(() => this.loading = false);
         } else {
             this.translationLocaleService
@@ -117,9 +115,7 @@ export class LocaleViewCardComponent implements OnInit {
                 .toPromise()
                 .then(translationLocale => this.locale = translationLocale)
                 .then(translationLocale => this.save.emit(translationLocale))
-                .catch(error => {
-                    this.notificationService.displayErrorMessage('ADMIN.LOCALES.ERROR.SAVE', error);
-                })
+                .catch(error => this.notificationService.displayErrorMessage('ADMIN.LOCALES.ERROR.SAVE', error))
                 .finally(() => this.loading = false);
         }
     }
@@ -132,9 +128,7 @@ export class LocaleViewCardComponent implements OnInit {
                 .toPromise()
                 .then(translationLocale => this.locale = translationLocale)
                 .then(translationLocale => this.save.emit(translationLocale))
-                .catch(error => {
-                    this.notificationService.displayErrorMessage('ADMIN.LOCALES.ERROR.DELETE', error);
-                })
+                .catch(error => this.notificationService.displayErrorMessage('ADMIN.LOCALES.ERROR.DELETE', error))
                 .finally(() => this.loading = false);
         } else {
             this.delete.emit();

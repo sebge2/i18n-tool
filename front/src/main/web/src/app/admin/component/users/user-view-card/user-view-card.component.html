@@ -6,7 +6,7 @@
         </mat-card-title>
     </mat-card-header>
     <mat-card-content>
-        <form [formGroup]="form" (ngSubmit)="onSave()">
+        <form [formGroup]="form" (ngSubmit)="onSave()" autocomplete="off">
             <p>
                 <mat-form-field appearance="standard">
                     <mat-label>{{'ADMIN.USERS.USER_NAME' | translate}}</mat-label>
@@ -24,14 +24,14 @@
             <p>
                 <mat-form-field appearance="standard">
                     <mat-label>{{'ADMIN.USERS.EMAIL' | translate}}</mat-label>
-                    <input matInput formControlName="email">
+                    <input matInput formControlName="email" type="email">
                     <mat-hint>{{'ADMIN.USERS.EMAIL_EXAMPLE' | translate}}</mat-hint>
                 </mat-form-field>
             </p>
             <p>
                 <mat-form-field appearance="standard">
                     <mat-label>{{'ADMIN.USERS.PASSWORD' | translate}}</mat-label>
-                    <input matInput formControlName="password" type="password" [placeholder]="'ADMIN.USERS.PASSWORD_PLACEHOLDER' | translate" autocomplete="no">
+                    <input matInput formControlName="password" type="password" [placeholder]="'ADMIN.USERS.PASSWORD_PLACEHOLDER' | translate">
                     <mat-hint>{{'ADMIN.USERS.PASSWORD_HINT' | translate}}</mat-hint>
                 </mat-form-field>
             </p>

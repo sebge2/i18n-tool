@@ -5,7 +5,7 @@ import * as _ from "lodash";
 import {UserRole} from "../../../../core/auth/model/user-role.model";
 import {UserService} from "../../../../core/auth/service/user.service";
 import {NotificationService} from "../../../../core/notification/service/notification.service";
-import {InternalUserCreationDto} from "../../../../api";
+import {InternalUserCreationDto, UserPatchDto} from "../../../../api";
 import {getStringValue} from "../../../../core/shared/utils/form-utils";
 
 export class RoleOption {
@@ -134,24 +134,20 @@ export class UserViewCardComponent implements OnInit {
         this.loading = true;
 
         if (this.isExistingUser()) {
-            // this.userService
-            //     .updateUser(this.toUpdatedLocale())
-            //     .toPromise()
-            //     .then(translationLocale => this.locale = translationLocale)
-            //     .then(translationLocale => this.save.emit(translationLocale))
-            //     .catch(error => {
-            //       this.notificationService.displayErrorMessage('ADMIN.LOCALES.ERROR.UPDATE', error);
-            //     })
-            //     .finally(() => this.loading = false);
+            this.userService
+                .updateUser(this.user.id, this.toUpdatedUser())
+                .toPromise()
+                .then(user => this.user = user)
+                .then(user => this.save.emit(user))
+                .catch(error => this.notificationService.displayErrorMessage('ADMIN.USERS.ERROR.UPDATE', error))
+                .finally(() => this.loading = false);
         } else {
             this.userService
                 .createUser(this.toNewUser())
                 .toPromise()
                 .then(user => this.user = user)
                 .then(user => this.save.emit(user))
-                .catch(error => {
-                    this.notificationService.displayErrorMessage('ADMIN.USERS.ERROR.SAVE', error);
-                })
+                .catch(error => this.notificationService.displayErrorMessage('ADMIN.USERS.ERROR.SAVE', error))
                 .finally(() => this.loading = false);
         }
     }
@@ -162,9 +158,7 @@ export class UserViewCardComponent implements OnInit {
             this.userService
                 .deleteUser(this.user.id)
                 .toPromise()
-                .catch(error => {
-                    this.notificationService.displayErrorMessage('ADMIN.USERS.ERROR.DELETE', error);
-                })
+                .catch(error => this.notificationService.displayErrorMessage('ADMIN.USERS.ERROR.DELETE', error))
                 .finally(() => this.loading = false);
         } else {
             this.delete.emit();
@@ -189,8 +183,13 @@ export class UserViewCardComponent implements OnInit {
         };
     }
 
-    private toUpdatedUser(): User {
-        // return new TranslationLocale(this.locale.id, this.language, this.icon, this.displayName, this.region, this.variants);
-        return null;
+    private toUpdatedUser(): UserPatchDto {
+        return  {
+            username: this.username,
+            displayName: this.displayName,
+            email: this.email,
+            password: this.password,
+            roles: this.roles
+        };
     }
 }

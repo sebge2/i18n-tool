@@ -83,7 +83,7 @@
         "NO_PRIVILEGE": "No privilege",
         "ADMIN_PRIVILEGE" : "Administrator"
       },
-      "ERRORS": {
+      "ERROR": {
         "SAVE": "Error while saving user.",
         "UPDATE": "Error while updating user.",
         "DELETE": "Error while deleting user."

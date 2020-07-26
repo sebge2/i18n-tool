@@ -5,8 +5,7 @@ import {NotificationService} from "../../notification/service/notification.servi
 import {Events} from "../../event/model/events.model";
 import {catchError, map} from "rxjs/operators";
 import {EventService} from "../../event/service/event.service";
-import {UserUpdate} from "../model/user-update.model";
-import {InternalUserCreationDto, UserService as ApiUserService} from "../../../api";
+import {InternalUserCreationDto, UserPatchDto, UserService as ApiUserService} from "../../../api";
 import {synchronizedCollection} from "../../shared/utils/synchronized-observable-utils";
 
 @Injectable({
@@ -40,22 +39,10 @@ export class UserService {
             .pipe(map(dto => User.fromDto(dto)));
     }
 
-    // TODO
-    public updateUser(id: string, update: UserUpdate): Observable<User> {
-        return null;
-        // return this.apiUserService
-        //     .updateUser()
-        //     .patch('/api/user/' + id, update)
-        //     .pipe(
-        //         map((user: User) => new User(user)),
-        //         catchError((result: HttpResponse<any>) => {
-        //                 console.error('Error while updating user.', result);
-        //                 this.notificationService.displayErrorMessage('Error while updating user.');
-        //
-        //                 return throwError(result);
-        //             }
-        //         )
-        //     );
+    public updateUser(id: string, update: UserPatchDto): Observable<User> {
+        return this.apiUserService
+            .updateUser(update, id)
+            .pipe(map(dto => User.fromDto(dto)));
     }
 
     public deleteUser(id: string): Observable<any> {

@@ -19,6 +19,10 @@ export interface UserPatchDto {
      */
     username?: string;
     /**
+     * Name to display for this user (typically: first and last name).
+     */
+    displayName?: string;
+    /**
      * The new email address.
      */
     email?: string;
