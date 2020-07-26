@@ -26,7 +26,7 @@ public class TranslationsEventListener implements TranslationsListener{
 //                UPDATED_TRANSLATIONS,
 //                new TranslationsUpdateEventDto(
 //                        WorkspaceDto.builder(workspace).build(),
-//                        currentUser,
+//                        currentAuthenticatedUser,
 //                        updatedEntries
 //                )
 //        );

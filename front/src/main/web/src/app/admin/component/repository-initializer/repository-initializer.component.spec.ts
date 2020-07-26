@@ -35,7 +35,7 @@ describe('RepositoryInitializerComponent', () => {
         repositoryService.initialize = jasmine.createSpy().and.returnValue(Promise.resolve());
 
         authenticationService = jasmine.createSpyObj('authenticationUser', ['currentUser']);
-        authenticationService.currentUser = jasmine.createSpy().and.returnValue(user);
+        authenticationService.currentAuthenticatedUser = jasmine.createSpy().and.returnValue(user);
 
         TestBed
             .configureTestingModule({

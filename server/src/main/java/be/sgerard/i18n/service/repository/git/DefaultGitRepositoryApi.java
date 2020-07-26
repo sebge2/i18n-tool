@@ -181,7 +181,7 @@ public class DefaultGitRepositoryApi extends BaseGitRepositoryApi {
     @Override
     public GitRepositoryApi commitAll(String message) throws RepositoryException {
         try {
-            //                final UserDto currentUser = credentialsProvider.getCurrentUserOrFail().getUser(); TODO
+            //                final UserDto currentAuthenticatedUser = credentialsProvider.getCurrentUserOrFail().getUser(); TODO
 
             openGit().add().addFilepattern(".").call();
 

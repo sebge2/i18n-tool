@@ -34,7 +34,7 @@ describe('WorkspaceTableComponent', () => {
         workspaceService.find = jasmine.createSpy('find').and.returnValue(of ([]).pipe(delay(1000)).toPromise());
 
         authenticationService = jasmine.createSpyObj('authenticationUser', ['currentUser']);
-        authenticationService.currentUser = jasmine.createSpy('currentUser').and.returnValue(user);
+        authenticationService.currentAuthenticatedUser = jasmine.createSpy('currentUser').and.returnValue(user);
 
         TestBed
             .configureTestingModule({

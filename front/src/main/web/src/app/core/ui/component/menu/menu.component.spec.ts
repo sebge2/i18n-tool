@@ -18,7 +18,7 @@ describe('MenuComponent', () => {
 
     beforeEach(async(() => {
         authenticationService = jasmine.createSpyObj('authenticationUser', ['currentUser']);
-        authenticationService.currentUser = jasmine.createSpy().and.returnValue(user);
+        authenticationService.currentAuthenticatedUser = jasmine.createSpy().and.returnValue(user);
 
         TestBed
             .configureTestingModule({

@@ -37,7 +37,7 @@ describe('AuthenticationService', () => {
         async () => {
             const expected = new AuthenticatedUser();
 
-            const promise = service.currentUser()
+            const promise = service.currentAuthenticatedUser()
                 .toPromise()
                 .then((actual: AuthenticatedUser) => {
                     expect(actual).toEqual(expected);

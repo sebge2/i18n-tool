@@ -21,7 +21,7 @@ export class UserPreferencesService {
                 private eventService: EventService,
                 private notificationService: NotificationService) {
         this._userPreferences$ = synchronizedObject(
-            this.authService.currentUser().pipe(flatMap(currentUser => currentUser ? this.apiService.getCurrentUserPreferences() : of(null))),
+            this.authService.currentAuthenticatedUser().pipe(flatMap(currentUser => currentUser ? this.apiService.getCurrentUserPreferences() : of(null))),
             this.eventService.subscribeDto(Events.UPDATED_USER_PREFERENCES),
             of(),
             dto => (dto != null) ? UserPreferences.fromDto(dto) : null

@@ -14,7 +14,7 @@ describe('GlobalAuthGuard', () => {
     beforeEach(() => {
         currentUser = new BehaviorSubject<AuthenticatedUser>(null);
         authenticationService = jasmine.createSpyObj('authenticationUser', ['currentUser']);
-        authenticationService.currentUser = jasmine.createSpy().and.returnValue(currentUser);
+        authenticationService.currentAuthenticatedUser = jasmine.createSpy().and.returnValue(currentUser);
 
         router = jasmine.createSpyObj('router', ['navigate']);
 

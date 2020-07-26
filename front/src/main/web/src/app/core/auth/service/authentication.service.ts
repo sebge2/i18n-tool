@@ -58,7 +58,7 @@ export class AuthenticationService implements OnDestroy {
         this._destroyed$.complete();
     }
 
-    currentUser(): Observable<AuthenticatedUser> {
+    currentAuthenticatedUser(): Observable<AuthenticatedUser> {
         return this._user$;
     }
 
