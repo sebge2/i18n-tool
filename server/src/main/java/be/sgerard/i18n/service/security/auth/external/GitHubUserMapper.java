@@ -25,6 +25,11 @@ public class GitHubUserMapper implements OAuthUserMapper {
     public static final String USERNAME = "login";
 
     /**
+     * OAuth attribute containing the display name.
+     */
+    public static final String NAME = "name";
+
+    /**
      * OAuth attribute containing the email.
      */
     public static final String EMAIL = "email";
@@ -55,6 +60,7 @@ public class GitHubUserMapper implements OAuthUserMapper {
                         .externalId(getStringAttribute(externalUser.getAttributes(), EXTERNAL_ID))
                         .authSystem(ExternalAuthSystem.OAUTH_GITHUB)
                         .username(getStringAttribute(externalUser.getAttributes(), USERNAME))
+                        .displayName(getStringAttribute(externalUser.getAttributes(), NAME))
                         .email(getStringAttribute(externalUser.getAttributes(), EMAIL))
                         .avatarUrl(getStringAttribute(externalUser.getAttributes(), AVATAR_URL))
                         .roles(UserRole.MEMBER_OF_ORGANIZATION)

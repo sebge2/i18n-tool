@@ -119,6 +119,7 @@ public class UserManagerImpl implements UserManager {
                 )
                 .flatMap(externalUser -> {
                     externalUser.setUsername(externalUserDto.getUsername());
+                    externalUser.setDisplayName(externalUserDto.getDisplayName());
                     externalUser.setAvatarUrl(externalUserDto.getAvatarUrl());
                     externalUser.setEmail(externalUserDto.getEmail());
                     externalUser.setRoles(externalUserDto.getRoles());

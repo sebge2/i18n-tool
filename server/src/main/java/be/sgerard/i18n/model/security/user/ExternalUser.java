@@ -23,6 +23,7 @@ public class ExternalUser {
     private final String externalId;
     private final ExternalAuthSystem authSystem;
     private final String username;
+    private final String displayName;
     private final String email;
     private final String avatarUrl;
     private final Collection<UserRole> roles;
@@ -31,6 +32,7 @@ public class ExternalUser {
         externalId = builder.externalId;
         authSystem = builder.authSystem;
         username = builder.username;
+        displayName = builder.displayName;
         email = builder.email;
         avatarUrl = builder.avatarUrl;
         roles = Collections.unmodifiableSet(builder.roles);
@@ -55,6 +57,13 @@ public class ExternalUser {
      */
     public String getUsername() {
         return username;
+    }
+
+    /**
+     * Returns the name to be displayed.
+     */
+    public String getDisplayName() {
+        return displayName;
     }
 
     /**
@@ -91,6 +100,7 @@ public class ExternalUser {
         private String externalId;
         private ExternalAuthSystem authSystem;
         private String username;
+        private String displayName;
         private String email;
         private String avatarUrl;
         private final Set<UserRole> roles = new HashSet<>();
@@ -110,6 +120,11 @@ public class ExternalUser {
 
         public Builder username(String username) {
             this.username = username;
+            return this;
+        }
+
+        public Builder displayName(String displayName) {
+            this.displayName = displayName;
             return this;
         }
 
