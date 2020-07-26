@@ -7,6 +7,7 @@ import * as _ from "lodash";
 import {TranslationLocaleCreationDto} from "../../../../api";
 import {Locale} from "../../../../core/translation/model/locale.model";
 import {startWith} from "rxjs/operators";
+import {getStringValue} from "../../../../core/shared/utils/form-utils";
 
 @Component({
     selector: 'app-locale-view-card',
@@ -58,31 +59,29 @@ export class LocaleViewCardComponent implements OnInit {
     }
 
     public get displayName(): string {
-        let displayName = this.form.controls['displayName'].value;
-
-        return _.isEmpty(displayName) ? null : displayName.trim();
+        return getStringValue(this.form.controls['displayName']);
     }
 
     public get language(): string {
-        let language = this.form.controls['language'].value;
+        let language = getStringValue(this.form.controls['language']);
 
-        return _.isEmpty(language) ? null : language.trim().toLowerCase();
+        return _.isEmpty(language) ? null : language.toLowerCase();
     }
 
     public get region(): string {
-        let region = this.form.controls['region'].value;
+        let region = getStringValue(this.form.controls['region']);
 
-        return _.isEmpty(region) ? null : region.trim().toUpperCase();
+        return _.isEmpty(region) ? null : region.toUpperCase();
     }
 
     public get variants(): string[] {
-        let variants = this.form.controls['variants'].value;
+        let variants = getStringValue(this.form.controls['variants']);
 
-        return _.isEmpty(variants) ? [] : variants.trim().split(' ');
+        return _.isEmpty(variants) ? [] : variants.split(' ');
     }
 
     public get icon(): string {
-        return this.form.controls['icon'].value;
+        return getStringValue(this.form.controls['icon']);
     }
 
     public get iconClass(): string {

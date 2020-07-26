@@ -63,9 +63,9 @@
       "ICON": "Icon",
       "ICON_EXAMPLE": "Example: flag-icon-fr.",
       "ERROR": {
-        "SAVE": "Error while saving language",
-        "UPDATE": "Error while updating language",
-        "DELETE": "Error while deleting language"
+        "SAVE": "Error while saving language.",
+        "UPDATE": "Error while updating language.",
+        "DELETE": "Error while deleting language."
       }
     },
     "USERS": {
@@ -75,10 +75,18 @@
       "DISPLAY_NAME_EXAMPLE": "Example: John Doe",
       "EMAIL": "Email",
       "EMAIL_EXAMPLE": "Example: john.doe@acme.com",
+      "PASSWORD": "Password",
+      "PASSWORD_HINT": "At least 6 characters.",
+      "PASSWORD_PLACEHOLDER": "Change only if needed",
       "ADMIN_ROLE": "Privilege",
       "ROLES": {
         "NO_PRIVILEGE": "No privilege",
         "ADMIN_PRIVILEGE" : "Administrator"
+      },
+      "ERRORS": {
+        "SAVE": "Error while saving user.",
+        "UPDATE": "Error while updating user.",
+        "DELETE": "Error while deleting user."
       }
     },
     "WORKSPACES" : {

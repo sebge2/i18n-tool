@@ -3,10 +3,10 @@ import {Observable} from "rxjs";
 import {User} from "../model/user.model";
 import {NotificationService} from "../../notification/service/notification.service";
 import {Events} from "../../event/model/events.model";
-import {catchError} from "rxjs/operators";
+import {catchError, map} from "rxjs/operators";
 import {EventService} from "../../event/service/event.service";
 import {UserUpdate} from "../model/user-update.model";
-import {UserService as ApiUserService} from "../../../api";
+import {InternalUserCreationDto, UserService as ApiUserService} from "../../../api";
 import {synchronizedCollection} from "../../shared/utils/synchronized-observable-utils";
 
 @Injectable({
@@ -34,8 +34,14 @@ export class UserService {
             }));
     }
 
+    public createUser(creationDto: InternalUserCreationDto): Observable<User> {
+        return this.apiUserService
+            .createUser(creationDto)
+            .pipe(map(dto => User.fromDto(dto)));
+    }
+
     // TODO
-    updateUser(id: string, update: UserUpdate): Observable<User> {
+    public updateUser(id: string, update: UserUpdate): Observable<User> {
         return null;
         // return this.apiUserService
         //     .updateUser()
@@ -52,7 +58,11 @@ export class UserService {
         //     );
     }
 
-    getUsers(): Observable<User[]> {
+    public deleteUser(id: string): Observable<any> {
+        return this.apiUserService.deleteUserById(id);
+    }
+
+    public getUsers(): Observable<User[]> {
         return this._users;
     }
 }

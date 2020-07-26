@@ -3,6 +3,10 @@ import {User} from "../../../../core/auth/model/user.model";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import * as _ from "lodash";
 import {UserRole} from "../../../../core/auth/model/user-role.model";
+import {UserService} from "../../../../core/auth/service/user.service";
+import {NotificationService} from "../../../../core/notification/service/notification.service";
+import {InternalUserCreationDto} from "../../../../api";
+import {getStringValue} from "../../../../core/shared/utils/form-utils";
 
 export class RoleOption {
 
@@ -20,6 +24,7 @@ export class RoleOption {
 export class UserViewCardComponent implements OnInit {
 
     @Output() public save = new EventEmitter<User>();
+    @Output() public delete = new EventEmitter<User>();
 
     public readonly form: FormGroup;
     public readonly roleOptionNoPrivilege = new RoleOption(false, 'ADMIN.USERS.ROLES.NO_PRIVILEGE', 'perm_identity');
@@ -29,14 +34,17 @@ export class UserViewCardComponent implements OnInit {
 
     private _user: User;
 
-    constructor(private formBuilder: FormBuilder) {
+    constructor(private formBuilder: FormBuilder,
+                private userService: UserService,
+                private notificationService: NotificationService) {
         this.form = this.formBuilder.group(
             {
                 username: this.formBuilder.control('', [Validators.required]),
                 displayName: this.formBuilder.control('', [Validators.required]),
                 email: this.formBuilder.control('', [Validators.required, Validators.email]),
                 adminRole: this.formBuilder.control(false, []),
-                // icon: this.formBuilder.control('', [Validators.required]), cloud provider
+                password: this.formBuilder.control(false, []),
+                // icon: this.formBuilder.control('', [Validators.required]), cloud provider TODO
             }
         );
     }
@@ -55,7 +63,31 @@ export class UserViewCardComponent implements OnInit {
         this.resetForm();
     }
 
-    public getUrl() {
+    public get username(): string {
+        return getStringValue(this.form.controls['username']);
+    }
+
+    public get displayName(): string {
+        return getStringValue(this.form.controls['displayName']);
+    }
+
+    public get email(): string {
+        return getStringValue(this.form.controls['email']);
+    }
+
+    public get password(): string {
+        return getStringValue(this.form.controls['password']);
+    }
+
+    public get roles(): UserRole[] {
+        if (this.form.controls['adminRole'].value === this.roleOptionAdminPrivilege) {
+            return [UserRole.ADMIN]
+        } else {
+            return [];
+        }
+    }
+
+    public avatarUrl(): string {
         return (this._user != null)
             ? `url('/api/user/${this.user.id}/avatar')`
             : null;
@@ -77,6 +109,16 @@ export class UserViewCardComponent implements OnInit {
             this.form.controls['email'].disable();
         }
 
+        if (this.user.isExternal()) {
+            this.form.controls['password'].disable();
+        }
+
+        if (this.isExistingUser()) {
+            this.form.controls['password'].setValidators([Validators.minLength(6)]);
+        } else {
+            this.form.controls['password'].setValidators([Validators.minLength(6), Validators.required]);
+        }
+
         this.form.controls['adminRole'].setValue(
             _.some(this.user.roles, role => role === UserRole.ADMIN) ? this.roleOptionAdminPrivilege : this.roleOptionNoPrivilege
         );
@@ -88,47 +130,67 @@ export class UserViewCardComponent implements OnInit {
         this.form.markAsPristine();
     }
 
-
     public onSave() {
         this.loading = true;
 
-        // if (this.locale.id) {
-        //   this.translationLocaleService
-        //       .updateLocale(this.toUpdatedLocale())
-        //       .toPromise()
-        //       .then(translationLocale => this.locale = translationLocale)
-        //       .then(translationLocale => this.save.emit(translationLocale))
-        //       .catch(error => {
-        //         this.notificationService.displayErrorMessage('ADMIN.LOCALES.ERROR.UPDATE', error);
-        //       })
-        //       .finally(() => this.loading = false);
-        // } else {
-        //   this.translationLocaleService
-        //       .createLocale(this.toNewLocale())
-        //       .toPromise()
-        //       .then(translationLocale => this.locale = translationLocale)
-        //       .then(translationLocale => this.save.emit(translationLocale))
-        //       .catch(error => {
-        //         this.notificationService.displayErrorMessage('ADMIN.LOCALES.ERROR.SAVE', error);
-        //       })
-        //       .finally(() => this.loading = false);
-        // }
+        if (this.isExistingUser()) {
+            // this.userService
+            //     .updateUser(this.toUpdatedLocale())
+            //     .toPromise()
+            //     .then(translationLocale => this.locale = translationLocale)
+            //     .then(translationLocale => this.save.emit(translationLocale))
+            //     .catch(error => {
+            //       this.notificationService.displayErrorMessage('ADMIN.LOCALES.ERROR.UPDATE', error);
+            //     })
+            //     .finally(() => this.loading = false);
+        } else {
+            this.userService
+                .createUser(this.toNewUser())
+                .toPromise()
+                .then(user => this.user = user)
+                .then(user => this.save.emit(user))
+                .catch(error => {
+                    this.notificationService.displayErrorMessage('ADMIN.USERS.ERROR.SAVE', error);
+                })
+                .finally(() => this.loading = false);
+        }
     }
 
     public onDelete() {
-        // if (this.locale.id) {
-        //   this.loading = true;
-        //   this.translationLocaleService
-        //       .deleteLocale(this.locale.id)
-        //       .toPromise()
-        //       .then(translationLocale => this.locale = translationLocale)
-        //       .then(translationLocale => this.save.emit(translationLocale))
-        //       .catch(error => {
-        //         this.notificationService.displayErrorMessage('ADMIN.LOCALES.ERROR.DELETE', error);
-        //       })
-        //       .finally(() => this.loading = false);
-        // } else {
-        //   this.delete.emit();
-        // }
+        if (this.user.id) {
+            this.loading = true;
+            this.userService
+                .deleteUser(this.user.id)
+                .toPromise()
+                .catch(error => {
+                    this.notificationService.displayErrorMessage('ADMIN.USERS.ERROR.DELETE', error);
+                })
+                .finally(() => this.loading = false);
+        } else {
+            this.delete.emit();
+        }
+    }
+
+    public canDelete(): boolean {
+        return !this.user.isAdminUser() && !this.user.isExternal();
+    }
+
+    private isExistingUser(): boolean {
+        return !!this.user.id;
+    }
+
+    private toNewUser(): InternalUserCreationDto {
+        return {
+            username: this.username,
+            displayName: this.displayName,
+            email: this.email,
+            password: this.password,
+            roles: this.roles
+        };
+    }
+
+    private toUpdatedUser(): User {
+        // return new TranslationLocale(this.locale.id, this.language, this.icon, this.displayName, this.region, this.variants);
+        return null;
     }
 }

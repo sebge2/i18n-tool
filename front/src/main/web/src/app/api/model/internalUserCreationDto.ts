@@ -19,6 +19,10 @@ export interface InternalUserCreationDto {
      */
     username: string;
     /**
+     * Name to display for this user (typically: first and last name).
+     */
+    displayName: string;
+    /**
      * User email address
      */
     email: string;
