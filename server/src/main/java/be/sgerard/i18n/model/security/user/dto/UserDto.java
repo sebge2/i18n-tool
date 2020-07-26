@@ -1,5 +1,6 @@
 package be.sgerard.i18n.model.security.user.dto;
 
+import be.sgerard.i18n.model.security.user.ExternalAuthSystem;
 import be.sgerard.i18n.model.security.user.persistence.ExternalUserEntity;
 import be.sgerard.i18n.model.security.user.persistence.UserEntity;
 import be.sgerard.i18n.service.security.UserRole;
@@ -42,7 +43,8 @@ public class UserDto implements Principal, Serializable {
                 .displayName(userDto.displayName)
                 .email(userDto.email)
                 .roles(userDto.roles)
-                .type(userDto.type);
+                .type(userDto.type)
+                .externalAuthSystem(userDto.externalAuthSystem);
     }
 
     public static Builder builder(UserEntity userEntity) {
@@ -52,7 +54,8 @@ public class UserDto implements Principal, Serializable {
                 .displayName(userEntity.getDisplayName())
                 .email(userEntity.getEmail())
                 .roles(userEntity.getRoles())
-                .type(userEntity instanceof ExternalUserEntity ? Type.EXTERNAL : Type.INTERNAL);
+                .type(userEntity instanceof ExternalUserEntity ? Type.EXTERNAL : Type.INTERNAL)
+                .externalAuthSystem(userEntity instanceof ExternalUserEntity ? ((ExternalUserEntity) userEntity).getExternalAuthSystem() : null);
     }
 
     @Schema(description = "Id of the user.")
@@ -73,6 +76,9 @@ public class UserDto implements Principal, Serializable {
     @Schema(description = "User type.")
     private final Type type;
 
+    @Schema(description = "External system that authenticated the user.")
+    private final ExternalAuthSystem externalAuthSystem;
+
     private UserDto(Builder builder) {
         id = builder.id;
         username = builder.username;
@@ -80,6 +86,7 @@ public class UserDto implements Principal, Serializable {
         email = builder.email;
         roles = unmodifiableSet(builder.roles);
         type = builder.type;
+        externalAuthSystem = builder.externalAuthSystem;
     }
 
     @Override
@@ -126,6 +133,7 @@ public class UserDto implements Principal, Serializable {
         private String email;
         private final Set<UserRole> roles = new HashSet<>();
         private Type type;
+        private ExternalAuthSystem externalAuthSystem;
 
         private Builder() {
         }
@@ -163,6 +171,11 @@ public class UserDto implements Principal, Serializable {
 
         public Builder type(Type type) {
             this.type = type;
+            return this;
+        }
+
+        public Builder externalAuthSystem(ExternalAuthSystem externalAuthSystem) {
+            this.externalAuthSystem = externalAuthSystem;
             return this;
         }
 

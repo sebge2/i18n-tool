@@ -38,6 +38,10 @@ export interface UserDto {
      * All possible user types.
      */
     type?: UserDto.TypeDtoEnum;
+    /**
+     * External system that authenticated the user.
+     */
+    externalAuthSystem?: UserDto.ExternalAuthSystemDtoEnum;
 }
 export namespace UserDto {
     export type RolesDtoEnum = 'MEMBER_OF_ORGANIZATION' | 'MEMBER_OF_REPOSITORY' | 'ADMIN';
@@ -50,5 +54,10 @@ export namespace UserDto {
     export const TypeDtoEnum = {
         EXTERNAL: 'EXTERNAL' as TypeDtoEnum,
         INTERNAL: 'INTERNAL' as TypeDtoEnum
+    };
+    export type ExternalAuthSystemDtoEnum = 'OAUTH_GOOGLE' | 'OAUTH_GITHUB';
+    export const ExternalAuthSystemDtoEnum = {
+        GOOGLE: 'OAUTH_GOOGLE' as ExternalAuthSystemDtoEnum,
+        GITHUB: 'OAUTH_GITHUB' as ExternalAuthSystemDtoEnum
     };
 }
