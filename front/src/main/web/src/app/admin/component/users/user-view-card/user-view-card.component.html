@@ -1,7 +1,8 @@
 <mat-card>
     <mat-card-header>
         <mat-card-title>
-            <img [src]="getUrl()" class="img-rounded profile-img"> {{user.displayName}}
+            <div mat-card-avatar class="profile-img" [style.background-image]="getUrl()"></div>
+            <mat-card-title>{{user.displayName}}</mat-card-title>
         </mat-card-title>
     </mat-card-header>
     <mat-card-content>

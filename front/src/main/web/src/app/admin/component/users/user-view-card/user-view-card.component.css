@@ -3,8 +3,7 @@ mat-card {
 }
 
 .profile-img {
-    margin-right: 5px;
-    vertical-align: middle;
+    background-size: cover;
     width: 30px;
     height: 30px;
 }

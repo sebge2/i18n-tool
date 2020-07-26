@@ -57,7 +57,7 @@ export class UserViewCardComponent implements OnInit {
 
     public getUrl() {
         return (this._user != null)
-            ? `/api/user/${this.user.id}/avatar`
+            ? `url('/api/user/${this.user.id}/avatar')`
             : null;
     }
 
