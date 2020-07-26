@@ -84,7 +84,7 @@ public class UserManagerImpl implements UserManager {
                 .flatMap(validationResult -> {
                     ValidationException.throwIfFailed(validationResult);
 
-                    final InternalUserEntity user = new InternalUserEntity(info.getUsername());
+                    final InternalUserEntity user = new InternalUserEntity(info.getUsername(), info.getDisplayName());
 
                     user.setPassword(passwordEncoder.encode(info.getPassword()));
 

@@ -38,9 +38,10 @@ public class InternalUserEntity extends UserEntity {
     InternalUserEntity() {
     }
 
-    public InternalUserEntity(String username) {
+    public InternalUserEntity(String username, String displayName) {
         setId(UUID.randomUUID().toString());
         setUsername(username);
+        setDisplayName(displayName);
         setPreferences(new UserPreferencesEntity());
     }
 

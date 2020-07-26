@@ -31,12 +31,16 @@ public class InternalUserCreationDto {
     public static Builder builder(UserDto userDto) {
         return builder()
                 .username(userDto.getUsername())
+                .displayName(userDto.getDisplayName())
                 .email(userDto.getEmail())
                 .roles(userDto.getRoles());
     }
 
     @Schema(description = "Username used to log in.", required = true)
     private final String username;
+
+    @Schema(description = "Name to display for this user (typically: first and last name).", required = true)
+    private final String displayName;
 
     @Schema(description = "User email address", required = true)
     private final String email;
@@ -50,6 +54,7 @@ public class InternalUserCreationDto {
     private InternalUserCreationDto(Builder builder) {
         roles = builder.roles;
         username = builder.username;
+        displayName = builder.displayName;
         email = builder.email;
         password = builder.password;
     }
@@ -62,6 +67,7 @@ public class InternalUserCreationDto {
     public static final class Builder {
 
         private String username;
+        private String displayName;
         private String email;
         private String password;
         private final Collection<UserRole> roles = new HashSet<>();
@@ -71,6 +77,11 @@ public class InternalUserCreationDto {
 
         public Builder username(String username) {
             this.username = username;
+            return this;
+        }
+
+        public Builder displayName(String displayName) {
+            this.displayName = displayName;
             return this;
         }
 
