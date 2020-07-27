@@ -1,0 +1,9 @@
+.avatar-zone {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.avatar-displayName {
+    text-align: center;
+}
