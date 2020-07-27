@@ -1,6 +1,6 @@
 <mat-card>
     <mat-card-content>
-        <div class="avatar-zone" appDragDrop [style.background]="getAvatarUrl()">
+        <div class="avatar-zone" appDragDrop [style.background]="getAvatarUrl()" (onFileDropped)="onFileDropped($event)">
         </div>
         <div class="avatar-displayName">
             <h1>{{currentUser.displayName}}</h1>
