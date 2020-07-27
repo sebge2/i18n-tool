@@ -14,6 +14,7 @@ import {CardGridItemComponent} from "./component/card-grid/card-grid-item/card-g
 import {FormCancelButtonComponent} from "./component/form-cancel-button/form-cancel-button.component";
 import {FormSaveButtonComponent} from "./component/form-save-button/form-save-button.component";
 import {FormDeleteButtonComponent} from "./component/form-delete-button/form-delete-button.component";
+import {DragDropDirective} from "./directive/drag-drop.directive";
 
 @NgModule({
     declarations: [
@@ -29,6 +30,8 @@ import {FormDeleteButtonComponent} from "./component/form-delete-button/form-del
         ToolLocaleIconPipe,
         TranslationLocaleIconPipe,
         RepositoryIconPipe,
+
+        DragDropDirective,
     ],
     imports: [
         CommonModule,
@@ -51,6 +54,8 @@ import {FormDeleteButtonComponent} from "./component/form-delete-button/form-del
         ToolLocaleIconPipe,
         TranslationLocaleIconPipe,
         RepositoryIconPipe,
+
+        DragDropDirective,
     ]
 })
 export class CoreSharedModule {

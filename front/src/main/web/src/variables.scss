@@ -1,0 +1,7 @@
+@import '~@angular/material/theming';
+@import '~@angular/material/prebuilt-themes/indigo-pink.css';
+@include mat-core();
+
+$color-primary: mat-palette($mat-indigo);
+$color-accent: mat-palette($mat-purple);
+
