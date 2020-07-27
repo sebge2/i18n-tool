@@ -52,4 +52,18 @@ export class UserService {
     public getUsers(): Observable<User[]> {
         return this._users;
     }
+
+    public getUserById(id: string): Observable<User> {
+        return this.getUsers()
+            .pipe(map(users => {
+                const foundUser = users.find(user => user.id === id);
+                console.log(id, users, foundUser);
+
+                if(!foundUser){
+                    throw Error(`There is no user with id [${id}].`);
+                }
+
+                return foundUser;
+            }));
+    }
 }
