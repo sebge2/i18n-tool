@@ -1,6 +1,8 @@
 package be.sgerard.i18n.service.user;
 
 import be.sgerard.i18n.model.security.user.ExternalUser;
+import be.sgerard.i18n.model.security.user.dto.CurrentUserPasswordUpdateDto;
+import be.sgerard.i18n.model.security.user.dto.CurrentUserPatchDto;
 import be.sgerard.i18n.model.security.user.dto.InternalUserCreationDto;
 import be.sgerard.i18n.model.security.user.dto.UserPatchDto;
 import be.sgerard.i18n.model.security.user.persistence.ExternalUserEntity;
@@ -9,6 +11,8 @@ import be.sgerard.i18n.model.security.user.persistence.UserEntity;
 import be.sgerard.i18n.service.ResourceNotFoundException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.io.InputStream;
 
 /**
  * Manager of {@link UserEntity users}.
@@ -54,6 +58,11 @@ public interface UserManager {
     Flux<UserEntity> findAll();
 
     /**
+     * Returns the {@link UserEntity current authenticated user}.
+     */
+    Mono<UserEntity> getCurrentOrDie();
+
+    /**
      * Creates a new {@link InternalUserEntity internal user} based on the specified {@link InternalUserCreationDto info}.
      */
     Mono<InternalUserEntity> createUser(InternalUserCreationDto info);
@@ -66,16 +75,30 @@ public interface UserManager {
     /**
      * Updates the {@link UserEntity user} based on the specified {@link UserPatchDto info}.
      */
-    Mono<UserEntity> update(String id, UserPatchDto patch);
+    Mono<UserEntity> update(UserEntity user);
 
     /**
      * Updates the {@link UserEntity user} based on the specified {@link UserPatchDto info}.
      */
-    Mono<UserEntity> update(UserEntity user);
+    Mono<UserEntity> update(String id, UserPatchDto patch);
+
+    /**
+     * Updates the current authenticated {@link UserEntity user} based on the specified {@link CurrentUserPatchDto info}.
+     */
+    Mono<UserEntity> updateCurrent(CurrentUserPatchDto patch);
+
+    /**
+     * Updates the {@link InternalUserEntity#getAvatar() avatar} of the current user.
+     */
+    Mono<UserEntity> updateUserAvatar(InputStream avatar);
+
+    /**
+     * Updates the {@link InternalUserEntity#getPassword() password} of the current user.
+     */
+    Mono<UserEntity> updateCurrentPassword(CurrentUserPasswordUpdateDto passwordUpdate);
 
     /**
      * Deletes the {@link UserEntity user} having the specified id.
      */
     Mono<UserEntity> delete(String id);
-
 }

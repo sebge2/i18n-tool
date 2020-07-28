@@ -1,8 +1,6 @@
 package be.sgerard.i18n.controller;
 
-import be.sgerard.i18n.model.security.user.dto.InternalUserCreationDto;
-import be.sgerard.i18n.model.security.user.dto.UserDto;
-import be.sgerard.i18n.model.security.user.dto.UserPatchDto;
+import be.sgerard.i18n.model.security.user.dto.*;
 import be.sgerard.i18n.model.security.user.persistence.ExternalUserEntity;
 import be.sgerard.i18n.model.security.user.persistence.InternalUserEntity;
 import be.sgerard.i18n.service.user.UserManager;
@@ -13,10 +11,13 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.core.io.buffer.DataBufferUtils;
 import org.springframework.core.io.buffer.DefaultDataBuffer;
 import org.springframework.core.io.buffer.DefaultDataBufferFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -111,6 +112,43 @@ public class UserController {
     }
 
     /**
+     * Updates the current authenticated user.
+     */
+    @PatchMapping(path = "/user/current")
+    @Operation(summary = "Updates the current authenticated user.")
+    @Transactional
+    public Mono<UserDto> updateCurrentUser(@RequestBody CurrentUserPatchDto userUpdate) {
+        return userManager
+                .updateCurrent(userUpdate)
+                .map(entity -> UserDto.builder(entity).build());
+    }
+
+    /**
+     * Updates the current user's password.
+     */
+    @PutMapping(path = "/user/current/password")
+    @Operation(summary = "Updates the password of the current authenticated user.")
+    @Transactional
+    public Mono<UserDto> updateCurrentUserPassword(@RequestBody CurrentUserPasswordUpdateDto passwordUpdate) {
+        return userManager
+                .updateCurrentPassword(passwordUpdate)
+                .map(entity -> UserDto.builder(entity).build());
+    }
+
+    /**
+     * Updates the avatar of the current internal user.
+     */
+    @PutMapping(path = "/user/current/avatar", consumes = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE})
+    @Operation(summary = "Updates the avatar of the current authenticated user.")
+    @Transactional
+    public Mono<UserDto> updateUserAvatar(ServerHttpRequest request) {
+        return DataBufferUtils.join(request.getBody())
+                .map(DataBuffer::asInputStream)
+                .flatMap(userManager::updateUserAvatar)
+                .map(entity -> UserDto.builder(entity).build());
+    }
+
+    /**
      * Returns the avatar of the specified user.
      */
     @Bean
@@ -168,7 +206,7 @@ public class UserController {
      */
     private static byte[] loadDefaultUserAvatar() {
         try {
-            return  IOUtils.toByteArray(UserManagerImpl.class.getResourceAsStream(UNKNOWN_USER_AVATAR));
+            return IOUtils.toByteArray(UserManagerImpl.class.getResourceAsStream(UNKNOWN_USER_AVATAR));
         } catch (IOException e) {
             logger.error("Error while loading default user avatar.", e);
 
