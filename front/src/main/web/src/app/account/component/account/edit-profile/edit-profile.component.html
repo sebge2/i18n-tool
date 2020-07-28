@@ -1,13 +1,36 @@
-<div fxLayout fxLayoutAlign="start start" fxLayoutGap="30px" class="container">
-    <div class="profile-avatar">
-        <app-edit-profile-avatar></app-edit-profile-avatar>
-    </div>
-    <div class="profile-info">
-        <mat-card>
-            <mat-card-content>
-                TOTO
-            </mat-card-content>
-        </mat-card>
-    </div>
-</div>
-
+<mat-card class="container">
+    <mat-card-content>
+        <div fxLayout fxLayoutAlign="start start" fxLayoutGap="30px">
+            <app-edit-profile-avatar class="profile-avatar"></app-edit-profile-avatar>
+            <div>
+                <form [formGroup]="form" (ngSubmit)="onSave()" autocomplete="off">
+                    <p>
+                        <mat-form-field appearance="standard">
+                            <mat-label>{{'ADMIN.USERS.USER_NAME' | translate}}</mat-label>
+                            <input matInput formControlName="username">
+                            <mat-hint>{{'ADMIN.USERS.USER_NAME_EXAMPLE' | translate}}</mat-hint>
+                        </mat-form-field>
+                    </p>
+                    <p>
+                        <mat-form-field appearance="standard">
+                            <mat-label>{{'ADMIN.USERS.DISPLAY_NAME' | translate}}</mat-label>
+                            <input matInput formControlName="displayName" #displayName>
+                            <mat-hint>{{'ADMIN.USERS.DISPLAY_NAME_EXAMPLE' | translate}}</mat-hint>
+                        </mat-form-field>
+                    </p>
+                    <p>
+                        <mat-form-field appearance="standard">
+                            <mat-label>{{'ADMIN.USERS.EMAIL' | translate}}</mat-label>
+                            <input matInput formControlName="email" type="email">
+                            <mat-hint>{{'ADMIN.USERS.EMAIL_EXAMPLE' | translate}}</mat-hint>
+                        </mat-form-field>
+                    </p>
+                </form>
+            </div>
+        </div>
+    </mat-card-content>
+    <mat-card-actions [align]="'end'">
+        <app-form-cancel-button [form]="form" [loading]="loading" (reset)="resetForm()"></app-form-cancel-button>
+        <app-form-save-button [form]="form" [loading]="loading" (save)="onSave()"></app-form-save-button>
+    </mat-card-actions>
+</mat-card>
