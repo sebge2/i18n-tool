@@ -74,6 +74,10 @@ export class EditProfileAvatarComponent implements ControlValueAccessor {
         this.value = {file: file.file, contentType: file.contentType};
     }
 
+    public onClick() {
+
+    }
+
     private doSetValue(value: AvatarFile) {
         this._value = value;
 
