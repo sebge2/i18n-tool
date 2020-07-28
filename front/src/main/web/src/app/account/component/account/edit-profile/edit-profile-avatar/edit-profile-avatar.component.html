@@ -1,7 +1,7 @@
 <div class="avatar-zone" appDragDrop [style.backgroundImage]="valueUrl" (onFileDropped)="onFileDropped($event)">
-    <button mat-fab color="primary" class="avatar-upload-button" (click)="onClick()">
+    <app-form-upload-button color="primary" class="avatar-upload-button" (click)="onClick()">
         <mat-icon>cloud_upload</mat-icon>
-    </button>
+    </app-form-upload-button>
 </div>
 <div class="avatar-displayName">
     <h1>{{currentUser?.displayName}}</h1>
