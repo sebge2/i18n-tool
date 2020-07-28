@@ -89,6 +89,8 @@ public interface UserManager {
 
     /**
      * Updates the {@link InternalUserEntity#getAvatar() avatar} of the current user.
+     *
+     * @param contentType can be <tt>null</tt>
      */
     Mono<UserEntity> updateUserAvatar(InputStream avatar, String contentType);
 

@@ -45,6 +45,11 @@ export class UserService {
             .pipe(map(dto => User.fromDto(dto)));
     }
 
+    public updateCurrentUserAvatar(file: { file: File, contentType: string }): Observable<any> {
+        return this.apiUserService
+            .updateUserAvatar(file.file);
+    }
+
     public deleteUser(id: string): Observable<any> {
         return this.apiUserService.deleteUserById(id);
     }
@@ -57,9 +62,8 @@ export class UserService {
         return this.getUsers()
             .pipe(map(users => {
                 const foundUser = users.find(user => user.id === id);
-                console.log(id, users, foundUser);
 
-                if(!foundUser){
+                if (!foundUser) {
                     throw Error(`There is no user with id [${id}].`);
                 }
 

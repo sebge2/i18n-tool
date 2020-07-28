@@ -17,6 +17,8 @@ import { CustomHttpUrlEncodingCodec }                        from '../encoder';
 
 import { Observable }                                        from 'rxjs';
 
+import { CurrentUserPasswordUpdateDto } from '../model/currentUserPasswordUpdateDto';
+import { CurrentUserPatchDto } from '../model/currentUserPatchDto';
 import { ErrorMessagesDto } from '../model/errorMessagesDto';
 import { InternalUserCreationDto } from '../model/internalUserCreationDto';
 import { UserDto } from '../model/userDto';
@@ -224,6 +226,100 @@ export class UserService {
     }
 
     /**
+     * Updates the current authenticated user.
+     * 
+     * @param body 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public updateCurrentUser(body: CurrentUserPatchDto, observe?: 'body', reportProgress?: boolean): Observable<UserDto>;
+    public updateCurrentUser(body: CurrentUserPatchDto, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<UserDto>>;
+    public updateCurrentUser(body: CurrentUserPatchDto, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<UserDto>>;
+    public updateCurrentUser(body: CurrentUserPatchDto, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        if (body === null || body === undefined) {
+            throw new Error('Required parameter body was null or undefined when calling updateCurrentUser.');
+        }
+
+        let headers = this.defaultHeaders;
+
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            '*/*'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected != undefined) {
+            headers = headers.set('Content-Type', httpContentTypeSelected);
+        }
+
+        return this.httpClient.request<UserDto>('patch',`${this.basePath}/api/user/current`,
+            {
+                body: body,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Updates the password of the current authenticated user.
+     * 
+     * @param body 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public updateCurrentUserPassword(body: CurrentUserPasswordUpdateDto, observe?: 'body', reportProgress?: boolean): Observable<UserDto>;
+    public updateCurrentUserPassword(body: CurrentUserPasswordUpdateDto, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<UserDto>>;
+    public updateCurrentUserPassword(body: CurrentUserPasswordUpdateDto, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<UserDto>>;
+    public updateCurrentUserPassword(body: CurrentUserPasswordUpdateDto, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        if (body === null || body === undefined) {
+            throw new Error('Required parameter body was null or undefined when calling updateCurrentUserPassword.');
+        }
+
+        let headers = this.defaultHeaders;
+
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            '*/*'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected != undefined) {
+            headers = headers.set('Content-Type', httpContentTypeSelected);
+        }
+
+        return this.httpClient.request<UserDto>('put',`${this.basePath}/api/user/current/password`,
+            {
+                body: body,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
      * Updates the user having the specified id.
      * 
      * @param body 
@@ -265,6 +361,51 @@ export class UserService {
         }
 
         return this.httpClient.request<UserDto>('patch',`${this.basePath}/api/user/${encodeURIComponent(String(id))}`,
+            {
+                body: body,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Updates the avatar of the current authenticated user.
+     * 
+     * @param body 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public updateUserAvatar(body?: Object, observe?: 'body', reportProgress?: boolean): Observable<UserDto>;
+    public updateUserAvatar(body?: Object, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<UserDto>>;
+    public updateUserAvatar(body?: Object, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<UserDto>>;
+    public updateUserAvatar(body?: Object, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+
+        let headers = this.defaultHeaders;
+
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            '*/*'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'image/jpeg',
+            'image/png'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected != undefined) {
+            headers = headers.set('Content-Type', httpContentTypeSelected);
+        }
+
+        return this.httpClient.request<UserDto>('put',`${this.basePath}/api/user/current/avatar`,
             {
                 body: body,
                 withCredentials: this.configuration.withCredentials,

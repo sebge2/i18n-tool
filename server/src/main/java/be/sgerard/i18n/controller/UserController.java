@@ -6,6 +6,8 @@ import be.sgerard.i18n.model.security.user.persistence.InternalUserEntity;
 import be.sgerard.i18n.service.user.UserManager;
 import be.sgerard.i18n.service.user.UserManagerImpl;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -20,6 +22,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.MimeType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -31,6 +34,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.io.IOException;
+import java.util.Optional;
 
 /**
  * Controller managing users.
@@ -139,12 +143,18 @@ public class UserController {
      * Updates the avatar of the current internal user.
      */
     @PutMapping(path = "/user/current/avatar", consumes = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE})
-    @Operation(summary = "Updates the avatar of the current authenticated user.")
+    @Operation(
+            summary = "Updates the avatar of the current authenticated user.",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(content = {
+                    @Content(mediaType = MediaType.IMAGE_JPEG_VALUE, schema = @Schema(type = "string", format = "binary")),
+                    @Content(mediaType = MediaType.IMAGE_PNG_VALUE, schema = @Schema(type = "string", format = "binary"))
+            })
+    )
     @Transactional
     public Mono<UserDto> updateUserAvatar(ServerHttpRequest request) {
         return DataBufferUtils.join(request.getBody())
                 .map(DataBuffer::asInputStream)
-                .flatMap(avatar -> userManager.updateUserAvatar(avatar, request.getHeaders().getContentType().getType()))
+                .flatMap(avatar -> userManager.updateUserAvatar(avatar, Optional.ofNullable(request.getHeaders().getContentType()).map(MimeType::getType).orElse(null)))
                 .map(entity -> UserDto.builder(entity).build());
     }
 
@@ -154,7 +164,7 @@ public class UserController {
     @Bean
     public RouterFunction<ServerResponse> getUserAvatar() {
         return RouterFunctions.route(
-                RequestPredicates.path("/api/user/{id}/avatar"),
+                RequestPredicates.GET("/api/user/{id}/avatar"),
                 request -> userManager
                         .findByIdOrDie(request.pathVariable("id"))
                         .flatMap(userEntity -> {

@@ -3,6 +3,8 @@ export * from './body1Dto';
 export * from './bodyDto';
 export * from './bundleFileDto';
 export * from './bundleKeyTranslationDto';
+export * from './currentUserPasswordUpdateDto';
+export * from './currentUserPatchDto';
 export * from './errorMessagesDto';
 export * from './eventObjectDto';
 export * from './gitHubPullRequestDto';
