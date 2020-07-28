@@ -17,7 +17,6 @@ import be.sgerard.i18n.service.security.auth.external.OAuthUserMapper;
 import be.sgerard.i18n.service.security.auth.external.OAuthUserRepositoryCredentialsHandler;
 import be.sgerard.i18n.service.security.session.repository.SessionRepository;
 import be.sgerard.i18n.service.user.UserManager;
-import be.sgerard.i18n.service.user.listener.UserListener;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.security.core.context.SecurityContext;
@@ -43,7 +42,7 @@ import static org.springframework.security.web.server.context.WebSessionServerSe
  * @author Sebastien Gerard
  */
 @Service
-public class AuthenticationManagerImpl implements AuthenticationManager, UserListener {
+public class AuthenticationManagerImpl implements AuthenticationManager {
 
     private final UserManager userManager;
     private final RepositoryManager repositoryManager;

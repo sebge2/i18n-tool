@@ -105,9 +105,9 @@ public class UserController {
     @PreAuthorize("hasRole('ADMIN')")
     @Transactional
     public Mono<UserDto> updateUser(@PathVariable String id,
-                                    @RequestBody UserPatchDto userUpdate) {
+                                    @RequestBody UserPatchDto patch) {
         return userManager
-                .update(id, userUpdate)
+                .update(id, patch)
                 .map(entity -> UserDto.builder(entity).build());
     }
 
@@ -117,9 +117,9 @@ public class UserController {
     @PatchMapping(path = "/user/current")
     @Operation(summary = "Updates the current authenticated user.")
     @Transactional
-    public Mono<UserDto> updateCurrentUser(@RequestBody CurrentUserPatchDto userUpdate) {
+    public Mono<UserDto> updateCurrentUser(@RequestBody CurrentUserPatchDto patch) {
         return userManager
-                .updateCurrent(userUpdate)
+                .updateCurrent(patch)
                 .map(entity -> UserDto.builder(entity).build());
     }
 
@@ -129,9 +129,9 @@ public class UserController {
     @PutMapping(path = "/user/current/password")
     @Operation(summary = "Updates the password of the current authenticated user.")
     @Transactional
-    public Mono<UserDto> updateCurrentUserPassword(@RequestBody CurrentUserPasswordUpdateDto passwordUpdate) {
+    public Mono<UserDto> updateCurrentUserPassword(@RequestBody CurrentUserPasswordUpdateDto update) {
         return userManager
-                .updateCurrentPassword(passwordUpdate)
+                .updateCurrentPassword(update)
                 .map(entity -> UserDto.builder(entity).build());
     }
 
@@ -144,7 +144,7 @@ public class UserController {
     public Mono<UserDto> updateUserAvatar(ServerHttpRequest request) {
         return DataBufferUtils.join(request.getBody())
                 .map(DataBuffer::asInputStream)
-                .flatMap(userManager::updateUserAvatar)
+                .flatMap(avatar -> userManager.updateUserAvatar(avatar, request.getHeaders().getContentType().getType()))
                 .map(entity -> UserDto.builder(entity).build());
     }
 

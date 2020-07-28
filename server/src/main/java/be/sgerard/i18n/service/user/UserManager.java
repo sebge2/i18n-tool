@@ -90,12 +90,12 @@ public interface UserManager {
     /**
      * Updates the {@link InternalUserEntity#getAvatar() avatar} of the current user.
      */
-    Mono<UserEntity> updateUserAvatar(InputStream avatar);
+    Mono<UserEntity> updateUserAvatar(InputStream avatar, String contentType);
 
     /**
      * Updates the {@link InternalUserEntity#getPassword() password} of the current user.
      */
-    Mono<UserEntity> updateCurrentPassword(CurrentUserPasswordUpdateDto passwordUpdate);
+    Mono<UserEntity> updateCurrentPassword(CurrentUserPasswordUpdateDto update);
 
     /**
      * Deletes the {@link UserEntity user} having the specified id.
