@@ -15,6 +15,7 @@ import {FormCancelButtonComponent} from "./component/form-cancel-button/form-can
 import {FormSaveButtonComponent} from "./component/form-save-button/form-save-button.component";
 import {FormDeleteButtonComponent} from "./component/form-delete-button/form-delete-button.component";
 import {DragDropDirective} from "./directive/drag-drop.directive";
+import {FormUploadButtonComponent} from "./component/form-upload-button/form-upload-button.component";
 
 @NgModule({
     declarations: [
@@ -24,6 +25,7 @@ import {DragDropDirective} from "./directive/drag-drop.directive";
         FormCancelButtonComponent,
         FormSaveButtonComponent,
         FormDeleteButtonComponent,
+        FormUploadButtonComponent,
 
         WorkspaceIconPipe,
         WorkspaceIconCssPipe,
@@ -48,6 +50,7 @@ import {DragDropDirective} from "./directive/drag-drop.directive";
         FormCancelButtonComponent,
         FormSaveButtonComponent,
         FormDeleteButtonComponent,
+        FormUploadButtonComponent,
 
         WorkspaceIconPipe,
         WorkspaceIconCssPipe,
