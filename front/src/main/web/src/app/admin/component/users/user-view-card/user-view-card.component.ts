@@ -128,6 +128,7 @@ export class UserViewCardComponent implements OnInit {
         }
 
         this.form.markAsPristine();
+        this.form.markAsUntouched();
     }
 
     public onSave() {

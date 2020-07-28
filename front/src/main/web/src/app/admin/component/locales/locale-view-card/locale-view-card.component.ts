@@ -96,6 +96,7 @@ export class LocaleViewCardComponent implements OnInit {
         this.form.controls['icon'].setValue(this.locale.icon);
 
         this.form.markAsPristine();
+        this.form.markAsUntouched();
     }
 
     public onSave() {
