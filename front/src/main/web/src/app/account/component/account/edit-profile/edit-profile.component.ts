@@ -3,7 +3,6 @@ import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {AuthenticationService} from "../../../../core/auth/service/authentication.service";
 import {User} from "../../../../core/auth/model/user.model";
 import {Subject} from "rxjs";
-import {UserService} from "../../../../core/auth/service/user.service";
 
 @Component({
     selector: 'app-edit-profile',
@@ -14,18 +13,18 @@ export class EditProfileComponent implements OnInit, OnDestroy {
 
     public readonly form: FormGroup;
     public loading = false;
+    public currentUser: User;
 
-    private currentUser: User;
     private readonly _destroyed$ = new Subject();
 
     constructor(private formBuilder: FormBuilder,
-                private authenticationService: AuthenticationService,
-                private userService: UserService) {
+                private authenticationService: AuthenticationService) {
         this.form = this.formBuilder.group(
             {
                 username: this.formBuilder.control('', [Validators.required]),
                 displayName: this.formBuilder.control('', [Validators.required]),
                 email: this.formBuilder.control('', [Validators.required, Validators.email]),
+                avatar: this.formBuilder.control(null, []),
             }
         );
     }
@@ -51,6 +50,7 @@ export class EditProfileComponent implements OnInit, OnDestroy {
         this.form.controls['username'].setValue(this.currentUser.username);
         this.form.controls['displayName'].setValue(this.currentUser.displayName);
         this.form.controls['email'].setValue(this.currentUser.email);
+        this.form.controls['avatar'].setValue(null);
 
         this.form.markAsPristine();
         this.form.markAsUntouched();

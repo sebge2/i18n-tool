@@ -1,9 +1,9 @@
 <mat-card class="container">
     <mat-card-content>
-        <div fxLayout fxLayoutAlign="start start" fxLayoutGap="30px">
-            <app-edit-profile-avatar class="profile-avatar"></app-edit-profile-avatar>
-            <div>
-                <form [formGroup]="form" (ngSubmit)="onSave()" autocomplete="off">
+        <form [formGroup]="form" (ngSubmit)="onSave()" autocomplete="off">
+            <div fxLayout fxLayoutAlign="start start" fxLayoutGap="30px">
+                <app-edit-profile-avatar class="profile-avatar" formControlName="avatar" [currentUser]="currentUser"></app-edit-profile-avatar>
+                <div>
                     <p>
                         <mat-form-field appearance="standard">
                             <mat-label>{{'ADMIN.USERS.USER_NAME' | translate}}</mat-label>
@@ -25,9 +25,9 @@
                             <mat-hint>{{'ADMIN.USERS.EMAIL_EXAMPLE' | translate}}</mat-hint>
                         </mat-form-field>
                     </p>
-                </form>
+                </div>
             </div>
-        </div>
+        </form>
     </mat-card-content>
     <mat-card-actions [align]="'end'">
         <app-form-cancel-button [form]="form" [loading]="loading" (reset)="resetForm()"></app-form-cancel-button>

@@ -1,51 +1,90 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, Input} from '@angular/core';
 import {User} from "../../../../../core/auth/model/user.model";
-import {Subject} from "rxjs";
-import {AuthenticationService} from "../../../../../core/auth/service/authentication.service";
 import {DroppedFile} from "../../../../../core/shared/directive/drag-drop.directive";
+import {ControlValueAccessor, NG_VALUE_ACCESSOR} from "@angular/forms";
+
+export interface AvatarFile {
+    file: File;
+    contentType: string;
+}
 
 @Component({
     selector: 'app-edit-profile-avatar',
     templateUrl: './edit-profile-avatar.component.html',
-    styleUrls: ['./edit-profile-avatar.component.css']
+    styleUrls: ['./edit-profile-avatar.component.css'],
+    providers: [
+        {
+            provide: NG_VALUE_ACCESSOR,
+            useExisting: EditProfileAvatarComponent,
+            multi: true,
+        },
+    ],
 })
-export class EditProfileAvatarComponent implements OnInit, OnDestroy {
+export class EditProfileAvatarComponent implements ControlValueAccessor {
 
-    public currentUser: User;
+    @Input() public currentUser: User;
 
-    public _currentUserAvatar: string;
-    public _uploadUserAvatar: any;
+    private _value: AvatarFile;
+    private _valueUrl: string;
 
-    private readonly _destroyed$ = new Subject();
-
-    constructor(private authenticationService: AuthenticationService) {
+    constructor() {
     }
 
-    public ngOnInit() {
-        this.authenticationService.currentUser()
-            .subscribe(currentUser => {
-                this.currentUser = currentUser;
-
-                this._currentUserAvatar = (this.currentUser != null)
-                    ? `url('/api/user/${this.currentUser.id}/avatar')`
-                    : null;
-            });
+    public get valueUrl(): string {
+        if (this._valueUrl) {
+            return this._valueUrl;
+        } else if (this.currentUser) {
+            return `url('/api/user/${this.currentUser.id}/avatar')`;
+        } else {
+            return null;
+        }
     }
 
-    public ngOnDestroy(): void {
-        this._destroyed$.next();
-        this._destroyed$.complete();
+    get value(): AvatarFile {
+        return this._value;
     }
 
-    public getAvatarUrl(): any {
-        return this._uploadUserAvatar ? this._uploadUserAvatar : this._currentUserAvatar;
+    set value(value: AvatarFile) {
+        if (value !== this._value) {
+            this.doSetValue(value);
+
+            this.onChange(value);
+        }
+    }
+
+    public onChange = (_) => {
+    };
+
+    public onTouched = () => {
+    };
+
+    public writeValue(value: AvatarFile): void {
+        this.doSetValue(value);
+    }
+
+    public registerOnChange(fn: any): void {
+        this.onChange = fn;
+    }
+
+    public registerOnTouched(fn: any): void {
+        this.onTouched = fn;
     }
 
     public onFileDropped(file: DroppedFile) {
-        const reader = new FileReader();
-        reader.readAsDataURL(file.file);
-        reader.onload = (_event) => {
-            this._uploadUserAvatar = `url(${reader.result})`;
-        };
+        this.value = {file: file.file, contentType: file.contentType};
+    }
+
+    private doSetValue(value: AvatarFile) {
+        this._value = value;
+
+        if (value) {
+            const reader = new FileReader();
+            reader.readAsDataURL(value.file);
+            reader.onload = (_event) => {
+                this._valueUrl = `url(${reader.result})`;
+            };
+        } else {
+            this._valueUrl = null;
+        }
     }
 }
