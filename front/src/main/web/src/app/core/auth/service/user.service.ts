@@ -5,7 +5,7 @@ import {NotificationService} from "../../notification/service/notification.servi
 import {Events} from "../../event/model/events.model";
 import {catchError, map} from "rxjs/operators";
 import {EventService} from "../../event/service/event.service";
-import {InternalUserCreationDto, UserPatchDto, UserService as ApiUserService} from "../../../api";
+import {CurrentUserPatchDto, InternalUserCreationDto, UserPatchDto, UserService as ApiUserService} from "../../../api";
 import {synchronizedCollection} from "../../shared/utils/synchronized-observable-utils";
 
 @Injectable({
@@ -42,6 +42,12 @@ export class UserService {
     public updateUser(id: string, update: UserPatchDto): Observable<User> {
         return this.apiUserService
             .updateUser(update, id)
+            .pipe(map(dto => User.fromDto(dto)));
+    }
+
+    public updateCurrentUser(update: CurrentUserPatchDto): Observable<User> {
+        return this.apiUserService
+            .updateCurrentUser(update)
             .pipe(map(dto => User.fromDto(dto)));
     }
 
