@@ -1,6 +1,8 @@
 package be.sgerard.i18n.service.user.listener;
 
 import be.sgerard.i18n.model.security.user.ExternalUser;
+import be.sgerard.i18n.model.security.user.dto.CurrentUserPasswordUpdateDto;
+import be.sgerard.i18n.model.security.user.dto.CurrentUserPatchDto;
 import be.sgerard.i18n.model.security.user.dto.InternalUserCreationDto;
 import be.sgerard.i18n.model.security.user.dto.UserPatchDto;
 import be.sgerard.i18n.model.security.user.persistence.UserEntity;
@@ -60,6 +62,33 @@ public class CompositeUserListener implements UserListener {
         return Flux
                 .fromIterable(listeners)
                 .flatMap(listener -> listener.beforeUpdate(user, patch))
+                .reduce(ValidationResult::merge)
+                .switchIfEmpty(Mono.just(ValidationResult.EMPTY));
+    }
+
+    @Override
+    public Mono<ValidationResult> beforeUpdate(UserEntity user, CurrentUserPatchDto patch) {
+        return Flux
+                .fromIterable(listeners)
+                .flatMap(listener -> listener.beforeUpdate(user, patch))
+                .reduce(ValidationResult::merge)
+                .switchIfEmpty(Mono.just(ValidationResult.EMPTY));
+    }
+
+    @Override
+    public Mono<ValidationResult> beforeUpdatePassword(UserEntity user, CurrentUserPasswordUpdateDto update) {
+        return Flux
+                .fromIterable(listeners)
+                .flatMap(listener -> listener.beforeUpdatePassword(user, update))
+                .reduce(ValidationResult::merge)
+                .switchIfEmpty(Mono.just(ValidationResult.EMPTY));
+    }
+
+    @Override
+    public Mono<ValidationResult> beforeUpdateAvatar(UserEntity user) {
+        return Flux
+                .fromIterable(listeners)
+                .flatMap(listener -> listener.beforeUpdateAvatar(user))
                 .reduce(ValidationResult::merge)
                 .switchIfEmpty(Mono.just(ValidationResult.EMPTY));
     }
