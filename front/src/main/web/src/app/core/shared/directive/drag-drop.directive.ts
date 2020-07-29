@@ -1,4 +1,4 @@
-import {Directive, EventEmitter, HostBinding, HostListener, Output} from '@angular/core';
+import {Directive, EventEmitter, HostBinding, HostListener, Input, Output} from '@angular/core';
 
 export class DroppedFile {
 
@@ -21,12 +21,31 @@ export class DragDropDirective {
 
     @HostBinding('class.dragAndDropZone') private dragAndDropZoneClass = true;
     @HostBinding('class.dragAndDropZoneOver') private dragAndDropZoneOverClass = false;
+    @HostBinding('class.dragAndDropZoneNotAllowed') private dragAndDropZoneNotAllowed = false;
 
-    @HostListener('dragover', ['$event']) onDragOver(evt) {
+    private _disabled: boolean;
+
+    constructor() {
+    }
+
+    @Input()
+    public get disabled(): boolean {
+        return this._disabled;
+    }
+
+    public set disabled(disabled: boolean) {
+        this._disabled = disabled;
+        this.dragAndDropZoneNotAllowed = disabled;
+    }
+
+    @HostListener('dragover', ['$event'])
+    public onDragOver(evt) {
         evt.preventDefault();
         evt.stopPropagation();
 
-        this.dragAndDropZoneOverClass = true;
+        if (!this.disabled) {
+            this.dragAndDropZoneOverClass = true;
+        }
     }
 
     @HostListener('dragleave', ['$event'])
@@ -34,7 +53,9 @@ export class DragDropDirective {
         evt.preventDefault();
         evt.stopPropagation();
 
-        this.dragAndDropZoneOverClass = false;
+        if (!this.disabled) {
+            this.dragAndDropZoneOverClass = false;
+        }
     }
 
     @HostListener('drop', ['$event'])
@@ -42,16 +63,18 @@ export class DragDropDirective {
         evt.preventDefault();
         evt.stopPropagation();
 
-        this.dragAndDropZoneOverClass = false;
+        if (!this.disabled) {
+            this.dragAndDropZoneOverClass = false;
 
-        const dataTransfer: DataTransfer = evt.dataTransfer;
+            const dataTransfer: DataTransfer = evt.dataTransfer;
 
-        if (evt.dataTransfer.files.length == 1) {
-            this.onFileDropped.emit(this.createDroppedFile(dataTransfer.files[0]))
+            if (evt.dataTransfer.files.length == 1) {
+                this.onFileDropped.emit(DragDropDirective.createDroppedFile(dataTransfer.files[0]))
+            }
         }
     }
 
-    private createDroppedFile(file: File): DroppedFile {
+    private static createDroppedFile(file: File): DroppedFile {
         let contentType = file.type;
 
         for (const extension of FILE_TYPES.keys()) {
