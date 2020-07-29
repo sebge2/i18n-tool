@@ -55,7 +55,7 @@ export class AuthenticationService {
             );
 
         this._currentUser$ = this.currentAuthenticatedUser()
-            .pipe(flatMap(currentUser => currentUser ? this.userService.getUserById(currentUser.user.id) : null));
+            .pipe(flatMap(currentUser => currentUser ? this.userService.getCurrentUser() : null));
     }
 
     public currentAuthenticatedUser(): Observable<AuthenticatedUser> {
@@ -102,7 +102,7 @@ export class AuthenticationService {
             .get('/auth/logout')
             .toPromise()
             .then((_) => {
-                console.debug('Logout succeeded, send next user.', null);
+                console.debug('Logout succeeded, send next user.');
 
                 this._user$.next(null);
             })

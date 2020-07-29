@@ -58,16 +58,9 @@ export class UserService {
         return this._users;
     }
 
-    public getUserById(id: string): Observable<User> {
-        return this.getUsers()
-            .pipe(map(users => {
-                const foundUser = users.find(user => user.id === id);
-
-                if (!foundUser) {
-                    throw Error(`There is no user with id [${id}].`);
-                }
-
-                return foundUser;
-            }));
+    public getCurrentUser(): Observable<User> {
+        return this.apiUserService
+            .getCurrent()
+            .pipe(map(user => User.fromDto(user)));
     }
 }

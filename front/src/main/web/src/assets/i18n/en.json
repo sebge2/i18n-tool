@@ -1,34 +1,34 @@
 {
-  "SHARED" : {
-    "WORKSPACES_TITLE" : "Workspaces",
-    "WORKSPACE_LABEL" : "Workspace:",
-    "CANCEL_ACTION" : "Cancel",
-    "LOCALES_LABEL" : "Locales:",
-    "REPOSITORY_TITLE" : "Repository",
+  "SHARED": {
+    "WORKSPACES_TITLE": "Workspaces",
+    "WORKSPACE_LABEL": "Workspace:",
+    "CANCEL_ACTION": "Cancel",
+    "LOCALES_LABEL": "Locales:",
+    "REPOSITORY_TITLE": "Repository",
     "USERS_TITLE": "Users"
   },
-  "TRANSLATIONS" : {
-    "SEARCH_BAR" : {
-      "SEARCH_BUTTON" : "Search",
-      "CRITERION_ALL" : "All",
-      "TITLE" : "Search {criterion, select, ALL{for <b>all</b> translations} MISSING_TRANSLATIONS{for <b>missing</b> translations} TRANSLATIONS_CURRENT_USER_UPDATED{for translations that <b>I have updated</b>} UPDATED_TRANSLATIONS{for <b>updated</b> translations} other{}} {workspace, select, null{} other {on <b>{workspace}</b> branch}} {locales, select, true{for <b>all locales</b>} other{for locales {locales}}}",
-      "CRITERION_USER_UPDATED" : "I have updated",
-      "CRITERION_UPDATED" : "Someone updated it",
-      "CRITERION_MISSING" : "Missing"
+  "TRANSLATIONS": {
+    "SEARCH_BAR": {
+      "SEARCH_BUTTON": "Search",
+      "CRITERION_ALL": "All",
+      "TITLE": "Search {criterion, select, ALL{for <b>all</b> translations} MISSING_TRANSLATIONS{for <b>missing</b> translations} TRANSLATIONS_CURRENT_USER_UPDATED{for translations that <b>I have updated</b>} UPDATED_TRANSLATIONS{for <b>updated</b> translations} other{}} {workspace, select, null{} other {on <b>{workspace}</b> branch}} {locales, select, true{for <b>all locales</b>} other{for locales {locales}}}",
+      "CRITERION_USER_UPDATED": "I have updated",
+      "CRITERION_UPDATED": "Someone updated it",
+      "CRITERION_MISSING": "Missing"
     },
-    "PLEASE_WAIT" : "The workspace is initializing, please wait.",
-    "START_REVIEW" : {
-      "START_ACTION" : "Start",
-      "COMMENT" : "Comment",
-      "TITLE" : "Start a review"
+    "PLEASE_WAIT": "The workspace is initializing, please wait.",
+    "START_REVIEW": {
+      "START_ACTION": "Start",
+      "COMMENT": "Comment",
+      "TITLE": "Start a review"
     },
-    "INITIALIZING_ALT" : "Initializing workspace",
-    "TABLE" : {
-      "NO_RESULT" : "There are no result, please modify your criteria.",
-      "KEY_HEADER" : "Key",
-      "UNSAVED" : "Your changes are not saved yet"
+    "INITIALIZING_ALT": "Initializing workspace",
+    "TABLE": {
+      "NO_RESULT": "There are no result, please modify your criteria.",
+      "KEY_HEADER": "Key",
+      "UNSAVED": "Your changes are not saved yet"
     },
-    "START_REVIEW_BUTTON" : "Publish and ask a review"
+    "START_REVIEW_BUTTON": "Publish and ask a review"
   },
   "PREFERENCES": {
     "TITLE": "My Preferences",
@@ -50,7 +50,7 @@
     "USERS_LABEL": "Users",
     "TRANSLATIONS_LABEL": "Translations"
   },
-  "ADMIN" : {
+  "ADMIN": {
     "LOCALES": {
       "DISPLAY_NAME": "Display Name",
       "DISPLAY_NAME_EXAMPLE": "Example: English.",
@@ -81,7 +81,7 @@
       "ADMIN_ROLE": "Privilege",
       "ROLES": {
         "NO_PRIVILEGE": "No privilege",
-        "ADMIN_PRIVILEGE" : "Administrator"
+        "ADMIN_PRIVILEGE": "Administrator"
       },
       "ERROR": {
         "SAVE": "Error while saving user.",
@@ -89,14 +89,28 @@
         "DELETE": "Error while deleting user."
       }
     },
-    "WORKSPACES" : {
-      "CONFIRM_DELETION" : {
-        "ERASE_ACTION" : "Erase",
-        "EXPLAIN" : "Please confirm the <b>erasing</b> of <b>{workspace}</b> (all modifications will be lost).",
-        "PLEASE" : "Please fill the name of the workspace to confirm:",
-        "TITLE" : "Confirm Erasing"
+    "WORKSPACES": {
+      "CONFIRM_DELETION": {
+        "ERASE_ACTION": "Erase",
+        "EXPLAIN": "Please confirm the <b>erasing</b> of <b>{workspace}</b> (all modifications will be lost).",
+        "PLEASE": "Please fill the name of the workspace to confirm:",
+        "TITLE": "Confirm Erasing"
       },
-      "REFRESH_ACTION" : "Refresh"
+      "REFRESH_ACTION": "Refresh"
+    }
+  },
+  "ACCOUNT": {
+    "PROFILE": {
+      "LABEL": "Profile"
+    },
+    "PREFERENCES": {
+      "LABEL": "Preferences"
+    },
+    "SECURITY": {
+      "LABEL": "Security"
+    },
+    "ERROR": {
+      "SAVE_PROFILE": "Error while saving profile."
     }
   }
 }
