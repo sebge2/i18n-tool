@@ -19,7 +19,10 @@ import static java.util.Collections.emptyList;
 @Component
 public class UserRoleValidationListener implements UserListener {
 
-    public static final String ROLE_NOT_ASSIGNABLE = "validation.user-role-not-assignable";
+    /**
+     * Validation message key specifying that the specified role cannot be assigned.
+     */
+    public static final String ROLE_NOT_ASSIGNABLE = "validation.user.role-not-assignable";
 
     public UserRoleValidationListener() {
     }

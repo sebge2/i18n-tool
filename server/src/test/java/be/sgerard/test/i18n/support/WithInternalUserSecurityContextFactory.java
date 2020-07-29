@@ -61,8 +61,8 @@ public class WithInternalUserSecurityContextFactory implements WithSecurityConte
                 .createUser(InternalUserCreationDto.builder()
                         .username(username)
                         .roles(roles)
-                        .password("")
-                        .email(username + "@acme.com")
+                        .password(user.password())
+                        .email(user.email())
                         .build()
                 )
                 .block();

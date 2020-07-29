@@ -1,11 +1,13 @@
 package be.sgerard.i18n.controller;
 
+import be.sgerard.i18n.model.security.user.dto.CurrentUserPatchDto;
 import be.sgerard.i18n.model.security.user.dto.UserDto;
 import be.sgerard.i18n.model.security.user.dto.UserPatchDto;
 import be.sgerard.i18n.service.security.UserRole;
 import be.sgerard.i18n.service.user.UserManager;
 import be.sgerard.test.i18n.support.TransactionalReactiveTest;
-import be.sgerard.test.i18n.support.WithAdminUser;
+import be.sgerard.test.i18n.support.WithJaneDoeAdminUser;
+import be.sgerard.test.i18n.support.WithJohnDoeSimpleUser;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 
@@ -19,7 +21,7 @@ public class UserControllerTest extends AbstractControllerTest {
 
     @Test
     @TransactionalReactiveTest
-    @WithAdminUser
+    @WithJaneDoeAdminUser
     public void findAllUsers() {
         final UserDto johnDoe = user.createUser(userJohnDoeCreation().build());
 
@@ -36,7 +38,7 @@ public class UserControllerTest extends AbstractControllerTest {
 
     @Test
     @TransactionalReactiveTest
-    @WithAdminUser
+    @WithJaneDoeAdminUser
     public void getUserById() {
         final UserDto johnDoe = user.createUser(userJohnDoeCreation().build());
 
@@ -55,7 +57,7 @@ public class UserControllerTest extends AbstractControllerTest {
 
     @Test
     @TransactionalReactiveTest
-    @WithAdminUser
+    @WithJaneDoeAdminUser
     public void createSameUserName() {
         user.createUser(userJohnDoeCreation().build());
 
@@ -72,7 +74,7 @@ public class UserControllerTest extends AbstractControllerTest {
 
     @Test
     @TransactionalReactiveTest
-    @WithAdminUser
+    @WithJaneDoeAdminUser
     public void updateUser() {
         final UserDto johnDoe = user.createUser(userJohnDoeCreation().build());
 
@@ -99,7 +101,7 @@ public class UserControllerTest extends AbstractControllerTest {
 
     @Test
     @TransactionalReactiveTest
-    @WithAdminUser
+    @WithJaneDoeAdminUser
     public void updateUserRoleNotAssignable() {
         final UserDto johnDoe = user.createUser(userJohnDoeCreation().build());
 
@@ -120,7 +122,34 @@ public class UserControllerTest extends AbstractControllerTest {
 
     @Test
     @TransactionalReactiveTest
-    @WithAdminUser
+    @WithJohnDoeSimpleUser
+    public void updateCurrentUser() {
+        webClient
+                .patch()
+                .uri("/api/user/current")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(
+                        CurrentUserPatchDto.builder()
+                                .username("john.doe.update")
+                                .displayName("John Doe Updated")
+                                .email("john.doe@warner.com")
+                                .build()
+                )
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.username").isEqualTo("john.doe.update")
+                .jsonPath("$.displayName").isEqualTo("John Doe Updated")
+                .jsonPath("$.email").isEqualTo("john.doe@warner.com");
+    }
+
+    // TODO update current user admin
+    // TODO update current user password
+    // TODO update current user avatar
+
+    @Test
+    @TransactionalReactiveTest
+    @WithJaneDoeAdminUser
     public void deleteUser() {
         final UserDto johnDoe = user.createUser(userJohnDoeCreation().build());
 

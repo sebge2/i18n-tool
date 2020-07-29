@@ -4,7 +4,7 @@ import be.sgerard.i18n.model.ToolLocale;
 import be.sgerard.i18n.model.i18n.dto.TranslationLocaleDto;
 import be.sgerard.i18n.model.security.user.dto.UserPreferencesDto;
 import be.sgerard.test.i18n.support.TransactionalReactiveTest;
-import be.sgerard.test.i18n.support.WithAdminUser;
+import be.sgerard.test.i18n.support.WithJaneDoeAdminUser;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 
@@ -18,7 +18,7 @@ public class UserPreferencesControllerTest extends AbstractControllerTest {
 
     @Test
     @TransactionalReactiveTest
-    @WithAdminUser
+    @WithJaneDoeAdminUser
     public void getUserPreferences() {
         webClient
                 .get()
@@ -29,7 +29,7 @@ public class UserPreferencesControllerTest extends AbstractControllerTest {
 
     @Test
     @TransactionalReactiveTest
-    @WithAdminUser
+    @WithJaneDoeAdminUser
     public void updateUserPreferences() {
         final TranslationLocaleDto frenchLocale = locale.createLocale(frLocaleCreationDto()).get();
 
@@ -65,7 +65,7 @@ public class UserPreferencesControllerTest extends AbstractControllerTest {
 
     @Test
     @TransactionalReactiveTest
-    @WithAdminUser
+    @WithJaneDoeAdminUser
     public void updateUserPreferencesMissingLocale() {
         try {
             webClient
@@ -89,7 +89,7 @@ public class UserPreferencesControllerTest extends AbstractControllerTest {
 
     @Test
     @TransactionalReactiveTest
-    @WithAdminUser
+    @WithJaneDoeAdminUser
     public void getUserPreferencesAfterLocaleDeletion() {
         final TranslationLocaleDto frenchLocale = locale.createLocale(frLocaleCreationDto()).get();
 

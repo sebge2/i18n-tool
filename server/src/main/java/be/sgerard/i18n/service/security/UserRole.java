@@ -47,7 +47,6 @@ public enum UserRole {
     /**
      * Returns whether this role can be assigned by a user, or if it's a technical one.
      */
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean isAssignableByEndUser() {
         return assignableByEndUser;
     }

@@ -2,17 +2,23 @@ package be.sgerard.i18n.service.user;
 
 import be.sgerard.i18n.configuration.AppProperties;
 import be.sgerard.i18n.model.security.user.ExternalUser;
+import be.sgerard.i18n.model.security.user.dto.CurrentUserPasswordUpdateDto;
+import be.sgerard.i18n.model.security.user.dto.CurrentUserPatchDto;
 import be.sgerard.i18n.model.security.user.dto.InternalUserCreationDto;
 import be.sgerard.i18n.model.security.user.dto.UserPatchDto;
 import be.sgerard.i18n.model.security.user.persistence.ExternalUserEntity;
 import be.sgerard.i18n.model.security.user.persistence.InternalUserEntity;
 import be.sgerard.i18n.model.security.user.persistence.UserEntity;
+import be.sgerard.i18n.model.validation.ValidationMessage;
+import be.sgerard.i18n.model.validation.ValidationResult;
 import be.sgerard.i18n.repository.user.ExternalUserRepository;
 import be.sgerard.i18n.repository.user.InternalUserRepository;
 import be.sgerard.i18n.repository.user.UserRepository;
 import be.sgerard.i18n.service.ValidationException;
 import be.sgerard.i18n.service.security.UserRole;
+import be.sgerard.i18n.service.security.auth.AuthenticationManager;
 import be.sgerard.i18n.service.user.listener.UserListener;
+import net.coobird.thumbnailator.Thumbnails;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +29,9 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import javax.annotation.PostConstruct;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -41,11 +49,22 @@ public class UserManagerImpl implements UserManager {
      */
     public static final String ADMIN_AVATAR = "/images/admin-icon.png";
 
+    /**
+     * Avatar size (height and width).
+     */
+    public static final int AVATAR_SIZE = 400;
+
+    /**
+     * Validation message specifying that the user's password does not match the existing one.
+     */
+    public static final String VALIDATION_USER_PASSWORD_NOT_MATCH = "validation.user.password-not-match";
+
     private static final Logger logger = LoggerFactory.getLogger(UserManagerImpl.class);
 
     private final UserRepository userRepository;
     private final InternalUserRepository internalUserRepository;
     private final ExternalUserRepository externalUserRepository;
+    private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
     private final UserListener listener;
     private final AppProperties appProperties;
@@ -53,12 +72,14 @@ public class UserManagerImpl implements UserManager {
     public UserManagerImpl(UserRepository userRepository,
                            InternalUserRepository internalUserRepository,
                            ExternalUserRepository externalUserRepository,
+                           AuthenticationManager authenticationManager,
                            PasswordEncoder passwordEncoder,
                            UserListener listener,
                            AppProperties appProperties) {
         this.userRepository = userRepository;
         this.internalUserRepository = internalUserRepository;
         this.externalUserRepository = externalUserRepository;
+        this.authenticationManager = authenticationManager;
         this.passwordEncoder = passwordEncoder;
         this.listener = listener;
         this.appProperties = appProperties;
@@ -74,6 +95,14 @@ public class UserManagerImpl implements UserManager {
     @Transactional(readOnly = true)
     public Flux<UserEntity> findAll() {
         return userRepository.findAll();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Mono<UserEntity> getCurrentOrDie() {
+        return authenticationManager
+                .getCurrentUserOrDie()
+                .flatMap(authenticatedUser -> findByIdOrDie(authenticatedUser.getUser().getId()));
     }
 
     @Override
@@ -135,6 +164,18 @@ public class UserManagerImpl implements UserManager {
 
     @Override
     @Transactional
+    public Mono<UserEntity> update(UserEntity user) {
+        return userRepository
+                .save(user)
+                .flatMap(u ->
+                        listener
+                                .onUpdate(u)
+                                .thenReturn(u)
+                );
+    }
+
+    @Override
+    @Transactional
     public Mono<UserEntity> update(String id, UserPatchDto patch) {
         return findById(id)
                 .flatMap(user ->
@@ -161,14 +202,78 @@ public class UserManagerImpl implements UserManager {
 
     @Override
     @Transactional
-    public Mono<UserEntity> update(UserEntity user) {
-        return userRepository
-                .save(user)
-                .flatMap(u ->
+    public Mono<UserEntity> updateCurrent(CurrentUserPatchDto patch) {
+        return getCurrentOrDie()
+                .flatMap(user ->
                         listener
-                                .onUpdate(u)
-                                .thenReturn(u)
+                                .beforeUpdate(user, patch)
+                                .map(validationResult -> {
+                                    ValidationException.throwIfFailed(validationResult);
+
+                                    return user;
+                                })
+                )
+                .doOnNext(userEntity -> {
+                    if (userEntity instanceof InternalUserEntity) {
+                        patch.getUsername().ifPresent(((InternalUserEntity) userEntity)::setUsername);
+                        patch.getDisplayName().ifPresent(((InternalUserEntity) userEntity)::setDisplayName);
+                        patch.getEmail().ifPresent(((InternalUserEntity) userEntity)::setEmail);
+                    }
+                })
+                .flatMap(this::update);
+    }
+
+    @Override
+    @Transactional
+    public Mono<UserEntity> updateUserAvatar(InputStream avatarStream, String contentType) {
+        return getCurrentOrDie()
+                .flatMap(user ->
+                        listener
+                                .beforeUpdateAvatar(user)
+                                .map(validationResult -> {
+                                    ValidationException.throwIfFailed(validationResult);
+
+                                    return user;
+                                })
+                )
+                .flatMap(userEntity ->
+                        convertToPngThumbnail(avatarStream)
+                                .map(avatar -> {
+                                    if (userEntity instanceof InternalUserEntity) {
+                                        ((InternalUserEntity) userEntity).setAvatar(avatar);
+                                    }
+
+                                    return userEntity;
+                                })
+                                .flatMap(this::update)
                 );
+    }
+
+    @Override
+    @Transactional
+    public Mono<UserEntity> updateCurrentPassword(CurrentUserPasswordUpdateDto update) {
+        return getCurrentOrDie()
+                .flatMap(user ->
+                        listener
+                                .beforeUpdatePassword(user, update)
+                                .map(validationResult -> {
+                                    ValidationException.throwIfFailed(validationResult);
+
+                                    return user;
+                                })
+                )
+                .map(userEntity -> {
+                    if (userEntity instanceof InternalUserEntity) {
+                        final InternalUserEntity internalUserEntity = (InternalUserEntity) userEntity;
+
+                        checkPassword(internalUserEntity.getPassword(), update.getCurrentPassword());
+
+                        internalUserEntity.setPassword(passwordEncoder.encode(update.getNewPassword()));
+                    }
+
+                    return userEntity;
+                })
+                .flatMap(this::update);
     }
 
     @Override
@@ -245,5 +350,36 @@ public class UserManagerImpl implements UserManager {
                             .flatMap(internalUserRepository::save);
                 })
                 .subscribe();
+    }
+
+    /**
+     * Checks that the existing password match.
+     */
+    private void checkPassword(String currentPassword, String providedPassword) {
+        if(!passwordEncoder.matches(providedPassword, currentPassword)){
+            throw new ValidationException(
+                    ValidationResult.builder()
+                            .messages(new ValidationMessage(VALIDATION_USER_PASSWORD_NOT_MATCH))
+                            .build()
+            );
+        }
+    }
+
+    /**
+     * Converts the specified avatar image to a PNG avatar file.
+     */
+    private Mono<byte[]> convertToPngThumbnail(InputStream avatar) {
+        final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+        try {
+            Thumbnails.of(avatar)
+                    .size(AVATAR_SIZE, AVATAR_SIZE)
+                    .outputFormat("png")
+                    .toOutputStream(outputStream);
+
+            return Mono.just(outputStream.toByteArray());
+        } catch (IOException e) {
+            return Mono.error(e);
+        }
     }
 }

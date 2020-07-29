@@ -10,17 +10,27 @@ public final class UserDtoTestUtils {
 
     public static final String JOHN_DOE = "john.doe";
 
+    public static final String JOHN_DOE_PASSWORD = "myPassword";
+
+    public static final String JOHN_DOE_EMAIL = "john.doe@acme.com";
+
+    public static final String JANE_DOE = "jane.doe";
+
+    public static final String JANE_DOE_PASSWORD = "myPassword";
+
+    public static final String JANE_DOE_EMAIL = "jane.doe@acme.com";
+
     public static UserDto.Builder userJohnDoe() {
         return UserDto.builder()
                 .id("3290a30e-bf49-4e7e-9c94-d838b711f0ea")
                 .username(JOHN_DOE)
-                .email("john.doe@acme.com")
+                .email(JOHN_DOE_EMAIL)
                 .type(UserDto.Type.INTERNAL);
     }
 
     public static InternalUserCreationDto.Builder userJohnDoeCreation() {
         return InternalUserCreationDto.builder(userJohnDoe().build())
-                .password("password");
+                .password(JOHN_DOE_PASSWORD);
     }
 
 }
