@@ -9,8 +9,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.BodyInserters;
 
-import java.util.List;
-
 /**
  * @author Sebastien Gerard
  */
@@ -21,16 +19,6 @@ public class UserTestHelper {
 
     public UserTestHelper(WebTestClient webClient) {
         this.webClient = webClient;
-    }
-
-    public List<UserDto> findAllUsers() {
-        return webClient.get().uri("/api/user/")
-                .header(HttpHeaders.ACCEPT, "application/json")
-                .exchange()
-                .expectStatus().isOk()
-                .expectBodyList(UserDto.class)
-                .returnResult()
-                .getResponseBody();
     }
 
     public UserDto createUser(InternalUserCreationDto internalUserCreationDto) {
@@ -55,5 +43,15 @@ public class UserTestHelper {
                 .expectStatus().isOk();
 
         return this;
+    }
+
+    public UserDto getCurrentUser() {
+        return webClient.get().uri("/api/user/current")
+                .header(HttpHeaders.ACCEPT, "application/json")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(UserDto.class)
+                .returnResult()
+                .getResponseBody();
     }
 }

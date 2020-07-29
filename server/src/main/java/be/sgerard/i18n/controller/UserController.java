@@ -88,6 +88,18 @@ public class UserController {
     }
 
     /**
+     * Returns the current user.
+     */
+    @GetMapping(path = "/user/current")
+    @Operation(summary = "Returns the current user.")
+    @Transactional(readOnly = true)
+    public Mono<UserDto> getCurrent() {
+        return userManager
+                .getCurrentOrDie()
+                .map(entity -> UserDto.builder(entity).build());
+    }
+
+    /**
      * Creates a new internal user.
      */
     @PostMapping(path = "/user")

@@ -18,17 +18,17 @@ public @interface WithInternalUser {
     /**
      * The username to be used.
      */
-    String username() default JOHN_DOE;
+    String username();
 
     /**
      * The password to be used.
      */
-    String password() default JOHN_DOE_PASSWORD;
+    String password();
 
     /**
      * The email to be used.
      */
-    String email() default JOHN_DOE_PASSWORD;
+    String email();
 
     /**
      * The {@link be.sgerard.i18n.service.security.UserRole user roles} to use.

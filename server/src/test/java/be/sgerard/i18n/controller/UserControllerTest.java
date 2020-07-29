@@ -1,5 +1,6 @@
 package be.sgerard.i18n.controller;
 
+import be.sgerard.i18n.model.security.user.dto.CurrentUserPasswordUpdateDto;
 import be.sgerard.i18n.model.security.user.dto.CurrentUserPatchDto;
 import be.sgerard.i18n.model.security.user.dto.UserDto;
 import be.sgerard.i18n.model.security.user.dto.UserPatchDto;
@@ -8,10 +9,14 @@ import be.sgerard.i18n.service.user.UserManager;
 import be.sgerard.test.i18n.support.TransactionalReactiveTest;
 import be.sgerard.test.i18n.support.WithJaneDoeAdminUser;
 import be.sgerard.test.i18n.support.WithJohnDoeSimpleUser;
+import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 
-import static be.sgerard.test.i18n.model.UserDtoTestUtils.userJohnDoeCreation;
+import java.io.IOException;
+
+import static be.sgerard.i18n.service.user.UserManagerImpl.ADMIN_AVATAR;
+import static be.sgerard.test.i18n.model.UserDtoTestUtils.*;
 import static org.hamcrest.Matchers.*;
 
 /**
@@ -53,6 +58,23 @@ public class UserControllerTest extends AbstractControllerTest {
                 .jsonPath("$.email").isEqualTo(johnDoe.getEmail())
                 .jsonPath("$.roles").value(containsInAnyOrder(johnDoe.getRoles().stream().map(UserRole::name).toArray()))
                 .jsonPath("$.type").isEqualTo(johnDoe.getType().name());
+    }
+
+    @Test
+    @TransactionalReactiveTest
+    @WithJohnDoeSimpleUser
+    public void getCurrentUser() {
+        webClient
+                .get()
+                .uri("/api/user/current")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.id").isNotEmpty()
+                .jsonPath("$.username").isEqualTo(JOHN_DOE)
+                .jsonPath("$.email").isEqualTo(JOHN_DOE_EMAIL)
+                .jsonPath("$.roles").value(containsInAnyOrder(UserRole.MEMBER_OF_ORGANIZATION.name()))
+                .jsonPath("$.type").isEqualTo(UserDto.Type.INTERNAL.name());
     }
 
     @Test
@@ -144,8 +166,66 @@ public class UserControllerTest extends AbstractControllerTest {
     }
 
     // TODO update current user admin
-    // TODO update current user password
-    // TODO update current user avatar
+
+    @Test
+    @TransactionalReactiveTest
+    @WithJohnDoeSimpleUser
+    public void updateCurrentUserPassword() {
+        webClient
+                .put()
+                .uri("/api/user/current/password")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(
+                        new CurrentUserPasswordUpdateDto(JOHN_DOE_PASSWORD, "123")
+                )
+                .exchange()
+                .expectStatus().isOk();
+    }
+
+    @Test
+    @TransactionalReactiveTest
+    @WithJohnDoeSimpleUser
+    public void updateCurrentUserPasswordWrongPassword() {
+        webClient
+                .put()
+                .uri("/api/user/current/password")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(
+                        new CurrentUserPasswordUpdateDto("wrong-password", "123")
+                )
+                .exchange()
+                .expectStatus().isBadRequest()
+                .expectBody()
+                .jsonPath("$.messages[0]").isEqualTo("The password does not match the existing one.");
+    }
+
+    @Test
+    @TransactionalReactiveTest
+    @WithJohnDoeSimpleUser
+    public void updateCurrentUserAvatar() throws IOException {
+        webClient
+                .put()
+                .uri("/api/user/current/avatar")
+                .contentType(MediaType.IMAGE_JPEG)
+                .bodyValue(IOUtils.toByteArray(UserControllerTest.class.getResourceAsStream(ADMIN_AVATAR)))
+                .exchange()
+                .expectStatus().isOk();
+    }
+
+    @Test
+    @TransactionalReactiveTest
+    @WithJaneDoeAdminUser
+    public void getUserAvatar() {
+        final UserDto johnDoe = user.createUser(userJohnDoeCreation().build());
+
+        webClient
+                .get()
+                .uri("/api/user/{id}/avatar", johnDoe.getId())
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType(MediaType.IMAGE_PNG)
+                .expectBody();
+    }
 
     @Test
     @TransactionalReactiveTest
@@ -164,6 +244,19 @@ public class UserControllerTest extends AbstractControllerTest {
                 .uri("/api/user/{id}", johnDoe.getId())
                 .exchange()
                 .expectStatus().isNotFound();
+    }
+
+    @Test
+    @TransactionalReactiveTest
+    @WithJohnDoeSimpleUser
+    public void deleteUserNotAllowed() {
+        final String currentUserId = user.getCurrentUser().getId();
+
+        webClient
+                .delete()
+                .uri("/api/user/{id}", currentUserId)
+                .exchange()
+                .expectStatus().isForbidden();
     }
 
 }
