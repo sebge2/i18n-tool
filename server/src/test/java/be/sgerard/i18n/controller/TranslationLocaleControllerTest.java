@@ -3,14 +3,14 @@ package be.sgerard.i18n.controller;
 import be.sgerard.i18n.model.i18n.dto.TranslationLocaleCreationDto;
 import be.sgerard.i18n.model.i18n.dto.TranslationLocaleDto;
 import be.sgerard.test.i18n.support.TransactionalReactiveTest;
-import be.sgerard.test.i18n.support.WithInternalUser;
+import be.sgerard.test.i18n.support.WithJaneDoeAdminUser;
+import be.sgerard.test.i18n.support.WithJohnDoeSimpleUser;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.http.MediaType;
 
-import static be.sgerard.test.i18n.model.GitRepositoryCreationDtoTestUtils.i18nToolLocalRepositoryCreationDto;
 import static be.sgerard.test.i18n.model.GitRepositoryCreationDtoTestUtils.i18nToolRepositoryCreationDto;
 import static be.sgerard.test.i18n.model.TranslationLocaleCreationDtoTestUtils.frBeWallonLocaleCreationDto;
 import static be.sgerard.test.i18n.model.TranslationLocaleCreationDtoTestUtils.frLocaleCreationDto;
@@ -38,7 +38,7 @@ public class TranslationLocaleControllerTest extends AbstractControllerTest {
 
     @Test
     @TransactionalReactiveTest
-    @WithInternalUser()
+    @WithJohnDoeSimpleUser
     public void findAllTranslationsNonAdminAllowed() {
         webClient.get()
                 .uri("/api/translation/locale/")
@@ -49,7 +49,7 @@ public class TranslationLocaleControllerTest extends AbstractControllerTest {
 
     @Test
     @TransactionalReactiveTest
-    @WithInternalUser(roles = { "ADMIN"})
+    @WithJaneDoeAdminUser
     public void findAllTranslations() {
         locale.createLocale(frBeWallonLocaleCreationDto());
 
@@ -66,7 +66,7 @@ public class TranslationLocaleControllerTest extends AbstractControllerTest {
 
     @Test
     @TransactionalReactiveTest
-    @WithInternalUser(roles = { "ADMIN"})
+    @WithJaneDoeAdminUser
     public void create() {
         final TranslationLocaleCreationDto translationLocale = frBeWallonLocaleCreationDto().build();
 
@@ -86,7 +86,7 @@ public class TranslationLocaleControllerTest extends AbstractControllerTest {
 
     @Test
     @TransactionalReactiveTest
-    @WithInternalUser(roles = { "ADMIN"})
+    @WithJaneDoeAdminUser
     public void createTwice() {
         locale.createLocale(frBeWallonLocaleCreationDto().build());
 
@@ -102,7 +102,7 @@ public class TranslationLocaleControllerTest extends AbstractControllerTest {
 
     @Test
     @TransactionalReactiveTest
-    @WithInternalUser(roles = { "ADMIN"})
+    @WithJaneDoeAdminUser
     public void update() {
         final TranslationLocaleDto originalLocale = locale.createLocale(TranslationLocaleCreationDto.builder().language("fr").icon("flag-icon-fr")).get();
 
@@ -131,7 +131,7 @@ public class TranslationLocaleControllerTest extends AbstractControllerTest {
 
     @Test
     @TransactionalReactiveTest
-    @WithInternalUser(roles = { "ADMIN"})
+    @WithJaneDoeAdminUser
     public void updateConflict() {
         final TranslationLocaleDto otherLocale = locale.createLocale(frBeWallonLocaleCreationDto()).get();
 
@@ -154,7 +154,7 @@ public class TranslationLocaleControllerTest extends AbstractControllerTest {
 
     @Test
     @TransactionalReactiveTest
-    @WithInternalUser(roles = { "ADMIN"})
+    @WithJaneDoeAdminUser
     public void delete() {
         final TranslationLocaleDto translationLocale = locale.createLocale(frBeWallonLocaleCreationDto()).get();
 
@@ -172,7 +172,7 @@ public class TranslationLocaleControllerTest extends AbstractControllerTest {
 
     @Test
     @TransactionalReactiveTest
-    @WithInternalUser(roles = { "ADMIN"})
+    @WithJaneDoeAdminUser
     public void deleteForbiddenTranslationsAssociated() {
         final TranslationLocaleDto translationLocale = locale.createLocale(frLocaleCreationDto()).get();
 

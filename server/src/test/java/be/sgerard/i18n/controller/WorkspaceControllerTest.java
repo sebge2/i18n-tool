@@ -6,7 +6,7 @@ import be.sgerard.i18n.model.repository.dto.RepositoryDto;
 import be.sgerard.i18n.model.workspace.WorkspaceStatus;
 import be.sgerard.i18n.model.workspace.dto.WorkspaceDto;
 import be.sgerard.test.i18n.support.TransactionalReactiveTest;
-import be.sgerard.test.i18n.support.WithInternalUser;
+import be.sgerard.test.i18n.support.WithJaneDoeAdminUser;
 import org.junit.jupiter.api.*;
 
 import java.util.Locale;
@@ -54,7 +54,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
 
     @Test
     @TransactionalReactiveTest
-    @WithInternalUser(roles = {"ADMIN"})
+    @WithJaneDoeAdminUser
     public void findAll() {
         this.repository
                 .create(i18nToolLocalRepositoryCreationDto())
@@ -73,7 +73,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
 
     @Test
     @TransactionalReactiveTest
-    @WithInternalUser(roles = {"ADMIN"})
+    @WithJaneDoeAdminUser
     public void findAllOfRepository() {
         final RepositoryDto repository = this.repository
                 .create(i18nToolLocalRepositoryCreationDto())
@@ -93,7 +93,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
 
     @Test
     @TransactionalReactiveTest
-    @WithInternalUser(roles = {"ADMIN"})
+    @WithJaneDoeAdminUser
     public void findById() {
         final WorkspaceDto masterWorkspace = repository
                 .create(i18nToolRepositoryCreationDto())
@@ -119,7 +119,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
 
         @Test
         @TransactionalReactiveTest
-        @WithInternalUser(roles = {"ADMIN"})
+        @WithJaneDoeAdminUser
         public void synchronize() {
             final GitHubRepositoryDto repository = this.repository.create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class).initialize().get();
 
@@ -134,7 +134,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
 
         @Test
         @TransactionalReactiveTest
-        @WithInternalUser(roles = {"ADMIN"})
+        @WithJaneDoeAdminUser
         public void initialize() {
             final WorkspaceDto masterWorkspace = repository
                     .create(i18nToolRepositoryCreationDto())
@@ -164,7 +164,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
 
         @Test
         @TransactionalReactiveTest
-        @WithInternalUser(roles = {"ADMIN"})
+        @WithJaneDoeAdminUser
         public void publish() {
             final WorkspaceDto masterWorkspace = repository
                     .create(i18nToolRepositoryCreationDto())
@@ -195,7 +195,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
 
         @Test
         @TransactionalReactiveTest
-        @WithInternalUser(roles = {"ADMIN"})
+        @WithJaneDoeAdminUser
         public void deleteInitialized() {
             final WorkspaceDto masterWorkspace = repository
                     .create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class)
@@ -215,7 +215,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
 
         @Test
         @TransactionalReactiveTest
-        @WithInternalUser(roles = {"ADMIN"})
+        @WithJaneDoeAdminUser
         public void deletePublished() {
             final WorkspaceDto masterWorkspace = repository
                     .create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class)
@@ -241,7 +241,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
 
         @Test
         @TransactionalReactiveTest
-        @WithInternalUser(roles = {"ADMIN"})
+        @WithJaneDoeAdminUser
         public void synchronize() {
             final GitRepositoryDto repository = this.repository.create(i18nToolLocalRepositoryCreationDto(), GitRepositoryDto.class).initialize().get();
 
@@ -264,7 +264,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
 
         @Test
         @TransactionalReactiveTest
-        @WithInternalUser(roles = {"ADMIN"})
+        @WithJaneDoeAdminUser
         public void initialize() {
             final WorkspaceDto masterWorkspace = repository
                     .create(i18nToolLocalRepositoryCreationDto(), GitRepositoryDto.class)
@@ -294,7 +294,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
 
         @Test
         @TransactionalReactiveTest
-        @WithInternalUser(roles = {"ADMIN"})
+        @WithJaneDoeAdminUser
         public void publish() {
             final WorkspaceDto masterWorkspace = repository
                     .create(i18nToolLocalRepositoryCreationDto(), GitRepositoryDto.class)
@@ -317,7 +317,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
 
         @Test
         @TransactionalReactiveTest
-        @WithInternalUser(roles = {"ADMIN"})
+        @WithJaneDoeAdminUser
         public void deleteInitialized() {
             final WorkspaceDto masterWorkspace = repository
                     .create(i18nToolLocalRepositoryCreationDto())
@@ -337,7 +337,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
 
         @Test
         @TransactionalReactiveTest
-        @WithInternalUser(roles = {"ADMIN"})
+        @WithJaneDoeAdminUser
         public void deletePublished() {
             final WorkspaceDto masterWorkspace = repository
                     .create(i18nToolLocalRepositoryCreationDto())

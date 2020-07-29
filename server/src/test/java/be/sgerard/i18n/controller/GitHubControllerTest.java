@@ -6,7 +6,7 @@ import be.sgerard.i18n.model.workspace.dto.WorkspaceDto;
 import be.sgerard.i18n.service.github.GitHubWebHookService;
 import be.sgerard.i18n.service.github.external.GitHubEventType;
 import be.sgerard.test.i18n.support.TransactionalReactiveTest;
-import be.sgerard.test.i18n.support.WithInternalUser;
+import be.sgerard.test.i18n.support.WithJaneDoeAdminUser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.codec.digest.HmacAlgorithms;
 import org.apache.commons.codec.digest.HmacUtils;
@@ -55,7 +55,7 @@ public class GitHubControllerTest extends AbstractControllerTest {
 
     @Test
     @TransactionalReactiveTest
-    @WithInternalUser(roles = {"ADMIN"})
+    @WithJaneDoeAdminUser
     public void deletedBranchEvent() throws Exception {
         repository
                 .create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class)
@@ -88,7 +88,7 @@ public class GitHubControllerTest extends AbstractControllerTest {
 
     @Test
     @TransactionalReactiveTest
-    @WithInternalUser(roles = {"ADMIN"})
+    @WithJaneDoeAdminUser
     public void createdBranchEvent() throws Exception {
         repository
                 .create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class)
@@ -117,7 +117,7 @@ public class GitHubControllerTest extends AbstractControllerTest {
 
     @Test
     @TransactionalReactiveTest
-    @WithInternalUser(roles = {"ADMIN"})
+    @WithJaneDoeAdminUser
     public void pullRequestEvent() throws Exception {
         repository
                 .create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class)
@@ -145,7 +145,7 @@ public class GitHubControllerTest extends AbstractControllerTest {
 
     @Test
     @TransactionalReactiveTest
-    @WithInternalUser(roles = {"ADMIN"})
+    @WithJaneDoeAdminUser
     public void wrongCredentials() throws Exception {
         repository
                 .create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class)
@@ -161,7 +161,7 @@ public class GitHubControllerTest extends AbstractControllerTest {
 
     @Test
     @TransactionalReactiveTest
-    @WithInternalUser(roles = {"ADMIN"})
+    @WithJaneDoeAdminUser
     public void noCredentialsNeeded() throws Exception {
         repository
                 .create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class)
