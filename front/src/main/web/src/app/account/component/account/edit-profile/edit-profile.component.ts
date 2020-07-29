@@ -52,7 +52,7 @@ export class EditProfileComponent implements OnInit, OnDestroy {
 
         this.saveAvatar()
             .then(_ => this.saveProfile())
-            .then(_ => this.resetForm())
+            .then(_ => this.makeFormUntouched())
             .catch(error => this.notificationService.displayErrorMessage('ACCOUNT.ERROR.SAVE_PROFILE', error))
             .finally(() => this.loading = false);
     }
@@ -67,6 +67,10 @@ export class EditProfileComponent implements OnInit, OnDestroy {
             this.form.disable();
         }
 
+        this.makeFormUntouched();
+    }
+
+    private makeFormUntouched() {
         this.form.markAsPristine();
         this.form.markAsUntouched();
     }
