@@ -10,6 +10,7 @@ export class FormUploadButtonComponent {
 
     @Input() public color: ThemePalette;
     @Input() public class: string;
+    @Input() public disabled: boolean = false;
     @Output() public click = new EventEmitter<void>();
 
     constructor() {

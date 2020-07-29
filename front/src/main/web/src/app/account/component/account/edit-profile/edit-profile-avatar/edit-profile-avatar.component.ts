@@ -24,6 +24,7 @@ export class EditProfileAvatarComponent implements ControlValueAccessor {
 
     @Input() public currentUser: User;
 
+    public disabled: boolean = false;
     private _value: AvatarFile;
     private _valueUrl: string;
 
@@ -68,6 +69,10 @@ export class EditProfileAvatarComponent implements ControlValueAccessor {
 
     public registerOnTouched(fn: any): void {
         this.onTouched = fn;
+    }
+
+    setDisabledState(disabled: boolean) {
+        this.disabled = disabled;
     }
 
     public onFileDropped(file: DroppedFile) {

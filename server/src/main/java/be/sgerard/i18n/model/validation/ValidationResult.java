@@ -65,11 +65,8 @@ public class ValidationResult {
     /**
      * Merges both {@link ValidationResult validation results}.
      */
-    public static ValidationResult merge(ValidationResult first, ValidationResult second){
-        return ValidationResult.builder()
-                .merge(first)
-                .merge(second)
-                .build();
+    public static ValidationResult merge(ValidationResult... validationResults){
+        return ValidationResult.builder().merge(validationResults).build();
     }
 
     /**
