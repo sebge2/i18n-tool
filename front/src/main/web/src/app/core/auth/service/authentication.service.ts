@@ -55,7 +55,7 @@ export class AuthenticationService {
             );
 
         this._currentUser$ = this.currentAuthenticatedUser()
-            .pipe(flatMap(currentUser => this.userService.getUserById(currentUser.user.id)));
+            .pipe(flatMap(currentUser => currentUser ? this.userService.getUserById(currentUser.user.id) : null));
     }
 
     public currentAuthenticatedUser(): Observable<AuthenticatedUser> {

@@ -29,7 +29,7 @@ export class LogoutGuard implements CanActivate {
                         if (user != null) {
                             return true;
                         } else {
-                            console.debug('There is no connected user, go to login page instead.', user);
+                            console.debug('There is no connected user, go to login page instead.');
 
                             this.router.navigate(['/login']);
 
