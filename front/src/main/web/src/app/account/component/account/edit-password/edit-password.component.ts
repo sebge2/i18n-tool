@@ -1,5 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {UserService} from "../../../../core/auth/service/user.service";
+import {NotificationService} from "../../../../core/notification/service/notification.service";
 
 @Component({
     selector: 'app-edit-password',
@@ -11,7 +13,9 @@ export class EditPasswordComponent implements OnInit {
     public readonly form: FormGroup;
     public loading = false;
 
-    constructor(private formBuilder: FormBuilder) {
+    constructor(private formBuilder: FormBuilder,
+                private userService: UserService,
+                private notificationService: NotificationService) {
         this.form = this.formBuilder.group(
             {
                 currentPassword: this.formBuilder.control('', [Validators.required]),
@@ -27,7 +31,17 @@ export class EditPasswordComponent implements OnInit {
     }
 
     public onSave() {
+        this.loading = true;
 
+        this.userService
+            .updateCurrentUserPassword({
+                currentPassword: this.form.controls['currentPassword'].value,
+                newPassword: this.form.controls['newPassword'].value
+            })
+            .toPromise()
+            .then(_ => this.makeFormUntouched())
+            .catch(error => this.notificationService.displayErrorMessage('ACCOUNT.ERROR.SAVE_PASSWORD', error))
+            .finally(() => this.loading = false);
     }
 
     public resetForm() {
@@ -35,6 +49,10 @@ export class EditPasswordComponent implements OnInit {
         this.form.controls['newPassword'].setValue(null);
         this.form.controls['confirmedPassword'].setValue(null);
 
+        this.makeFormUntouched();
+    }
+
+    private makeFormUntouched() {
         this.form.markAsPristine();
         this.form.markAsUntouched();
     }

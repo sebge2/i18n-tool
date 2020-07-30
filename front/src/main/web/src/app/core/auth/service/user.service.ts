@@ -5,7 +5,13 @@ import {NotificationService} from "../../notification/service/notification.servi
 import {Events} from "../../event/model/events.model";
 import {catchError, map} from "rxjs/operators";
 import {EventService} from "../../event/service/event.service";
-import {CurrentUserPatchDto, InternalUserCreationDto, UserPatchDto, UserService as ApiUserService} from "../../../api";
+import {
+    CurrentUserPasswordUpdateDto,
+    CurrentUserPatchDto,
+    InternalUserCreationDto,
+    UserPatchDto,
+    UserService as ApiUserService
+} from "../../../api";
 import {synchronizedCollection} from "../../shared/utils/synchronized-observable-utils";
 import {ImportedFile} from "../../shared/model/imported-file.model";
 
@@ -55,6 +61,12 @@ export class UserService {
     public updateCurrentUserAvatar(file: ImportedFile): Observable<any> {
         return this.apiUserService
             .updateUserAvatar(file.file);
+    }
+
+    public updateCurrentUserPassword(patch: CurrentUserPasswordUpdateDto): Observable<User> {
+        return this.apiUserService
+            .updateCurrentUserPassword(patch)
+            .pipe(map(dto => User.fromDto(dto)));
     }
 
     public deleteUser(id: string): Observable<any> {
