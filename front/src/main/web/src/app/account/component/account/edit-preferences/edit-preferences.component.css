@@ -1,0 +1,12 @@
+.container {
+    width: 700px;
+}
+
+.preferences-icon {
+    width: 220px;
+    height: 220px;
+}
+
+.preferences-icon .mat-icon {
+    font-size: 200px;
+}

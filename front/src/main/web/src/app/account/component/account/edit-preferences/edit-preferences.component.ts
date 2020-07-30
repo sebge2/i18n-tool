@@ -87,4 +87,8 @@ export class EditPreferencesComponent implements OnInit, OnDestroy {
           this.loading = false;
         });
   }
+
+    resetForm() {
+
+    }
 }
