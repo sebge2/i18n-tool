@@ -107,7 +107,13 @@
       "LABEL": "Preferences"
     },
     "SECURITY": {
-      "LABEL": "Security"
+      "LABEL": "Security",
+      "CURRENT_PASSWORD": "Current Password",
+      "CURRENT_PASSWORD_HINT": "Please fill your current password.",
+      "NEW_PASSWORD": "New Password",
+      "NEW_PASSWORD_HINT": "At least 6 characters.",
+      "CONFIRMED_PASSWORD": "Please Confirm",
+      "CONFIRMED_PASSWORD_HINT": "Please confirm your new password."
     },
     "ERROR": {
       "SAVE_PROFILE": "Error while saving profile."
