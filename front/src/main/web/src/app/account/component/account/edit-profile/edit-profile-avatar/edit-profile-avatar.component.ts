@@ -1,12 +1,7 @@
 import {Component, Input} from '@angular/core';
 import {User} from "../../../../../core/auth/model/user.model";
-import {DroppedFile} from "../../../../../core/shared/directive/drag-drop.directive";
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from "@angular/forms";
-
-export interface AvatarFile {
-    file: File;
-    contentType: string;
-}
+import {ImportedFile} from "../../../../../core/shared/model/imported-file.model";
 
 @Component({
     selector: 'app-edit-profile-avatar',
@@ -25,7 +20,7 @@ export class EditProfileAvatarComponent implements ControlValueAccessor {
     @Input() public currentUser: User;
 
     public disabled: boolean = false;
-    private _value: AvatarFile;
+    private _value: ImportedFile;
     private _valueUrl: string;
 
     constructor() {
@@ -41,11 +36,11 @@ export class EditProfileAvatarComponent implements ControlValueAccessor {
         }
     }
 
-    get value(): AvatarFile {
+    get value(): ImportedFile {
         return this._value;
     }
 
-    set value(value: AvatarFile) {
+    set value(value: ImportedFile) {
         if (value !== this._value) {
             this.doSetValue(value);
 
@@ -59,7 +54,7 @@ export class EditProfileAvatarComponent implements ControlValueAccessor {
     public onTouched = () => {
     };
 
-    public writeValue(value: AvatarFile): void {
+    public writeValue(value: ImportedFile): void {
         this.doSetValue(value);
     }
 
@@ -75,15 +70,15 @@ export class EditProfileAvatarComponent implements ControlValueAccessor {
         this.disabled = disabled;
     }
 
-    public onFileDropped(file: DroppedFile) {
-        this.value = {file: file.file, contentType: file.contentType};
+    public onFileDropped(file: ImportedFile) {
+        this.value = file;
     }
 
     public onClick() {
 
     }
 
-    private doSetValue(value: AvatarFile) {
+    private doSetValue(value: ImportedFile) {
         this._value = value;
 
         if (value) {
