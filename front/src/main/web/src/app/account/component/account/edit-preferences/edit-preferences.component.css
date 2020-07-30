@@ -10,3 +10,7 @@
 .preferences-icon .mat-icon {
     font-size: 200px;
 }
+
+:host ::ng-deep .mat-chip-list-wrapper {
+    width: 450px !important;
+}
