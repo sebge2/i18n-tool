@@ -1,5 +1,5 @@
 import {Directive, EventEmitter, HostBinding, HostListener, Input, Output} from '@angular/core';
-import {FILE_CONTENT_TYPES, FileExtension} from "../model/file-extension.model";
+import {createImportedFile, FileExtension} from "../model/file-extension.model";
 import {ImportedFile} from "../model/imported-file.model";
 
 @Directive({
@@ -60,25 +60,12 @@ export class DragDropDirective {
             const dataTransfer: DataTransfer = evt.dataTransfer;
 
             if (evt.dataTransfer.files.length == 1) {
-                const file = this.createDroppedFile(dataTransfer.files[0]);
+                const file = createImportedFile(dataTransfer.files[0], this.allowedFileExtensions);
 
                 if (file) {
                     this.onFileDropped.emit(file)
                 }
             }
         }
-    }
-
-    private createDroppedFile(file: File): ImportedFile {
-        let contentType = file.type;
-
-        for (const extension of this.allowedFileExtensions) {
-            if (file.name.toLowerCase().endsWith(`.${extension}`)) {
-                contentType = FILE_CONTENT_TYPES.get(extension)
-                return new ImportedFile(file, contentType);
-            }
-        }
-
-        return null;
     }
 }
