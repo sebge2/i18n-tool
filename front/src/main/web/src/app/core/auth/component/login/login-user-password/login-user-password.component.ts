@@ -51,10 +51,11 @@ export class LoginUserPasswordComponent implements OnInit {
 
         this.authenticationService.authenticateWithUserPassword(this.form.get('username').value, this.form.get('password').value)
             .then((_) => this.router.navigate(['/translations']))
-            .catch((errorType: AuthenticationErrorType) => {
-                if (errorType == AuthenticationErrorType.WRONG_CREDENTIALS) {
+            .catch((error: Error) => {
+                if (error.message == AuthenticationErrorType.WRONG_CREDENTIALS) {
                     this.form.setErrors({'authFailed': true});
                 }
+                // TODO technical error
             })
             .finally(() => this.buttonOptions.active = false);
     }
