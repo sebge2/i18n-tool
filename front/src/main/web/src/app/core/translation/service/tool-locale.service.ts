@@ -1,9 +1,9 @@
 import {Injectable} from '@angular/core';
-import {BehaviorSubject, combineLatest, Observable, ReplaySubject} from "rxjs";
+import {BehaviorSubject, combineLatest, Observable} from "rxjs";
 import {ALL_LOCALES, DEFAULT_LOCALE, ToolLocale} from "../model/tool-locale.model";
 import {TranslateService} from "@ngx-translate/core";
 import {UserPreferencesService} from "../../../account/service/user-preferences.service";
-import {distinctUntilChanged, flatMap, map} from "rxjs/operators";
+import {distinctUntilChanged, flatMap, map, shareReplay, skip} from "rxjs/operators";
 import {ActivatedRoute, Params} from "@angular/router";
 import {Locale} from "../model/locale.model";
 
@@ -14,7 +14,8 @@ export class ToolLocaleService {
 
     public static FORCE_LOCALE = 'forceLocale';
 
-    private readonly _currentLocale$ = new ReplaySubject<ToolLocale>();
+    private readonly _currentLocale$ = new BehaviorSubject<ToolLocale>(null);
+    private readonly _currentLocaleObs$ = this._currentLocale$.pipe(skip(1), shareReplay(1));
     private readonly _forceLocale$: Observable<ToolLocale>;
     private readonly _toolLocale$: Observable<ToolLocale>;
     private readonly _browserLocalePreference$ = new BehaviorSubject(this.getLocaleFromBrowserPreference());
@@ -64,7 +65,7 @@ export class ToolLocaleService {
     }
 
     getCurrentLocale(): Observable<ToolLocale> {
-        return this._currentLocale$;
+        return this._currentLocaleObs$;
     }
 
     getPreferredToolLocale(): Observable<ToolLocale> {

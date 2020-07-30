@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpResponse} from "@angular/common/http";
-import {Observable, ReplaySubject, Subject} from "rxjs";
-import {flatMap, map} from "rxjs/operators";
+import {BehaviorSubject, Observable, Subject} from "rxjs";
+import {flatMap, map, shareReplay, skip} from "rxjs/operators";
 import {NotificationService} from "../../notification/service/notification.service";
 import {AuthenticationErrorType} from "../model/authentication-error-type.model";
 import {AuthenticationService as ApiAuthenticationService, Configuration} from "../../../api";
@@ -17,7 +17,8 @@ import {UserService} from "./user.service";
 })
 export class AuthenticationService {
 
-    private readonly _user$: Subject<AuthenticatedUser> = new ReplaySubject<AuthenticatedUser>();
+    private readonly _user$: Subject<AuthenticatedUser> = new BehaviorSubject<AuthenticatedUser>(null);
+    private readonly _userObs = this._user$.pipe(skip(1), shareReplay(1));
     private readonly _currentUser$: Observable<User>;
 
     constructor(private httpClient: HttpClient,
@@ -59,7 +60,7 @@ export class AuthenticationService {
     }
 
     public currentAuthenticatedUser(): Observable<AuthenticatedUser> {
-        return this._user$;
+        return this._userObs;
     }
 
     public currentUser(): Observable<User> {

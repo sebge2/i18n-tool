@@ -1,5 +1,5 @@
-import {BehaviorSubject, Observable, ReplaySubject} from "rxjs";
-import {map} from "rxjs/operators";
+import {BehaviorSubject, Observable} from "rxjs";
+import {map, shareReplay, skip} from "rxjs/operators";
 
 export function synchronizedCollection<I, O>(originalCollection: Observable<I[]>,
                                              created: Observable<I>,
@@ -63,7 +63,8 @@ export function synchronizedObject<I, O>(original: Observable<I>,
                                          updated: Observable<I>,
                                          deleted: Observable<I>,
                                          mapper: ((I) => O)): Observable<O> {
-    const subject = new ReplaySubject<O>();
+    const subject = new BehaviorSubject<O>(null);
+    const observable = subject.pipe(skip(1), shareReplay(1));
 
     original
         .pipe(map((value: I) => mapper(value)))
@@ -77,5 +78,5 @@ export function synchronizedObject<I, O>(original: Observable<I>,
         .pipe(map(value => mapper(value)))
         .subscribe((_: O) => subject.next(null), error => subject.error(error));
 
-    return subject;
+    return observable;
 }
