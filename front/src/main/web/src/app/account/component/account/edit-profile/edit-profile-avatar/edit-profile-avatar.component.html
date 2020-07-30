@@ -1,4 +1,4 @@
-<div class="avatar-zone" appDragDrop [disabled]="disabled" [style.backgroundImage]="valueUrl" (onFileDropped)="onFileDropped($event)">
+<div class="avatar-zone" appDragDrop [disabled]="disabled" [allowedFileExtensions]="allowedFileExtensions" [style.backgroundImage]="valueUrl" (onFileDropped)="onFileDropped($event)">
     <app-form-upload-button color="primary" class="avatar-upload-button" [disabled]="disabled" (click)="onClick()">
         <mat-icon>cloud_upload</mat-icon>
     </app-form-upload-button>

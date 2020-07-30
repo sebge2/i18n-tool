@@ -4,8 +4,8 @@ import {AuthenticationService} from "../../../../core/auth/service/authenticatio
 import {User} from "../../../../core/auth/model/user.model";
 import {Subject} from "rxjs";
 import {UserService} from "../../../../core/auth/service/user.service";
-import {AvatarFile} from "./edit-profile-avatar/edit-profile-avatar.component";
 import {NotificationService} from "../../../../core/notification/service/notification.service";
+import {ImportedFile} from "../../../../core/shared/model/imported-file.model";
 
 @Component({
     selector: 'app-edit-profile',
@@ -82,7 +82,7 @@ export class EditProfileComponent implements OnInit, OnDestroy {
     private saveAvatar() : Promise<any> {
         if (!this.form.controls['avatar'].pristine) {
             return this.userService
-                .updateCurrentUserAvatar(<AvatarFile>this.form.controls['avatar'].value)
+                .updateCurrentUserAvatar(<ImportedFile>this.form.controls['avatar'].value)
                 .toPromise();
         } else {
             return Promise.resolve();

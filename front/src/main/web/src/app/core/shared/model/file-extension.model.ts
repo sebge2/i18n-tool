@@ -1,12 +1,14 @@
 export enum FileExtension {
 
-    JPG = 'JPG',
+    JPG = 'jpg',
 
-    JPEG = 'JPEG',
+    JPEG = 'jpeg',
 
-    PNG = 'PNG'
+    PNG = 'png'
 
 }
+
+export const IMAGE_FILE_EXTENSIONS: FileExtension[] = [FileExtension.JPG, FileExtension.JPEG, FileExtension.PNG];
 
 export let FILE_CONTENT_TYPES = new Map([
     [FileExtension.JPG, 'image/jpeg'],
