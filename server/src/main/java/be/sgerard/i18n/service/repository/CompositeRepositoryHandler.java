@@ -5,6 +5,7 @@ import be.sgerard.i18n.model.repository.dto.RepositoryCreationDto;
 import be.sgerard.i18n.model.repository.dto.RepositoryPatchDto;
 import be.sgerard.i18n.model.repository.persistence.RepositoryEntity;
 import be.sgerard.i18n.model.security.auth.RepositoryCredentials;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
@@ -22,6 +23,7 @@ public class CompositeRepositoryHandler implements RepositoryHandler<RepositoryE
 
     private final List<RepositoryHandler<RepositoryEntity, RepositoryCreationDto, RepositoryPatchDto>> handlers;
 
+    @Lazy
     @SuppressWarnings("unchecked")
     public CompositeRepositoryHandler(List<RepositoryHandler<?, ?, ?>> handlers) {
         this.handlers = (List<RepositoryHandler<RepositoryEntity, RepositoryCreationDto, RepositoryPatchDto>>) (List<?>) handlers;

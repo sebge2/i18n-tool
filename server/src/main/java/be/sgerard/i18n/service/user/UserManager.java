@@ -58,11 +58,6 @@ public interface UserManager {
     Flux<UserEntity> findAll();
 
     /**
-     * Returns the {@link UserEntity current authenticated user}.
-     */
-    Mono<UserEntity> getCurrentOrDie();
-
-    /**
      * Creates a new {@link InternalUserEntity internal user} based on the specified {@link InternalUserCreationDto info}.
      */
     Mono<InternalUserEntity> createUser(InternalUserCreationDto info);
@@ -85,19 +80,19 @@ public interface UserManager {
     /**
      * Updates the current authenticated {@link UserEntity user} based on the specified {@link CurrentUserPatchDto info}.
      */
-    Mono<UserEntity> updateCurrent(CurrentUserPatchDto patch);
+    Mono<UserEntity> updateCurrent(String currentUserId, CurrentUserPatchDto patch);
 
     /**
      * Updates the {@link InternalUserEntity#getAvatar() avatar} of the current user.
      *
      * @param contentType can be <tt>null</tt>
      */
-    Mono<UserEntity> updateUserAvatar(InputStream avatar, String contentType);
+    Mono<UserEntity> updateUserAvatar(String currentUserId, InputStream avatar, String contentType);
 
     /**
      * Updates the {@link InternalUserEntity#getPassword() password} of the current user.
      */
-    Mono<UserEntity> updateCurrentPassword(CurrentUserPasswordUpdateDto update);
+    Mono<UserEntity> updateCurrentPassword(String currentUserId, CurrentUserPasswordUpdateDto update);
 
     /**
      * Deletes the {@link UserEntity user} having the specified id.

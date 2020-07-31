@@ -1,7 +1,6 @@
 package be.sgerard.i18n.service.user;
 
 import be.sgerard.i18n.configuration.AppProperties;
-import be.sgerard.i18n.model.security.auth.AuthenticatedUser;
 import be.sgerard.i18n.model.security.user.ExternalUser;
 import be.sgerard.i18n.model.security.user.dto.CurrentUserPasswordUpdateDto;
 import be.sgerard.i18n.model.security.user.dto.CurrentUserPatchDto;
@@ -17,7 +16,6 @@ import be.sgerard.i18n.repository.user.InternalUserRepository;
 import be.sgerard.i18n.repository.user.UserRepository;
 import be.sgerard.i18n.service.ValidationException;
 import be.sgerard.i18n.service.security.UserRole;
-import be.sgerard.i18n.service.security.auth.AuthenticationManager;
 import be.sgerard.i18n.service.user.listener.UserListener;
 import net.coobird.thumbnailator.Thumbnails;
 import org.apache.commons.io.IOUtils;
@@ -65,7 +63,6 @@ public class UserManagerImpl implements UserManager {
     private final UserRepository userRepository;
     private final InternalUserRepository internalUserRepository;
     private final ExternalUserRepository externalUserRepository;
-    private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
     private final UserListener listener;
     private final AppProperties appProperties;
@@ -73,14 +70,12 @@ public class UserManagerImpl implements UserManager {
     public UserManagerImpl(UserRepository userRepository,
                            InternalUserRepository internalUserRepository,
                            ExternalUserRepository externalUserRepository,
-                           AuthenticationManager authenticationManager,
                            PasswordEncoder passwordEncoder,
                            UserListener listener,
                            AppProperties appProperties) {
         this.userRepository = userRepository;
         this.internalUserRepository = internalUserRepository;
         this.externalUserRepository = externalUserRepository;
-        this.authenticationManager = authenticationManager;
         this.passwordEncoder = passwordEncoder;
         this.listener = listener;
         this.appProperties = appProperties;
@@ -96,15 +91,6 @@ public class UserManagerImpl implements UserManager {
     @Transactional(readOnly = true)
     public Flux<UserEntity> findAll() {
         return userRepository.findAll();
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public Mono<UserEntity> getCurrentOrDie() {
-        return authenticationManager
-                .getCurrentUserOrDie()
-                .map(AuthenticatedUser::getUserId)
-                .flatMap(this::findByIdOrDie);
     }
 
     @Override
@@ -204,8 +190,8 @@ public class UserManagerImpl implements UserManager {
 
     @Override
     @Transactional
-    public Mono<UserEntity> updateCurrent(CurrentUserPatchDto patch) {
-        return getCurrentOrDie()
+    public Mono<UserEntity> updateCurrent(String currentUserId, CurrentUserPatchDto patch) {
+        return findByIdOrDie(currentUserId)
                 .flatMap(user ->
                         listener
                                 .beforeUpdate(user, patch)
@@ -227,8 +213,8 @@ public class UserManagerImpl implements UserManager {
 
     @Override
     @Transactional
-    public Mono<UserEntity> updateUserAvatar(InputStream avatarStream, String contentType) {
-        return getCurrentOrDie()
+    public Mono<UserEntity> updateUserAvatar(String currentUserId, InputStream avatarStream, String contentType) {
+        return findByIdOrDie(currentUserId)
                 .flatMap(user ->
                         listener
                                 .beforeUpdateAvatar(user)
@@ -253,8 +239,8 @@ public class UserManagerImpl implements UserManager {
 
     @Override
     @Transactional
-    public Mono<UserEntity> updateCurrentPassword(CurrentUserPasswordUpdateDto update) {
-        return getCurrentOrDie()
+    public Mono<UserEntity> updateCurrentPassword(String currentUserId, CurrentUserPasswordUpdateDto update) {
+        return findByIdOrDie(currentUserId)
                 .flatMap(user ->
                         listener
                                 .beforeUpdatePassword(user, update)
