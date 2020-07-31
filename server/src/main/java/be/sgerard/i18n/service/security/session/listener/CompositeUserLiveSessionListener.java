@@ -11,6 +11,7 @@ import java.util.List;
 
 /**
  * Composite {@link UserLiveSessionListener session listener}.
+ *
  * @author Sebastien Gerard
  */
 @Primary
@@ -25,18 +26,26 @@ public class CompositeUserLiveSessionListener implements UserLiveSessionListener
     }
 
     @Override
-    public Mono<Void> onNewSession(UserLiveSessionEntity userLiveSession) {
+    public Mono<Void> onNewSession(UserLiveSessionEntity session) {
         return Flux
                 .fromIterable(listeners)
-                .flatMap(listener -> listener.onNewSession(userLiveSession))
+                .flatMap(listener -> listener.onNewSession(session))
                 .then();
     }
 
     @Override
-    public Mono<Void> onStopSession(UserLiveSessionEntity userLiveSession) {
+    public Mono<Void> onStopSession(UserLiveSessionEntity session) {
         return Flux
                 .fromIterable(listeners)
-                .flatMap(listener -> listener.onStopSession(userLiveSession))
+                .flatMap(listener -> listener.onStopSession(session))
+                .then();
+    }
+
+    @Override
+    public Mono<Void> onDeletedSession(UserLiveSessionEntity session) {
+        return Flux
+                .fromIterable(listeners)
+                .flatMap(listener -> listener.onDeletedSession(session))
                 .then();
     }
 }

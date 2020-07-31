@@ -13,12 +13,21 @@ public interface UserLiveSessionListener {
     /**
      * Performs an action when creating the specified session.
      */
-    Mono<Void> onNewSession(UserLiveSessionEntity userLiveSession);
-
+    default Mono<Void> onNewSession(UserLiveSessionEntity session) {
+        return Mono.empty();
+    }
 
     /**
      * Performs an action when stopping the specified session.
      */
-    Mono<Void> onStopSession(UserLiveSessionEntity userLiveSession);
+    default Mono<Void> onStopSession(UserLiveSessionEntity session) {
+        return Mono.empty();
+    }
 
+    /**
+     * Performs an action when deleting (physically) the specified session.
+     */
+    default Mono<Void> onDeletedSession(UserLiveSessionEntity session) {
+        return Mono.empty();
+    }
 }
