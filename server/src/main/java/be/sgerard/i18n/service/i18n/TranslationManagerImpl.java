@@ -107,7 +107,7 @@ public class TranslationManagerImpl implements TranslationManager {
     public Flux<BundleKeyTranslationEntity> updateTranslations(Map<String, String> translations) throws ResourceNotFoundException {
         return authenticationManager
                 .getCurrentUser()
-                .map(AuthenticatedUserDto::getUser)
+                .map(AuthenticatedUserDto::getUserId)
                 .flatMapMany(currentUser ->
                         Flux
                                 .fromIterable(translations.entrySet())
@@ -132,7 +132,7 @@ public class TranslationManagerImpl implements TranslationManager {
                                         translation.setUpdatedValue(null);
                                     }
 
-                                    translation.setLastEditor(translation.getUpdatedValue().isEmpty() ? null : currentUser.getId());
+                                    translation.setLastEditor(translation.getUpdatedValue().isEmpty() ? null : currentUser);
                                 })
                                 .map(Pair::getKey)
                                 .flatMap(translationRepository::save)

@@ -2,7 +2,6 @@ package be.sgerard.i18n.model.security.auth.external;
 
 import be.sgerard.i18n.model.security.auth.AuthenticatedUser;
 import be.sgerard.i18n.model.security.auth.RepositoryCredentials;
-import be.sgerard.i18n.model.security.user.dto.UserDto;
 import be.sgerard.i18n.service.security.UserRole;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
@@ -27,20 +26,20 @@ public final class ExternalAuthenticatedUser extends DefaultOAuth2User implement
     public static final String NAME_ATTRIBUTE = "principal_id";
 
     private final String id;
-    private final UserDto user;
+    private final String userId;
     private final String token;
     private final Set<UserRole> roles;
     private final Map<String, RepositoryCredentials> repositoryCredentials;
 
     public ExternalAuthenticatedUser(String id,
-                                     UserDto user,
+                                     String userId,
                                      String token,
                                      Collection<UserRole> roles,
                                      Collection<RepositoryCredentials> repositoryCredentials) {
-        super(mapToAuthorities(roles), singletonMap(NAME_ATTRIBUTE, user.getId()), NAME_ATTRIBUTE);
+        super(mapToAuthorities(roles), singletonMap(NAME_ATTRIBUTE, userId), NAME_ATTRIBUTE);
 
         this.id = id;
-        this.user = user;
+        this.userId = userId;
         this.token = token;
         this.roles = Set.copyOf(roles);
         this.repositoryCredentials = repositoryCredentials.stream().collect(toMap(RepositoryCredentials::getRepository, auth -> auth));
@@ -52,13 +51,13 @@ public final class ExternalAuthenticatedUser extends DefaultOAuth2User implement
     }
 
     @Override
-    public UserDto getUser() {
-        return user;
+    public String getUserId() {
+        return userId;
     }
 
     @Override
     public String getName() {
-        return getUser().getId();
+        return getUserId();
     }
 
     @Override
@@ -76,7 +75,7 @@ public final class ExternalAuthenticatedUser extends DefaultOAuth2User implement
     public ExternalAuthenticatedUser updateSessionRoles(List<UserRole> sessionRoles) {
         return new ExternalAuthenticatedUser(
                 id,
-                user,
+                userId,
                 token,
                 sessionRoles,
                 repositoryCredentials.values()
@@ -103,12 +102,12 @@ public final class ExternalAuthenticatedUser extends DefaultOAuth2User implement
 
         final ExternalAuthenticatedUser that = (ExternalAuthenticatedUser) o;
 
-        return user.equals(that.user);
+        return userId.equals(that.userId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), user);
+        return Objects.hash(super.hashCode(), userId);
     }
 
     /**

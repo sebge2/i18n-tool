@@ -2,7 +2,6 @@ package be.sgerard.i18n.model.security.auth.internal;
 
 import be.sgerard.i18n.model.security.auth.AuthenticatedUser;
 import be.sgerard.i18n.model.security.auth.RepositoryCredentials;
-import be.sgerard.i18n.model.security.user.dto.UserDto;
 import be.sgerard.i18n.service.security.UserRole;
 import org.springframework.security.core.CredentialsContainer;
 import org.springframework.security.core.GrantedAuthority;
@@ -21,17 +20,17 @@ import static java.util.stream.Collectors.toSet;
 public class InternalAuthenticatedUser implements AuthenticatedUser, UserDetails, CredentialsContainer {
 
     private final String id;
-    private final UserDto user;
+    private final String userId;
     private final Set<UserRole> roles;
 
     private String password;
 
     public InternalAuthenticatedUser(String id,
-                                     UserDto user,
+                                     String userId,
                                      String password,
                                      Collection<UserRole> roles) {
         this.id = id;
-        this.user = user;
+        this.userId = userId;
         this.password = password;
         this.roles = Set.copyOf(roles);
     }
@@ -42,13 +41,13 @@ public class InternalAuthenticatedUser implements AuthenticatedUser, UserDetails
     }
 
     @Override
-    public UserDto getUser() {
-        return user;
+    public String getUserId() {
+        return userId;
     }
 
     @Override
     public String getName() {
-        return getUser().getId();
+        return getUserId();
     }
 
     @Override
@@ -60,7 +59,7 @@ public class InternalAuthenticatedUser implements AuthenticatedUser, UserDetails
     public InternalAuthenticatedUser updateSessionRoles(List<UserRole> sessionRoles) {
         return new InternalAuthenticatedUser(
                 id,
-                user,
+                userId,
                 password,
                 sessionRoles
         );
@@ -124,12 +123,12 @@ public class InternalAuthenticatedUser implements AuthenticatedUser, UserDetails
 
         final InternalAuthenticatedUser that = (InternalAuthenticatedUser) o;
 
-        return user.equals(that.user);
+        return userId.equals(that.userId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), user);
+        return Objects.hash(super.hashCode(), userId);
     }
 
     /**

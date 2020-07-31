@@ -2,7 +2,6 @@ package be.sgerard.test.i18n.support;
 
 import be.sgerard.i18n.model.security.auth.internal.InternalAuthenticatedUser;
 import be.sgerard.i18n.model.security.user.dto.InternalUserCreationDto;
-import be.sgerard.i18n.model.security.user.dto.UserDto;
 import be.sgerard.i18n.model.security.user.persistence.InternalUserEntity;
 import be.sgerard.i18n.service.security.UserRole;
 import be.sgerard.i18n.service.user.UserManager;
@@ -38,7 +37,7 @@ public class WithInternalUserSecurityContextFactory implements WithSecurityConte
         final UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                 new InternalAuthenticatedUser(
                         userEntity.getUsername(),
-                        UserDto.builder(userEntity).build(),
+                        userEntity.getId(),
                         null,
                         userEntity.getRoles()
                 ),

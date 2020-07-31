@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Getter;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -19,6 +20,7 @@ import static java.util.Collections.unmodifiableCollection;
  */
 @Schema(name = "AuthenticatedUser", description = "Description of an authenticated user.")
 @JsonDeserialize(builder = AuthenticatedUserDto.Builder.class)
+@Getter
 public class AuthenticatedUserDto {
 
     public static Builder builder() {
@@ -28,7 +30,7 @@ public class AuthenticatedUserDto {
     public static Builder builder(AuthenticatedUser authenticatedUser) {
         return builder()
                 .id(authenticatedUser.getId())
-                .user(authenticatedUser.getUser())
+                .userId(authenticatedUser.getUserId())
                 .sessionRoles(authenticatedUser.getSessionRoles());
     }
 
@@ -36,36 +38,15 @@ public class AuthenticatedUserDto {
     private final String id;
 
     @Schema(description = "Description of the user.")
-    private final UserDto user;
+    private final String userId;
 
     @Schema(description = "Roles allowed during this session.")
     private final Collection<UserRole> sessionRoles;
 
     private AuthenticatedUserDto(Builder builder) {
         id = builder.id;
-        user = builder.user;
+        userId = builder.userId;
         sessionRoles = unmodifiableCollection(builder.sessionRoles);
-    }
-
-    /**
-     * Returns the unique id of the authenticated user.
-     */
-    public String getId() {
-        return id;
-    }
-
-    /**
-     * Returns the {@link UserDto current user}.
-     */
-    public UserDto getUser() {
-        return user;
-    }
-
-    /**
-     * Returns the current session security roles.
-     */
-    public Collection<UserRole> getSessionRoles() {
-        return sessionRoles;
     }
 
     /**
@@ -76,7 +57,7 @@ public class AuthenticatedUserDto {
     public static final class Builder {
 
         private String id;
-        private UserDto user;
+        private String userId;
         private final Collection<UserRole> sessionRoles = new HashSet<>();
 
         private Builder() {
@@ -87,8 +68,8 @@ public class AuthenticatedUserDto {
             return this;
         }
 
-        public Builder user(UserDto user) {
-            this.user = user;
+        public Builder userId(String userId) {
+            this.userId = userId;
             return this;
         }
 
