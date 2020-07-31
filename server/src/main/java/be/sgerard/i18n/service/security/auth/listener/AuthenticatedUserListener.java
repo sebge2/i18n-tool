@@ -11,16 +11,16 @@ import reactor.core.publisher.Mono;
 public interface AuthenticatedUserListener {
 
     /**
-     * Performs an action after the creation of the specified authenticated user.
+     * Performs an action after the update of the specified authenticated user.
      */
-    default Mono<Void> onCreate(AuthenticatedUser authenticatedUser) {
+    default Mono<Void> onUpdate(AuthenticatedUser authenticatedUser) {
         return Mono.empty();
     }
 
     /**
-     * Performs an action after the update of the specified authenticated user.
+     * Performs an action before the deletion of the specified authenticated user.
      */
-    default Mono<Void> onUpdate(AuthenticatedUser authenticatedUser) {
+    default Mono<Void> onDelete(AuthenticatedUser authenticatedUser) {
         return Mono.empty();
     }
 }

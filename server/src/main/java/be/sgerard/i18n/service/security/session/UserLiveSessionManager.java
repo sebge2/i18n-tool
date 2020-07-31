@@ -1,6 +1,7 @@
 package be.sgerard.i18n.service.security.session;
 
 import be.sgerard.i18n.model.security.session.persistence.UserLiveSessionEntity;
+import be.sgerard.i18n.model.security.user.persistence.UserEntity;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -30,5 +31,15 @@ public interface UserLiveSessionManager {
      * Stops the specified {@link UserLiveSessionEntity session}.
      */
     Mono<Void> stopSession(UserLiveSessionEntity userLiveSession);
+
+    /**
+     * Deletes the specified {@link UserLiveSessionEntity session}.
+     */
+    Mono<Void> deleteSession(UserLiveSessionEntity userLiveSession);
+
+    /**
+     * Deletes all {@link UserLiveSessionEntity sessions} of the specified user.
+     */
+    Mono<Void> deleteAll(UserEntity userEntity);
 
 }

@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 /**
- * {@link UserListener User listener} impacting {@link be.sgerard.i18n.model.security.auth.AuthenticatedUser authication}:
+ * {@link UserListener User listener} impacting {@link be.sgerard.i18n.model.security.auth.AuthenticatedUser authentication}:
  * <ul>
  *     <li>If the user is removed, all his authentications are removed.</li>
  *     <li>If user change, all his authentications are updated accordingly.</li>
@@ -15,11 +15,11 @@ import reactor.core.publisher.Mono;
  * @author Sebastien Gerard
  */
 @Component
-public class SessionUserListener implements UserListener {
+public class AuthenticationUserListener implements UserListener {
 
     private final AuthenticationManager authenticationManager;
 
-    public SessionUserListener(AuthenticationManager authenticationManager) {
+    public AuthenticationUserListener(AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;
     }
 
