@@ -1,6 +1,7 @@
 package be.sgerard.i18n.service.user;
 
 import be.sgerard.i18n.model.i18n.persistence.TranslationLocaleEntity;
+import be.sgerard.i18n.model.security.auth.AuthenticatedUser;
 import be.sgerard.i18n.model.security.user.dto.UserPreferencesDto;
 import be.sgerard.i18n.model.security.user.persistence.UserEntity;
 import be.sgerard.i18n.model.security.user.persistence.UserPreferencesEntity;
@@ -9,8 +10,8 @@ import be.sgerard.i18n.model.validation.ValidationResult;
 import be.sgerard.i18n.service.ResourceNotFoundException;
 import be.sgerard.i18n.service.ValidationException;
 import be.sgerard.i18n.service.i18n.TranslationLocaleManager;
-import be.sgerard.i18n.service.user.listener.UserPreferencesListener;
 import be.sgerard.i18n.service.security.auth.AuthenticationManager;
+import be.sgerard.i18n.service.user.listener.UserPreferencesListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
@@ -81,7 +82,8 @@ public class UserPreferencesManagerImpl implements UserPreferencesManager {
     private Mono<UserEntity> getCurrentUserOrDie() {
         return authenticationManager
                 .getCurrentUserOrDie()
-                .flatMap(authenticatedUser -> userManager.findByIdOrDie(authenticatedUser.getUser().getId()));
+                .map(AuthenticatedUser::getUserId)
+                .flatMap(userManager::findByIdOrDie);
     }
 
     /**

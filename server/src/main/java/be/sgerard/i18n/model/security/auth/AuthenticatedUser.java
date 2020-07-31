@@ -30,9 +30,9 @@ public interface AuthenticatedUser extends AuthenticatedPrincipal, Serializable 
     String getId();
 
     /**
-     * Returns the associated {@link UserDto user}.
+     * Returns the id of the associated {@link be.sgerard.i18n.model.security.user.persistence.UserEntity user}.
      */
-    UserDto getUser();
+    String getUserId();
 
     /**
      * Returns the {@link UserRole roles} attributed to the user in this session.

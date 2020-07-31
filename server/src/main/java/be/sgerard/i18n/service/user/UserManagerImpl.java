@@ -1,6 +1,7 @@
 package be.sgerard.i18n.service.user;
 
 import be.sgerard.i18n.configuration.AppProperties;
+import be.sgerard.i18n.model.security.auth.AuthenticatedUser;
 import be.sgerard.i18n.model.security.user.ExternalUser;
 import be.sgerard.i18n.model.security.user.dto.CurrentUserPasswordUpdateDto;
 import be.sgerard.i18n.model.security.user.dto.CurrentUserPatchDto;
@@ -102,7 +103,8 @@ public class UserManagerImpl implements UserManager {
     public Mono<UserEntity> getCurrentOrDie() {
         return authenticationManager
                 .getCurrentUserOrDie()
-                .flatMap(authenticatedUser -> findByIdOrDie(authenticatedUser.getUser().getId()));
+                .map(AuthenticatedUser::getUserId)
+                .flatMap(this::findByIdOrDie);
     }
 
     @Override
@@ -192,7 +194,7 @@ public class UserManagerImpl implements UserManager {
                         patch.getUsername().ifPresent(((InternalUserEntity) userEntity)::setUsername);
                         patch.getDisplayName().ifPresent(((InternalUserEntity) userEntity)::setDisplayName);
                         patch.getEmail().ifPresent(((InternalUserEntity) userEntity)::setEmail);
-                        patch.getPassword().ifPresent(((InternalUserEntity) userEntity)::setPassword);
+                        patch.getPassword().map(passwordEncoder::encode).ifPresent(((InternalUserEntity) userEntity)::setPassword);
                     }
 
                     patch.getRoles().ifPresent(userEntity::setRoles);

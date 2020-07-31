@@ -75,7 +75,7 @@ public class BundleKeyTranslationRepositoryImpl implements BundleKeyTranslationR
                 query.addCriteria(Criteria.where(FIELD_UPDATED_VALUE).ne(null));
                 break;
             case TRANSLATIONS_CURRENT_USER_UPDATED:
-                query.addCriteria(Criteria.where(FIELD_LAST_EDITOR).is(currentUser.getUser().getId()));
+                query.addCriteria(Criteria.where(FIELD_LAST_EDITOR).is(currentUser.getUserId()));
                 query.addCriteria(Criteria.where(FIELD_UPDATED_VALUE).ne(null));
                 break;
         }

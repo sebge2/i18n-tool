@@ -5,15 +5,11 @@ import be.sgerard.i18n.service.security.auth.AuthenticationManager;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
-import java.util.stream.Stream;
-
-import static java.util.stream.Collectors.toList;
-
 /**
  * {@link UserListener User listener} impacting {@link be.sgerard.i18n.model.security.auth.AuthenticatedUser authication}:
  * <ul>
- *     <li>If the user is removed, all his authentication are removed.</li>
- *     <li>If user's roles change, all his authentication are updated accordingly.</li>
+ *     <li>If the user is removed, all his authentications are removed.</li>
+ *     <li>If user change, all his authentications are updated accordingly.</li>
  * </ul>
  *
  * @author Sebastien Gerard
@@ -29,25 +25,11 @@ public class SessionUserListener implements UserListener {
 
     @Override
     public Mono<Void> onUpdate(UserEntity user) {
-        return authenticationManager
-                .findAll(user.getId())
-                .map(authenticatedUser -> authenticatedUser.updateSessionRoles(
-                        Stream
-                                .concat(
-                                        authenticatedUser.getSessionRoles().stream().filter(role -> !role.isAssignableByEndUser()),
-                                        user.getRoles().stream()
-                                )
-                                .collect(toList())
-                ))
-                .flatMap(authenticationManager::update)
-                .then();
+        return authenticationManager.updateAuthentications(user);
     }
 
     @Override
     public Mono<Void> onDelete(UserEntity user) {
-        return authenticationManager
-                .findAll(user.getId())
-                .flatMap(authenticationManager::delete)
-                .then();
+        return authenticationManager.deleteAllAuthentications(user.getId());
     }
 }

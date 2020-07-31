@@ -1,5 +1,4 @@
 import {UserRole} from "./user-role.model";
-import {User} from "./user.model";
 import {AuthenticatedUserDto} from "../../../api";
 
 export class AuthenticatedUser {
@@ -8,10 +7,7 @@ export class AuthenticatedUser {
         return new AuthenticatedUser({});
     }
 
-    readonly user: User;
-
     constructor(private dto: AuthenticatedUserDto) {
-        this.user = User.fromDto(dto.user);
     }
 
     get sessionRoles(): UserRole[] {
