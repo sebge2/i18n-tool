@@ -37,7 +37,7 @@ export class UsersComponent implements OnInit, OnDestroy {
 
     public onAdd() {
         const locales = this._addedUsers.getValue();
-        locales.push(new User(null, null, null, null, [], UserType.INTERNAL));
+        locales.push(User.createInternalUser());
 
         this._addedUsers.next(locales);
     }

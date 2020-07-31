@@ -4,8 +4,17 @@ import {RepositoryType} from "./repository-type.model";
 
 export class Repository {
 
-    public static fromDto(dto: RepositoryDto): Repository{
-        return new Repository(dto.id, dto.name, RepositoryType[dto.type], RepositoryStatus[dto.status]);
+    public static fromDto(dto: RepositoryDto): Repository {
+        return new Repository(
+            dto.id,
+            dto.name,
+            RepositoryType[dto.type],
+            RepositoryStatus[dto.status]
+        );
+    }
+
+    public static create(): Repository {
+        return new Repository(null, null, null, null);
     }
 
     constructor(public id: string,

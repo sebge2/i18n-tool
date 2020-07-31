@@ -16,6 +16,17 @@ export class User {
         );
     }
 
+    public static createInternalUser(): User {
+        return new User(
+            null,
+            null,
+            null,
+            null,
+            [],
+            UserType.INTERNAL
+        );
+    }
+
     constructor(public id: string,
                 public username: string,
                 public displayName: string,

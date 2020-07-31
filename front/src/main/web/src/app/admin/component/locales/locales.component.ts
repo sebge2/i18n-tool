@@ -37,7 +37,7 @@ export class LocalesComponent implements OnInit, OnDestroy {
 
     public onAdd() {
         const locales = this._addedLocales.getValue();
-        locales.push(new TranslationLocale(null, null, null, null, null, []));
+        locales.push(TranslationLocale.create());
 
         this._addedLocales.next(locales);
     }

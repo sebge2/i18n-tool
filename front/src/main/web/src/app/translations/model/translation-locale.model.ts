@@ -14,6 +14,17 @@ export class TranslationLocale {
         );
     }
 
+    public static create(): TranslationLocale {
+        return new TranslationLocale(
+            null,
+            null,
+            null,
+            null,
+            null,
+            []
+        );
+    }
+
     constructor(public id: string,
                 public language: string,
                 public icon: string,
