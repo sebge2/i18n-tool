@@ -112,6 +112,11 @@ public enum EventType {
     UPDATED_CURRENT_AUTHENTICATED_USER,
 
     /**
+     * @see AuthenticatedUserDto
+     */
+    DELETED_CURRENT_AUTHENTICATED_USER,
+
+    /**
      * @see UserPreferencesDto
      */
     UPDATED_USER_PREFERENCES;

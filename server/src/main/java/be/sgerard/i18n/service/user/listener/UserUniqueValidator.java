@@ -22,7 +22,7 @@ public class UserUniqueValidator implements UserListener {
     /**
      * Validation message key specifying that there is already such username.
      */
-    public static final String DUPLICATED_LOCALE = "validation.user.duplicated-username";
+    public static final String DUPLICATED_USERNAME = "validation.user.duplicated-username";
 
     private final UserManager userManager;
 
@@ -50,7 +50,7 @@ public class UserUniqueValidator implements UserListener {
     private Mono<ValidationResult> validateUniqueName(String username) {
         return userManager
                 .finUserByName(username)
-                .map(existingName -> ValidationResult.builder().messages(new ValidationMessage(DUPLICATED_LOCALE, username)).build())
+                .map(existingName -> ValidationResult.builder().messages(new ValidationMessage(DUPLICATED_USERNAME, username)).build())
                 .switchIfEmpty(Mono.just(ValidationResult.EMPTY));
     }
 }

@@ -124,6 +124,27 @@ public class UserControllerTest extends AbstractControllerTest {
     @Test
     @TransactionalReactiveTest
     @WithJaneDoeAdminUser
+    public void updateUserUsernameExists() {
+        final UserDto johnDoe = user.createUser(userJohnDoeCreation().build());
+
+        webClient
+                .patch()
+                .uri("/api/user/{id}", johnDoe.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(
+                        UserPatchDto.builder()
+                                .username(JANE_DOE_USERNAME)
+                                .build()
+                )
+                .exchange()
+                .expectStatus().isBadRequest()
+                .expectBody()
+                .jsonPath("$.messages[0]").isEqualTo("The username [jane.doe] is already used.");
+    }
+
+    @Test
+    @TransactionalReactiveTest
+    @WithJaneDoeAdminUser
     public void updateUserRoleNotAssignable() {
         final UserDto johnDoe = user.createUser(userJohnDoeCreation().build());
 
