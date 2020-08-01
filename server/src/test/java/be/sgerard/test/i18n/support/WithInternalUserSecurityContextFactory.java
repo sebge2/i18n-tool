@@ -59,6 +59,7 @@ public class WithInternalUserSecurityContextFactory implements WithSecurityConte
         return userManager
                 .createUser(InternalUserCreationDto.builder()
                         .username(username)
+                        .displayName(user.displayName())
                         .roles(roles)
                         .password(user.password())
                         .email(user.email())

@@ -5,9 +5,6 @@ import org.springframework.security.test.context.support.WithSecurityContext;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-import static be.sgerard.test.i18n.model.UserDtoTestUtils.JOHN_DOE;
-import static be.sgerard.test.i18n.model.UserDtoTestUtils.JOHN_DOE_PASSWORD;
-
 /**
  * @author Sebastien Gerard
  */
@@ -19,6 +16,11 @@ public @interface WithInternalUser {
      * The username to be used.
      */
     String username();
+
+    /**
+     * The user display name to be used.
+     */
+    String displayName();
 
     /**
      * The password to be used.

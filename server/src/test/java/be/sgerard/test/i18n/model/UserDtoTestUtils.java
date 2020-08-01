@@ -8,13 +8,17 @@ import be.sgerard.i18n.model.security.user.dto.UserDto;
  */
 public final class UserDtoTestUtils {
 
-    public static final String JOHN_DOE = "john.doe";
+    public static final String JOHN_DOE_USERNAME = "john.doe";
+
+    public static final String JOHN_DOE = "John Doe";
 
     public static final String JOHN_DOE_PASSWORD = "myPassword";
 
     public static final String JOHN_DOE_EMAIL = "john.doe@acme.com";
 
-    public static final String JANE_DOE = "jane.doe";
+    public static final String JANE_DOE_USERNAME = "jane.doe";
+
+    public static final String JANE_DOE = "Jane Doe";
 
     public static final String JANE_DOE_PASSWORD = "myPassword";
 
@@ -23,7 +27,7 @@ public final class UserDtoTestUtils {
     public static UserDto.Builder userJohnDoe() {
         return UserDto.builder()
                 .id("3290a30e-bf49-4e7e-9c94-d838b711f0ea")
-                .username(JOHN_DOE)
+                .username(JOHN_DOE_USERNAME)
                 .email(JOHN_DOE_EMAIL)
                 .type(UserDto.Type.INTERNAL);
     }

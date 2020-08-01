@@ -1,9 +1,9 @@
 package be.sgerard.i18n.service.security.session.listener;
 
 import be.sgerard.i18n.model.event.EventType;
+import be.sgerard.i18n.model.security.session.dto.UserLiveSessionDto;
 import be.sgerard.i18n.model.security.session.persistence.UserLiveSessionEntity;
 import be.sgerard.i18n.service.event.EventService;
-import be.sgerard.i18n.service.security.session.UserLiveSessionDtoMapper;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
@@ -16,31 +16,23 @@ import reactor.core.publisher.Mono;
 public class UserLiveSessionEventListener implements UserLiveSessionListener {
 
     private final EventService eventService;
-    private final UserLiveSessionDtoMapper mapper;
 
-    public UserLiveSessionEventListener(EventService eventService, UserLiveSessionDtoMapper mapper) {
+    public UserLiveSessionEventListener(EventService eventService) {
         this.eventService = eventService;
-        this.mapper = mapper;
     }
 
     @Override
     public Mono<Void> onNewSession(UserLiveSessionEntity session) {
-        return mapper
-                .toDto(session)
-                .flatMap(dto -> eventService.broadcastEvent(EventType.CONNECTED_USER_SESSION, dto));
+        return eventService.broadcastEvent(EventType.CONNECTED_USER_SESSION, UserLiveSessionDto.toDto(session));
     }
 
     @Override
     public Mono<Void> onStopSession(UserLiveSessionEntity session) {
-        return mapper
-                .toDto(session)
-                .flatMap(dto -> eventService.broadcastEvent(EventType.DISCONNECTED_USER_SESSION, dto));
+        return eventService.broadcastEvent(EventType.DISCONNECTED_USER_SESSION, UserLiveSessionDto.toDto(session));
     }
 
     @Override
     public Mono<Void> onDeletedSession(UserLiveSessionEntity session) {
-        return mapper
-                .toDto(session)
-                .flatMap(dto -> eventService.broadcastEvent(EventType.DISCONNECTED_USER_SESSION, dto));
+        return eventService.broadcastEvent(EventType.DISCONNECTED_USER_SESSION, UserLiveSessionDto.toDto(session));
     }
 }

@@ -1,7 +1,6 @@
 package be.sgerard.i18n.controller;
 
 import be.sgerard.i18n.model.security.session.dto.UserLiveSessionDto;
-import be.sgerard.i18n.service.security.session.UserLiveSessionDtoMapper;
 import be.sgerard.i18n.service.security.session.UserLiveSessionManager;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -21,11 +20,9 @@ import reactor.core.publisher.Flux;
 public class UserLiveSessionController {
 
     private final UserLiveSessionManager userSessionManager;
-    private final UserLiveSessionDtoMapper dtoMapper;
 
-    public UserLiveSessionController(UserLiveSessionManager userSessionManager, UserLiveSessionDtoMapper dtoMapper) {
+    public UserLiveSessionController(UserLiveSessionManager userSessionManager) {
         this.userSessionManager = userSessionManager;
-        this.dtoMapper = dtoMapper;
     }
 
     /**
@@ -36,6 +33,6 @@ public class UserLiveSessionController {
     public Flux<UserLiveSessionDto> getCurrentLiveSessions() {
         return userSessionManager
                 .getCurrentLiveSessions()
-                .flatMap(dtoMapper::toDto);
+                .map(UserLiveSessionDto::toDto);
     }
 }

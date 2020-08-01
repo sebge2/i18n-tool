@@ -71,7 +71,7 @@ public class UserControllerTest extends AbstractControllerTest {
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.id").isNotEmpty()
-                .jsonPath("$.username").isEqualTo(JOHN_DOE)
+                .jsonPath("$.username").isEqualTo(JOHN_DOE_USERNAME)
                 .jsonPath("$.email").isEqualTo(JOHN_DOE_EMAIL)
                 .jsonPath("$.roles").value(containsInAnyOrder(UserRole.MEMBER_OF_ORGANIZATION.name()))
                 .jsonPath("$.type").isEqualTo(UserDto.Type.INTERNAL.name());
