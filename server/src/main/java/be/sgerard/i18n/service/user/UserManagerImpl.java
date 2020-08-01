@@ -183,7 +183,7 @@ public class UserManagerImpl implements UserManager {
                         patch.getPassword().map(passwordEncoder::encode).ifPresent(((InternalUserEntity) userEntity)::setPassword);
                     }
 
-                    patch.getRoles().ifPresent(userEntity::setRoles);
+                    patch.getRoles().ifPresent(userEntity::updateAssignableRoles);
                 })
                 .flatMap(this::update);
     }

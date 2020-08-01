@@ -71,4 +71,13 @@ public abstract class UserEntity {
         this.roles.addAll(roles);
         return this;
     }
+
+    /**
+     * Updates all roles that are {@link UserRole#isAssignableByEndUser() assignables} and preserve the other ones.
+     */
+    public UserEntity updateAssignableRoles(Collection<UserRole> roles) {
+        this.roles.stream().filter(UserRole::isAssignableByEndUser).forEach(this.roles::remove);
+        this.roles.addAll(roles);
+        return this;
+    }
 }

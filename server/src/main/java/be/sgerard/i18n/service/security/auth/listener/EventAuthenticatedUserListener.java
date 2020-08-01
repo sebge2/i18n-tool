@@ -7,8 +7,7 @@ import be.sgerard.i18n.service.security.UserRole;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
-import static be.sgerard.i18n.model.event.EventType.DELETED_AUTHENTICATED_USER;
-import static be.sgerard.i18n.model.event.EventType.UPDATED_AUTHENTICATED_USER;
+import static be.sgerard.i18n.model.event.EventType.*;
 
 /**
  * {@link AuthenticatedUserListener Listener} of authenticated user that emits events accordingly.
@@ -30,7 +29,7 @@ public class EventAuthenticatedUserListener implements AuthenticatedUserListener
 
         return Mono
                 .zip(
-                        eventService.sendEventToUser(authenticatedUser, UPDATED_AUTHENTICATED_USER, dto),
+                        eventService.sendEventToUser(authenticatedUser, UPDATED_CURRENT_AUTHENTICATED_USER, dto),
                         eventService.sendEventToUsers(UserRole.ADMIN, UPDATED_AUTHENTICATED_USER, dto)
                 )
                 .then();
@@ -38,8 +37,13 @@ public class EventAuthenticatedUserListener implements AuthenticatedUserListener
 
     @Override
     public Mono<Void> onDelete(AuthenticatedUser authenticatedUser) {
-        return eventService
-                .sendEventToUsers(UserRole.ADMIN, DELETED_AUTHENTICATED_USER, AuthenticatedUserDto.builder(authenticatedUser).build())
+        final AuthenticatedUserDto dto = AuthenticatedUserDto.builder(authenticatedUser).build();
+
+        return Mono
+                .zip(
+                        eventService.sendEventToUser(authenticatedUser, DELETED_CURRENT_AUTHENTICATED_USER, dto),
+                        eventService.sendEventToUsers(UserRole.ADMIN, DELETED_AUTHENTICATED_USER, AuthenticatedUserDto.builder(authenticatedUser).build())
+                )
                 .then();
     }
 }
