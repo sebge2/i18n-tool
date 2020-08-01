@@ -15,7 +15,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
         @JsonSubTypes.Type(value = GitRepositoryPatchDto.class, name = "GIT"),
         @JsonSubTypes.Type(value = GitHubRepositoryPatchDto.class, name = "GITHUB")
 })
-@Schema(name = "RepositoryCreationRequest", description = "Request asking the creation of a repository")
+@Schema(name = "RepositoryPatchRequest", description = "Request asking the creation of a repository")
 public abstract class RepositoryPatchDto {
 
     @Schema(description = "The id of the repository to modify", required = true)
