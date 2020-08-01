@@ -58,7 +58,7 @@ public class ServerSentEventService implements EventService {
 
     @Override
     public Mono<Void> sendEventToUser(AuthenticatedUser authenticatedUser, EventType eventType, Object payload) {
-        return emit(new Event<>(eventType, payload, currentAuthenticatedUser -> Objects.equals(currentAuthenticatedUser.getId(), currentAuthenticatedUser.getId())));
+        return emit(new Event<>(eventType, payload, currentAuthenticatedUser -> Objects.equals(currentAuthenticatedUser.getId(), authenticatedUser.getId())));
     }
 
     @Override

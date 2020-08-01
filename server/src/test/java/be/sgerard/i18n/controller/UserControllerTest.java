@@ -117,7 +117,7 @@ public class UserControllerTest extends AbstractControllerTest {
                 .jsonPath("$.id").isEqualTo(johnDoe.getId())
                 .jsonPath("$.username").isEqualTo("stay_home")
                 .jsonPath("$.email").isEqualTo("john@localhost")
-                .jsonPath("$.roles").value(containsInAnyOrder(UserRole.ADMIN.name()))
+                .jsonPath("$.roles").value(containsInAnyOrder(UserRole.ADMIN.name(), UserRole.MEMBER_OF_ORGANIZATION.name()))
                 .jsonPath("$.type").isEqualTo(johnDoe.getType().name());
     }
 
