@@ -1,0 +1,44 @@
+<div [ngSwitch]="repositoryType">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
+        <ng-container *ngSwitchCase="RepositoryType.GITHUB">
+            <p>
+                <mat-form-field appearance="standard">
+                    <mat-label>{{'ADMIN.REPOSITORIES.ADD_WIZARD.STEP_INFO.GITHUB.USER_NAME' | translate}}</mat-label>
+                    <input matInput formControlName="username" autocomplete="off">
+                    <mat-hint>{{'ADMIN.REPOSITORIES.ADD_WIZARD.STEP_INFO.GITHUB.USER_NAME_HINT' | translate}}</mat-hint>
+                </mat-form-field>
+            </p>
+            <p>
+                <mat-form-field appearance="standard">
+                    <mat-label>{{'ADMIN.REPOSITORIES.ADD_WIZARD.STEP_INFO.GITHUB.REPOSITORY' | translate}}</mat-label>
+                    <input matInput formControlName="repository" autocomplete="off">
+                    <mat-hint>{{'ADMIN.REPOSITORIES.ADD_WIZARD.STEP_INFO.GITHUB.REPOSITORY_HINT' | translate}}</mat-hint>
+                </mat-form-field>
+            </p>
+            <p>
+                <mat-form-field appearance="standard">
+                    <mat-label>{{'ADMIN.REPOSITORIES.ADD_WIZARD.STEP_INFO.GITHUB.ACCESS_KEY' | translate}}</mat-label>
+                    <input matInput formControlName="accessKey" autocomplete="off">
+                    <mat-hint>{{'ADMIN.REPOSITORIES.ADD_WIZARD.STEP_INFO.GITHUB.ACCESS_KEY_HINT' | translate}}</mat-hint>
+                </mat-form-field>
+            </p>
+        </ng-container>
+
+        <ng-container *ngSwitchCase="RepositoryType.GIT">
+            <p>
+                <mat-form-field appearance="standard">
+                    <mat-label>{{'ADMIN.REPOSITORIES.ADD_WIZARD.STEP_INFO.GIT.LOCATION' | translate}}</mat-label>
+                    <input matInput formControlName="location" autocomplete="off">
+                    <mat-hint>{{'ADMIN.REPOSITORIES.ADD_WIZARD.STEP_INFO.GIT.LOCATION_HINT' | translate}}</mat-hint>
+                </mat-form-field>
+            </p>
+            <p>
+                <mat-form-field appearance="standard">
+                    <mat-label>{{'ADMIN.REPOSITORIES.ADD_WIZARD.STEP_INFO.GIT.NAME' | translate}}</mat-label>
+                    <input matInput formControlName="name" autocomplete="off">
+                    <mat-hint>{{'ADMIN.REPOSITORIES.ADD_WIZARD.STEP_INFO.GIT.NAME_HINT' | translate}}</mat-hint>
+                </mat-form-field>
+            </p>
+        </ng-container>
+    </form>
+</div>

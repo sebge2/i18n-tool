@@ -12,6 +12,11 @@ import {LocalesComponent} from './component/locales/locales.component';
 import {LocaleViewCardComponent} from './component/locales/locale-view-card/locale-view-card.component';
 import { RepositoryViewCardComponent } from './component/repositories/repository-view-card/repository-view-card.component';
 import { UserViewCardComponent } from './component/users/user-view-card/user-view-card.component';
+import { RepositoryDetailsComponent } from './component/repositories/repository-details/repository-details.component';
+import { RepositoryListComponent } from './component/repositories/repository-list/repository-list.component';
+import { RepositoryAddWizardComponent } from './component/repositories/repository-list/repository-add-wizard/repository-add-wizard.component';
+import { RepositoryAddWizardStepTypeComponent } from './component/repositories/repository-list/repository-add-wizard/repository-add-wizard-step-type/repository-add-wizard-step-type.component';
+import { RepositoryAddWizardStepInfoComponent } from './component/repositories/repository-list/repository-add-wizard/repository-add-wizard-step-info/repository-add-wizard-step-info.component';
 
 const appRoutes: Routes = [
     {path: 'users', component: UsersComponent},
@@ -24,15 +29,23 @@ const appRoutes: Routes = [
         WorkspaceTableComponent,
         RepositoryInitializerComponent,
         ConfirmWorkspaceDeletionComponent,
-        RepositoriesComponent,
         LocalesComponent,
         LocaleViewCardComponent,
-        RepositoryViewCardComponent,
+
         UsersComponent,
-        UserViewCardComponent
+        UserViewCardComponent,
+        RepositoryDetailsComponent,
+
+        RepositoriesComponent,
+        RepositoryListComponent,
+        RepositoryViewCardComponent,
+        RepositoryAddWizardComponent,
+        RepositoryAddWizardStepTypeComponent,
+        RepositoryAddWizardStepInfoComponent
     ],
     entryComponents: [
-        ConfirmWorkspaceDeletionComponent
+        ConfirmWorkspaceDeletionComponent,
+        RepositoryAddWizardComponent
     ],
     imports: [
         CommonModule,
