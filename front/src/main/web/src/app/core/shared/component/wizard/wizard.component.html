@@ -1,0 +1,30 @@
+<div mat-dialog-content>
+    <form [formGroup]="form">
+        <mat-horizontal-stepper [linear]="true" [formArrayName]="'stepsForm'" #stepper>
+            <mat-step *ngFor="let step of steps; let i = index" [stepControl]="step.form" [editable]="step.editable">
+                <ng-template matStepLabel>{{step.name}}</ng-template>
+                <ng-container *ngTemplateOutlet="step.template"></ng-container>
+
+                <div mat-dialog-actions align="end">
+                    <button
+                            mat-stroked-button
+                            mat-dialog-close
+                            class="button-close">
+                        <mat-icon>close</mat-icon>
+                        {{'SHARED.WIZARD.CLOSE_ACTION' | translate}}
+                    </button>
+                    <button
+                            mat-raised-button
+                            color="primary"
+                            class="button-next"
+                            matStepperNext
+                            [disabled]="!this.form.valid"
+                            *ngIf="step.nextVisible">
+                        <mat-icon>double_arrow</mat-icon>
+                        {{'SHARED.WIZARD.NEXT_ACTION' | translate}}
+                    </button>
+                </div>
+            </mat-step>
+        </mat-horizontal-stepper>
+    </form>
+</div>

@@ -16,6 +16,8 @@ import {FormSaveButtonComponent} from "./component/form-save-button/form-save-bu
 import {FormDeleteButtonComponent} from "./component/form-delete-button/form-delete-button.component";
 import {DragDropDirective} from "./directive/drag-drop.directive";
 import {FormUploadButtonComponent} from "./component/form-upload-button/form-upload-button.component";
+import {WizardStepComponent} from "./component/wizard/wizard-step/wizard-step.component";
+import {WizardComponent} from "./component/wizard/wizard.component";
 
 @NgModule({
     declarations: [
@@ -26,6 +28,8 @@ import {FormUploadButtonComponent} from "./component/form-upload-button/form-upl
         FormSaveButtonComponent,
         FormDeleteButtonComponent,
         FormUploadButtonComponent,
+        WizardComponent,
+        WizardStepComponent,
 
         WorkspaceIconPipe,
         WorkspaceIconCssPipe,
@@ -38,6 +42,7 @@ import {FormUploadButtonComponent} from "./component/form-upload-button/form-upl
     imports: [
         CommonModule,
         CoreSharedLibModule,
+        TranslateModule,
     ],
     exports: [
         CommonModule,
@@ -51,6 +56,8 @@ import {FormUploadButtonComponent} from "./component/form-upload-button/form-upl
         FormSaveButtonComponent,
         FormDeleteButtonComponent,
         FormUploadButtonComponent,
+        WizardComponent,
+        WizardStepComponent,
 
         WorkspaceIconPipe,
         WorkspaceIconCssPipe,

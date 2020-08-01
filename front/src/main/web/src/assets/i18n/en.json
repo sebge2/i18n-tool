@@ -5,7 +5,11 @@
     "CANCEL_ACTION": "Cancel",
     "LOCALES_LABEL": "Locales:",
     "REPOSITORY_TITLE": "Repository",
-    "USERS_TITLE": "Users"
+    "USERS_TITLE": "Users",
+    "WIZARD": {
+      "CLOSE_ACTION": "Close",
+      "NEXT_ACTION": "Next"
+    }
   },
   "TRANSLATIONS": {
     "SEARCH_BAR": {
@@ -103,6 +107,22 @@
         "STEP_TYPE" : {
           "GITHUB": "Connect to GitHub",
           "GIT": "Connect to Git"
+        },
+        "STEP_INFO": {
+          "GITHUB": {
+            "USER_NAME": "Username",
+            "USER_NAME_HINT": "The username owner of the repository.",
+            "REPOSITORY": "Name",
+            "REPOSITORY_HINT": "The repository name on GitHub.",
+            "ACCESS_KEY": "Access key",
+            "ACCESS_KEY_HINT": "The access key used to manipulate the repository."
+          },
+          "GIT": {
+            "LOCATION": "Location",
+            "LOCATION_HINT": "Git URL (ex: https://example.com/gitproject.git).",
+            "NAME": "Name",
+            "NAME_HINT": "Repository name displayed in this tool."
+          }
         }
       }
     }
