@@ -97,6 +97,14 @@
         "TITLE": "Confirm Erasing"
       },
       "REFRESH_ACTION": "Refresh"
+    },
+    "REPOSITORIES": {
+      "ADD_WIZARD": {
+        "STEP_TYPE" : {
+          "GITHUB": "Connect to GitHub",
+          "GIT": "Connect to Git"
+        }
+      }
     }
   },
   "ACCOUNT": {

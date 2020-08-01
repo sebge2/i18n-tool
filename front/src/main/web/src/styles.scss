@@ -30,3 +30,10 @@ body {
 .dragAndDropZoneNotAllowed {
     cursor: not-allowed;
 }
+
+.mat-card-clickable {
+    cursor: pointer;
+    &:hover {
+        @include mat-elevation(8);
+    }
+}
