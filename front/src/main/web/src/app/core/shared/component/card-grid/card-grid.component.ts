@@ -1,4 +1,4 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 
 @Component({
     selector: 'app-card-grid',
@@ -7,6 +7,7 @@ import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 })
 export class CardGridComponent implements OnInit {
 
+    @Input() public allowAdd = true;
     @Output() public add = new EventEmitter<void>();
 
     constructor() {
