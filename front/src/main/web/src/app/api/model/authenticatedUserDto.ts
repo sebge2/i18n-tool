@@ -9,7 +9,6 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
-import { UserDto } from './userDto';
 
 /**
  * Description of an authenticated user.
@@ -19,7 +18,10 @@ export interface AuthenticatedUserDto {
      * Unique id of the authenticated user.
      */
     id?: string;
-    user?: UserDto;
+    /**
+     * Description of the user.
+     */
+    userId?: string;
     /**
      * Roles allowed during this session.
      */

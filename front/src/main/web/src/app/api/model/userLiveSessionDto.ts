@@ -9,7 +9,6 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
-import { UserDto } from './userDto';
 
 /**
  * Description of a user live session.
@@ -19,5 +18,12 @@ export interface UserLiveSessionDto {
      * Id of this session.
      */
     id: string;
-    user: UserDto;
+    /**
+     * Id of the User associated to this session.
+     */
+    userId: string;
+    /**
+     * Display name of the user associated to this session.
+     */
+    userDisplayName: string;
 }

@@ -13,13 +13,17 @@
 /**
  * Request asking the creation of a repository
  */
-export interface RepositoryCreationRequestDto { 
+export interface RepositoryPatchRequestDto { 
+    /**
+     * The id of the repository to modify
+     */
+    id: string;
     /**
      * Type of this repository
      */
-    type: RepositoryCreationRequestDto.TypeDtoEnum;
+    type: RepositoryPatchRequestDto.TypeDtoEnum;
 }
-export namespace RepositoryCreationRequestDto {
+export namespace RepositoryPatchRequestDto {
     export type TypeDtoEnum = 'GIT' | 'GITHUB';
     export const TypeDtoEnum = {
         GIT: 'GIT' as TypeDtoEnum,

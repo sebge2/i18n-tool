@@ -18,6 +18,7 @@ export * from './inlineResponse200Dto';
 export * from './internalUserCreationDto';
 export * from './repositoryCreationRequestDto';
 export * from './repositoryDto';
+export * from './repositoryPatchRequestDto';
 export * from './repositorySummaryDto';
 export * from './serverSentEventDto';
 export * from './translationKeyPatternDto';
