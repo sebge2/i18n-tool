@@ -11,6 +11,7 @@ import {AuthenticatedUser} from '../model/authenticated-user.model';
 import {OAuthClient} from "../model/oauth-client.model";
 import {User} from "../model/user.model";
 import {UserService} from "./user.service";
+import {Router} from "@angular/router";
 
 @Injectable({
     providedIn: 'root'
@@ -22,6 +23,7 @@ export class AuthenticationService {
     private readonly _currentUser$: Observable<User>;
 
     constructor(private httpClient: HttpClient,
+                private router: Router,
                 private eventService: EventService,
                 private userService: UserService,
                 private notificationService: NotificationService,
@@ -48,12 +50,18 @@ export class AuthenticationService {
             });
 
         this.eventService.subscribe(Events.UPDATED_CURRENT_AUTHENTICATED_USER, AuthenticatedUser)
-            .subscribe(
-                (user: AuthenticatedUser) => {
+            .subscribe((user: AuthenticatedUser) => {
                     console.debug('Current authenticated user changed.', user);
                     this._user$.next(user);
-                }
-            );
+                });
+
+        this.eventService.subscribe(Events.DELETED_CURRENT_AUTHENTICATED_USER, AuthenticatedUser)
+            .subscribe(_ => {
+                    console.debug('Current authenticated user removed.');
+                    this._user$.next(null);
+
+                    this.router.navigateByUrl('/login');
+                });
 
         this._currentUser$ = this.currentAuthenticatedUser()
             .pipe(flatMap(currentUser => currentUser ? this.userService.getCurrentUser() : null));
