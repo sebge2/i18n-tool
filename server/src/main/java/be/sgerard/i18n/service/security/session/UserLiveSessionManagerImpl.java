@@ -1,10 +1,12 @@
 package be.sgerard.i18n.service.security.session;
 
 import be.sgerard.i18n.model.security.session.persistence.UserLiveSessionEntity;
+import be.sgerard.i18n.model.security.user.persistence.UserEntity;
 import be.sgerard.i18n.repository.security.UserLiveSessionRepository;
 import be.sgerard.i18n.service.ResourceNotFoundException;
 import be.sgerard.i18n.service.security.auth.AuthenticationManager;
 import be.sgerard.i18n.service.security.session.listener.UserLiveSessionListener;
+import be.sgerard.i18n.service.user.UserManager;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,13 +24,16 @@ import java.time.Instant;
 public class UserLiveSessionManagerImpl implements UserLiveSessionManager {
 
     private final AuthenticationManager authenticationManager;
+    private final UserManager userManager;
     private final UserLiveSessionRepository repository;
     private final UserLiveSessionListener listener;
 
     public UserLiveSessionManagerImpl(AuthenticationManager authenticationManager,
+                                      UserManager userManager,
                                       UserLiveSessionRepository repository,
                                       UserLiveSessionListener listener) {
         this.authenticationManager = authenticationManager;
+        this.userManager = userManager;
         this.repository = repository;
         this.listener = listener;
     }
@@ -44,15 +49,17 @@ public class UserLiveSessionManagerImpl implements UserLiveSessionManager {
     public Mono<UserLiveSessionEntity> startSession() {
         return authenticationManager
                 .getCurrentUserOrDie()
-                .flatMap(authenticatedUser -> repository.save(new UserLiveSessionEntity(authenticatedUser)))
-                .flatMap(userLiveSession ->
+                .flatMap(authenticatedUser -> userManager.findByIdOrDie(authenticatedUser.getUserId()))
+                .flatMap(currentUser -> repository.save(new UserLiveSessionEntity(currentUser)))
+                .flatMap(session ->
                         listener
-                                .onNewSession(userLiveSession)
-                                .thenReturn(userLiveSession)
+                                .onNewSession(session)
+                                .thenReturn(session)
                 );
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Mono<UserLiveSessionEntity> getSessionOrDie(String id) {
         return repository
                 .findById(id)
@@ -60,8 +67,9 @@ public class UserLiveSessionManagerImpl implements UserLiveSessionManager {
     }
 
     @Override
-    public Mono<Void> stopSession(UserLiveSessionEntity userLiveSession) {
-        return getSessionOrDie(userLiveSession.getId())
+    @Transactional
+    public Mono<Void> stopSession(UserLiveSessionEntity session) {
+        return getSessionOrDie(session.getId())
                 .flatMap(currentSession -> {
                     if (currentSession.getLogoutTime() == null) {
                         currentSession.setLogoutTime(Instant.now());
@@ -69,6 +77,23 @@ public class UserLiveSessionManagerImpl implements UserLiveSessionManager {
 
                     return repository.save(currentSession);
                 })
-                .flatMap(session -> listener.onStopSession(userLiveSession));
+                .flatMap(listener::onStopSession);
+    }
+
+    @Override
+    @Transactional
+    public Mono<Void> deleteSession(UserLiveSessionEntity session) {
+        return repository
+                .delete(session)
+                .then(listener.onDeletedSession(session));
+    }
+
+    @Override
+    @Transactional
+    public Mono<Void> deleteAll(UserEntity userEntity) {
+        return repository
+                .findByUser(userEntity)
+                .flatMap(this::deleteSession)
+                .then();
     }
 }

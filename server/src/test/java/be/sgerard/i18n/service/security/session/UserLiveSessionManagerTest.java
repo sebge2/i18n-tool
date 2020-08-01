@@ -1,0 +1,147 @@
+package be.sgerard.i18n.service.security.session;
+
+import be.sgerard.i18n.AbstractIntegrationTest;
+import be.sgerard.i18n.model.security.session.persistence.UserLiveSessionEntity;
+import be.sgerard.i18n.service.ResourceNotFoundException;
+import be.sgerard.test.i18n.support.TransactionalReactiveTest;
+import be.sgerard.test.i18n.support.WithJohnDoeSimpleUser;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import reactor.test.StepVerifier;
+
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
+
+import static be.sgerard.test.i18n.model.UserDtoTestUtils.JOHN_DOE;
+
+/**
+ * @author Sebastien Gerard
+ */
+public class UserLiveSessionManagerTest extends AbstractIntegrationTest {
+
+    @Autowired
+    private UserLiveSessionManager sessionManager;
+
+    @Test
+    @WithJohnDoeSimpleUser
+    @TransactionalReactiveTest
+    public void startSession() {
+        StepVerifier
+                .create(sessionManager.startSession())
+                .expectNextMatches(session -> Objects.equals(session.getUser().getUsername(), JOHN_DOE))
+                .expectComplete()
+                .verify();
+    }
+
+    @Test
+    @WithJohnDoeSimpleUser
+    @TransactionalReactiveTest
+    public void getCurrentLiveSessions() {
+        StepVerifier
+                .create(sessionManager.startSession())
+                .expectNextMatches(session -> Objects.equals(session.getUser().getUsername(), JOHN_DOE))
+                .expectComplete()
+                .verify();
+
+        StepVerifier
+                .create(sessionManager.getCurrentLiveSessions())
+                .expectNextMatches(session -> Objects.equals(session.getUser().getUsername(), JOHN_DOE))
+                .expectComplete()
+                .verify();
+    }
+
+    @Test
+    @WithJohnDoeSimpleUser
+    @TransactionalReactiveTest
+    public void getSessionOrDie() {
+        final UserLiveSessionEntity session = createSession();
+
+        StepVerifier
+                .create(sessionManager.getSessionOrDie(session.getId()))
+                .expectNextMatches(actual -> Objects.equals(actual.getUser().getUsername(), JOHN_DOE))
+                .expectComplete()
+                .verify();
+    }
+
+    @Test
+    @WithJohnDoeSimpleUser
+    @TransactionalReactiveTest
+    public void getSessionOrDieFailed() {
+        StepVerifier
+                .create(sessionManager.getSessionOrDie("unknown"))
+                .expectError()
+                .verify();
+    }
+
+    @Test
+    @WithJohnDoeSimpleUser
+    @TransactionalReactiveTest
+    public void stopSession() {
+        final UserLiveSessionEntity session = createSession();
+
+        StepVerifier
+                .create(sessionManager.stopSession(session))
+                .expectComplete()
+                .verify();
+
+        StepVerifier
+                .create(sessionManager.getSessionOrDie(session.getId()))
+                .expectNextMatches(actual -> Objects.equals(actual.getUser().getUsername(), JOHN_DOE))
+                .expectComplete()
+                .verify();
+
+        StepVerifier
+                .create(sessionManager.getCurrentLiveSessions())
+                .expectComplete()
+                .verify();
+    }
+
+    @Test
+    @WithJohnDoeSimpleUser
+    @TransactionalReactiveTest
+    public void deleteSession() {
+        final UserLiveSessionEntity session = createSession();
+
+        StepVerifier
+                .create(sessionManager.deleteSession(session))
+                .expectComplete()
+                .verify();
+
+        StepVerifier
+                .create(sessionManager.getSessionOrDie(session.getId()))
+                .expectError(ResourceNotFoundException.class)
+                .verify();
+    }
+
+    @Test
+    @WithJohnDoeSimpleUser
+    @TransactionalReactiveTest
+    public void deleteAll() {
+        final UserLiveSessionEntity session = createSession();
+
+        StepVerifier
+                .create(sessionManager.deleteAll(session.getUser()))
+                .expectComplete()
+                .verify();
+
+        StepVerifier
+                .create(sessionManager.getSessionOrDie(session.getId()))
+                .expectError(ResourceNotFoundException.class)
+                .verify();
+    }
+
+    private UserLiveSessionEntity createSession() {
+        final Set<UserLiveSessionEntity> sessions = new HashSet<>();
+
+        StepVerifier
+                .create(sessionManager.startSession())
+                .recordWith(() -> sessions)
+                .expectNextCount(1)
+                .expectComplete()
+                .verify();
+
+        return sessions.iterator().next();
+    }
+
+}
