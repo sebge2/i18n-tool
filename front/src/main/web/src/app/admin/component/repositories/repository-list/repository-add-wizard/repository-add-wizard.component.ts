@@ -1,8 +1,8 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {AbstractControl, FormArray, FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {MatStepper} from "@angular/material/stepper";
+import {Component, OnInit, ViewChild} from '@angular/core';
+import {FormArray, FormBuilder, FormGroup} from "@angular/forms";
 import {RepositoryType} from "../../../../../translations/model/repository-type.model";
 import * as _ from "lodash";
+import {WizardComponent} from "../../../../../core/shared/component/wizard/wizard.component";
 
 @Component({
     selector: 'app-repository-add-wizard',
@@ -11,18 +11,22 @@ import * as _ from "lodash";
 })
 export class RepositoryAddWizardComponent implements OnInit {
 
-    @ViewChild('stepper', {static: true}) stepper: MatStepper;
+    @ViewChild('wizard', {static: true}) wizard: WizardComponent;
 
     public form: FormGroup;
 
-    private static  STEP_TYPE = 0;
-    private static  STEP_INFO = 1;
+    private static STEP_TYPE = 0;
+    private static STEP_CONFIG = 1;
+    private static STEP_CREATION = 2;
+    private static STEP_INITIALIZATION = 3;
 
     constructor(private formBuilder: FormBuilder) {
         this.form = this.formBuilder.group({
             stepsForm: this.formBuilder.array([
                 this.formBuilder.group({}), // step type
-                this.formBuilder.group({}) // step repo info
+                this.formBuilder.group({}), // step repo config
+                this.formBuilder.group({}), // step repo creation
+                this.formBuilder.group({}) // step repo initialization
             ])
         });
     }
@@ -30,24 +34,31 @@ export class RepositoryAddWizardComponent implements OnInit {
     public ngOnInit() {
     }
 
-
     public get stepTypeEditable(): boolean {
-        return this.stepper.selectedIndex == RepositoryAddWizardComponent.STEP_TYPE;
+        return this.wizard.selectedIndex == RepositoryAddWizardComponent.STEP_TYPE;
     }
 
     public get stepTypeForm(): FormGroup {
-        return <FormGroup> this.stepsForm.at(RepositoryAddWizardComponent.STEP_TYPE);
+        return <FormGroup>this.stepsForm.at(RepositoryAddWizardComponent.STEP_TYPE);
     }
 
     public get repositoryType(): RepositoryType {
         return _.get(this.stepTypeForm.controls['type'], 'value');
     }
 
-    public get stepInfoForm(): FormGroup {
-        return <FormGroup> this.stepsForm.at(RepositoryAddWizardComponent.STEP_INFO);
+    public get stepConfigForm(): FormGroup {
+        return <FormGroup>this.stepsForm.at(RepositoryAddWizardComponent.STEP_CONFIG);
+    }
+
+    public get stepCreationForm(): FormGroup {
+        return <FormGroup>this.stepsForm.at(RepositoryAddWizardComponent.STEP_CREATION);
+    }
+
+    public get stepInitializationForm(): FormGroup {
+        return <FormGroup>this.stepsForm.at(RepositoryAddWizardComponent.STEP_INITIALIZATION);
     }
 
     private get stepsForm(): FormArray | null {
-        return <FormArray> this.form.controls['stepsForm'];
+        return <FormArray>this.form.controls['stepsForm'];
     }
 }

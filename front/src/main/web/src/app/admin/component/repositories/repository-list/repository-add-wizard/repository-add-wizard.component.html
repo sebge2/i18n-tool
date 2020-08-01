@@ -1,36 +1,16 @@
-<div mat-dialog-content>
-    <form [formGroup]="form">
-        <mat-horizontal-stepper [linear]="true" [formArrayName]="'stepsForm'" #stepper>
-            <mat-step formGroupName="0" [stepControl]="stepTypeForm" [editable]="stepTypeEditable">
-                <ng-template matStepLabel>Selection</ng-template>
-
-                <app-repository-add-wizard-step-type [form]="stepTypeForm" [stepper]="stepper"></app-repository-add-wizard-step-type>
-            </mat-step>
-            <mat-step formGroupName="0" [stepControl]="stepInfoForm">
-                <ng-template matStepLabel>Configuration</ng-template>
-
-                <app-repository-add-wizard-step-info [form]="stepInfoForm" [repositoryType]="repositoryType"></app-repository-add-wizard-step-info>
-            </mat-step>
-            <mat-step>
-                <ng-template matStepLabel>Creation</ng-template>
-                <p>OK Created</p>
-                <div>
-                    <button mat-button matStepperPrevious>Back</button>
-                    <button mat-button (click)="stepper.reset()">Reset</button>
-                </div>
-            </mat-step>
-            <mat-step [optional]="true">
-                <ng-template matStepLabel>Initialization</ng-template>
-                <p>You are now done.</p>
-<!--                <div>-->
-<!--                    <button mat-button matStepperPrevious>Back</button>-->
-<!--                    <button mat-button (click)="stepper.reset()">Reset</button>-->
-<!--                </div>-->
-            </mat-step>
-        </mat-horizontal-stepper>
-    </form>
-</div>
-<div mat-dialog-actions align="end">
-    <button mat-stroked-button mat-dialog-close class="button-close"><mat-icon>close</mat-icon> Close</button>
-    <button mat-raised-button color="primary" class="button-next"><mat-icon>double_arrow</mat-icon> Next</button>
-</div>
+<app-wizard [form]="form" #wizard>
+    <app-wizard-step [form]="stepTypeForm" [name]="'ADMIN.REPOSITORIES.ADD_WIZARD.STEPS.SELECTION' | translate" [editable]="stepTypeEditable" [nextVisible]="false">
+        <app-repository-add-wizard-step-type [form]="stepTypeForm"
+                                             [wizard]="wizard"></app-repository-add-wizard-step-type>
+    </app-wizard-step>
+    <app-wizard-step [form]="stepConfigForm" [name]="'ADMIN.REPOSITORIES.ADD_WIZARD.STEPS.CONFIGURATION' | translate">
+        <app-repository-add-wizard-step-info [form]="stepConfigForm"
+                                             [repositoryType]="repositoryType"></app-repository-add-wizard-step-info>
+    </app-wizard-step>
+    <app-wizard-step [form]="stepCreationForm" [name]="'ADMIN.REPOSITORIES.ADD_WIZARD.STEPS.CREATION' | translate">
+        <p>OK Created</p>
+    </app-wizard-step>
+    <app-wizard-step [form]="stepInitializationForm" [name]="'ADMIN.REPOSITORIES.ADD_WIZARD.STEPS.INITIALIZATION' | translate">
+        <p>You are now done.</p>
+    </app-wizard-step>
+</app-wizard>

@@ -104,6 +104,12 @@
     },
     "REPOSITORIES": {
       "ADD_WIZARD": {
+        "STEPS": {
+          "SELECTION": "Selection",
+          "CONFIGURATION": "Configuration",
+          "CREATION": "Creation",
+          "INITIALIZATION": "Initialization"
+        },
         "STEP_TYPE" : {
           "GITHUB": "Connect to GitHub",
           "GIT": "Connect to Git"

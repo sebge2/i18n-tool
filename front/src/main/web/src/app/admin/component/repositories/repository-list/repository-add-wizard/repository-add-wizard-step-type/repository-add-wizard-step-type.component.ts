@@ -1,7 +1,7 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {RepositoryType} from "../../../../../../translations/model/repository-type.model";
-import {MatStepper} from "@angular/material/stepper";
+import {WizardComponent} from "../../../../../../core/shared/component/wizard/wizard.component";
 
 @Component({
     selector: 'app-repository-add-wizard-step-type',
@@ -11,7 +11,7 @@ import {MatStepper} from "@angular/material/stepper";
 export class RepositoryAddWizardStepTypeComponent implements OnInit {
 
     @Input() public form: FormGroup;
-    @Input() public stepper: MatStepper;
+    @Input() public wizard: WizardComponent;
 
     public availableTypes = [RepositoryType.GITHUB, RepositoryType.GIT];
 
@@ -24,6 +24,6 @@ export class RepositoryAddWizardStepTypeComponent implements OnInit {
 
     public onSelect(type: RepositoryType) {
         this.form.controls['type'].setValue(type);
-        this.stepper.next();
+        this.wizard.nextStep();
     }
 }
