@@ -29,6 +29,7 @@ export class WizardComponent implements OnInit, OnDestroy, AfterContentInit {
 
     @Input() public form: FormGroup;
     @Output() public stepChange = new EventEmitter<StepChangeEvent>();
+    @Output() public close = new EventEmitter<void>();
 
     @ContentChildren(WizardStepComponent) public stepComponents: QueryList<WizardStepComponent>;
     @ViewChild('stepper', {static: true}) public stepper: MatStepper;
@@ -71,5 +72,9 @@ export class WizardComponent implements OnInit, OnDestroy, AfterContentInit {
 
     public nextStep() {
         this.stepper.next();
+    }
+
+    public onClose() {
+        this.close.emit();
     }
 }

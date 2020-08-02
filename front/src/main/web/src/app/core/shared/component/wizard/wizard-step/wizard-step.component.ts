@@ -13,6 +13,7 @@ export class WizardStepComponent {
     @Input() public editable: boolean = true;
     @Input() public nextVisible: boolean = true;
     @Input() public previousVisible: boolean = true;
+    @Input() public closeVisible: boolean = false;
 
     @ViewChild(TemplateRef, {static: false}) template: TemplateRef<any>;
 

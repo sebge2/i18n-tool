@@ -5,11 +5,12 @@
                 <ng-template matStepLabel>{{step.name}}</ng-template>
                 <ng-container *ngTemplateOutlet="step.template"></ng-container>
 
-                <div mat-dialog-actions align="end">
+                <div class="wizard-actions">
                     <button
                             mat-stroked-button
-                            mat-dialog-close
-                            class="button-close">
+                            class="button-close"
+                            (click)="onClose()"
+                            *ngIf="step.closeVisible">
                         <mat-icon>close</mat-icon>
                         {{'SHARED.WIZARD.CLOSE_ACTION' | translate}}
                     </button>
