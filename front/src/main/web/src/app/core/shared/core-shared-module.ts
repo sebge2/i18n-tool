@@ -18,6 +18,8 @@ import {DragDropDirective} from "./directive/drag-drop.directive";
 import {FormUploadButtonComponent} from "./component/form-upload-button/form-upload-button.component";
 import {WizardStepComponent} from "./component/wizard/wizard-step/wizard-step.component";
 import {WizardComponent} from "./component/wizard/wizard.component";
+import {TabsComponent} from "./component/tabs/tabs.component";
+import {TabComponent} from "./component/tabs/tab/tab.component";
 
 @NgModule({
     declarations: [
@@ -30,6 +32,8 @@ import {WizardComponent} from "./component/wizard/wizard.component";
         FormUploadButtonComponent,
         WizardComponent,
         WizardStepComponent,
+        TabsComponent,
+        TabComponent,
 
         WorkspaceIconPipe,
         WorkspaceIconCssPipe,
@@ -58,6 +62,8 @@ import {WizardComponent} from "./component/wizard/wizard.component";
         FormUploadButtonComponent,
         WizardComponent,
         WizardStepComponent,
+        TabsComponent,
+        TabComponent,
 
         WorkspaceIconPipe,
         WorkspaceIconCssPipe,
