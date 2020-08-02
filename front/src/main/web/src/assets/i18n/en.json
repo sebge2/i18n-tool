@@ -104,6 +104,7 @@
       "REFRESH_ACTION": "Refresh"
     },
     "REPOSITORIES": {
+      "TAB_LABEL": "Repositories",
       "ADD_WIZARD": {
         "STEPS": {
           "SELECTION": "Selection",

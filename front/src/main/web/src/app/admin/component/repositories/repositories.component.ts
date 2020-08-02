@@ -1,39 +1,26 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import {RepositoryService} from "../../../translations/service/repository.service";
+import {Component} from '@angular/core';
 import {Repository} from "../../../translations/model/repository.model";
-import {Subject} from "rxjs";
-import {takeUntil} from "rxjs/operators";
+import * as _ from "lodash";
 
 @Component({
-  selector: 'app-repositories',
-  templateUrl: './repositories.component.html',
-  styleUrls: ['./repositories.component.css']
+    selector: 'app-repositories',
+    templateUrl: './repositories.component.html',
+    styleUrls: ['./repositories.component.css']
 })
-export class RepositoriesComponent implements OnInit, OnDestroy {
+export class RepositoriesComponent {
 
-  public repositories: Repository[] = [];
+    public openedRepositories: Repository[] = [];
 
-  private _destroyed$ = new Subject<void>();
+    constructor() {
+    }
 
-  constructor(private _repositoryService: RepositoryService) { }
+    public onOpen(repository: Repository) {
+        if (!_.find(this.openedRepositories, rep => rep.id == repository.id)) {
+            this.openedRepositories.push(repository);
+        }
+    }
 
-  public ngOnInit() {
-    this._repositoryService
-        .getRepositories()
-        .pipe(takeUntil(this._destroyed$))
-        .subscribe(rep => this.repositories = rep);
-  }
-
-  public ngOnDestroy(): void {
-    this._destroyed$.next();
-    this._destroyed$.complete();
-  }
-
-  public onSave(locale: Repository) {
-
-  }
-
-  public onAdd() {
-
-  }
+    public onClose(repository: Repository) {
+        _.remove(this.openedRepositories, rep => rep.id == repository.id);
+    }
 }
