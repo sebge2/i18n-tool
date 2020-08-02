@@ -1,6 +1,7 @@
-import {Component} from '@angular/core';
+import {Component, ViewChild} from '@angular/core';
 import {Repository} from "../../../translations/model/repository.model";
 import * as _ from "lodash";
+import {TabsComponent} from "../../../core/shared/component/tabs/tabs.component";
 
 @Component({
     selector: 'app-repositories',
@@ -11,12 +12,19 @@ export class RepositoriesComponent {
 
     public openedRepositories: Repository[] = [];
 
+    @ViewChild('tabs', {static: false}) private tabs: TabsComponent;
+
     constructor() {
     }
 
     public onOpen(repository: Repository) {
-        if (!_.find(this.openedRepositories, rep => rep.id == repository.id)) {
+        const index = _.findIndex(this.openedRepositories, rep => rep.id == repository.id);
+
+        if (index < 0) {
             this.openedRepositories.push(repository);
+            this.tabs.selectTab(this.openedRepositories.length)
+        } else {
+            this.tabs.selectTab(index + 1);
         }
     }
 

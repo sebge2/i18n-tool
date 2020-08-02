@@ -1,4 +1,4 @@
-<app-tabs>
+<app-tabs #tabs>
     <app-tab [title]="'ADMIN.REPOSITORIES.TAB_LABEL' | translate" [matIcon]="'view_module'">
         <app-repository-list (open)="onOpen($event)">
         </app-repository-list>

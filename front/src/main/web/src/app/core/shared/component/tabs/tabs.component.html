@@ -1,4 +1,4 @@
-<mat-tab-group>
+<mat-tab-group #tabGroup>
     <mat-tab *ngFor="let tab of tabs; let i = index" >
         <ng-template mat-tab-label>
             <mat-icon *ngIf="tab.matIcon">{{tab.matIcon}}</mat-icon>
