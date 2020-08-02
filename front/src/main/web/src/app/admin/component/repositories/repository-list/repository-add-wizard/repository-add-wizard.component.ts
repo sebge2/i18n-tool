@@ -2,7 +2,9 @@ import {Component, ViewChild} from '@angular/core';
 import {FormArray, FormBuilder, FormGroup} from "@angular/forms";
 import {RepositoryType} from "../../../../../translations/model/repository-type.model";
 import * as _ from "lodash";
-import {WizardComponent} from "../../../../../core/shared/component/wizard/wizard.component";
+import {StepChangeEvent, WizardComponent} from "../../../../../core/shared/component/wizard/wizard.component";
+import {GitHubRepositoryCreationRequestDto, GitRepositoryCreationRequestDto} from "../../../../../api";
+import {RepositoryAddWizardStepInfoComponent} from "./repository-add-wizard-step-info/repository-add-wizard-step-info.component";
 
 @Component({
     selector: 'app-repository-add-wizard',
@@ -12,8 +14,10 @@ import {WizardComponent} from "../../../../../core/shared/component/wizard/wizar
 export class RepositoryAddWizardComponent {
 
     @ViewChild('wizard', {static: true}) wizard: WizardComponent;
+    @ViewChild('stepInfo', {static: true}) stepInfo: RepositoryAddWizardStepInfoComponent;
 
     public form: FormGroup;
+    public creationDto: (GitHubRepositoryCreationRequestDto | GitRepositoryCreationRequestDto) = null;
 
     private static STEP_TYPE = 0;
     private static STEP_CONFIG = 1;
@@ -57,6 +61,12 @@ export class RepositoryAddWizardComponent {
 
     public onNextStep() {
         this.wizard.nextStep();
+    }
+
+    public onStepChange(stepChange: StepChangeEvent) {
+        if (stepChange.originalStepIndex == RepositoryAddWizardComponent.STEP_CONFIG) {
+            this.creationDto = this.stepInfo.creationRequest;
+        }
     }
 
     private get stepsForm(): FormArray | null {
