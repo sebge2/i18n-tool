@@ -122,7 +122,7 @@
             "REPOSITORY": "Name",
             "REPOSITORY_HINT": "The repository name on GitHub.",
             "ACCESS_KEY": "Access key",
-            "ACCESS_KEY_HINT": "The access key used to manipulate the repository."
+            "ACCESS_KEY_HINT": "The access key used to access (read/write) the repository."
           },
           "GIT": {
             "LOCATION": "Location",

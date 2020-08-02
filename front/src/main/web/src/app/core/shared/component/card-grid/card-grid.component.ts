@@ -8,6 +8,8 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 export class CardGridComponent implements OnInit {
 
     @Input() public allowAdd = true;
+    @Input() public layout = 'flex-start';
+
     @Output() public add = new EventEmitter<void>();
 
     constructor() {

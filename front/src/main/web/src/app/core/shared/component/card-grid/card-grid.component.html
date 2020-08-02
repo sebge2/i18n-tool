@@ -1,4 +1,4 @@
-<div class="container" fxLayout="row wrap" fxLayoutAlign="flex-start" fxLayoutGap="10px grid">
+<div class="container" fxLayout="row wrap" [fxLayoutAlign]="layout" fxLayoutGap="10px grid">
     <ng-content select="app-card-grid-item"></ng-content>
 
     <button mat-fab color="primary" class="add-button" (click)="onAdd()" *ngIf="allowAdd">

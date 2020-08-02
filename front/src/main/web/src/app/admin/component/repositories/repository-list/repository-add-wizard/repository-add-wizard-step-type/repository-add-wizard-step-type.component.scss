@@ -1,5 +1,9 @@
 @import '~@angular/material/theming';
 
+:host ::ng-deep app-card-grid-item {
+  margin-top: 30px;
+}
+
 .repository-type-card {
   width: 200px;
   height: 200px;
@@ -13,6 +17,3 @@
 .repository-type-action {
   text-align: center;
 }
-
-
-
