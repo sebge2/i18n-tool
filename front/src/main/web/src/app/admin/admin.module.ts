@@ -9,7 +9,7 @@ import {UsersComponent} from './component/users/users.component';
 import {RepositoriesComponent} from './component/repositories/repositories.component';
 import {LocalesComponent} from './component/locales/locales.component';
 import {LocaleViewCardComponent} from './component/locales/locale-view-card/locale-view-card.component';
-import {RepositoryViewCardComponent} from './component/repositories/repository-view-card/repository-view-card.component';
+import {RepositoryViewCardComponent} from './component/repositories/repository-list/repository-view-card/repository-view-card.component';
 import {UserViewCardComponent} from './component/users/user-view-card/user-view-card.component';
 import {RepositoryDetailsComponent} from './component/repositories/repository-details/repository-details.component';
 import {RepositoryListComponent} from './component/repositories/repository-list/repository-list.component';

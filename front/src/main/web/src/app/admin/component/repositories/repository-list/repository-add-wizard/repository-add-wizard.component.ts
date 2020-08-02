@@ -61,10 +61,6 @@ export class RepositoryAddWizardComponent {
         return <FormGroup>this.stepsForm.at(RepositoryAddWizardComponent.STEP_INITIALIZATION);
     }
 
-    public onNextStep() {
-        this.wizard.nextStep();
-    }
-
     public onStepChange(stepChange: StepChangeEvent) {
         if (stepChange.originalStepIndex == RepositoryAddWizardComponent.STEP_CONFIG) {
             this.creationDto = this.stepInfo.creationRequest;
