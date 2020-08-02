@@ -5,6 +5,7 @@ import * as _ from "lodash";
 import {StepChangeEvent, WizardComponent} from "../../../../../core/shared/component/wizard/wizard.component";
 import {GitHubRepositoryCreationRequestDto, GitRepositoryCreationRequestDto} from "../../../../../api";
 import {RepositoryAddWizardStepInfoComponent} from "./repository-add-wizard-step-info/repository-add-wizard-step-info.component";
+import {MatDialogRef} from "@angular/material/dialog";
 
 @Component({
     selector: 'app-repository-add-wizard',
@@ -24,7 +25,8 @@ export class RepositoryAddWizardComponent {
     private static STEP_CREATION = 2;
     private static STEP_INITIALIZATION = 3;
 
-    constructor(private formBuilder: FormBuilder) {
+    constructor(private formBuilder: FormBuilder,
+                private dialogRef: MatDialogRef<RepositoryAddWizardComponent>) {
         this.form = this.formBuilder.group({
             stepsForm: this.formBuilder.array([
                 this.formBuilder.group({}), // step type
@@ -67,6 +69,10 @@ export class RepositoryAddWizardComponent {
         if (stepChange.originalStepIndex == RepositoryAddWizardComponent.STEP_CONFIG) {
             this.creationDto = this.stepInfo.creationRequest;
         }
+    }
+
+    public onClose() {
+        this.dialogRef.close();
     }
 
     private get stepsForm(): FormArray | null {

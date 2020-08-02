@@ -1,13 +1,16 @@
 <div mat-dialog-content>
     <app-wizard [form]="form"
                 (stepChange)="onStepChange($event)"
+                (close)="onClose()"
                 #wizard
     >
         <app-wizard-step [form]="stepTypeForm"
                          [name]="'ADMIN.REPOSITORIES.ADD_WIZARD.STEPS.SELECTION' | translate"
                          [editable]="stepTypeEditable"
                          [nextVisible]="false"
-                         [previousVisible]="false">
+                         [previousVisible]="false"
+                         [closeVisible]="true"
+        style="height: 100%">
             <app-repository-add-wizard-step-type [form]="stepTypeForm"
                                                  [wizard]="wizard"></app-repository-add-wizard-step-type>
         </app-wizard-step>
@@ -26,7 +29,8 @@
         </app-wizard-step>
         <app-wizard-step [form]="stepInitializationForm"
                          [name]="'ADMIN.REPOSITORIES.ADD_WIZARD.STEPS.INITIALIZATION' | translate"
-                         [previousVisible]="false">
+                         [previousVisible]="false"
+                         [closeVisible]="true">
             <app-repository-add-wizard-step-initialization></app-repository-add-wizard-step-initialization>
         </app-wizard-step>
     </app-wizard>
