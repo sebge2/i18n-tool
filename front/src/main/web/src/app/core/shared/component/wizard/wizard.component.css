@@ -1,4 +1,13 @@
-.button-close{
+.wizard-actions {
+    padding: 8px 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-bottom: -24px;
+    justify-content: flex-end;
+}
+
+.button-close {
     margin-right: 5px;
 }
 
