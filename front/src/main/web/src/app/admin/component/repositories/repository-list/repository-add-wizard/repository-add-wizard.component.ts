@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, ViewChild} from '@angular/core';
 import {FormArray, FormBuilder, FormGroup} from "@angular/forms";
 import {RepositoryType} from "../../../../../translations/model/repository-type.model";
 import * as _ from "lodash";
@@ -9,7 +9,7 @@ import {WizardComponent} from "../../../../../core/shared/component/wizard/wizar
     templateUrl: './repository-add-wizard.component.html',
     styleUrls: ['./repository-add-wizard.component.css']
 })
-export class RepositoryAddWizardComponent implements OnInit {
+export class RepositoryAddWizardComponent {
 
     @ViewChild('wizard', {static: true}) wizard: WizardComponent;
 
@@ -29,9 +29,6 @@ export class RepositoryAddWizardComponent implements OnInit {
                 this.formBuilder.group({}) // step repo initialization
             ])
         });
-    }
-
-    public ngOnInit() {
     }
 
     public get stepTypeEditable(): boolean {
@@ -56,6 +53,10 @@ export class RepositoryAddWizardComponent implements OnInit {
 
     public get stepInitializationForm(): FormGroup {
         return <FormGroup>this.stepsForm.at(RepositoryAddWizardComponent.STEP_INITIALIZATION);
+    }
+
+    public onNextStep() {
+        this.wizard.nextStep();
     }
 
     private get stepsForm(): FormArray | null {

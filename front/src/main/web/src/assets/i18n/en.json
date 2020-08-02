@@ -8,7 +8,8 @@
     "USERS_TITLE": "Users",
     "WIZARD": {
       "CLOSE_ACTION": "Close",
-      "NEXT_ACTION": "Next"
+      "NEXT_ACTION": "Next",
+      "PREVIOUS_ACTION": "Previous"
     }
   },
   "TRANSLATIONS": {

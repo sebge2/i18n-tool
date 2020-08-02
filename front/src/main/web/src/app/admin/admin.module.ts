@@ -17,6 +17,8 @@ import { RepositoryListComponent } from './component/repositories/repository-lis
 import { RepositoryAddWizardComponent } from './component/repositories/repository-list/repository-add-wizard/repository-add-wizard.component';
 import { RepositoryAddWizardStepTypeComponent } from './component/repositories/repository-list/repository-add-wizard/repository-add-wizard-step-type/repository-add-wizard-step-type.component';
 import { RepositoryAddWizardStepInfoComponent } from './component/repositories/repository-list/repository-add-wizard/repository-add-wizard-step-info/repository-add-wizard-step-info.component';
+import { RepositoryAddWizardStepCreationComponent } from './component/repositories/repository-list/repository-add-wizard/repository-add-wizard-step-creation/repository-add-wizard-step-creation.component';
+import { RepositoryAddWizardStepInitializationComponent } from './component/repositories/repository-list/repository-add-wizard/repository-add-wizard-step-initialization/repository-add-wizard-step-initialization.component';
 
 const appRoutes: Routes = [
     {path: 'users', component: UsersComponent},
@@ -41,7 +43,9 @@ const appRoutes: Routes = [
         RepositoryViewCardComponent,
         RepositoryAddWizardComponent,
         RepositoryAddWizardStepTypeComponent,
-        RepositoryAddWizardStepInfoComponent
+        RepositoryAddWizardStepInfoComponent,
+        RepositoryAddWizardStepCreationComponent,
+        RepositoryAddWizardStepInitializationComponent
     ],
     entryComponents: [
         ConfirmWorkspaceDeletionComponent,

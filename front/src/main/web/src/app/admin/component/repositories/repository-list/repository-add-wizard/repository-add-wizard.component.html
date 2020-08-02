@@ -1,16 +1,29 @@
+<div mat-dialog-content>
 <app-wizard [form]="form" #wizard>
-    <app-wizard-step [form]="stepTypeForm" [name]="'ADMIN.REPOSITORIES.ADD_WIZARD.STEPS.SELECTION' | translate" [editable]="stepTypeEditable" [nextVisible]="false">
+    <app-wizard-step [form]="stepTypeForm"
+                     [name]="'ADMIN.REPOSITORIES.ADD_WIZARD.STEPS.SELECTION' | translate"
+                     [editable]="stepTypeEditable"
+                     [nextVisible]="false"
+                     [previousVisible]="false">
         <app-repository-add-wizard-step-type [form]="stepTypeForm"
                                              [wizard]="wizard"></app-repository-add-wizard-step-type>
     </app-wizard-step>
-    <app-wizard-step [form]="stepConfigForm" [name]="'ADMIN.REPOSITORIES.ADD_WIZARD.STEPS.CONFIGURATION' | translate">
+    <app-wizard-step [form]="stepConfigForm"
+                     [name]="'ADMIN.REPOSITORIES.ADD_WIZARD.STEPS.CONFIGURATION' | translate"
+                     [previousVisible]="false">
         <app-repository-add-wizard-step-info [form]="stepConfigForm"
-                                             [repositoryType]="repositoryType"></app-repository-add-wizard-step-info>
+                                             [repositoryType]="repositoryType"
+                                             (submit)="onNextStep()">
+        </app-repository-add-wizard-step-info>
     </app-wizard-step>
-    <app-wizard-step [form]="stepCreationForm" [name]="'ADMIN.REPOSITORIES.ADD_WIZARD.STEPS.CREATION' | translate">
-        <p>OK Created</p>
+    <app-wizard-step [form]="stepCreationForm"
+                     [name]="'ADMIN.REPOSITORIES.ADD_WIZARD.STEPS.CREATION' | translate">
+        <app-repository-add-wizard-step-creation></app-repository-add-wizard-step-creation>
     </app-wizard-step>
-    <app-wizard-step [form]="stepInitializationForm" [name]="'ADMIN.REPOSITORIES.ADD_WIZARD.STEPS.INITIALIZATION' | translate">
-        <p>You are now done.</p>
+    <app-wizard-step [form]="stepInitializationForm"
+                     [name]="'ADMIN.REPOSITORIES.ADD_WIZARD.STEPS.INITIALIZATION' | translate"
+                     [previousVisible]="false">
+        <app-repository-add-wizard-step-initialization></app-repository-add-wizard-step-initialization>
     </app-wizard-step>
 </app-wizard>
+</div>
