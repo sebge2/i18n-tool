@@ -1,35 +1,39 @@
+<button mat-icon-button class="close-button" [mat-dialog-close]="true">
+    <mat-icon class="close-icon">close</mat-icon>
+</button>
+
 <div mat-dialog-content>
     <app-wizard [form]="form"
                 (stepChange)="onStepChange($event)"
-                (close)="onClose()"
                 #wizard
     >
         <app-wizard-step [form]="stepTypeForm"
                          [name]="'ADMIN.REPOSITORIES.ADD_WIZARD.STEPS.SELECTION' | translate"
                          [editable]="stepTypeEditable"
                          [nextVisible]="false"
-                         [previousVisible]="false"
-                         [closeVisible]="true">
+                         [previousVisible]="false">
             <app-repository-add-wizard-step-type [form]="stepTypeForm"
                                                  [wizard]="wizard"></app-repository-add-wizard-step-type>
         </app-wizard-step>
         <app-wizard-step [form]="stepConfigForm"
-                         [name]="'ADMIN.REPOSITORIES.ADD_WIZARD.STEPS.CONFIGURATION' | translate">
+                         [name]="'ADMIN.REPOSITORIES.ADD_WIZARD.STEPS.CONFIGURATION' | translate"
+                         [editable]="stepConfigEditable">
             <app-repository-add-wizard-step-info [form]="stepConfigForm"
                                                  [repositoryType]="repositoryType"
-                                                 (submit)="onNextStep()"
                                                  #stepInfo>
             </app-repository-add-wizard-step-info>
         </app-wizard-step>
         <app-wizard-step [form]="stepCreationForm"
-                         [name]="'ADMIN.REPOSITORIES.ADD_WIZARD.STEPS.CREATION' | translate">
-            <app-repository-add-wizard-step-creation [creationDto]="creationDto">
+                         [name]="'ADMIN.REPOSITORIES.ADD_WIZARD.STEPS.CREATION' | translate"
+                         [editable]="stepCreationEditable">
+            <app-repository-add-wizard-step-creation
+                    [form]="stepCreationForm"
+                    [creationDto]="creationDto">
             </app-repository-add-wizard-step-creation>
         </app-wizard-step>
         <app-wizard-step [form]="stepInitializationForm"
                          [name]="'ADMIN.REPOSITORIES.ADD_WIZARD.STEPS.INITIALIZATION' | translate"
-                         [previousVisible]="false"
-                         [closeVisible]="true">
+                         [previousVisible]="false">
             <app-repository-add-wizard-step-initialization></app-repository-add-wizard-step-initialization>
         </app-wizard-step>
     </app-wizard>
