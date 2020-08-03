@@ -1,5 +1,5 @@
 <div [ngSwitch]="repositoryType">
-    <form [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
+    <form [formGroup]="form" autocomplete="off">
         <ng-container *ngSwitchCase="RepositoryType.GITHUB">
             <p>
                 <mat-form-field appearance="standard">
