@@ -41,9 +41,9 @@ export class RepositoryService {
         return this._repositories$;
     }
 
-    public createRepository(dto: (GitHubRepositoryCreationRequestDto | GitRepositoryCreationRequestDto)): Observable<Repository> {
+    public createRepository(dto: RepositoryCreationRequestDto): Observable<Repository> {
         return this.apiRepositoryService
-            .create(dto)
+            .create(<(GitHubRepositoryCreationRequestDto | GitRepositoryCreationRequestDto)> dto)
             .pipe(map(dto => Repository.fromDto(dto)));
     }
 

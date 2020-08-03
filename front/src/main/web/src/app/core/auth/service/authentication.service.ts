@@ -60,6 +60,9 @@ export class AuthenticationService {
                 this.router.navigateByUrl('/login');
             });
 
+        this.currentAuthenticatedUser()
+            .subscribe(currentUser => currentUser ? eventService.enabledEvents() : eventService.disableEvents());
+
         this._currentUser$ = this.currentAuthenticatedUser()
             .pipe(flatMap(currentUser => currentUser ? this.userService.getCurrentUser() : null));
     }
