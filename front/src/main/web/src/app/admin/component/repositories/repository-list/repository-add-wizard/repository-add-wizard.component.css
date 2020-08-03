@@ -12,13 +12,3 @@
 .close-button:hover {
     opacity: 1;
 }
-
-::ng-deep .icon-outside .close-button {
-    float: right;
-    top: -52px;
-    right: -52px;
-}
-
-::ng-deep .icon-outside .mat-dialog-container {
-    overflow: unset;
-}
