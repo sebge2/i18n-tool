@@ -1,16 +1,12 @@
+.wizard-step {
+    display: grid;
+    height: 100%;
+    width: 100%;
+    grid-template-rows: auto 1fr auto;
+}
+
 .wizard-actions {
-    padding: 8px 0;
     display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    margin-bottom: -24px;
-    justify-content: flex-end;
-}
-
-.button-close {
-    margin-right: 5px;
-}
-
-.button-next {
-    margin-left: 5px;
+    justify-content: space-between;
+    width: 100%;
 }

@@ -1,30 +1,32 @@
 <form [formGroup]="form">
-    <mat-horizontal-stepper [linear]="true" [formArrayName]="'stepsForm'" #stepper>
+    <mat-horizontal-stepper [linear]="true" [formArrayName]="'stepsForm'" fxLayout="column" fxFlex="100" fxLayoutAlign="stretch" #stepper>
         <mat-step *ngFor="let step of steps; let i = index" [stepControl]="step.form" [editable]="step.editable">
             <ng-template matStepLabel>{{step.name}}</ng-template>
-            <ng-container *ngTemplateOutlet="step.template"></ng-container>
 
-            <div class="wizard-actions">
-                <button
-                        mat-raised-button
-                        color="primary"
-                        class="button-next"
-                        matStepperPrevious
-                        [disabled]="!step.previousAllowed || !previousAllowed"
-                        *ngIf="step.previousVisible">
-                    <mat-icon>chevron_left</mat-icon>
-                    {{'SHARED.WIZARD.PREVIOUS_ACTION' | translate}}
-                </button>
-                <button
-                        mat-raised-button
-                        color="primary"
-                        class="button-next"
-                        matStepperNext
-                        [disabled]="!step.nextAllowed || !nextAllowed"
-                        *ngIf="step.nextVisible">
-                    {{'SHARED.WIZARD.NEXT_ACTION' | translate}}
-                    <mat-icon>chevron_right</mat-icon>
-                </button>
+            <div class="wizard-step">
+                <main>
+                    <ng-container *ngTemplateOutlet="step.template"></ng-container>
+                </main>
+                <footer class="wizard-actions">
+                    <button
+                            mat-raised-button
+                            color="primary"
+                            matStepperPrevious
+                            [disabled]="!step.previousAllowed || !previousAllowed"
+                            *ngIf="step.previousVisible">
+                        <mat-icon>chevron_left</mat-icon>
+                        {{'SHARED.WIZARD.PREVIOUS_ACTION' | translate}}
+                    </button>
+                    <button
+                            mat-raised-button
+                            color="primary"
+                            matStepperNext
+                            [disabled]="!step.nextAllowed || !nextAllowed"
+                            *ngIf="step.nextVisible">
+                        {{'SHARED.WIZARD.NEXT_ACTION' | translate}}
+                        <mat-icon>chevron_right</mat-icon>
+                    </button>
+                </footer>
             </div>
         </mat-step>
     </mat-horizontal-stepper>
