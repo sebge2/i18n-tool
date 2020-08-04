@@ -4,8 +4,7 @@ import {ErrorNotificationComponent} from "../component/error-notification/error-
 import {ErrorMessagesNotificationComponent} from "../component/validation-result-notification/error-messages-notification.component";
 import {ErrorMessagesDto} from "../../../api";
 import {TranslateService} from "@ngx-translate/core";
-import {HttpErrorResponse} from "@angular/common/http";
-import * as _ from "lodash";
+import {instanceOfErrorMessages, instanceOfHttpError} from "../../shared/utils/error-utils";
 
 @Injectable({
     providedIn: 'root'
@@ -17,12 +16,10 @@ export class NotificationService {
     }
 
     public displayErrorMessage(message?: string, cause?: any): void {
-        if (NotificationService.instanceOfHttpError(cause)) {
+        if (instanceOfHttpError(cause)) {
             return this.displayErrorMessage(message, cause.error);
-        } else if (NotificationService.instanceOfErrorMessages(cause)) {
+        } else if (instanceOfErrorMessages(cause)) {
             this.displayErrorMessages(this.translateService.instant(message), <ErrorMessagesDto>cause);
-        } else if (typeof "cause" === "string") {
-            this.displayTextErrorMessage(this.translateService.instant(message), cause);
         } else {
             this.displayTextErrorMessage(this.translateService.instant(message), cause);
         }
@@ -59,13 +56,5 @@ export class NotificationService {
                 data: {errorMessages: errorMessages, message: message},
                 panelClass: ['snack-bar', 'mat-toolbar', 'mat-theme']
             });
-    }
-
-    private static instanceOfErrorMessages(object: any): object is ErrorMessagesDto {
-        return object && 'messages' in object && 'id' in object && 'time' in object;
-    }
-
-    private static instanceOfHttpError(error: any): error is HttpErrorResponse {
-        return _.get(error, 'name') === 'HttpErrorResponse';
     }
 }
