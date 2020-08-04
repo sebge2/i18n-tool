@@ -1,7 +1,6 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {RepositoryType} from "../../../../../../translations/model/repository-type.model";
-import {WizardComponent} from "../../../../../../core/shared/component/wizard/wizard.component";
 
 @Component({
     selector: 'app-repository-add-wizard-step-type',
@@ -11,7 +10,7 @@ import {WizardComponent} from "../../../../../../core/shared/component/wizard/wi
 export class RepositoryAddWizardStepTypeComponent implements OnInit {
 
     @Input() public form: FormGroup;
-    @Input() public wizard: WizardComponent;
+    @Output() public repositoryTypeChange = new EventEmitter<RepositoryType>();
 
     public availableTypes = [RepositoryType.GITHUB, RepositoryType.GIT];
 
@@ -24,6 +23,6 @@ export class RepositoryAddWizardStepTypeComponent implements OnInit {
 
     public onSelect(type: RepositoryType) {
         this.form.controls['type'].setValue(type);
-        this.wizard.nextStep();
+        this.repositoryTypeChange.emit(type);
     }
 }
