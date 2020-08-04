@@ -20,6 +20,7 @@ import {WizardStepComponent} from "./component/wizard/wizard-step/wizard-step.co
 import {WizardComponent} from "./component/wizard/wizard.component";
 import {TabsComponent} from "./component/tabs/tabs.component";
 import {TabComponent} from "./component/tabs/tab/tab.component";
+import {ErrorMessageListComponent} from "./component/error-message-list/error-message-list.component";
 
 @NgModule({
     declarations: [
@@ -34,6 +35,7 @@ import {TabComponent} from "./component/tabs/tab/tab.component";
         WizardStepComponent,
         TabsComponent,
         TabComponent,
+        ErrorMessageListComponent,
 
         WorkspaceIconPipe,
         WorkspaceIconCssPipe,
@@ -64,6 +66,7 @@ import {TabComponent} from "./component/tabs/tab/tab.component";
         WizardStepComponent,
         TabsComponent,
         TabComponent,
+        ErrorMessageListComponent,
 
         WorkspaceIconPipe,
         WorkspaceIconCssPipe,

@@ -1,0 +1,6 @@
+<mat-list class="list">
+    <mat-list-item class="item" [ngClass]="whiteFont ? 'item-white' : 'item-dark'" *ngFor="let errorMessage of errorMessages.messages">
+        <mat-icon mat-list-icon class="item-bullet" [ngClass]="whiteFont ? 'item-bullet-white' : 'item-bullet-dark'">close</mat-icon>
+        {{errorMessage}}
+    </mat-list-item>
+</mat-list>

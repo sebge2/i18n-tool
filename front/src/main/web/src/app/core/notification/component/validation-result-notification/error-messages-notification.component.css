@@ -17,25 +17,6 @@
     font-weight: bold;
 }
 
-.list {
-    max-height: 600px;
-    overflow: auto;
-}
-
-.item {
-    color: white !important;
-    font-weight: bold;
-}
-
-.item-bullet {
-    color: red;
-    font-weight: normal;
-}
-
-.item:hover .item-bullet {
-    color: white;
-}
-
 .snack-bar-close {
     background-color: white;
     color: black;
