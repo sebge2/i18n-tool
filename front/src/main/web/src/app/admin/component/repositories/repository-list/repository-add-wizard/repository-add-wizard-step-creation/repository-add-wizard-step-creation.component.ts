@@ -1,4 +1,4 @@
-import {Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {Component, Input, OnDestroy} from '@angular/core';
 import {RepositoryCreationRequestDto} from "../../../../../../api";
 import {RepositoryService} from "../../../../../../translations/service/repository.service";
 import {Subject} from "rxjs";
@@ -11,7 +11,7 @@ import {Repository} from "../../../../../../translations/model/repository.model"
     templateUrl: './repository-add-wizard-step-creation.component.html',
     styleUrls: ['./repository-add-wizard-step-creation.component.css']
 })
-export class RepositoryAddWizardStepCreationComponent implements OnInit, OnDestroy {
+export class RepositoryAddWizardStepCreationComponent implements OnDestroy {
 
     @Input() public form: FormGroup;
 
@@ -23,9 +23,6 @@ export class RepositoryAddWizardStepCreationComponent implements OnInit, OnDestr
     private _destroyed$ = new Subject<void>();
 
     constructor(private repositoryService: RepositoryService) {
-    }
-
-    public ngOnInit() {
     }
 
     public ngOnDestroy(): void {
@@ -61,5 +58,9 @@ export class RepositoryAddWizardStepCreationComponent implements OnInit, OnDestr
 
     public set repository(repository: Repository) {
         this.form.controls['repository'].setValue(repository);
+    }
+
+    public get successful(): boolean {
+        return !!this.repository;
     }
 }
