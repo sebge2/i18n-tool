@@ -131,6 +131,12 @@
             "NAME": "Name",
             "NAME_HINT": "Repository name displayed in this tool."
           }
+        },
+        "STEP_CREATION" : {
+          "CREATED": "Your repository {name} has been created!",
+          "CREATED_NEXT": "You can now initialize it by clicking on \"next\", or do it later.",
+          "UNKNOWN_ERROR": "A technical error happened, please verify the configuration and try again.",
+          "ERROR_TITLE": "Error while creating your repository, please go back."
         }
       }
     }

@@ -39,6 +39,8 @@ export class RepositoryAddWizardStepCreationComponent implements OnDestroy {
     public set creationRequest(value: RepositoryCreationRequestDto) {
         this._creationRequest = value;
         this.repository = null;
+        this.unknownError = null;
+        this.errorMessages = null;
 
         if (this._creationRequest) {
             this.creationInProgress = true;
