@@ -16,24 +16,25 @@
         <app-wizard-step [form]="stepConfigForm"
                          [name]="'ADMIN.REPOSITORIES.ADD_WIZARD.STEPS.CONFIGURATION' | translate"
                          [editable]="stepConfigEditable">
-            <app-repository-add-wizard-step-info [form]="stepConfigForm"
-                                                 [repositoryType]="repositoryType">
+            <app-repository-add-wizard-step-info [form]="stepConfigForm" [repositoryType]="repositoryType">
             </app-repository-add-wizard-step-info>
         </app-wizard-step>
 
         <app-wizard-step [form]="stepCreationForm"
                          [name]="'ADMIN.REPOSITORIES.ADD_WIZARD.STEPS.CREATION' | translate"
                          [editable]="stepCreationEditable">
-            <app-repository-add-wizard-step-creation
-                    [form]="stepCreationForm"
-                    [creationRequest]="creationRequest">
+            <app-repository-add-wizard-step-creation [form]="stepCreationForm" [creationRequest]="creationRequest">
             </app-repository-add-wizard-step-creation>
         </app-wizard-step>
 
         <app-wizard-step [form]="stepInitializationForm"
                          [name]="'ADMIN.REPOSITORIES.ADD_WIZARD.STEPS.INITIALIZATION' | translate"
-                         [previousVisible]="false">
-            <app-repository-add-wizard-step-initialization></app-repository-add-wizard-step-initialization>
+                         [previousVisible]="false"
+                         [editable]="stepInitializationEditable"
+                         [nextVisible]="false">
+            <app-repository-add-wizard-step-initialization [form]="stepInitializationForm"
+                                                           [originalRepository]="createdRepository">
+            </app-repository-add-wizard-step-initialization>
         </app-wizard-step>
     </app-wizard>
 </div>

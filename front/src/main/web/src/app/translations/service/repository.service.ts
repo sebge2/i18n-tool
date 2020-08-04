@@ -4,7 +4,8 @@ import {Observable} from "rxjs";
 import {Repository} from "../model/repository.model";
 import {
     GitHubRepositoryCreationRequestDto,
-    GitRepositoryCreationRequestDto, RepositoryCreationRequestDto,
+    GitRepositoryCreationRequestDto,
+    RepositoryCreationRequestDto,
     RepositoryService as ApiRepositoryService
 } from "../../api";
 import {NotificationService} from "../../core/notification/service/notification.service";
@@ -43,7 +44,13 @@ export class RepositoryService {
 
     public createRepository(dto: RepositoryCreationRequestDto): Observable<Repository> {
         return this.apiRepositoryService
-            .create(<(GitHubRepositoryCreationRequestDto | GitRepositoryCreationRequestDto)> dto)
+            .create(<(GitHubRepositoryCreationRequestDto | GitRepositoryCreationRequestDto)>dto)
+            .pipe(map(dto => Repository.fromDto(dto)));
+    }
+
+    public initializeRepository(id: string): Observable<Repository> {
+        return this.apiRepositoryService
+            .executeRepositoryAction(id, 'INITIALIZE')
             .pipe(map(dto => Repository.fromDto(dto)));
     }
 

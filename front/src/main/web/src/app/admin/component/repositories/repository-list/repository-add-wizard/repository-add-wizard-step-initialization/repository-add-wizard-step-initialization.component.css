@@ -1,0 +1,17 @@
+.creation-container  {
+    text-align:center;
+    display: grid;
+    place-items: center;
+    height: 100%;
+    width: 100%
+}
+
+.successful-container {
+    text-align:center;
+    display: block;
+}
+
+.successful-container-child {
+    display: inline-block;
+    vertical-align: middle;
+}

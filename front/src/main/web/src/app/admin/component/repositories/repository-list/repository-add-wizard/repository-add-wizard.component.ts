@@ -9,6 +9,7 @@ import {
 } from "../../../../../api";
 import {Subject} from "rxjs";
 import {takeUntil} from "rxjs/operators";
+import {Repository} from "../../../../../translations/model/repository.model";
 
 @Component({
     selector: 'app-repository-add-wizard',
@@ -20,6 +21,7 @@ export class RepositoryAddWizardComponent implements OnInit, OnDestroy {
     public form: FormGroup;
     public repositoryType: RepositoryType;
     public creationRequest: RepositoryCreationRequestDto;
+    public createdRepository: Repository;
 
     @ViewChild('wizard', {static: true}) private wizard: WizardComponent;
 
@@ -58,7 +60,9 @@ export class RepositoryAddWizardComponent implements OnInit, OnDestroy {
                     repository: this.formBuilder.control(null, [Validators.required])
                 }), // step repo creation
 
-                this.formBuilder.group({}) // step repo initialization
+                this.formBuilder.group({
+                    repository: this.formBuilder.control(null, [Validators.required])
+                }) // step repo initialization
             ])
         });
     }
@@ -115,11 +119,17 @@ export class RepositoryAddWizardComponent implements OnInit, OnDestroy {
         return <FormGroup>this.stepsForm.at(RepositoryAddWizardComponent.FORM_STEP_INITIALIZATION);
     }
 
+    public get stepInitializationEditable(): boolean {
+        return !this.stepInitializationForm.valid;
+    }
+
     public onStepChange(stepChangeEvent: StepChangeEvent) {
         if (stepChangeEvent.nextStepIndex == RepositoryAddWizardComponent.STEP_CONFIG) {
             this.repositoryType = this.stepTypeForm.controls['type'].value;
         } else if (stepChangeEvent.nextStepIndex == RepositoryAddWizardComponent.STEP_CREATION) {
             this.creationRequest = this.createRequest();
+        }else if (stepChangeEvent.nextStepIndex == RepositoryAddWizardComponent.STEP_INITIALIZATION) {
+            this.createdRepository = this.stepCreationForm.controls['repository'].value;
         }
     }
 
