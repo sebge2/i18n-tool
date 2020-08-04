@@ -1,4 +1,4 @@
-import {Component, ViewChild} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {FormArray, FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {RepositoryType} from "../../../../../translations/model/repository-type.model";
 import {StepChangeEvent, WizardComponent} from "../../../../../core/shared/component/wizard/wizard.component";
@@ -7,29 +7,34 @@ import {
     GitRepositoryCreationRequestDto,
     RepositoryCreationRequestDto
 } from "../../../../../api";
+import {Subject} from "rxjs";
+import {takeUntil} from "rxjs/operators";
 
 @Component({
     selector: 'app-repository-add-wizard',
     templateUrl: './repository-add-wizard.component.html',
     styleUrls: ['./repository-add-wizard.component.css']
 })
-export class RepositoryAddWizardComponent {
-
-    @ViewChild('wizard', {static: true}) wizard: WizardComponent;
+export class RepositoryAddWizardComponent implements OnInit, OnDestroy {
 
     public form: FormGroup;
-    public creationDto: RepositoryCreationRequestDto = null;
-    public RepositoryType = RepositoryType;
-
-    private static STEP_TYPE = 0;
-    private static STEP_NO_TYPE_CONFIG = 1;
-    private static STEP_GITHUB_CONFIG = 2;
-    private static STEP_GIT_CONFIG = 3;
-    private static STEP_CREATION = 4;
-    private static STEP_INITIALIZATION = 5;
-
     public repositoryType: RepositoryType;
     public creationRequest: RepositoryCreationRequestDto;
+
+    @ViewChild('wizard', {static: true}) private wizard: WizardComponent;
+
+    private static STEP_CONFIG = 1;
+    private static STEP_CREATION = 2;
+    private static STEP_INITIALIZATION = 3;
+
+    private static FORM_STEP_TYPE = 0;
+    private static FORM_STEP_NO_TYPE_CONFIG = 1;
+    private static FORM_STEP_GITHUB_CONFIG = 2;
+    private static FORM_STEP_GIT_CONFIG = 3;
+    private static FORM_STEP_CREATION = 4;
+    private static FORM_STEP_INITIALIZATION = 5;
+
+    private _destroyed$ = new Subject<void>();
 
     constructor(private formBuilder: FormBuilder) {
         this.form = this.formBuilder.group({
@@ -39,14 +44,14 @@ export class RepositoryAddWizardComponent {
                 this.formBuilder.group({}), // step config no type selected
 
                 this.formBuilder.group({
-                    'username': this.formBuilder.control('', [Validators.required]),
-                    'repository': this.formBuilder.control('', [Validators.required]),
-                    'accessKey': this.formBuilder.control('', [])
+                    username: this.formBuilder.control('', [Validators.required]),
+                    repository: this.formBuilder.control('', [Validators.required]),
+                    accessKey: this.formBuilder.control('', [])
                 }), // step repo config github
 
                 this.formBuilder.group({
-                    'location': this.formBuilder.control('', [Validators.required]),
-                    'name': this.formBuilder.control('', [Validators.required])
+                    location: this.formBuilder.control('', [Validators.required]),
+                    name: this.formBuilder.control('', [Validators.required])
                 }), // step repo config git
 
                 this.formBuilder.group({}), // step repo creation
@@ -56,22 +61,37 @@ export class RepositoryAddWizardComponent {
         });
     }
 
+    public ngOnInit(): void {
+        this.stepTypeForm.statusChanges
+            .pipe(takeUntil(this._destroyed$))
+            .subscribe(_ => {
+                if (this.stepTypeForm.valid) {
+                    this.wizard.nextStep()
+                }
+            });
+    }
+
+    public ngOnDestroy(): void {
+        this._destroyed$.next();
+        this._destroyed$.complete();
+    }
+
     public get stepTypeEditable(): boolean {
         return !this.repositoryType;
     }
 
     public get stepTypeForm(): FormGroup {
-        return <FormGroup>this.stepsForm.at(RepositoryAddWizardComponent.STEP_TYPE);
+        return <FormGroup>this.stepsForm.at(RepositoryAddWizardComponent.FORM_STEP_TYPE);
     }
 
     public get stepConfigForm(): FormGroup {
         let index;
         if (!this.repositoryType) {
-            index = RepositoryAddWizardComponent.STEP_NO_TYPE_CONFIG;
+            index = RepositoryAddWizardComponent.FORM_STEP_NO_TYPE_CONFIG;
         } else if (this.repositoryType === RepositoryType.GITHUB) {
-            index = RepositoryAddWizardComponent.STEP_GITHUB_CONFIG;
+            index = RepositoryAddWizardComponent.FORM_STEP_GITHUB_CONFIG;
         } else if (this.repositoryType === RepositoryType.GIT) {
-            index = RepositoryAddWizardComponent.STEP_GIT_CONFIG;
+            index = RepositoryAddWizardComponent.FORM_STEP_GIT_CONFIG;
         }
 
         return <FormGroup>this.stepsForm.at(index);
@@ -82,7 +102,7 @@ export class RepositoryAddWizardComponent {
     }
 
     public get stepCreationForm(): FormGroup {
-        return <FormGroup>this.stepsForm.at(RepositoryAddWizardComponent.STEP_CREATION);
+        return <FormGroup>this.stepsForm.at(RepositoryAddWizardComponent.FORM_STEP_CREATION);
     }
 
     public get stepCreationEditable(): boolean {
@@ -90,16 +110,13 @@ export class RepositoryAddWizardComponent {
     }
 
     public get stepInitializationForm(): FormGroup {
-        return <FormGroup>this.stepsForm.at(RepositoryAddWizardComponent.STEP_INITIALIZATION);
-    }
-
-    public onRepositoryType(repositoryType: RepositoryType) {
-        this.repositoryType = repositoryType;
-        this.wizard.nextStep();
+        return <FormGroup>this.stepsForm.at(RepositoryAddWizardComponent.FORM_STEP_INITIALIZATION);
     }
 
     public onStepChange(stepChangeEvent: StepChangeEvent) {
-        if(stepChangeEvent.nextStepIndex == 2){
+        if (stepChangeEvent.nextStepIndex == RepositoryAddWizardComponent.STEP_CONFIG) {
+            this.repositoryType = this.stepTypeForm.controls['type'].value;
+        } else if (stepChangeEvent.nextStepIndex == RepositoryAddWizardComponent.STEP_CREATION) {
             this.creationRequest = this.createRequest();
         }
     }
