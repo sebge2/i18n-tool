@@ -54,7 +54,9 @@ export class RepositoryAddWizardComponent implements OnInit, OnDestroy {
                     name: this.formBuilder.control('', [Validators.required])
                 }), // step repo config git
 
-                this.formBuilder.group({}), // step repo creation
+                this.formBuilder.group({
+                    repository: this.formBuilder.control(null, [Validators.required])
+                }), // step repo creation
 
                 this.formBuilder.group({}) // step repo initialization
             ])
@@ -98,7 +100,7 @@ export class RepositoryAddWizardComponent implements OnInit, OnDestroy {
     }
 
     public get stepConfigEditable(): boolean {
-        return !this.stepCreationForm.touched || !this.stepConfigForm.valid;
+        return this.stepCreationEditable;
     }
 
     public get stepCreationForm(): FormGroup {
@@ -106,7 +108,7 @@ export class RepositoryAddWizardComponent implements OnInit, OnDestroy {
     }
 
     public get stepCreationEditable(): boolean {
-        return !this.stepCreationForm.touched || !this.stepCreationForm.valid;
+        return !this.stepCreationForm.valid;
     }
 
     public get stepInitializationForm(): FormGroup {
