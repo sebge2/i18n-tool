@@ -1,8 +1,9 @@
 package be.sgerard.i18n.service.security.auth.external;
 
+import be.sgerard.i18n.configuration.AppProperties;
 import be.sgerard.i18n.model.security.auth.external.OAuthExternalUser;
-import be.sgerard.i18n.model.security.user.ExternalUser;
 import be.sgerard.i18n.model.security.user.ExternalAuthSystem;
+import be.sgerard.i18n.model.security.user.ExternalUser;
 import be.sgerard.i18n.service.security.UserRole;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
@@ -38,7 +39,10 @@ public class GoogleUserMapper implements OAuthUserMapper {
      */
     public static final String EXTERNAL_ID = "sub";
 
-    public GoogleUserMapper() {
+    private final AppProperties appProperties;
+
+    public GoogleUserMapper(AppProperties appProperties) {
+        this.appProperties = appProperties;
     }
 
     @Override
@@ -47,16 +51,18 @@ public class GoogleUserMapper implements OAuthUserMapper {
     }
 
     @Override
-    public Mono<ExternalUser> map(OAuthExternalUser externalUser) {
+    public Mono<ExternalUser> map(OAuthExternalUser oAuthExternalUser) {
+        final String email = getStringAttribute(oAuthExternalUser.getAttributes(), EMAIL);
+
         return Mono.just(
                 ExternalUser.builder()
-                        .externalId(getStringAttribute(externalUser.getAttributes(), EXTERNAL_ID))
+                        .externalId(getStringAttribute(oAuthExternalUser.getAttributes(), EXTERNAL_ID))
                         .authSystem(ExternalAuthSystem.OAUTH_GOOGLE)
-                        .username(getStringAttribute(externalUser.getAttributes(), EMAIL))
-                        .displayName(getStringAttribute(externalUser.getAttributes(), NAME))
-                        .email(getStringAttribute(externalUser.getAttributes(), EMAIL))
-                        .avatarUrl(getStringAttribute(externalUser.getAttributes(), AVATAR_URL))
-                        .roles(UserRole.MEMBER_OF_ORGANIZATION)
+                        .username(email)
+                        .displayName(getStringAttribute(oAuthExternalUser.getAttributes(), NAME))
+                        .email(email)
+                        .avatarUrl(getStringAttribute(oAuthExternalUser.getAttributes(), AVATAR_URL))
+                        .roles(isUserAllowed(email) ? new UserRole[]{UserRole.MEMBER_OF_ORGANIZATION} : new UserRole[0])
                         .build()
         );
     }
@@ -70,5 +76,12 @@ public class GoogleUserMapper implements OAuthUserMapper {
         } else {
             return null;
         }
+    }
+
+    /**
+     * Returns whether the current user is allowed to access the application.
+     */
+    private boolean isUserAllowed(String email) {
+        return appProperties.getSecurity().getGoogle().isEmailAllowed(email);
     }
 }

@@ -10,3 +10,10 @@ spring:
               - email
               - profile
             redirectUri: "{baseUrl}/auth/oauth2/code/{registrationId}"
+
+be:
+  sgerard:
+    i18n:
+      security:
+        google:
+          restricted-domains:

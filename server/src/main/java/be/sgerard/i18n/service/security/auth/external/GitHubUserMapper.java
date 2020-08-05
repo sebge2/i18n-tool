@@ -1,15 +1,22 @@
 package be.sgerard.i18n.service.security.auth.external;
 
+import be.sgerard.i18n.configuration.AppProperties;
 import be.sgerard.i18n.model.security.auth.external.OAuthExternalUser;
-import be.sgerard.i18n.model.security.user.ExternalUser;
 import be.sgerard.i18n.model.security.user.ExternalAuthSystem;
+import be.sgerard.i18n.model.security.user.ExternalUser;
 import be.sgerard.i18n.service.security.UserRole;
+import com.jcabi.github.Organization;
+import com.jcabi.github.RtGithub;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 import javax.json.JsonString;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.StreamSupport;
+
+import static java.util.stream.Collectors.toSet;
 
 /**
  * {@link OAuthUserMapper Mapper} for user coming from GitHub.
@@ -44,7 +51,10 @@ public class GitHubUserMapper implements OAuthUserMapper {
      */
     public static final String EXTERNAL_ID = "node_id";
 
-    public GitHubUserMapper() {
+    private final AppProperties appProperties;
+
+    public GitHubUserMapper(AppProperties appProperties) {
+        this.appProperties = appProperties;
     }
 
     @Override
@@ -53,17 +63,18 @@ public class GitHubUserMapper implements OAuthUserMapper {
     }
 
     @Override
-    public Mono<ExternalUser> map(OAuthExternalUser externalUser) {
-        // TODO check that it's part of the organization
+    public Mono<ExternalUser> map(OAuthExternalUser oAuthExternalUser) {
+        final String email = getStringAttribute(oAuthExternalUser.getAttributes(), EMAIL);
+
         return Mono.just(
                 ExternalUser.builder()
-                        .externalId(getStringAttribute(externalUser.getAttributes(), EXTERNAL_ID))
+                        .externalId(getStringAttribute(oAuthExternalUser.getAttributes(), EXTERNAL_ID))
                         .authSystem(ExternalAuthSystem.OAUTH_GITHUB)
-                        .username(getStringAttribute(externalUser.getAttributes(), USERNAME))
-                        .displayName(getStringAttribute(externalUser.getAttributes(), NAME))
-                        .email(getStringAttribute(externalUser.getAttributes(), EMAIL))
-                        .avatarUrl(getStringAttribute(externalUser.getAttributes(), AVATAR_URL))
-                        .roles(UserRole.MEMBER_OF_ORGANIZATION)
+                        .username(getStringAttribute(oAuthExternalUser.getAttributes(), USERNAME))
+                        .displayName(getStringAttribute(oAuthExternalUser.getAttributes(), NAME))
+                        .email(email)
+                        .avatarUrl(getStringAttribute(oAuthExternalUser.getAttributes(), AVATAR_URL))
+                        .roles(isUserAllowed(email, oAuthExternalUser.getToken()) ? new UserRole[]{UserRole.MEMBER_OF_ORGANIZATION} : new UserRole[0])
                         .build()
         );
     }
@@ -85,16 +96,17 @@ public class GitHubUserMapper implements OAuthUserMapper {
         }
     }
 
-//            // TODO
-//    private boolean isRepoMember(String tokenValue) {
-//        final RtGithub github = new RtGithub(tokenValue);
-//
-//        try {
-//            return true;
-////            return github.repos().get(new Coordinates.Simple(repository)).branches().iterate().iterator().hasNext();
-//        } catch (AssertionError e) {
-//            logger.error("error while connecting to "+ repository, e);
-//            return false;
-//        }
-//    }
+    /**
+     * Returns whether the current user is allowed to access the application.
+     */
+    private boolean isUserAllowed(String email, String token) {
+        final AppProperties.GitHubOauthOauth gitProperties = appProperties.getSecurity().getGithub();
+
+        final Set<String> userOrganizations = StreamSupport
+                .stream(new RtGithub(token).organizations().iterate().spliterator(), false)
+                .map(Organization::login)
+                .collect(toSet());
+
+        return gitProperties.isEmailAllowed(email) && gitProperties.isOrganizationAllowed(userOrganizations);
+    }
 }
