@@ -3,7 +3,7 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {TranslationEditingCellComponent} from './translation-editing-cell.component';
 import {FormBuilder} from "@angular/forms";
 import {BundleKeyTranslation} from "../../../model/edition/bundle-key-translation.model";
-import {Locale} from "../../../model/locale.model";
+import {Locale} from "../../../../core/translation/model/locale.model";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {CoreSharedModule} from "../../../../core/shared/core-shared-module";
 

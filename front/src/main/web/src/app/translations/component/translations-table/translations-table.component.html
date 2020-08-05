@@ -20,7 +20,8 @@
                               [matColumnDef]="columnDefinition.columnDef">
                     <th mat-header-cell *matHeaderCellDef>
                         <span *ngIf="!isKeyHeaderColumn(columnDefinition.header); else elseKeyHeaderColumn">
-                            <span [class]="columnDefinition.header | localeIcon"></span> {{columnDefinition.header.toUpperCase() }}
+<!--                            <span [class]="columnDefinition.header | toolLocaleIcon"></span> {{columnDefinition.header.toUpperCase() }}-->
+                            <span [class]="columnDefinition.header"></span> {{columnDefinition.header.toUpperCase() }}
                         </span>
                         <ng-template #elseKeyHeaderColumn>
                             {{columnDefinition.header | translate}}

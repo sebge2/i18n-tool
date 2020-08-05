@@ -1,4 +1,4 @@
-import {Locale} from "../locale.model";
+import {Locale} from "../../../core/translation/model/locale.model";
 
 export class BundleKeyTranslation {
 

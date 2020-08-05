@@ -1,16 +1,15 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {Locale} from "../../model/locale.model";
+import {Locale} from "../../../core/translation/model/locale.model";
 import {Workspace} from "../../model/workspace.model";
 import {TranslationsSearchRequest} from "../../model/translations-search-request.model";
 import {TranslationsSearchCriterion} from "../../model/translations-search-criterion.model";
-import {LocaleIconPipe} from "../../../core/shared/pipe/locale-icon.pipe";
-import {LocalesTranslationsService} from "../../service/locales-translations.service";
+import {TranslationLocaleService} from "../../service/translation-locale.service";
+import {FormBuilder, FormGroup} from "@angular/forms";
 
 @Component({
     selector: 'app-translations-search-bar',
     templateUrl: './translations-search-bar.component.html',
     styleUrls: ['./translations-search-bar.component.css'],
-    providers: [LocaleIconPipe]
 })
 export class TranslationsSearchBarComponent implements OnInit {
 
@@ -29,10 +28,16 @@ export class TranslationsSearchBarComponent implements OnInit {
     searchRequest: TranslationsSearchRequest;
 
     private _expanded: boolean;
+    form: FormGroup;
 
-    constructor(private localeIconPipe: LocaleIconPipe,
-                private localeService: LocalesTranslationsService) {
+    constructor(/*private localeIconPipe: ToolLocaleIconPipe,*/
+                private localeService: TranslationLocaleService,
+                private _formBuilder: FormBuilder) {
         this.searchRequest = new TranslationsSearchRequest();
+        this.form = _formBuilder.group({
+            workspaces: [[]],
+            locales: [[]]
+        });
     }
 
     ngOnInit() {
@@ -101,7 +106,8 @@ export class TranslationsSearchBarComponent implements OnInit {
     }
 
     isSearchForAllLocales(): boolean {
-        return this.searchRequest.locales.length == 0 || this.searchRequest.locales.length == this.localeService.getAvailableLocales().length;
+        return false;
+        // return this.searchRequest.locales.length == 0 || this.searchRequest.locales.length == this.localeService.getAvailableLocales().length;
     }
 
     getLocalesAsHtmlList(): String {
@@ -113,7 +119,7 @@ export class TranslationsSearchBarComponent implements OnInit {
                 title += ",";
             }
 
-            title += " <span class=\"" + this.localeIconPipe.transform(this.searchRequest.locales[i]) + "\"></span>" + this.searchRequest.locales[i].toString();
+            // title += " <span class=\"" + this.localeIconPipe.transform(this.searchRequest.locales[i]) + "\"></span>" + this.searchRequest.locales[i].toString();
         }
 
         return title;

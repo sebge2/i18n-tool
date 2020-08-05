@@ -1,4 +1,4 @@
-import {Locale} from "./locale.model";
+import {Locale} from "../../core/translation/model/locale.model";
 import {Workspace} from "./workspace.model";
 import {TranslationsSearchCriterion} from "./translations-search-criterion.model";
 

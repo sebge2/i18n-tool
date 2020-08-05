@@ -3,7 +3,7 @@ import {TranslationsSearchRequest} from "../../model/translations-search-request
 import {TranslationsService} from '../../service/translations.service';
 import {BundleKeysPage} from "../../model/edition/bundle-keys-page.model";
 import {AbstractControl, FormArray, FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {Locale} from "../../model/locale.model";
+import {Locale} from "../../../core/translation/model/locale.model";
 import {BundleKey} from "../../model/edition/bundle-key.model";
 import {BundleKeyTranslation} from "../../model/edition/bundle-key-translation.model";
 import {ColumnDefinition} from "../../model/table/column-definition.model";
@@ -12,7 +12,7 @@ import {MatTable} from "@angular/material";
 import {auditTime, takeUntil} from 'rxjs/operators';
 import {BehaviorSubject, Subject} from "rxjs";
 import {NotificationService} from "../../../core/notification/service/notification.service";
-import {LocalesTranslationsService} from "../../service/locales-translations.service";
+import {TranslationLocaleService} from "../../service/translation-locale.service";
 
 @Component({
     selector: 'app-translations-table',
@@ -35,7 +35,7 @@ export class TranslationsTableComponent implements OnInit, OnDestroy {
     private _readOnly = new BehaviorSubject<boolean>(false);
 
     constructor(private translationsService: TranslationsService,
-                private localesTranslationsService: LocalesTranslationsService,
+                private localesTranslationsService: TranslationLocaleService,
                 private notificationService: NotificationService,
                 private formBuilder: FormBuilder) {
         this.form = formBuilder.array([]);
@@ -135,31 +135,31 @@ export class TranslationsTableComponent implements OnInit, OnDestroy {
                     this.formBuilder.group({key})
                 );
 
-                for (let i = 0; i < this.getSearchedLocales().length; i++) {
-                    // TODO
-                    const translation: BundleKeyTranslation = key.findTranslation(/*this.getSearchedLocales()[i]*/ null);
-
-                    const formGroup = this.formBuilder.group({translation});
-
-                    const control = this.formBuilder.control(
-                        (translation != null) ? translation.currentValue() : null,
-                        [Validators.required]
-                    );
-
-                    this._readOnly
-                        .pipe(takeUntil(this.destroy$))
-                        .subscribe((readOnly: boolean) => {
-                            if (readOnly) {
-                                control.disable();
-                            } else {
-                                control.enable();
-                            }
-                        });
-
-                    formGroup.addControl('value', control);
-
-                    keyFormArray.push(formGroup);
-                }
+                // for (let i = 0; i < this.getSearchedLocales().length; i++) {
+                //     // TODO
+                //     const translation: BundleKeyTranslation = key.findTranslation(/*this.getSearchedLocales()[i]*/ null);
+                //
+                //     const formGroup = this.formBuilder.group({translation});
+                //
+                //     const control = this.formBuilder.control(
+                //         (translation != null) ? translation.currentValue() : null,
+                //         [Validators.required]
+                //     );
+                //
+                //     this._readOnly
+                //         .pipe(takeUntil(this.destroy$))
+                //         .subscribe((readOnly: boolean) => {
+                //             if (readOnly) {
+                //                 control.disable();
+                //             } else {
+                //                 control.enable();
+                //             }
+                //         });
+                //
+                //     formGroup.addControl('value', control);
+                //
+                //     keyFormArray.push(formGroup);
+                // }
 
                 this.form.push(keyFormArray);
             }
@@ -177,23 +177,23 @@ export class TranslationsTableComponent implements OnInit, OnDestroy {
             )
         );
 
-        for (let i = 0; i < this.getSearchedLocales().length; i++) {
-            const locale: Locale = this.getSearchedLocales()[i];
-
-            this.columnDefinitions.push(
-                new ColumnDefinition(
-                    locale.toString(),
-                    locale.toString(),
-                    (formArray: FormArray) => <FormGroup>formArray.controls[i + 1],
-                    (formArray: FormArray) => {
-                        const bundleKey = <BundleKey>(<FormGroup>formArray.controls[0]).value.key;
-                        // TODO
-                        return (bundleKey).findTranslation(/*locale*/ null) != null
-                            ? CellType.TRANSLATION : CellType.EMPTY;
-                    }
-                )
-            );
-        }
+        // for (let i = 0; i < this.getSearchedLocales().length; i++) {
+        //     const locale: Locale = this.getSearchedLocales()[i];
+        //
+        //     this.columnDefinitions.push(
+        //         new ColumnDefinition(
+        //             locale.toString(),
+        //             locale.toString(),
+        //             (stepsForm: FormArray) => <FormGroup>stepsForm.controls[i + 1],
+        //             (stepsForm: FormArray) => {
+        //                 const bundleKey = <BundleKey>(<FormGroup>stepsForm.controls[0]).value.key;
+        //                 // TODO
+        //                 return (bundleKey).findTranslation(/*locale*/ null) != null
+        //                     ? CellType.TRANSLATION : CellType.EMPTY;
+        //             }
+        //         )
+        //     );
+        // }
 
         this.displayedColumns = this.columnDefinitions.map(column => column.columnDef);
     }

@@ -81,11 +81,11 @@ export class TranslationsComponent implements OnInit, OnDestroy {
                 if (result) {
                     this.startReviewing = true;
 
-                    this.workspaceService
-                        .startReview(this.searchRequest.workspace, result.comment)
-                        .finally(() => {
-                            this.startReviewing = false;
-                        });
+                    // this.workspaceService
+                    //     .startReview(this.searchRequest.workspace, result.comment)
+                    //     .finally(() => {
+                    //         this.startReviewing = false;
+                    //     });
                 }
             });
     }
@@ -97,7 +97,7 @@ export class TranslationsComponent implements OnInit, OnDestroy {
                 break;
             case WorkspaceStatus.NOT_INITIALIZED:
                 this.readOnlyTable = true;
-                this.workspaceService.initialize(this.searchRequest.workspace);
+                // this.workspaceService.initialize(this.searchRequest.workspace);
                 break;
             case  WorkspaceStatus.INITIALIZED:
                 this.readOnlyTable = false;

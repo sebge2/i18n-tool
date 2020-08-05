@@ -44,11 +44,11 @@ export class WorkspaceTableComponent implements OnInit, OnDestroy {
     find(): void {
         this.actionInProgress = true;
 
-        this.workspaceService
-            .find()
-            .finally(() => {
-                this.actionInProgress = false;
-            });
+        // this.workspaceService
+        //     .find()
+        //     .finally(() => {
+        //         this.actionInProgress = false;
+        //     });
     }
 
     delete(workspace: Workspace): void {
@@ -62,11 +62,11 @@ export class WorkspaceTableComponent implements OnInit, OnDestroy {
                 if (result) {
                     this.actionInProgress = true;
 
-                    this.workspaceService
-                        .delete(result.workspace)
-                        .finally(() => {
-                            this.actionInProgress = false;
-                        });
+                    // this.workspaceService
+                    //     .delete(result.workspace)
+                    //     .finally(() => {
+                    //         this.actionInProgress = false;
+                    //     });
                 }
             });
     }
