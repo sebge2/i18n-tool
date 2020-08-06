@@ -11,6 +11,7 @@ export class CardComponent implements OnInit {
   @Input() public headerMatIcon : string;
   @Input() public headerImg : string;
   @Input() public headerClassIcon : string;
+  @Input() public maxSizePx : number;
 
   constructor() { }
 

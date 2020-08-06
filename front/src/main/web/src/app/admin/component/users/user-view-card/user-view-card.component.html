@@ -1,6 +1,7 @@
 <app-card [title]="displayName"
           [headerMatIcon]="!getAvatarUrl() ? 'perm_identity' : null"
-          [headerImg]="getAvatarUrl() ? getAvatarUrl() : null">
+          [headerImg]="getAvatarUrl() ? getAvatarUrl() : null"
+          [maxSizePx]="270">
     <app-card-content>
         <form [formGroup]="form" (ngSubmit)="onSave()" autocomplete="off">
             <p>
@@ -27,7 +28,8 @@
             <p>
                 <mat-form-field appearance="standard">
                     <mat-label>{{'ADMIN.USERS.PASSWORD' | translate}}</mat-label>
-                    <input matInput formControlName="password" type="password" autocomplete="off" [placeholder]="'ADMIN.USERS.PASSWORD_PLACEHOLDER' | translate">
+                    <input matInput formControlName="password" type="password" autocomplete="off"
+                           [placeholder]="'ADMIN.USERS.PASSWORD_PLACEHOLDER' | translate">
                     <mat-hint>{{'ADMIN.USERS.PASSWORD_HINT' | translate}}</mat-hint>
                 </mat-form-field>
             </p>
@@ -36,10 +38,12 @@
                     <mat-label>{{'ADMIN.USERS.ADMIN_ROLE' | translate}}</mat-label>
                     <mat-select formControlName="adminRole">
                         <mat-select-trigger>
-                            <mat-icon>{{form.controls['adminRole'].value?.icon}}</mat-icon> {{form.controls['adminRole'].value?.label | translate}}
+                            <mat-icon>{{form.controls['adminRole'].value?.icon}}</mat-icon>
+                            {{form.controls['adminRole'].value?.label | translate}}
                         </mat-select-trigger>
                         <mat-option *ngFor="let roleOption of roleOptions" [value]="roleOption">
-                            <mat-icon>{{roleOption.icon}}</mat-icon> {{roleOption.label | translate}}
+                            <mat-icon>{{roleOption.icon}}</mat-icon>
+                            {{roleOption.label | translate}}
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
@@ -48,7 +52,8 @@
     </app-card-content>
     <app-card-actions>
         <app-form-cancel-button [form]="form" [loading]="loading" (reset)="resetForm()"></app-form-cancel-button>
-        <app-form-delete-button [loading]="loading" (delete)="onDelete()" [disabled]="!this.canDelete()"></app-form-delete-button>
+        <app-form-delete-button [loading]="loading" (delete)="onDelete()"
+                                [disabled]="!this.canDelete()"></app-form-delete-button>
         <app-form-save-button [form]="form" [loading]="loading" (save)="onSave()"></app-form-save-button>
     </app-card-actions>
 </app-card>

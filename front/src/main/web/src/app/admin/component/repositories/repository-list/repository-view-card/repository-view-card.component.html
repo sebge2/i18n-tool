@@ -1,10 +1,22 @@
 <app-card [title]="repository.name"
-          [headerClassIcon]="repository?.type | repositoryIcon">
+          [headerClassIcon]="repository?.type | repositoryIcon"
+          [maxSizePx]="350">
     <app-card-content>
-        <p>
-            <button mat-raised-button (click)="onOpen()">Open details</button>
+        <p style="margin-top: 30px">Status:
+            <mat-icon style="color: green">check_circle_outline</mat-icon>
         </p>
+        <p>Access:
+            <mat-icon style="color: green">check_circle_outline</mat-icon>
+        </p>
+        <!--        <p>Access: <mat-icon style="color: red">error_outline</mat-icon></p>-->
     </app-card-content>
     <app-card-actions>
+        <button mat-icon-button color="primary" (click)="onOpen()">
+            <mat-icon>open_in_new</mat-icon>
+        </button>
+        <button mat-icon-button color="primary">
+            <mat-icon>cloud_download</mat-icon>
+        </button>
+        <app-form-delete-button></app-form-delete-button>
     </app-card-actions>
 </app-card>

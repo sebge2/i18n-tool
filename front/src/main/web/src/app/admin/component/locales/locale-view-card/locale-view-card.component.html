@@ -1,5 +1,6 @@
 <app-card [title]="title"
-          [headerClassIcon]="iconClass">
+          [headerClassIcon]="iconClass"
+          [maxSizePx]="270">
     <app-card-content>
         <form [formGroup]="form" (ngSubmit)="onSave()">
             <p>
