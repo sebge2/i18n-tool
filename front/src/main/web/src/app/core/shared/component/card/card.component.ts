@@ -10,6 +10,7 @@ export class CardComponent implements OnInit {
   @Input() public title : string;
   @Input() public headerMatIcon : string;
   @Input() public headerImg : string;
+  @Input() public headerClassIcon : string;
 
   constructor() { }
 

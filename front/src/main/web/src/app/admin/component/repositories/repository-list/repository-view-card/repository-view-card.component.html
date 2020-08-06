@@ -1,14 +1,10 @@
-<mat-card>
-    <mat-card-header>
-        <mat-card-title>
-            <span mat-card-image [class]="repository?.type | repositoryIcon"></span> {{repository.name}}
-        </mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
+<app-card [title]="repository.name"
+          [headerClassIcon]="repository?.type | repositoryIcon">
+    <app-card-content>
         <p>
             <button mat-raised-button (click)="onOpen()">Open details</button>
         </p>
-    </mat-card-content>
-    <mat-card-actions [align]="'end'">
-    </mat-card-actions>
-</mat-card>
+    </app-card-content>
+    <app-card-actions>
+    </app-card-actions>
+</app-card>

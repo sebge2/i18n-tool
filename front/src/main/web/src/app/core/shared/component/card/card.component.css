@@ -3,7 +3,7 @@ mat-card {
     width: 250px
 }
 
-.profile-img {
+.app-card-header-img-icon {
     background-size: cover;
     width: 30px;
     height: 30px;
