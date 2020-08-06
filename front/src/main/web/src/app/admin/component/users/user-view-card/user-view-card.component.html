@@ -1,4 +1,4 @@
-<app-card [title]="displayName.value"
+<app-card [title]="displayName"
           [headerMatIcon]="!getAvatarUrl() ? 'perm_identity' : null"
           [headerImg]="getAvatarUrl() ? getAvatarUrl() : null">
     <app-card-content>
@@ -13,7 +13,7 @@
             <p>
                 <mat-form-field appearance="standard">
                     <mat-label>{{'ADMIN.USERS.DISPLAY_NAME' | translate}}</mat-label>
-                    <input matInput formControlName="displayName" autocomplete="off" #displayName>
+                    <input matInput formControlName="displayName" autocomplete="off">
                     <mat-hint>{{'ADMIN.USERS.DISPLAY_NAME_EXAMPLE' | translate}}</mat-hint>
                 </mat-form-field>
             </p>
