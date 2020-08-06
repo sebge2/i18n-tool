@@ -20,24 +20,11 @@ import {ImportedFile} from "../../shared/model/imported-file.model";
 })
 export class UserService {
 
-    private readonly _users: Observable<User[]>;
+    private _users: Observable<User[]>;
 
     constructor(private apiUserService: ApiUserService,
                 private eventService: EventService,
                 private notificationService: NotificationService) {
-        this._users = synchronizedCollection(
-            this.apiUserService.findAll2(),
-            this.eventService.subscribeDto(Events.ADDED_USER),
-            this.eventService.subscribeDto(Events.UPDATED_USER),
-            this.eventService.subscribeDto(Events.DELETED_USER),
-            dto => User.fromDto(dto),
-            (first, second) => first.id === second.id
-        )
-            .pipe(catchError((reason) => {
-                console.error("Error while retrieving users.", reason);
-                this.notificationService.displayErrorMessage("Error while retrieving users.");
-                return [];
-            }));
     }
 
     public createUser(creationDto: InternalUserCreationDto): Observable<User> {
@@ -74,6 +61,22 @@ export class UserService {
     }
 
     public getUsers(): Observable<User[]> {
+        if(!this._users){
+            this._users = synchronizedCollection(
+                this.apiUserService.findAll2(),
+                this.eventService.subscribeDto(Events.ADDED_USER),
+                this.eventService.subscribeDto(Events.UPDATED_USER),
+                this.eventService.subscribeDto(Events.DELETED_USER),
+                dto => User.fromDto(dto),
+                (first, second) => first.id === second.id
+            )
+                .pipe(catchError((reason) => {
+                    console.error("Error while retrieving users.", reason);
+                    this.notificationService.displayErrorMessage("Error while retrieving users.");
+                    return [];
+                }));
+        }
+
         return this._users;
     }
 
