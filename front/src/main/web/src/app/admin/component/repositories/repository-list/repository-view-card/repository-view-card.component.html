@@ -2,21 +2,28 @@
           [headerClassIcon]="repository?.type | repositoryIcon"
           [maxSizePx]="350">
     <app-card-content>
-        <p style="margin-top: 30px">Status:
-            <mat-icon style="color: green">check_circle_outline</mat-icon>
-        </p>
-        <p>Access:
-            <mat-icon style="color: green">check_circle_outline</mat-icon>
-        </p>
-        <!--        <p>Access: <mat-icon style="color: red">error_outline</mat-icon></p>-->
+        <table style="margin-top: 20px">
+            <tr style="vertical-align: center;">
+                <td style="padding-right: 20px">
+                    Status:
+                </td>
+                <td [ngSwitch]="repository.status" class="">
+                    <div *ngSwitchCase="repositoryStatus.NOT_INITIALIZED">
+                        <mat-icon style="color: darkorange">warning</mat-icon>
+                    </div>
+                    <div *ngSwitchCase="repositoryStatus.INITIALIZING">
+                        <mat-spinner></mat-spinner>
+                    </div>
+                    <div *ngSwitchCase="repositoryStatus.INITIALIZED">
+                        <mat-icon style="color: green">check_circle_outline</mat-icon>
+                    </div>
+                </td>
+            </tr>
+        </table>
     </app-card-content>
     <app-card-actions>
-        <button mat-icon-button color="primary" (click)="onOpen()">
-            <mat-icon>open_in_new</mat-icon>
-        </button>
-        <button mat-icon-button color="primary">
-            <mat-icon>cloud_download</mat-icon>
-        </button>
+        <app-form-open-tab-button (open)="onOpen()"></app-form-open-tab-button>
+        <app-form-download-action-button></app-form-download-action-button>
         <app-form-delete-button></app-form-delete-button>
     </app-card-actions>
 </app-card>

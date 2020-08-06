@@ -2,6 +2,7 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Repository} from "../../../../../translations/model/repository.model";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {RepositoryType} from "../../../../../translations/model/repository-type.model";
+import {RepositoryStatus} from "../../../../../translations/model/repository-status.model";
 
 @Component({
     selector: 'app-repository-view-card',
@@ -15,6 +16,7 @@ export class RepositoryViewCardComponent implements OnInit {
     @Output() public open = new EventEmitter<Repository>();
 
     public readonly form: FormGroup;
+    public readonly repositoryStatus = RepositoryStatus;
     public readonly types = [RepositoryType.GIT, RepositoryType.GITHUB];
 
     constructor(private formBuilder: FormBuilder) {
