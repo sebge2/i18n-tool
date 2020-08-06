@@ -24,6 +24,8 @@ import {ErrorMessageListComponent} from "./component/error-message-list/error-me
 import {CardComponent} from "./component/card/card.component";
 import {CardActionsComponent} from "./component/card/card-actions/card-actions.component";
 import {CardContentComponent} from "./component/card/card-content/card-content.component";
+import {FormDownloadActionButtonComponent} from "./component/form-download-action-button/form-download-action-button.component";
+import {FormOpenTabButtonComponent} from "./component/form-open-tab-button/form-open-tab-button.component";
 
 @NgModule({
     declarations: [
@@ -35,6 +37,8 @@ import {CardContentComponent} from "./component/card/card-content/card-content.c
         FormSaveButtonComponent,
         FormDeleteButtonComponent,
         FormUploadButtonComponent,
+        FormOpenTabButtonComponent,
+        FormDownloadActionButtonComponent,
         WizardComponent,
         WizardStepComponent,
         TabsComponent,
@@ -84,6 +88,8 @@ import {CardContentComponent} from "./component/card/card-content/card-content.c
         RepositoryIconPipe,
 
         DragDropDirective,
+        FormOpenTabButtonComponent,
+        FormDownloadActionButtonComponent,
     ]
 })
 export class CoreSharedModule {
