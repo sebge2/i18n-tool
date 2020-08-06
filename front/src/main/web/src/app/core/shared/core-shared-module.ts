@@ -24,8 +24,8 @@ import {ErrorMessageListComponent} from "./component/error-message-list/error-me
 import {CardComponent} from "./component/card/card.component";
 import {CardActionsComponent} from "./component/card/card-actions/card-actions.component";
 import {CardContentComponent} from "./component/card/card-content/card-content.component";
-import {FormDownloadActionButtonComponent} from "./component/form-download-action-button/form-download-action-button.component";
 import {FormOpenTabButtonComponent} from "./component/form-open-tab-button/form-open-tab-button.component";
+import {FormSyncButtonComponent} from "./component/form-sync-button/form-sync-button.component";
 
 @NgModule({
     declarations: [
@@ -38,7 +38,7 @@ import {FormOpenTabButtonComponent} from "./component/form-open-tab-button/form-
         FormDeleteButtonComponent,
         FormUploadButtonComponent,
         FormOpenTabButtonComponent,
-        FormDownloadActionButtonComponent,
+        FormSyncButtonComponent,
         WizardComponent,
         WizardStepComponent,
         TabsComponent,
@@ -73,6 +73,8 @@ import {FormOpenTabButtonComponent} from "./component/form-open-tab-button/form-
         FormSaveButtonComponent,
         FormDeleteButtonComponent,
         FormUploadButtonComponent,
+        FormOpenTabButtonComponent,
+        FormSyncButtonComponent,
         WizardComponent,
         WizardStepComponent,
         TabsComponent,
@@ -88,8 +90,6 @@ import {FormOpenTabButtonComponent} from "./component/form-open-tab-button/form-
         RepositoryIconPipe,
 
         DragDropDirective,
-        FormOpenTabButtonComponent,
-        FormDownloadActionButtonComponent,
     ]
 })
 export class CoreSharedModule {
