@@ -10,8 +10,8 @@ import {Workspace} from "../../../../translations/model/workspace.model";
 })
 export class ConfirmWorkspaceDeletionComponent implements OnInit {
 
-    private form: FormGroup;
-    private workspace: Workspace;
+    public form: FormGroup;
+    public workspace: Workspace;
 
     constructor(private dialogRef: MatDialogRef<ConfirmWorkspaceDeletionComponent>,
                 private formBuilder: FormBuilder,

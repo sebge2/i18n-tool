@@ -2,7 +2,6 @@ import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {TranslationsComponent} from "./component/translations/translations.component";
 import {RouterModule, Routes} from "@angular/router";
-import {WorkspaceSelectorComponent} from './component/translations-search-bar/workspace-selector/workspace-selector.component';
 import {TranslationsSearchBarComponent} from './component/translations-search-bar/translations-search-bar.component';
 import {TranslationCriterionSelectorComponent} from './component/translations-search-bar/translation-criterion-selector/translation-criterion-selector.component';
 import {TranslationsTableComponent} from './component/translations-table/translations-table.component';
