@@ -1,8 +1,6 @@
-<mat-card>
-    <mat-card-header>
-        <mat-card-title><span mat-card-image [class]="iconClass"></span> {{title}}</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
+<app-card [title]="title"
+          [headerClassIcon]="iconClass">
+    <app-card-content>
         <form [formGroup]="form" (ngSubmit)="onSave()">
             <p>
                 <mat-form-field appearance="standard">
@@ -61,10 +59,10 @@
                 </mat-form-field>
             </p>
         </form>
-    </mat-card-content>
-    <mat-card-actions [align]="'end'">
+    </app-card-content>
+    <app-card-actions>
         <app-form-cancel-button [form]="form" [loading]="loading" (reset)="resetForm()"></app-form-cancel-button>
         <app-form-delete-button [loading]="loading" (delete)="onDelete()"></app-form-delete-button>
         <app-form-save-button [form]="form" [loading]="loading" (save)="onSave()"></app-form-save-button>
-    </mat-card-actions>
-</mat-card>
+    </app-card-actions>
+</app-card>
