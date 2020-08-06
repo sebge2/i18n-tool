@@ -1,0 +1,11 @@
+mat-card {
+    /*TODO*/
+    width: 250px
+}
+
+.profile-img {
+    background-size: cover;
+    width: 30px;
+    height: 30px;
+    font-size: 30px;
+}

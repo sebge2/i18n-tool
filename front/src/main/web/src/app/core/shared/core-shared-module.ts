@@ -21,10 +21,14 @@ import {WizardComponent} from "./component/wizard/wizard.component";
 import {TabsComponent} from "./component/tabs/tabs.component";
 import {TabComponent} from "./component/tabs/tab/tab.component";
 import {ErrorMessageListComponent} from "./component/error-message-list/error-message-list.component";
+import {CardComponent} from "./component/card/card.component";
+import {CardActionsComponent} from "./component/card/card-actions/card-actions.component";
+import {CardContentComponent} from "./component/card/card-content/card-content.component";
 
 @NgModule({
     declarations: [
         MainMessageComponent,
+        ErrorMessageListComponent,
         CardGridComponent,
         CardGridItemComponent,
         FormCancelButtonComponent,
@@ -35,7 +39,9 @@ import {ErrorMessageListComponent} from "./component/error-message-list/error-me
         WizardStepComponent,
         TabsComponent,
         TabComponent,
-        ErrorMessageListComponent,
+        CardComponent,
+        CardActionsComponent,
+        CardContentComponent,
 
         WorkspaceIconPipe,
         WorkspaceIconCssPipe,
@@ -56,6 +62,7 @@ import {ErrorMessageListComponent} from "./component/error-message-list/error-me
         CoreSharedLibModule,
 
         MainMessageComponent,
+        ErrorMessageListComponent,
         CardGridComponent,
         CardGridItemComponent,
         FormCancelButtonComponent,
@@ -66,7 +73,9 @@ import {ErrorMessageListComponent} from "./component/error-message-list/error-me
         WizardStepComponent,
         TabsComponent,
         TabComponent,
-        ErrorMessageListComponent,
+        CardComponent,
+        CardActionsComponent,
+        CardContentComponent,
 
         WorkspaceIconPipe,
         WorkspaceIconCssPipe,
