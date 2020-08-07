@@ -1,7 +1,10 @@
 <button mat-icon-button
         color="primary"
-        [disabled]="!form.valid || !form.dirty || loading"
+        [disabled]="!form.valid || !form.dirty || saveInProgress"
         (click)="onSave()"
-        [class.spinner]="loading">
-    <mat-icon>save</mat-icon>
+        [class.spinner]="saveInProgress">
+    <mat-icon *ngIf="saveInProgress">
+        <mat-spinner color="primary" diameter="20"></mat-spinner>
+    </mat-icon>
+    <mat-icon *ngIf="!saveInProgress">save</mat-icon>
 </button>
