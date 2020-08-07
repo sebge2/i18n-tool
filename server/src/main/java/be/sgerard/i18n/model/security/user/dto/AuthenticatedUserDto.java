@@ -6,12 +6,13 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.Singular;
 
 import java.util.Collection;
-import java.util.HashSet;
 
-import static java.util.Collections.unmodifiableCollection;
+import static java.util.stream.Collectors.toList;
 
 /**
  * The current authenticated user.
@@ -21,6 +22,7 @@ import static java.util.Collections.unmodifiableCollection;
 @Schema(name = "AuthenticatedUser", description = "Description of an authenticated user.")
 @JsonDeserialize(builder = AuthenticatedUserDto.Builder.class)
 @Getter
+@Builder(builderClassName = "Builder")
 public class AuthenticatedUserDto {
 
     public static Builder builder() {
@@ -31,7 +33,12 @@ public class AuthenticatedUserDto {
         return builder()
                 .id(authenticatedUser.getId())
                 .userId(authenticatedUser.getUserId())
-                .sessionRoles(authenticatedUser.getSessionRoles());
+                .sessionRoles(authenticatedUser.getSessionRoles())
+                .repositoryRoles(
+                        authenticatedUser.getRepositoryCredentials().stream()
+                                .map(cred -> RepositoryRolesDto.builder(cred).build())
+                                .collect(toList())
+                );
     }
 
     @Schema(description = "Unique id of the authenticated user.")
@@ -41,45 +48,15 @@ public class AuthenticatedUserDto {
     private final String userId;
 
     @Schema(description = "Roles allowed during this session.")
+    @Singular
     private final Collection<UserRole> sessionRoles;
 
-    private AuthenticatedUserDto(Builder builder) {
-        id = builder.id;
-        userId = builder.userId;
-        sessionRoles = unmodifiableCollection(builder.sessionRoles);
-    }
+    @Schema(description = "All the current repository roles.")
+    @Singular
+    private final Collection<RepositoryRolesDto> repositoryRoles;
 
-    /**
-     * Builder of {@link AuthenticatedUserDto authenticated user}.
-     */
     @JsonPOJOBuilder(withPrefix = "")
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder {
-
-        private String id;
-        private String userId;
-        private final Collection<UserRole> sessionRoles = new HashSet<>();
-
-        private Builder() {
-        }
-
-        public Builder id(String id) {
-            this.id = id;
-            return this;
-        }
-
-        public Builder userId(String userId) {
-            this.userId = userId;
-            return this;
-        }
-
-        public Builder sessionRoles(Collection<UserRole> sessionRoles) {
-            this.sessionRoles.addAll(sessionRoles);
-            return this;
-        }
-
-        public AuthenticatedUserDto build() {
-            return new AuthenticatedUserDto(this);
-        }
     }
 }
