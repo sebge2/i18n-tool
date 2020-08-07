@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Output} from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 
 @Component({
     selector: 'app-form-sync-button',
@@ -7,6 +7,8 @@ import {Component, EventEmitter, Output} from '@angular/core';
 })
 export class FormSyncButtonComponent {
 
+    @Input() public syncInProgress: boolean;
+    @Input() public disabled: boolean;
     @Output() public sync = new EventEmitter<void>();
 
     constructor() {

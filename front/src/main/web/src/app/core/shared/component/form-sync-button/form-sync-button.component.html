@@ -1,5 +1,11 @@
 <button
         mat-icon-button color="primary"
+        [disabled]="disabled || syncInProgress"
+        [class.enabled]="!disabled"
+        [class.spinner]="syncInProgress"
         (click)="onSync()">
-    <mat-icon>sync</mat-icon>
+    <mat-icon *ngIf="syncInProgress">
+        <mat-spinner color="primary" diameter="20"></mat-spinner>
+    </mat-icon>
+    <mat-icon *ngIf="!syncInProgress">sync</mat-icon>
 </button>
