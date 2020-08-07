@@ -11,7 +11,7 @@ import reactor.core.publisher.Mono;
  *
  * @author Sebastien Gerard
  */
-public interface OAuthUserRepositoryCredentialsHandler {
+public interface ExternalUserRepositoryCredentialsHandler {
 
     /**
      * Returns whether the handler supports the specified {@link OAuthExternalUser external user}

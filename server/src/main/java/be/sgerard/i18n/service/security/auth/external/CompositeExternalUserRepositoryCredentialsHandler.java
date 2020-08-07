@@ -10,17 +10,17 @@ import reactor.core.publisher.Mono;
 import java.util.List;
 
 /**
- * Composite {@link OAuthUserRepositoryCredentialsHandler handler}.
+ * Composite {@link ExternalUserRepositoryCredentialsHandler handler}.
  *
  * @author Sebastien Gerard
  */
 @Primary
 @Component
-public class CompositeOAuthUserRepositoryCredentialsHandler implements OAuthUserRepositoryCredentialsHandler {
+public class CompositeExternalUserRepositoryCredentialsHandler implements ExternalUserRepositoryCredentialsHandler {
 
-    private final List<OAuthUserRepositoryCredentialsHandler> handlers;
+    private final List<ExternalUserRepositoryCredentialsHandler> handlers;
 
-    public CompositeOAuthUserRepositoryCredentialsHandler(List<OAuthUserRepositoryCredentialsHandler> handlers) {
+    public CompositeExternalUserRepositoryCredentialsHandler(List<ExternalUserRepositoryCredentialsHandler> handlers) {
         this.handlers = handlers;
     }
 

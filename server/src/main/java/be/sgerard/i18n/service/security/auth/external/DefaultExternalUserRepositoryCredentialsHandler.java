@@ -8,15 +8,15 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 /**
- * {@link OAuthUserRepositoryCredentialsHandler Handler} that simply takes the default repository credentials if present.
+ * {@link ExternalUserRepositoryCredentialsHandler Handler} that simply takes the default repository credentials if present.
  *
  * @author Sebastien Gerard
  */
 @Component
 @Order()
-public class DefaultOAuthUserRepositoryCredentialsHandler implements OAuthUserRepositoryCredentialsHandler {
+public class DefaultExternalUserRepositoryCredentialsHandler implements ExternalUserRepositoryCredentialsHandler {
 
-    public DefaultOAuthUserRepositoryCredentialsHandler() {
+    public DefaultExternalUserRepositoryCredentialsHandler() {
     }
 
     @Override

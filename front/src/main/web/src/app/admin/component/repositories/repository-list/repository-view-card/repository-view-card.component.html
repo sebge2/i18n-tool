@@ -5,7 +5,7 @@
         <table style="margin-top: 20px">
             <tr style="vertical-align: center;">
                 <td style="padding-right: 20px">
-                    Status:
+                    {{'ADMIN.REPOSITORIES.VIEW_CARD.STATUS_LABEL' | translate}}
                 </td>
                 <td [ngSwitch]="repository.status" class="">
                     <div *ngSwitchCase="repositoryStatus.NOT_INITIALIZED">

@@ -15,18 +15,18 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 /**
- * {@link OAuthUserRepositoryCredentialsHandler Handler} that takes the GitHub OAuth token for accessing the repository if the token
+ * {@link ExternalUserRepositoryCredentialsHandler Handler} that takes the GitHub OAuth token for accessing the repository if the token
  * allows the access to it.
  *
  * @author Sebastien Gerard
  */
 @Component
 @Order(0)
-public class GitHubOAuthUserRepositoryCredentialsHandler implements OAuthUserRepositoryCredentialsHandler {
+public class GitHubExternalUserRepositoryCredentialsHandler implements ExternalUserRepositoryCredentialsHandler {
 
-    private static final Logger logger = LoggerFactory.getLogger(GitHubOAuthUserRepositoryCredentialsHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(GitHubExternalUserRepositoryCredentialsHandler.class);
 
-    public GitHubOAuthUserRepositoryCredentialsHandler() {
+    public GitHubExternalUserRepositoryCredentialsHandler() {
     }
 
     @Override
@@ -36,9 +36,11 @@ public class GitHubOAuthUserRepositoryCredentialsHandler implements OAuthUserRep
 
     @Override
     public Mono<RepositoryCredentials> loadCredentials(ExternalAuthSystem authSystem, String token, RepositoryEntity repository) {
-        return isRepoMember(token, (GitHubRepositoryEntity) repository)
+        final GitHubRepositoryEntity gitHubRepository = (GitHubRepositoryEntity) repository;
+
+        return isRepoMember(token, gitHubRepository)
                 ? Mono.just(new RepositoryTokenCredentials(repository.getId(), token))
-                : Mono.empty();
+                : Mono.justOrEmpty(gitHubRepository.getAccessKey().map(accessKey -> new RepositoryTokenCredentials(repository.getId(), accessKey)));
     }
 
     /**
