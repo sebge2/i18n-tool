@@ -1,6 +1,9 @@
 <button mat-icon-button
         color="warn"
-        [disabled]="!form.dirty || loading"
+        [disabled]="!form.dirty || cancelInProgress"
         (click)="onReset()">
-    <mat-icon>settings_backup_restore</mat-icon>
+    <mat-icon *ngIf="cancelInProgress">
+        <mat-spinner color="warn" diameter="20"></mat-spinner>
+    </mat-icon>
+    <mat-icon *ngIf="!cancelInProgress">settings_backup_restore</mat-icon>
 </button>

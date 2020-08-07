@@ -9,7 +9,7 @@ import {FormGroup} from "@angular/forms";
 export class FormCancelButtonComponent implements OnInit {
 
     @Input() public form: FormGroup;
-    @Input() public loading: boolean;
+    @Input() public cancelInProgress: boolean;
     @Output() public reset = new EventEmitter<void>();
 
     constructor() {
