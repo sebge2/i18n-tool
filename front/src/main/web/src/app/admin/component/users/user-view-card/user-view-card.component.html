@@ -1,6 +1,6 @@
 <app-card [title]="displayName"
-          [headerMatIcon]="!getAvatarUrl() ? 'perm_identity' : null"
-          [headerImg]="getAvatarUrl() ? getAvatarUrl() : null"
+          [headerMatIcon]="!avatarUrl ? 'perm_identity' : null"
+          [headerImg]="avatarUrl ? avatarUrl : null"
           [maxSizePx]="270">
     <app-card-content>
         <form [formGroup]="form" (ngSubmit)="onSave()" autocomplete="off">
@@ -51,8 +51,8 @@
         </form>
     </app-card-content>
     <app-card-actions>
-        <app-form-cancel-button [form]="form" [cancelInProgress]="loading" (reset)="resetForm()"></app-form-cancel-button>
-        <app-form-delete-button [loading]="loading" (delete)="onDelete()" [disabled]="!this.canDelete()"></app-form-delete-button>
-        <app-form-save-button [form]="form" [saveInProgress]="loading" (save)="onSave()"></app-form-save-button>
+        <app-form-cancel-button [form]="form" [cancelInProgress]="cancelInProgress" [disabled]="actionInProgress" (reset)="onCancel()" ></app-form-cancel-button>
+        <app-form-delete-button [deleteInProgress]="deleteInProgress" [disabled]="!deleteAllowed || actionInProgress" (delete)="onDelete()"></app-form-delete-button>
+        <app-form-save-button [form]="form" [saveInProgress]="saveInProgress" [disabled]="actionInProgress" (save)="onSave()"></app-form-save-button>
     </app-card-actions>
 </app-card>

@@ -7,7 +7,7 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 })
 export class FormDeleteButtonComponent implements OnInit {
 
-    @Input() public loading: boolean;
+    @Input() public deleteInProgress: boolean;
     @Input() public disabled: boolean;
     @Output() public delete = new EventEmitter<void>();
 

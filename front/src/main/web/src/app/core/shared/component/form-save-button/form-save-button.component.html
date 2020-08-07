@@ -1,6 +1,6 @@
 <button mat-icon-button
         color="primary"
-        [disabled]="!form.valid || !form.dirty || saveInProgress"
+        [disabled]="!form.valid || !form.dirty || saveInProgress || disabled"
         (click)="onSave()"
         [class.spinner]="saveInProgress">
     <mat-icon *ngIf="saveInProgress">

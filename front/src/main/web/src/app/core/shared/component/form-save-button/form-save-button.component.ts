@@ -9,6 +9,7 @@ import {FormGroup} from "@angular/forms";
 export class FormSaveButtonComponent implements OnInit {
 
   @Input() public form: FormGroup;
+  @Input() public disabled: boolean;
   @Input() public saveInProgress: boolean;
   @Output() public save = new EventEmitter<void>();
 

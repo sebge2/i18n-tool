@@ -1,7 +1,7 @@
 <mat-card [style.width.px]="maxSizePx">
     <mat-card-header>
         <img mat-card-avatar [src]="headerImg" class="profile-img" *ngIf="headerImg"/>
-        <mat-icon mat-card-avatar class="app-card-header-img-icon" [svgIcon]="headerMatIcon" *ngIf="headerMatIcon"></mat-icon>
+        <mat-icon mat-card-avatar class="app-card-header-img-icon" *ngIf="headerMatIcon">{{headerMatIcon}}</mat-icon>
         <div mat-card-avatar [class]="headerClassIcon" *ngIf="headerClassIcon"></div>
 
         <mat-card-title [style.width.px]="maxSizePx ? (maxSizePx - 60) : null">

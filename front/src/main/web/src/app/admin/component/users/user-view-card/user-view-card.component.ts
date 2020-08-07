@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {User} from "../../../../core/auth/model/user.model";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import * as _ from "lodash";
@@ -21,7 +21,7 @@ export class RoleOption {
     templateUrl: './user-view-card.component.html',
     styleUrls: ['./user-view-card.component.css']
 })
-export class UserViewCardComponent implements OnInit {
+export class UserViewCardComponent {
 
     @Output() public save = new EventEmitter<User>();
     @Output() public delete = new EventEmitter<User>();
@@ -30,7 +30,10 @@ export class UserViewCardComponent implements OnInit {
     public readonly roleOptionNoPrivilege = new RoleOption(false, 'ADMIN.USERS.ROLES.NO_PRIVILEGE', 'perm_identity');
     public readonly roleOptionAdminPrivilege = new RoleOption(true, 'ADMIN.USERS.ROLES.ADMIN_PRIVILEGE', 'admin_panel_settings');
     public readonly roleOptions = [this.roleOptionNoPrivilege, this.roleOptionAdminPrivilege];
-    public loading: boolean = false;
+
+    public cancelInProgress: boolean = false;
+    public deleteInProgress: boolean = false;
+    public saveInProgress: boolean = false;
 
     private _user: User;
 
@@ -47,9 +50,6 @@ export class UserViewCardComponent implements OnInit {
                 // icon: this.formBuilder.control('', [Validators.required]), cloud provider TODO
             }
         );
-    }
-
-    ngOnInit() {
     }
 
     @Input()
@@ -87,13 +87,86 @@ export class UserViewCardComponent implements OnInit {
         }
     }
 
-    public getAvatarUrl(): string {
+    public get avatarUrl(): string {
         return (this.user != null) && this.isExistingUser()
             ? `/api/user/${this.user.id}/avatar`
             : null;
     }
 
-    public resetForm() {
+    public get deleteAllowed(): boolean {
+        return !this.user.isAdminUser() && !this.user.isExternal();
+    }
+
+    public get actionInProgress(): boolean {
+        return this.cancelInProgress || this.saveInProgress || this.deleteInProgress;
+    }
+
+    public onCancel() {
+        this.cancelInProgress = true;
+        this.resetForm();
+        this.cancelInProgress = false;
+    }
+
+    public onSave() {
+        this.saveInProgress = true;
+
+        if (this.isExistingUser()) {
+            this.userService
+                .updateUser(this.user.id, this.toUpdatedUser())
+                .toPromise()
+                .then(user => this.user = user)
+                .then(user => this.save.emit(user))
+                .catch(error => this.notificationService.displayErrorMessage('ADMIN.USERS.ERROR.UPDATE', error))
+                .finally(() => this.saveInProgress = false);
+        } else {
+            this.userService
+                .createUser(this.toNewUser())
+                .toPromise()
+                .then(user => this.user = user)
+                .then(user => this.save.emit(user))
+                .catch(error => this.notificationService.displayErrorMessage('ADMIN.USERS.ERROR.SAVE', error))
+                .finally(() => this.saveInProgress = false);
+        }
+    }
+
+    public onDelete() {
+        if (this.user.id) {
+            this.deleteInProgress = true;
+            this.userService
+                .deleteUser(this.user.id)
+                .toPromise()
+                .catch(error => this.notificationService.displayErrorMessage('ADMIN.USERS.ERROR.DELETE', error))
+                .finally(() => this.deleteInProgress = false);
+        } else {
+            this.delete.emit();
+        }
+    }
+
+    private isExistingUser(): boolean {
+        return !!this.user.id;
+    }
+
+    private toNewUser(): InternalUserCreationDto {
+        return {
+            username: this.username,
+            displayName: this.displayName,
+            email: this.email,
+            password: this.password,
+            roles: this.roles
+        };
+    }
+
+    private toUpdatedUser(): UserPatchDto {
+        return {
+            username: this.username,
+            displayName: this.displayName,
+            email: this.email,
+            password: this.password,
+            roles: this.roles
+        };
+    }
+
+    private resetForm() {
         this.form.controls['username'].setValue(this.user.username);
         if (this.user.isExternal()) {
             this.form.controls['username'].disable();
@@ -129,68 +202,5 @@ export class UserViewCardComponent implements OnInit {
 
         this.form.markAsPristine();
         this.form.markAsUntouched();
-    }
-
-    public onSave() {
-        this.loading = true;
-
-        if (this.isExistingUser()) {
-            this.userService
-                .updateUser(this.user.id, this.toUpdatedUser())
-                .toPromise()
-                .then(user => this.user = user)
-                .then(user => this.save.emit(user))
-                .catch(error => this.notificationService.displayErrorMessage('ADMIN.USERS.ERROR.UPDATE', error))
-                .finally(() => this.loading = false);
-        } else {
-            this.userService
-                .createUser(this.toNewUser())
-                .toPromise()
-                .then(user => this.user = user)
-                .then(user => this.save.emit(user))
-                .catch(error => this.notificationService.displayErrorMessage('ADMIN.USERS.ERROR.SAVE', error))
-                .finally(() => this.loading = false);
-        }
-    }
-
-    public onDelete() {
-        if (this.user.id) {
-            this.loading = true;
-            this.userService
-                .deleteUser(this.user.id)
-                .toPromise()
-                .catch(error => this.notificationService.displayErrorMessage('ADMIN.USERS.ERROR.DELETE', error))
-                .finally(() => this.loading = false);
-        } else {
-            this.delete.emit();
-        }
-    }
-
-    public canDelete(): boolean {
-        return !this.user.isAdminUser() && !this.user.isExternal();
-    }
-
-    private isExistingUser(): boolean {
-        return !!this.user.id;
-    }
-
-    private toNewUser(): InternalUserCreationDto {
-        return {
-            username: this.username,
-            displayName: this.displayName,
-            email: this.email,
-            password: this.password,
-            roles: this.roles
-        };
-    }
-
-    private toUpdatedUser(): UserPatchDto {
-        return  {
-            username: this.username,
-            displayName: this.displayName,
-            email: this.email,
-            password: this.password,
-            roles: this.roles
-        };
     }
 }
