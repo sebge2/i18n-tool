@@ -1,4 +1,12 @@
-import {AfterContentInit, Component, ContentChildren, OnDestroy, QueryList, ViewChild} from '@angular/core';
+import {
+    AfterContentInit,
+    Component,
+    ContentChildren,
+    EventEmitter,
+    OnDestroy, Output,
+    QueryList,
+    ViewChild
+} from '@angular/core';
 import {TabComponent} from "./tab/tab.component";
 import {Subject} from "rxjs";
 import {takeUntil} from "rxjs/operators";
@@ -11,6 +19,7 @@ import {MatTabGroup} from "@angular/material/tabs";
 })
 export class TabsComponent implements AfterContentInit, OnDestroy {
 
+    @Output() public selectedTab = new EventEmitter<number>();
     @ContentChildren(TabComponent) public tabComponents: QueryList<TabComponent>;
     @ViewChild('tabGroup', {static: false}) private tabGroup: MatTabGroup;
 
@@ -25,9 +34,7 @@ export class TabsComponent implements AfterContentInit, OnDestroy {
         this.tabComponents
             .changes
             .pipe(takeUntil(this._destroyed$))
-            .subscribe(() => {
-                this.tabs = this.tabComponents.toArray();
-            })
+            .subscribe(() => this.tabs = this.tabComponents.toArray());
 
         setTimeout(() => {
             this.tabs = this.tabComponents.toArray();
@@ -43,4 +50,7 @@ export class TabsComponent implements AfterContentInit, OnDestroy {
         this.tabGroup.selectedIndex = tabIndex;
     }
 
+    public onSelectedTab(index: number) {
+        this.selectedTab.emit(index);
+    }
 }
