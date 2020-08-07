@@ -55,6 +55,11 @@ public interface AuthenticatedUser extends AuthenticatedPrincipal, Serializable 
     <A extends RepositoryCredentials> Optional<A> getCredentials(String repository, Class<A> expectedType);
 
     /**
+     * Returns all the available {@link RepositoryCredentials credentials}.
+     */
+    Collection<RepositoryCredentials> getRepositoryCredentials();
+
+    /**
      * Updates {@link #getSessionRoles() session roles}.
      */
     AuthenticatedUser updateSessionRoles(List<UserRole> sessionRoles);

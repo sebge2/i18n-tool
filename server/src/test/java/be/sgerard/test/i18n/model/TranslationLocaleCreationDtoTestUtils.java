@@ -36,7 +36,7 @@ public final class TranslationLocaleCreationDtoTestUtils {
         return TranslationLocaleCreationDto.builder()
                 .language("fr")
                 .region("BE")
-                .variants("wallon")
+                .variant("wallon")
                 .displayName("Français (Wallon)")
                 .icon("flag-icon-fr");
     }

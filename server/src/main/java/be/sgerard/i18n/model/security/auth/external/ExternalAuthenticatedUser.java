@@ -72,6 +72,11 @@ public final class ExternalAuthenticatedUser extends DefaultOAuth2User implement
     }
 
     @Override
+    public Collection<RepositoryCredentials> getRepositoryCredentials() {
+        return repositoryCredentials.values();
+    }
+
+    @Override
     public ExternalAuthenticatedUser updateSessionRoles(List<UserRole> sessionRoles) {
         return new ExternalAuthenticatedUser(
                 id,

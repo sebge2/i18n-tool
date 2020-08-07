@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
 import lombok.Getter;
 
 import java.util.Optional;
@@ -17,6 +18,7 @@ import java.util.Optional;
 @Schema(name = "BundleKeyTranslation", description = "Translation of a key of a bundle file and associated to a locale.")
 @JsonDeserialize(builder = BundleKeyTranslationDto.Builder.class)
 @Getter
+@Builder(builderClassName = "Builder")
 public class BundleKeyTranslationDto {
 
     public static Builder builder() {
@@ -59,17 +61,6 @@ public class BundleKeyTranslationDto {
     @Schema(description = "The username of the end-user that has edited this translation.")
     private final String lastEditor;
 
-    private BundleKeyTranslationDto(Builder builder) {
-        id = builder.id;
-        workspace = builder.workspace;
-        bundleFile = builder.bundleFile;
-        bundleKey = builder.bundleKey;
-        locale = builder.locale;
-        originalValue = builder.originalValue;
-        updatedValue = builder.updatedValue;
-        lastEditor = builder.lastEditor;
-    }
-
     /**
      * Returns the original translation.
      */
@@ -97,60 +88,5 @@ public class BundleKeyTranslationDto {
     @JsonPOJOBuilder(withPrefix = "")
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder {
-        private String id;
-        private String workspace;
-        private String bundleFile;
-        private String bundleKey;
-        private String locale;
-        private String originalValue;
-        private String updatedValue;
-        private String lastEditor;
-
-        private Builder() {
-        }
-
-        public Builder id(String id) {
-            this.id = id;
-            return this;
-        }
-
-        public Builder workspace(String workspace) {
-            this.workspace = workspace;
-            return this;
-        }
-
-        public Builder bundleFile(String bundleFile) {
-            this.bundleFile = bundleFile;
-            return this;
-        }
-
-        public Builder bundleKey(String bundleKey) {
-            this.bundleKey = bundleKey;
-            return this;
-        }
-
-        public Builder locale(String locale) {
-            this.locale = locale;
-            return this;
-        }
-
-        public Builder originalValue(String originalValue) {
-            this.originalValue = originalValue;
-            return this;
-        }
-
-        public Builder updatedValue(String updatedValue) {
-            this.updatedValue = updatedValue;
-            return this;
-        }
-
-        public Builder lastEditor(String lastEditor) {
-            this.lastEditor = lastEditor;
-            return this;
-        }
-
-        public BundleKeyTranslationDto build() {
-            return new BundleKeyTranslationDto(this);
-        }
     }
 }

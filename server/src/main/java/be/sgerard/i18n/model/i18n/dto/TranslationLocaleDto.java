@@ -1,18 +1,17 @@
 package be.sgerard.i18n.model.i18n.dto;
 
 import be.sgerard.i18n.model.i18n.persistence.TranslationLocaleEntity;
-import be.sgerard.i18n.support.StringUtils;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Singular;
 
-import java.util.*;
-
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
 
 /**
  * Description of a locale associated to a translation.
@@ -21,6 +20,8 @@ import static java.util.Collections.unmodifiableList;
  */
 @Schema(name = "TranslationLocale", description = "Description of a locale associated to a translation (https://tools.ietf.org/html/bcp47)")
 @JsonDeserialize(builder = TranslationLocaleDto.Builder.class)
+@Getter
+@Builder(builderClassName = "Builder")
 public class TranslationLocaleDto {
 
     public static Builder builder() {
@@ -37,68 +38,44 @@ public class TranslationLocaleDto {
                 .icon(entity.getIcon());
     }
 
+    @Schema(description = "The unique id of this locale", required = true)
     private final String id;
+
+    @Schema(description = "The language.", required = true)
     private final String language;
+
+    @Schema(description = "The region of the language.")
     private final String region;
+
+    @Schema(description = "The variants in the region.")
+    @Singular
     private final List<String> variants;
+
+    @Schema(description = "The user friendly name for this locale.")
     private final String displayName;
+
+    @Schema(description = "Icon to be displayed for this locale (library flag-icon-css).", required = true)
     private final String icon;
 
-    private TranslationLocaleDto(Builder builder) {
-        id = builder.id;
-        language = builder.language;
-        region = builder.region;
-        variants = unmodifiableList(builder.variants);
-        displayName = builder.displayName;
-        icon = builder.icon;
-    }
-
     /**
-     * Returns the unique id of this locale.
+     * @see #region
      */
-    @Schema(description = "The unique id of this locale", required = true)
-    public String getId() {
-        return id;
-    }
-
-    /**
-     * Returns the language of this locale.
-     */
-    @Schema(description = "The language.", required = true)
-    public String getLanguage() {
-        return language;
-    }
-
-    /**
-     * Returns the region of the language.
-     */
-    @Schema(description = "The region of the language.")
     public Optional<String> getRegion() {
         return Optional.ofNullable(region);
     }
 
     /**
-     * Returns the variants of the region.
+     * @see #variants
      */
-    @Schema(description = "The variants in the region.")
     public List<String> getVariants() {
         return variants;
     }
 
     /**
-     * Returns the user friendly name for this locale.
+     * @see #displayName
      */
-    @Schema(description = "The user friendly name for this locale.")
     public Optional<String> getDisplayName() {
         return Optional.ofNullable(displayName);
-    }
-
-    /**
-     * Returns the icon of this locale.
-     */
-    @Schema(description = "Icon to be displayed for this locale (library flag-icon-css).", required = true)
-    public String getIcon() {
-        return icon;
     }
 
     /**
@@ -108,69 +85,8 @@ public class TranslationLocaleDto {
         return TranslationLocaleEntity.toLocale(getLanguage(), getRegion().orElse(null), getVariants());
     }
 
-    /**
-     * Builder of {@link TranslationLocaleDto translation locale DTO}.
-     */
     @JsonPOJOBuilder(withPrefix = "")
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder {
-        private String id;
-        private String language;
-        private String region;
-        private final List<String> variants = new ArrayList<>();
-        private String displayName;
-        private String icon;
-
-        private Builder() {
-        }
-
-        public Builder id(String id) {
-            this.id = id;
-            return this;
-        }
-
-        public Builder language(String language) {
-            this.language = StringUtils.isEmptyString(language);
-            return this;
-        }
-
-        public Builder region(String region) {
-            this.region = StringUtils.isEmptyString(region);
-            return this;
-        }
-
-        @JsonProperty("variants")
-        public Builder variants(Collection<String> variants) {
-            if(variants == null){
-                return this;
-            }
-
-            this.variants.addAll(variants);
-
-            return this;
-        }
-
-        @JsonIgnore
-        public Builder variants(String... variants) {
-            if(variants == null){
-                return this;
-            }
-
-            return variants(asList(variants));
-        }
-
-        public Builder displayName(String displayName) {
-            this.displayName = StringUtils.isEmptyString(displayName);
-            return this;
-        }
-
-        public Builder icon(String icon) {
-            this.icon = StringUtils.isEmptyString(icon);
-            return this;
-        }
-
-        public TranslationLocaleDto build() {
-            return new TranslationLocaleDto(this);
-        }
     }
 }

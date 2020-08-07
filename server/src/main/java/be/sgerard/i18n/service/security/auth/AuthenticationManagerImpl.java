@@ -10,8 +10,8 @@ import be.sgerard.i18n.model.security.user.persistence.ExternalUserEntity;
 import be.sgerard.i18n.model.security.user.persistence.UserEntity;
 import be.sgerard.i18n.service.ResourceNotFoundException;
 import be.sgerard.i18n.service.repository.RepositoryManager;
+import be.sgerard.i18n.service.security.auth.external.ExternalUserRepositoryCredentialsHandler;
 import be.sgerard.i18n.service.security.auth.external.OAuthUserMapper;
-import be.sgerard.i18n.service.security.auth.external.OAuthUserRepositoryCredentialsHandler;
 import be.sgerard.i18n.service.security.auth.listener.AuthenticatedUserListener;
 import be.sgerard.i18n.service.security.session.repository.SessionRepository;
 import be.sgerard.i18n.service.user.UserManager;
@@ -46,14 +46,14 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
     private final RepositoryManager repositoryManager;
     private final SessionRepository sessionRepository;
     private final OAuthUserMapper externalUserHandler;
-    private final OAuthUserRepositoryCredentialsHandler credentialsHandler;
+    private final ExternalUserRepositoryCredentialsHandler credentialsHandler;
     private final AuthenticatedUserListener listener;
 
     public AuthenticationManagerImpl(UserManager userManager,
                                      RepositoryManager repositoryManager,
                                      SessionRepository sessionRepository,
                                      OAuthUserMapper externalUserHandler,
-                                     OAuthUserRepositoryCredentialsHandler credentialsHandler,
+                                     ExternalUserRepositoryCredentialsHandler credentialsHandler,
                                      AuthenticatedUserListener listener) {
         this.userManager = userManager;
         this.repositoryManager = repositoryManager;

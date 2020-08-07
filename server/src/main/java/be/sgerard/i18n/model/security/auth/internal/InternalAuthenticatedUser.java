@@ -81,6 +81,11 @@ public class InternalAuthenticatedUser implements AuthenticatedUser, UserDetails
     }
 
     @Override
+    public Collection<RepositoryCredentials> getRepositoryCredentials() {
+        return Collections.emptyList();
+    }
+
+    @Override
     public String getPassword() {
         return password;
     }

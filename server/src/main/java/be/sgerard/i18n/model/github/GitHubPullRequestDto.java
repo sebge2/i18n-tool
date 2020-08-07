@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
+import lombok.Getter;
 
 /**
  * Pull-request of a GitHub repository.
@@ -12,6 +14,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
  */
 @Schema(name = "GitHubPullRequest", description = "Pull-request on GitHub.")
 @JsonDeserialize(builder = GitHubPullRequestDto.Builder.class)
+@Getter
+@Builder(builderClassName = "Builder")
 public class GitHubPullRequestDto {
 
     public static Builder builder() {
@@ -33,76 +37,11 @@ public class GitHubPullRequestDto {
     @Schema(description = "Current status of this request", required = true)
     private final GitHubPullRequestStatus status;
 
-    private GitHubPullRequestDto(Builder builder) {
-        repositoryName = builder.repositoryName;
-        number = builder.number;
-        currentBranch = builder.currentBranch;
-        targetBranch = builder.targetBranch;
-        status = builder.status;
-    }
-
-    public String getRepositoryName() {
-        return repositoryName;
-    }
-
-    public int getNumber() {
-        return number;
-    }
-
-    public String getCurrentBranch() {
-        return currentBranch;
-    }
-
-    public String getTargetBranch() {
-        return targetBranch;
-    }
-
-    public GitHubPullRequestStatus getStatus() {
-        return status;
-    }
-
     /**
      * Builder of {@link GitHubPullRequestDto pull-request DTO}.
      */
     @JsonPOJOBuilder(withPrefix = "")
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder {
-        private String repositoryName;
-        private int number;
-        private String currentBranch;
-        private String targetBranch;
-        private GitHubPullRequestStatus status;
-
-        private Builder() {
-        }
-
-        public Builder repositoryName(String repositoryName) {
-            this.repositoryName = repositoryName;
-            return this;
-        }
-
-        public Builder number(int number) {
-            this.number = number;
-            return this;
-        }
-
-        public Builder currentBranch(String currentBranch) {
-            this.currentBranch = currentBranch;
-            return this;
-        }
-
-        public Builder targetBranch(String targetBranch) {
-            this.targetBranch = targetBranch;
-            return this;
-        }
-
-        public Builder status(GitHubPullRequestStatus status) {
-            this.status = status;
-            return this;
-        }
-
-        public GitHubPullRequestDto build() {
-            return new GitHubPullRequestDto(this);
-        }
     }
 }

@@ -110,7 +110,7 @@ public class TranslationLocaleControllerTest extends AbstractControllerTest {
                 .id(originalLocale.getId())
                 .language("fr")
                 .region("BE")
-                .variants("wallon")
+                .variant("wallon")
                 .icon("flag-icon-fr")
                 .displayName("Français (Wallon)")
                 .build();
