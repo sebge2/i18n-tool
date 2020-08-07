@@ -1,30 +1,29 @@
 <app-card-grid [allowAdd]="false">
     <app-card-grid-item>
-        <mat-card>
-            <mat-card-title>
-                Workspaces {{repository.name}}
-            </mat-card-title>
-            <mat-card-content>
+        <app-card [maxSizePx]="350" [title]="'Configuration'">
+            <app-card-content>
                 <p>fsfsfsd</p>
                 <p>fsfsfsd</p>
                 <p>fsfsfsd</p>
                 <p>fsfsfsd</p>
                 <p>fsfsfsd</p>
-            </mat-card-content>
-        </mat-card>
-    </app-card-grid-item>
-    <app-card-grid-item>
-        <mat-card>
-            <mat-card-title>
-                Configuration
-            </mat-card-title>
-            <mat-card-content>
+            </app-card-content>
+            <app-card-actions>
+
+            </app-card-actions>
+        </app-card>
+
+        <app-card [maxSizePx]="500" [title]="'Workspaces'">
+            <app-card-content>
                 <p>fsfsfsd</p>
                 <p>fsfsfsd</p>
                 <p>fsfsfsd</p>
                 <p>fsfsfsd</p>
                 <p>fsfsfsd</p>
-            </mat-card-content>
-        </mat-card>
+            </app-card-content>
+            <app-card-actions>
+
+            </app-card-actions>
+        </app-card>
     </app-card-grid-item>
 </app-card-grid>
