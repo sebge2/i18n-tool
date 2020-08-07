@@ -9,30 +9,21 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
-import { RepositoryRolesDto } from './repositoryRolesDto';
 
 /**
- * Description of an authenticated user.
+ * Roles that has an authenticated user on a repository.
  */
-export interface AuthenticatedUserDto { 
+export interface RepositoryRolesDto { 
     /**
-     * Unique id of the authenticated user.
+     * Unique id of the associated repository.
      */
-    id?: string;
+    repository?: string;
     /**
-     * Description of the user.
+     * All the roles that the user has on this repository.
      */
-    userId?: string;
-    /**
-     * Roles allowed during this session.
-     */
-    sessionRoles?: Array<AuthenticatedUserDto.SessionRolesDtoEnum>;
-    /**
-     * All the current repository roles.
-     */
-    repositoryRoles?: Array<RepositoryRolesDto>;
+    sessionRoles?: Array<RepositoryRolesDto.SessionRolesDtoEnum>;
 }
-export namespace AuthenticatedUserDto {
+export namespace RepositoryRolesDto {
     export type SessionRolesDtoEnum = 'MEMBER_OF_ORGANIZATION' | 'MEMBER_OF_REPOSITORY' | 'ADMIN';
     export const SessionRolesDtoEnum = {
         MEMBEROFORGANIZATION: 'MEMBER_OF_ORGANIZATION' as SessionRolesDtoEnum,
