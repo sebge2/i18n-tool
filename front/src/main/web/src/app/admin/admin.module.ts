@@ -24,6 +24,7 @@ import { RepositoryDetailsWorkspacesComponent } from './component/repositories/r
 const appRoutes: Routes = [
     {path: 'users', component: UsersComponent},
     {path: 'repositories', component: RepositoriesComponent},
+    {path: 'repositories/:id', component: RepositoriesComponent},
     {path: 'locales', component: LocalesComponent}
 ];
 

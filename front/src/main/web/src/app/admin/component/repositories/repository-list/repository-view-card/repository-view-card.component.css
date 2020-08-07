@@ -1,3 +1,7 @@
+:host ::ng-deep .mat-card-content {
+    margin-bottom: 0;
+}
+
 .info-table{
     margin-top: 20px
 }
