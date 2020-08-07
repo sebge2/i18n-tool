@@ -29,7 +29,7 @@ export class AuthenticationService {
                 private authenticationService: ApiAuthenticationService) {
         this.authenticationService
             .getCurrentUser()
-            .pipe(map(userDto => new AuthenticatedUser(userDto)))
+            .pipe(map(userDto => AuthenticatedUser.fromDto(userDto)))
             .toPromise()
             .then(user => {
                 console.debug('There is an existing authenticated user, send next user.', user);
@@ -87,7 +87,7 @@ export class AuthenticationService {
 
         return this.authenticationService
             .getCurrentUser()
-            .pipe(map(userDto => new AuthenticatedUser(userDto)))
+            .pipe(map(userDto => AuthenticatedUser.fromDto(userDto)))
             .toPromise()
             .then(authenticatedUser => {
                 this._user$.next(authenticatedUser);

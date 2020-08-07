@@ -1,0 +1,24 @@
+.info-table{
+    margin-top: 20px
+}
+
+.info-table-row {
+    vertical-align: center;
+}
+
+.info-table-column-label {
+    padding-right: 20px;
+}
+
+.status-warning {
+    color: darkorange;
+}
+
+.status-healthy {
+    color: green;
+}
+
+.status-progress {
+    width: 24px;
+    font-size: 24px;
+}

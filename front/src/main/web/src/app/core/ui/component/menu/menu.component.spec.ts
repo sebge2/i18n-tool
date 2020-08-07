@@ -13,7 +13,7 @@ describe('MenuComponent', () => {
     let component: MenuComponent;
     let fixture: ComponentFixture<MenuComponent>;
 
-    let user: BehaviorSubject<AuthenticatedUser> = new BehaviorSubject<AuthenticatedUser>(new AuthenticatedUser(<AuthenticatedUser>{sessionRoles: ALL_USER_ROLES}));
+    let user: BehaviorSubject<AuthenticatedUser> = new BehaviorSubject<AuthenticatedUser>(new AuthenticatedUser(ALL_USER_ROLES));
     let authenticationService: AuthenticationService;
 
     beforeEach(async(() => {
@@ -39,7 +39,7 @@ describe('MenuComponent', () => {
     }));
 
     it('should have all rights', () => {
-        user.next(new AuthenticatedUser(<AuthenticatedUser>{sessionRoles: ALL_USER_ROLES}));
+        user.next(new AuthenticatedUser(ALL_USER_ROLES));
 
         fixture.detectChanges();
 
@@ -47,7 +47,7 @@ describe('MenuComponent', () => {
     });
 
     it('should have limited rights', () => {
-        user.next(new AuthenticatedUser(<AuthenticatedUser>{sessionRoles: [UserRole.MEMBER_OF_ORGANIZATION]}));
+        user.next(new AuthenticatedUser([UserRole.MEMBER_OF_ORGANIZATION]));
 
         fixture.detectChanges();
 

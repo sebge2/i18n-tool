@@ -2,20 +2,33 @@
           [headerClassIcon]="repository?.type | repositoryIcon"
           [maxSizePx]="350">
     <app-card-content>
-        <table style="margin-top: 20px">
-            <tr style="vertical-align: center;">
-                <td style="padding-right: 20px">
+        <table class="info-table">
+            <tr class="info-table-row">
+                <td class="info-table-column-label">
                     {{'ADMIN.REPOSITORIES.VIEW_CARD.STATUS_LABEL' | translate}}
                 </td>
-                <td [ngSwitch]="repository.status" class="">
+                <td [ngSwitch]="repository.status">
                     <div *ngSwitchCase="repositoryStatus.NOT_INITIALIZED">
-                        <mat-icon style="color: darkorange">warning</mat-icon>
+                        <mat-icon class="status-warning">warning</mat-icon>
                     </div>
                     <div *ngSwitchCase="repositoryStatus.INITIALIZING">
-                        <mat-spinner></mat-spinner>
+                        <mat-spinner [diameter]="24" class="status-progress"></mat-spinner>
                     </div>
                     <div *ngSwitchCase="repositoryStatus.INITIALIZED">
-                        <mat-icon style="color: green">check_circle_outline</mat-icon>
+                        <mat-icon class="status-healthy">check_circle_outline</mat-icon>
+                    </div>
+                </td>
+            </tr>
+            <tr class="info-table-row">
+                <td class="info-table-column-label">
+                    {{'ADMIN.REPOSITORIES.VIEW_CARD.RO_LABEL' | translate}}
+                </td>
+                <td [ngSwitch]="(currentAuthenticatedUser | async).hasRepositoryAccess(repository.id)">
+                    <div *ngSwitchCase="false">
+                        <mat-icon class="status-warning">warning</mat-icon>
+                    </div>
+                    <div *ngSwitchCase="true">
+                        <mat-icon class="status-healthy">check_circle_outline</mat-icon>
                     </div>
                 </td>
             </tr>

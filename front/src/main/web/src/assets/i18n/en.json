@@ -145,7 +145,8 @@
         }
       },
       "VIEW_CARD": {
-        "STATUS_LABEL": "Status:"
+        "STATUS_LABEL": "Status:",
+        "RO_LABEL": "Your Access:"
       }
     }
   },

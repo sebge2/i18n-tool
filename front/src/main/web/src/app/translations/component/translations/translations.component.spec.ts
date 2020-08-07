@@ -26,7 +26,7 @@ describe('TranslationsComponent', () => {
     let workspaceService: WorkspaceService;
     let workspaces: BehaviorSubject<Workspace[]>;
 
-    let user: BehaviorSubject<AuthenticatedUser> = new BehaviorSubject<AuthenticatedUser>(new AuthenticatedUser(<AuthenticatedUser>{sessionRoles: ALL_USER_ROLES}));
+    let user: BehaviorSubject<AuthenticatedUser> = new BehaviorSubject<AuthenticatedUser>(new AuthenticatedUser(ALL_USER_ROLES));
     let authenticationService: AuthenticationService;
 
     beforeEach(async(() => {
