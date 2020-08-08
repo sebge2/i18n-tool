@@ -63,12 +63,16 @@ export class UserViewCardComponent {
         this.resetForm();
     }
 
-    public get username(): string {
-        return getStringValue(this.form.controls['username']);
-    }
-
     public get displayName(): string {
         return getStringValue(this.form.controls['displayName']);
+    }
+
+    public get externalAuthProvider(): string {
+        return this.user.isExternal() ? this.user.externalAuthSystem : "-";
+    }
+
+    public get username(): string {
+        return getStringValue(this.form.controls['username']);
     }
 
     public get email(): string {

@@ -12,7 +12,8 @@ export class User {
             dto.displayName ? dto.displayName : dto.username,
             dto.email,
             dto.roles.map(role => UserRole[role]),
-            UserType[dto.type]
+            UserType[dto.type],
+            dto.externalAuthSystem ? ExternalAuthSystem[dto.externalAuthSystem] : null
         );
     }
 
@@ -23,7 +24,8 @@ export class User {
             null,
             null,
             [],
-            UserType.INTERNAL
+            UserType.INTERNAL,
+            null
         );
     }
 
@@ -32,7 +34,8 @@ export class User {
                 public displayName: string,
                 public email: string,
                 public roles: UserRole[],
-                public type: UserType) {
+                public type: UserType,
+                public externalAuthSystem: ExternalAuthSystem) {
     }
 
     public hasRole(role: UserRole): boolean {
@@ -62,4 +65,9 @@ export enum UserType {
 
     INTERNAL = "INTERNAL"
 
+}
+
+export enum ExternalAuthSystem {
+    OAUTH_GOOGLE = 'GOOGLE',
+    OAUTH_GITHUB = 'GITHUB'
 }

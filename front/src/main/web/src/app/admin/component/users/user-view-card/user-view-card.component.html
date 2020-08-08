@@ -1,4 +1,5 @@
 <app-card [title]="displayName"
+          [subTitle]="externalAuthProvider | titlecase"
           [headerMatIcon]="!avatarUrl ? 'perm_identity' : null"
           [headerImg]="avatarUrl ? avatarUrl : null"
           [maxSizePx]="270">
