@@ -1,6 +1,7 @@
 package be.sgerard.i18n.controller;
 
 import be.sgerard.i18n.model.workspace.dto.WorkspaceDto;
+import be.sgerard.i18n.service.BadRequestException;
 import be.sgerard.i18n.service.workspace.WorkspaceManager;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -8,6 +9,7 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -65,9 +67,7 @@ public class WorkspaceController {
     @PostMapping(path = "/repository/{repositoryId}/workspace/do", params = "action=SYNCHRONIZE")
     @Operation(summary = "Executes an action on workspaces of a particular repository.",
             parameters = {@Parameter(name = "action", examples = {
-                    @ExampleObject(value = "SYNCHRONIZE"),
-                    @ExampleObject(value = "INITIALIZE"),
-                    @ExampleObject(value = "PUBLISH") // TODO find a better way
+                    @ExampleObject(value = "SYNCHRONIZE")
             })}
     )
     @PreAuthorize("hasRole('ADMIN')")
@@ -88,14 +88,21 @@ public class WorkspaceController {
     }
 
     /**
-     * Executes an action on the specified workspace.
+     * Executes an action on workspaces associated to the specified repository.
      */
-    @PostMapping(path = "/repository/workspace/{id}/do", params = "action=INITIALIZE")
-    @Operation(summary = "Executes an action on the specified workspace.")
+    @PostMapping(path = "/repository/{repositoryId}/workspace/do")
+    @Operation(summary = "Executes an action on workspaces of a particular repository.")
     @PreAuthorize("hasRole('ADMIN')")
-    public Mono<WorkspaceDto> initializeWorkspace(@PathVariable String id) {
-        return workspaceManager.initialize(id)
-                .map(workspace -> WorkspaceDto.builder(workspace).build());
+    @SuppressWarnings("SwitchStatementWithTooFewBranches")
+    public Flux<WorkspaceDto> executeWorkspacesAction(@PathVariable String repositoryId,
+                                                      @Parameter(description = "The action to execute.") @RequestParam(name = "action") WorkspacesAction action) {
+        switch (action) {
+            case SYNCHRONIZE:
+                return workspaceManager.synchronize(repositoryId)
+                        .map(entity -> WorkspaceDto.builder(entity).build());
+            default:
+                throw BadRequestException.actionNotSupportedException(action.name());
+        }
     }
 
     /**
@@ -105,9 +112,40 @@ public class WorkspaceController {
     @PostMapping(path = "/repository/workspace/{id}/do", params = "action=PUBLISH")
     @Operation(summary = "Executes an action on the specified workspace.")
     @PreAuthorize("hasRole('ADMIN')")
-    public Mono<WorkspaceDto> publishWorkspace(@PathVariable String id,
-                                               @RequestParam(name = "message") String message) {
-        return workspaceManager.publish(id, message)
-                .map(workspace -> WorkspaceDto.builder(workspace).build());
+    public Mono<WorkspaceDto> executeWorkspaceAction(@PathVariable String id,
+                                                     @Parameter(description = "The action to execute.") @RequestParam(name = "action") WorkspaceAction action,
+                                                     @Parameter(description = "Message required when publishing, it describe the changes.") @RequestParam(name = "message", required = false) String message) {
+        switch (action) {
+            case INITIALIZE:
+                return workspaceManager.initialize(id)
+                        .map(workspace -> WorkspaceDto.builder(workspace).build());
+            case PUBLISH:
+                if (StringUtils.isEmpty(message)) {
+                    throw BadRequestException.missingReviewMessage();
+                }
+
+                return workspaceManager.publish(id, message)
+                        .map(workspace -> WorkspaceDto.builder(workspace).build());
+            default:
+                throw BadRequestException.actionNotSupportedException(action.toString());
+        }
+    }
+
+    /**
+     * Action possible on a group of workspaces.
+     */
+    public enum WorkspacesAction {
+
+        SYNCHRONIZE
+    }
+
+    /**
+     * Action possible on a workspace.
+     */
+    public enum WorkspaceAction {
+
+        INITIALIZE,
+
+        PUBLISH
     }
 }
