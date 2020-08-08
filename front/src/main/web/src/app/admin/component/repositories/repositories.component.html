@@ -9,7 +9,7 @@
             [iconClass]="repository.type | repositoryIcon"
             [closeable]="true"
             (close)="onClose(repository)"
-            *ngFor="let repository of openedRepositories"
+            *ngFor="let repository of openedRepositories; trackBy:identify"
     >
         <app-repository-details [repository]="repository"></app-repository-details>
     </app-tab>

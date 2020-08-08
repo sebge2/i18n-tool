@@ -1,5 +1,6 @@
 import {BehaviorSubject, Observable} from "rxjs";
 import {map, shareReplay, skip} from "rxjs/operators";
+import * as _ from "lodash";
 
 export function synchronizedCollection<I, O>(originalCollection: Observable<I[]>,
                                              created: Observable<I>,
@@ -79,4 +80,16 @@ export function synchronizedObject<I, O>(original: Observable<I>,
         .subscribe((_: O) => subject.next(null), error => subject.error(error));
 
     return observable;
+}
+
+export function updateOriginalCollection<E>(originalElements: E[], updatedElements: E[], field: keyof E): E[] {
+    return updatedElements
+        .filter(updatedElement =>
+            _.some(originalElements, originalElement =>
+                _.isEqual(
+                    _.get(originalElement, field),
+                    _.get(updatedElement, field)
+                )
+            )
+        );
 }

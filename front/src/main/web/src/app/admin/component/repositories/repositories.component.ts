@@ -5,6 +5,7 @@ import {TabsComponent} from "../../../core/shared/component/tabs/tabs.component"
 import {Subject} from "rxjs";
 import {takeUntil} from "rxjs/operators";
 import {RepositoryService} from "../../../translations/service/repository.service";
+import { updateOriginalCollection } from 'src/app/core/shared/utils/synchronized-observable-utils';
 
 @Component({
     selector: 'app-repositories',
@@ -35,6 +36,10 @@ export class RepositoriesComponent implements OnInit, OnDestroy {
         this._destroyed$.complete();
     }
 
+    public identify(index: number, repository: Repository){
+        return repository.id;
+    }
+
     public onOpen(repository: Repository) {
         const index = _.findIndex(this.openedRepositories, rep => rep.id == repository.id);
 
@@ -56,6 +61,8 @@ export class RepositoriesComponent implements OnInit, OnDestroy {
 
     public updateRepositories(repositories: Repository[]) {
         this.repositories = repositories;
+
+        this.openedRepositories = updateOriginalCollection(this.openedRepositories, repositories, 'id');
 
         if(this._initialTab){
             const index = _.findIndex(this.repositories, repo => _.isEqual(repo.id, this._initialTab));
