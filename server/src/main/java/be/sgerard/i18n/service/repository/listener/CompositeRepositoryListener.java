@@ -86,7 +86,7 @@ public class CompositeRepositoryListener implements RepositoryListener<Repositor
         return Flux
                 .fromIterable(listeners)
                 .filter(listener -> listener.support(repository))
-                .flatMap(listener -> listener.onCreate(repository))
+                .flatMap(listener -> listener.onDelete(repository))
                 .then();
     }
 }
