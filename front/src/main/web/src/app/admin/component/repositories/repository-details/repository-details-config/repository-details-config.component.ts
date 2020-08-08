@@ -44,13 +44,13 @@ export class RepositoryDetailsConfigComponent {
                 this.form.registerControl('name', this.formBuilder.control('', [Validators.required]));
                 this.form.registerControl('location', this.formBuilder.control('', [Validators.required]));
                 this.form.registerControl('defaultBranch', this.formBuilder.control('', [Validators.required]));
+                this.form.registerControl('allowedBranches', this.formBuilder.control('', [Validators.required]));
 
                 break;
             case "GITHUB":
                 this.form.registerControl('name', this.formBuilder.control('', [Validators.required]));
                 this.form.registerControl('defaultBranch', this.formBuilder.control('', [Validators.required]));
-                this.form.registerControl('accessKey', this.formBuilder.control('', []));
-                this.form.registerControl('webHookSecret', this.formBuilder.control('', []));
+                this.form.registerControl('allowedBranches', this.formBuilder.control('', [Validators.required]));
 
                 break;
             default:
@@ -133,6 +133,7 @@ export class RepositoryDetailsConfigComponent {
                 this.form.controls['location'].disable();
 
                 this.form.controls['defaultBranch'].setValue(gitRepository.defaultBranch);
+                this.form.controls['allowedBranches'].setValue(gitRepository.allowedBranches);
 
                 break;
             case "GITHUB":
@@ -142,8 +143,7 @@ export class RepositoryDetailsConfigComponent {
                 this.form.controls['name'].disable();
 
                 this.form.controls['defaultBranch'].setValue(gitHubRepository.defaultBranch);
-                this.form.controls['accessKey'].setValue(gitHubRepository.accessKey);
-                this.form.controls['webHookSecret'].setValue(gitHubRepository.webHookSecret);
+                this.form.controls['allowedBranches'].setValue(gitHubRepository.allowedBranches);
 
                 break;
             default:

@@ -24,6 +24,13 @@
                             <mat-hint>{{'ADMIN.REPOSITORIES.CONFIG_CARD.DEFAULT_BRANCH_HINT' | translate}}</mat-hint>
                         </mat-form-field>
                     </p>
+                    <p>
+                        <mat-form-field appearance="standard">
+                            <mat-label>{{'ADMIN.REPOSITORIES.CONFIG_CARD.ALLOWED_BRANCHES_LABEL' | translate}}</mat-label>
+                            <input matInput formControlName="allowedBranches" autocomplete="off">
+                            <mat-hint>{{'ADMIN.REPOSITORIES.CONFIG_CARD.ALLOWED_BRANCHESHINT' | translate}}</mat-hint>
+                        </mat-form-field>
+                    </p>
                 </ng-template>
                 <ng-template [ngSwitchCase]="RepositoryType.GITHUB">
                     <p>
@@ -42,16 +49,9 @@
                     </p>
                     <p>
                         <mat-form-field appearance="standard">
-                            <mat-label>{{'ADMIN.REPOSITORIES.CONFIG_CARD.ACCESS_KEY_LABEL' | translate}}</mat-label>
-                            <input matInput formControlName="accessKey" autocomplete="off">
-                            <mat-hint>{{'ADMIN.REPOSITORIES.CONFIG_CARD.ACCESS_KEY_HINT' | translate}}</mat-hint>
-                        </mat-form-field>
-                    </p>
-                    <p>
-                        <mat-form-field appearance="standard">
-                            <mat-label>{{'ADMIN.REPOSITORIES.CONFIG_CARD.WEB_HOOK_SECRET_LABEL' | translate}}</mat-label>
-                            <input matInput formControlName="webHookSecret" autocomplete="off">
-                            <mat-hint>{{'ADMIN.REPOSITORIES.CONFIG_CARD.WEB_HOOK_SECRET_HINT' | translate}}</mat-hint>
+                            <mat-label>{{'ADMIN.REPOSITORIES.CONFIG_CARD.ALLOWED_BRANCHES_LABEL' | translate}}</mat-label>
+                            <input matInput formControlName="allowedBranches" autocomplete="off">
+                            <mat-hint>{{'ADMIN.REPOSITORIES.CONFIG_CARD.ALLOWED_BRANCHES_HINT' | translate}}</mat-hint>
                         </mat-form-field>
                     </p>
                 </ng-template>

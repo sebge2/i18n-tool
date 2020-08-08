@@ -156,10 +156,8 @@
         "NAME_HINT": "Unique name of this repository.",
         "DEFAULT_BRANCH_LABEL": "Default Branch",
         "DEFAULT_BRANCH_HINT": "Default branch to use when searching.",
-        "ACCESS_KEY_LABEL": "Access Key",
-        "ACCESS_KEY_HINT": "Access Key to use for reading/pushing files.",
-        "WEB_HOOK_SECRET_LABEL": "Web Hook Secret",
-        "WEB_HOOK_SECRET_HINT": "Secret to use for the GitHub Web Hook (to be used on GitHub).",
+        "ALLOWED_BRANCHES_LABEL": "Allowed Branches",
+        "ALLOWED_BRANCHES_HINT": "Regex specifying which branches will be scanned.",
         "LOCATION_LABEL": "Location",
         "LOCATION_HINT": "Git URL of your repository."
       }
