@@ -1,5 +1,6 @@
 package be.sgerard.i18n.controller;
 
+import be.sgerard.i18n.model.repository.RepositoryType;
 import be.sgerard.i18n.model.repository.dto.GitHubRepositoryDto;
 import be.sgerard.i18n.model.repository.dto.GitRepositoryDto;
 import be.sgerard.i18n.model.repository.dto.RepositoryDto;
@@ -97,6 +98,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
     public void findById() {
         final WorkspaceDto masterWorkspace = repository
                 .create(i18nToolRepositoryCreationDto())
+                .hint("repo")
                 .initialize()
                 .workspaces()
                 .sync()
@@ -110,7 +112,10 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.branch").isEqualTo("master")
-                .jsonPath("$.status").isEqualTo(WorkspaceStatus.NOT_INITIALIZED.name());
+                .jsonPath("$.status").isEqualTo(WorkspaceStatus.NOT_INITIALIZED.name())
+                .jsonPath("$.repositoryId").isEqualTo(repository.forHint("repo").get().getId())
+                .jsonPath("$.repositoryName").isEqualTo(repository.forHint("repo").get().getName())
+                .jsonPath("$.repositoryType").isEqualTo(RepositoryType.GITHUB.name());
     }
 
     @Nested

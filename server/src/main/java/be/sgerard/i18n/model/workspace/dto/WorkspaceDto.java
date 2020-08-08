@@ -1,17 +1,18 @@
 package be.sgerard.i18n.model.workspace.dto;
 
+import be.sgerard.i18n.model.repository.RepositoryType;
 import be.sgerard.i18n.model.workspace.WorkspaceStatus;
 import be.sgerard.i18n.model.workspace.persistence.WorkspaceEntity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.Singular;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import static java.util.Collections.unmodifiableList;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -23,6 +24,7 @@ import static java.util.stream.Collectors.toList;
         description = "A workspace is a place where users can define translations and then submit them for review. A workspace is based on a particular branch.")
 @JsonDeserialize(builder = WorkspaceDto.Builder.class)
 @Getter
+@Builder(builderClassName = "Builder")
 public class WorkspaceDto {
 
     public static Builder builder() {
@@ -34,6 +36,9 @@ public class WorkspaceDto {
                 .id(entity.getId())
                 .branch(entity.getBranch())
                 .status(entity.getStatus())
+                .repositoryId(entity.getRepository().getId())
+                .repositoryName(entity.getRepository().getName())
+                .repositoryType(entity.getRepository().getType())
                 .files(entity.getFiles().stream().map(file -> BundleFileDto.builder(file).build()).collect(toList()));
     }
 
@@ -47,15 +52,18 @@ public class WorkspaceDto {
             "the workspace is initialized and all the translations are retrieved. Once they are edited, they are sent for review.", required = true)
     private final WorkspaceStatus status;
 
-    @Schema(description = "All the bundle files contained in this workspace.", required = true)
-    private final List<BundleFileDto> files;
+    @Schema(description = "The unique id of the associated repository.", required = true)
+    private final String repositoryId;
 
-    private WorkspaceDto(Builder builder) {
-        id = builder.id;
-        branch = builder.branch;
-        status = builder.status;
-        files = unmodifiableList(builder.files);
-    }
+    @Schema(description = "The name of the associated repository.", required = true)
+    private final String repositoryName;
+
+    @Schema(description = "The type of the associated repository.", required = true)
+    private final RepositoryType repositoryType;
+
+    @Schema(description = "All the bundle files contained in this workspace.", required = true)
+    @Singular
+    private final List<BundleFileDto> files;
 
     /**
      * Builder of {@link WorkspaceDto workspace DTO}.
@@ -63,36 +71,5 @@ public class WorkspaceDto {
     @JsonPOJOBuilder(withPrefix = "")
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder {
-        private String id;
-        private String branch;
-        private WorkspaceStatus status;
-        private final List<BundleFileDto> files = new ArrayList<>();
-
-        private Builder() {
-        }
-
-        public Builder id(String id) {
-            this.id = id;
-            return this;
-        }
-
-        public Builder branch(String branch) {
-            this.branch = branch;
-            return this;
-        }
-
-        public Builder status(WorkspaceStatus status) {
-            this.status = status;
-            return this;
-        }
-
-        public Builder files(List<BundleFileDto> files) {
-            this.files.addAll(files);
-            return this;
-        }
-
-        public WorkspaceDto build() {
-            return new WorkspaceDto(this);
-        }
     }
 }
