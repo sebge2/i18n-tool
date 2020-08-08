@@ -3,15 +3,17 @@ import {EventService} from "../../core/event/service/event.service";
 import {Observable} from "rxjs";
 import {Repository} from "../model/repository/repository.model";
 import {
-    GitHubRepositoryCreationRequestDto,
-    GitRepositoryCreationRequestDto,
-    RepositoryCreationRequestDto,
+    GitHubRepositoryCreationRequestDto, GitHubRepositoryDto,
+    GitRepositoryCreationRequestDto, GitRepositoryDto,
+    RepositoryCreationRequestDto, RepositoryDto,
     RepositoryService as ApiRepositoryService
 } from "../../api";
 import {NotificationService} from "../../core/notification/service/notification.service";
 import {synchronizedCollection} from "../../core/shared/utils/synchronized-observable-utils";
 import {Events} from "../../core/event/model/events.model";
 import {catchError, map} from "rxjs/operators";
+import {GitRepository} from "../model/repository/git-repository.model";
+import {GitHubRepository} from "../model/repository/github-repository.model";
 
 @Injectable({
     providedIn: 'root'
@@ -28,7 +30,7 @@ export class RepositoryService {
             this.eventService.subscribeDto(Events.ADDED_REPOSITORY),
             this.eventService.subscribeDto(Events.UPDATED_REPOSITORY),
             this.eventService.subscribeDto(Events.DELETED_REPOSITORY),
-            dto => Repository.fromDto(dto),
+            dto => RepositoryService.fromDto(dto),
             ((first, second) => first.id === second.id)
         )
             .pipe(catchError((reason) => {
@@ -45,13 +47,23 @@ export class RepositoryService {
     public createRepository(dto: RepositoryCreationRequestDto): Observable<Repository> {
         return this.apiRepositoryService
             .create(<(GitHubRepositoryCreationRequestDto | GitRepositoryCreationRequestDto)>dto)
-            .pipe(map(dto => Repository.fromDto(dto)));
+            .pipe(map(dto => RepositoryService.fromDto(dto)));
     }
 
     public initializeRepository(id: string): Observable<Repository> {
         return this.apiRepositoryService
             .executeRepositoryAction(id, 'INITIALIZE')
-            .pipe(map(dto => Repository.fromDto(dto)));
+            .pipe(map(dto => RepositoryService.fromDto(dto)));
     }
 
+    private static fromDto(dto: RepositoryDto): Repository {
+        switch (dto.type) {
+            case "GIT":
+                return GitRepository.fromDto(<GitRepositoryDto>dto);
+            case "GITHUB":
+                return GitHubRepository.fromDto(<GitHubRepositoryDto>dto);
+            default:
+                throw new Error(`Unsupported type ${dto.type}.`)
+        }
+    }
 }
