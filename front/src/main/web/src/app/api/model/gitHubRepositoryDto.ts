@@ -24,13 +24,17 @@ export interface GitHubRepositoryDto extends RepositoryDto {
      */
     defaultBranch: string;
     /**
-     * Access key to use to access this repository
+     * Regex specifying branches that can be scanned by this tool.
      */
-    accessKey: string;
+    allowedBranches: string;
     /**
-     * Access key to use to access this repository
+     * GitHub username owner of the repository.
      */
-    webHookSecret?: string;
+    username: string;
+    /**
+     * GitHub repository name.
+     */
+    repository: string;
 }
 export namespace GitHubRepositoryDto {
 }

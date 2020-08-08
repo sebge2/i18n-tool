@@ -14,12 +14,18 @@
  * Repository that can be of different type.
  */
 export interface RepositoryDto { 
-    id?: string;
-    name?: string;
+    /**
+     * Unique id of this repository.
+     */
+    id: string;
+    /**
+     * Display name to use for this repository.
+     */
+    name: string;
     /**
      * All possible repository statuses.
      */
-    status?: RepositoryDto.StatusDtoEnum;
+    status: RepositoryDto.StatusDtoEnum;
     type?: RepositoryDto.TypeDtoEnum;
 }
 export namespace RepositoryDto {

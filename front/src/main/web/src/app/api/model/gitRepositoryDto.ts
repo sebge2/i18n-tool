@@ -23,6 +23,10 @@ export interface GitRepositoryDto extends RepositoryDto {
      * The name of the default branch used to find translations
      */
     defaultBranch: string;
+    /**
+     * Regex specifying branches that can be scanned by this tool.
+     */
+    allowedBranches: string;
 }
 export namespace GitRepositoryDto {
 }
