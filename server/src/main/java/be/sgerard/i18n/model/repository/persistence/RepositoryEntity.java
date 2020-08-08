@@ -2,6 +2,9 @@ package be.sgerard.i18n.model.repository.persistence;
 
 import be.sgerard.i18n.model.repository.RepositoryStatus;
 import be.sgerard.i18n.model.repository.RepositoryType;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -15,17 +18,32 @@ import java.util.UUID;
  * @author Sebastien Gerard
  */
 @Document("repository")
+@Getter
+@Setter
+@Accessors(chain = true)
 public abstract class RepositoryEntity {
 
+    /**
+     * The unique id of this repository.
+     */
     @Id
     private String id;
 
+    /**
+     * The display name to use for this repository.
+     */
     @NotNull
     private String name;
 
+    /**
+     * The {@link RepositoryStatus current status}.
+     */
     @NotNull
     private RepositoryStatus status = RepositoryStatus.NOT_INITIALIZED;
 
+    /**
+     * The {@link TranslationsConfigurationEntity configuration} to use for managing translations.
+     */
     private TranslationsConfigurationEntity translationsConfiguration;
 
     RepositoryEntity() {
@@ -42,65 +60,5 @@ public abstract class RepositoryEntity {
      */
     @Field(name = "type")
     public abstract RepositoryType getType();
-
-    /**
-     * Returns the unique id of this repository.
-     */
-    public String getId() {
-        return id;
-    }
-
-    /**
-     * Sets the unique id of this repository.
-     */
-    public RepositoryEntity setId(String id) {
-        this.id = id;
-        return this;
-    }
-
-    /**
-     * Returns the display name to use for this repository.
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Sets the display name to use for this repository.
-     */
-    public RepositoryEntity setName(String name) {
-        this.name = name;
-        return this;
-    }
-
-    /**
-     * Returns the {@link RepositoryStatus current status}.
-     */
-    public RepositoryStatus getStatus() {
-        return status;
-    }
-
-    /**
-     * Sets the {@link RepositoryStatus current status}.
-     */
-    public RepositoryEntity setStatus(RepositoryStatus status) {
-        this.status = status;
-        return this;
-    }
-
-    /**
-     * Returns the {@link TranslationsConfigurationEntity configuration} to use for managing translations.
-     */
-    public TranslationsConfigurationEntity getTranslationsConfiguration() {
-        return translationsConfiguration;
-    }
-
-    /**
-     * Sets the {@link TranslationsConfigurationEntity configuration} to use for managing translations.
-     */
-    public RepositoryEntity setTranslationsConfiguration(TranslationsConfigurationEntity translationsConfiguration) {
-        this.translationsConfiguration = translationsConfiguration;
-        return this;
-    }
 
 }

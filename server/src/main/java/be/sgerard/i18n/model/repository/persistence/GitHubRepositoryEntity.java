@@ -1,11 +1,13 @@
 package be.sgerard.i18n.model.repository.persistence;
 
 import be.sgerard.i18n.model.repository.RepositoryType;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.springframework.data.annotation.PersistenceConstructor;
 
 import javax.validation.constraints.NotNull;
 import java.util.Optional;
-import java.util.regex.Pattern;
 
 import static be.sgerard.i18n.support.GitHubUtils.createGitHubUrl;
 
@@ -14,16 +16,31 @@ import static be.sgerard.i18n.support.GitHubUtils.createGitHubUrl;
  *
  * @author Sebastien Gerard
  */
+@Getter
+@Setter
+@Accessors(chain = true)
 public class GitHubRepositoryEntity extends BaseGitRepositoryEntity {
 
+    /**
+     * The GitHub username owner of the repository.
+     */
     @NotNull
     private String username;
 
+    /**
+     * The GitHub repository name.
+     */
     @NotNull
     private String repository;
 
+    /**
+     * The access key to use to access this repository.
+     */
     private String accessKey;
 
+    /**
+     * The secret shared when GitHub access this app via a web-hook.
+     */
     private String webHookSecret;
 
     @PersistenceConstructor
@@ -46,73 +63,16 @@ public class GitHubRepositoryEntity extends BaseGitRepositoryEntity {
     }
 
     /**
-     * Returns the GitHub username owner of the repository.
-     */
-    public String getUsername() {
-        return username;
-    }
-
-    /**
-     * Sets the GitHub username owner of the repository.
-     */
-    public GitHubRepositoryEntity setUsername(String username) {
-        this.username = username;
-        return this;
-    }
-
-    /**
-     * Returns the GitHub repository name.
-     */
-    public String getRepository() {
-        return repository;
-    }
-
-    /**
-     * Sets the GitHub repository name.
-     */
-    public GitHubRepositoryEntity setRepository(String repository) {
-        this.repository = repository;
-        return this;
-    }
-
-    /**
-     * Returns the access key to use to access this repository.
+     * @see #accessKey
      */
     public Optional<String> getAccessKey() {
         return Optional.ofNullable(accessKey);
     }
 
     /**
-     * Sets the access key to use to access this repository.
-     */
-    public GitHubRepositoryEntity setAccessKey(String accessKey) {
-        this.accessKey = accessKey;
-        return this;
-    }
-
-    /**
-     * Returns the secret shared when GitHub access this app via a web-hook.
+     * @see #webHookSecret
      */
     public Optional<String> getWebHookSecret() {
         return Optional.ofNullable(webHookSecret);
-    }
-
-    /**
-     * Sets the secret shared when GitHub access this app via a web-hook.
-     */
-    public GitHubRepositoryEntity setWebHookSecret(String webHookSecret) {
-        this.webHookSecret = webHookSecret;
-        return this;
-    }
-
-    @Override
-    public GitHubRepositoryEntity setLocation(String location) {
-        return (GitHubRepositoryEntity) super.setLocation(location);
-    }
-
-
-    @Override
-    public GitHubRepositoryEntity setAllowedBranches(Pattern allowedBranches) {
-        return (GitHubRepositoryEntity) super.setAllowedBranches(allowedBranches);
     }
 }
