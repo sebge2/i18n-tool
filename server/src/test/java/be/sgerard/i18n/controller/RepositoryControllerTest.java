@@ -438,6 +438,28 @@ public class RepositoryControllerTest extends AbstractControllerTest {
         @Test
         @TransactionalReactiveTest
         @WithJaneDoeAdminUser
+        public void updateName() {
+            final GitRepositoryDto repository = this.repository.create(i18nToolLocalRepositoryCreationDto(), GitRepositoryDto.class).get();
+
+            final GitRepositoryPatchDto patchDto = GitRepositoryPatchDto.gitBuilder()
+                    .id(repository.getId())
+                    .name("My beautiful repository")
+                    .build();
+
+            webClient
+                    .patch()
+                    .uri("/api/repository/{id}", repository.getId())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(patchDto)
+                    .exchange()
+                    .expectStatus().isOk()
+                    .expectBody()
+                    .jsonPath("$.name").isEqualTo("My beautiful repository");
+        }
+
+        @Test
+        @TransactionalReactiveTest
+        @WithJaneDoeAdminUser
         public void updateAllowedBranchDefaultBranchNotMatching() {
             final GitRepositoryDto repository = this.repository.create(i18nToolLocalRepositoryCreationDto(), GitRepositoryDto.class).get();
 

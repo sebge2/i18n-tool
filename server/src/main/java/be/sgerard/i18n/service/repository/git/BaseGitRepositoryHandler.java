@@ -1,5 +1,6 @@
 package be.sgerard.i18n.service.repository.git;
 
+import be.sgerard.i18n.model.repository.dto.BaseGitRepositoryPatchDto;
 import be.sgerard.i18n.model.repository.dto.GitRepositoryPatchDto;
 import be.sgerard.i18n.model.repository.dto.RepositoryCreationDto;
 import be.sgerard.i18n.model.repository.persistence.BaseGitRepositoryEntity;
@@ -17,7 +18,7 @@ import java.util.regex.Pattern;
  * @author Sebastien Gerard
  */
 @Component
-public abstract class BaseGitRepositoryHandler<E extends BaseGitRepositoryEntity, C extends RepositoryCreationDto, P extends GitRepositoryPatchDto> implements RepositoryHandler<E, C, P> {
+public abstract class BaseGitRepositoryHandler<E extends BaseGitRepositoryEntity, C extends RepositoryCreationDto, P extends BaseGitRepositoryPatchDto> implements RepositoryHandler<E, C, P> {
 
     private final GitRepositoryApiProvider apiProvider;
 

@@ -47,6 +47,8 @@ public class GitRepositoryHandler extends BaseGitRepositoryHandler<GitRepository
     public Mono<GitRepositoryEntity> updateRepository(GitRepositoryEntity repository, GitRepositoryPatchDto patchDto) throws RepositoryException {
         updateFromPatch(patchDto, repository);
 
+        patchDto.getName().ifPresent(repository::setName);
+
         return Mono.just(repository);
     }
 

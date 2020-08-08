@@ -3,9 +3,10 @@ import {EventService} from "../../core/event/service/event.service";
 import {Observable} from "rxjs";
 import {Repository} from "../model/repository/repository.model";
 import {
+    BodyDto,
     GitHubRepositoryCreationRequestDto, GitHubRepositoryDto,
     GitRepositoryCreationRequestDto, GitRepositoryDto,
-    RepositoryCreationRequestDto, RepositoryDto,
+    RepositoryCreationRequestDto, RepositoryDto, RepositoryPatchRequestDto,
     RepositoryService as ApiRepositoryService
 } from "../../api";
 import {NotificationService} from "../../core/notification/service/notification.service";
@@ -54,6 +55,17 @@ export class RepositoryService {
         return this.apiRepositoryService
             .executeRepositoryAction(id, 'INITIALIZE')
             .pipe(map(dto => RepositoryService.fromDto(dto)));
+    }
+
+    public updateRepository(id: string, patch: RepositoryPatchRequestDto): Observable<Repository> {
+        return this.apiRepositoryService
+            .update(<BodyDto> patch, id)
+            .pipe(map(dto => RepositoryService.fromDto(dto)));
+    }
+
+    public deleteRepository(id: string): Observable<any> {
+        return this.apiRepositoryService
+            ._delete(id);
     }
 
     private static fromDto(dto: RepositoryDto): Repository {

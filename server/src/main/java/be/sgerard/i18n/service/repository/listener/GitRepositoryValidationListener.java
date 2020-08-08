@@ -1,6 +1,6 @@
 package be.sgerard.i18n.service.repository.listener;
 
-import be.sgerard.i18n.model.repository.dto.GitRepositoryPatchDto;
+import be.sgerard.i18n.model.repository.dto.BaseGitRepositoryPatchDto;
 import be.sgerard.i18n.model.repository.dto.RepositoryPatchDto;
 import be.sgerard.i18n.model.repository.persistence.BaseGitRepositoryEntity;
 import be.sgerard.i18n.model.repository.persistence.RepositoryEntity;
@@ -41,7 +41,7 @@ public class GitRepositoryValidationListener implements RepositoryListener<Repos
     @Override
     public Mono<ValidationResult> beforeUpdate(RepositoryEntity repository, RepositoryPatchDto patch) {
         final BaseGitRepositoryEntity gitRepository = (BaseGitRepositoryEntity) repository;
-        final GitRepositoryPatchDto gitPatch = (GitRepositoryPatchDto) patch;
+        final BaseGitRepositoryPatchDto gitPatch = (BaseGitRepositoryPatchDto) patch;
 
         final ValidationResult.Builder builder = ValidationResult.builder();
         if (gitPatch.getDefaultBranch().isPresent() || gitPatch.getAllowedBranches().isPresent()) {

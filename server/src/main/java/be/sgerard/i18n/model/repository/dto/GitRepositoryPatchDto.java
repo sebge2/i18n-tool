@@ -15,24 +15,20 @@ import java.util.Optional;
  */
 @Schema(name = "GitRepositoryPatchRequest", description = "Request asking the update of a Git repository")
 @JsonDeserialize(builder = GitRepositoryPatchDto.Builder.class)
-public class GitRepositoryPatchDto extends RepositoryPatchDto {
+public class GitRepositoryPatchDto extends BaseGitRepositoryPatchDto {
 
     public static Builder gitBuilder() {
         return new Builder();
     }
 
-    @Schema(description = "The name of the default branch used to find translations", required = true)
-    private final String defaultBranch;
+    @Schema(description = "The unique name of this repository.", required = true)
+    private final String name;
 
 
-    @Schema(description = "Regex specifying branches that can be scanned by this tool.", required = true)
-    private final String allowedBranches;
-
-    protected GitRepositoryPatchDto(BaseBuilder<?, ?> builder) {
+    protected GitRepositoryPatchDto(Builder builder) {
         super(builder);
 
-        this.defaultBranch = builder.defaultBranch;
-        this.allowedBranches = builder.allowedBranches;
+        this.name = builder.name;
     }
 
     @Override
@@ -41,39 +37,10 @@ public class GitRepositoryPatchDto extends RepositoryPatchDto {
     }
 
     /**
-     * @see #defaultBranch
+     * @see #name
      */
-    public Optional<String> getDefaultBranch() {
-        return Optional.ofNullable(defaultBranch);
-    }
-
-    /**
-     * @see #allowedBranches
-     */
-    public Optional<String> getAllowedBranches() {
-        return Optional.ofNullable(allowedBranches);
-    }
-
-    /**
-     * Builder of {@link GitRepositoryPatchDto GIT repository patch DTO}.
-     */
-    public static abstract class BaseBuilder<R extends GitRepositoryPatchDto, B extends GitRepositoryPatchDto.BaseBuilder<R, B>> extends RepositoryPatchDto.BaseBuilder<R, B> {
-
-        private String defaultBranch;
-        private String allowedBranches;
-
-        protected BaseBuilder() {
-        }
-
-        public B defaultBranch(String defaultBranch) {
-            this.defaultBranch = defaultBranch;
-            return self();
-        }
-
-        public B allowedBranches(String allowedBranches) {
-            this.allowedBranches = allowedBranches;
-            return self();
-        }
+    public Optional<String> getName() {
+        return Optional.ofNullable(name);
     }
 
     /**
@@ -83,7 +50,14 @@ public class GitRepositoryPatchDto extends RepositoryPatchDto {
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Builder extends BaseBuilder<GitRepositoryPatchDto, GitRepositoryPatchDto.Builder> {
 
+        private String name;
+
         public Builder() {
+        }
+
+        public Builder name(String name) {
+            this.name = name;
+            return this;
         }
 
         @Override

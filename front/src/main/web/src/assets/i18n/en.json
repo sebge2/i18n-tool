@@ -160,6 +160,10 @@
         "ALLOWED_BRANCHES_HINT": "Regex specifying which branches will be scanned.",
         "LOCATION_LABEL": "Location",
         "LOCATION_HINT": "Git URL of your repository."
+      },
+      "ERROR": {
+        "UPDATE": "Error while updating repository",
+        "DELETE": "Error while deleting repository."
       }
     }
   },

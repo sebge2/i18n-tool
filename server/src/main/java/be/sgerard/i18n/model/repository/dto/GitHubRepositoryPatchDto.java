@@ -15,7 +15,7 @@ import java.util.Optional;
  */
 @Schema(name = "GitHubRepositoryPatchRequest", description = "Request asking the update of a GitHub repository")
 @JsonDeserialize(builder = GitHubRepositoryPatchDto.Builder.class)
-public class GitHubRepositoryPatchDto extends GitRepositoryPatchDto {
+public class GitHubRepositoryPatchDto extends BaseGitRepositoryPatchDto {
 
     public static GitHubRepositoryPatchDto.Builder gitHubBuilder() {
         return new GitHubRepositoryPatchDto.Builder();

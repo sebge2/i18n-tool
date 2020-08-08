@@ -7,6 +7,11 @@ import {NotificationService} from "../../../../../core/notification/service/noti
 import {GitRepository} from "../../../../../translations/model/repository/git-repository.model";
 import {GitHubRepository} from "../../../../../translations/model/repository/github-repository.model";
 import {RepositoryType} from "../../../../../translations/model/repository/repository-type.model";
+import {
+    GitHubRepositoryPatchRequestDto,
+    GitRepositoryPatchRequestDto,
+    RepositoryPatchRequestDto
+} from "../../../../../api";
 
 @Component({
     selector: 'app-repository-details-config',
@@ -76,36 +81,22 @@ export class RepositoryDetailsConfigComponent {
     public onSave() {
         this.saveInProgress = true;
 
-        // if (this.isExistingUser()) {
-        //     this.userService
-        //         .updateUser(this.user.id, this.toUpdatedUser())
-        //         .toPromise()
-        //         .then(user => this.user = user)
-        //         .then(user => this.save.emit(user))
-        //         .catch(error => this.notificationService.displayErrorMessage('ADMIN.USERS.ERROR.UPDATE', error))
-        //         .finally(() => this.saveInProgress = false);
-        // } else {
-        //     this.userService
-        //         .createUser(this.toNewUser())
-        //         .toPromise()
-        //         .then(user => this.user = user)
-        //         .then(user => this.save.emit(user))
-        //         .catch(error => this.notificationService.displayErrorMessage('ADMIN.USERS.ERROR.SAVE', error))
-        //         .finally(() => this.saveInProgress = false);
-        // }
+        this.repositoryService
+            .updateRepository(this.repository.id, this.createPatch())
+            .toPromise()
+            .then(repository => this.repository = repository)
+            .catch(error => this.notificationService.displayErrorMessage('ADMIN.REPOSITORIES.ERROR.UPDATE', error))
+            .finally(() => this.saveInProgress = false);
     }
 
     public onDelete() {
-        // if (this.user.id) {
-        //     this.deleteInProgress = true;
-        //     this.userService
-        //         .deleteUser(this.user.id)
-        //         .toPromise()
-        //         .catch(error => this.notificationService.displayErrorMessage('ADMIN.USERS.ERROR.DELETE', error))
-        //         .finally(() => this.deleteInProgress = false);
-        // } else {
-        //     this.delete.emit();
-        // }
+        this.deleteInProgress = true;
+
+        this.repositoryService
+            .deleteRepository(this.repository.id)
+            .toPromise()
+            .catch(error => this.notificationService.displayErrorMessage('ADMIN.REPOSITORIES.ERROR.DELETE', error))
+            .finally(() => this.deleteInProgress = false);
     }
 
     private resetForm() {
@@ -140,4 +131,27 @@ export class RepositoryDetailsConfigComponent {
         this.form.markAsUntouched();
     }
 
+    private createPatch(): RepositoryPatchRequestDto {
+        switch (this.repository.type) {
+            case "GIT":
+                return <GitRepositoryPatchRequestDto>{
+                    id: this.repository.id,
+                    type: this.repository.type,
+                    name: this.form.controls['name'].value,
+                    defaultBranch: this.form.controls['defaultBranch'].value,
+                    allowedBranches: this.form.controls['allowedBranches'].value
+                };
+            case "GITHUB":
+                return <GitHubRepositoryPatchRequestDto>{
+                    id: this.repository.id,
+                    type: this.repository.type,
+                    accessKey: null,
+                    webHookSecret: null,
+                    defaultBranch: this.form.controls['defaultBranch'].value,
+                    allowedBranches: this.form.controls['allowedBranches'].value
+                };
+            default:
+                throw new Error(`Unsupported type ${this.repository.type}.`)
+        }
+    }
 }
