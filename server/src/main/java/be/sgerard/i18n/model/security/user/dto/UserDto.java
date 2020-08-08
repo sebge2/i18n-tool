@@ -16,7 +16,7 @@ import java.util.Collection;
 import java.util.Objects;
 
 /**
- * User registered in the application, it can be external (from an OAUTH), or internal.
+ * User registered in the application, it can be external (from OAUTH), or internal.
  *
  * @author Sebastien Gerard
  */
