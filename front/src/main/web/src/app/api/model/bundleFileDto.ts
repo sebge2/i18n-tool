@@ -26,4 +26,15 @@ export interface BundleFileDto {
      * Directory location of this bundle file.
      */
     location: string;
+    /**
+     * Type of bundle file
+     */
+    type: BundleFileDto.TypeDtoEnum;
+}
+export namespace BundleFileDto {
+    export type TypeDtoEnum = 'JAVA_PROPERTIES' | 'JSON_ICU';
+    export const TypeDtoEnum = {
+        JAVAPROPERTIES: 'JAVA_PROPERTIES' as TypeDtoEnum,
+        JSONICU: 'JSON_ICU' as TypeDtoEnum
+    };
 }

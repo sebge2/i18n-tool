@@ -28,6 +28,10 @@ export interface WorkspaceDto {
      */
     status: WorkspaceDto.StatusDtoEnum;
     /**
+     * The unique id of the associated repository.
+     */
+    repositoryId: string;
+    /**
      * All the bundle files contained in this workspace.
      */
     files: Array<BundleFileDto>;

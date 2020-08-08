@@ -16,9 +16,13 @@ import { RepositoryPatchRequestDto } from './repositoryPatchRequestDto';
  */
 export interface GitHubRepositoryPatchRequestDto extends RepositoryPatchRequestDto { 
     /**
-     * The default branch to use
+     * The name of the default branch used to find translations
      */
     defaultBranch: string;
+    /**
+     * Regex specifying branches that can be scanned by this tool.
+     */
+    allowedBranches: string;
     /**
      * Access key to use to access this repository
      */

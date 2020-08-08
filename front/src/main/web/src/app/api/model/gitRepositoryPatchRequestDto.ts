@@ -16,9 +16,17 @@ import { RepositoryPatchRequestDto } from './repositoryPatchRequestDto';
  */
 export interface GitRepositoryPatchRequestDto extends RepositoryPatchRequestDto { 
     /**
-     * The default branch to use
+     * The name of the default branch used to find translations
      */
     defaultBranch: string;
+    /**
+     * Regex specifying branches that can be scanned by this tool.
+     */
+    allowedBranches: string;
+    /**
+     * The unique name of this repository.
+     */
+    name: string;
 }
 export namespace GitRepositoryPatchRequestDto {
 }

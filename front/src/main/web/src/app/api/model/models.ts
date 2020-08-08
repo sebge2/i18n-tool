@@ -20,7 +20,6 @@ export * from './repositoryCreationRequestDto';
 export * from './repositoryDto';
 export * from './repositoryPatchRequestDto';
 export * from './repositoryRolesDto';
-export * from './repositorySummaryDto';
 export * from './serverSentEventDto';
 export * from './translationKeyPatternDto';
 export * from './translationLocaleCreationDto';

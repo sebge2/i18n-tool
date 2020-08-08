@@ -20,8 +20,8 @@ import { Observable }                                        from 'rxjs';
 import { Body1Dto } from '../model/body1Dto';
 import { BodyDto } from '../model/bodyDto';
 import { ErrorMessagesDto } from '../model/errorMessagesDto';
+import { GitHubRepositoryDtoGitRepositoryDto } from '../model/gitHubRepositoryDtoGitRepositoryDto';
 import { InlineResponse200Dto } from '../model/inlineResponse200Dto';
-import { RepositorySummaryDto } from '../model/repositorySummaryDto';
 
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
 import { Configuration }                                     from '../configuration';
@@ -205,9 +205,9 @@ export class RepositoryService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public findAll(observe?: 'body', reportProgress?: boolean): Observable<Array<RepositorySummaryDto>>;
-    public findAll(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<RepositorySummaryDto>>>;
-    public findAll(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<RepositorySummaryDto>>>;
+    public findAll(observe?: 'body', reportProgress?: boolean): Observable<Array<GitHubRepositoryDto | GitRepositoryDto>>;
+    public findAll(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<GitHubRepositoryDto | GitRepositoryDto>>>;
+    public findAll(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<GitHubRepositoryDto | GitRepositoryDto>>>;
     public findAll(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         let headers = this.defaultHeaders;
@@ -225,7 +225,7 @@ export class RepositoryService {
         const consumes: string[] = [
         ];
 
-        return this.httpClient.request<Array<RepositorySummaryDto>>('get',`${this.basePath}/api/repository`,
+        return this.httpClient.request<Array<GitHubRepositoryDto | GitRepositoryDto>>('get',`${this.basePath}/api/repository`,
             {
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
