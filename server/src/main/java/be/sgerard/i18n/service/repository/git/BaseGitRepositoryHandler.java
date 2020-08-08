@@ -9,6 +9,8 @@ import be.sgerard.i18n.service.repository.RepositoryHandler;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
+import java.util.regex.Pattern;
+
 /**
  * Abstract {@link RepositoryHandler repository handler} for Git.
  *
@@ -16,11 +18,6 @@ import reactor.core.publisher.Mono;
  */
 @Component
 public abstract class BaseGitRepositoryHandler<E extends BaseGitRepositoryEntity, C extends RepositoryCreationDto, P extends GitRepositoryPatchDto> implements RepositoryHandler<E, C, P> {
-
-    /**
-     * Default master branch.
-     */
-    public static final String DEFAULT_BRANCH = "master";
 
     private final GitRepositoryApiProvider apiProvider;
 
@@ -87,6 +84,7 @@ public abstract class BaseGitRepositoryHandler<E extends BaseGitRepositoryEntity
      */
     protected void updateFromPatch(P patchDto, E repository) {
         repository.setDefaultBranch(patchDto.getDefaultBranch().orElse(repository.getDefaultBranch()));
+        repository.setAllowedBranches(patchDto.getAllowedBranches().map(Pattern::compile).orElse(repository.getAllowedBranches()));
     }
 
     /**

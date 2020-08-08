@@ -107,7 +107,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
                     .jsonPath("$.name").isEqualTo("sebge2/i18n-tool")
                     .jsonPath("$.location").isEqualTo("https://github.com/sebge2/i18n-tool.git")
                     .jsonPath("$.defaultBranch").isEqualTo("master")
-                    .jsonPath("$.allowedBranches").isEqualTo("^master|release\\/[0-9]{4}.[0-9]{1,2}$")
+                    .jsonPath("$.allowedBranches").isEqualTo("^master|develop|release\\/[0-9]{4}.[0-9]{1,2}$")
                     .jsonPath("$.username").isEqualTo("sebge2")
                     .jsonPath("$.repository").isEqualTo("i18n-tool");
         }
@@ -235,7 +235,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
         @Test
         @TransactionalReactiveTest
         @WithJaneDoeAdminUser
-        public void update() {
+        public void updateWebHookAndAccessKey() {
             final GitHubRepositoryDto repository = this.repository.create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class).get();
 
             final GitHubRepositoryPatchDto patchDto = GitHubRepositoryPatchDto.gitHubBuilder()
@@ -251,6 +251,112 @@ public class RepositoryControllerTest extends AbstractControllerTest {
                     .bodyValue(patchDto)
                     .exchange()
                     .expectStatus().isOk();
+        }
+
+        @Test
+        @TransactionalReactiveTest
+        @WithJaneDoeAdminUser
+        public void updateAllowedBranch() {
+            final GitHubRepositoryDto repository = this.repository.create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class).get();
+
+            final GitHubRepositoryPatchDto patchDto = GitHubRepositoryPatchDto.gitHubBuilder()
+                    .id(repository.getId())
+                    .allowedBranches("^master$")
+                    .build();
+
+            webClient
+                    .patch()
+                    .uri("/api/repository/{id}", repository.getId())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(patchDto)
+                    .exchange()
+                    .expectStatus().isOk();
+        }
+
+        @Test
+        @TransactionalReactiveTest
+        @WithJaneDoeAdminUser
+        public void updateAllowedBranchDefaultBranchNotMatching() {
+            final GitHubRepositoryDto repository = this.repository.create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class).get();
+
+            final GitHubRepositoryPatchDto patchDto = GitHubRepositoryPatchDto.gitHubBuilder()
+                    .id(repository.getId())
+                    .allowedBranches("^release\\/[0-9]{4}.[0-9]{1,2}$")
+                    .build();
+
+            webClient
+                    .patch()
+                    .uri("/api/repository/{id}", repository.getId())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(patchDto)
+                    .exchange()
+                    .expectStatus().isBadRequest()
+                    .expectBody()
+                    .jsonPath("$.messages[0]").isEqualTo("The default branch [master] is not allowed by the pattern [^release\\/[0-9]{4}.[0-9]{1,2}$].");
+        }
+
+        @Test
+        @TransactionalReactiveTest
+        @WithJaneDoeAdminUser
+        public void updateAllowedBranchPatternInvalid() {
+            final GitHubRepositoryDto repository = this.repository.create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class).get();
+
+            final GitHubRepositoryPatchDto patchDto = GitHubRepositoryPatchDto.gitHubBuilder()
+                    .id(repository.getId())
+                    .allowedBranches("[")
+                    .build();
+
+            webClient
+                    .patch()
+                    .uri("/api/repository/{id}", repository.getId())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(patchDto)
+                    .exchange()
+                    .expectStatus().isBadRequest()
+                    .expectBody()
+                    .jsonPath("$.messages[0]").isEqualTo("The pattern specifying allowed branches is invalid: [[].");
+        }
+
+        @Test
+        @TransactionalReactiveTest
+        @WithJaneDoeAdminUser
+        public void updateDefaultBranch() {
+            final GitHubRepositoryDto repository = this.repository.create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class).get();
+
+            final GitHubRepositoryPatchDto patchDto = GitHubRepositoryPatchDto.gitHubBuilder()
+                    .id(repository.getId())
+                    .defaultBranch("develop")
+                    .build();
+
+            webClient
+                    .patch()
+                    .uri("/api/repository/{id}", repository.getId())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(patchDto)
+                    .exchange()
+                    .expectStatus().isOk();
+        }
+
+        @Test
+        @TransactionalReactiveTest
+        @WithJaneDoeAdminUser
+        public void updateDefaultBranchNotMatching() {
+            final GitHubRepositoryDto repository = this.repository.create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class).get();
+
+            final GitHubRepositoryPatchDto patchDto = GitHubRepositoryPatchDto.gitHubBuilder()
+                    .id(repository.getId())
+                    .defaultBranch("toto")
+                    .build();
+
+            webClient
+                    .patch()
+                    .uri("/api/repository/{id}", repository.getId())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(patchDto)
+                    .exchange()
+                    .expectStatus().isBadRequest()
+                    .expectBody()
+                    .jsonPath("$.messages[0]").isEqualTo("The default branch [toto] is not allowed by the pattern [^master|develop|release\\/[0-9]{4}.[0-9]{1,2}$].");
         }
 
         @Test
@@ -292,7 +398,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
                     .jsonPath("$.name").isEqualTo(creationDto.getName())
                     .jsonPath("$.location").isEqualTo(creationDto.getLocation())
                     .jsonPath("$.defaultBranch").isEqualTo("master")
-                    .jsonPath("$.allowedBranches").isEqualTo("^master|release\\/[0-9]{4}.[0-9]{1,2}$");
+                    .jsonPath("$.allowedBranches").isEqualTo("^master|develop|release\\/[0-9]{4}.[0-9]{1,2}$");
         }
 
         @Test
@@ -312,7 +418,71 @@ public class RepositoryControllerTest extends AbstractControllerTest {
         @Test
         @TransactionalReactiveTest
         @WithJaneDoeAdminUser
-        public void update() {
+        public void updateAllowedBranch() {
+            final GitRepositoryDto repository = this.repository.create(i18nToolLocalRepositoryCreationDto(), GitRepositoryDto.class).get();
+
+            final GitRepositoryPatchDto patchDto = GitRepositoryPatchDto.gitBuilder()
+                    .id(repository.getId())
+                    .allowedBranches("^master$")
+                    .build();
+
+            webClient
+                    .patch()
+                    .uri("/api/repository/{id}", repository.getId())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(patchDto)
+                    .exchange()
+                    .expectStatus().isOk();
+        }
+
+        @Test
+        @TransactionalReactiveTest
+        @WithJaneDoeAdminUser
+        public void updateAllowedBranchDefaultBranchNotMatching() {
+            final GitRepositoryDto repository = this.repository.create(i18nToolLocalRepositoryCreationDto(), GitRepositoryDto.class).get();
+
+            final GitRepositoryPatchDto patchDto = GitRepositoryPatchDto.gitBuilder()
+                    .id(repository.getId())
+                    .allowedBranches("^release\\/[0-9]{4}.[0-9]{1,2}$")
+                    .build();
+
+            webClient
+                    .patch()
+                    .uri("/api/repository/{id}", repository.getId())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(patchDto)
+                    .exchange()
+                    .expectStatus().isBadRequest()
+                    .expectBody()
+                    .jsonPath("$.messages[0]").isEqualTo("The default branch [master] is not allowed by the pattern [^release\\/[0-9]{4}.[0-9]{1,2}$].");
+        }
+
+        @Test
+        @TransactionalReactiveTest
+        @WithJaneDoeAdminUser
+        public void updateAllowedBranchPatternInvalid() {
+            final GitRepositoryDto repository = this.repository.create(i18nToolLocalRepositoryCreationDto(), GitRepositoryDto.class).get();
+
+            final GitRepositoryPatchDto patchDto = GitRepositoryPatchDto.gitBuilder()
+                    .id(repository.getId())
+                    .allowedBranches("[")
+                    .build();
+
+            webClient
+                    .patch()
+                    .uri("/api/repository/{id}", repository.getId())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(patchDto)
+                    .exchange()
+                    .expectStatus().isBadRequest()
+                    .expectBody()
+                    .jsonPath("$.messages[0]").isEqualTo("The pattern specifying allowed branches is invalid: [[].");
+        }
+
+        @Test
+        @TransactionalReactiveTest
+        @WithJaneDoeAdminUser
+        public void updateDefaultBranch() {
             final GitRepositoryDto repository = this.repository.create(i18nToolLocalRepositoryCreationDto(), GitRepositoryDto.class).get();
 
             final GitRepositoryPatchDto patchDto = GitRepositoryPatchDto.gitBuilder()
@@ -326,9 +496,29 @@ public class RepositoryControllerTest extends AbstractControllerTest {
                     .contentType(MediaType.APPLICATION_JSON)
                     .bodyValue(patchDto)
                     .exchange()
-                    .expectStatus().isOk()
+                    .expectStatus().isOk();
+        }
+
+        @Test
+        @TransactionalReactiveTest
+        @WithJaneDoeAdminUser
+        public void updateDefaultBranchNotMatching() {
+            final GitRepositoryDto repository = this.repository.create(i18nToolLocalRepositoryCreationDto(), GitRepositoryDto.class).get();
+
+            final GitRepositoryPatchDto patchDto = GitRepositoryPatchDto.gitBuilder()
+                    .id(repository.getId())
+                    .defaultBranch("toto")
+                    .build();
+
+            webClient
+                    .patch()
+                    .uri("/api/repository/{id}", repository.getId())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(patchDto)
+                    .exchange()
+                    .expectStatus().isBadRequest()
                     .expectBody()
-                    .jsonPath("$.defaultBranch").isEqualTo("develop");
+                    .jsonPath("$.messages[0]").isEqualTo("The default branch [toto] is not allowed by the pattern [^master|develop|release\\/[0-9]{4}.[0-9]{1,2}$].");
         }
 
         @Test

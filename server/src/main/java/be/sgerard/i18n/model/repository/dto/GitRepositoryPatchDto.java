@@ -21,13 +21,18 @@ public class GitRepositoryPatchDto extends RepositoryPatchDto {
         return new Builder();
     }
 
-    @Schema(description = "The default branch to use", required = true)
+    @Schema(description = "The name of the default branch used to find translations", required = true)
     private final String defaultBranch;
+
+
+    @Schema(description = "Regex specifying branches that can be scanned by this tool.", required = true)
+    private final String allowedBranches;
 
     protected GitRepositoryPatchDto(BaseBuilder<?, ?> builder) {
         super(builder);
 
         this.defaultBranch = builder.defaultBranch;
+        this.allowedBranches = builder.allowedBranches;
     }
 
     @Override
@@ -36,10 +41,17 @@ public class GitRepositoryPatchDto extends RepositoryPatchDto {
     }
 
     /**
-     * Returns the default branch to use.
+     * @see #defaultBranch
      */
     public Optional<String> getDefaultBranch() {
         return Optional.ofNullable(defaultBranch);
+    }
+
+    /**
+     * @see #allowedBranches
+     */
+    public Optional<String> getAllowedBranches() {
+        return Optional.ofNullable(allowedBranches);
     }
 
     /**
@@ -48,12 +60,18 @@ public class GitRepositoryPatchDto extends RepositoryPatchDto {
     public static abstract class BaseBuilder<R extends GitRepositoryPatchDto, B extends GitRepositoryPatchDto.BaseBuilder<R, B>> extends RepositoryPatchDto.BaseBuilder<R, B> {
 
         private String defaultBranch;
+        private String allowedBranches;
 
         protected BaseBuilder() {
         }
 
         public B defaultBranch(String defaultBranch) {
             this.defaultBranch = defaultBranch;
+            return self();
+        }
+
+        public B allowedBranches(String allowedBranches) {
+            this.allowedBranches = allowedBranches;
             return self();
         }
     }

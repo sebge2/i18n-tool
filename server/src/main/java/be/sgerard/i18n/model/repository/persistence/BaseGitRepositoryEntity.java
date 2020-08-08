@@ -22,7 +22,7 @@ public abstract class BaseGitRepositoryEntity extends RepositoryEntity {
     private String defaultBranch = DEFAULT_BRANCH;
 
     @NotNull
-    public Pattern allowedBranches = Pattern.compile("^master|release\\/[0-9]{4}.[0-9]{1,2}$");
+    public Pattern allowedBranches = Pattern.compile("^master|develop|release\\/[0-9]{4}.[0-9]{1,2}$");
 
     protected BaseGitRepositoryEntity() {
         super();
