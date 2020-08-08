@@ -99,6 +99,14 @@ export class RepositoryDetailsConfigComponent {
             .finally(() => this.deleteInProgress = false);
     }
 
+    public onUpdateWebHookSecret() {
+// TODO
+    }
+
+    public onUpdateAccessKey() {
+// TODO
+    }
+
     private resetForm() {
         switch (this.repository.type) {
             case "GIT":

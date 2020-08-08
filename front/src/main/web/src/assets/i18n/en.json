@@ -159,7 +159,9 @@
         "ALLOWED_BRANCHES_LABEL": "Allowed Branches",
         "ALLOWED_BRANCHES_HINT": "Regex specifying which branches will be scanned.",
         "LOCATION_LABEL": "Location",
-        "LOCATION_HINT": "Git URL of your repository."
+        "LOCATION_HINT": "Git URL of your repository.",
+        "ACTION_UPDATE_ACCESS_KEY": "Update Access Key",
+        "ACTION_UPDATE_WEB_HOOK_SECRET": "Update Web Hook Secret"
       },
       "ERROR": {
         "UPDATE": "Error while updating repository",

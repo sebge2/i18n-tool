@@ -1,0 +1,6 @@
+<button mat-icon-button [matMenuTriggerFor]="menu">
+    <mat-icon>more_vert</mat-icon>
+</button>
+<mat-menu #menu="matMenu">
+    <ng-content select="app-more-action-item-button"></ng-content>
+</mat-menu>

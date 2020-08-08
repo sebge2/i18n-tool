@@ -1,4 +1,20 @@
 <app-card [maxSizePx]="350" [title]="'Configuration'" [headerMatIcon]="'settings'">
+    <app-card-header-actions>
+        <app-more-actions-button>
+            <app-more-action-item-button>
+                <button mat-menu-item (click)="onUpdateAccessKey()">
+                    <mat-icon>vpn_key</mat-icon>
+                    <span>{{'ADMIN.REPOSITORIES.CONFIG_CARD.ACTION_UPDATE_ACCESS_KEY' | translate}}</span>
+                </button>
+            </app-more-action-item-button>
+            <app-more-action-item-button>
+                <button mat-menu-item (click)="onUpdateWebHookSecret()">
+                    <mat-icon>security</mat-icon>
+                    <span>{{'ADMIN.REPOSITORIES.CONFIG_CARD.ACTION_UPDATE_WEB_HOOK_SECRET' | translate}}</span>
+                </button>
+            </app-more-action-item-button>
+        </app-more-actions-button>
+    </app-card-header-actions>
     <app-card-content>
         <form [formGroup]="form" (ngSubmit)="onSave()" autocomplete="off">
             <div [ngSwitch]="repository.type">

@@ -27,6 +27,8 @@ import {CardContentComponent} from "./component/card/card-content/card-content.c
 import {FormOpenTabButtonComponent} from "./component/form-open-tab-button/form-open-tab-button.component";
 import {FormSyncButtonComponent} from "./component/form-sync-button/form-sync-button.component";
 import {CardHeaderActionsComponent} from "./component/card/card-header-actions/card-header-actions.component";
+import {MoreActionItemButtonComponent} from "./component/more-actions-button/more-action-item-button/more-action-item-button.component";
+import {MoreActionsButtonComponent} from "./component/more-actions-button/more-actions-button.component";
 
 @NgModule({
     declarations: [
@@ -40,6 +42,9 @@ import {CardHeaderActionsComponent} from "./component/card/card-header-actions/c
         FormUploadButtonComponent,
         FormOpenTabButtonComponent,
         FormSyncButtonComponent,
+        MoreActionsButtonComponent,
+        MoreActionItemButtonComponent,
+
         WizardComponent,
         WizardStepComponent,
         TabsComponent,
@@ -77,6 +82,9 @@ import {CardHeaderActionsComponent} from "./component/card/card-header-actions/c
         FormUploadButtonComponent,
         FormOpenTabButtonComponent,
         FormSyncButtonComponent,
+        MoreActionsButtonComponent,
+        MoreActionItemButtonComponent,
+
         WizardComponent,
         WizardStepComponent,
         TabsComponent,
