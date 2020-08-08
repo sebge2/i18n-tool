@@ -4,23 +4,16 @@ import be.sgerard.i18n.model.security.user.ExternalAuthSystem;
 import be.sgerard.i18n.model.security.user.persistence.ExternalUserEntity;
 import be.sgerard.i18n.model.security.user.persistence.UserEntity;
 import be.sgerard.i18n.service.security.UserRole;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.Singular;
 
-import java.io.Serializable;
-import java.security.Principal;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
-
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableSet;
 
 /**
  * User registered in the application, it can be external (from an OAUTH), or internal.
@@ -30,7 +23,8 @@ import static java.util.Collections.unmodifiableSet;
 @Schema(name = "User", description = "Description of the user.")
 @JsonDeserialize(builder = UserDto.Builder.class)
 @Getter
-public class UserDto implements Principal, Serializable {
+@Builder(builderClassName = "Builder")
+public class UserDto {
 
     public static Builder builder() {
         return new Builder();
@@ -71,6 +65,7 @@ public class UserDto implements Principal, Serializable {
     private final String email;
 
     @Schema(description = "User roles.")
+    @Singular
     private final Collection<UserRole> roles;
 
     @Schema(description = "User type.")
@@ -78,22 +73,6 @@ public class UserDto implements Principal, Serializable {
 
     @Schema(description = "External system that authenticated the user.")
     private final ExternalAuthSystem externalAuthSystem;
-
-    private UserDto(Builder builder) {
-        id = builder.id;
-        username = builder.username;
-        displayName = builder.displayName;
-        email = builder.email;
-        roles = unmodifiableSet(builder.roles);
-        type = builder.type;
-        externalAuthSystem = builder.externalAuthSystem;
-    }
-
-    @Override
-    @JsonIgnore
-    public String getName() {
-        return getId();
-    }
 
     @Override
     public String toString() {
@@ -126,62 +105,6 @@ public class UserDto implements Principal, Serializable {
     @JsonPOJOBuilder(withPrefix = "")
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder {
-
-        private String id;
-        private String username;
-        private String displayName;
-        private String email;
-        private final Set<UserRole> roles = new HashSet<>();
-        private Type type;
-        private ExternalAuthSystem externalAuthSystem;
-
-        private Builder() {
-        }
-
-        public Builder id(String id) {
-            this.id = id;
-            return this;
-        }
-
-        public Builder username(String username) {
-            this.username = username;
-            return this;
-        }
-
-        public Builder displayName(String displayName) {
-            this.displayName = displayName;
-            return this;
-        }
-
-        public Builder email(String email) {
-            this.email = email;
-            return this;
-        }
-
-        @JsonProperty("roles")
-        public Builder roles(Collection<UserRole> roles) {
-            this.roles.addAll(roles);
-            return this;
-        }
-
-        @JsonIgnore
-        public Builder roles(UserRole... roles) {
-            return roles(asList(roles));
-        }
-
-        public Builder type(Type type) {
-            this.type = type;
-            return this;
-        }
-
-        public Builder externalAuthSystem(ExternalAuthSystem externalAuthSystem) {
-            this.externalAuthSystem = externalAuthSystem;
-            return this;
-        }
-
-        public UserDto build() {
-            return new UserDto(this);
-        }
     }
 
     /**
