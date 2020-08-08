@@ -1,10 +1,10 @@
-<app-tabs #tabs>
-    <app-tab [title]="'ADMIN.REPOSITORIES.TAB_LABEL' | translate" [matIcon]="'view_module'">
-        <app-repository-list (open)="onOpen($event)">
-        </app-repository-list>
+<app-tabs [enableInitialTab]="true" [tabUrlParam]="'repository'" (initialTab)="onInitialTab($event)" #tabs>
+    <app-tab [id]="''" [title]="'ADMIN.REPOSITORIES.TAB_LABEL' | translate" [matIcon]="'view_module'">
+        <app-repository-list [repositories]="repositories" (open)="onOpen($event)"></app-repository-list>
     </app-tab>
 
     <app-tab
+            [id]="repository.id"
             [title]="repository.name"
             [iconClass]="repository.type | repositoryIcon"
             [closeable]="true"

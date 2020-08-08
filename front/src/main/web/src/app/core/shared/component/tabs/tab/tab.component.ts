@@ -1,5 +1,6 @@
 import {Component, EventEmitter, Input, Output, TemplateRef, ViewChild} from '@angular/core';
 import {MouseEventUtils} from "../../../utils/mouse-event-utils";
+import {generateId} from "../../../utils/string-utils";
 
 @Component({
     selector: 'app-tab',
@@ -8,6 +9,7 @@ import {MouseEventUtils} from "../../../utils/mouse-event-utils";
 })
 export class TabComponent {
 
+    @Input() public id: string = generateId();
     @Input() public title: string;
     @Input() public matIcon: string;
     @Input() public iconClass: string;
