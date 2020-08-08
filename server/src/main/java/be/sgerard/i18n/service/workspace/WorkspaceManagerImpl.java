@@ -1,7 +1,6 @@
 package be.sgerard.i18n.service.workspace;
 
 import be.sgerard.i18n.model.repository.RepositoryStatus;
-import be.sgerard.i18n.model.repository.persistence.RepositoryEntity;
 import be.sgerard.i18n.model.workspace.WorkspaceStatus;
 import be.sgerard.i18n.model.workspace.persistence.WorkspaceEntity;
 import be.sgerard.i18n.repository.workspace.WorkspaceRepository;
@@ -75,7 +74,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
                                     if (pair.getRight() == null) {
                                         return repositoryManager
                                                 .findByIdOrDie(repositoryId)
-                                                .flatMap(repository -> createWorkspace(repository, pair.getLeft()));
+                                                .flatMap(repository -> createWorkspace(repository.getId(), pair.getLeft()));
                                     } else {
                                         switch (pair.getRight().getStatus()) {
                                             case IN_REVIEW:
@@ -225,7 +224,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
      */
     private Mono<WorkspaceEntity> createWorkspaceIfNeeded(WorkspaceEntity workspace) {
         return repositoryManager
-                .findByIdOrDie(workspace.getRepository().getId())
+                .findByIdOrDie(workspace.getRepository())
                 .flatMapMany(translationsStrategy::listBranches)
                 .hasElement(workspace.getBranch())
                 .filter(present -> present)
@@ -235,7 +234,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
     /**
      * Creates a new {@link WorkspaceEntity workspace} based on the specified branch.
      */
-    private Mono<WorkspaceEntity> createWorkspace(RepositoryEntity repository, String branch) {
+    private Mono<WorkspaceEntity> createWorkspace(String repository, String branch) {
         return Mono
                 .just(new WorkspaceEntity(repository, branch))
                 .flatMap(this.repository::save)

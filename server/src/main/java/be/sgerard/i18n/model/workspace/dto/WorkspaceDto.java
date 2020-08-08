@@ -1,6 +1,5 @@
 package be.sgerard.i18n.model.workspace.dto;
 
-import be.sgerard.i18n.model.repository.RepositoryType;
 import be.sgerard.i18n.model.workspace.WorkspaceStatus;
 import be.sgerard.i18n.model.workspace.persistence.WorkspaceEntity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -36,9 +35,7 @@ public class WorkspaceDto {
                 .id(entity.getId())
                 .branch(entity.getBranch())
                 .status(entity.getStatus())
-                .repositoryId(entity.getRepository().getId())
-                .repositoryName(entity.getRepository().getName())
-                .repositoryType(entity.getRepository().getType())
+                .repositoryId(entity.getRepository())
                 .files(entity.getFiles().stream().map(file -> BundleFileDto.builder(file).build()).collect(toList()));
     }
 
@@ -54,12 +51,6 @@ public class WorkspaceDto {
 
     @Schema(description = "The unique id of the associated repository.", required = true)
     private final String repositoryId;
-
-    @Schema(description = "The name of the associated repository.", required = true)
-    private final String repositoryName;
-
-    @Schema(description = "The type of the associated repository.", required = true)
-    private final RepositoryType repositoryType;
 
     @Schema(description = "All the bundle files contained in this workspace.", required = true)
     @Singular

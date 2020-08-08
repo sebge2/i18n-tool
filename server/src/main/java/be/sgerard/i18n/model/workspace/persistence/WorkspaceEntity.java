@@ -41,8 +41,7 @@ public class WorkspaceEntity {
      * The associated {@link RepositoryEntity repository}.
      */
     @NotNull
-    @DBRef
-    private RepositoryEntity repository;
+    private String repository;
 
     /**
      * The branch name of the repository containing those translations.
@@ -71,7 +70,7 @@ public class WorkspaceEntity {
     WorkspaceEntity() {
     }
 
-    public WorkspaceEntity(RepositoryEntity repository, String branch) {
+    public WorkspaceEntity(String repository, String branch) {
         this.id = UUID.randomUUID().toString();
 
         this.repository = repository;
