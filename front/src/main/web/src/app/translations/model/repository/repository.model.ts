@@ -1,5 +1,5 @@
 import {RepositoryStatus} from "./repository-status.model";
-import {RepositoryDto} from "../../api";
+import {RepositoryDto} from "../../../api";
 import {RepositoryType} from "./repository-type.model";
 
 export class Repository {

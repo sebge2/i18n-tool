@@ -1,6 +1,6 @@
 import {Component, Input} from '@angular/core';
 import {FormGroup} from "@angular/forms";
-import {RepositoryType} from "../../../../../../translations/model/repository-type.model";
+import {RepositoryType} from "../../../../../../translations/model/repository/repository-type.model";
 
 @Component({
     selector: 'app-repository-add-wizard-step-type',

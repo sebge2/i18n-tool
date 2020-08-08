@@ -4,7 +4,7 @@ import {RepositoryService} from "../../../../../../translations/service/reposito
 import {Subject} from "rxjs";
 import {takeUntil} from "rxjs/operators";
 import {FormGroup} from "@angular/forms";
-import {Repository} from "../../../../../../translations/model/repository.model";
+import {Repository} from "../../../../../../translations/model/repository/repository.model";
 import {instanceOfErrorMessages, instanceOfHttpError} from "../../../../../../core/shared/utils/error-utils";
 
 @Component({

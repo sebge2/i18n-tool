@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {FormArray, FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {RepositoryType} from "../../../../../translations/model/repository-type.model";
+import {RepositoryType} from "../../../../../translations/model/repository/repository-type.model";
 import {StepChangeEvent, WizardComponent} from "../../../../../core/shared/component/wizard/wizard.component";
 import {
     GitHubRepositoryCreationRequestDto,
@@ -9,7 +9,7 @@ import {
 } from "../../../../../api";
 import {Subject} from "rxjs";
 import {takeUntil} from "rxjs/operators";
-import {Repository} from "../../../../../translations/model/repository.model";
+import {Repository} from "../../../../../translations/model/repository/repository.model";
 
 @Component({
     selector: 'app-repository-add-wizard',

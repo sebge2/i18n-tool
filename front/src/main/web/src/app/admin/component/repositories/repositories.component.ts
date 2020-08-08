@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {Repository} from "../../../translations/model/repository.model";
+import {Repository} from "../../../translations/model/repository/repository.model";
 import * as _ from "lodash";
 import {TabsComponent} from "../../../core/shared/component/tabs/tabs.component";
 import {Subject} from "rxjs";

@@ -3,7 +3,7 @@ import {FormGroup} from "@angular/forms";
 import {ErrorMessagesDto} from "../../../../../../api";
 import {Subject} from "rxjs";
 import {instanceOfErrorMessages, instanceOfHttpError} from "../../../../../../core/shared/utils/error-utils";
-import {Repository} from "../../../../../../translations/model/repository.model";
+import {Repository} from "../../../../../../translations/model/repository/repository.model";
 import {takeUntil} from "rxjs/operators";
 import {RepositoryService} from "../../../../../../translations/service/repository.service";
 

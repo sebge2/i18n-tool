@@ -1,6 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import {Repository} from "../../../translations/model/repository.model";
-import {RepositoryType} from "../../../translations/model/repository-type.model";
+import {Repository} from "../../../translations/model/repository/repository.model";
+import {RepositoryType} from "../../../translations/model/repository/repository-type.model";
 
 @Pipe({
   name: 'repositoryIcon'

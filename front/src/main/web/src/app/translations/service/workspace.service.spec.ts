@@ -4,7 +4,7 @@ import {WorkspaceService} from './workspace.service';
 import {CoreEventModule} from "../../core/event/core-event.module";
 import {HttpClientTestingModule, HttpTestingController} from "@angular/common/http/testing";
 import {Observable, Subject} from "rxjs";
-import {Repository} from "../model/repository.model";
+import {Repository} from "../model/repository/repository.model";
 import {Events} from "../../core/event/model/events.model";
 import {EventService} from "../../core/event/service/event.service";
 import {take, toArray} from "rxjs/operators";

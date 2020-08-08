@@ -1,8 +1,8 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {Repository} from "../../../../../translations/model/repository.model";
+import {Repository} from "../../../../../translations/model/repository/repository.model";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {RepositoryType} from "../../../../../translations/model/repository-type.model";
-import {RepositoryStatus} from "../../../../../translations/model/repository-status.model";
+import {RepositoryType} from "../../../../../translations/model/repository/repository-type.model";
+import {RepositoryStatus} from "../../../../../translations/model/repository/repository-status.model";
 import {AuthenticatedUser} from "../../../../../core/auth/model/authenticated-user.model";
 import {AuthenticationService} from "../../../../../core/auth/service/authentication.service";
 import {Observable} from "rxjs";

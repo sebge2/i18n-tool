@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {EventService} from "../../core/event/service/event.service";
 import {Observable} from "rxjs";
-import {Repository} from "../model/repository.model";
+import {Repository} from "../model/repository/repository.model";
 import {
     GitHubRepositoryCreationRequestDto,
     GitRepositoryCreationRequestDto,

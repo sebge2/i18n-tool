@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {Repository} from "../../../../translations/model/repository.model";
+import {Repository} from "../../../../translations/model/repository/repository.model";
 import {MatDialog} from "@angular/material/dialog";
 import {RepositoryAddWizardComponent} from "./repository-add-wizard/repository-add-wizard.component";
 
