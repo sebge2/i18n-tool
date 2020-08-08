@@ -5,8 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import io.swagger.v3.oas.annotations.media.Schema;
-
-import java.util.Optional;
+import lombok.Getter;
 
 /**
  * GitHub repository.
@@ -15,42 +14,29 @@ import java.util.Optional;
  */
 @Schema(name = "GitHubRepository", description = "GitHub Repository")
 @JsonDeserialize(builder = GitHubRepositoryDto.Builder.class)
+@Getter
 public class GitHubRepositoryDto extends GitRepositoryDto {
 
     public static Builder gitHubBuilder() {
         return new Builder();
     }
 
-    @Schema(description = "Access key to use to access this repository", required = true)
-    private final String accessKey;
+    @Schema(description = "GitHub username owner of the repository.", required = true)
+    private final String username;
 
-    @Schema(description = "Access key to use to access this repository")
-    private final String webHookSecret;
+    @Schema(description = "GitHub repository name.", required = true)
+    private final String repository;
 
     private GitHubRepositoryDto(Builder builder) {
         super(builder);
 
-        accessKey = builder.accessKey;
-        webHookSecret = builder.webHookSecret;
+        username = builder.username;
+        repository = builder.repository;
     }
 
     @Override
     public RepositoryType getType() {
         return RepositoryType.GITHUB;
-    }
-
-    /**
-     * Returns the access key to use to access this repository.
-     */
-    public Optional<String> getAccessKey() {
-        return Optional.ofNullable(accessKey);
-    }
-
-    /**
-     * Returns the secret shared when GitHub access this app via a web-hook.
-     */
-    public Optional<String> getWebHookSecret() {
-        return Optional.ofNullable(webHookSecret);
     }
 
     /**
@@ -60,19 +46,19 @@ public class GitHubRepositoryDto extends GitRepositoryDto {
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder extends GitRepositoryDto.BaseBuilder<GitHubRepositoryDto, Builder> {
 
-        private String accessKey;
-        private String webHookSecret;
+        private String username;
+        private String repository;
 
         public Builder() {
         }
 
-        public Builder accessKey(String accessKey) {
-            this.accessKey = accessKey;
+        public Builder username(String username) {
+            this.username = username;
             return self();
         }
 
-        public Builder webHookSecret(String webHookSecret) {
-            this.webHookSecret = webHookSecret;
+        public Builder repository(String repository) {
+            this.repository = repository;
             return self();
         }
 

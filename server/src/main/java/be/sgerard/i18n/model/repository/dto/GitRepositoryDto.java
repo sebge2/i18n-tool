@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Getter;
 
 /**
  * Git repository.
@@ -13,6 +14,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
  */
 @Schema(name = "GitRepository", description = "Git Repository")
 @JsonDeserialize(builder = GitRepositoryDto.Builder.class)
+@Getter
 public class GitRepositoryDto extends RepositoryDto {
 
     public static Builder gitBuilder() {
@@ -25,11 +27,15 @@ public class GitRepositoryDto extends RepositoryDto {
     @Schema(description = "The name of the default branch used to find translations", required = true)
     private final String defaultBranch;
 
+    @Schema(description = "Regex specifying branches that can be scanned by this tool.", required = true)
+    private final String allowedBranches;
+
     protected GitRepositoryDto(BaseBuilder<?, ?> builder) {
         super(builder);
 
         location = builder.location;
         defaultBranch = builder.defaultBranch;
+        allowedBranches = builder.allowedBranches;
     }
 
     @Override
@@ -38,25 +44,12 @@ public class GitRepositoryDto extends RepositoryDto {
     }
 
     /**
-     * Returns the location URL of this repository.
-     */
-    public String getLocation() {
-        return location;
-    }
-
-    /**
-     * Returns the name of the default branch used to find translations.
-     */
-    public String getDefaultBranch() {
-        return defaultBranch;
-    }
-
-    /**
      * Builder of {@link GitRepositoryDto GIT repository DTO}.
      */
     public static abstract class BaseBuilder<R extends GitRepositoryDto, B extends BaseBuilder<R, B>> extends RepositoryDto.BaseBuilder<R, B> {
         private String location;
         private String defaultBranch;
+        private String allowedBranches;
 
         protected BaseBuilder() {
         }
@@ -68,6 +61,11 @@ public class GitRepositoryDto extends RepositoryDto {
 
         public B defaultBranch(String defaultBranch) {
             this.defaultBranch = defaultBranch;
+            return self();
+        }
+
+        public B allowedBranches(String allowedBranches) {
+            this.allowedBranches = allowedBranches;
             return self();
         }
     }

@@ -28,8 +28,8 @@ public class RepositoryDtoMapper {
             final GitHubRepositoryEntity gitHubRepositoryEntity = (GitHubRepositoryEntity) entity;
 
             return fillBuilder(GitHubRepositoryDto.gitHubBuilder(), gitHubRepositoryEntity)
-                    .accessKey(gitHubRepositoryEntity.getAccessKey().orElse(null))
-                    .webHookSecret(gitHubRepositoryEntity.getWebHookSecret().orElse(null))
+                    .username(gitHubRepositoryEntity.getUsername())
+                    .repository(gitHubRepositoryEntity.getRepository())
                     .build();
         } else if (entity instanceof GitRepositoryEntity) {
             return fillBuilder(GitRepositoryDto.gitBuilder(), (GitRepositoryEntity) entity)
@@ -49,6 +49,7 @@ public class RepositoryDtoMapper {
                 .name(repository.getName())
                 .status(repository.getStatus())
                 .defaultBranch(repository.getDefaultBranch())
+                .allowedBranches(repository.getAllowedBranches().toString())
                 .location(repository.getLocation());
     }
 }

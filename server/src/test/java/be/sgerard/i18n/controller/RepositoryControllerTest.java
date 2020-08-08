@@ -103,7 +103,11 @@ public class RepositoryControllerTest extends AbstractControllerTest {
                     .expectBody()
                     .jsonPath("$.status").isEqualTo(RepositoryStatus.NOT_INITIALIZED.name())
                     .jsonPath("$.name").isEqualTo("sebge2/i18n-tool")
-                    .jsonPath("$.location").isEqualTo("https://github.com/sebge2/i18n-tool.git");
+                    .jsonPath("$.location").isEqualTo("https://github.com/sebge2/i18n-tool.git")
+                    .jsonPath("$.defaultBranch").isEqualTo("master")
+                    .jsonPath("$.allowedBranches").isEqualTo("^master|release\\/[0-9]{4}.[0-9]{1,2}$")
+                    .jsonPath("$.username").isEqualTo("sebge2")
+                    .jsonPath("$.repository").isEqualTo("i18n-tool");
         }
 
         @Test
@@ -244,10 +248,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
                     .contentType(MediaType.APPLICATION_JSON)
                     .bodyValue(patchDto)
                     .exchange()
-                    .expectStatus().isOk()
-                    .expectBody()
-                    .jsonPath("$.accessKey").isEqualTo("an access key")
-                    .jsonPath("$.webHookSecret").isEqualTo("a secret");
+                    .expectStatus().isOk();
         }
 
         @Test
@@ -287,7 +288,9 @@ public class RepositoryControllerTest extends AbstractControllerTest {
                     .expectBody()
                     .jsonPath("$.status").isEqualTo(RepositoryStatus.NOT_INITIALIZED.name())
                     .jsonPath("$.name").isEqualTo(creationDto.getName())
-                    .jsonPath("$.location").isEqualTo(creationDto.getLocation());
+                    .jsonPath("$.location").isEqualTo(creationDto.getLocation())
+                    .jsonPath("$.defaultBranch").isEqualTo("master")
+                    .jsonPath("$.allowedBranches").isEqualTo("^master|release\\/[0-9]{4}.[0-9]{1,2}$");
         }
 
         @Test

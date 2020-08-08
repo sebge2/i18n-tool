@@ -5,6 +5,7 @@ import be.sgerard.i18n.model.repository.RepositoryType;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Getter;
 
 /**
  * Repository that can be of different type. A repository contains translations.
@@ -17,10 +18,16 @@ import io.swagger.v3.oas.annotations.media.Schema;
         @JsonSubTypes.Type(value = GitRepositoryDto.class, name = "GIT"),
         @JsonSubTypes.Type(value = GitHubRepositoryDto.class, name = "GITHUB")
 })
+@Getter
 public abstract class RepositoryDto {
 
+    @Schema(description = "Unique id of this repository.", required = true)
     private final String id;
+
+    @Schema(description = "Display name to use for this repository.", required = true)
     private final String name;
+
+    @Schema(description = "The current repository status.", required = true)
     private final RepositoryStatus status;
 
     protected RepositoryDto(BaseBuilder<?, ?> builder) {
@@ -33,27 +40,6 @@ public abstract class RepositoryDto {
      * Returns the {@link RepositoryType type} of this repository.
      */
     public abstract RepositoryType getType();
-
-    /**
-     * Returns the {@link RepositoryType type} of this repository.
-     */
-    public String getId() {
-        return id;
-    }
-
-    /**
-     * Returns the display name to use for this repository.
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Returns the {@link RepositoryStatus current status}.
-     */
-    public RepositoryStatus getStatus() {
-        return status;
-    }
 
     /**
      * Builder of {@link RepositoryDto repository DTO}.
