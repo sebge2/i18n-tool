@@ -1,8 +1,8 @@
 package be.sgerard.i18n.service.repository.listener;
 
-import be.sgerard.i18n.model.repository.dto.RepositorySummaryDto;
 import be.sgerard.i18n.model.repository.persistence.RepositoryEntity;
 import be.sgerard.i18n.service.event.EventService;
+import be.sgerard.i18n.service.repository.RepositoryDtoMapper;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
@@ -17,9 +17,11 @@ import static be.sgerard.i18n.model.event.EventType.*;
 public class RepositoryEventListener implements RepositoryListener<RepositoryEntity> {
 
     private final EventService eventService;
+    private final RepositoryDtoMapper dtoMapper;
 
-    public RepositoryEventListener(EventService eventService) {
+    public RepositoryEventListener(EventService eventService, RepositoryDtoMapper dtoMapper) {
         this.eventService = eventService;
+        this.dtoMapper = dtoMapper;
     }
 
     @Override
@@ -29,16 +31,16 @@ public class RepositoryEventListener implements RepositoryListener<RepositoryEnt
 
     @Override
     public Mono<Void> onCreate(RepositoryEntity repository) {
-        return this.eventService.broadcastEvent(ADDED_REPOSITORY, RepositorySummaryDto.builder(repository).build());
+        return this.eventService.broadcastEvent(ADDED_REPOSITORY, dtoMapper.mapToDto(repository));
     }
 
     @Override
     public Mono<Void> onUpdate(RepositoryEntity repository) {
-        return this.eventService.broadcastEvent(UPDATED_REPOSITORY, RepositorySummaryDto.builder(repository).build());
+        return this.eventService.broadcastEvent(UPDATED_REPOSITORY, dtoMapper.mapToDto(repository));
     }
 
     @Override
     public Mono<Void> onDelete(RepositoryEntity repository) {
-        return this.eventService.broadcastEvent(DELETED_REPOSITORY, RepositorySummaryDto.builder(repository).build());
+        return this.eventService.broadcastEvent(DELETED_REPOSITORY, dtoMapper.mapToDto(repository));
     }
 }

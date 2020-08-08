@@ -53,7 +53,9 @@ public class RepositoryControllerTest extends AbstractControllerTest {
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$").value(hasSize(greaterThanOrEqualTo(1)))
-                .jsonPath("$[?(@.id=='" + repository.getId() + "')]").exists();
+                .jsonPath("$[?(@.id=='" + repository.getId() + "')]").exists()
+                .jsonPath("$[?(@.name=='" + repository.getName() + "')]").exists()
+                .jsonPath("$[?(@.status=='" + RepositoryStatus.NOT_INITIALIZED.name() + "')]").exists();
     }
 
     @Test

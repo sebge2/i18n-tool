@@ -18,7 +18,6 @@ export class RepositoryDetailsConfigComponent {
     public readonly form: FormGroup;
     public readonly RepositoryType = RepositoryType;
 
-    public initializeInProgress: boolean = false;
     public cancelInProgress: boolean = false;
     public deleteInProgress: boolean = false;
     public saveInProgress: boolean = false;
@@ -65,20 +64,7 @@ export class RepositoryDetailsConfigComponent {
     }
 
     public get actionInProgress(): boolean {
-        return this.initializeInProgress || this.cancelInProgress || this.saveInProgress || this.deleteInProgress;
-    }
-
-    public get initializeAllowed(): boolean {
-        return this.repository.status == RepositoryStatus.NOT_INITIALIZED;
-    }
-
-    public onInitialize() {
-        this.initializeInProgress = true;
-        this.repositoryService
-            .initializeRepository(this.repository.id)
-            .toPromise()
-            .catch(error => this.notificationService.displayErrorMessage('ADMIN.REPOSITORIES.VIEW_CARD.ERROR.INITIALIZE', error))
-            .finally(() => this.initializeInProgress = false);
+        return this.cancelInProgress || this.saveInProgress || this.deleteInProgress;
     }
 
     public onCancel() {

@@ -59,7 +59,6 @@
         </form>
     </app-card-content>
     <app-card-actions>
-        <app-form-sync-button [syncInProgress]="initializeInProgress" [disabled]="!initializeAllowed" (sync)="onInitialize()"></app-form-sync-button>
         <app-form-cancel-button [form]="form" [cancelInProgress]="cancelInProgress" [disabled]="actionInProgress" (reset)="onCancel()" ></app-form-cancel-button>
         <app-form-delete-button [deleteInProgress]="deleteInProgress" [disabled]="!deleteAllowed || actionInProgress" (delete)="onDelete()"></app-form-delete-button>
         <app-form-save-button [form]="form" [saveInProgress]="saveInProgress" [disabled]="actionInProgress" (save)="onSave()"></app-form-save-button>

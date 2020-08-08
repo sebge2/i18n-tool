@@ -1,6 +1,6 @@
 package be.sgerard.i18n.model.event;
 
-import be.sgerard.i18n.model.repository.dto.RepositorySummaryDto;
+import be.sgerard.i18n.model.repository.dto.RepositoryDto;
 import be.sgerard.i18n.model.security.session.dto.UserLiveSessionDto;
 import be.sgerard.i18n.model.security.user.dto.AuthenticatedUserDto;
 import be.sgerard.i18n.model.security.user.dto.UserDto;
@@ -62,17 +62,17 @@ public enum EventType {
     UPDATED_TRANSLATIONS,
 
     /**
-     * @see RepositorySummaryDto
+     * @see RepositoryDto
      */
     ADDED_REPOSITORY,
 
     /**
-     * @see RepositorySummaryDto
+     * @see RepositoryDto
      */
     UPDATED_REPOSITORY,
 
     /**
-     * @see RepositorySummaryDto
+     * @see RepositoryDto
      */
     DELETED_REPOSITORY,
 

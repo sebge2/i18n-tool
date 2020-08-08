@@ -3,7 +3,6 @@ package be.sgerard.i18n.controller;
 import be.sgerard.i18n.model.repository.dto.RepositoryCreationDto;
 import be.sgerard.i18n.model.repository.dto.RepositoryDto;
 import be.sgerard.i18n.model.repository.dto.RepositoryPatchDto;
-import be.sgerard.i18n.model.repository.dto.RepositorySummaryDto;
 import be.sgerard.i18n.service.BadRequestException;
 import be.sgerard.i18n.service.repository.RepositoryDtoMapper;
 import be.sgerard.i18n.service.repository.RepositoryManager;
@@ -36,14 +35,14 @@ public class RepositoryController {
     }
 
     /**
-     * Finds all the {@link RepositorySummaryDto repositories}.
+     * Finds all the {@link RepositoryDto repositories}.
      */
     @GetMapping(path = "/repository")
     @Operation(summary = "Finds all repositories.")
     @PreAuthorize("hasRole('ADMIN')")
-    public Flux<RepositorySummaryDto> findAll() {
+    public Flux<RepositoryDto> findAll() {
         return repositoryManager.findAll()
-                .map(entity -> RepositorySummaryDto.builder(entity).build());
+                .map(dtoMapper::mapToDto);
     }
 
     /**
