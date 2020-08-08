@@ -159,7 +159,9 @@
         "ACCESS_KEY_LABEL": "Access Key",
         "ACCESS_KEY_HINT": "Access Key to use for reading/pushing files.",
         "WEB_HOOK_SECRET_LABEL": "Web Hook Secret",
-        "WEB_HOOK_SECRET_HINT": "Secret to use for the GitHub Web Hook (to be used on GitHub)."
+        "WEB_HOOK_SECRET_HINT": "Secret to use for the GitHub Web Hook (to be used on GitHub).",
+        "LOCATION_LABEL": "Location",
+        "LOCATION_HINT": "Git URL of your repository."
       }
     }
   },

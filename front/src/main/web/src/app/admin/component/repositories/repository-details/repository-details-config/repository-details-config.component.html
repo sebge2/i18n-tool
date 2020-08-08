@@ -1,25 +1,45 @@
 <app-card [maxSizePx]="350" [title]="'Configuration'" [headerMatIcon]="'settings'">
     <app-card-content>
         <form [formGroup]="form" (ngSubmit)="onSave()" autocomplete="off">
-            <p>
-                <mat-form-field appearance="standard">
-                    <mat-label>{{'ADMIN.REPOSITORIES.CONFIG_CARD.NAME_LABEL' | translate}}</mat-label>
-                    <input matInput formControlName="name" autocomplete="off">
-                    <mat-hint>{{'ADMIN.REPOSITORIES.CONFIG_CARD.NAME_HINT' | translate}}</mat-hint>
-                </mat-form-field>
-            </p>
-            <p>
-                <mat-form-field appearance="standard">
-                    <mat-label>{{'ADMIN.REPOSITORIES.CONFIG_CARD.DEFAULT_BRANCH_LABEL' | translate}}</mat-label>
-                    <input matInput formControlName="defaultBranch" autocomplete="off">
-                    <mat-hint>{{'ADMIN.REPOSITORIES.CONFIG_CARD.DEFAULT_BRANCH_HINT' | translate}}</mat-hint>
-                </mat-form-field>
-            </p>
-
             <div [ngSwitch]="repository.type">
                 <ng-template [ngSwitchCase]="RepositoryType.GIT">
+                    <p>
+                        <mat-form-field appearance="standard">
+                            <mat-label>{{'ADMIN.REPOSITORIES.CONFIG_CARD.NAME_LABEL' | translate}}</mat-label>
+                            <input matInput formControlName="name" autocomplete="off">
+                            <mat-hint>{{'ADMIN.REPOSITORIES.CONFIG_CARD.NAME_HINT' | translate}}</mat-hint>
+                        </mat-form-field>
+                    </p>
+                    <p>
+                        <mat-form-field appearance="standard">
+                            <mat-label>{{'ADMIN.REPOSITORIES.CONFIG_CARD.LOCATION_LABEL' | translate}}</mat-label>
+                            <input matInput formControlName="location" autocomplete="off">
+                            <mat-hint>{{'ADMIN.REPOSITORIES.CONFIG_CARD.LOCATION_HINT' | translate}}</mat-hint>
+                        </mat-form-field>
+                    </p>
+                    <p>
+                        <mat-form-field appearance="standard">
+                            <mat-label>{{'ADMIN.REPOSITORIES.CONFIG_CARD.DEFAULT_BRANCH_LABEL' | translate}}</mat-label>
+                            <input matInput formControlName="defaultBranch" autocomplete="off">
+                            <mat-hint>{{'ADMIN.REPOSITORIES.CONFIG_CARD.DEFAULT_BRANCH_HINT' | translate}}</mat-hint>
+                        </mat-form-field>
+                    </p>
                 </ng-template>
                 <ng-template [ngSwitchCase]="RepositoryType.GITHUB">
+                    <p>
+                        <mat-form-field appearance="standard">
+                            <mat-label>{{'ADMIN.REPOSITORIES.CONFIG_CARD.NAME_LABEL' | translate}}</mat-label>
+                            <input matInput formControlName="name" autocomplete="off">
+                            <mat-hint>{{'ADMIN.REPOSITORIES.CONFIG_CARD.NAME_HINT' | translate}}</mat-hint>
+                        </mat-form-field>
+                    </p>
+                    <p>
+                        <mat-form-field appearance="standard">
+                            <mat-label>{{'ADMIN.REPOSITORIES.CONFIG_CARD.DEFAULT_BRANCH_LABEL' | translate}}</mat-label>
+                            <input matInput formControlName="defaultBranch" autocomplete="off">
+                            <mat-hint>{{'ADMIN.REPOSITORIES.CONFIG_CARD.DEFAULT_BRANCH_HINT' | translate}}</mat-hint>
+                        </mat-form-field>
+                    </p>
                     <p>
                         <mat-form-field appearance="standard">
                             <mat-label>{{'ADMIN.REPOSITORIES.CONFIG_CARD.ACCESS_KEY_LABEL' | translate}}</mat-label>

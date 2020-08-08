@@ -11,6 +11,7 @@ export class GitRepository extends Repository {
             dto.name,
             RepositoryType[dto.type],
             RepositoryStatus[dto.status],
+            dto.location,
             dto.defaultBranch
         );
     }
@@ -19,6 +20,7 @@ export class GitRepository extends Repository {
                 public name: string,
                 public type: RepositoryType,
                 public status: RepositoryStatus,
+                public location: string,
                 public defaultBranch: string) {
         super(id, name, type, status);
     }

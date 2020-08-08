@@ -42,6 +42,7 @@ export class RepositoryDetailsConfigComponent {
         switch (this.repository.type) {
             case "GIT":
                 this.form.registerControl('name', this.formBuilder.control('', [Validators.required]));
+                this.form.registerControl('location', this.formBuilder.control('', [Validators.required]));
                 this.form.registerControl('defaultBranch', this.formBuilder.control('', [Validators.required]));
 
                 break;
@@ -127,6 +128,10 @@ export class RepositoryDetailsConfigComponent {
                 const gitRepository = <GitRepository>this.repository;
 
                 this.form.controls['name'].setValue(gitRepository.name);
+
+                this.form.controls['location'].setValue(gitRepository.location);
+                this.form.controls['location'].disable();
+
                 this.form.controls['defaultBranch'].setValue(gitRepository.defaultBranch);
 
                 break;
