@@ -26,13 +26,13 @@ import org.springframework.security.oauth2.client.web.server.DefaultServerOAuth2
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.authentication.RedirectServerAuthenticationEntryPoint;
-import org.springframework.security.web.server.authentication.RedirectServerAuthenticationFailureHandler;
 import org.springframework.security.web.server.authentication.logout.HttpStatusReturningServerLogoutSuccessHandler;
 import org.springframework.security.web.server.context.WebSessionServerSecurityContextRepository;
 import org.springframework.security.web.server.util.matcher.PathPatternParserServerWebExchangeMatcher;
 import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatcher;
 import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers;
 import org.springframework.session.data.mongo.config.annotation.web.reactive.EnableMongoWebSession;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 
@@ -112,7 +112,10 @@ public class SecurityConfiguration {
 
                 .httpBasic()
                 .authenticationManager(internalAuthenticationManager())
-                .authenticationEntryPoint(new RedirectServerAuthenticationEntryPoint("/login"))
+                .authenticationEntryPoint((exchange, e) -> {
+                    exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+                    return Mono.empty();
+                })
                 .and()
 
                 .securityContextRepository(new WebSessionServerSecurityContextRepository())
@@ -121,11 +124,15 @@ public class SecurityConfiguration {
                         formLogin
                                 .authenticationEntryPoint(new RedirectServerAuthenticationEntryPoint("/login"))
                                 .requiresAuthenticationMatcher(exchange -> ServerWebExchangeMatcher.MatchResult.notMatch())
-                                .authenticationFailureHandler(new RedirectServerAuthenticationFailureHandler("/login?error"))
+                                .authenticationFailureHandler((webFilterExchange, exception) -> {
+                                    webFilterExchange.getExchange().getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+                                    return Mono.empty();
+                                })
                 );
 
 
         if (repository != null) {
+            // TODO unfortunately oauth login redirect to /login if not authenticated
             httpSecurity.oauth2Login(oAuth2Login ->
                     oAuth2Login
                             .authorizationRequestResolver(new DefaultServerOAuth2AuthorizationRequestResolver(repository, ServerWebExchangeMatchers.pathMatchers(("/auth/oauth2/authorize-client/{registrationId}"))))
