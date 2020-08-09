@@ -8,11 +8,6 @@ import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Singular;
-
-import java.util.List;
-
-import static java.util.stream.Collectors.toList;
 
 /**
  * A workspace represents the edition of translations related to a particular branch of a repository.
@@ -35,8 +30,7 @@ public class WorkspaceDto {
                 .id(entity.getId())
                 .branch(entity.getBranch())
                 .status(entity.getStatus())
-                .repositoryId(entity.getRepository())
-                .files(entity.getFiles().stream().map(file -> BundleFileDto.builder(file).build()).collect(toList()));
+                .repositoryId(entity.getRepository());
     }
 
     @Schema(description = "Unique identifier of a workspace.", required = true)
@@ -51,10 +45,6 @@ public class WorkspaceDto {
 
     @Schema(description = "The unique id of the associated repository.", required = true)
     private final String repositoryId;
-
-    @Schema(description = "All the bundle files contained in this workspace.", required = true)
-    @Singular
-    private final List<BundleFileDto> files;
 
     /**
      * Builder of {@link WorkspaceDto workspace DTO}.

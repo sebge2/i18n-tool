@@ -4,36 +4,66 @@
 @import './assets/fonts/app-icons.css';
 
 body {
-    font-family: Roboto, Arial, sans-serif;
-    margin: 0;
-    height: 100vh;
-}
-
-.version-info {
-    font-size: 8pt;
-    float: right;
+  font-family: Roboto, Arial, sans-serif;
+  margin: 0;
+  height: 100vh;
 }
 
 .dragAndDropZone {
-    cursor: default;
-    margin: 20px auto;
-    border: 1px dashed mat-color($color-primary);
-    border-radius: 10px;
+  cursor: default;
+  margin: 20px auto;
+  border: 1px dashed mat-color($color-primary);
+  border-radius: 10px;
 }
 
 .dragAndDropZoneOver {
-    cursor: pointer;
-    border: 1px solid mat-color($color-accent);
-    opacity: 0.6;
+  cursor: pointer;
+  border: 1px solid mat-color($color-accent);
+  opacity: 0.6;
 }
 
 .dragAndDropZoneNotAllowed {
-    cursor: not-allowed;
+  cursor: not-allowed;
 }
 
 .mat-card-clickable {
-    cursor: pointer;
-    &:hover {
-        @include mat-elevation(8);
-    }
+  cursor: pointer;
+
+  &:hover {
+    @include mat-elevation(8);
+  }
 }
+
+.app-centered-container {
+  text-align: center;
+  display: block;
+}
+
+.app-centered-container-child {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.app-centered-container-item {
+}
+
+.app-centered-single-item {
+  text-align:center;
+  display: grid;
+  place-items: center;
+  height: 100%;
+  width: 100%
+}
+
+.mat-icon-button.xlarge {
+  width: 100px;
+  height: 100px;
+  line-height: 100px;
+  .mat-icon {
+    font-size: 100px;
+    width: 100px;
+    height: 100px;
+    line-height: 100px;
+  }
+}
+

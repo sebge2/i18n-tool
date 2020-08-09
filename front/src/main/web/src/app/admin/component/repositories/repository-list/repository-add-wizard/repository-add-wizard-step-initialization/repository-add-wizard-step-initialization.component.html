@@ -1,14 +1,14 @@
 <div >
-    <div class="creation-container" *ngIf="initializationInProgress">
+    <div class="app-centered-single-item" *ngIf="initializationInProgress">
         <mat-spinner></mat-spinner>
     </div>
 
-    <div class="successful-container" *ngIf="repository">
-        <div class="successful-container-child">
-            <div class="container-item">
+    <div class="app-centered-container" *ngIf="repository">
+        <div class="app-centered-container-child">
+            <div class="app-centered-container-item">
                 <mat-icon style="color: green; font-size: 150px; width: 150px">check_circle</mat-icon>
             </div>
-            <div class="container-item">
+            <div class="app-centered-container-item">
                 <p>{{'ADMIN.REPOSITORIES.ADD_WIZARD.STEP_INITIALIZATION.INITIALIZED' | translate: {name: repository?.name} }}</p>
             </div>
         </div>

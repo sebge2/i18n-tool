@@ -25,10 +25,11 @@ import {CardComponent} from "./component/card/card.component";
 import {CardActionsComponent} from "./component/card/card-actions/card-actions.component";
 import {CardContentComponent} from "./component/card/card-content/card-content.component";
 import {FormOpenTabButtonComponent} from "./component/form-open-tab-button/form-open-tab-button.component";
-import {FormSyncButtonComponent} from "./component/form-sync-button/form-sync-button.component";
 import {CardHeaderActionsComponent} from "./component/card/card-header-actions/card-header-actions.component";
 import {MoreActionItemButtonComponent} from "./component/more-actions-button/more-action-item-button/more-action-item-button.component";
 import {MoreActionsButtonComponent} from "./component/more-actions-button/more-actions-button.component";
+import {SyncButtonComponent} from "./component/sync-button/sync-button.component";
+import {InitDownloadButtonComponent} from "./component/init-download-button/init-download-button.component";
 
 @NgModule({
     declarations: [
@@ -41,7 +42,8 @@ import {MoreActionsButtonComponent} from "./component/more-actions-button/more-a
         FormDeleteButtonComponent,
         FormUploadButtonComponent,
         FormOpenTabButtonComponent,
-        FormSyncButtonComponent,
+        SyncButtonComponent,
+        InitDownloadButtonComponent,
         MoreActionsButtonComponent,
         MoreActionItemButtonComponent,
 
@@ -81,7 +83,8 @@ import {MoreActionsButtonComponent} from "./component/more-actions-button/more-a
         FormDeleteButtonComponent,
         FormUploadButtonComponent,
         FormOpenTabButtonComponent,
-        FormSyncButtonComponent,
+        SyncButtonComponent,
+        InitDownloadButtonComponent,
         MoreActionsButtonComponent,
         MoreActionItemButtonComponent,
 

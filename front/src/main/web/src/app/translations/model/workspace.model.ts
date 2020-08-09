@@ -4,10 +4,18 @@ import {WorkspaceDto} from "../../api";
 export class Workspace {
 
     public static fromDto(dto: WorkspaceDto): Workspace {
-        return new Workspace(dto.id, dto.branch, WorkspaceStatus[dto.status]);
+        return new Workspace(
+            dto.id,
+            dto.branch,
+            WorkspaceStatus[dto.status],
+            dto.repositoryId
+        );
     }
 
-    constructor(public id: string, public branch: string, public status: WorkspaceStatus) {
+    constructor(public id: string,
+                public branch: string,
+                public status: WorkspaceStatus,
+                public repositoryId: string) {
     }
 
     public isNotInitialized(): boolean {
@@ -24,14 +32,5 @@ export class Workspace {
 
     public equals(other: Workspace): boolean {
         return this.id === other.id;
-    }
-
-    public toDto(): WorkspaceDto {
-        return {
-            id: this.id,
-            branch: this.branch,
-            status: this.status,
-            files: [] // TODO
-        }
     }
 }

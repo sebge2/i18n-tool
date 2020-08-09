@@ -1,20 +1,20 @@
-import {Injectable, OnDestroy} from '@angular/core';
+import {Injectable} from '@angular/core';
 import {EventService} from "../../core/event/service/event.service";
 import {Workspace} from "../model/workspace.model";
-import {Observable, Subject} from "rxjs";
+import {Observable} from "rxjs";
 import {Events} from 'src/app/core/event/model/events.model';
-import {catchError} from "rxjs/operators";
+import {catchError, map} from "rxjs/operators";
 import {NotificationService} from "../../core/notification/service/notification.service";
 import {synchronizedCollection} from "../../core/shared/utils/synchronized-observable-utils";
 import {WorkspaceService as ApiWorkspaceService} from "../../api";
+import * as _ from "lodash";
 
 @Injectable({
     providedIn: 'root'
 })
-export class WorkspaceService implements OnDestroy {
+export class WorkspaceService {
 
     private readonly _workspaces$: Observable<Workspace[]>;
-    private readonly _destroyed$ = new Subject();
 
     constructor(private apiWorkspaceService: ApiWorkspaceService,
                 private eventService: EventService,
@@ -32,107 +32,16 @@ export class WorkspaceService implements OnDestroy {
                 this.notificationService.displayErrorMessage("Error while retrieving workspaces.");
                 return [];
             }));
-
-
-        // this.httpClient.get<Workspace[]>('/api/workspace').toPromise()
-        //     .then(workspaces => this._workspaces$.next(workspaces.map(workspace => new Workspace(workspace)).sort(workspaceSorter)))
-        //     .catch(reason => {
-        //         console.error("Error while retrieving workspaces.", reason);
-        //         this.notificationService.displayErrorMessage("Error while retrieving workspaces.")
-        //     });
-        //
-        // this.eventService.subscribe(Events.UPDATED_WORKSPACE, Workspace)
-        //     .pipe(takeUntil(this.destroy$))
-        //     .subscribe(
-        //         (workspace: Workspace) => {
-        //             const workspaces = this._workspaces$.getValue().slice();
-        //
-        //             const index = workspaces.findIndex(current => workspace.id === current.id);
-        //             if (index >= 0) {
-        //                 workspaces[index] = workspace;
-        //             } else {
-        //                 workspaces.push(workspace);
-        //             }
-        //
-        //             this._workspaces$.next(workspaces.sort(workspaceSorter));
-        //         }
-        //     );
     }
 
-    ngOnDestroy(): void {
-        this._destroyed$.next();
-        this._destroyed$.complete();
-    }
-
-    getWorkspaces(): Observable<Workspace[]> {
+    public getWorkspaces(): Observable<Workspace[]> {
         return this._workspaces$;
     }
 
-    // initialize(workspace: Workspace): Promise<any> {
-    //     return this.httpClient
-    //         .put(
-    //             '/api/workspace/' + workspace.id,
-    //             null,
-    //             {
-    //                 params: {
-    //                     do: 'INITIALIZE'
-    //                 }
-    //             }
-    //         )
-    //         .toPromise()
-    //         .catch(reason => {
-    //             console.error("Error while initializing workspaces.", reason);
-    //             this.notificationService.displayErrorMessage("Error while initializing workspace.")
-    //         });
-    // }
-
-    // find(): Promise<any> {
-    //     return this.httpClient
-    //         .put(
-    //             '/api/workspace/',
-    //             null,
-    //             {
-    //                 params: {
-    //                     do: 'FIND'
-    //                 }
-    //             }
-    //         )
-    //         .toPromise()
-    //         .catch(reason => {
-    //             console.error("Error while finding workspaces.", reason);
-    //             this.notificationService.displayErrorMessage("Error while finding workspaces. ")
-    //         });
-    // }
-
-    // startReview(workspace: Workspace, comment: string): Promise<any> {
-    //     return this.httpClient
-    //         .put(
-    //             '/api/workspace/' + workspace.id,
-    //             null,
-    //             {
-    //                 params: {
-    //                     do: 'START_REVIEW',
-    //                     message: comment
-    //                 }
-    //             }
-    //         )
-    //         .toPromise()
-    //         .catch(reason => {
-    //             console.error("Error while starting review.", reason);
-    //             this.notificationService.displayErrorMessage("Error while starting a review.");
-    //         });
-    // }
-
-    // delete(workspace: Workspace): Promise<any> {
-    //     return this.httpClient
-    //         .delete('/api/workspace/' + workspace.id)
-    //         .toPromise()
-    //         .catch(reason => {
-    //             console.error("Error while deleting.", reason);
-    //             this.notificationService.displayErrorMessage("Error while deleting the workspace.");
-    //         });
-    // }
-
+    public getRepositoryWorkspaces(repositoryId: string): Observable<Workspace[]> {
+        return this._workspaces$
+            .pipe(map(workspaces => workspaces.filter(workspace => _.isEqual(workspace.repositoryId, repositoryId))));
+    }
 }
 
 export function workspaceSorter(first: Workspace, second: Workspace): number {

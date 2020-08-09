@@ -163,6 +163,9 @@
         "ACTION_UPDATE_ACCESS_KEY": "Update Access Key",
         "ACTION_UPDATE_WEB_HOOK_SECRET": "Update Web Hook Secret"
       },
+      "DETAILS_CARD" : {
+        "PLEASE_INITIALIZE": "Please initialize your repository first."
+      },
       "ERROR": {
         "UPDATE": "Error while updating repository",
         "DELETE": "Error while deleting repository."

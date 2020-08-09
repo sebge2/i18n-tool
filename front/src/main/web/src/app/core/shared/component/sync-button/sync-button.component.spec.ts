@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { FormSyncButtonComponent } from './form-sync-button.component';
+import { SyncButtonComponent } from './sync-button.component';
 
-describe('FormSyncButtonComponent', () => {
-  let component: FormSyncButtonComponent;
-  let fixture: ComponentFixture<FormSyncButtonComponent>;
+describe('SyncButtonComponent', () => {
+  let component: SyncButtonComponent;
+  let fixture: ComponentFixture<SyncButtonComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ FormSyncButtonComponent ]
+      declarations: [ SyncButtonComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(FormSyncButtonComponent);
+    fixture = TestBed.createComponent(SyncButtonComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
