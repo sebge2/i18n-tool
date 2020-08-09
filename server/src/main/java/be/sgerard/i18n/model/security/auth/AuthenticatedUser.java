@@ -11,6 +11,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
+import static be.sgerard.i18n.service.security.UserRole.mapToAuthorities;
+
 /**
  * {@link UserDto User} authenticated, or about to be authenticated on the platform.
  *
@@ -47,7 +49,9 @@ public interface AuthenticatedUser extends AuthenticatedPrincipal, Serializable 
      * @see #getSessionRoles()
      * @see UserRole#toAuthority()
      */
-    Collection<? extends GrantedAuthority> getAuthorities();
+    default Collection<? extends GrantedAuthority> getAuthorities() {
+        return mapToAuthorities(getSessionRoles());
+    }
 
     /**
      * Returns the {@link RepositoryCredentials credentials} to use for the specified repository.

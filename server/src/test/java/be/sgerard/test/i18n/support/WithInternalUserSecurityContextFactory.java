@@ -1,11 +1,11 @@
 package be.sgerard.test.i18n.support;
 
-import be.sgerard.i18n.model.security.auth.internal.InternalAuthenticatedUser;
+import be.sgerard.i18n.model.security.auth.internal.InternalUserDetails;
 import be.sgerard.i18n.model.security.user.dto.InternalUserCreationDto;
 import be.sgerard.i18n.model.security.user.persistence.InternalUserEntity;
 import be.sgerard.i18n.service.security.UserRole;
+import be.sgerard.i18n.service.security.auth.AuthenticationManager;
 import be.sgerard.i18n.service.user.UserManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextImpl;
@@ -24,32 +24,26 @@ import static java.util.stream.Collectors.toSet;
 public class WithInternalUserSecurityContextFactory implements WithSecurityContextFactory<WithInternalUser> {
 
     private final UserManager userManager;
+    private final AuthenticationManager authenticationManager;
 
-    public WithInternalUserSecurityContextFactory(UserManager userManager) {
+    public WithInternalUserSecurityContextFactory(UserManager userManager, AuthenticationManager authenticationManager) {
         this.userManager = userManager;
+        this.authenticationManager = authenticationManager;
     }
 
     @Override
-    @SuppressWarnings("ResultOfMethodCallIgnored")
+    @SuppressWarnings({"ResultOfMethodCallIgnored", "ConstantConditions"})
     public SecurityContext createSecurityContext(WithInternalUser user) {
         final InternalUserEntity userEntity = createUser(user);
 
-        final UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                new InternalAuthenticatedUser(
-                        userEntity.getUsername(),
-                        userEntity.getId(),
-                        null,
-                        userEntity.getRoles()
-                ),
-                null,
-                userEntity.getRoles().stream().map(UserRole::toAuthority).collect(toSet())
-        );
+        final SecurityContext securityContext = authenticationManager
+                .createAuthentication(new InternalUserDetails(userEntity))
+                .map(SecurityContextImpl::new)
+                .block();
 
-        final SecurityContext context = new SecurityContextImpl(authentication);
+        ReactiveSecurityContextHolder.withSecurityContext(Mono.just(securityContext));
 
-        ReactiveSecurityContextHolder.withSecurityContext(Mono.just(context));
-
-        return context;
+        return securityContext;
     }
 
     private InternalUserEntity createUser(WithInternalUser user) {

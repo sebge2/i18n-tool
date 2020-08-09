@@ -6,6 +6,7 @@ import be.sgerard.i18n.model.security.auth.RepositoryCredentials;
 import be.sgerard.i18n.model.security.auth.external.ExternalAuthenticatedUser;
 import be.sgerard.i18n.model.security.auth.external.OAuthExternalUser;
 import be.sgerard.i18n.model.security.auth.internal.InternalAuthenticatedUser;
+import be.sgerard.i18n.model.security.auth.internal.InternalUserDetails;
 import be.sgerard.i18n.model.security.user.persistence.ExternalUserEntity;
 import be.sgerard.i18n.model.security.user.persistence.UserEntity;
 import be.sgerard.i18n.service.ResourceNotFoundException;
@@ -15,6 +16,8 @@ import be.sgerard.i18n.service.security.auth.external.OAuthUserMapper;
 import be.sgerard.i18n.service.security.auth.listener.AuthenticatedUserListener;
 import be.sgerard.i18n.service.security.session.repository.SessionRepository;
 import be.sgerard.i18n.service.user.UserManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.session.data.mongo.MongoSession;
@@ -114,24 +117,18 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
     }
 
     @Override
-    @Transactional
-    public Mono<InternalAuthenticatedUser> createAuthentication(String username) {
-        return userManager
-                .finUserByNameOrDie(username)
-                .flatMap(user ->
-                        repositoryManager
-                                .findAll()
-                                .collectList()
-                                .map(repositories ->
-                                        new InternalAuthenticatedUser(
-                                                UUID.randomUUID().toString(),
-                                                user.getId(),
-                                                user.getPassword(),
-                                                user.getRoles()
-                                        )
-                                )
-                );
-
+    public Mono<Authentication> createAuthentication(InternalUserDetails principal) {
+        return Mono.just(
+                new UsernamePasswordAuthenticationToken(
+                        new InternalAuthenticatedUser(
+                                UUID.randomUUID().toString(),
+                                principal.getInternalUser().getId(),
+                                principal.getInternalUser().getRoles()
+                        ),
+                        principal.getPassword(),
+                        principal.getAuthorities()
+                )
+        );
     }
 
     @Override

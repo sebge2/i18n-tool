@@ -1,6 +1,7 @@
 package be.sgerard.i18n.service.security.auth.internal;
 
-import be.sgerard.i18n.service.security.auth.AuthenticationManager;
+import be.sgerard.i18n.model.security.auth.internal.InternalUserDetails;
+import be.sgerard.i18n.service.user.UserManager;
 import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -15,17 +16,17 @@ import reactor.core.publisher.Mono;
 @Service
 public class InternalUserDetailsService implements ReactiveUserDetailsService {
 
-    private final AuthenticationManager authenticationManager;
+    private final UserManager userManager;
 
-    public InternalUserDetailsService(AuthenticationManager authenticationManager) {
-        this.authenticationManager = authenticationManager;
+    public InternalUserDetailsService(UserManager userManager) {
+        this.userManager = userManager;
     }
 
     @Override
     @Transactional(readOnly = true)
     public Mono<UserDetails> findByUsername(String username) {
-        return authenticationManager
-                .createAuthentication(username)
-                .map(user -> user);
+        return userManager
+                .finUserByNameOrDie(username)
+                .map(InternalUserDetails::new);
     }
 }

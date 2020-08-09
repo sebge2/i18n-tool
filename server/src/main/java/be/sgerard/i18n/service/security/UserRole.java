@@ -3,6 +3,11 @@ package be.sgerard.i18n.service.security;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
+import java.util.Collection;
+import java.util.Set;
+
+import static java.util.stream.Collectors.toSet;
+
 /**
  * All possible security roles for a user.
  *
@@ -28,6 +33,15 @@ public enum UserRole {
      * Administrator role with all privileges.
      */
     ADMIN(true);
+
+    /**
+     * Maps the specified roles to authorities.
+     */
+    public static Set<GrantedAuthority> mapToAuthorities(Collection<UserRole> roles) {
+        return roles.stream()
+                .map(UserRole::toAuthority)
+                .collect(toSet());
+    }
 
     public static final String ROLE_PREFIX = "ROLE_";
 

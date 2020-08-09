@@ -3,35 +3,23 @@ package be.sgerard.i18n.model.security.auth.internal;
 import be.sgerard.i18n.model.security.auth.AuthenticatedUser;
 import be.sgerard.i18n.model.security.auth.RepositoryCredentials;
 import be.sgerard.i18n.service.security.UserRole;
-import org.springframework.security.core.CredentialsContainer;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.*;
-import java.util.stream.Stream;
-
-import static java.util.stream.Collectors.toSet;
 
 /**
  * {@link AuthenticatedUser Authenticated internal user}.
  *
  * @author Sebastien Gerard
  */
-public class InternalAuthenticatedUser implements AuthenticatedUser, UserDetails, CredentialsContainer {
+public class InternalAuthenticatedUser implements AuthenticatedUser {
 
     private final String id;
     private final String userId;
     private final Set<UserRole> roles;
 
-    private String password;
-
-    public InternalAuthenticatedUser(String id,
-                                     String userId,
-                                     String password,
-                                     Collection<UserRole> roles) {
+    public InternalAuthenticatedUser(String id, String userId, Collection<UserRole> roles) {
         this.id = id;
         this.userId = userId;
-        this.password = password;
         this.roles = Set.copyOf(roles);
     }
 
@@ -57,22 +45,7 @@ public class InternalAuthenticatedUser implements AuthenticatedUser, UserDetails
 
     @Override
     public InternalAuthenticatedUser updateSessionRoles(List<UserRole> sessionRoles) {
-        return new InternalAuthenticatedUser(
-                id,
-                userId,
-                password,
-                sessionRoles
-        );
-    }
-
-    @Override
-    public void eraseCredentials() {
-        this.password = null;
-    }
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return mapToAuthorities(getSessionRoles());
+        return new InternalAuthenticatedUser(id, userId, sessionRoles);
     }
 
     @Override
@@ -83,36 +56,6 @@ public class InternalAuthenticatedUser implements AuthenticatedUser, UserDetails
     @Override
     public Collection<RepositoryCredentials> getRepositoryCredentials() {
         return Collections.emptyList();
-    }
-
-    @Override
-    public String getPassword() {
-        return password;
-    }
-
-    @Override
-    public String getUsername() {
-        return getName();
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
     }
 
     @Override
@@ -128,23 +71,11 @@ public class InternalAuthenticatedUser implements AuthenticatedUser, UserDetails
 
         final InternalAuthenticatedUser that = (InternalAuthenticatedUser) o;
 
-        return userId.equals(that.userId);
+        return id.equals(that.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), userId);
-    }
-
-    /**
-     * Maps the specified roles to authorities.
-     */
-    private static Set<GrantedAuthority> mapToAuthorities(Collection<UserRole> roles) {
-        return Stream
-                .concat(
-                        Stream.of(ROLE_USER),
-                        roles.stream().map(UserRole::toAuthority)
-                )
-                .collect(toSet());
+        return Objects.hash(super.hashCode(), id);
     }
 }
