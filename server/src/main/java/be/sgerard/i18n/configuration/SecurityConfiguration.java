@@ -96,11 +96,7 @@ public class SecurityConfiguration {
     public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
         final ServerHttpSecurity httpSecurity = http
                 .authorizeExchange()
-                .pathMatchers("/").permitAll()
-                .pathMatchers("/*").permitAll()
-                .pathMatchers("/auth/**").permitAll()
-                .pathMatchers("/api/authentication/**").permitAll()
-                .pathMatchers("/api/git-hub/**").permitAll()
+                .pathMatchers("/", "/**", "/auth/**", "/api/authentication/**", "/api/git-hub/**").permitAll()
                 .anyExchange().hasAnyRole(UserRole.MEMBER_OF_ORGANIZATION.name()).and()
 
                 .logout()
