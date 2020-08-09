@@ -61,22 +61,6 @@ public class WorkspaceController {
     }
 
     /**
-     * Synchronizes the current workspaces with the specified repository: missing ones are created, workspaces
-     * that are no more relevant (branch does not exist anymore) are deleted.
-     */
-    @PostMapping(path = "/repository/{repositoryId}/workspace/do", params = "action=SYNCHRONIZE")
-    @Operation(summary = "Executes an action on workspaces of a particular repository.",
-            parameters = {@Parameter(name = "action", examples = {
-                    @ExampleObject(value = "SYNCHRONIZE")
-            })}
-    )
-    @PreAuthorize("hasRole('ADMIN')")
-    public Flux<WorkspaceDto> synchronizeWorkspaces(@PathVariable String repositoryId) {
-        return workspaceManager.synchronize(repositoryId)
-                .map(entity -> WorkspaceDto.builder(entity).build());
-    }
-
-    /**
      * Removes the {@link WorkspaceDto workspace} having the specified id.
      */
     @DeleteMapping(path = "/repository/workspace/{id}")
