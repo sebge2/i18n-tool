@@ -152,6 +152,7 @@
         }
       },
       "CONFIG_CARD" : {
+        "CARD_TITLE": "Configuration",
         "NAME_LABEL": "Name",
         "NAME_HINT": "Unique name of this repository.",
         "DEFAULT_BRANCH_LABEL": "Default Branch",
@@ -164,11 +165,13 @@
         "ACTION_UPDATE_WEB_HOOK_SECRET": "Update Web Hook Secret"
       },
       "DETAILS_CARD" : {
+        "CARD_TITLE": "Workspaces",
         "PLEASE_INITIALIZE": "Please initialize your repository first."
       },
       "ERROR": {
-        "UPDATE": "Error while updating repository",
-        "DELETE": "Error while deleting repository."
+        "UPDATE": "Error while updating the repository",
+        "DELETE": "Error while deleting the repository.",
+        "INITIALIZE": "Error while initializing the repository."
       }
     }
   },
