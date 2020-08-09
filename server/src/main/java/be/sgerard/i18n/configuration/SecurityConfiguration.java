@@ -2,7 +2,8 @@ package be.sgerard.i18n.configuration;
 
 import be.sgerard.i18n.service.security.UserRole;
 import be.sgerard.i18n.service.security.auth.AuthenticationManager;
-import be.sgerard.i18n.service.security.auth.ExternalUserService;
+import be.sgerard.i18n.service.security.auth.external.ExternalUserDetailsService;
+import be.sgerard.i18n.service.security.auth.internal.InternalAuthenticationManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,7 +12,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.DelegatingReactiveAuthenticationManager;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
-import org.springframework.security.authentication.UserDetailsRepositoryReactiveAuthenticationManager;
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
@@ -71,12 +71,12 @@ public class SecurityConfiguration {
 
     @Bean
     public ReactiveAuthenticationManager internalAuthenticationManager() {
-        final UserDetailsRepositoryReactiveAuthenticationManager authenticationManager =
-                new UserDetailsRepositoryReactiveAuthenticationManager(internalUserDetailsService);
+        final InternalAuthenticationManager internalAuthenticationManager =
+                new InternalAuthenticationManager(internalUserDetailsService, authenticationManager);
 
-        authenticationManager.setPasswordEncoder(passwordEncoder);
+        internalAuthenticationManager.setPasswordEncoder(passwordEncoder);
 
-        return authenticationManager;
+        return internalAuthenticationManager;
     }
 
     @Bean
@@ -89,7 +89,7 @@ public class SecurityConfiguration {
 
     @Bean
     public ReactiveOAuth2UserService<OAuth2UserRequest, OAuth2User> reactiveOAuth2UserService() {
-        return new ExternalUserService(authenticationManager);
+        return new ExternalUserDetailsService(authenticationManager);
     }
 
     @Bean

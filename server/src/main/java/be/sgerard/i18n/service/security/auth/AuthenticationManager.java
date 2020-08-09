@@ -43,12 +43,13 @@ public interface AuthenticationManager {
     /**
      * Creates the {@link ExternalAuthenticatedUser authenticated user} for the specified {@link OAuthExternalUser OAuth user}.
      */
+    @Deprecated
     Mono<ExternalAuthenticatedUser> createAuthentication(OAuthExternalUser externalUser);
 
     /**
-     * Creates the {@link Authentication authenticated user} for the specified {@link InternalUserDetails internal user}.
+     * Creates the {@link Authentication authentication} for the specified {@link InternalUserDetails internal user}.
      */
-    Mono<Authentication> createAuthentication(InternalUserDetails principal);
+    Mono<Authentication> createAuthentication(InternalUserDetails userDetails);
 
     /**
      * Updates all the {@link AuthenticatedUser users} linked to the specified {@link UserEntity user}.

@@ -117,12 +117,12 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
     }
 
     @Override
-    public Mono<Authentication> createAuthentication(InternalUserDetails principal) {
+    public Mono<Authentication> createAuthentication(InternalUserDetails userDetails) {
         return Mono.just(
                 new UsernamePasswordAuthenticationToken(
-                        new InternalAuthenticatedUser(UUID.randomUUID().toString(), principal.getId(), principal.getRoles()),
-                        principal.getPassword(),
-                        principal.getAuthorities()
+                        new InternalAuthenticatedUser(UUID.randomUUID().toString(), userDetails.getId(), userDetails.getRoles()),
+                        userDetails.getPassword(),
+                        userDetails.getAuthorities()
                 )
         );
     }
