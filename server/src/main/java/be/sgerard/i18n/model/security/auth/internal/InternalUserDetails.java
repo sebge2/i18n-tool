@@ -1,6 +1,7 @@
 package be.sgerard.i18n.model.security.auth.internal;
 
 import be.sgerard.i18n.model.security.user.persistence.InternalUserEntity;
+import be.sgerard.i18n.service.security.UserRole;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -19,10 +20,6 @@ public class InternalUserDetails implements UserDetails {
 
     public InternalUserDetails(InternalUserEntity internalUser) {
         this.internalUser = internalUser;
-    }
-
-    public InternalUserEntity getInternalUser() {
-        return internalUser;
     }
 
     @Override
@@ -58,5 +55,19 @@ public class InternalUserDetails implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    /**
+     * Returns the unique id of the associated user.
+     */
+    public String getId() {
+        return internalUser.getId();
+    }
+
+    /**
+     * Returns the user's roles.
+     */
+    public Collection<UserRole> getRoles() {
+        return internalUser.getRoles();
     }
 }

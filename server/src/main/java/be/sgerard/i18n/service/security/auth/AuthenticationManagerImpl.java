@@ -120,11 +120,7 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
     public Mono<Authentication> createAuthentication(InternalUserDetails principal) {
         return Mono.just(
                 new UsernamePasswordAuthenticationToken(
-                        new InternalAuthenticatedUser(
-                                UUID.randomUUID().toString(),
-                                principal.getInternalUser().getId(),
-                                principal.getInternalUser().getRoles()
-                        ),
+                        new InternalAuthenticatedUser(UUID.randomUUID().toString(), principal.getId(), principal.getRoles()),
                         principal.getPassword(),
                         principal.getAuthorities()
                 )
