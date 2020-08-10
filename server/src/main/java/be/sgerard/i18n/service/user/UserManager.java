@@ -64,6 +64,8 @@ public interface UserManager {
 
     /**
      * Creates a new, or updates the existing {@link ExternalUserEntity external user} based on the specified {@link ExternalUser info}.
+     * <p>
+     * If the user is not allowed to access the application, no value may be returned.
      */
     Mono<ExternalUserEntity> createOrUpdate(ExternalUser externalUser);
 

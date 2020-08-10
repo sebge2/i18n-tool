@@ -121,27 +121,30 @@ public class UserManagerImpl implements UserManager {
 
     @Override
     @Transactional
-    public Mono<ExternalUserEntity> createOrUpdate(ExternalUser externalUserDto) {
+    public Mono<ExternalUserEntity> createOrUpdate(ExternalUser externalUser) {
+        if (!externalUser.isAuthorized()) {
+            return Mono.empty();
+        }
+
         return externalUserRepository
-                .findByExternalId(externalUserDto.getExternalId())
-                .switchIfEmpty(Mono.just(new ExternalUserEntity(externalUserDto.getExternalId(), externalUserDto.getAuthSystem())))
-                .flatMap(externalUser ->
+                .findByExternalId(externalUser.getExternalId())
+                .switchIfEmpty(Mono.just(new ExternalUserEntity(externalUser.getExternalId(), externalUser.getAuthSystem())))
+                .flatMap(externalUserEntity ->
                         listener
-                                .beforePersist(externalUserDto)
+                                .beforePersist(externalUser)
                                 .map(validationResult -> {
                                     ValidationException.throwIfFailed(validationResult);
 
-                                    return externalUser;
+                                    return externalUserEntity;
                                 })
                 )
-                .flatMap(externalUser -> {
-                    externalUser.setUsername(externalUserDto.getUsername());
-                    externalUser.setDisplayName(externalUserDto.getDisplayName());
-                    externalUser.setAvatarUrl(externalUserDto.getAvatarUrl());
-                    externalUser.setEmail(externalUserDto.getEmail());
-                    externalUser.setRoles(externalUserDto.getRoles());
+                .flatMap(externalUserEntity -> {
+                    externalUserEntity.setUsername(externalUser.getUsername());
+                    externalUserEntity.setDisplayName(externalUser.getDisplayName());
+                    externalUserEntity.setAvatarUrl(externalUser.getAvatarUrl());
+                    externalUserEntity.setEmail(externalUser.getEmail());
 
-                    return externalUserRepository.save(externalUser);
+                    return externalUserRepository.save(externalUserEntity);
                 })
                 .flatMap(user ->
                         listener
@@ -344,7 +347,7 @@ public class UserManagerImpl implements UserManager {
      * Checks that the existing password match.
      */
     private void checkPassword(String currentPassword, String providedPassword) {
-        if(!passwordEncoder.matches(providedPassword, currentPassword)){
+        if (!passwordEncoder.matches(providedPassword, currentPassword)) {
             throw new ValidationException(
                     ValidationResult.builder()
                             .messages(new ValidationMessage(VALIDATION_USER_PASSWORD_NOT_MATCH))

@@ -141,9 +141,9 @@ public class AppProperties {
         }
 
         /**
-         * Returns whether the specified email address is allowed.
+         * Returns whether the specified email address is authorized.
          */
-        public boolean isEmailAllowed(String email) {
+        public boolean isEmailAuthorized(String email) {
             return restrictedDomains.isEmpty() || restrictedDomains.stream().anyMatch(domain -> email.toLowerCase().endsWith("@" + domain));
         }
     }
@@ -170,16 +170,16 @@ public class AppProperties {
         }
 
         /**
-         * Returns whether the specified email address is allowed.
+         * Returns whether the specified email address is authorized.
          */
-        public boolean isEmailAllowed(String email) {
+        public boolean isEmailAuthorized(String email) {
             return restrictedDomains.isEmpty() || restrictedDomains.stream().anyMatch(domain -> email.toLowerCase().endsWith("@" + domain.toLowerCase()));
         }
 
         /**
-         * Returns whether the specified organization is allowed.
+         * Returns whether the specified organization is authorized.
          */
-        public boolean isOrganizationAllowed(Collection<String> organizations) {
+        public boolean isOrganizationAuthorized(Collection<String> organizations) {
             final Set<String> organizationsLowerCases = organizations.stream().map(String::toLowerCase).collect(toSet());
             return restrictedOrganizations.isEmpty()
                     || restrictedOrganizations.stream().map(String::toLowerCase).anyMatch(organizationsLowerCases::contains);

@@ -1,10 +1,9 @@
 package be.sgerard.i18n.service.security.auth.external;
 
 import be.sgerard.i18n.configuration.AppProperties;
-import be.sgerard.i18n.model.security.auth.external.OAuthExternalUser;
+import be.sgerard.i18n.model.security.auth.external.RawExternalUser;
 import be.sgerard.i18n.model.security.user.ExternalAuthSystem;
 import be.sgerard.i18n.model.security.user.ExternalUser;
-import be.sgerard.i18n.service.security.UserRole;
 import com.jcabi.github.Organization;
 import com.jcabi.github.RtGithub;
 import org.springframework.stereotype.Component;
@@ -19,12 +18,12 @@ import java.util.stream.StreamSupport;
 import static java.util.stream.Collectors.toSet;
 
 /**
- * {@link OAuthUserMapper Mapper} for user coming from GitHub.
+ * {@link ExternalUserExtractor Extractor} of users coming from GitHub.
  *
  * @author Sebastien Gerard
  */
 @Component
-public class GitHubUserMapper implements OAuthUserMapper {
+public class GitHubUserExtractor implements ExternalUserExtractor {
 
     /**
      * OAuth attribute containing the username.
@@ -53,28 +52,28 @@ public class GitHubUserMapper implements OAuthUserMapper {
 
     private final AppProperties appProperties;
 
-    public GitHubUserMapper(AppProperties appProperties) {
+    public GitHubUserExtractor(AppProperties appProperties) {
         this.appProperties = appProperties;
     }
 
     @Override
-    public boolean support(OAuthExternalUser externalUser) {
-        return externalUser.getOauthClient() == ExternalAuthSystem.OAUTH_GITHUB;
+    public boolean support(RawExternalUser externalUser) {
+        return externalUser.getAuthSystem() == ExternalAuthSystem.OAUTH_GITHUB;
     }
 
     @Override
-    public Mono<ExternalUser> map(OAuthExternalUser oAuthExternalUser) {
-        final String email = getStringAttribute(oAuthExternalUser.getAttributes(), EMAIL);
+    public Mono<ExternalUser> map(RawExternalUser rawExternalUser) {
+        final String email = getStringAttribute(rawExternalUser.getAttributes(), EMAIL);
 
         return Mono.just(
                 ExternalUser.builder()
-                        .externalId(getStringAttribute(oAuthExternalUser.getAttributes(), EXTERNAL_ID))
+                        .externalId(getStringAttribute(rawExternalUser.getAttributes(), EXTERNAL_ID))
                         .authSystem(ExternalAuthSystem.OAUTH_GITHUB)
-                        .username(getStringAttribute(oAuthExternalUser.getAttributes(), USERNAME))
-                        .displayName(getStringAttribute(oAuthExternalUser.getAttributes(), NAME))
+                        .username(getStringAttribute(rawExternalUser.getAttributes(), USERNAME))
+                        .displayName(getStringAttribute(rawExternalUser.getAttributes(), NAME))
                         .email(email)
-                        .avatarUrl(getStringAttribute(oAuthExternalUser.getAttributes(), AVATAR_URL))
-                        .roles(isUserAllowed(email, oAuthExternalUser.getToken()) ? new UserRole[]{UserRole.MEMBER_OF_ORGANIZATION} : new UserRole[0])
+                        .avatarUrl(getStringAttribute(rawExternalUser.getAttributes(), AVATAR_URL))
+                        .authorized(isUserAuthorized(email, rawExternalUser.getToken()))
                         .build()
         );
     }
@@ -97,9 +96,9 @@ public class GitHubUserMapper implements OAuthUserMapper {
     }
 
     /**
-     * Returns whether the current user is allowed to access the application.
+     * Returns whether the current user is authorized to access the application.
      */
-    private boolean isUserAllowed(String email, String token) {
+    private boolean isUserAuthorized(String email, String token) {
         final AppProperties.GitHubOauthOauth gitProperties = appProperties.getSecurity().getGithub();
 
         final Set<String> userOrganizations = StreamSupport
@@ -107,6 +106,6 @@ public class GitHubUserMapper implements OAuthUserMapper {
                 .map(Organization::login)
                 .collect(toSet());
 
-        return gitProperties.isEmailAllowed(email) && gitProperties.isOrganizationAllowed(userOrganizations);
+        return gitProperties.isEmailAuthorized(email) && gitProperties.isOrganizationAuthorized(userOrganizations);
     }
 }
