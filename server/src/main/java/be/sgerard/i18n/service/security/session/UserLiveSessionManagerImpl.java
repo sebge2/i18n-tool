@@ -4,7 +4,7 @@ import be.sgerard.i18n.model.security.session.persistence.UserLiveSessionEntity;
 import be.sgerard.i18n.model.security.user.persistence.UserEntity;
 import be.sgerard.i18n.repository.security.UserLiveSessionRepository;
 import be.sgerard.i18n.service.ResourceNotFoundException;
-import be.sgerard.i18n.service.security.auth.AuthenticationManager;
+import be.sgerard.i18n.service.security.auth.AuthenticationUserManager;
 import be.sgerard.i18n.service.security.session.listener.UserLiveSessionListener;
 import be.sgerard.i18n.service.user.UserManager;
 import org.springframework.stereotype.Service;
@@ -23,16 +23,16 @@ import java.time.Instant;
 @Service
 public class UserLiveSessionManagerImpl implements UserLiveSessionManager {
 
-    private final AuthenticationManager authenticationManager;
+    private final AuthenticationUserManager authenticationUserManager;
     private final UserManager userManager;
     private final UserLiveSessionRepository repository;
     private final UserLiveSessionListener listener;
 
-    public UserLiveSessionManagerImpl(AuthenticationManager authenticationManager,
+    public UserLiveSessionManagerImpl(AuthenticationUserManager authenticationUserManager,
                                       UserManager userManager,
                                       UserLiveSessionRepository repository,
                                       UserLiveSessionListener listener) {
-        this.authenticationManager = authenticationManager;
+        this.authenticationUserManager = authenticationUserManager;
         this.userManager = userManager;
         this.repository = repository;
         this.listener = listener;
@@ -47,7 +47,7 @@ public class UserLiveSessionManagerImpl implements UserLiveSessionManager {
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public Mono<UserLiveSessionEntity> startSession() {
-        return authenticationManager
+        return authenticationUserManager
                 .getCurrentUserOrDie()
                 .flatMap(authenticatedUser -> userManager.findByIdOrDie(authenticatedUser.getUserId()))
                 .flatMap(currentUser -> repository.save(new UserLiveSessionEntity(currentUser)))

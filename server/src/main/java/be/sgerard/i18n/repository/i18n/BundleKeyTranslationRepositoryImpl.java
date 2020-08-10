@@ -4,7 +4,7 @@ import be.sgerard.i18n.model.i18n.TranslationsSearchRequest;
 import be.sgerard.i18n.model.i18n.dto.TranslationKeyPatternDto;
 import be.sgerard.i18n.model.i18n.persistence.BundleKeyTranslationEntity;
 import be.sgerard.i18n.model.security.auth.AuthenticatedUser;
-import be.sgerard.i18n.service.security.auth.AuthenticationManager;
+import be.sgerard.i18n.service.security.auth.AuthenticationUserManager;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.PageRequest;
@@ -28,12 +28,12 @@ import static org.springframework.data.domain.ExampleMatcher.GenericPropertyMatc
 public class BundleKeyTranslationRepositoryImpl implements BundleKeyTranslationRepositoryCustom {
 
     private final ReactiveMongoTemplate template;
-    private final AuthenticationManager authenticationManager;
+    private final AuthenticationUserManager authenticationUserManager;
     private final Constructor<BundleKeyTranslationEntity> entityConstructor;
 
-    public BundleKeyTranslationRepositoryImpl(ReactiveMongoTemplate template, AuthenticationManager authenticationManager) throws Exception {
+    public BundleKeyTranslationRepositoryImpl(ReactiveMongoTemplate template, AuthenticationUserManager authenticationUserManager) throws Exception {
         this.template = template;
-        this.authenticationManager = authenticationManager;
+        this.authenticationUserManager = authenticationUserManager;
 
         this.entityConstructor = BundleKeyTranslationEntity.class.getDeclaredConstructor();
         this.entityConstructor.setAccessible(true);
@@ -41,7 +41,7 @@ public class BundleKeyTranslationRepositoryImpl implements BundleKeyTranslationR
 
     @Override
     public Flux<BundleKeyTranslationEntity> search(TranslationsSearchRequest request) {
-        return authenticationManager
+        return authenticationUserManager
                 .getCurrentUserOrDie()
                 .flatMapMany(currentUser -> search(createQuery(request, currentUser)));
     }

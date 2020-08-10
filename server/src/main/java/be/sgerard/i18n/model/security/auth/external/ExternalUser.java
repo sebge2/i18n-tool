@@ -8,28 +8,28 @@ import java.util.Map;
 import static java.util.Collections.unmodifiableMap;
 
 /**
- * User coming from OAuth.
+ * User coming from an external authentication system.
  *
  * @author Sebastien Gerard
  */
-public class OAuthExternalUser {
+public class ExternalUser {
 
-    private final ExternalAuthSystem oauthClient;
+    private final ExternalAuthSystem authSystem;
     private final String token;
     private final Map<String, Object> attributes;
 
     @SuppressWarnings("Java9CollectionFactory")
-    public OAuthExternalUser(ExternalAuthSystem oauthClient, String token, Map<String, Object> attributes) {
-        this.oauthClient = oauthClient;
+    public ExternalUser(ExternalAuthSystem authSystem, String token, Map<String, Object> attributes) {
+        this.authSystem = authSystem;
         this.token = token;
         this.attributes = unmodifiableMap(new HashMap<>(attributes));
     }
 
     /**
-     * Returns the name of the OAuth client (used in the application configuration files).
+     * Returns the name of the authentication system.
      */
-    public ExternalAuthSystem getOauthClient() {
-        return oauthClient;
+    public ExternalAuthSystem getAuthSystem() {
+        return authSystem;
     }
 
     /**

@@ -2,7 +2,7 @@ package be.sgerard.i18n.controller;
 
 import be.sgerard.i18n.model.security.user.dto.AuthenticatedUserDto;
 import be.sgerard.i18n.service.ResourceNotFoundException;
-import be.sgerard.i18n.service.security.auth.AuthenticationManager;
+import be.sgerard.i18n.service.security.auth.AuthenticationUserManager;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -30,12 +30,12 @@ import static java.util.stream.Collectors.toList;
 @Tag(name = "Authentication", description = "Controller handling authentication (current user, or not).")
 public class AuthenticationController {
 
-    private final AuthenticationManager authenticationManager;
+    private final AuthenticationUserManager authenticationUserManager;
     private final Iterable<ClientRegistration> registrationRepository;
 
-    public AuthenticationController(AuthenticationManager authenticationManager,
+    public AuthenticationController(AuthenticationUserManager authenticationUserManager,
                                     @Autowired(required = false) InMemoryReactiveClientRegistrationRepository registrationRepository) {
-        this.authenticationManager = authenticationManager;
+        this.authenticationUserManager = authenticationUserManager;
         this.registrationRepository = (registrationRepository != null) ? registrationRepository : emptyList();
     }
 
@@ -45,7 +45,7 @@ public class AuthenticationController {
     @GetMapping("/authentication/user")
     @Operation(summary = "Retrieves the current authenticated user.", security = @SecurityRequirement(name = "basicScheme"))
     public Mono<AuthenticatedUserDto> getCurrentUser() {
-        return authenticationManager
+        return authenticationUserManager
                 .getCurrentUser()
                 .switchIfEmpty(Mono.error(ResourceNotFoundException.userNotFoundException("current")))
                 .map(user -> AuthenticatedUserDto.builder(user).build());

@@ -7,7 +7,7 @@ import be.sgerard.i18n.model.repository.dto.GitRepositoryPatchDto;
 import be.sgerard.i18n.model.repository.persistence.GitRepositoryEntity;
 import be.sgerard.i18n.model.security.auth.RepositoryTokenCredentials;
 import be.sgerard.i18n.service.repository.RepositoryException;
-import be.sgerard.i18n.service.security.auth.AuthenticationManager;
+import be.sgerard.i18n.service.security.auth.AuthenticationUserManager;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
@@ -21,15 +21,15 @@ import java.net.URI;
 @Component
 public class GitRepositoryHandler extends BaseGitRepositoryHandler<GitRepositoryEntity, GitRepositoryCreationDto, GitRepositoryPatchDto> {
 
-    private final AuthenticationManager authenticationManager;
+    private final AuthenticationUserManager authenticationUserManager;
     private final AppProperties appProperties;
 
     public GitRepositoryHandler(GitRepositoryApiProvider apiProvider,
-                                AuthenticationManager authenticationManager,
+                                AuthenticationUserManager authenticationUserManager,
                                 AppProperties appProperties) {
         super(apiProvider);
 
-        this.authenticationManager = authenticationManager;
+        this.authenticationUserManager = authenticationUserManager;
         this.appProperties = appProperties;
     }
 
@@ -54,7 +54,7 @@ public class GitRepositoryHandler extends BaseGitRepositoryHandler<GitRepository
 
     @Override
     protected Mono<DefaultGitRepositoryApi.Configuration> createConfiguration(GitRepositoryEntity repository) {
-        return authenticationManager
+        return authenticationUserManager
                 .getCurrentUserOrDie()
                 .map(currentUser ->
                         new DefaultGitRepositoryApi.Configuration(appProperties.getRepository().getDirectoryBaseDir(repository.getId()), URI.create(repository.getLocation()))

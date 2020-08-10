@@ -3,8 +3,12 @@ package be.sgerard.i18n.model.security.auth.internal;
 import be.sgerard.i18n.model.security.auth.AuthenticatedUser;
 import be.sgerard.i18n.model.security.auth.RepositoryCredentials;
 import be.sgerard.i18n.service.security.UserRole;
+import org.springframework.security.core.GrantedAuthority;
 
 import java.util.*;
+
+import static be.sgerard.i18n.service.security.UserRole.mapToAuthorities;
+import static java.util.stream.Collectors.toMap;
 
 /**
  * {@link AuthenticatedUser Authenticated internal user}.
@@ -16,11 +20,19 @@ public class InternalAuthenticatedUser implements AuthenticatedUser {
     private final String id;
     private final String userId;
     private final Set<UserRole> roles;
+    private final Collection<GrantedAuthority> additionalAuthorities;
+    private final Map<String, RepositoryCredentials> repositoryCredentials;
 
-    public InternalAuthenticatedUser(String id, String userId, Collection<UserRole> roles) {
+    public InternalAuthenticatedUser(String id,
+                                     String userId,
+                                     Collection<UserRole> roles,
+                                     Collection<GrantedAuthority> additionalAuthorities,
+                                     Collection<RepositoryCredentials> repositoryCredentials) {
         this.id = id;
         this.userId = userId;
         this.roles = Set.copyOf(roles);
+        this.additionalAuthorities = additionalAuthorities;
+        this.repositoryCredentials = repositoryCredentials.stream().collect(toMap(RepositoryCredentials::getRepository, auth -> auth));
     }
 
     @Override
@@ -39,23 +51,29 @@ public class InternalAuthenticatedUser implements AuthenticatedUser {
     }
 
     @Override
-    public Collection<UserRole> getSessionRoles() {
+    public Collection<UserRole> getRoles() {
         return roles;
     }
 
     @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return mapToAuthorities(roles, additionalAuthorities);
+    }
+
+    @Override
     public InternalAuthenticatedUser updateSessionRoles(List<UserRole> sessionRoles) {
-        return new InternalAuthenticatedUser(id, userId, sessionRoles);
+        return new InternalAuthenticatedUser(id, userId, sessionRoles, additionalAuthorities, repositoryCredentials.values());
     }
 
     @Override
     public <A extends RepositoryCredentials> Optional<A> getCredentials(String repository, Class<A> expectedType) {
-        return Optional.empty();
+        return Optional.ofNullable(repositoryCredentials.get(repository))
+                .map(expectedType::cast);
     }
 
     @Override
     public Collection<RepositoryCredentials> getRepositoryCredentials() {
-        return Collections.emptyList();
+        return repositoryCredentials.values();
     }
 
     @Override

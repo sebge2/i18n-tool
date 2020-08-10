@@ -4,7 +4,8 @@ import be.sgerard.i18n.model.security.auth.internal.InternalUserDetails;
 import be.sgerard.i18n.model.security.user.dto.InternalUserCreationDto;
 import be.sgerard.i18n.model.security.user.persistence.InternalUserEntity;
 import be.sgerard.i18n.service.security.UserRole;
-import be.sgerard.i18n.service.security.auth.AuthenticationManager;
+import be.sgerard.i18n.service.security.auth.AuthenticationUserManager;
+import be.sgerard.i18n.service.security.auth.AuthenticationUtils;
 import be.sgerard.i18n.service.user.UserManager;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.security.core.context.SecurityContext;
@@ -24,11 +25,11 @@ import static java.util.stream.Collectors.toSet;
 public class WithInternalUserSecurityContextFactory implements WithSecurityContextFactory<WithInternalUser> {
 
     private final UserManager userManager;
-    private final AuthenticationManager authenticationManager;
+    private final AuthenticationUserManager authenticationUserManager;
 
-    public WithInternalUserSecurityContextFactory(UserManager userManager, AuthenticationManager authenticationManager) {
+    public WithInternalUserSecurityContextFactory(UserManager userManager, AuthenticationUserManager authenticationUserManager) {
         this.userManager = userManager;
-        this.authenticationManager = authenticationManager;
+        this.authenticationUserManager = authenticationUserManager;
     }
 
     @Override
@@ -36,8 +37,11 @@ public class WithInternalUserSecurityContextFactory implements WithSecurityConte
     public SecurityContext createSecurityContext(WithInternalUser user) {
         final InternalUserEntity userEntity = createUser(user);
 
-        final SecurityContext securityContext = authenticationManager
-                .createAuthentication(new InternalUserDetails(userEntity))
+        final InternalUserDetails userDetails = new InternalUserDetails(userEntity);
+
+        final SecurityContext securityContext = authenticationUserManager
+                .createUser(userDetails)
+                .map(authenticatedUser -> AuthenticationUtils.createAuthentication(userDetails, authenticatedUser))
                 .map(SecurityContextImpl::new)
                 .block();
 

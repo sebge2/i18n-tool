@@ -3,7 +3,7 @@ package be.sgerard.i18n.controller;
 import be.sgerard.i18n.model.security.user.dto.*;
 import be.sgerard.i18n.model.security.user.persistence.ExternalUserEntity;
 import be.sgerard.i18n.model.security.user.persistence.InternalUserEntity;
-import be.sgerard.i18n.service.security.auth.AuthenticationManager;
+import be.sgerard.i18n.service.security.auth.AuthenticationUserManager;
 import be.sgerard.i18n.service.user.UserManager;
 import be.sgerard.i18n.service.user.UserManagerImpl;
 import io.swagger.v3.oas.annotations.Operation;
@@ -55,12 +55,12 @@ public class UserController {
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     private final UserManager userManager;
-    private final AuthenticationManager authenticationManager;
+    private final AuthenticationUserManager authenticationUserManager;
     private final byte[] defaultUserAvatar;
 
-    public UserController(UserManager userManager, AuthenticationManager authenticationManager) {
+    public UserController(UserManager userManager, AuthenticationUserManager authenticationUserManager) {
         this.userManager = userManager;
-        this.authenticationManager = authenticationManager;
+        this.authenticationUserManager = authenticationUserManager;
         this.defaultUserAvatar = loadDefaultUserAvatar();
     }
 
@@ -97,7 +97,7 @@ public class UserController {
     @Operation(summary = "Returns the current user.")
     @Transactional(readOnly = true)
     public Mono<UserDto> getCurrent() {
-        return authenticationManager
+        return authenticationUserManager
                 .getCurrentUserOrDie()
                 .flatMap(authenticatedUser -> userManager.findByIdOrDie(authenticatedUser.getUserId()))
                 .map(entity -> UserDto.builder(entity).build());
@@ -138,7 +138,7 @@ public class UserController {
     @Operation(summary = "Updates the current authenticated user.")
     @Transactional
     public Mono<UserDto> updateCurrentUser(@RequestBody CurrentUserPatchDto patch) {
-        return authenticationManager
+        return authenticationUserManager
                 .getCurrentUserOrDie()
                 .flatMap(authenticatedUser -> userManager.updateCurrent(authenticatedUser.getUserId(), patch))
                 .map(entity -> UserDto.builder(entity).build());
@@ -151,7 +151,7 @@ public class UserController {
     @Operation(summary = "Updates the password of the current authenticated user.")
     @Transactional
     public Mono<UserDto> updateCurrentUserPassword(@RequestBody CurrentUserPasswordUpdateDto update) {
-        return authenticationManager
+        return authenticationUserManager
                 .getCurrentUserOrDie()
                 .flatMap(authenticatedUser -> userManager.updateCurrentPassword(authenticatedUser.getUserId(), update))
                 .map(entity -> UserDto.builder(entity).build());
@@ -173,7 +173,7 @@ public class UserController {
         return DataBufferUtils.join(request.getBody())
                 .map(DataBuffer::asInputStream)
                 .flatMap(avatar ->
-                        authenticationManager
+                        authenticationUserManager
                                 .getCurrentUserOrDie()
                                 .flatMap(authenticatedUser ->
                                         userManager.updateUserAvatar(

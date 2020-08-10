@@ -1,6 +1,6 @@
 package be.sgerard.i18n.model.security.user;
 
-import be.sgerard.i18n.model.security.auth.external.OAuthExternalUser;
+import be.sgerard.i18n.model.security.auth.external.ExternalUser;
 
 import java.util.Objects;
 import java.util.stream.Stream;
@@ -13,12 +13,12 @@ import java.util.stream.Stream;
 public enum ExternalAuthSystem {
 
     /**
-     * @see OAuthExternalUser#getOauthClient()
+     * @see ExternalUser#getAuthSystem()
      */
     OAUTH_GOOGLE("Google"),
 
     /**
-     * @see OAuthExternalUser#getOauthClient()
+     * @see ExternalUser#getAuthSystem()
      */
     OAUTH_GITHUB("GitHub");
 

@@ -7,11 +7,10 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 
 import java.util.*;
-import java.util.stream.Stream;
 
+import static be.sgerard.i18n.service.security.UserRole.mapToAuthorities;
 import static java.util.Collections.singletonMap;
 import static java.util.stream.Collectors.toMap;
-import static java.util.stream.Collectors.toSet;
 
 /**
  * {@link AuthenticatedUser Authenticated external user}.
@@ -29,19 +28,22 @@ public final class ExternalAuthenticatedUser extends DefaultOAuth2User implement
     private final String userId;
     private final String token;
     private final Set<UserRole> roles;
+    private final Collection<GrantedAuthority> additionalAuthorities;
     private final Map<String, RepositoryCredentials> repositoryCredentials;
 
     public ExternalAuthenticatedUser(String id,
                                      String userId,
                                      String token,
                                      Collection<UserRole> roles,
+                                     Collection<GrantedAuthority> additionalAuthorities,
                                      Collection<RepositoryCredentials> repositoryCredentials) {
-        super(mapToAuthorities(roles), singletonMap(NAME_ATTRIBUTE, userId), NAME_ATTRIBUTE);
+        super(mapToAuthorities(roles, additionalAuthorities), singletonMap(NAME_ATTRIBUTE, userId), NAME_ATTRIBUTE);
 
         this.id = id;
         this.userId = userId;
         this.token = token;
         this.roles = Set.copyOf(roles);
+        this.additionalAuthorities = additionalAuthorities;
         this.repositoryCredentials = repositoryCredentials.stream().collect(toMap(RepositoryCredentials::getRepository, auth -> auth));
     }
 
@@ -56,12 +58,7 @@ public final class ExternalAuthenticatedUser extends DefaultOAuth2User implement
     }
 
     @Override
-    public String getName() {
-        return getUserId();
-    }
-
-    @Override
-    public Collection<UserRole> getSessionRoles() {
+    public Collection<UserRole> getRoles() {
         return roles;
     }
 
@@ -83,6 +80,7 @@ public final class ExternalAuthenticatedUser extends DefaultOAuth2User implement
                 userId,
                 token,
                 sessionRoles,
+                additionalAuthorities,
                 repositoryCredentials.values()
         );
     }
@@ -103,27 +101,14 @@ public final class ExternalAuthenticatedUser extends DefaultOAuth2User implement
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        if (!super.equals(o)) return false;
 
         final ExternalAuthenticatedUser that = (ExternalAuthenticatedUser) o;
 
-        return userId.equals(that.userId);
+        return id.equals(that.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), userId);
-    }
-
-    /**
-     * Maps the specified roles to authorities.
-     */
-    private static Set<GrantedAuthority> mapToAuthorities(Collection<UserRole> roles) {
-        return Stream
-                .concat(
-                        Stream.of(ROLE_USER),
-                        roles.stream().map(UserRole::toAuthority)
-                )
-                .collect(toSet());
+        return Objects.hash(id);
     }
 }

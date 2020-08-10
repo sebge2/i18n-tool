@@ -33,7 +33,7 @@ public class AuthenticatedUserDto {
         return builder()
                 .id(authenticatedUser.getId())
                 .userId(authenticatedUser.getUserId())
-                .sessionRoles(authenticatedUser.getSessionRoles())
+                .sessionRoles(authenticatedUser.getRoles())
                 .repositoryRoles(
                         authenticatedUser.getRepositoryCredentials().stream()
                                 .map(cred -> RepositoryRolesDto.builder(cred).build())

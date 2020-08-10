@@ -5,7 +5,9 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.Collection;
 import java.util.Set;
+import java.util.stream.Stream;
 
+import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toSet;
 
 /**
@@ -37,10 +39,17 @@ public enum UserRole {
     /**
      * Maps the specified roles to authorities.
      */
-    public static Set<GrantedAuthority> mapToAuthorities(Collection<UserRole> roles) {
-        return roles.stream()
-                .map(UserRole::toAuthority)
+    public static Set<GrantedAuthority> mapToAuthorities(Collection<UserRole> roles, Collection<GrantedAuthority> additionalAuthorities) {
+        return Stream
+                .concat(roles.stream().map(UserRole::toAuthority), additionalAuthorities.stream())
                 .collect(toSet());
+    }
+
+    /**
+     * Maps the specified roles to authorities.
+     */
+    public static Set<GrantedAuthority> mapToAuthorities(Collection<UserRole> roles) {
+        return mapToAuthorities(roles, emptyList());
     }
 
     public static final String ROLE_PREFIX = "ROLE_";

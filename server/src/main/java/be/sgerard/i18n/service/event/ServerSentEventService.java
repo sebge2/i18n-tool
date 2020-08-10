@@ -5,7 +5,7 @@ import be.sgerard.i18n.model.event.EventType;
 import be.sgerard.i18n.model.security.auth.AuthenticatedUser;
 import be.sgerard.i18n.model.security.user.dto.UserDto;
 import be.sgerard.i18n.service.security.UserRole;
-import be.sgerard.i18n.service.security.auth.AuthenticationManager;
+import be.sgerard.i18n.service.security.auth.AuthenticationUserManager;
 import be.sgerard.i18n.service.security.session.UserLiveSessionManager;
 import lombok.Getter;
 import org.apache.commons.lang3.tuple.Pair;
@@ -28,27 +28,27 @@ import java.util.function.Predicate;
 public class ServerSentEventService implements EventService {
 
     private final UserLiveSessionManager userSessionManager;
-    private final AuthenticationManager authenticationManager;
+    private final AuthenticationUserManager authenticationUserManager;
     private final EmitterProcessor<Event<Object>> emitter;
     private final FluxSink<Event<Object>> sink;
 
     @Lazy
     public ServerSentEventService(UserLiveSessionManager userSessionManager,
-                                  AuthenticationManager authenticationManager) {
+                                  AuthenticationUserManager authenticationUserManager) {
         this.userSessionManager = userSessionManager;
-        this.authenticationManager = authenticationManager;
+        this.authenticationUserManager = authenticationUserManager;
         this.emitter = EmitterProcessor.create(false);
         this.sink = emitter.sink();
     }
 
     @Override
     public Mono<Void> broadcastEvent(EventType eventType, Object payload) {
-        return emit(new Event<>(eventType, payload, currentAuthenticatedUser -> currentAuthenticatedUser.getSessionRoles().contains(UserRole.MEMBER_OF_ORGANIZATION)));
+        return emit(new Event<>(eventType, payload, currentAuthenticatedUser -> currentAuthenticatedUser.getRoles().contains(UserRole.MEMBER_OF_ORGANIZATION)));
     }
 
     @Override
     public Mono<Void> sendEventToUsers(UserRole userRole, EventType eventType, Object payload) {
-        return emit(new Event<>(eventType, payload, currentAuthenticatedUser -> currentAuthenticatedUser.getSessionRoles().contains(userRole)));
+        return emit(new Event<>(eventType, payload, currentAuthenticatedUser -> currentAuthenticatedUser.getRoles().contains(userRole)));
     }
 
     @Override
@@ -68,7 +68,7 @@ public class ServerSentEventService implements EventService {
                 .flatMapMany(userLiveSession ->
                         emitter
                                 .flatMap(event ->
-                                        authenticationManager
+                                        authenticationUserManager
                                                 .getCurrentUserOrDie()
                                                 .map(currentAuthenticatedUser -> Pair.of(event, currentAuthenticatedUser))
                                 )

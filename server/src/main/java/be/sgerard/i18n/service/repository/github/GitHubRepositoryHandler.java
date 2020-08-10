@@ -10,7 +10,7 @@ import be.sgerard.i18n.service.repository.RepositoryException;
 import be.sgerard.i18n.service.repository.git.BaseGitRepositoryHandler;
 import be.sgerard.i18n.service.repository.git.DefaultGitRepositoryApi;
 import be.sgerard.i18n.service.repository.git.GitRepositoryApiProvider;
-import be.sgerard.i18n.service.security.auth.AuthenticationManager;
+import be.sgerard.i18n.service.security.auth.AuthenticationUserManager;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
@@ -24,15 +24,15 @@ import java.net.URI;
 @Component
 public class GitHubRepositoryHandler extends BaseGitRepositoryHandler<GitHubRepositoryEntity, GitHubRepositoryCreationDto, GitHubRepositoryPatchDto> {
 
-    private final AuthenticationManager authenticationManager;
+    private final AuthenticationUserManager authenticationUserManager;
     private final AppProperties appProperties;
 
     public GitHubRepositoryHandler(GitRepositoryApiProvider apiProvider,
-                                   AuthenticationManager authenticationManager,
+                                   AuthenticationUserManager authenticationUserManager,
                                    AppProperties appProperties) {
         super(apiProvider);
 
-        this.authenticationManager = authenticationManager;
+        this.authenticationUserManager = authenticationUserManager;
         this.appProperties = appProperties;
     }
 
@@ -61,7 +61,7 @@ public class GitHubRepositoryHandler extends BaseGitRepositoryHandler<GitHubRepo
 
     @Override
     protected Mono<DefaultGitRepositoryApi.Configuration> createConfiguration(GitHubRepositoryEntity repository) {
-        return authenticationManager
+        return authenticationUserManager
                 .getCurrentUserOrDie()
                 .map(currentUser ->
                         new DefaultGitRepositoryApi.Configuration(appProperties.getRepository().getDirectoryBaseDir(repository.getId()), URI.create(repository.getLocation()))

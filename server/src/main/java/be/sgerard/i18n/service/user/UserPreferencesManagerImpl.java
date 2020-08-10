@@ -10,7 +10,7 @@ import be.sgerard.i18n.model.validation.ValidationResult;
 import be.sgerard.i18n.service.ResourceNotFoundException;
 import be.sgerard.i18n.service.ValidationException;
 import be.sgerard.i18n.service.i18n.TranslationLocaleManager;
-import be.sgerard.i18n.service.security.auth.AuthenticationManager;
+import be.sgerard.i18n.service.security.auth.AuthenticationUserManager;
 import be.sgerard.i18n.service.user.listener.UserPreferencesListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,16 +33,16 @@ public class UserPreferencesManagerImpl implements UserPreferencesManager {
      */
     public static final String MISSING_VALIDATION_LOCALE = "validation.locale.missing";
 
-    private final AuthenticationManager authenticationManager;
+    private final AuthenticationUserManager authenticationUserManager;
     private final UserManager userManager;
     private final UserPreferencesListener listener;
     private final TranslationLocaleManager translationLocaleManager;
 
-    public UserPreferencesManagerImpl(AuthenticationManager authenticationManager,
+    public UserPreferencesManagerImpl(AuthenticationUserManager authenticationUserManager,
                                       UserManager userManager,
                                       UserPreferencesListener listener,
                                       TranslationLocaleManager translationLocaleManager) {
-        this.authenticationManager = authenticationManager;
+        this.authenticationUserManager = authenticationUserManager;
         this.userManager = userManager;
         this.listener = listener;
         this.translationLocaleManager = translationLocaleManager;
@@ -80,7 +80,7 @@ public class UserPreferencesManagerImpl implements UserPreferencesManager {
      * Returns the current {@link UserEntity user}.
      */
     private Mono<UserEntity> getCurrentUserOrDie() {
-        return authenticationManager
+        return authenticationUserManager
                 .getCurrentUserOrDie()
                 .map(AuthenticatedUser::getUserId)
                 .flatMap(userManager::findByIdOrDie);

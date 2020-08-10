@@ -5,7 +5,7 @@ import be.sgerard.i18n.model.github.GitHubPullRequestStatus;
 import be.sgerard.i18n.model.repository.persistence.GitHubRepositoryEntity;
 import be.sgerard.i18n.model.security.auth.RepositoryTokenCredentials;
 import be.sgerard.i18n.service.repository.RepositoryManager;
-import be.sgerard.i18n.service.security.auth.AuthenticationManager;
+import be.sgerard.i18n.service.security.auth.AuthenticationUserManager;
 import be.sgerard.i18n.service.workspace.WorkspaceException;
 import com.jcabi.github.*;
 import org.springframework.stereotype.Service;
@@ -23,11 +23,11 @@ import static java.util.Collections.emptyMap;
 public class GitHubClientImpl implements GitHubClient {
 
     private final RepositoryManager repositoryManager;
-    private final AuthenticationManager authenticationManager;
+    private final AuthenticationUserManager authenticationUserManager;
 
-    public GitHubClientImpl(RepositoryManager repositoryManager, AuthenticationManager authenticationManager) {
+    public GitHubClientImpl(RepositoryManager repositoryManager, AuthenticationUserManager authenticationUserManager) {
         this.repositoryManager = repositoryManager;
-        this.authenticationManager = authenticationManager;
+        this.authenticationUserManager = authenticationUserManager;
     }
 
     @Override
@@ -104,7 +104,7 @@ public class GitHubClientImpl implements GitHubClient {
      * Initializes the {@link Github GitHub API}.
      */
     private Mono<Github> getGitHubApi(GitHubRepositoryEntity repository) {
-        return authenticationManager
+        return authenticationUserManager
                 .getCurrentUserOrDie()
                 .map(authenticatedUser ->
                         new RtGithub(
