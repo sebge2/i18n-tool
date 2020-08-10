@@ -6,9 +6,12 @@ import be.sgerard.i18n.model.security.auth.external.ExternalUserDetails;
 import be.sgerard.i18n.model.security.auth.internal.InternalAuthenticatedUser;
 import be.sgerard.i18n.model.security.auth.internal.InternalUserDetails;
 import be.sgerard.i18n.model.security.user.persistence.UserEntity;
+import be.sgerard.i18n.service.security.UserRole;
 import org.springframework.security.access.AccessDeniedException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.util.Collection;
 
 /**
  * Manager of {@link AuthenticatedUser authenticated users}.
@@ -51,12 +54,16 @@ public interface AuthenticationUserManager {
     Mono<InternalAuthenticatedUser> createUser(InternalUserDetails userDetails);
 
     /**
-     * Updates all the {@link AuthenticatedUser users} linked to the specified {@link UserEntity user}.
+     * Updates roles of all the {@link AuthenticatedUser users} linked to the specified {@link UserEntity user}.
+     *
+     * @see UserEntity#getId()
      */
-    Mono<Void> updateUsers(UserEntity user);
+    Mono<Void> updateAll(String userId, Collection<UserRole> roles);
 
     /**
      * Deletes all the {@link AuthenticatedUser authenticated users} associated to the specified {@link UserEntity user}.
+     *
+     * @see UserEntity#getId()
      */
-    Mono<Void> deleteAllUsers(String userId);
+    Mono<Void> deleteAll(String userId);
 }

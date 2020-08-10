@@ -5,8 +5,8 @@ import be.sgerard.i18n.model.security.auth.external.ExternalAuthenticatedUser;
 import be.sgerard.i18n.model.security.auth.external.ExternalUserDetails;
 import be.sgerard.i18n.model.security.auth.internal.InternalAuthenticatedUser;
 import be.sgerard.i18n.model.security.auth.internal.InternalUserDetails;
-import be.sgerard.i18n.model.security.user.persistence.UserEntity;
 import be.sgerard.i18n.service.ResourceNotFoundException;
+import be.sgerard.i18n.service.security.UserRole;
 import be.sgerard.i18n.service.security.auth.listener.AuthenticatedUserListener;
 import be.sgerard.i18n.service.security.repository.RepositoryCredentialsManager;
 import be.sgerard.i18n.service.security.session.repository.SessionRepository;
@@ -18,6 +18,7 @@ import org.springframework.web.server.WebSession;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.Collection;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Stream;
@@ -105,14 +106,14 @@ public class AuthenticationUserManagerImpl implements AuthenticationUserManager 
     }
 
     @Override
-    public Mono<Void> updateUsers(UserEntity user) {
+    public Mono<Void> updateAll(String userId, Collection<UserRole> roles) {
         return this
-                .findAll(user.getId())
+                .findAll(userId)
                 .map(authenticatedUser -> authenticatedUser.updateSessionRoles(
                         Stream
                                 .concat(
                                         authenticatedUser.getRoles().stream().filter(role -> !role.isAssignableByEndUser()),
-                                        user.getRoles().stream()
+                                        roles.stream()
                                 )
                                 .collect(toList())
                 ))
@@ -121,7 +122,7 @@ public class AuthenticationUserManagerImpl implements AuthenticationUserManager 
     }
 
     @Override
-    public Mono<Void> deleteAllUsers(String userId) {
+    public Mono<Void> deleteAll(String userId) {
         return this
                 .findAll(userId)
                 .flatMap(this::delete)
