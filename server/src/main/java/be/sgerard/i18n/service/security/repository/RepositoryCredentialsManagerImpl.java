@@ -1,8 +1,6 @@
 package be.sgerard.i18n.service.security.repository;
 
 import be.sgerard.i18n.model.security.auth.RepositoryCredentials;
-import be.sgerard.i18n.model.security.auth.external.ExternalUserDetails;
-import be.sgerard.i18n.model.security.auth.internal.InternalUserDetails;
 import be.sgerard.i18n.service.repository.RepositoryManager;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -28,7 +26,7 @@ public class RepositoryCredentialsManagerImpl implements RepositoryCredentialsMa
     }
 
     @Override
-    public Flux<RepositoryCredentials> loadCredentials(InternalUserDetails internalUserDetails) {
+    public Flux<RepositoryCredentials> loadCredentials() {
         return repositoryManager
                 .findAll()
                 .flatMap(repository ->
@@ -41,7 +39,7 @@ public class RepositoryCredentialsManagerImpl implements RepositoryCredentialsMa
     }
 
     @Override
-    public Flux<RepositoryCredentials> loadCredentials(ExternalUserDetails externalUserDetails) {
+    public Flux<RepositoryCredentials> loadCredentials(String token) {
         return repositoryManager
                 .findAll()
                 .flatMap(repository ->
@@ -49,7 +47,7 @@ public class RepositoryCredentialsManagerImpl implements RepositoryCredentialsMa
                                 .filter(handler -> handler.support(repository))
                                 .findFirst()
                                 .orElseThrow(() -> new UnsupportedOperationException("Unsupported external user and repository " + repository.getType() + "."))
-                                .loadCredentials(externalUserDetails, repository)
+                                .loadCredentials(token, repository)
                 );
     }
 }

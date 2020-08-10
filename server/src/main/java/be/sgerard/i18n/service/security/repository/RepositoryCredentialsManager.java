@@ -1,8 +1,6 @@
 package be.sgerard.i18n.service.security.repository;
 
 import be.sgerard.i18n.model.security.auth.RepositoryCredentials;
-import be.sgerard.i18n.model.security.auth.external.ExternalUserDetails;
-import be.sgerard.i18n.model.security.auth.internal.InternalUserDetails;
 import reactor.core.publisher.Flux;
 
 /**
@@ -13,12 +11,12 @@ import reactor.core.publisher.Flux;
 public interface RepositoryCredentialsManager {
 
     /**
-     * Loads {@link RepositoryCredentials credentials} for the specified internal user.
+     * Loads {@link RepositoryCredentials credentials} when there is no token.
      */
-    Flux<RepositoryCredentials> loadCredentials(InternalUserDetails internalUserDetails);
+    Flux<RepositoryCredentials> loadCredentials();
 
     /**
-     * Loads {@link RepositoryCredentials credentials} for the specified external user.
+     * Loads {@link RepositoryCredentials credentials} with the specified token.
      */
-    Flux<RepositoryCredentials> loadCredentials(ExternalUserDetails externalUserDetails);
+    Flux<RepositoryCredentials> loadCredentials(String token);
 }

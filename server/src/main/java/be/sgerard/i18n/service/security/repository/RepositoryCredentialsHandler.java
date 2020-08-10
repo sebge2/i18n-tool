@@ -2,7 +2,6 @@ package be.sgerard.i18n.service.security.repository;
 
 import be.sgerard.i18n.model.repository.persistence.RepositoryEntity;
 import be.sgerard.i18n.model.security.auth.RepositoryCredentials;
-import be.sgerard.i18n.model.security.auth.external.ExternalUserDetails;
 import reactor.core.publisher.Mono;
 
 /**
@@ -18,14 +17,13 @@ public interface RepositoryCredentialsHandler {
     boolean support(RepositoryEntity repository);
 
     /**
-     * Loads the {@link RepositoryCredentials credentails} to use for accessing the specified {@link RepositoryEntity repository}.
+     * Loads the {@link RepositoryCredentials credentails} to access the specified repository when there is no token.
      */
     Mono<RepositoryCredentials> loadCredentials(RepositoryEntity repository);
 
     /**
-     * Loads the {@link RepositoryCredentials credentails} to use for the specified {@link ExternalUserDetails user} when
-     * accessing the specified {@link RepositoryEntity repository}.
+     * Loads the {@link RepositoryCredentials credentails} to access the specified repository with the specified token.
      */
-    Mono<RepositoryCredentials> loadCredentials(ExternalUserDetails userDetails, RepositoryEntity repository);
+    Mono<RepositoryCredentials> loadCredentials(String token, RepositoryEntity repository);
 
 }
