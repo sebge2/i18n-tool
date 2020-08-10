@@ -1,6 +1,7 @@
 package be.sgerard.i18n.service.security.auth;
 
 import be.sgerard.i18n.model.security.auth.AuthenticatedUser;
+import be.sgerard.i18n.model.security.auth.RepositoryCredentials;
 import be.sgerard.i18n.model.security.auth.external.ExternalAuthenticatedUser;
 import be.sgerard.i18n.model.security.auth.external.ExternalUserDetails;
 import be.sgerard.i18n.model.security.auth.internal.InternalAuthenticatedUser;
@@ -75,7 +76,7 @@ public class AuthenticationUserManagerImpl implements AuthenticationUserManager 
     @Transactional
     public Mono<ExternalAuthenticatedUser> createUser(ExternalUserDetails userDetails) {
         return repositoryCredentialsManager
-                .loadCredentials(userDetails)
+                .loadAllCredentials(userDetails.getToken())
                 .collectList()
                 .map(repositoryCredentials ->
                         new ExternalAuthenticatedUser(
@@ -90,9 +91,10 @@ public class AuthenticationUserManagerImpl implements AuthenticationUserManager 
     }
 
     @Override
+    @Transactional
     public Mono<InternalAuthenticatedUser> createUser(InternalUserDetails userDetails) {
         return repositoryCredentialsManager
-                .loadCredentials(userDetails)
+                .loadAllCredentials()
                 .collectList()
                 .map(repositoryCredentials ->
                         new InternalAuthenticatedUser(
@@ -106,6 +108,7 @@ public class AuthenticationUserManagerImpl implements AuthenticationUserManager 
     }
 
     @Override
+    @Transactional
     public Mono<Void> updateAll(String userId, Collection<UserRole> roles) {
         return this
                 .findAll(userId)
@@ -122,6 +125,19 @@ public class AuthenticationUserManagerImpl implements AuthenticationUserManager 
     }
 
     @Override
+    @Transactional
+    public Mono<Void> updateAllRepositoryCredentials(String repositoryId) {
+        return this
+                .findAll()
+                .flatMap(authenticatedUser ->
+                        loadCredentials(repositoryId, authenticatedUser).map(authenticatedUser::updateRepositoryCredentials)
+                )
+                .flatMap(this::update)
+                .then();
+    }
+
+    @Override
+    @Transactional
     public Mono<Void> deleteAll(String userId) {
         return this
                 .findAll(userId)
@@ -169,5 +185,14 @@ public class AuthenticationUserManagerImpl implements AuthenticationUserManager 
                         listener.onDelete(authenticatedUser)
                                 .thenReturn(authenticatedUser)
                 );
+    }
+
+    /**
+     * Loads credentials of the specified user for accessing the specified repository.
+     */
+    private Mono<RepositoryCredentials> loadCredentials(String repositoryId, AuthenticatedUser authenticatedUser) {
+        return authenticatedUser instanceof ExternalAuthenticatedUser
+                ? repositoryCredentialsManager.loadCredentials(repositoryId, ((ExternalAuthenticatedUser) authenticatedUser).getToken())
+                : repositoryCredentialsManager.loadCredentials(repositoryId);
     }
 }
