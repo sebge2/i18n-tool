@@ -11,6 +11,7 @@ import be.sgerard.i18n.service.repository.git.BaseGitRepositoryHandler;
 import be.sgerard.i18n.service.repository.git.DefaultGitRepositoryApi;
 import be.sgerard.i18n.service.repository.git.GitRepositoryApiProvider;
 import be.sgerard.i18n.service.security.auth.AuthenticationUserManager;
+import be.sgerard.i18n.support.StringUtils;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
@@ -45,7 +46,7 @@ public class GitHubRepositoryHandler extends BaseGitRepositoryHandler<GitHubRepo
     public Mono<GitHubRepositoryEntity> createRepository(GitHubRepositoryCreationDto creationDto) {
         return validateRepository(
                 new GitHubRepositoryEntity(creationDto.getUsername(), creationDto.getRepository())
-                        .setAccessKey(creationDto.getAccessKey().orElse(null))
+                        .setAccessKey(creationDto.getAccessKey().filter(StringUtils::isEmptyString).orElse(null))
         );
     }
 
@@ -53,8 +54,8 @@ public class GitHubRepositoryHandler extends BaseGitRepositoryHandler<GitHubRepo
     public Mono<GitHubRepositoryEntity> updateRepository(GitHubRepositoryEntity repository, GitHubRepositoryPatchDto patchDto) throws RepositoryException {
         updateFromPatch(patchDto, repository);
 
-        repository.setAccessKey(patchDto.getAccessKey().or(repository::getAccessKey).orElse(null));
-        repository.setWebHookSecret(patchDto.getWebHookSecret().or(repository::getWebHookSecret).orElse(null));
+        repository.setAccessKey(patchDto.getAccessKey().or(repository::getAccessKey).filter(StringUtils::isEmptyString).orElse(null));
+        repository.setWebHookSecret(patchDto.getWebHookSecret().or(repository::getWebHookSecret).filter(StringUtils::isEmptyString).orElse(null));
 
         return Mono.just(repository);
     }
