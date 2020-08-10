@@ -1,10 +1,13 @@
 package be.sgerard.i18n.service.security.auth;
 
 import be.sgerard.i18n.model.security.auth.AuthenticatedUser;
+import be.sgerard.i18n.model.security.auth.external.ExternalAuthenticatedUser;
 import be.sgerard.i18n.model.security.auth.internal.InternalAuthenticatedUser;
+import be.sgerard.i18n.model.security.auth.internal.InternalUserDetails;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.session.data.mongo.MongoSession;
 
 import java.util.Optional;
@@ -16,9 +19,17 @@ import static org.springframework.security.web.server.context.WebSessionServerSe
  *
  * @author Sebastien Gerard
  */
-final class AuthenticationUtils {
+public final class AuthenticationUtils {
 
     private AuthenticationUtils() {
+    }
+
+    /**
+     * Creates the authentication for the specified internal user.
+     */
+    public static UsernamePasswordAuthenticationToken createAuthentication(InternalUserDetails userDetails,
+                                                                           AuthenticatedUser authenticatedUser) {
+        return new UsernamePasswordAuthenticationToken(authenticatedUser, userDetails.getPassword(), userDetails.getAuthorities());
     }
 
     /**
@@ -64,14 +75,23 @@ final class AuthenticationUtils {
      */
     private static Authentication updateAuthentication(AuthenticatedUser authenticatedUser, Authentication authentication) {
         if ((authentication instanceof UsernamePasswordAuthenticationToken) && (authenticatedUser instanceof InternalAuthenticatedUser)) {
+            final UsernamePasswordAuthenticationToken passwordAuthenticationToken = (UsernamePasswordAuthenticationToken) authentication;
+
             return new UsernamePasswordAuthenticationToken(
                     authenticatedUser,
-                    ((InternalAuthenticatedUser) authenticatedUser).getPassword(),
-                    authenticatedUser.getAuthorities()
+                    passwordAuthenticationToken.getCredentials(),
+                    passwordAuthenticationToken.getAuthorities()
+            );
+        } else if ((authentication instanceof OAuth2AuthenticationToken) && (authenticatedUser instanceof ExternalAuthenticatedUser)) {
+            final OAuth2AuthenticationToken oAuth2AuthenticationToken = (OAuth2AuthenticationToken) authentication;
+
+            return new OAuth2AuthenticationToken(
+                    (ExternalAuthenticatedUser) authenticatedUser,
+                    oAuth2AuthenticationToken.getAuthorities(),
+                    oAuth2AuthenticationToken.getAuthorizedClientRegistrationId()
             );
         } else {
             throw new UnsupportedOperationException("Unsupported authentication [" + authentication + "].");
         }
     }
-
 }

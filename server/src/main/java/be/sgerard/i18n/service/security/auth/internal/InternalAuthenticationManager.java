@@ -21,8 +21,7 @@ public class InternalAuthenticationManager extends UserDetailsRepositoryReactive
 
     private final AuthenticationUserManager authenticationUserManager;
 
-    public InternalAuthenticationManager(ReactiveUserDetailsService userDetailsService,
-                                         AuthenticationUserManager authenticationUserManager) {
+    public InternalAuthenticationManager(ReactiveUserDetailsService userDetailsService, AuthenticationUserManager authenticationUserManager) {
         super(userDetailsService);
 
         this.authenticationUserManager = authenticationUserManager;
