@@ -4,6 +4,7 @@ import be.sgerard.i18n.model.security.auth.RepositoryCredentials;
 import be.sgerard.i18n.model.security.auth.external.ExternalUserDetails;
 import be.sgerard.i18n.model.security.auth.internal.InternalUserDetails;
 import be.sgerard.i18n.service.repository.RepositoryManager;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 
@@ -20,6 +21,7 @@ public class RepositoryCredentialsManagerImpl implements RepositoryCredentialsMa
     private final RepositoryManager repositoryManager;
     private final List<RepositoryCredentialsHandler> handlers;
 
+    @Lazy
     public RepositoryCredentialsManagerImpl(RepositoryManager repositoryManager, List<RepositoryCredentialsHandler> handlers) {
         this.repositoryManager = repositoryManager;
         this.handlers = handlers;
@@ -31,10 +33,10 @@ public class RepositoryCredentialsManagerImpl implements RepositoryCredentialsMa
                 .findAll()
                 .flatMap(repository ->
                         handlers.stream()
-                                .filter(handler -> handler.support(internalUserDetails, repository))
+                                .filter(handler -> handler.support(repository))
                                 .findFirst()
                                 .orElseThrow(() -> new UnsupportedOperationException("Unsupported internal user and repository " + repository.getType() + "."))
-                                .loadCredentials(internalUserDetails, repository)
+                                .loadCredentials(repository)
                 );
     }
 
@@ -44,7 +46,7 @@ public class RepositoryCredentialsManagerImpl implements RepositoryCredentialsMa
                 .findAll()
                 .flatMap(repository ->
                         handlers.stream()
-                                .filter(handler -> handler.support(externalUserDetails, repository))
+                                .filter(handler -> handler.support(repository))
                                 .findFirst()
                                 .orElseThrow(() -> new UnsupportedOperationException("Unsupported external user and repository " + repository.getType() + "."))
                                 .loadCredentials(externalUserDetails, repository)

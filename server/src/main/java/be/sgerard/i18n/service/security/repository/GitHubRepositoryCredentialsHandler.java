@@ -6,7 +6,6 @@ import be.sgerard.i18n.model.repository.persistence.RepositoryEntity;
 import be.sgerard.i18n.model.security.auth.RepositoryCredentials;
 import be.sgerard.i18n.model.security.auth.RepositoryTokenCredentials;
 import be.sgerard.i18n.model.security.auth.external.ExternalUserDetails;
-import be.sgerard.i18n.model.security.auth.internal.InternalUserDetails;
 import com.jcabi.github.Coordinates;
 import com.jcabi.github.RtGithub;
 import org.slf4j.Logger;
@@ -33,17 +32,12 @@ public class GitHubRepositoryCredentialsHandler implements RepositoryCredentials
     }
 
     @Override
-    public boolean support(InternalUserDetails userDetails, RepositoryEntity repository) {
+    public boolean support(RepositoryEntity repository) {
         return repository.getType() == RepositoryType.GITHUB;
     }
 
     @Override
-    public boolean support(ExternalUserDetails userDetails, RepositoryEntity repository) {
-        return repository.getType() == RepositoryType.GITHUB;
-    }
-
-    @Override
-    public Mono<RepositoryCredentials> loadCredentials(InternalUserDetails userDetails, RepositoryEntity repository) {
+    public Mono<RepositoryCredentials> loadCredentials(RepositoryEntity repository) {
         return Mono
                 .just(repository)
                 .map(GitHubRepositoryEntity.class::cast)
