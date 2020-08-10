@@ -1,7 +1,7 @@
 package be.sgerard.i18n.service.user.listener;
 
 import be.sgerard.i18n.model.security.user.persistence.UserEntity;
-import be.sgerard.i18n.service.security.auth.AuthenticationManager;
+import be.sgerard.i18n.service.security.auth.AuthenticationUserManager;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
@@ -17,19 +17,19 @@ import reactor.core.publisher.Mono;
 @Component
 public class AuthenticationUserListener implements UserListener {
 
-    private final AuthenticationManager authenticationManager;
+    private final AuthenticationUserManager authenticationUserManager;
 
-    public AuthenticationUserListener(AuthenticationManager authenticationManager) {
-        this.authenticationManager = authenticationManager;
+    public AuthenticationUserListener(AuthenticationUserManager authenticationUserManager) {
+        this.authenticationUserManager = authenticationUserManager;
     }
 
     @Override
     public Mono<Void> onUpdate(UserEntity user) {
-        return authenticationManager.updateAuthentications(user);
+        return authenticationUserManager.updateAll(user.getId(), user.getRoles());
     }
 
     @Override
     public Mono<Void> onDelete(UserEntity user) {
-        return authenticationManager.deleteAllAuthentications(user.getId());
+        return authenticationUserManager.deleteAll(user.getId());
     }
 }

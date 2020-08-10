@@ -74,7 +74,7 @@ public final class ExternalAuthenticatedUser extends DefaultOAuth2User implement
     }
 
     @Override
-    public ExternalAuthenticatedUser updateSessionRoles(List<UserRole> sessionRoles) {
+    public ExternalAuthenticatedUser updateRoles(List<UserRole> sessionRoles) {
         return new ExternalAuthenticatedUser(
                 id,
                 userId,
@@ -82,6 +82,21 @@ public final class ExternalAuthenticatedUser extends DefaultOAuth2User implement
                 sessionRoles,
                 additionalAuthorities,
                 repositoryCredentials.values()
+        );
+    }
+
+    @Override
+    public AuthenticatedUser updateRepositoryCredentials(RepositoryCredentials repositoryCredentials) {
+        final Set<RepositoryCredentials> repositoriesCredentials = new HashSet<>(this.repositoryCredentials.values());
+        repositoriesCredentials.add(repositoryCredentials);
+
+        return new ExternalAuthenticatedUser(
+                id,
+                userId,
+                token,
+                roles,
+                additionalAuthorities,
+                repositoriesCredentials
         );
     }
 

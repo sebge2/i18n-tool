@@ -109,7 +109,7 @@ public class AuthenticationUserManagerImpl implements AuthenticationUserManager 
     public Mono<Void> updateAll(String userId, Collection<UserRole> roles) {
         return this
                 .findAll(userId)
-                .map(authenticatedUser -> authenticatedUser.updateSessionRoles(
+                .map(authenticatedUser -> authenticatedUser.updateRoles(
                         Stream
                                 .concat(
                                         authenticatedUser.getRoles().stream().filter(role -> !role.isAssignableByEndUser()),

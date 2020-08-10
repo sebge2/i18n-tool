@@ -4,6 +4,7 @@ import be.sgerard.i18n.service.security.UserRole;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import static java.util.Collections.singletonList;
@@ -40,5 +41,25 @@ public class RepositoryTokenCredentials implements RepositoryCredentials {
      */
     public String getToken() {
         return token;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        final RepositoryTokenCredentials that = (RepositoryTokenCredentials) o;
+
+        return Objects.equals(repository, that.repository);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(repository);
     }
 }

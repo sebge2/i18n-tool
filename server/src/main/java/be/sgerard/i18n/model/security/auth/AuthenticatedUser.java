@@ -60,7 +60,12 @@ public interface AuthenticatedUser extends AuthenticatedPrincipal, Serializable 
     Collection<RepositoryCredentials> getRepositoryCredentials();
 
     /**
-     * Updates {@link #getRoles() session roles}.
+     * Updates {@link #getRoles() roles}.
      */
-    AuthenticatedUser updateSessionRoles(List<UserRole> sessionRoles);
+    AuthenticatedUser updateRoles(List<UserRole> sessionRoles);
+
+    /**
+     * Updates credentials of a repository.
+     */
+    AuthenticatedUser updateRepositoryCredentials(RepositoryCredentials repositoryCredentials);
 }

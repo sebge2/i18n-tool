@@ -61,8 +61,28 @@ public class InternalAuthenticatedUser implements AuthenticatedUser {
     }
 
     @Override
-    public InternalAuthenticatedUser updateSessionRoles(List<UserRole> sessionRoles) {
-        return new InternalAuthenticatedUser(id, userId, sessionRoles, additionalAuthorities, repositoryCredentials.values());
+    public InternalAuthenticatedUser updateRoles(List<UserRole> sessionRoles) {
+        return new InternalAuthenticatedUser(
+                id,
+                userId,
+                sessionRoles,
+                additionalAuthorities,
+                repositoryCredentials.values()
+        );
+    }
+
+    @Override
+    public AuthenticatedUser updateRepositoryCredentials(RepositoryCredentials repositoryCredentials) {
+        final Set<RepositoryCredentials> repositoriesCredentials = new HashSet<>(this.repositoryCredentials.values());
+        repositoriesCredentials.add(repositoryCredentials);
+
+        return new InternalAuthenticatedUser(
+                id,
+                userId,
+                roles,
+                additionalAuthorities,
+                repositoriesCredentials
+        );
     }
 
     @Override
