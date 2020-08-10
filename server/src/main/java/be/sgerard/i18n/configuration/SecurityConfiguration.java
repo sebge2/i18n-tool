@@ -2,10 +2,7 @@ package be.sgerard.i18n.configuration;
 
 import be.sgerard.i18n.service.security.UserRole;
 import be.sgerard.i18n.service.security.auth.AuthenticationUserManager;
-import be.sgerard.i18n.service.security.auth.external.ExternalUserDetailsService;
-import be.sgerard.i18n.service.security.auth.external.OAuthUserMapper;
 import be.sgerard.i18n.service.security.auth.internal.InternalAuthenticationManager;
-import be.sgerard.i18n.service.user.UserManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -51,23 +48,20 @@ public class SecurityConfiguration {
 
     private final PasswordEncoder passwordEncoder;
     private final ReactiveUserDetailsService internalUserDetailsService;
+    private final ReactiveOAuth2UserService<OAuth2UserRequest, OAuth2User> externalUserDetailsService;
     private final AuthenticationUserManager authenticationUserManager;
-    private final OAuthUserMapper externalUserHandler;
-    private final UserManager userManager;
     private final ReactiveClientRegistrationRepository repository;
 
     public SecurityConfiguration(PasswordEncoder passwordEncoder,
                                  ReactiveUserDetailsService internalUserDetailsService,
+                                 ReactiveOAuth2UserService<OAuth2UserRequest, OAuth2User> externalUserDetailsService,
                                  AuthenticationUserManager authenticationUserManager,
-                                 OAuthUserMapper externalUserHandler,
-                                 UserManager userManager,
                                  @Autowired(required = false) ReactiveClientRegistrationRepository repository) {
         this.passwordEncoder = passwordEncoder;
 
         this.internalUserDetailsService = internalUserDetailsService;
+        this.externalUserDetailsService = externalUserDetailsService;
         this.authenticationUserManager = authenticationUserManager;
-        this.externalUserHandler = externalUserHandler;
-        this.userManager = userManager;
         this.repository = repository;
     }
 
@@ -91,13 +85,8 @@ public class SecurityConfiguration {
     public OAuth2LoginReactiveAuthenticationManager externalAuthenticationManager() {
         return new OAuth2LoginReactiveAuthenticationManager(
                 new WebClientReactiveAuthorizationCodeTokenResponseClient(),
-                reactiveOAuth2UserService()
+                externalUserDetailsService
         );
-    }
-
-    @Bean
-    public ReactiveOAuth2UserService<OAuth2UserRequest, OAuth2User> reactiveOAuth2UserService() {
-        return new ExternalUserDetailsService(externalUserHandler, userManager, authenticationUserManager);
     }
 
     @Bean
