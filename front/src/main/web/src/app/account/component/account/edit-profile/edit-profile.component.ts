@@ -15,8 +15,10 @@ import {ImportedFile} from "../../../../core/shared/model/imported-file.model";
 export class EditProfileComponent implements OnInit, OnDestroy {
 
     public readonly form: FormGroup;
-    public loading = false;
     public currentUser: User;
+
+    public cancelInProgress: boolean = false;
+    public saveInProgress: boolean = false;
 
     private readonly _destroyed$ = new Subject();
 
@@ -48,16 +50,18 @@ export class EditProfileComponent implements OnInit, OnDestroy {
     }
 
     public onSave() {
-        this.loading = true;
+        this.saveInProgress = true;
 
         this.saveAvatar()
             .then(_ => this.saveProfile())
             .then(_ => this.makeFormUntouched())
             .catch(error => this.notificationService.displayErrorMessage('ACCOUNT.ERROR.SAVE_PROFILE', error))
-            .finally(() => this.loading = false);
+            .finally(() => this.saveInProgress = false);
     }
 
     public resetForm() {
+        this.cancelInProgress = true;
+
         this.form.controls['username'].setValue(this.currentUser.username);
         this.form.controls['displayName'].setValue(this.currentUser.displayName);
         this.form.controls['email'].setValue(this.currentUser.email);
@@ -68,6 +72,11 @@ export class EditProfileComponent implements OnInit, OnDestroy {
         }
 
         this.makeFormUntouched();
+        this.cancelInProgress = false;
+    }
+
+    public get actionInProgress(): boolean {
+        return this.cancelInProgress || this.saveInProgress;
     }
 
     private makeFormUntouched() {

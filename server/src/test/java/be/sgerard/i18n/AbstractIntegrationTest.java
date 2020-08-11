@@ -12,7 +12,7 @@ import org.springframework.test.context.ActiveProfiles;
 @SpringBootTest(classes = {I18nToolApplication.class, TestConfiguration.class}, properties = "spring.main.web-application-type=reactive")
 @ComponentScan({"be.sgerard.i18n", "be.sgerard.test.i18n"})
 @AutoConfigureDataMongo
-@AutoConfigureWebTestClient
+@AutoConfigureWebTestClient(timeout = "30000")
 @ExtendWith(TransactionInvocationInterceptor.class)
 @ActiveProfiles("test")
 @Tag("IntegrationTest")

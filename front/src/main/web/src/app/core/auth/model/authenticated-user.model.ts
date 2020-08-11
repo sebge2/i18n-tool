@@ -17,7 +17,7 @@ export class AuthenticatedUser {
     }
 
     hasRole(role: UserRole): boolean {
-        return this.sessionRoles.includes(role);
+        return _.includes(this.sessionRoles, role);
     }
 
     hasAllRoles(roles: UserRole[]): boolean {

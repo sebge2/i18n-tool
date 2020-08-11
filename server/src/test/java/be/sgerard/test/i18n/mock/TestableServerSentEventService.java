@@ -31,7 +31,6 @@ public class TestableServerSentEventService extends ServerSentEventService {
     @Override
     protected Mono<Void> emit(Event<Object> event) {
         events.add(event);
-
-        return super.emit(event);
+        return Mono.empty();
     }
 }

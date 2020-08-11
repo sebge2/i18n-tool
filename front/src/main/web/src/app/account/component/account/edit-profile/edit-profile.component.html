@@ -30,7 +30,7 @@
         </form>
     </app-card-content>
     <app-card-actions>
-        <app-form-cancel-button [form]="form" [cancelInProgress]="loading" (reset)="resetForm()"></app-form-cancel-button>
-        <app-form-save-button [form]="form" [saveInProgress]="loading" (save)="onSave()"></app-form-save-button>
+        <app-form-cancel-button [form]="form" [cancelInProgress]="cancelInProgress" [disabled]="actionInProgress" (reset)="resetForm()"></app-form-cancel-button>
+        <app-form-save-button [form]="form" [saveInProgress]="saveInProgress" [disabled]="actionInProgress" (save)="onSave()"></app-form-save-button>
     </app-card-actions>
 </app-card>
