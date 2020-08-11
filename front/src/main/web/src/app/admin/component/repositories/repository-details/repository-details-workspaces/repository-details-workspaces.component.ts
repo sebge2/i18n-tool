@@ -3,6 +3,84 @@ import {Repository} from "../../../../../translations/model/repository/repositor
 import {RepositoryStatus} from "../../../../../translations/model/repository/repository-status.model";
 import {RepositoryService} from "../../../../../translations/service/repository.service";
 import {NotificationService} from "../../../../../core/notification/service/notification.service";
+import {
+    EmptyTreeObjectDataSource, TreeObject,
+    TreeObjectDataSource
+} from "../../../../../core/shared/component/tree/tree.component";
+import {Observable, of} from "rxjs";
+import {BundleFileDto} from "../../../../../api";
+import {Workspace} from "../../../../../translations/model/workspace.model";
+import {WorkspaceService} from "../../../../../translations/service/workspace.service";
+import {map} from "rxjs/operators";
+
+export class WorkspaceTreeNode implements TreeObject {
+
+    constructor(private workspace: Workspace) {
+    }
+
+    public get expandable(): boolean{
+        return true;
+    }
+
+    public get name(): string {
+        return this.workspace.branch;
+    }
+
+}
+
+export class WorkspaceBundleTreeNode implements TreeObject {
+
+    constructor(private bundleFileDto: BundleFileDto) {
+    }
+
+    public get expandable(): boolean{
+        return true;
+    }
+
+    public get name(): string {
+        return this.bundleFileDto.location;
+    }
+}
+
+export class WorkspaceBundleFileEntryTreeNode implements TreeObject {
+
+    constructor() {
+    }
+
+    public get expandable(): boolean{
+        return false;
+    }
+
+    public get name(): string {
+        return '';
+    }
+
+}
+
+export class WorkspaceTreeObjectDataSource implements TreeObjectDataSource {
+
+    constructor(private workspaceService: WorkspaceService,
+                private repository: Repository) {
+    }
+
+    getRootObjects(): Observable<TreeObject[]> {
+        return this.workspaceService
+            .getRepositoryWorkspaces(this.repository.id)
+            .pipe(map(workspaces => workspaces.map(workspace => new WorkspaceTreeNode(workspace))));
+    }
+
+    getChildren(parent: TreeObject): Observable<TreeObject[]> {
+        return of([
+            new WorkspaceBundleTreeNode({
+                location: "/tmp/test",
+                type: "JAVA_PROPERTIES",
+                name: "test",
+                id: 'toto'
+            })
+        ]);
+    }
+
+}
 
 @Component({
     selector: 'app-repository-details-workspaces',
@@ -14,13 +92,16 @@ export class RepositoryDetailsWorkspacesComponent implements OnInit {
     @Input() public repository: Repository;
 
     public RepositoryStatus = RepositoryStatus;
+    public workspacesDataSource: TreeObjectDataSource = new EmptyTreeObjectDataSource();
     public initInProgress = false;
 
     constructor(private _repositoryService: RepositoryService,
+                private _workspaceService: WorkspaceService,
                 private _notificationService: NotificationService) {
     }
 
     ngOnInit(): void {
+        this.workspacesDataSource = new WorkspaceTreeObjectDataSource(this._workspaceService, this.repository);
     }
 
     public onInitialize() {

@@ -19,6 +19,9 @@
                     </div>
                 </div>
             </div>
+            <div *ngIf="repository.status === RepositoryStatus.INITIALIZED">
+                <app-tree [treeNodeDataSource]="workspacesDataSource"></app-tree>
+            </div>
         </div>
     </app-card-content>
     <app-card-actions>
