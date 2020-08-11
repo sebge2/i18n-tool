@@ -10,6 +10,7 @@ import java.util.*;
 
 import static be.sgerard.i18n.service.security.UserRole.mapToAuthorities;
 import static java.util.Collections.singletonMap;
+import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
 /**
@@ -23,6 +24,8 @@ public final class ExternalAuthenticatedUser extends DefaultOAuth2User implement
      * Name of the attribute containing the unique user id.
      */
     public static final String NAME_ATTRIBUTE = "principal_id";
+
+    private static final long serialVersionUID = 1L;
 
     private final String id;
     private final String userId;
@@ -97,6 +100,18 @@ public final class ExternalAuthenticatedUser extends DefaultOAuth2User implement
                 roles,
                 additionalAuthorities,
                 repositoriesCredentials
+        );
+    }
+
+    @Override
+    public AuthenticatedUser removeRepositoryCredentials(String repositoryId) {
+        return new ExternalAuthenticatedUser(
+                id,
+                userId,
+                token,
+                roles,
+                additionalAuthorities,
+                repositoryCredentials.values().stream().filter(cred -> !Objects.equals(repositoryId, cred.getRepository())).collect(toList())
         );
     }
 

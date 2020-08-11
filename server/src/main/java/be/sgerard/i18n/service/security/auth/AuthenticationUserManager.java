@@ -68,6 +68,13 @@ public interface AuthenticationUserManager {
     Mono<Void> updateAllRepositoryCredentials(String repositoryId);
 
     /**
+     * Deletes repository credentials of all the {@link AuthenticatedUser users}.
+     *
+     * @see AuthenticatedUser#getRepositoryCredentials()
+     */
+    Mono<Void> deleteAllRepositoryCredentials(String repositoryId);
+
+    /**
      * Deletes all the {@link AuthenticatedUser authenticated users} associated to the specified {@link UserEntity user}.
      *
      * @see UserEntity#getId()

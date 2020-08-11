@@ -8,6 +8,7 @@ import org.springframework.security.core.GrantedAuthority;
 import java.util.*;
 
 import static be.sgerard.i18n.service.security.UserRole.mapToAuthorities;
+import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
 /**
@@ -16,6 +17,8 @@ import static java.util.stream.Collectors.toMap;
  * @author Sebastien Gerard
  */
 public class InternalAuthenticatedUser implements AuthenticatedUser {
+
+    private static final long serialVersionUID = 1L;
 
     private final String id;
     private final String userId;
@@ -82,6 +85,17 @@ public class InternalAuthenticatedUser implements AuthenticatedUser {
                 roles,
                 additionalAuthorities,
                 repositoriesCredentials
+        );
+    }
+
+    @Override
+    public AuthenticatedUser removeRepositoryCredentials(String repositoryId) {
+        return new InternalAuthenticatedUser(
+                id,
+                userId,
+                roles,
+                additionalAuthorities,
+                repositoryCredentials.values().stream().filter(cred -> !Objects.equals(repositoryId, cred.getRepository())).collect(toList())
         );
     }
 

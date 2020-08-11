@@ -68,4 +68,9 @@ public interface AuthenticatedUser extends AuthenticatedPrincipal, Serializable 
      * Updates credentials of a repository.
      */
     AuthenticatedUser updateRepositoryCredentials(RepositoryCredentials repositoryCredentials);
+
+    /**
+     * Removes credentials of a repository.
+     */
+    AuthenticatedUser removeRepositoryCredentials(String repositoryId);
 }
