@@ -127,6 +127,8 @@ export class TreeDataSource implements DataSource<TreeNode> {
                         return;
                     }
 
+                    this.removeChildObjectsAtIndex(this.treeNodes.indexOf(node), node);
+
                     if (expand) {
                         this.insertChildObjectsAtIndex(childObjects, node.level + 1, index);
                     }

@@ -7,7 +7,7 @@ import {
     EmptyTreeObjectDataSource, TreeObject,
     TreeObjectDataSource
 } from "../../../../../core/shared/component/tree/tree.component";
-import {Observable, of} from "rxjs";
+import {interval, Observable, of, timer} from "rxjs";
 import {BundleFileDto} from "../../../../../api";
 import {Workspace} from "../../../../../translations/model/workspace.model";
 import {WorkspaceService} from "../../../../../translations/service/workspace.service";
@@ -70,14 +70,17 @@ export class WorkspaceTreeObjectDataSource implements TreeObjectDataSource {
     }
 
     getChildren(parent: TreeObject): Observable<TreeObject[]> {
-        return of([
-            new WorkspaceBundleTreeNode({
-                location: "/tmp/test",
-                type: "JAVA_PROPERTIES",
-                name: "test",
-                id: 'toto'
-            })
-        ]);
+        return interval(1000)
+            .pipe(map(index =>
+                [
+                    new WorkspaceBundleTreeNode({
+                        location: "/tmp/test" + index,
+                        type: "JAVA_PROPERTIES",
+                        name: "test",
+                        id: 'toto'
+                    })
+                ]
+            ))
     }
 
 }
