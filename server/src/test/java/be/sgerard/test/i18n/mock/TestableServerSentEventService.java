@@ -19,7 +19,6 @@ public class TestableServerSentEventService extends ServerSentEventService {
 
     private final List<ServerSentEventService.Event<?>> events = new ArrayList<>();
 
-    @Lazy
     public TestableServerSentEventService(UserLiveSessionManager userSessionManager, AuthenticationUserManager authenticationUserManager) {
         super(userSessionManager, authenticationUserManager);
     }
