@@ -14,7 +14,7 @@ export interface TreeObjectDataSource {
 
     getRootObjects(): Observable<TreeObject[]>;
 
-    getChildren(parent: TreeObject): Observable<TreeObject[]>;
+    getChildren(parent: TreeObject, level: number): Observable<TreeObject[]>;
 }
 
 export class EmptyTreeObjectDataSource implements TreeObjectDataSource {
@@ -23,7 +23,7 @@ export class EmptyTreeObjectDataSource implements TreeObjectDataSource {
         return of([])
     }
 
-    public getChildren(parent: TreeObject): Observable<TreeObject[]> {
+    public getChildren(parent: TreeObject, level: number): Observable<TreeObject[]> {
         return of([]);
     }
 }
@@ -117,7 +117,7 @@ export class TreeDataSource implements DataSource<TreeNode> {
         if (expand) {
             node.isLoading = true;
 
-            combineLatest([node.expanded, this._source.getChildren(node.data)])
+            combineLatest([node.expanded, this._source.getChildren(node.data, node.level + 1)])
                 .pipe(takeWhile(([expanded, childObjects]) => expanded))
                 .subscribe(([expanded, childObjects]) => {
                     node.isLoading = false

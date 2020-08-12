@@ -69,7 +69,7 @@ export class WorkspaceTreeObjectDataSource implements TreeObjectDataSource {
             .pipe(map(workspaces => workspaces.map(workspace => new WorkspaceTreeNode(workspace))));
     }
 
-    getChildren(parent: TreeObject): Observable<TreeObject[]> {
+    getChildren(parent: TreeObject, level: number): Observable<TreeObject[]> {
         return interval(1000)
             .pipe(map(index =>
                 [
