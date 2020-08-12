@@ -23,7 +23,7 @@
             <div *ngIf="repository.status === RepositoryStatus.INITIALIZED">
                 <app-tree
                         [treeNodeDataSource]="workspacesDataSource"
-                        [nodeComponent]="RepositoryDetailsWorkspaceNodeComponent">
+                        [nodeComponent]="RepositoryDetailsWorkspaceTreeNodeComponent">
                 </app-tree>
             </div>
         </div>

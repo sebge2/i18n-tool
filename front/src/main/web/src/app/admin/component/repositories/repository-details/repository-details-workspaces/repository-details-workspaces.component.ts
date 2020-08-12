@@ -8,13 +8,13 @@ import {
     TreeObject,
     TreeObjectDataSource
 } from "../../../../../core/shared/component/tree/tree.component";
-import {interval, Observable, of} from "rxjs";
+import {Observable, of} from "rxjs";
 import {Workspace} from "../../../../../translations/model/workspace/workspace.model";
 import {WorkspaceService} from "../../../../../translations/service/workspace.service";
 import {map} from "rxjs/operators";
-import {RepositoryDetailsWorkspaceNodeComponent} from "./repository-details-workspace-node/repository-details-workspace-node.component";
 import {BundleFile} from "../../../../../translations/model/workspace/bundle-file.model";
 import {BundleFileEntry} from "../../../../../translations/model/workspace/bundle-file-entry.model";
+import {RepositoryDetailsWorkspaceTreeNodeComponent} from './repository-details-workspace-tree-node/repository-details-workspace-tree-node.component';
 
 export class WorkspaceTreeNode implements TreeObject {
 
@@ -71,14 +71,14 @@ export class WorkspaceTreeObjectDataSource implements TreeObjectDataSource {
     }
 
     getChildren(parent: TreeObject, level: number): Observable<TreeObject[]> {
-        if(level == 2){
-            const workspaceNode :WorkspaceTreeNode = <WorkspaceTreeNode> parent;
+        if (level == 2) {
+            const workspaceNode: WorkspaceTreeNode = <WorkspaceTreeNode>parent;
 
             return this.workspaceService
                 .getWorkspaceBundleFile(workspaceNode.workspace.id)
                 .pipe(map(bundleFiles => bundleFiles.map(bundleFile => new WorkspaceBundleTreeNode(bundleFile))));
-        } else if(level == 3){
-            const bundleTreeNode :WorkspaceBundleTreeNode = <WorkspaceBundleTreeNode> parent;
+        } else if (level == 3) {
+            const bundleTreeNode: WorkspaceBundleTreeNode = <WorkspaceBundleTreeNode>parent;
 
             return of(bundleTreeNode.bundleFile.files.map(fileEntry => new WorkspaceBundleFileEntryTreeNode(fileEntry)));
         } else {
@@ -97,7 +97,7 @@ export class RepositoryDetailsWorkspacesComponent implements OnInit {
     @Input() public repository: Repository;
 
     public RepositoryStatus = RepositoryStatus;
-    public RepositoryDetailsWorkspaceNodeComponent = RepositoryDetailsWorkspaceNodeComponent;
+    public RepositoryDetailsWorkspaceTreeNodeComponent = RepositoryDetailsWorkspaceTreeNodeComponent;
 
     public workspacesDataSource: TreeObjectDataSource = new EmptyTreeObjectDataSource();
     public initInProgress = false;

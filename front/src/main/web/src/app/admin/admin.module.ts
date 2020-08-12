@@ -21,6 +21,9 @@ import {RepositoryAddWizardStepInitializationComponent} from './component/reposi
 import { RepositoryDetailsConfigComponent } from './component/repositories/repository-details/repository-details-config/repository-details-config.component';
 import { RepositoryDetailsWorkspacesComponent } from './component/repositories/repository-details/repository-details-workspaces/repository-details-workspaces.component';
 import { RepositoryDetailsWorkspaceNodeComponent } from './component/repositories/repository-details/repository-details-workspaces/repository-details-workspace-node/repository-details-workspace-node.component';
+import { RepositoryDetailsBundleFileNodeComponent } from './component/repositories/repository-details/repository-details-workspaces/repository-details-bundle-file-node/repository-details-bundle-file-node.component';
+import { RepositoryDetailsBundleFileEntryNodeComponent } from './component/repositories/repository-details/repository-details-workspaces/repository-details-bundle-file-entry-node/repository-details-bundle-file-entry-node.component';
+import { RepositoryDetailsWorkspaceTreeNodeComponent } from './component/repositories/repository-details/repository-details-workspaces/repository-details-workspace-tree-node/repository-details-workspace-tree-node.component';
 
 const appRoutes: Routes = [
     {path: 'users', component: UsersComponent},
@@ -49,7 +52,10 @@ const appRoutes: Routes = [
         RepositoryDetailsComponent,
         RepositoryDetailsConfigComponent,
         RepositoryDetailsWorkspacesComponent,
-        RepositoryDetailsWorkspaceNodeComponent
+        RepositoryDetailsWorkspaceNodeComponent,
+        RepositoryDetailsBundleFileNodeComponent,
+        RepositoryDetailsBundleFileEntryNodeComponent,
+        RepositoryDetailsWorkspaceTreeNodeComponent
     ],
     entryComponents: [
         ConfirmWorkspaceDeletionComponent,
