@@ -9,7 +9,6 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
-import { BundleFileDto } from './bundleFileDto';
 
 /**
  * A workspace is a place where users can define translations and then submit them for review. A workspace is based on a particular branch.
@@ -31,10 +30,6 @@ export interface WorkspaceDto {
      * The unique id of the associated repository.
      */
     repositoryId: string;
-    /**
-     * All the bundle files contained in this workspace.
-     */
-    files: Array<BundleFileDto>;
 }
 export namespace WorkspaceDto {
     export type StatusDtoEnum = 'NOT_INITIALIZED' | 'INITIALIZED' | 'IN_REVIEW';

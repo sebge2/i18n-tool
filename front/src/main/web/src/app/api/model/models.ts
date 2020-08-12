@@ -2,6 +2,7 @@ export * from './authenticatedUserDto';
 export * from './body1Dto';
 export * from './bodyDto';
 export * from './bundleFileDto';
+export * from './bundleFileEntryDto';
 export * from './bundleKeyTranslationDto';
 export * from './currentUserPasswordUpdateDto';
 export * from './currentUserPatchDto';

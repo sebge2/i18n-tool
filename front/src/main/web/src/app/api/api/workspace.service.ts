@@ -17,6 +17,7 @@ import { CustomHttpUrlEncodingCodec }                        from '../encoder';
 
 import { Observable }                                        from 'rxjs';
 
+import { BundleFileDto } from '../model/bundleFileDto';
 import { ErrorMessagesDto } from '../model/errorMessagesDto';
 import { WorkspaceDto } from '../model/workspaceDto';
 
@@ -155,6 +156,58 @@ export class WorkspaceService {
     }
 
     /**
+     * Executes an action on workspaces of a particular repository.
+     * 
+     * @param repositoryId 
+     * @param action The action to execute.
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public executeWorkspacesAction(repositoryId: string, action: string, observe?: 'body', reportProgress?: boolean): Observable<Array<WorkspaceDto>>;
+    public executeWorkspacesAction(repositoryId: string, action: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<WorkspaceDto>>>;
+    public executeWorkspacesAction(repositoryId: string, action: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<WorkspaceDto>>>;
+    public executeWorkspacesAction(repositoryId: string, action: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        if (repositoryId === null || repositoryId === undefined) {
+            throw new Error('Required parameter repositoryId was null or undefined when calling executeWorkspacesAction.');
+        }
+
+        if (action === null || action === undefined) {
+            throw new Error('Required parameter action was null or undefined when calling executeWorkspacesAction.');
+        }
+
+        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        if (action !== undefined && action !== null) {
+            queryParameters = queryParameters.set('action', <any>action);
+        }
+
+        let headers = this.defaultHeaders;
+
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            '*/*'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+        ];
+
+        return this.httpClient.request<Array<WorkspaceDto>>('post',`${this.basePath}/api/repository/${encodeURIComponent(String(repositoryId))}/workspace/do`,
+            {
+                params: queryParameters,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
      * Returns registered workspaces.
      * 
      * @param id 
@@ -273,29 +326,19 @@ export class WorkspaceService {
     }
 
     /**
-     * Executes an action on workspaces of a particular repository.
+     * Returns bundle files composing the specified workspace.
      * 
-     * @param action The action to execute.
-     * @param repositoryId 
+     * @param id 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public synchronizeWorkspaces1(action: string, repositoryId: string, observe?: 'body', reportProgress?: boolean): Observable<Array<WorkspaceDto>>;
-    public synchronizeWorkspaces1(action: string, repositoryId: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<WorkspaceDto>>>;
-    public synchronizeWorkspaces1(action: string, repositoryId: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<WorkspaceDto>>>;
-    public synchronizeWorkspaces1(action: string, repositoryId: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public findWorkspaceBundleFiles(id: string, observe?: 'body', reportProgress?: boolean): Observable<Array<BundleFileDto>>;
+    public findWorkspaceBundleFiles(id: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<BundleFileDto>>>;
+    public findWorkspaceBundleFiles(id: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<BundleFileDto>>>;
+    public findWorkspaceBundleFiles(id: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
-        if (action === null || action === undefined) {
-            throw new Error('Required parameter action was null or undefined when calling synchronizeWorkspaces1.');
-        }
-
-        if (repositoryId === null || repositoryId === undefined) {
-            throw new Error('Required parameter repositoryId was null or undefined when calling synchronizeWorkspaces1.');
-        }
-
-        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
-        if (action !== undefined && action !== null) {
-            queryParameters = queryParameters.set('action', <any>action);
+        if (id === null || id === undefined) {
+            throw new Error('Required parameter id was null or undefined when calling findWorkspaceBundleFiles.');
         }
 
         let headers = this.defaultHeaders;
@@ -313,9 +356,8 @@ export class WorkspaceService {
         const consumes: string[] = [
         ];
 
-        return this.httpClient.request<Array<WorkspaceDto>>('post',`${this.basePath}/api/repository/${encodeURIComponent(String(repositoryId))}/workspace/do`,
+        return this.httpClient.request<Array<BundleFileDto>>('get',`${this.basePath}/api/repository/workspace/${encodeURIComponent(String(id))}/bundle-file`,
             {
-                params: queryParameters,
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
                 observe: observe,

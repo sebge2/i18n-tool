@@ -9,6 +9,7 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
+import { BundleFileEntryDto } from './bundleFileEntryDto';
 
 /**
  * Bundle file containing translations of keys.
@@ -30,6 +31,10 @@ export interface BundleFileDto {
      * Type of bundle file
      */
     type: BundleFileDto.TypeDtoEnum;
+    /**
+     * All the file paths of this bundle.
+     */
+    files: Array<BundleFileEntryDto>;
 }
 export namespace BundleFileDto {
     export type TypeDtoEnum = 'JAVA_PROPERTIES' | 'JSON_ICU';
