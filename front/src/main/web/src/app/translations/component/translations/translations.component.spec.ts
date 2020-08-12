@@ -13,7 +13,7 @@ import {CoreEventModule} from "../../../core/event/core-event.module";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {BehaviorSubject} from "rxjs";
 import {WorkspaceService} from "../../service/workspace.service";
-import {Workspace} from "../../model/workspace.model";
+import {Workspace} from "../../model/workspace/workspace.model";
 import {AuthenticationService} from "../../../core/auth/service/authentication.service";
 import {CoreAuthModule} from "../../../core/auth/core-auth.module";
 import {AuthenticatedUser} from "../../../core/auth/model/authenticated-user.model";

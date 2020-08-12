@@ -4,7 +4,7 @@ import {ConfirmWorkspaceDeletionComponent} from './confirm-workspace-deletion.co
 import {CoreSharedModule} from "../../../../core/shared/core-shared-module";
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material";
 import {BrowserDynamicTestingModule} from "@angular/platform-browser-dynamic/testing";
-import {Workspace} from "../../../../translations/model/workspace.model";
+import {Workspace} from "../../../../translations/model/workspace/workspace.model";
 import {OverlayContainer} from "@angular/cdk/overlay";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {TranslateModule} from "@ngx-translate/core";

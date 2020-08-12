@@ -1,5 +1,5 @@
 import {WorkspaceStatus} from './workspace-status.model';
-import {WorkspaceDto} from "../../api";
+import {WorkspaceDto} from "../../../api";
 
 export class Workspace {
 

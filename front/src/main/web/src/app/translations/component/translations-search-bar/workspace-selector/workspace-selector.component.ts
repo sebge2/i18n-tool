@@ -1,5 +1,5 @@
 import {Component, EventEmitter, OnDestroy, OnInit, Output} from '@angular/core';
-import {Workspace} from "../../../model/workspace.model";
+import {Workspace} from "../../../model/workspace/workspace.model";
 import {WorkspaceService} from "../../../service/workspace.service";
 import {Observable, Subject} from 'rxjs';
 import {takeUntil, tap} from "rxjs/operators";

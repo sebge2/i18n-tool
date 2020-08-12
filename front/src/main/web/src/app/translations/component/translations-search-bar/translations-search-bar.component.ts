@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Locale} from "../../../core/translation/model/locale.model";
-import {Workspace} from "../../model/workspace.model";
+import {Workspace} from "../../model/workspace/workspace.model";
 import {TranslationsSearchRequest} from "../../model/translations-search-request.model";
 import {TranslationsSearchCriterion} from "../../model/translations-search-criterion.model";
 import {TranslationLocaleService} from "../../service/translation-locale.service";

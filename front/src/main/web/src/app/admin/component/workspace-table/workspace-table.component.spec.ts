@@ -5,7 +5,7 @@ import {TranslateModule} from "@ngx-translate/core";
 import {CoreSharedModule} from "../../../core/shared/core-shared-module";
 import {CoreEventModule} from "../../../core/event/core-event.module";
 import {BehaviorSubject} from "rxjs";
-import {Workspace} from "../../../translations/model/workspace.model";
+import {Workspace} from "../../../translations/model/workspace/workspace.model";
 import {WorkspaceService} from "../../../translations/service/workspace.service";
 import {AuthenticationService} from "../../../core/auth/service/authentication.service";
 import {CoreAuthModule} from "../../../core/auth/core-auth.module";

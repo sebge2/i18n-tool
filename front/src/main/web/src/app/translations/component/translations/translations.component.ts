@@ -1,13 +1,13 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {TranslationsSearchRequest} from "../../model/translations-search-request.model";
-import {WorkspaceStatus} from "../../model/workspace-status.model";
+import {WorkspaceStatus} from "../../model/workspace/workspace-status.model";
 import {WorkspaceService} from "../../service/workspace.service";
 import {
     StartReviewDialogModel,
     TranslationsStartReviewComponent
 } from "../translations-start-review/translations-start-review.component";
 import {MatDialog} from "@angular/material";
-import {Workspace} from "../../model/workspace.model";
+import {Workspace} from "../../model/workspace/workspace.model";
 import {Subject} from "rxjs";
 
 @Component({

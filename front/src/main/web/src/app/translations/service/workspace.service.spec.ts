@@ -8,7 +8,7 @@ import {Repository} from "../model/repository/repository.model";
 import {Events} from "../../core/event/model/events.model";
 import {EventService} from "../../core/event/service/event.service";
 import {take, toArray} from "rxjs/operators";
-import {Workspace} from "../model/workspace.model";
+import {Workspace} from "../model/workspace/workspace.model";
 import {NotificationService} from "../../core/notification/service/notification.service";
 
 describe('WorkspaceService', () => {

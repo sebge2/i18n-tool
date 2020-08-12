@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {MatDialog, MatTableDataSource} from '@angular/material';
-import {Workspace} from "../../../translations/model/workspace.model";
+import {Workspace} from "../../../translations/model/workspace/workspace.model";
 import {WorkspaceService} from "../../../translations/service/workspace.service";
 import {Subject} from "rxjs";
 import {takeUntil} from "rxjs/operators";

@@ -10,7 +10,7 @@ import {TranslateModule} from "@ngx-translate/core";
 import {CoreEventModule} from "../../../core/event/core-event.module";
 import {BehaviorSubject} from "rxjs";
 import {WorkspaceService} from "../../service/workspace.service";
-import {Workspace} from "../../model/workspace.model";
+import {Workspace} from "../../model/workspace/workspace.model";
 
 describe('TranslationsSearchBarComponent', () => {
     let component: TranslationsSearchBarComponent;

@@ -1,7 +1,7 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {AbstractControl, FormBuilder, FormGroup, ValidatorFn} from "@angular/forms";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material";
-import {Workspace} from "../../../../translations/model/workspace.model";
+import {Workspace} from "../../../../translations/model/workspace/workspace.model";
 
 @Component({
     selector: 'app-confirm-deletion',

@@ -1,5 +1,5 @@
 import {Locale} from "../../core/translation/model/locale.model";
-import {Workspace} from "./workspace.model";
+import {Workspace} from "./workspace/workspace.model";
 import {TranslationsSearchCriterion} from "./translations-search-criterion.model";
 
 export class TranslationsSearchRequest {

@@ -7,7 +7,7 @@ import {CoreEventModule} from "../../../../core/event/core-event.module";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {WorkspaceService} from "../../../service/workspace.service";
 import {BehaviorSubject} from "rxjs";
-import {Workspace} from "../../../model/workspace.model";
+import {Workspace} from "../../../model/workspace/workspace.model";
 
 describe('WorkspaceSelectorComponent', () => {
     let component: WorkspaceSelectorComponent;

@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {EventService} from "../../core/event/service/event.service";
-import {Workspace} from "../model/workspace.model";
+import {Workspace} from "../model/workspace/workspace.model";
 import {Observable} from "rxjs";
 import {Events} from 'src/app/core/event/model/events.model';
 import {catchError, map} from "rxjs/operators";

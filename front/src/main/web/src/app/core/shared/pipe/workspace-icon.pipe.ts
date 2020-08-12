@@ -1,6 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import {Workspace} from "../../../translations/model/workspace.model";
-import {WorkspaceStatus} from "../../../translations/model/workspace-status.model";
+import {Workspace} from "../../../translations/model/workspace/workspace.model";
+import {WorkspaceStatus} from "../../../translations/model/workspace/workspace-status.model";
 
 @Pipe({
   name: 'workspaceIcon'

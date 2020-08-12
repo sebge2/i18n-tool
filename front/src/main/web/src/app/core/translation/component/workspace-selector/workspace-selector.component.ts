@@ -13,7 +13,7 @@ import {
 } from '@angular/core';
 import {ControlValueAccessor, FormBuilder, FormGroup, NG_VALUE_ACCESSOR, NgControl} from "@angular/forms";
 import {MatFormFieldControl} from "@angular/material/form-field";
-import {Workspace} from "../../../../translations/model/workspace.model";
+import {Workspace} from "../../../../translations/model/workspace/workspace.model";
 import {MatAutocomplete, MatAutocompleteSelectedEvent} from "@angular/material/autocomplete";
 import {combineLatest, Observable, Subject} from "rxjs";
 import {COMMA, ENTER} from "@angular/cdk/keycodes";
