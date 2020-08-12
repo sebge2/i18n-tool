@@ -1,7 +1,8 @@
 <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
     <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding>
         <button mat-icon-button disabled></button>
-        {{node.data.name}}
+
+        <app-tree-node-template [node]="node" [nodeComponent]="nodeComponent"></app-tree-node-template>
     </mat-tree-node>
 
     <mat-tree-node *matTreeNodeDef="let node; when: hasChild" matTreeNodePadding>
@@ -10,7 +11,9 @@
                 {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
             </mat-icon>
         </button>
-        {{node.data.name}}
+
+        <app-tree-node-template [node]="node" [nodeComponent]="nodeComponent"></app-tree-node-template>
+
         <mat-progress-bar *ngIf="node.isLoading" mode="indeterminate" class="example-tree-progress-bar"></mat-progress-bar>
     </mat-tree-node>
 </mat-tree>

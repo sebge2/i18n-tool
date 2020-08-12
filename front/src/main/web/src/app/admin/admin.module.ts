@@ -20,6 +20,7 @@ import {RepositoryAddWizardStepCreationComponent} from './component/repositories
 import {RepositoryAddWizardStepInitializationComponent} from './component/repositories/repository-list/repository-add-wizard/repository-add-wizard-step-initialization/repository-add-wizard-step-initialization.component';
 import { RepositoryDetailsConfigComponent } from './component/repositories/repository-details/repository-details-config/repository-details-config.component';
 import { RepositoryDetailsWorkspacesComponent } from './component/repositories/repository-details/repository-details-workspaces/repository-details-workspaces.component';
+import { RepositoryDetailsWorkspaceNodeComponent } from './component/repositories/repository-details/repository-details-workspaces/repository-details-workspace-node/repository-details-workspace-node.component';
 
 const appRoutes: Routes = [
     {path: 'users', component: UsersComponent},
@@ -47,7 +48,8 @@ const appRoutes: Routes = [
         RepositoryAddWizardStepInitializationComponent,
         RepositoryDetailsComponent,
         RepositoryDetailsConfigComponent,
-        RepositoryDetailsWorkspacesComponent
+        RepositoryDetailsWorkspacesComponent,
+        RepositoryDetailsWorkspaceNodeComponent
     ],
     entryComponents: [
         ConfirmWorkspaceDeletionComponent,

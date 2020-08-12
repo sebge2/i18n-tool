@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit, Type} from '@angular/core';
 import {FlatTreeControl, TreeControl} from "@angular/cdk/tree";
 import {CollectionViewer, DataSource, SelectionChange} from "@angular/cdk/collections";
 import {BehaviorSubject, combineLatest, merge, Observable, of, Subject} from "rxjs";
@@ -172,8 +172,11 @@ export class TreeDataSource implements DataSource<TreeNode> {
 })
 export class TreeComponent implements OnInit {
 
+    @Input() public nodeComponent: Type<any>;
+
     public treeControl: FlatTreeControl<TreeNode>;
     public dataSource: TreeDataSource;
+
     private _treeNodeDataSource: TreeObjectDataSource = new EmptyTreeObjectDataSource();
 
     constructor() {

@@ -31,6 +31,7 @@ import {MoreActionsButtonComponent} from "./component/more-actions-button/more-a
 import {SyncButtonComponent} from "./component/sync-button/sync-button.component";
 import {InitDownloadButtonComponent} from "./component/init-download-button/init-download-button.component";
 import {TreeComponent} from "./component/tree/tree.component";
+import {TreeNodeTemplateComponent} from "./component/tree/tree-node-template/tree-node-template.component";
 
 @NgModule({
     declarations: [
@@ -57,6 +58,7 @@ import {TreeComponent} from "./component/tree/tree.component";
         CardContentComponent,
         CardHeaderActionsComponent,
         TreeComponent,
+        TreeNodeTemplateComponent,
 
         WorkspaceIconPipe,
         WorkspaceIconCssPipe,
@@ -99,6 +101,7 @@ import {TreeComponent} from "./component/tree/tree.component";
         CardContentComponent,
         CardHeaderActionsComponent,
         TreeComponent,
+        TreeNodeTemplateComponent,
 
         WorkspaceIconPipe,
         WorkspaceIconCssPipe,
