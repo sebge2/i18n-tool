@@ -1,10 +1,10 @@
 @font-face {
     font-family: "app-icons";
-    src: url("./app-icons.eot?31d526809da6c939313e78eb6edaa6c9?#iefix") format("embedded-opentype"),
-url("./app-icons.woff2?31d526809da6c939313e78eb6edaa6c9") format("woff2"),
-url("./app-icons.woff?31d526809da6c939313e78eb6edaa6c9") format("woff"),
-url("./app-icons.ttf?31d526809da6c939313e78eb6edaa6c9") format("truetype"),
-url("./app-icons.svg?31d526809da6c939313e78eb6edaa6c9#app-icons") format("svg");
+    src: url("./app-icons.eot?0f354e4d7210c3323af02f68865dad18?#iefix") format("embedded-opentype"),
+url("./app-icons.woff2?0f354e4d7210c3323af02f68865dad18") format("woff2"),
+url("./app-icons.woff?0f354e4d7210c3323af02f68865dad18") format("woff"),
+url("./app-icons.ttf?0f354e4d7210c3323af02f68865dad18") format("truetype"),
+url("./app-icons.svg?0f354e4d7210c3323af02f68865dad18#app-icons") format("svg");
 }
 
 *[class^="app-icon-"]:before, *[class*=" app-icon-"]:before {
@@ -26,4 +26,10 @@ url("./app-icons.svg?31d526809da6c939313e78eb6edaa6c9#app-icons") format("svg");
 }
 .app-icon-google:before {
     content: "\f103";
+}
+.app-icon-java-file:before {
+    content: "\f104";
+}
+.app-icon-json-file:before {
+    content: "\f105";
 }

@@ -1,5 +1,7 @@
 {
     "icon-git": "\\f101",
     "icon-github": "\\f102",
-    "icon-google": "\\f103"
+    "icon-google": "\\f103",
+    "icon-java-file": "\\f104",
+    "icon-json-file": "\\f105"
 }
