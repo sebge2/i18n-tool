@@ -3,11 +3,12 @@ import {EventService} from "../../core/event/service/event.service";
 import {Workspace} from "../model/workspace/workspace.model";
 import {Observable} from "rxjs";
 import {Events} from 'src/app/core/event/model/events.model';
-import {catchError, map} from "rxjs/operators";
+import {catchError, distinctUntilChanged, filter, map, mergeMap} from "rxjs/operators";
 import {NotificationService} from "../../core/notification/service/notification.service";
 import {synchronizedCollection} from "../../core/shared/utils/synchronized-observable-utils";
 import {WorkspaceService as ApiWorkspaceService} from "../../api";
 import * as _ from "lodash";
+import {BundleFile} from "../model/workspace/bundle-file.model";
 
 @Injectable({
     providedIn: 'root'
@@ -41,6 +42,23 @@ export class WorkspaceService {
     public getRepositoryWorkspaces(repositoryId: string): Observable<Workspace[]> {
         return this._workspaces$
             .pipe(map(workspaces => workspaces.filter(workspace => _.isEqual(workspace.repositoryId, repositoryId))));
+    }
+
+    public getWorkspace(workspaceId: string): Observable<Workspace> {
+        return this.getWorkspaces()
+            .pipe(
+                map(workspaces => _.find(workspaces, workspace => _.isEqual(workspace.id, workspaceId))),
+                filter(workspace => !!workspace),
+                distinctUntilChanged()
+            );
+    }
+
+    public getWorkspaceBundleFile(workspaceId: string): Observable<BundleFile[]> {
+        return this.getWorkspace(workspaceId)
+            .pipe(
+                mergeMap(_ => this.apiWorkspaceService.findWorkspaceBundleFiles(workspaceId)),
+                map(bundleFiles => bundleFiles.map(bundleFileDto => BundleFile.fromDto(bundleFileDto)))
+            );
     }
 }
 

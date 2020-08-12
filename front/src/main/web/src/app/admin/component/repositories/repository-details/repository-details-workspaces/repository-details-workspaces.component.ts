@@ -4,57 +4,58 @@ import {RepositoryStatus} from "../../../../../translations/model/repository/rep
 import {RepositoryService} from "../../../../../translations/service/repository.service";
 import {NotificationService} from "../../../../../core/notification/service/notification.service";
 import {
-    EmptyTreeObjectDataSource, TreeObject,
+    EmptyTreeObjectDataSource,
+    TreeObject,
     TreeObjectDataSource
 } from "../../../../../core/shared/component/tree/tree.component";
-import {interval, Observable, of, timer} from "rxjs";
-import {BundleFileDto} from "../../../../../api";
-import {Workspace} from "../../../../../translations/model/workspace.model";
+import {interval, Observable, of} from "rxjs";
+import {Workspace} from "../../../../../translations/model/workspace/workspace.model";
 import {WorkspaceService} from "../../../../../translations/service/workspace.service";
 import {map} from "rxjs/operators";
+import {RepositoryDetailsWorkspaceNodeComponent} from "./repository-details-workspace-node/repository-details-workspace-node.component";
+import {BundleFile} from "../../../../../translations/model/workspace/bundle-file.model";
+import {BundleFileEntry} from "../../../../../translations/model/workspace/bundle-file-entry.model";
 
 export class WorkspaceTreeNode implements TreeObject {
 
-    constructor(private workspace: Workspace) {
+    constructor(public workspace: Workspace) {
     }
 
-    public get expandable(): boolean{
+    public get expandable(): boolean {
         return true;
     }
 
     public get name(): string {
         return this.workspace.branch;
     }
-
 }
 
 export class WorkspaceBundleTreeNode implements TreeObject {
 
-    constructor(private bundleFileDto: BundleFileDto) {
+    constructor(public bundleFile: BundleFile) {
     }
 
-    public get expandable(): boolean{
+    public get expandable(): boolean {
         return true;
     }
 
     public get name(): string {
-        return this.bundleFileDto.location;
+        return `${this.bundleFile.location}/${this.bundleFile.name}`;
     }
 }
 
 export class WorkspaceBundleFileEntryTreeNode implements TreeObject {
 
-    constructor() {
+    constructor(public bundleFileEntry: BundleFileEntry) {
     }
 
-    public get expandable(): boolean{
+    public get expandable(): boolean {
         return false;
     }
 
     public get name(): string {
-        return '';
+        return this.bundleFileEntry.file;
     }
-
 }
 
 export class WorkspaceTreeObjectDataSource implements TreeObjectDataSource {
@@ -70,19 +71,20 @@ export class WorkspaceTreeObjectDataSource implements TreeObjectDataSource {
     }
 
     getChildren(parent: TreeObject, level: number): Observable<TreeObject[]> {
-        return interval(1000)
-            .pipe(map(index =>
-                [
-                    new WorkspaceBundleTreeNode({
-                        location: "/tmp/test" + index,
-                        type: "JAVA_PROPERTIES",
-                        name: "test",
-                        id: 'toto'
-                    })
-                ]
-            ))
-    }
+        if(level == 2){
+            const workspaceNode :WorkspaceTreeNode = <WorkspaceTreeNode> parent;
 
+            return this.workspaceService
+                .getWorkspaceBundleFile(workspaceNode.workspace.id)
+                .pipe(map(bundleFiles => bundleFiles.map(bundleFile => new WorkspaceBundleTreeNode(bundleFile))));
+        } else if(level == 3){
+            const bundleTreeNode :WorkspaceBundleTreeNode = <WorkspaceBundleTreeNode> parent;
+
+            return of(bundleTreeNode.bundleFile.files.map(fileEntry => new WorkspaceBundleFileEntryTreeNode(fileEntry)));
+        } else {
+            return of([]);
+        }
+    }
 }
 
 @Component({
@@ -95,6 +97,8 @@ export class RepositoryDetailsWorkspacesComponent implements OnInit {
     @Input() public repository: Repository;
 
     public RepositoryStatus = RepositoryStatus;
+    public RepositoryDetailsWorkspaceNodeComponent = RepositoryDetailsWorkspaceNodeComponent;
+
     public workspacesDataSource: TreeObjectDataSource = new EmptyTreeObjectDataSource();
     public initInProgress = false;
 

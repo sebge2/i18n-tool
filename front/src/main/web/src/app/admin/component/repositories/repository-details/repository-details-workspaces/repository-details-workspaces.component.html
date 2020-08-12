@@ -1,4 +1,5 @@
-<app-card [maxSizePx]="700" [title]="'ADMIN.REPOSITORIES.DETAILS_CARD.CARD_TITLE' | translate" [headerMatIcon]="'sources'">
+<app-card [maxSizePx]="700" [title]="'ADMIN.REPOSITORIES.DETAILS_CARD.CARD_TITLE' | translate"
+          [headerMatIcon]="'sources'">
     <app-card-header-actions>
         <app-sync-button *ngIf="repository.status === RepositoryStatus.INITIALIZED"></app-sync-button>
     </app-card-header-actions>
@@ -20,7 +21,10 @@
                 </div>
             </div>
             <div *ngIf="repository.status === RepositoryStatus.INITIALIZED">
-                <app-tree [treeNodeDataSource]="workspacesDataSource"></app-tree>
+                <app-tree
+                        [treeNodeDataSource]="workspacesDataSource"
+                        [nodeComponent]="RepositoryDetailsWorkspaceNodeComponent">
+                </app-tree>
             </div>
         </div>
     </app-card-content>
