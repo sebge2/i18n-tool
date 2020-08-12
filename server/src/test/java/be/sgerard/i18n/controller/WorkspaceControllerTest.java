@@ -16,6 +16,7 @@ import static be.sgerard.test.i18n.model.GitRepositoryCreationDtoTestUtils.i18nT
 import static be.sgerard.test.i18n.model.GitRepositoryCreationDtoTestUtils.i18nToolRepositoryCreationDto;
 import static be.sgerard.test.i18n.model.TranslationLocaleCreationDtoTestUtils.enLocaleCreationDto;
 import static be.sgerard.test.i18n.model.TranslationLocaleCreationDtoTestUtils.frLocaleCreationDto;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasSize;
 
 /**
@@ -116,6 +117,33 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                 .jsonPath("$.repositoryId").isEqualTo(repository.forHint("repo").get().getId())
                 .jsonPath("$.repositoryName").isEqualTo(repository.forHint("repo").get().getName())
                 .jsonPath("$.repositoryType").isEqualTo(RepositoryType.GITHUB.name());
+    }
+
+    @Test
+    @TransactionalReactiveTest
+    @WithJaneDoeAdminUser
+    public void findWorkspaceBundleFiles() {
+        final WorkspaceDto masterWorkspace = repository
+                .create(i18nToolRepositoryCreationDto())
+                .hint("repo")
+                .initialize()
+                .workspaces()
+                .sync()
+                .workspaceForBranch("master")
+                .initialize()
+                .get();
+
+        webClient
+                .get()
+                .uri("/api/repository/workspace/{id}/bundle-file", masterWorkspace.getId())
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$").value(hasSize(4))
+                .jsonPath("$[0].files").value(hasSize(greaterThan(1)))
+                .jsonPath("$[1].files").value(hasSize(greaterThan(1)))
+                .jsonPath("$[2].files").value(hasSize(greaterThan(1)))
+                .jsonPath("$[3].files").value(hasSize(greaterThan(1)));
     }
 
     @Nested

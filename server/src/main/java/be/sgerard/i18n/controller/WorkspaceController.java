@@ -1,11 +1,12 @@
 package be.sgerard.i18n.controller;
 
+import be.sgerard.i18n.model.workspace.dto.BundleFileDto;
 import be.sgerard.i18n.model.workspace.dto.WorkspaceDto;
+import be.sgerard.i18n.model.workspace.persistence.WorkspaceEntity;
 import be.sgerard.i18n.service.BadRequestException;
 import be.sgerard.i18n.service.workspace.WorkspaceManager;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -13,6 +14,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.util.List;
 
 /**
  * {@link RestController Controller} handling {@link WorkspaceDto workspaces}.
@@ -37,7 +40,7 @@ public class WorkspaceController {
     @Operation(summary = "Returns registered workspaces.")
     public Flux<WorkspaceDto> findAll() {
         return workspaceManager.findAll()
-                .map(entity -> WorkspaceDto.builder(entity).build());
+                .map(workspace -> WorkspaceDto.builder(workspace).build());
     }
 
     /**
@@ -47,7 +50,7 @@ public class WorkspaceController {
     @Operation(summary = "Returns registered workspaces.")
     public Flux<WorkspaceDto> findAll(@PathVariable String id) {
         return workspaceManager.findAll(id)
-                .map(entity -> WorkspaceDto.builder(entity).build());
+                .map(workspace -> WorkspaceDto.builder(workspace).build());
     }
 
     /**
@@ -57,7 +60,19 @@ public class WorkspaceController {
     @Operation(summary = "Returns the workspace having the specified id.")
     public Mono<WorkspaceDto> findById(@PathVariable String id) {
         return workspaceManager.findByIdOrDie(id)
-                .map(entity -> WorkspaceDto.builder(entity).build());
+                .map(workspace -> WorkspaceDto.builder(workspace).build());
+    }
+
+    /**
+     * Returns {@link BundleFileDto bundle files} composing the specified workspace.
+     */
+    @GetMapping(path = "/repository/workspace/{id}/bundle-file")
+    @Operation(summary = "Returns bundle files composing the specified workspace.")
+    public Mono<List<BundleFileDto>> findWorkspaceBundleFiles(@PathVariable String id) {
+        return workspaceManager.findByIdOrDie(id)
+                .flatMapIterable(WorkspaceEntity::getFiles)
+                .map(bundleFile -> BundleFileDto.builder(bundleFile).build())
+                .collectList();
     }
 
     /**

@@ -29,7 +29,7 @@ public class BundleFileEntryEntity {
      * The {@link TranslationLocaleEntity locale} of this file.
      */
     @NotNull
-    private String locale; // TODO
+    private String locale;
 
     /**
      * The file part of the bundle file.

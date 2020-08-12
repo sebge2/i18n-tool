@@ -8,6 +8,11 @@ import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Singular;
+
+import java.util.List;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * Bundle file containing translations of keys.
@@ -24,12 +29,13 @@ public class BundleFileDto {
         return new Builder();
     }
 
-    public static Builder builder(BundleFileEntity entity) {
+    public static Builder builder(BundleFileEntity bundleFile) {
         return builder()
-                .id(entity.getId())
-                .name(entity.getName())
-                .location(entity.getLocation())
-                .type(entity.getType());
+                .id(bundleFile.getId())
+                .name(bundleFile.getName())
+                .location(bundleFile.getLocation())
+                .type(bundleFile.getType())
+                .files(bundleFile.getFiles().stream().map(entry -> BundleFileEntryDto.builder(entry).build()).collect(toList()));
     }
 
     @Schema(description = "Unique identifier of a bundle file.", required = true)
@@ -43,6 +49,10 @@ public class BundleFileDto {
 
     @Schema(description = "Type of bundle file", required = true)
     private final BundleType type;
+
+    @Schema(description = "All the file paths of this bundle.", required = true)
+    @Singular
+    private final List<BundleFileEntryDto> files;
 
     /**
      * Builder of {@link BundleFileDto bundle file.}
