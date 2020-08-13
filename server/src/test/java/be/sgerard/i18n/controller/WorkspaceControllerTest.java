@@ -16,8 +16,7 @@ import static be.sgerard.test.i18n.model.GitRepositoryCreationDtoTestUtils.i18nT
 import static be.sgerard.test.i18n.model.GitRepositoryCreationDtoTestUtils.i18nToolRepositoryCreationDto;
 import static be.sgerard.test.i18n.model.TranslationLocaleCreationDtoTestUtils.enLocaleCreationDto;
 import static be.sgerard.test.i18n.model.TranslationLocaleCreationDtoTestUtils.frLocaleCreationDto;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.*;
 
 /**
  * @author Sebastien Gerard
@@ -142,7 +141,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                 .jsonPath("$").value(hasSize(4))
                 .jsonPath("$[0].files").value(hasSize(greaterThan(1)))
                 .jsonPath("$[1].files").value(hasSize(greaterThan(1)))
-                .jsonPath("$[2].files").value(hasSize(greaterThan(1)))
+                .jsonPath("$[2].files").value(hasSize(greaterThanOrEqualTo(1)))
                 .jsonPath("$[3].files").value(hasSize(greaterThan(1)));
     }
 

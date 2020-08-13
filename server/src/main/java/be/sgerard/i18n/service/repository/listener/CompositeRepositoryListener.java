@@ -53,6 +53,24 @@ public class CompositeRepositoryListener implements RepositoryListener<Repositor
     }
 
     @Override
+    public Mono<Void> onInitialize(RepositoryEntity repository) {
+        return Flux
+                .fromIterable(listeners)
+                .filter(listener -> listener.support(repository))
+                .flatMap(listener -> listener.onInitialize(repository))
+                .then();
+    }
+
+    @Override
+    public Mono<Void> onInitializationError(RepositoryEntity repository, Throwable error) {
+        return Flux
+                .fromIterable(listeners)
+                .filter(listener -> listener.support(repository))
+                .flatMap(listener -> listener.onInitializationError(repository, error))
+                .then();
+    }
+
+    @Override
     public Mono<ValidationResult> beforeUpdate(RepositoryEntity original, RepositoryPatchDto patch) {
         return Flux
                 .fromIterable(listeners)
@@ -63,11 +81,11 @@ public class CompositeRepositoryListener implements RepositoryListener<Repositor
     }
 
     @Override
-    public Mono<Void> onUpdate(RepositoryEntity repository) {
+    public Mono<Void> onUpdate(RepositoryPatchDto patch, RepositoryEntity repository) {
         return Flux
                 .fromIterable(listeners)
                 .filter(listener -> listener.support(repository))
-                .flatMap(listener -> listener.onUpdate(repository))
+                .flatMap(listener -> listener.onUpdate(patch, repository))
                 .then();
     }
 

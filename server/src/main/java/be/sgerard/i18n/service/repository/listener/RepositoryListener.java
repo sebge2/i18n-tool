@@ -39,9 +39,23 @@ public interface RepositoryListener<R extends RepositoryEntity> {
     }
 
     /**
-     * Performs an action after the update of the specified repository.
+     * Performs an action after the initialization of the specified repository.
      */
-    default Mono<Void> onUpdate(R repository) {
+    default Mono<Void> onInitialize(R repository) {
+        return Mono.empty();
+    }
+
+    /**
+     * Performs an action after the initialization of the specified repository.
+     */
+    default Mono<Void> onInitializationError(R repository, Throwable error) {
+        return Mono.empty();
+    }
+
+    /**
+     * Performs an action after the patch of the specified repository.
+     */
+    default Mono<Void> onUpdate(RepositoryPatchDto patch, R repository) {
         return Mono.empty();
     }
 

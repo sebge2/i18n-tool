@@ -85,45 +85,57 @@ public class RepositoryManagerImpl implements RepositoryManager {
     public Mono<RepositoryEntity> initialize(String id) throws ResourceNotFoundException, IllegalStateException {
         return lockService.executeInLock(() ->
                 findByIdOrDie(id)
-                        .map(entity -> {
-                            if (asList(RepositoryStatus.NOT_INITIALIZED, RepositoryStatus.INITIALIZATION_ERROR).contains(entity.getStatus())) {
-                                entity.setStatus(RepositoryStatus.INITIALIZING);
+                        .map(repo -> {
+                            if (asList(RepositoryStatus.NOT_INITIALIZED, RepositoryStatus.INITIALIZATION_ERROR).contains(repo.getStatus())) {
+                                repo.setStatus(RepositoryStatus.INITIALIZING);
                             }
-                            return entity;
+                            return repo;
                         })
-                        .flatMap(entity ->
-                                updateAndNotifyInTx(entity)
+                        .flatMap(repository ->
+                                Mono.just(repository)
                                         .filter(repo -> repo.getStatus() == RepositoryStatus.INITIALIZING)
                                         .flatMap(handler::initializeRepository)
                                         .doOnNext(repo -> repo.setStatus(RepositoryStatus.INITIALIZED))
-                                        .flatMap(this::updateAndNotifyInTx)
+                                        .flatMap(this.repository::save)
+                                        .flatMap(rep ->
+                                                listener.onInitialize(rep).thenReturn(rep)
+                                        )
+                                        .switchIfEmpty(Mono.just(repository))
                                         .onErrorResume(error -> {
                                             logger.error("Error while initializing repository.", error);
 
-                                            entity.setStatus(RepositoryStatus.INITIALIZATION_ERROR);
+                                            repository.setStatus(RepositoryStatus.INITIALIZATION_ERROR);
 
-                                            return updateAndNotifyInTx(entity);
+                                            return this.repository
+                                                    .save(repository)
+                                                    .flatMap(rep ->
+                                                            listener.onInitializationError(rep, error).thenReturn(rep)
+                                                    );
                                         })
-                                        .switchIfEmpty(Mono.just(entity))
                         )
         );
     }
 
     @Transactional
     @Override
-    public Mono<RepositoryEntity> update(RepositoryPatchDto patchDto) throws ResourceNotFoundException, RepositoryException {
+    public Mono<RepositoryEntity> update(RepositoryPatchDto patch) throws ResourceNotFoundException, RepositoryException {
         return lockService.executeInLock(() ->
-                findByIdOrDie(patchDto.getId())
+                findByIdOrDie(patch.getId())
                         .flatMap(repo ->
                                 listener
-                                        .beforeUpdate(repo, patchDto)
+                                        .beforeUpdate(repo, patch)
                                         .map(validationResult -> {
                                             ValidationException.throwIfFailed(validationResult);
 
                                             return repo;
                                         })
-                                        .flatMap(rep -> handler.updateRepository(rep, patchDto))
-                                        .flatMap(this::updateAndNotifyInTx)
+                        )
+                        .flatMap(repo -> handler.updateRepository(repo, patch))
+                        .flatMap(repository::save)
+                        .flatMap(repo ->
+                                listener
+                                        .onUpdate(patch, repo)
+                                        .thenReturn(repo)
                         )
         );
     }
@@ -169,15 +181,6 @@ public class RepositoryManagerImpl implements RepositoryManager {
         } catch (LockTimeoutException e) {
             throw RepositoryException.onLockTimeout(e);
         }
-    }
-
-    /**
-     * Persists the specified entity in another transaction and sends an event.
-     */
-    private Mono<RepositoryEntity> updateAndNotifyInTx(RepositoryEntity updated) {
-        return listener
-                .onUpdate(updated)
-                .then(Mono.defer(() -> repository.save(updated))); // TODO separate tx
     }
 
     /**
