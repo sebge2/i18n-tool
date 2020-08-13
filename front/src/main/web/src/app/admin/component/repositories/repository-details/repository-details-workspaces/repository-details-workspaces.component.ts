@@ -24,10 +24,6 @@ export class WorkspaceTreeNode implements TreeObject {
     public get expandable(): boolean {
         return true;
     }
-
-    public get name(): string {
-        return this.workspace.branch;
-    }
 }
 
 export class WorkspaceBundleTreeNode implements TreeObject {
@@ -38,10 +34,6 @@ export class WorkspaceBundleTreeNode implements TreeObject {
     public get expandable(): boolean {
         return true;
     }
-
-    public get name(): string {
-        return null;
-    }
 }
 
 export class WorkspaceBundleFileEntryTreeNode implements TreeObject {
@@ -51,10 +43,6 @@ export class WorkspaceBundleFileEntryTreeNode implements TreeObject {
 
     public get expandable(): boolean {
         return false;
-    }
-
-    public get name(): string {
-        return this.bundleFileEntry.file;
     }
 }
 

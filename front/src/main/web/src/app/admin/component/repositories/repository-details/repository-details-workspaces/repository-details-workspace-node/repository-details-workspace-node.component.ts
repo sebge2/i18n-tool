@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input} from '@angular/core';
 import {WorkspaceTreeNode} from "../repository-details-workspaces.component";
 
 @Component({
@@ -11,6 +11,10 @@ export class RepositoryDetailsWorkspaceNodeComponent {
     @Input() public node: WorkspaceTreeNode;
 
     constructor() {
+    }
+
+    public get name(): string {
+        return this.node.workspace.branch;
     }
 
 }

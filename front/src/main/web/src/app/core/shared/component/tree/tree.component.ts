@@ -6,7 +6,6 @@ import {map, takeUntil, takeWhile} from "rxjs/operators";
 import * as _ from "lodash";
 
 export interface TreeObject {
-    name: string,
     expandable: boolean;
 }
 
