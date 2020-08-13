@@ -1,1 +1,1 @@
-<span class="app-icon-json-file" style="font-size: 30px"></span> {{node.name}}
+<span [ngClass]="locale$ | async | translationLocaleIcon" style="font-size: 25px"></span> {{name}}

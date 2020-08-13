@@ -40,7 +40,7 @@ export class WorkspaceBundleTreeNode implements TreeObject {
     }
 
     public get name(): string {
-        return `${this.bundleFile.location}/${this.bundleFile.name}`;
+        return null;
     }
 }
 
