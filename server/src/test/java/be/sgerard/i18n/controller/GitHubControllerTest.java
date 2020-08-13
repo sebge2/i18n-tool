@@ -62,8 +62,7 @@ public class GitHubControllerTest extends AbstractControllerTest {
                 .hint("my-repo")
                 .update(i18nToolRepositoryPatchDto())
                 .initialize()
-                .workspaces()
-                .sync();
+                .workspaces();
 
         gitRepo
                 .getRepo(i18nToolRepositoryCreationDto())
@@ -95,8 +94,7 @@ public class GitHubControllerTest extends AbstractControllerTest {
                 .hint("my-repo")
                 .update(i18nToolRepositoryPatchDto())
                 .initialize()
-                .workspaces()
-                .sync();
+                .workspaces();
 
         gitRepo
                 .getRepo(i18nToolRepositoryCreationDto())
@@ -125,7 +123,6 @@ public class GitHubControllerTest extends AbstractControllerTest {
                 .update(i18nToolRepositoryPatchDto())
                 .initialize()
                 .workspaces()
-                .sync()
                 .workspaceForBranch("release/2020.6")
                 .initialize()
                 .publish("test");

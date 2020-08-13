@@ -47,7 +47,6 @@ public class TranslationControllerTest extends AbstractControllerTest {
                 .hint("my-repo")
                 .initialize()
                 .workspaces()
-                .sync()
                 .workspaceForBranch("master")
                 .initialize();
     }

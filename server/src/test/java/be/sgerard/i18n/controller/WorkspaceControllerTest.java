@@ -60,8 +60,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
         this.repository
                 .create(i18nToolLocalRepositoryCreationDto())
                 .initialize()
-                .workspaces()
-                .sync();
+                .workspaces();
 
         webClient
                 .get()
@@ -80,7 +79,6 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                 .create(i18nToolLocalRepositoryCreationDto())
                 .initialize()
                 .workspaces()
-                .sync()
                 .getRepo();
 
         webClient
@@ -101,7 +99,6 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                 .hint("repo")
                 .initialize()
                 .workspaces()
-                .sync()
                 .workspaceForBranch("master")
                 .get();
 
@@ -127,7 +124,6 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                 .hint("repo")
                 .initialize()
                 .workspaces()
-                .sync()
                 .workspaceForBranch("master")
                 .initialize()
                 .get();
@@ -173,7 +169,6 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                     .hint("my-repo")
                     .initialize()
                     .workspaces()
-                    .sync()
                     .workspaceForBranch("master")
                     .get();
 
@@ -203,7 +198,6 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                     .hint("my-repo")
                     .initialize()
                     .workspaces()
-                    .sync()
                     .workspaceForBranch("master")
                     .initialize()
                     .get();
@@ -233,7 +227,6 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                     .create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class)
                     .initialize()
                     .workspaces()
-                    .sync()
                     .workspaceForBranch("master")
                     .initialize()
                     .get();
@@ -253,7 +246,6 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                     .create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class)
                     .initialize()
                     .workspaces()
-                    .sync()
                     .workspaceForBranch("master")
                     .initialize()
                     .publish("publish message")
@@ -303,7 +295,6 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                     .hint("my-repo")
                     .initialize()
                     .workspaces()
-                    .sync()
                     .workspaceForBranch("master")
                     .get();
 
@@ -332,7 +323,6 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                     .create(i18nToolLocalRepositoryCreationDto(), GitRepositoryDto.class)
                     .initialize()
                     .workspaces()
-                    .sync()
                     .workspaceForBranch("master")
                     .initialize()
                     .get();
@@ -355,7 +345,6 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                     .create(i18nToolLocalRepositoryCreationDto())
                     .initialize()
                     .workspaces()
-                    .sync()
                     .workspaceForBranch("master")
                     .initialize()
                     .get();
@@ -375,7 +364,6 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                     .create(i18nToolLocalRepositoryCreationDto())
                     .initialize()
                     .workspaces()
-                    .sync()
                     .workspaceForBranch("master")
                     .initialize()
                     .publish("test message")

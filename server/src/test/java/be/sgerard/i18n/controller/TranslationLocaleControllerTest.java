@@ -180,7 +180,6 @@ public class TranslationLocaleControllerTest extends AbstractControllerTest {
                 .create(i18nToolRepositoryCreationDto())
                 .initialize()
                 .workspaces()
-                .sync()
                 .workspaceForBranch("master")
                 .initialize();
 
