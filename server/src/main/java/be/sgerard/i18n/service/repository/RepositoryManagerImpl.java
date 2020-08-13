@@ -20,8 +20,6 @@ import reactor.core.publisher.Mono;
 
 import java.lang.reflect.InvocationTargetException;
 
-import static java.util.Arrays.asList;
-
 /**
  * Implementation of the {@link RepositoryManager repository manager}.
  *
@@ -85,20 +83,16 @@ public class RepositoryManagerImpl implements RepositoryManager {
     public Mono<RepositoryEntity> initialize(String id) throws ResourceNotFoundException, IllegalStateException {
         return lockService.executeInLock(() ->
                 findByIdOrDie(id)
-                        .map(repo -> {
-                            if (asList(RepositoryStatus.NOT_INITIALIZED, RepositoryStatus.INITIALIZATION_ERROR).contains(repo.getStatus())) {
-                                repo.setStatus(RepositoryStatus.INITIALIZING);
-                            }
-                            return repo;
-                        })
                         .flatMap(repository ->
                                 Mono.just(repository)
-                                        .filter(repo -> repo.getStatus() == RepositoryStatus.INITIALIZING)
+                                        .filter(repo -> repo.getStatus() != RepositoryStatus.INITIALIZED)
                                         .flatMap(handler::initializeRepository)
                                         .doOnNext(repo -> repo.setStatus(RepositoryStatus.INITIALIZED))
                                         .flatMap(this.repository::save)
                                         .flatMap(rep ->
-                                                listener.onInitialize(rep).thenReturn(rep)
+                                                listener
+                                                        .onInitialize(rep)
+                                                        .thenReturn(rep)
                                         )
                                         .switchIfEmpty(Mono.just(repository))
                                         .onErrorResume(error -> {
@@ -109,7 +103,9 @@ public class RepositoryManagerImpl implements RepositoryManager {
                                             return this.repository
                                                     .save(repository)
                                                     .flatMap(rep ->
-                                                            listener.onInitializationError(rep, error).thenReturn(rep)
+                                                            listener
+                                                                    .onInitializationError(rep, error)
+                                                                    .thenReturn(rep)
                                                     );
                                         })
                         )

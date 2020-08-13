@@ -18,8 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import static java.util.Arrays.asList;
-
 /**
  * Implementation of the {@link WorkspaceManager workspace manager}.
  *
@@ -210,7 +208,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
     private Flux<String> listBranches(String repositoryId) {
         return repositoryManager.findByIdOrDie(repositoryId)
                 .flatMapMany(repository -> {
-                    if (!asList(RepositoryStatus.INITIALIZING, RepositoryStatus.INITIALIZED).contains(repository.getStatus())) {
+                    if (repository.getStatus() != RepositoryStatus.INITIALIZED) {
                         return Flux.empty();
                     }
 
