@@ -67,11 +67,10 @@ body {
   }
 }
 
-[badgeSuccess]:after {
+.app-badge-success {
   background: mat-color($color-success);
   border-radius: 30px;
   color: #fff;
-  content: attr(badgeSuccess);
   font-size: 8px;
   margin-top: -10px;
   min-width: 20px;
@@ -80,7 +79,7 @@ body {
   text-align: center;
 }
 
-[badgeWarning]:after {
+.app-badge-warning {
   background: mat-color($color-warning);
   border-radius: 30px;
   color: #fff;
