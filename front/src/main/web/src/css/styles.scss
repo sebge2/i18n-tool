@@ -1,7 +1,7 @@
 @import "./variables.scss";
 @import "~@fortawesome/fontawesome-free/css/all.css";
 @import "~flag-icon-css/css/flag-icon.min.css";
-@import './assets/fonts/app-icons.css';
+@import '../assets/fonts/app-icons.css';
 
 body {
   font-family: Roboto, Arial, sans-serif;
@@ -66,4 +66,31 @@ body {
     line-height: 100px;
   }
 }
+
+[badgeSuccess]:after {
+  background: mat-color($color-success);
+  border-radius: 30px;
+  color: #fff;
+  content: attr(badgeSuccess);
+  font-size: 8px;
+  margin-top: -10px;
+  min-width: 20px;
+  padding: 4px;
+  position: absolute;
+  text-align: center;
+}
+
+[badgeWarning]:after {
+  background: mat-color($color-warning);
+  border-radius: 30px;
+  color: #fff;
+  content: attr(badgeWarning);
+  font-size: 8px;
+  margin-top: -10px;
+  min-width: 20px;
+  padding: 4px;
+  position: absolute;
+  text-align: center;
+}
+
 
