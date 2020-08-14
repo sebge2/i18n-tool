@@ -30,4 +30,12 @@ public class WorkspaceRepositoryListener implements RepositoryListener<Repositor
                 .synchronize(repository.getId())
                 .then();
     }
+
+    @Override
+    public Mono<Void> onDelete(RepositoryEntity repository) {
+        return workspaceManager
+                .findAll(repository.getId())
+                .flatMap(workspace -> workspaceManager.delete(workspace.getId()))
+                .then();
+    }
 }

@@ -1,6 +1,7 @@
 package be.sgerard.i18n.model.i18n.dto;
 
 import be.sgerard.i18n.model.i18n.persistence.BundleKeyTranslationEntity;
+import be.sgerard.i18n.model.i18n.persistence.BundleKeyTranslationModificationEntity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
@@ -27,8 +28,8 @@ public class TranslationsPageTranslationDto {
         return builder()
                 .id(translation.getId())
                 .originalValue(translation.getOriginalValue().orElse(null))
-                .updatedValue(translation.getUpdatedValue().orElse(null))
-                .lastEditor(translation.getLastEditor().orElse(null));
+                .updatedValue(translation.getModification().flatMap(BundleKeyTranslationModificationEntity::getUpdatedValue).orElse(null))
+                .lastEditor(translation.getModification().flatMap(BundleKeyTranslationModificationEntity::getLastEditor).orElse(null));
     }
 
     @Schema(description = "Unique identifier of a translation.", required = true)

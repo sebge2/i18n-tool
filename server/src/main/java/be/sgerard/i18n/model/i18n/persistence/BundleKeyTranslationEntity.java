@@ -28,7 +28,7 @@ public class BundleKeyTranslationEntity {
     private String id;
 
     /**
-     * The associated {@link WorkspaceEntity workspace}. // TODO
+     * The associated {@link WorkspaceEntity workspace}.
      */
     @NotNull
     private String workspace;
@@ -49,11 +49,11 @@ public class BundleKeyTranslationEntity {
      * The {@link TranslationLocaleEntity locale} of the translation.
      */
     @NotNull
-    private String locale; // TODO
+    private String locale;
 
     /**
      * The unique index of this translation has defined in the original file.
-     *
+     * <p>
      * If the index is negative, it means that this translation was not originally defined in the file.
      */
     @NotNull
@@ -65,14 +65,9 @@ public class BundleKeyTranslationEntity {
     private String originalValue;
 
     /**
-     * The updated translation (if it was edited).
+     * The entity containing modification applied on the translation.
      */
-    private String updatedValue;
-
-    /**
-     * The {@link be.sgerard.i18n.model.security.user.persistence.UserEntity user} that edited this translation.
-     */
-    private String lastEditor; // TODO
+    private BundleKeyTranslationModificationEntity modification;
 
     @PersistenceConstructor
     BundleKeyTranslationEntity() {
@@ -101,24 +96,18 @@ public class BundleKeyTranslationEntity {
     }
 
     /**
-     * @see #updatedValue
+     * Returns {@link BundleKeyTranslationModificationEntity modification} applied to this translation.
      */
-    public Optional<String> getUpdatedValue() {
-        return Optional.ofNullable(updatedValue);
+    public Optional<BundleKeyTranslationModificationEntity> getModification() {
+        return Optional.ofNullable(modification);
     }
 
     /**
      * Returns the translation value that will be used at the end.
      */
     public Optional<String> getValue() {
-        return getUpdatedValue()
+        return getModification()
+                .flatMap(BundleKeyTranslationModificationEntity::getUpdatedValue)
                 .or(this::getOriginalValue);
-    }
-
-    /**
-     * @see #lastEditor
-     */
-    public Optional<String> getLastEditor() {
-        return Optional.ofNullable(lastEditor);
     }
 }

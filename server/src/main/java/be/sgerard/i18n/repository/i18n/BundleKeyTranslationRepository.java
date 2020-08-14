@@ -1,6 +1,7 @@
 package be.sgerard.i18n.repository.i18n;
 
 import be.sgerard.i18n.model.i18n.persistence.BundleKeyTranslationEntity;
+import be.sgerard.i18n.model.i18n.persistence.BundleKeyTranslationModificationEntity;
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 import reactor.core.publisher.Mono;
 
@@ -27,14 +28,21 @@ public interface BundleKeyTranslationRepository extends ReactiveMongoRepository<
     String FIELD_ORIGINAL_VALUE = "originalValue";
 
     /**
-     * @see BundleKeyTranslationEntity#getUpdatedValue()
+     * @see BundleKeyTranslationEntity#getModification()
      */
-    String FIELD_UPDATED_VALUE = "updatedValue";
+    String FIELD_MODIFICATION = "modification";
 
     /**
-     * @see BundleKeyTranslationEntity#getLastEditor()
+     * @see BundleKeyTranslationEntity#getModification()
+     * @see BundleKeyTranslationModificationEntity#getUpdatedValue()
      */
-    String FIELD_LAST_EDITOR = "lastEditor";
+    String FIELD_UPDATED_VALUE = "modification.updatedValue";
+
+    /**
+     * @see BundleKeyTranslationEntity#getModification()
+     * @see BundleKeyTranslationModificationEntity#getLastEditor()
+     */
+    String FIELD_LAST_EDITOR = "modification.lastEditor";
 
     /**
      * @see BundleKeyTranslationEntity#getBundleKey()
@@ -59,5 +67,6 @@ public interface BundleKeyTranslationRepository extends ReactiveMongoRepository<
     /**
      * Returns whether a translation exists with that locale.
      */
+    @SuppressWarnings("SpringDataRepositoryMethodReturnTypeInspection")
     Mono<Boolean> existsByLocale(String locale);
 }

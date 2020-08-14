@@ -7,6 +7,7 @@ import be.sgerard.i18n.model.i18n.file.ScannedBundleFile;
 import be.sgerard.i18n.model.i18n.file.ScannedBundleFileEntry;
 import be.sgerard.i18n.model.i18n.persistence.BundleFileEntity;
 import be.sgerard.i18n.model.i18n.persistence.BundleKeyTranslationEntity;
+import be.sgerard.i18n.model.i18n.persistence.BundleKeyTranslationModificationEntity;
 import be.sgerard.i18n.model.i18n.persistence.TranslationLocaleEntity;
 import be.sgerard.i18n.model.security.user.dto.AuthenticatedUserDto;
 import be.sgerard.i18n.model.workspace.persistence.WorkspaceEntity;
@@ -126,13 +127,22 @@ public class TranslationManagerImpl implements TranslationManager {
                                 .doOnNext(entry -> {
                                     final BundleKeyTranslationEntity translation = entry.getLeft();
 
-                                    translation.setUpdatedValue(mapToNullIfEmpty(entry.getValue()));
+                                    final String updatedValue = mapToNullIfEmpty(entry.getValue());
+                                    final String currentUpdatedValue =
+                                            translation.getModification().flatMap(BundleKeyTranslationModificationEntity::getUpdatedValue).orElse(null);
+                                    final String originalValue = translation.getOriginalValue().orElse(null);
 
-                                    if (Objects.equals(translation.getOriginalValue(), translation.getUpdatedValue())) {
-                                        translation.setUpdatedValue(null);
+                                    if(updatedValue != null){
+                                        if(Objects.equals(updatedValue, originalValue)){
+                                            translation.setModification(null);
+                                        } else if(!Objects.equals(updatedValue, currentUpdatedValue)){
+                                            translation.setModification(new BundleKeyTranslationModificationEntity(updatedValue, currentUser));
+                                        } else {
+                                            // nothing to do, the update match the previous update
+                                        }
+                                    } else {
+                                        translation.setModification(null);
                                     }
-
-                                    translation.setLastEditor(translation.getUpdatedValue().isEmpty() ? null : currentUser);
                                 })
                                 .map(Pair::getKey)
                                 .flatMap(translationRepository::save)

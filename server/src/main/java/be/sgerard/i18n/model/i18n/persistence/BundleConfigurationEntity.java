@@ -1,6 +1,8 @@
 package be.sgerard.i18n.model.i18n.persistence;
 
 import be.sgerard.i18n.model.i18n.BundleType;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.util.AntPathMatcher;
 
@@ -13,14 +15,29 @@ import java.util.List;
  *
  * @author Sebastien Gerard
  */
+@Getter
+@Setter
 public class BundleConfigurationEntity {
 
     private static final AntPathMatcher PATH_MATCHER = new AntPathMatcher();
 
+    /**
+     * The type of bundle associated to this configuration.
+     */
     private BundleType bundleType;
 
+    /**
+     * All the paths that are included when scanning bundles of this type.
+     * By default all paths are included. If paths have been specified only those paths will be scanned,
+     * expected if they have been {@link #getIgnoredPaths() ignored}.
+     */
     private List<String> includedPaths = new ArrayList<>();
 
+    /**
+     * All the paths that are ignored when scanning bundles of this type.
+     * <p>
+     * Note that ignored paths have a bigger priority over {@link #getIncludedPaths() included paths}.
+     */
     private List<String> ignoredPaths = new ArrayList<>();
 
     @PersistenceConstructor
@@ -29,55 +46,6 @@ public class BundleConfigurationEntity {
 
     public BundleConfigurationEntity(BundleType bundleType) {
         this.bundleType = bundleType;
-    }
-
-    /**
-     * Returns the type of bundle associated to this configuration.
-     */
-    public BundleType getBundleType() {
-        return bundleType;
-    }
-
-    /**
-     * Sets the type of bundle associated to this configuration.
-     */
-    public BundleConfigurationEntity setBundleType(BundleType bundleType) {
-        this.bundleType = bundleType;
-        return this;
-    }
-
-    /**
-     * Returns all the paths that are included when scanning bundles of this type.
-     * By default all paths are included. If paths have been specified only those paths will be scanned,
-     * expected if they have been {@link #getIgnoredPaths() ignored}.
-     */
-    public List<String> getIncludedPaths() {
-        return includedPaths;
-    }
-
-    /**
-     * Sets all the paths that are included when scanning bundles of this type.
-     */
-    public BundleConfigurationEntity setIncludedPaths(List<String> includedPaths) {
-        this.includedPaths = includedPaths;
-        return this;
-    }
-
-    /**
-     * Returns all the paths that are ignored when scanning bundles of this type.
-     * <p>
-     * Note that ignored paths have a bigger priority over {@link #getIncludedPaths() included paths}.
-     */
-    public List<String> getIgnoredPaths() {
-        return ignoredPaths;
-    }
-
-    /**
-     * Sets all the paths that are ignored when scanning bundles of this type.
-     */
-    public BundleConfigurationEntity setIgnoredPaths(List<String> ignoredPaths) {
-        this.ignoredPaths = ignoredPaths;
-        return this;
     }
 
     /**

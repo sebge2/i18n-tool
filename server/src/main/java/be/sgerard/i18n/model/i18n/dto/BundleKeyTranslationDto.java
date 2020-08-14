@@ -1,6 +1,7 @@
 package be.sgerard.i18n.model.i18n.dto;
 
 import be.sgerard.i18n.model.i18n.persistence.BundleKeyTranslationEntity;
+import be.sgerard.i18n.model.i18n.persistence.BundleKeyTranslationModificationEntity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
@@ -25,16 +26,16 @@ public class BundleKeyTranslationDto {
         return new Builder();
     }
 
-    public static Builder builder(BundleKeyTranslationEntity entity) {
+    public static Builder builder(BundleKeyTranslationEntity translation) {
         return builder()
-                .id(entity.getId())
-                .workspace(entity.getWorkspace())
-                .bundleFile(entity.getBundleFile())
-                .bundleKey(entity.getBundleKey())
-                .locale(entity.getLocale())
-                .originalValue(entity.getOriginalValue().orElse(null))
-                .updatedValue(entity.getUpdatedValue().orElse(null))
-                .lastEditor(entity.getLastEditor().orElse(null));
+                .id(translation.getId())
+                .workspace(translation.getWorkspace())
+                .bundleFile(translation.getBundleFile())
+                .bundleKey(translation.getBundleKey())
+                .locale(translation.getLocale())
+                .originalValue(translation.getOriginalValue().orElse(null))
+                .updatedValue(translation.getModification().flatMap(BundleKeyTranslationModificationEntity::getUpdatedValue).orElse(null))
+                .lastEditor(translation.getModification().flatMap(BundleKeyTranslationModificationEntity::getLastEditor).orElse(null));
     }
 
     @Schema(description = "Unique identifier of a translation.", required = true)
