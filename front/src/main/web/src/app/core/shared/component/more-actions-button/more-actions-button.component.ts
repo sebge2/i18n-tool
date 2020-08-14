@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 
 @Component({
   selector: 'app-more-actions-button',
@@ -6,6 +6,8 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./more-actions-button.component.css']
 })
 export class MoreActionsButtonComponent implements OnInit {
+
+  @Input() public disabled : boolean = false;
 
   constructor() { }
 

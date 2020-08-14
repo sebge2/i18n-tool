@@ -102,6 +102,14 @@ export class UserViewCardComponent {
         return !this.user.isAdminUser() && !this.user.isExternal();
     }
 
+    public get isMoreActionsEnabled(): boolean {
+        return this.isExistingUser() && this.user.isInternal()
+    }
+
+    public get isPasswordEditionAllowed(): boolean {
+        return this.user.isInternal() && !this.isExistingUser();
+    }
+
     public get actionInProgress(): boolean {
         return this.cancelInProgress || this.saveInProgress || this.deleteInProgress;
     }
@@ -151,6 +159,10 @@ export class UserViewCardComponent {
         this.form.controls['password'].setValue(generatedPassword);
     }
 
+    public onUpdatePassword() {
+// TODO
+    }
+
     private isExistingUser(): boolean {
         return !!this.user.id;
     }
@@ -191,12 +203,12 @@ export class UserViewCardComponent {
             this.form.controls['email'].disable();
         }
 
-        if (this.user.isExternal() || this.isExistingUser()) {
-            this.form.controls['password'].disable();
-        } else {
+        if (this.isPasswordEditionAllowed) {
             this.form.controls['password'].setValue(null);
 
             this.form.controls['password'].setValidators([Validators.minLength(6), Validators.required]);
+        } else {
+            this.form.controls['password'].disable();
         }
 
         this.form.controls['adminRole'].setValue(
