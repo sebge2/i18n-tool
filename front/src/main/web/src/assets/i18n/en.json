@@ -82,12 +82,13 @@
       "EMAIL_EXAMPLE": "Example: john.doe@acme.com",
       "PASSWORD": "Password",
       "PASSWORD_HINT": "At least 6 characters.",
-      "PASSWORD_PLACEHOLDER": "Change only if needed",
       "ADMIN_ROLE": "Privilege",
       "ROLES": {
         "NO_PRIVILEGE": "No privilege",
         "ADMIN_PRIVILEGE": "Administrator"
       },
+      "UPDATE_PASSWORD": "Update Password",
+      "PASSWORD_COPIED": "The user's password has been copied to your clipboard.",
       "ERROR": {
         "SAVE": "Error while saving user.",
         "UPDATE": "Error while updating user.",

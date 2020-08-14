@@ -45,6 +45,7 @@
                             matSuffix
                             [length]="12"
                             [disabled]="passwordInput.disabled"
+                            [notificationMessage]="'ADMIN.USERS.PASSWORD_COPIED'"
                             (generatedPassword)="onGeneratedPassword($event)">
                     </app-generate-password-button>
                 </mat-form-field>
