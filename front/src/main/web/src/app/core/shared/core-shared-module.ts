@@ -32,6 +32,7 @@ import {SyncButtonComponent} from "./component/sync-button/sync-button.component
 import {InitDownloadButtonComponent} from "./component/init-download-button/init-download-button.component";
 import {TreeComponent} from "./component/tree/tree.component";
 import {TreeNodeTemplateComponent} from "./component/tree/tree-node-template/tree-node-template.component";
+import {GeneratePasswordButtonComponent} from "./component/generate-password-button/generate-password-button.component";
 
 @NgModule({
     declarations: [
@@ -48,6 +49,7 @@ import {TreeNodeTemplateComponent} from "./component/tree/tree-node-template/tre
         InitDownloadButtonComponent,
         MoreActionsButtonComponent,
         MoreActionItemButtonComponent,
+        GeneratePasswordButtonComponent,
 
         WizardComponent,
         WizardStepComponent,
@@ -91,6 +93,7 @@ import {TreeNodeTemplateComponent} from "./component/tree/tree-node-template/tre
         InitDownloadButtonComponent,
         MoreActionsButtonComponent,
         MoreActionItemButtonComponent,
+        GeneratePasswordButtonComponent,
 
         WizardComponent,
         WizardStepComponent,

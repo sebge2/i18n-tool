@@ -1,5 +1,5 @@
 <app-card [title]="displayName"
-          [subTitle]="externalAuthProvider | titlecase"
+          [subTitle]="externalAuthProvider | translate | titlecase"
           [headerMatIcon]="!avatarUrl ? 'perm_identity' : null"
           [headerImg]="avatarUrl ? avatarUrl : null"
           [maxSizePx]="270">
@@ -29,9 +29,14 @@
             <p>
                 <mat-form-field appearance="standard">
                     <mat-label>{{'ADMIN.USERS.PASSWORD' | translate}}</mat-label>
-                    <input matInput formControlName="password" type="password" autocomplete="off"
-                           [placeholder]="'ADMIN.USERS.PASSWORD_PLACEHOLDER' | translate">
+                    <input matInput formControlName="password" type="password" autocomplete="off" #passwordInput>
                     <mat-hint>{{'ADMIN.USERS.PASSWORD_HINT' | translate}}</mat-hint>
+                    <app-generate-password-button
+                            matSuffix
+                            [length]="12"
+                            [disabled]="passwordInput.disabled"
+                            (generatedPassword)="onGeneratedPassword($event)">
+                    </app-generate-password-button>
                 </mat-form-field>
             </p>
             <p>

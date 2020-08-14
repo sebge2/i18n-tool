@@ -46,8 +46,7 @@ export class UserViewCardComponent {
                 displayName: this.formBuilder.control('', [Validators.required]),
                 email: this.formBuilder.control('', [Validators.required, Validators.email]),
                 adminRole: this.formBuilder.control(false, []),
-                password: this.formBuilder.control(false, []),
-                // icon: this.formBuilder.control('', [Validators.required]), cloud provider TODO
+                password: this.formBuilder.control(false, [])
             }
         );
     }
@@ -64,11 +63,13 @@ export class UserViewCardComponent {
     }
 
     public get displayName(): string {
-        return getStringValue(this.form.controls['displayName']);
+        const displayName = getStringValue(this.form.controls['displayName']);
+
+        return !_.isEmpty(displayName) ? displayName : "-";
     }
 
     public get externalAuthProvider(): string {
-        return this.user.isExternal() ? this.user.externalAuthSystem : "-";
+        return this.user.isExternal() ? this.user.externalAuthSystem : 'ADMIN.USERS.USER_TYPE.INTERNAL';
     }
 
     public get username(): string {
@@ -146,6 +147,10 @@ export class UserViewCardComponent {
         }
     }
 
+    public onGeneratedPassword(generatedPassword: string) {
+        this.form.controls['password'].setValue(generatedPassword);
+    }
+
     private isExistingUser(): boolean {
         return !!this.user.id;
     }
@@ -186,13 +191,11 @@ export class UserViewCardComponent {
             this.form.controls['email'].disable();
         }
 
-        if (this.user.isExternal()) {
+        if (this.user.isExternal() || this.isExistingUser()) {
             this.form.controls['password'].disable();
-        }
-
-        if (this.isExistingUser()) {
-            this.form.controls['password'].setValidators([Validators.minLength(6)]);
         } else {
+            this.form.controls['password'].setValue(null);
+
             this.form.controls['password'].setValidators([Validators.minLength(6), Validators.required]);
         }
 
