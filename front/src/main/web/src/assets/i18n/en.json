@@ -92,6 +92,9 @@
         "SAVE": "Error while saving user.",
         "UPDATE": "Error while updating user.",
         "DELETE": "Error while deleting user."
+      },
+      "USER_TYPE": {
+        "INTERNAL": "Internal"
       }
     },
     "WORKSPACES": {

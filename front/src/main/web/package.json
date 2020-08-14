@@ -39,6 +39,7 @@
     "lodash": "^4.17.19",
     "mat-progress-buttons": "^8.0.8",
     "messageformat": "^2.3.0",
+    "ngx-clipboard": "^13.0.1",
     "ngx-flag-icon-css": "^1.0.1",
     "ngx-translate-messageformat-compiler": "^4.8.0",
     "rxjs": "~6.6.2",
