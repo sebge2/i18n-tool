@@ -3,8 +3,6 @@ package be.sgerard.i18n.repository.i18n;
 import be.sgerard.i18n.model.i18n.TranslationsSearchRequest;
 import be.sgerard.i18n.model.i18n.dto.TranslationKeyPatternDto;
 import be.sgerard.i18n.model.i18n.persistence.BundleKeyTranslationEntity;
-import be.sgerard.i18n.model.security.auth.AuthenticatedUser;
-import be.sgerard.i18n.service.security.auth.AuthenticationUserManager;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.PageRequest;
@@ -28,12 +26,10 @@ import static org.springframework.data.domain.ExampleMatcher.GenericPropertyMatc
 public class BundleKeyTranslationRepositoryImpl implements BundleKeyTranslationRepositoryCustom {
 
     private final ReactiveMongoTemplate template;
-    private final AuthenticationUserManager authenticationUserManager;
     private final Constructor<BundleKeyTranslationEntity> entityConstructor;
 
-    public BundleKeyTranslationRepositoryImpl(ReactiveMongoTemplate template, AuthenticationUserManager authenticationUserManager) throws Exception {
+    public BundleKeyTranslationRepositoryImpl(ReactiveMongoTemplate template) throws Exception {
         this.template = template;
-        this.authenticationUserManager = authenticationUserManager;
 
         this.entityConstructor = BundleKeyTranslationEntity.class.getDeclaredConstructor();
         this.entityConstructor.setAccessible(true);
@@ -41,9 +37,7 @@ public class BundleKeyTranslationRepositoryImpl implements BundleKeyTranslationR
 
     @Override
     public Flux<BundleKeyTranslationEntity> search(TranslationsSearchRequest request) {
-        return authenticationUserManager
-                .getCurrentUserOrDie()
-                .flatMapMany(currentUser -> search(createQuery(request, currentUser)));
+        return search(createQuery(request));
     }
 
     @Override
@@ -54,7 +48,7 @@ public class BundleKeyTranslationRepositoryImpl implements BundleKeyTranslationR
     /**
      * Creates the {@link Query query} for the specified {@link TranslationsSearchRequest request}.
      */
-    private Query createQuery(TranslationsSearchRequest request, AuthenticatedUser currentUser) {
+    private Query createQuery(TranslationsSearchRequest request) {
         final Query query = new Query();
 
         if (!request.getWorkspaces().isEmpty()) {
@@ -74,7 +68,7 @@ public class BundleKeyTranslationRepositoryImpl implements BundleKeyTranslationR
                 query.addCriteria(Criteria.where(FIELD_MODIFICATION).ne(null));
                 break;
             case TRANSLATIONS_CURRENT_USER_UPDATED:
-                query.addCriteria(Criteria.where(FIELD_LAST_EDITOR).is(currentUser.getUserId()));
+                query.addCriteria(Criteria.where(FIELD_LAST_EDITOR).is(request.getCurrentUser()));
                 break;
         }
 
@@ -99,8 +93,12 @@ public class BundleKeyTranslationRepositoryImpl implements BundleKeyTranslationR
             }
         }
 
-        return query
-                .with(PageRequest.of(request.getPageIndex(), request.getMaxTranslations(), Sort.by(request.getSortBy().toArray(new String[0]))));
+        if (request.getMaxTranslations().isPresent()) {
+            return query
+                    .with(PageRequest.of(request.getPageIndex(), request.getMaxTranslations().get(), Sort.by(request.getSortBy().toArray(new String[0]))));
+        } else {
+            return query;
+        }
     }
 
     /**
