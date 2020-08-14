@@ -1,14 +1,14 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import { ErrorNotificationComponent } from './component/error-notification/error-notification.component';
 import {ErrorMessagesNotificationComponent} from "./component/validation-result-notification/error-messages-notification.component";
 import {CoreSharedLibModule} from "../shared/core-shared-lib.module";
 import {CoreSharedModule} from "../shared/core-shared-module";
+import {NotificationSnackbarComponent} from './component/notification-snackbar/notification-snackbar.component';
 
 @NgModule({
     declarations: [
-        ErrorNotificationComponent,
-        ErrorMessagesNotificationComponent
+        NotificationSnackbarComponent,
+        ErrorMessagesNotificationComponent,
     ],
     imports: [
         CommonModule,
@@ -17,7 +17,7 @@ import {CoreSharedModule} from "../shared/core-shared-module";
     ],
     providers: [],
     exports: [],
-    entryComponents:[ErrorNotificationComponent, ErrorMessagesNotificationComponent]
+    entryComponents: [NotificationSnackbarComponent, ErrorMessagesNotificationComponent]
 })
 export class CoreNotificationModule {
 }

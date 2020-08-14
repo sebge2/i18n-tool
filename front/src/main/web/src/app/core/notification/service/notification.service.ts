@@ -1,10 +1,13 @@
 import {Injectable} from '@angular/core';
 import {MatSnackBar} from '@angular/material';
-import {ErrorNotificationComponent} from "../component/error-notification/error-notification.component";
 import {ErrorMessagesNotificationComponent} from "../component/validation-result-notification/error-messages-notification.component";
 import {ErrorMessagesDto} from "../../../api";
 import {TranslateService} from "@ngx-translate/core";
 import {instanceOfErrorMessages, instanceOfHttpError} from "../../shared/utils/error-utils";
+import {
+    NotificationSnackbarComponent,
+    NotificationType
+} from '../component/notification-snackbar/notification-snackbar.component';
 
 @Injectable({
     providedIn: 'root'
@@ -25,6 +28,13 @@ export class NotificationService {
         }
     }
 
+    public displayInfoMessage(message: string) {
+        this._snackBar.openFromComponent(NotificationSnackbarComponent, {
+            duration: 10000,
+            data: {message: this.translateService.instant(message), type: NotificationType.INFO}
+        });
+    }
+
     private displayTextErrorMessage(message: string, cause: any) {
         console.error(message, cause);
 
@@ -42,9 +52,9 @@ export class NotificationService {
             text += cause;
         }
 
-        this._snackBar.openFromComponent(ErrorNotificationComponent, {
+        this._snackBar.openFromComponent(NotificationSnackbarComponent, {
             duration: 10000,
-            data: {message: text}
+            data: {message: text, type: NotificationType.WARNING}
         });
     }
 
