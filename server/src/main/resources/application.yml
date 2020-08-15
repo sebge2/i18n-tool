@@ -1,6 +1,9 @@
 spring:
   main:
     banner-mode: "OFF"
+  data:
+    mongodb:
+      auto-index-creation: false
 
 logging:
   config: "classpath:logback.xml"
