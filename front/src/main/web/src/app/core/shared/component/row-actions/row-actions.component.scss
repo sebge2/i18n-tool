@@ -1,0 +1,36 @@
+@import "../../../../front/src/main/web/src/css/variables";
+
+.app-row-actions {
+  width: 100%;
+  height: auto;
+  overflow: auto;
+
+  .app-row-actions-items {
+    opacity: 0;
+    transition:visibility 0.3s linear,opacity 0.3s linear;
+  }
+}
+
+.app-row-actions:hover {
+  background-color: mat-color($color-hover);
+
+  .app-row-actions-items {
+    opacity: 100%;
+  }
+}
+
+.app-row-actions-element {
+  display: inline-block;
+  float: left;
+  margin-left: 3px;
+}
+
+.app-row-actions-items {
+  display: inline-block;
+  float: right;
+  vertical-align: middle;
+  margin-right: 3px;
+
+  //TODO
+  margin-top: 15px;
+}
