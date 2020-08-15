@@ -170,7 +170,12 @@
       },
       "DETAILS_CARD" : {
         "CARD_TITLE": "Workspaces",
-        "PLEASE_INITIALIZE": "Please initialize your repository first."
+        "PLEASE_INITIALIZE": "Please initialize your repository first.",
+        "WORKSPACES": {
+          "READY": "Ready",
+          "NOT_READY": "Not Ready",
+          "IN_REVIEW": "In Review"
+        }
       },
       "ERROR": {
         "UPDATE": "Error while updating the repository",

@@ -3,11 +3,11 @@
     align-items: center;
 }
 
-.snack-container .mat-icon .info {
+.snack-container .info {
     color: white;
 }
 
-.snack-container .mat-icon .warning {
+.snack-container .warning {
     color: red;
 }
 
