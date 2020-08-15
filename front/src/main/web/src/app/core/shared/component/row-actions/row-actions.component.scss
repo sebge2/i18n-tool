@@ -3,7 +3,8 @@
 .app-row-actions {
   width: 100%;
   height: auto;
-  overflow: auto;
+  overflow: hidden;
+  padding: 3px;
 
   .app-row-actions-items {
     opacity: 0;
@@ -22,14 +23,13 @@
 .app-row-actions-element {
   display: inline-block;
   float: left;
-  margin-left: 3px;
 }
 
 .app-row-actions-items {
   display: inline-block;
   float: right;
   vertical-align: middle;
-  margin-right: 10px;
+  margin-right: 7px;
 
   //TODO
   margin-top: 12px;
