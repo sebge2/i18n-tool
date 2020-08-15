@@ -33,6 +33,9 @@ import {InitDownloadButtonComponent} from "./component/init-download-button/init
 import {TreeComponent} from "./component/tree/tree.component";
 import {TreeNodeTemplateComponent} from "./component/tree/tree-node-template/tree-node-template.component";
 import {GeneratePasswordButtonComponent} from "./component/generate-password-button/generate-password-button.component";
+import {RowActionsComponent} from "./component/row-actions/row-actions.component";
+import {RowActionsElementComponent} from "./component/row-actions/row-actions-element/row-actions-element.component";
+import {RowActionsItemComponent} from "./component/row-actions/row-actions-item/row-actions-item.component";
 
 @NgModule({
     declarations: [
@@ -61,6 +64,11 @@ import {GeneratePasswordButtonComponent} from "./component/generate-password-but
         CardHeaderActionsComponent,
         TreeComponent,
         TreeNodeTemplateComponent,
+        RowActionsComponent,
+        RowActionsElementComponent,
+        RowActionsItemComponent,
+        RowActionsElementComponent,
+        RowActionsItemComponent,
 
         WorkspaceIconPipe,
         WorkspaceIconCssPipe,
@@ -105,6 +113,9 @@ import {GeneratePasswordButtonComponent} from "./component/generate-password-but
         CardHeaderActionsComponent,
         TreeComponent,
         TreeNodeTemplateComponent,
+        RowActionsComponent,
+        RowActionsElementComponent,
+        RowActionsItemComponent,
 
         WorkspaceIconPipe,
         WorkspaceIconCssPipe,

@@ -2,7 +2,10 @@
     <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding>
         <button mat-icon-button disabled></button>
 
-        <app-tree-node-template [node]="node" [nodeComponent]="nodeComponent"></app-tree-node-template>
+        <app-tree-node-template [node]="node"
+                                [nodeComponent]="nodeComponent"
+                                [loading]="node.isLoading">
+        </app-tree-node-template>
     </mat-tree-node>
 
     <mat-tree-node *matTreeNodeDef="let node; when: hasChild" matTreeNodePadding>
@@ -12,7 +15,10 @@
             </mat-icon>
         </button>
 
-        <app-tree-node-template [node]="node" [nodeComponent]="nodeComponent"></app-tree-node-template>
+        <app-tree-node-template [node]="node"
+                                [nodeComponent]="nodeComponent"
+                                [loading]="node.isLoading">
+        </app-tree-node-template>
 
         <mat-progress-bar *ngIf="node.isLoading" mode="indeterminate" class="app-tree-progress-bar"></mat-progress-bar>
     </mat-tree-node>

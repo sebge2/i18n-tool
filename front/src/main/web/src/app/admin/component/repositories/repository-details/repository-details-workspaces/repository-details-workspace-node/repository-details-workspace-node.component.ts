@@ -10,6 +10,8 @@ import {WorkspaceStatus} from "../../../../../../translations/model/workspace/wo
 export class RepositoryDetailsWorkspaceNodeComponent {
 
     @Input() public node: WorkspaceTreeNode;
+    @Input() public loading: boolean = false;
+
     constructor() {
     }
 
