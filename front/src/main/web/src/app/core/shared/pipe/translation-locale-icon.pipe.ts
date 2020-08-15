@@ -7,7 +7,7 @@ import {TranslationLocale} from "../../../translations/model/translation-locale.
 export class TranslationLocaleIconPipe implements PipeTransform {
 
     transform(locale: TranslationLocale): String {
-        return `flag-icon ${locale.icon}`;
+        return `flag-icon ${locale?.icon}`;
     }
 
 }
