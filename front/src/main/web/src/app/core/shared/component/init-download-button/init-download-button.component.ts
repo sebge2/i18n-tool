@@ -9,7 +9,7 @@ export class InitDownloadButtonComponent {
 
     @Input() public initInProgress: boolean;
     @Input() public disabled: boolean;
-    @Input() public buttonClass: string = '';
+    @Input() public buttonClass: string = 'normal';
     @Output() public init = new EventEmitter<void>();
 
     constructor() {

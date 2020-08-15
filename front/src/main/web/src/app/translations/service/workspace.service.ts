@@ -60,6 +60,12 @@ export class WorkspaceService {
                 map(bundleFiles => bundleFiles.map(bundleFileDto => BundleFile.fromDto(bundleFileDto)))
             );
     }
+
+    public initialize(workspaceId: string) : Observable<Workspace>{
+        return this.apiWorkspaceService
+            .executeWorkspaceAction(workspaceId, 'INITIALIZE')
+            .pipe(map(workspace => Workspace.fromDto(workspace)));
+    }
 }
 
 export function workspaceSorter(first: Workspace, second: Workspace): number {

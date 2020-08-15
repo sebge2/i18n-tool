@@ -9,6 +9,7 @@ import {TreeNode} from "../../../../../../core/shared/component/tree/tree.compon
 export class RepositoryDetailsWorkspaceTreeNodeComponent {
 
     public node: TreeNode;
+    public loading : boolean = false;
 
     constructor() {
     }

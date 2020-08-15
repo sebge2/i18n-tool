@@ -1,6 +1,8 @@
 import {Component, Input} from '@angular/core';
 import {WorkspaceTreeNode} from "../repository-details-workspaces.component";
 import {WorkspaceStatus} from "../../../../../../translations/model/workspace/workspace-status.model";
+import {WorkspaceService} from "../../../../../../translations/service/workspace.service";
+import {NotificationService} from "../../../../../../core/notification/service/notification.service";
 
 @Component({
     selector: 'app-repository-details-workspace-node',
@@ -12,7 +14,10 @@ export class RepositoryDetailsWorkspaceNodeComponent {
     @Input() public node: WorkspaceTreeNode;
     @Input() public loading: boolean = false;
 
-    constructor() {
+    public initializationInProgress: boolean = false;
+
+    constructor(private _workspaceService: WorkspaceService,
+                private _notificationService: NotificationService) {
     }
 
     public get name(): string {
@@ -44,4 +49,20 @@ export class RepositoryDetailsWorkspaceNodeComponent {
         }
     }
 
+    public get initializationAllowed(){
+        return this.node.workspace.status === WorkspaceStatus.NOT_INITIALIZED;
+    }
+
+    public onInitialize() {
+        this.initializationInProgress = true;
+
+        this._workspaceService
+            .initialize(this.node.workspace.id)
+            .toPromise()
+            .catch(error => {
+                console.error('Error while initializing workspace.', error);
+                this._notificationService.displayErrorMessage('ADMIN.REPOSITORIES.ERROR.INITIALIZE_WORKSPACE', error);
+            })
+            .finally(() => this.initializationInProgress = false);
+    }
 }
