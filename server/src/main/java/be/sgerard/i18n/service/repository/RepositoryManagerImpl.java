@@ -149,6 +149,10 @@ public class RepositoryManagerImpl implements RepositoryManager {
                                     return repo;
                                 })
                                 .flatMap(handler::deleteRepository)
+                                .onErrorResume(error -> {
+                                    logger.error("Error while deleting repository.", error);
+                                    return Mono.just(repo);
+                                })
                                 .flatMap(rep ->
                                         repository.delete(rep)
                                                 .thenReturn(rep)

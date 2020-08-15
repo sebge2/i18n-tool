@@ -1,6 +1,4 @@
 spring:
-  datasource:
-    url: jdbc:h2:mem:i18n
   security:
     oauth2:
       client:
