@@ -10,7 +10,7 @@ import {Observable} from "rxjs";
 @Component({
     selector: 'app-repository-view-card',
     templateUrl: './repository-view-card.component.html',
-    styleUrls: ['./repository-view-card.component.css']
+    styleUrls: ['./repository-view-card.component.scss']
 })
 export class RepositoryViewCardComponent {
 

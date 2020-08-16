@@ -5,7 +5,7 @@
     </app-card-header-actions>
     <app-card-content>
         <div style="margin-top: 20px">
-            <div *ngIf="repository.status === RepositoryStatus.NOT_INITIALIZED">
+            <div *ngIf="repository.status === RepositoryStatus.NOT_INITIALIZED || repository.status === RepositoryStatus.INITIALIZATION_ERROR">
                 <div class="app-centered-container">
                     <div class="app-centered-container-child">
                         <div class="app-centered-container-item">

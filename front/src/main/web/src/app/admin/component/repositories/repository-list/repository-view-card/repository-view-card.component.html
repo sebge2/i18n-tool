@@ -11,6 +11,9 @@
                     <div *ngSwitchCase="repositoryStatus.NOT_INITIALIZED">
                         <mat-icon class="status-warning">warning</mat-icon>
                     </div>
+                    <div *ngSwitchCase="repositoryStatus.INITIALIZATION_ERROR">
+                        <mat-icon class="status-error">warning</mat-icon>
+                    </div>
                     <div *ngSwitchCase="repositoryStatus.INITIALIZING">
                         <mat-spinner [diameter]="24" class="status-progress"></mat-spinner>
                     </div>

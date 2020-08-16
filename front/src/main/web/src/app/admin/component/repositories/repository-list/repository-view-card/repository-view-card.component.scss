@@ -1,3 +1,5 @@
+@import "../../../../front/src/main/web/src/css/variables";
+
 :host ::ng-deep .mat-card-content {
     margin-bottom: 0;
 }
@@ -15,7 +17,11 @@
 }
 
 .status-warning {
-    color: darkorange;
+    color: mat-color($color-warning);
+}
+
+.status-error {
+    color: mat-color($color-error);
 }
 
 .status-healthy {
