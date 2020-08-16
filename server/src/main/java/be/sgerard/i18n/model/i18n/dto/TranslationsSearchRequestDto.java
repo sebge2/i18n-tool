@@ -1,5 +1,6 @@
 package be.sgerard.i18n.model.i18n.dto;
 
+import be.sgerard.i18n.model.i18n.persistence.BundleFileEntity;
 import be.sgerard.i18n.model.i18n.persistence.TranslationLocaleEntity;
 import be.sgerard.i18n.model.workspace.persistence.WorkspaceEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -47,6 +48,9 @@ public class TranslationsSearchRequestDto {
     @Schema(description = "Search translations only in those translations locale ids.")
     private final List<String> locales;
 
+    @Schema(description = "Search translations only in those bundle file ids.")
+    private final List<String> bundleFiles;
+
     @Schema(description = "Specify the criterion that translations must have.")
     private final TranslationSearchCriterion criterion;
 
@@ -62,6 +66,7 @@ public class TranslationsSearchRequestDto {
     private TranslationsSearchRequestDto(Builder builder) {
         workspaces = unmodifiableList(builder.workspaces);
         locales = unmodifiableList(builder.locales);
+        bundleFiles = unmodifiableList(builder.bundleFiles);
         criterion = (builder.criterion != null) ? builder.criterion : TranslationSearchCriterion.ALL;
         keyPattern = builder.keyPattern;
         maxKeys = (builder.maxKeys != null) ? builder.maxKeys : DEFAULT_MAX_KEYS;
@@ -80,6 +85,13 @@ public class TranslationsSearchRequestDto {
      */
     public List<String> getLocales() {
         return locales;
+    }
+
+    /**
+     * {@link BundleFileEntity Bundle files} of translations to look for.
+     */
+    public List<String> getBundleFiles() {
+        return bundleFiles;
     }
 
     /**
@@ -121,6 +133,7 @@ public class TranslationsSearchRequestDto {
 
         private final List<String> workspaces = new ArrayList<>();
         private final List<String> locales = new ArrayList<>();
+        private final List<String> bundleFiles = new ArrayList<>();
         private TranslationSearchCriterion criterion;
         private TranslationKeyPatternDto keyPattern;
         private Integer maxKeys;
@@ -149,6 +162,17 @@ public class TranslationsSearchRequestDto {
         @JsonIgnore
         public Builder locales(String... locales) {
             return locales(asList(locales));
+        }
+
+        @JsonProperty("bundleFiles")
+        public Builder bundleFiles(Collection<String> bundleFiles) {
+            this.bundleFiles.addAll(bundleFiles);
+            return this;
+        }
+
+        @JsonIgnore
+        public Builder bundleFiles(String... bundleFiles) {
+            return bundleFiles(asList(bundleFiles));
         }
 
         public Builder criterion(TranslationSearchCriterion criterion) {

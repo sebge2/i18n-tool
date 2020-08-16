@@ -59,6 +59,10 @@ public class BundleKeyTranslationRepositoryImpl implements BundleKeyTranslationR
             query.addCriteria(Criteria.where(FIELD_LOCALE).in(request.getLocales()));
         }
 
+        if (!request.getBundleFiles().isEmpty()) {
+            query.addCriteria(Criteria.where(FIELD_BUNDLE_FILE).in(request.getBundleFiles()));
+        }
+
         switch (request.getCriterion()) {
             case MISSING_TRANSLATIONS:
                 query.addCriteria(Criteria.where(FIELD_ORIGINAL_VALUE).is(null));

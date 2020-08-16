@@ -95,6 +95,7 @@ public class TranslationSearchManagerImpl implements TranslationSearchManager {
                         TranslationsSearchRequest.builder()
                                 .workspaces(workspaces)
                                 .locales(locales)
+                                .bundleFiles(searchRequest.getBundleFiles())
                                 .criterion(searchRequest.getCriterion())
                                 .keyPattern(searchRequest.getKeyPattern().orElse(null))
                                 .maxTranslations(searchRequest.getMaxKeys() * locales.size())

@@ -2,6 +2,7 @@ package be.sgerard.i18n.model.i18n;
 
 import be.sgerard.i18n.model.i18n.dto.TranslationKeyPatternDto;
 import be.sgerard.i18n.model.i18n.dto.TranslationSearchCriterion;
+import be.sgerard.i18n.model.i18n.persistence.BundleFileEntity;
 import be.sgerard.i18n.model.i18n.persistence.TranslationLocaleEntity;
 import be.sgerard.i18n.model.workspace.persistence.WorkspaceEntity;
 import lombok.Builder;
@@ -37,9 +38,10 @@ public class TranslationsSearchRequest {
     private final List<String> locales;
 
     /**
-     * The list of fields to sort by.
+     * {@link BundleFileEntity Bundle files} of translations to look for.
      */
-    private final List<String> sortBy;
+    @Singular
+    private final List<String> bundleFiles;
 
     /**
      * The {@link TranslationSearchCriterion criterion} that translations must have.
@@ -50,6 +52,11 @@ public class TranslationsSearchRequest {
      * The {@link TranslationKeyPatternDto pattern} to use of keys to retrieve.
      */
     private final TranslationKeyPatternDto keyPattern;
+
+    /**
+     * The list of fields to sort by.
+     */
+    private final List<String> sortBy;
 
     /**
      * The current user id.
