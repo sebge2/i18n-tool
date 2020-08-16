@@ -89,13 +89,15 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
                                                     logger.info("Synchronize, there is no branch anymore for the workspace [{}] alias [{}], let's delete it.",
                                                             pair.getRight().getBranch(), pair.getRight().getId());
 
-                                                    return delete(pair.getRight().getId());
+                                                    return delete(pair.getRight().getId())
+                                                            .then(Mono.empty());
                                                 } else {
                                                     logger.info("Synchronize, let's check the review status for the workspace [{}] alias [{}].",
                                                             pair.getRight().getBranch(), pair.getRight().getId());
 
-                                                    return translationsStrategy
-                                                            .isReviewFinished(pair.getRight())
+                                                    return repositoryManager
+                                                            .findByIdOrDie(repositoryId)
+                                                            .flatMap(repository -> translationsStrategy.isReviewFinished(pair.getRight(), repository))
                                                             .flatMap(reviewFinished ->
                                                                     reviewFinished
                                                                             ? doFinishReview(pair.getRight())
@@ -108,7 +110,8 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
                                                     logger.info("Synchronize, there is no branch anymore for the workspace [{}] alias [{}], let's delete it.",
                                                             pair.getRight().getBranch(), pair.getRight().getId());
 
-                                                    return delete(pair.getRight().getId());
+                                                    return delete(pair.getRight().getId())
+                                                            .then(Mono.empty());
                                                 } else {
                                                     logger.info("Synchronize, the branch for the workspace [{}] alias [{}] is still there, don't touch.",
                                                             pair.getRight().getBranch(), pair.getRight().getId());

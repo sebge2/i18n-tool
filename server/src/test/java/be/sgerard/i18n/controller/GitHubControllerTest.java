@@ -137,7 +137,7 @@ public class GitHubControllerTest extends AbstractControllerTest {
 
         assertThat(getWorkspacesForRepo())
                 .extracting(WorkspaceDto::getStatus)
-                .containsOnly(WorkspaceStatus.NOT_INITIALIZED, WorkspaceStatus.NOT_INITIALIZED, WorkspaceStatus.NOT_INITIALIZED);
+                .containsOnly(WorkspaceStatus.INITIALIZED, WorkspaceStatus.NOT_INITIALIZED, WorkspaceStatus.NOT_INITIALIZED);
     }
 
     @Test

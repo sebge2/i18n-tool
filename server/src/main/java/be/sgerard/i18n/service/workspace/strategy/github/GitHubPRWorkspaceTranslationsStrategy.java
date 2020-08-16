@@ -4,6 +4,7 @@ import be.sgerard.i18n.model.github.GitHubPullRequestDto;
 import be.sgerard.i18n.model.github.GitHubPullRequestStatus;
 import be.sgerard.i18n.model.repository.persistence.BaseGitRepositoryEntity;
 import be.sgerard.i18n.model.repository.persistence.GitHubRepositoryEntity;
+import be.sgerard.i18n.model.repository.persistence.RepositoryEntity;
 import be.sgerard.i18n.model.workspace.persistence.GitHubReviewEntity;
 import be.sgerard.i18n.model.workspace.persistence.WorkspaceEntity;
 import be.sgerard.i18n.service.client.GitHubClient;
@@ -45,7 +46,7 @@ public class GitHubPRWorkspaceTranslationsStrategy extends BaseGitWorkspaceTrans
     }
 
     @Override
-    public Mono<Boolean> isReviewFinished(WorkspaceEntity workspace) {
+    public Mono<Boolean> isReviewFinished(WorkspaceEntity workspace, RepositoryEntity repository) {
         return gitHubClient
                 .findByNumber(workspace.getRepository(), workspace.getReviewOrDie(GitHubReviewEntity.class).getPullRequestNumber())
                 .map(GitHubPullRequestDto::getStatus)

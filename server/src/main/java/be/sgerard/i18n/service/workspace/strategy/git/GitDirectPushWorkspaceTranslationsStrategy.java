@@ -2,6 +2,7 @@ package be.sgerard.i18n.service.workspace.strategy.git;
 
 import be.sgerard.i18n.model.repository.persistence.BaseGitRepositoryEntity;
 import be.sgerard.i18n.model.repository.persistence.GitRepositoryEntity;
+import be.sgerard.i18n.model.repository.persistence.RepositoryEntity;
 import be.sgerard.i18n.model.workspace.persistence.WorkspaceEntity;
 import be.sgerard.i18n.service.i18n.TranslationManager;
 import be.sgerard.i18n.service.repository.RepositoryManager;
@@ -24,7 +25,7 @@ public class GitDirectPushWorkspaceTranslationsStrategy extends BaseGitWorkspace
     }
 
     @Override
-    public Mono<Boolean> isReviewFinished(WorkspaceEntity workspace) {
+    public Mono<Boolean> isReviewFinished(WorkspaceEntity workspace, RepositoryEntity repository) {
         return Mono.error(new UnsupportedOperationException("This strategy does not support review. Make sure that strategies have been properly registered."));
     }
 

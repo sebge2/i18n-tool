@@ -35,7 +35,7 @@ public interface WorkspaceTranslationsStrategy {
     /**
      * Returns whether the review of the specified {@link WorkspaceEntity workspace} is finished.
      */
-    Mono<Boolean> isReviewFinished(WorkspaceEntity workspace) throws WorkspaceException, RepositoryException;
+    Mono<Boolean> isReviewFinished(WorkspaceEntity workspace, RepositoryEntity repository) throws WorkspaceException, RepositoryException;
 
     /**
      * Initializes the specified {@link WorkspaceEntity workspace} after that translations can be read/write.
