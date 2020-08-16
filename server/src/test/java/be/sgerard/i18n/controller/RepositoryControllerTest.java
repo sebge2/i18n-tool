@@ -382,7 +382,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
         @Test
         @TransactionalReactiveTest
         @WithJaneDoeAdminUser
-        public void updateWebhookSecret() {
+        public void updateWebHookSecret() {
             final GitHubRepositoryDto repository = this.repository.create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class).get();
 
             final GitHubRepositoryPatchDto patchDto = GitHubRepositoryPatchDto.gitHubBuilder()
