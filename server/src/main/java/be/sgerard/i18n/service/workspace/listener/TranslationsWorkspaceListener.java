@@ -1,0 +1,31 @@
+package be.sgerard.i18n.service.workspace.listener;
+
+import be.sgerard.i18n.model.workspace.persistence.WorkspaceEntity;
+import be.sgerard.i18n.repository.i18n.BundleKeyTranslationRepository;
+import org.springframework.stereotype.Component;
+import reactor.core.publisher.Mono;
+
+/**
+ * {@link WorkspaceListener Listener} for events associated to the lifecycle of translations in a workspace.
+ *
+ * @author Sebastien Gerard
+ */
+@Component
+public class TranslationsWorkspaceListener implements WorkspaceListener {
+
+    private final BundleKeyTranslationRepository translationRepository;
+
+    public TranslationsWorkspaceListener(BundleKeyTranslationRepository translationRepository) {
+        this.translationRepository = translationRepository;
+    }
+
+    @Override
+    public boolean support(WorkspaceEntity workspace) {
+        return true;
+    }
+
+    @Override
+    public Mono<Void> onDelete(WorkspaceEntity workspace) {
+        return translationRepository.deleteByWorkspace(workspace.getId());
+    }
+}

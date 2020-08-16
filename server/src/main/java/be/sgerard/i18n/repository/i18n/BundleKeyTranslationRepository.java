@@ -69,4 +69,9 @@ public interface BundleKeyTranslationRepository extends ReactiveMongoRepository<
      */
     @SuppressWarnings("SpringDataRepositoryMethodReturnTypeInspection")
     Mono<Boolean> existsByLocale(String locale);
+
+    /**
+     * Removes all translations of a workspace.
+     */
+    Mono<Void> deleteByWorkspace(String workspaceId);
 }
