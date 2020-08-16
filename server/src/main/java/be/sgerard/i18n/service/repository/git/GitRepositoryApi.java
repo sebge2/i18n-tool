@@ -125,6 +125,9 @@ public interface GitRepositoryApi extends RepositoryApi {
      */
     GitRepositoryApi delete() throws RepositoryException;
 
+    @Override
+    void close();
+
     /**
      * Git configuration.
      */

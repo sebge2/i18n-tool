@@ -14,7 +14,6 @@ import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.treewalk.TreeWalk;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
 import java.util.Collection;
@@ -95,10 +94,6 @@ public class GitRepositoryMock {
         return this;
     }
 
-    private GitRepositoryApi getApi() {
-        return DefaultGitRepositoryApi.createAPI(new GitRepositoryApi.Configuration(location));
-    }
-
     public boolean authenticate(String username, String password) {
         if ((username == null) && (password == null)) {
             return allowAnonymousRead;
@@ -112,39 +107,43 @@ public class GitRepositoryMock {
     }
 
     public GitRepositoryMock createBranches(String... branches) {
-        final GitRepositoryApi api = getApi();
-
         try {
-            for (String branch : branches) {
-                api.createBranch(branch);
-            }
+            try (GitRepositoryApi api = getApi()) {
+                for (String branch : branches) {
+                    api.createBranch(branch);
+                }
 
-            return this;
-        } finally {
-            api.checkout(GitRepositoryApi.DEFAULT_BRANCH);
+                return this;
+            }
+        } catch (Exception e) {
+            throw new IllegalStateException("Cannot create branch on mock repository.", e);
         }
     }
 
     public GitRepositoryMock deleteBranches(String... branches) {
-        final GitRepositoryApi api = getApi();
-
         try {
-            for (String branch : branches) {
-                api.removeBranch(branch);
-            }
+            try (GitRepositoryApi api = getApi()) {
+                for (String branch : branches) {
+                    api.removeBranch(branch);
+                }
 
-            return this;
-        } finally {
-            api.checkout(GitRepositoryApi.DEFAULT_BRANCH);
+                return this;
+            }
+        } catch (Exception e) {
+            throw new IllegalStateException("Cannot delete branch on mock repository.", e);
         }
     }
 
     public GitRepositoryMock destroy() {
         try {
+            try (GitRepositoryApi api = getApi()) {
+                api.delete();
+            }
+
             FileUtils.deleteDirectory(location);
 
             return this;
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new IllegalStateException("Cannot delete mock repository.", e);
         }
     }
@@ -167,6 +166,10 @@ public class GitRepositoryMock {
     @Override
     public int hashCode() {
         return Objects.hash(mockedRemoteUri);
+    }
+
+    private GitRepositoryApi getApi() {
+        return DefaultGitRepositoryApi.createAPI(new GitRepositoryApi.Configuration(location));
     }
 
     public static final class User {

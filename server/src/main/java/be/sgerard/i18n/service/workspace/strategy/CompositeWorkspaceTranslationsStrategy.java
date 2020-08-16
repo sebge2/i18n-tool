@@ -44,6 +44,15 @@ public class CompositeWorkspaceTranslationsStrategy implements WorkspaceTranslat
     }
 
     @Override
+    public boolean initializeOnCreate(WorkspaceEntity workspace, RepositoryEntity repository) {
+        return strategies.stream()
+                .filter(strategy -> strategy.support(repository))
+                .findFirst()
+                .orElseThrow(() -> new UnsupportedOperationException("Unsupported repository [" + repository + "]. Please make sure that all strategies have been registered."))
+                .initializeOnCreate(workspace, repository);
+    }
+
+    @Override
     public Mono<Boolean> isReviewFinished(WorkspaceEntity workspace) {
         return null;
     }

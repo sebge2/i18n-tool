@@ -56,7 +56,7 @@ public class GitHubPRWorkspaceTranslationsStrategy extends BaseGitWorkspaceTrans
     @Override
     public Mono<WorkspaceEntity> onPublish(WorkspaceEntity workspace, String message) {
         return repositoryManager
-                .applyOnRepository(
+                .applyGetMono(
                         workspace.getRepository(),
                         GitRepositoryApi.class,
                         api ->
@@ -72,14 +72,13 @@ public class GitHubPRWorkspaceTranslationsStrategy extends BaseGitWorkspaceTrans
                                                                         .map(pr -> workspace.setReview(new GitHubReviewEntity(prBranch, pr.getNumber()))))
                                                         )
                                         )
-                )
-                .flatMap(m -> m);
+                );
     }
 
     @Override
     public Mono<WorkspaceEntity> onDelete(WorkspaceEntity workspace) {
         return repositoryManager
-                .applyOnRepository(
+                .applyGetMono(
                         workspace.getRepository(),
                         GitRepositoryApi.class,
                         api -> {
@@ -91,7 +90,7 @@ public class GitHubPRWorkspaceTranslationsStrategy extends BaseGitWorkspaceTrans
                                         logger.info("The branch {} has been removed.", review.getPullRequestBranch());
                                     });
 
-                            return workspace;
+                            return Mono.just(workspace);
                         }
                 );
     }

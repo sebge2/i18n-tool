@@ -1,7 +1,6 @@
 package be.sgerard.i18n.service.repository.git;
 
 import be.sgerard.i18n.model.repository.dto.BaseGitRepositoryPatchDto;
-import be.sgerard.i18n.model.repository.dto.GitRepositoryPatchDto;
 import be.sgerard.i18n.model.repository.dto.RepositoryCreationDto;
 import be.sgerard.i18n.model.repository.persistence.BaseGitRepositoryEntity;
 import be.sgerard.i18n.service.repository.RepositoryApi;
@@ -35,11 +34,13 @@ public abstract class BaseGitRepositoryHandler<E extends BaseGitRepositoryEntity
     public Mono<E> initializeRepository(E repository) {
         try {
             return initApiFromEntity(repository)
-                    .map(api -> {
-                        api.init();
-
-                        return repository;
-                    });
+                    .flatMap(api ->
+                            Mono
+                                    .just(api)
+                                    .map(GitRepositoryApi::init)
+                                    .thenReturn(repository)
+                                    .doAfterTerminate(api::close)
+                    );
         } catch (Exception e) {
             return Mono.error(e);
         }
@@ -49,11 +50,13 @@ public abstract class BaseGitRepositoryHandler<E extends BaseGitRepositoryEntity
     public Mono<E> deleteRepository(E repository) throws RepositoryException {
         try {
             return initApiFromEntity(repository)
-                    .map(api -> {
-                        api.delete();
-
-                        return repository;
-                    });
+                    .flatMap(api ->
+                            Mono
+                                    .just(api)
+                                    .map(GitRepositoryApi::delete)
+                                    .thenReturn(repository)
+                                    .doAfterTerminate(api::close)
+                    );
         } catch (Exception e) {
             return Mono.error(e);
         }
@@ -70,11 +73,13 @@ public abstract class BaseGitRepositoryHandler<E extends BaseGitRepositoryEntity
     protected Mono<E> validateRepository(E repository) {
         try {
             return initApiFromEntity(repository)
-                    .map(api -> {
-                        api.validateInfo();
-
-                        return repository;
-                    });
+                    .flatMap(api ->
+                            Mono
+                                    .just(api)
+                                    .map(GitRepositoryApi::validateInfo)
+                                    .thenReturn(repository)
+                                    .doAfterTerminate(api::close)
+                    );
         } catch (Exception e) {
             return Mono.error(e);
         }

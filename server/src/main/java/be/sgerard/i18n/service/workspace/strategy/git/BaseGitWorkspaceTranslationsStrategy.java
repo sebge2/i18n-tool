@@ -12,6 +12,8 @@ import be.sgerard.i18n.service.workspace.strategy.WorkspaceTranslationsStrategy;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.Objects;
+
 /**
  * Base implementation for {@link WorkspaceTranslationsStrategy strategies} using {@link GitRepositoryEntity Git repositories}
  *
@@ -35,7 +37,7 @@ public abstract class BaseGitWorkspaceTranslationsStrategy implements WorkspaceT
     @Override
     public Flux<String> listBranches(RepositoryEntity repository) throws RepositoryException {
         return repositoryManager
-                .applyOnRepository(
+                .applyGetFlux(
                         repository.getId(),
                         GitRepositoryApi.class,
                         api -> Flux.fromStream(
@@ -45,22 +47,25 @@ public abstract class BaseGitWorkspaceTranslationsStrategy implements WorkspaceT
                                         .stream()
                                         .filter(branch -> isAllowedBranch(repository, branch))
                         )
-                )
-                .flatMapMany(flux -> flux);
+                );
+    }
+
+    @Override
+    public boolean initializeOnCreate(WorkspaceEntity workspace, RepositoryEntity repository) {
+        return Objects.equals(workspace.getBranch(), ((BaseGitRepositoryEntity) repository).getDefaultBranch());
     }
 
     @Override
     public Mono<WorkspaceEntity> onInitialize(WorkspaceEntity workspace) {
         return repositoryManager
-                .applyOnRepository(
+                .applyGetMono(
                         workspace.getRepository(),
                         GitRepositoryApi.class,
                         api ->
                                 translationManager
                                         .readTranslations(workspace, new GitTranslationRepositoryReadApi(api, workspace.getBranch()))
                                         .then(Mono.just(workspace))
-                )
-                .flatMap(m -> m);
+                );
     }
 
     /**

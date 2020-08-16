@@ -31,15 +31,14 @@ public class GitDirectPushWorkspaceTranslationsStrategy extends BaseGitWorkspace
     @Override
     public Mono<WorkspaceEntity> onPublish(WorkspaceEntity workspace, String message) {
         return repositoryManager
-                .applyOnRepository(
+                .applyGetMono(
                         workspace.getRepository(),
                         GitRepositoryApi.class,
                         api -> translationManager
                                 .writeTranslations(workspace, new GitTranslationRepositoryWriteApi(api, workspace.getBranch(), workspace.getBranch()))
                                 .doOnSuccess(v -> api.commitAll(message).push())
                                 .thenReturn(workspace)
-                )
-                .flatMap(m -> m);
+                );
     }
 
     @Override
