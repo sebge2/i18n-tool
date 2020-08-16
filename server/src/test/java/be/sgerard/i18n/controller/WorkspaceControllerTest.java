@@ -1,6 +1,5 @@
 package be.sgerard.i18n.controller;
 
-import be.sgerard.i18n.model.repository.RepositoryType;
 import be.sgerard.i18n.model.repository.dto.GitHubRepositoryDto;
 import be.sgerard.i18n.model.repository.dto.GitRepositoryDto;
 import be.sgerard.i18n.model.repository.dto.RepositoryDto;
@@ -110,9 +109,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                 .expectBody()
                 .jsonPath("$.branch").isEqualTo("master")
                 .jsonPath("$.status").isEqualTo(WorkspaceStatus.NOT_INITIALIZED.name())
-                .jsonPath("$.repositoryId").isEqualTo(repository.forHint("repo").get().getId())
-                .jsonPath("$.repositoryName").isEqualTo(repository.forHint("repo").get().getName())
-                .jsonPath("$.repositoryType").isEqualTo(RepositoryType.GITHUB.name());
+                .jsonPath("$.repositoryId").isEqualTo(repository.forHint("repo").get().getId());
     }
 
     @Test
@@ -178,8 +175,11 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                     .exchange()
                     .expectStatus().isOk()
                     .expectBody()
+                    .jsonPath("$.id").isNotEmpty()
                     .jsonPath("$.branch").isEqualTo("master")
-                    .jsonPath("$.status").isEqualTo(WorkspaceStatus.INITIALIZED.name());
+                    .jsonPath("$.status").isEqualTo(WorkspaceStatus.INITIALIZED.name())
+                    .jsonPath("$.repositoryId").isNotEmpty()
+                    .jsonPath("$.files", hasSize(4));
 
             translations
                     .forRepositoryHint("my-repo")
@@ -305,7 +305,9 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                     .expectStatus().isOk()
                     .expectBody()
                     .jsonPath("$.branch").isEqualTo("master")
-                    .jsonPath("$.status").isEqualTo(WorkspaceStatus.INITIALIZED.name());
+                    .jsonPath("$.status").isEqualTo(WorkspaceStatus.INITIALIZED.name())
+                    .jsonPath("$.repositoryId").isNotEmpty()
+                    .jsonPath("$.files", hasSize(4));
 
             translations
                     .forRepositoryHint("my-repo")

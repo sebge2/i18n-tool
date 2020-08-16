@@ -21,10 +21,10 @@ public class GitHubRepositoryPatchDto extends BaseGitRepositoryPatchDto {
         return new GitHubRepositoryPatchDto.Builder();
     }
 
-    @Schema(description = "Access key to use to access this repository")
+    @Schema(description = "Access key to use to access this repository (empty means no access key)")
     private final String accessKey;
 
-    @Schema(description = "Access key to use to access this repository")
+    @Schema(description = "Access key to use to access this repository (empty means no password)")
     private final String webHookSecret;
 
     private GitHubRepositoryPatchDto(Builder builder) {

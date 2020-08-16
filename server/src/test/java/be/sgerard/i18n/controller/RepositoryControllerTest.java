@@ -362,6 +362,46 @@ public class RepositoryControllerTest extends AbstractControllerTest {
         @Test
         @TransactionalReactiveTest
         @WithJaneDoeAdminUser
+        public void updateAccessKey() {
+            final GitHubRepositoryDto repository = this.repository.create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class).get();
+
+            final GitHubRepositoryPatchDto patchDto = GitHubRepositoryPatchDto.gitHubBuilder()
+                    .id(repository.getId())
+                    .accessKey("abzec")
+                    .build();
+
+            webClient
+                    .patch()
+                    .uri("/api/repository/{id}", repository.getId())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(patchDto)
+                    .exchange()
+                    .expectStatus().isOk();
+        }
+
+        @Test
+        @TransactionalReactiveTest
+        @WithJaneDoeAdminUser
+        public void updateWebhookSecret() {
+            final GitHubRepositoryDto repository = this.repository.create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class).get();
+
+            final GitHubRepositoryPatchDto patchDto = GitHubRepositoryPatchDto.gitHubBuilder()
+                    .id(repository.getId())
+                    .webHookSecret("abzec")
+                    .build();
+
+            webClient
+                    .patch()
+                    .uri("/api/repository/{id}", repository.getId())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(patchDto)
+                    .exchange()
+                    .expectStatus().isOk();
+        }
+
+        @Test
+        @TransactionalReactiveTest
+        @WithJaneDoeAdminUser
         public void deleteRepository() {
             final GitHubRepositoryDto repository = this.repository.create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class).get();
 

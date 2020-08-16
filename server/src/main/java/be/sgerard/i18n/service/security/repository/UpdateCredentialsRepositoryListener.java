@@ -1,5 +1,7 @@
 package be.sgerard.i18n.service.security.repository;
 
+import be.sgerard.i18n.model.repository.dto.GitHubRepositoryPatchDto;
+import be.sgerard.i18n.model.repository.dto.RepositoryPatchDto;
 import be.sgerard.i18n.model.repository.persistence.RepositoryEntity;
 import be.sgerard.i18n.service.repository.listener.RepositoryListener;
 import be.sgerard.i18n.service.security.auth.AuthenticationUserManager;
@@ -31,8 +33,12 @@ public class UpdateCredentialsRepositoryListener implements RepositoryListener<R
     }
 
     @Override
-    public Mono<Void> onUpdate(RepositoryEntity repository) {
-        return authenticationUserManager.updateAllRepositoryCredentials(repository.getId());
+    public Mono<Void> onUpdate(RepositoryPatchDto patch, RepositoryEntity repository) {
+        if (patch instanceof GitHubRepositoryPatchDto && ((GitHubRepositoryPatchDto) patch).getAccessKey().isPresent()) {
+            return authenticationUserManager.updateAllRepositoryCredentials(repository.getId());
+        }
+
+        return Mono.empty();
     }
 
     @Override
