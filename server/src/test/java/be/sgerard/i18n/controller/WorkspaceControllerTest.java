@@ -1,8 +1,7 @@
 package be.sgerard.i18n.controller;
 
-import be.sgerard.i18n.model.repository.dto.GitHubRepositoryDto;
-import be.sgerard.i18n.model.repository.dto.GitRepositoryDto;
-import be.sgerard.i18n.model.repository.dto.RepositoryDto;
+import be.sgerard.i18n.model.github.GitHubPullRequestStatus;
+import be.sgerard.i18n.model.repository.dto.*;
 import be.sgerard.i18n.model.workspace.WorkspaceStatus;
 import be.sgerard.i18n.model.workspace.dto.WorkspaceDto;
 import be.sgerard.test.i18n.support.TransactionalReactiveTest;
@@ -108,7 +107,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.branch").isEqualTo("master")
-                .jsonPath("$.status").isEqualTo(WorkspaceStatus.NOT_INITIALIZED.name())
+                .jsonPath("$.status").isEqualTo(WorkspaceStatus.INITIALIZED.name())
                 .jsonPath("$.repositoryId").isEqualTo(repository.forHint("repo").get().getId());
     }
 
@@ -145,16 +144,204 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
         @Test
         @TransactionalReactiveTest
         @WithJaneDoeAdminUser
-        public void synchronize() {
-            final GitHubRepositoryDto repository = this.repository.create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class).initialize().get();
+        public void synchronizeBranchAdded() {
+            final GitHubRepositoryCreationDto creationDto = i18nToolRepositoryCreationDto();
+            final GitHubRepositoryDto repository = this.repository.create(creationDto, GitHubRepositoryDto.class).initialize().get();
 
-            webClient
-                    .post()
-                    .uri("/api/repository/{id}/workspace/do?action=SYNCHRONIZE", repository.getId())
-                    .exchange()
-                    .expectStatus().isOk()
-                    .expectBody()
-                    .jsonPath("$").value(hasSize(3));
+            gitRepo.getRepo(creationDto).createBranches("release/2020.08");
+
+            try {
+                webClient
+                        .post()
+                        .uri("/api/repository/{id}/workspace/do?action=SYNCHRONIZE", repository.getId())
+                        .exchange()
+                        .expectStatus().isOk()
+                        .expectBody()
+                        .jsonPath("$").value(hasSize(4))
+                        .jsonPath("$.[0].branch").isEqualTo("master")
+                        .jsonPath("$.[0].status").isEqualTo("INITIALIZED")
+                        .jsonPath("$.[1].branch").isEqualTo("release/2020.05")
+                        .jsonPath("$.[1].status").isEqualTo("NOT_INITIALIZED")
+                        .jsonPath("$.[2].branch").isEqualTo("release/2020.06")
+                        .jsonPath("$.[2].status").isEqualTo("NOT_INITIALIZED")
+                        .jsonPath("$.[3].branch").isEqualTo("release/2020.08")
+                        .jsonPath("$.[3].status").isEqualTo("NOT_INITIALIZED");
+            } finally {
+                gitRepo.getRepo(creationDto).deleteBranches("release/2020.08");
+            }
+        }
+
+        @Test
+        @TransactionalReactiveTest
+        @WithJaneDoeAdminUser
+        public void synchronizeBranchRemoved() {
+            final GitHubRepositoryCreationDto creationDto = i18nToolRepositoryCreationDto();
+            final GitHubRepositoryDto repository = this.repository.create(creationDto, GitHubRepositoryDto.class).initialize().get();
+
+            try {
+                gitRepo.getRepo(creationDto).deleteBranches("release/2020.06");
+
+                webClient
+                        .post()
+                        .uri("/api/repository/{id}/workspace/do?action=SYNCHRONIZE", repository.getId())
+                        .exchange()
+                        .expectStatus().isOk()
+                        .expectBody()
+                        .jsonPath("$").value(hasSize(2))
+                        .jsonPath("$.[0].branch").isEqualTo("master")
+                        .jsonPath("$.[0].status").isEqualTo("INITIALIZED")
+                        .jsonPath("$.[1].branch").isEqualTo("release/2020.05")
+                        .jsonPath("$.[1].status").isEqualTo("NOT_INITIALIZED");
+            } finally {
+                gitRepo.getRepo(creationDto).createBranches("release/2020.06");
+            }
+        }
+
+        @Test
+        @TransactionalReactiveTest
+        @WithJaneDoeAdminUser
+        public void synchronizeInReviewBranchDeleted() {
+            final GitHubRepositoryCreationDto creationDto = i18nToolRepositoryCreationDto();
+
+            try {
+                gitRepo.getRepo(creationDto).createBranches("release/2020.08");
+
+                this.repository.create(creationDto, GitHubRepositoryDto.class).hint("repo")
+                        .initialize()
+                        .workspaces()
+                        .workspaceForBranch("release/2020.08")
+                        .initialize()
+                        .publish("test");
+
+                gitRepo.getRepo(creationDto).deleteBranches("release/2020.08");
+
+                webClient
+                        .post()
+                        .uri("/api/repository/{id}/workspace/do?action=SYNCHRONIZE", this.repository.forHint("repo").get().getId())
+                        .exchange()
+                        .expectStatus().isOk()
+                        .expectBody()
+                        .jsonPath("$").value(hasSize(3))
+                        .jsonPath("$.[0].branch").isEqualTo("master")
+                        .jsonPath("$.[0].status").isEqualTo("INITIALIZED")
+                        .jsonPath("$.[1].branch").isEqualTo("release/2020.05")
+                        .jsonPath("$.[1].status").isEqualTo("NOT_INITIALIZED")
+                        .jsonPath("$.[2].branch").isEqualTo("release/2020.06")
+                        .jsonPath("$.[2].status").isEqualTo("NOT_INITIALIZED");
+            } finally {
+                gitRepo.getRepo(creationDto).deleteBranches("release/2020.08");
+            }
+        }
+
+        @Test
+        @TransactionalReactiveTest
+        @WithJaneDoeAdminUser
+        public void synchronizeInReviewStillInReview() {
+            final GitHubRepositoryCreationDto creationDto = i18nToolRepositoryCreationDto();
+
+            try {
+                gitRepo.getRepo(creationDto).createBranches("release/2020.08");
+
+                this.repository.create(creationDto, GitHubRepositoryDto.class).hint("repo")
+                        .initialize()
+                        .workspaces()
+                        .workspaceForBranch("release/2020.08")
+                        .initialize()
+                        .publish("test");
+
+                webClient
+                        .post()
+                        .uri("/api/repository/{id}/workspace/do?action=SYNCHRONIZE", this.repository.forHint("repo").get().getId())
+                        .exchange()
+                        .expectStatus().isOk()
+                        .expectBody()
+                        .jsonPath("$").value(hasSize(4))
+                        .jsonPath("$.[0].branch").isEqualTo("master")
+                        .jsonPath("$.[0].status").isEqualTo("INITIALIZED")
+                        .jsonPath("$.[1].branch").isEqualTo("release/2020.05")
+                        .jsonPath("$.[1].status").isEqualTo("NOT_INITIALIZED")
+                        .jsonPath("$.[2].branch").isEqualTo("release/2020.06")
+                        .jsonPath("$.[2].status").isEqualTo("NOT_INITIALIZED")
+                        .jsonPath("$.[3].branch").isEqualTo("release/2020.08")
+                        .jsonPath("$.[3].status").isEqualTo("IN_REVIEW");
+            } finally {
+                gitRepo.getRepo(creationDto).deleteBranches("release/2020.08");
+            }
+        }
+
+        @Test
+        @TransactionalReactiveTest
+        @WithJaneDoeAdminUser
+        public void synchronizeInReviewReviewFinished() {
+            final GitHubRepositoryCreationDto creationDto = i18nToolRepositoryCreationDto();
+
+            try {
+                gitRepo.getRepo(creationDto).createBranches("release/2020.08");
+
+                this.repository.create(creationDto, GitHubRepositoryDto.class).hint("repo")
+                        .initialize()
+                        .workspaces()
+                        .workspaceForBranch("release/2020.08")
+                        .initialize()
+                        .publish("test");
+
+                this.repository.forHint("repo").gitHub().updatePullRequestStatus("release/2020.08", GitHubPullRequestStatus.CLOSED);
+
+                webClient
+                        .post()
+                        .uri("/api/repository/{id}/workspace/do?action=SYNCHRONIZE", this.repository.forHint("repo").get().getId())
+                        .exchange()
+                        .expectStatus().isOk()
+                        .expectBody()
+                        .jsonPath("$").value(hasSize(4))
+                        .jsonPath("$.[0].branch").isEqualTo("master")
+                        .jsonPath("$.[0].status").isEqualTo("INITIALIZED")
+                        .jsonPath("$.[1].branch").isEqualTo("release/2020.05")
+                        .jsonPath("$.[1].status").isEqualTo("NOT_INITIALIZED")
+                        .jsonPath("$.[2].branch").isEqualTo("release/2020.06")
+                        .jsonPath("$.[2].status").isEqualTo("NOT_INITIALIZED")
+                        .jsonPath("$.[3].branch").isEqualTo("release/2020.08")
+                        .jsonPath("$.[3].status").isEqualTo("NOT_INITIALIZED");
+            } finally {
+                gitRepo.getRepo(creationDto).deleteBranches("release/2020.08");
+            }
+        }
+
+        @Test
+        @TransactionalReactiveTest
+        @WithJaneDoeAdminUser
+        public void synchronizeInReviewReviewFinishedBranchDeleted() {
+            final GitHubRepositoryCreationDto creationDto = i18nToolRepositoryCreationDto();
+
+            try {
+                gitRepo.getRepo(creationDto).createBranches("release/2020.08");
+
+                this.repository.create(creationDto, GitHubRepositoryDto.class).hint("repo")
+                        .initialize()
+                        .workspaces()
+                        .workspaceForBranch("release/2020.08")
+                        .initialize()
+                        .publish("test");
+
+                gitRepo.getRepo(creationDto).deleteBranches("release/2020.08");
+                this.repository.forHint("repo").gitHub().updatePullRequestStatus("release/2020.08", GitHubPullRequestStatus.CLOSED);
+
+                webClient
+                        .post()
+                        .uri("/api/repository/{id}/workspace/do?action=SYNCHRONIZE", this.repository.forHint("repo").get().getId())
+                        .exchange()
+                        .expectStatus().isOk()
+                        .expectBody()
+                        .jsonPath("$").value(hasSize(3))
+                        .jsonPath("$.[0].branch").isEqualTo("master")
+                        .jsonPath("$.[0].status").isEqualTo("INITIALIZED")
+                        .jsonPath("$.[1].branch").isEqualTo("release/2020.05")
+                        .jsonPath("$.[1].status").isEqualTo("NOT_INITIALIZED")
+                        .jsonPath("$.[2].branch").isEqualTo("release/2020.06")
+                        .jsonPath("$.[2].status").isEqualTo("NOT_INITIALIZED");
+            } finally {
+                gitRepo.getRepo(creationDto).deleteBranches("release/2020.08");
+            }
         }
 
         @Test
@@ -266,24 +453,57 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
         @Test
         @TransactionalReactiveTest
         @WithJaneDoeAdminUser
-        public void synchronize() {
-            final GitRepositoryDto repository = this.repository.create(i18nToolLocalRepositoryCreationDto(), GitRepositoryDto.class).initialize().get();
+        public void synchronizeBranchAdded() {
+            final GitRepositoryCreationDto creationDto = i18nToolLocalRepositoryCreationDto();
+            final GitRepositoryDto repository = this.repository.create(creationDto, GitRepositoryDto.class).initialize().get();
 
-            webClient
-                    .post()
-                    .uri("/api/repository/{id}/workspace/do?action=SYNCHRONIZE", repository.getId())
-                    .exchange()
-                    .expectStatus().isOk()
-                    .expectBody()
-                    .jsonPath("$").value(hasSize(3));
+            gitRepo.getRepo(creationDto).createBranches("release/2020.08");
 
-            webClient
-                    .get()
-                    .uri("/api/repository/workspace")
-                    .exchange()
-                    .expectStatus().isOk()
-                    .expectBody()
-                    .jsonPath("$").value(hasSize(3));
+            try {
+                webClient
+                        .post()
+                        .uri("/api/repository/{id}/workspace/do?action=SYNCHRONIZE", repository.getId())
+                        .exchange()
+                        .expectStatus().isOk()
+                        .expectBody()
+                        .jsonPath("$").value(hasSize(4))
+                        .jsonPath("$.[0].branch").isEqualTo("master")
+                        .jsonPath("$.[0].status").isEqualTo("INITIALIZED")
+                        .jsonPath("$.[1].branch").isEqualTo("release/2020.05")
+                        .jsonPath("$.[1].status").isEqualTo("NOT_INITIALIZED")
+                        .jsonPath("$.[2].branch").isEqualTo("release/2020.06")
+                        .jsonPath("$.[2].status").isEqualTo("NOT_INITIALIZED")
+                        .jsonPath("$.[3].branch").isEqualTo("release/2020.08")
+                        .jsonPath("$.[3].status").isEqualTo("NOT_INITIALIZED");
+            } finally {
+                gitRepo.getRepo(creationDto).deleteBranches("release/2020.08");
+            }
+        }
+
+        @Test
+        @TransactionalReactiveTest
+        @WithJaneDoeAdminUser
+        public void synchronizeBranchRemoved() {
+            final GitRepositoryCreationDto creationDto = i18nToolLocalRepositoryCreationDto();
+            final GitRepositoryDto repository = this.repository.create(creationDto, GitRepositoryDto.class).initialize().get();
+
+            try {
+                gitRepo.getRepo(creationDto).deleteBranches("release/2020.06");
+
+                webClient
+                        .post()
+                        .uri("/api/repository/{id}/workspace/do?action=SYNCHRONIZE", repository.getId())
+                        .exchange()
+                        .expectStatus().isOk()
+                        .expectBody()
+                        .jsonPath("$").value(hasSize(2))
+                        .jsonPath("$.[0].branch").isEqualTo("master")
+                        .jsonPath("$.[0].status").isEqualTo("INITIALIZED")
+                        .jsonPath("$.[1].branch").isEqualTo("release/2020.05")
+                        .jsonPath("$.[1].status").isEqualTo("NOT_INITIALIZED");
+            } finally {
+                gitRepo.getRepo(creationDto).createBranches("release/2020.06");
+            }
         }
 
         @Test
@@ -336,7 +556,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                     .expectStatus().isOk()
                     .expectBody()
                     .jsonPath("$.branch").isEqualTo("master")
-                    .jsonPath("$.status").isEqualTo(WorkspaceStatus.NOT_INITIALIZED.name());
+                    .jsonPath("$.status").isEqualTo(WorkspaceStatus.INITIALIZED.name());
         }
 
         @Test

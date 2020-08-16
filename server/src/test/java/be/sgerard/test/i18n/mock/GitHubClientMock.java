@@ -82,6 +82,15 @@ public class GitHubClientMock implements GitHubClient {
         );
     }
 
+    public void updatePullRequestStatus(String repositoryId, String targetBranch, GitHubPullRequestStatus status) {
+        pullRequests
+                .stream()
+                .filter(pullRequest -> Objects.equals(pullRequest.getRepositoryId(), repositoryId))
+                .filter(pullRequest -> Objects.equals(pullRequest.getTargetBranch(), targetBranch))
+                .findFirst()
+                .ifPresent(pullRequest -> pullRequest.setStatus(status));
+    }
+
     public static final class PullRequest {
 
         private final String repositoryId;
@@ -146,6 +155,7 @@ public class GitHubClientMock implements GitHubClient {
                     .currentBranch(getCurrentBranch())
                     .targetBranch(getTargetBranch())
                     .number(getRequestNumber())
+                    .status(getStatus())
                     .build();
         }
 

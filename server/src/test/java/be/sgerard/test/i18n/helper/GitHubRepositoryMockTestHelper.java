@@ -1,5 +1,6 @@
 package be.sgerard.test.i18n.helper;
 
+import be.sgerard.i18n.model.github.GitHubPullRequestStatus;
 import be.sgerard.i18n.model.repository.dto.GitHubRepositoryDto;
 import be.sgerard.test.i18n.mock.GitHubClientMock;
 import org.springframework.stereotype.Component;
@@ -12,10 +13,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Component
 public class GitHubRepositoryMockTestHelper {
 
-    private final GitHubClientMock pullRequestClient;
+    private final GitHubClientMock gitHubClient;
 
-    public GitHubRepositoryMockTestHelper(GitHubClientMock pullRequestClient) {
-        this.pullRequestClient = pullRequestClient;
+    public GitHubRepositoryMockTestHelper(GitHubClientMock gitHubClient) {
+        this.gitHubClient = gitHubClient;
     }
 
     StepRepository forRepository(GitHubRepositoryDto repositoryDto) {
@@ -31,7 +32,13 @@ public class GitHubRepositoryMockTestHelper {
         }
 
         public StepRepository assertHasPullRequests() {
-            assertThat(pullRequestClient.findAll(repositoryDto.getId()).hasElements().block()).isTrue();
+            assertThat(gitHubClient.findAll(repositoryDto.getId()).hasElements().block()).isTrue();
+
+            return this;
+        }
+
+        public StepRepository updatePullRequestStatus(String targetBranch, GitHubPullRequestStatus status) {
+            gitHubClient.updatePullRequestStatus(repositoryDto.getId(), targetBranch, status);
 
             return this;
         }
