@@ -28,6 +28,11 @@ public interface WorkspaceTranslationsStrategy {
     Flux<String> listBranches(RepositoryEntity repository)  throws WorkspaceException, RepositoryException;
 
     /**
+     * Returns whether the newly created workspace should be now initialized.
+     */
+    boolean initializeOnCreate(WorkspaceEntity workspace, RepositoryEntity repository);
+
+    /**
      * Returns whether the review of the specified {@link WorkspaceEntity workspace} is finished.
      */
     Mono<Boolean> isReviewFinished(WorkspaceEntity workspace) throws WorkspaceException, RepositoryException;

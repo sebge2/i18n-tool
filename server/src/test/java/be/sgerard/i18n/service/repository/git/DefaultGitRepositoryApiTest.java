@@ -5,7 +5,10 @@ import be.sgerard.i18n.service.repository.RepositoryException;
 import be.sgerard.test.i18n.support.GitHubCredentialsTest;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,6 +32,8 @@ public class DefaultGitRepositoryApiTest {
     private static DefaultGitRepositoryApi.Configuration configuration;
     private static GitRepositoryApi api;
 
+    // TODO cleanup this test, avoid api field
+
     @BeforeAll
     public static void setup() throws IOException {
         configuration = new DefaultGitRepositoryApi.Configuration(generateTemporaryFile(), URI.create(REPO_LOCATION));
@@ -39,35 +44,56 @@ public class DefaultGitRepositoryApiTest {
 
     @AfterAll
     public static void tearDown() throws IOException {
+        api.close();
+
         FileUtils.deleteDirectory(configuration.getRepositoryLocation());
     }
 
     @Test
     public void validateInfo() throws Exception {
-        DefaultGitRepositoryApi.createAPI(new DefaultGitRepositoryApi.Configuration(generateTemporaryFile(), URI.create(REPO_LOCATION)))
-                .validateInfo();
+        final File repositoryLocation = generateTemporaryFile();
+
+        try {
+            final GitRepositoryApi.Configuration configuration = new DefaultGitRepositoryApi.Configuration(repositoryLocation, URI.create(REPO_LOCATION));
+
+            try (GitRepositoryApi api = DefaultGitRepositoryApi.createAPI(configuration)) {
+                api.validateInfo();
+            }
+        } finally {
+            FileUtils.deleteDirectory(repositoryLocation);
+        }
     }
 
     @Test
-    public void validateInfoWrongUrl() {
-        Assertions.assertThrows(ValidationException.class, () ->
-                DefaultGitRepositoryApi
-                        .createAPI(new DefaultGitRepositoryApi.Configuration(generateTemporaryFile(), URI.create("https://github.com/sebge2/unknown.git")))
-                        .validateInfo()
-        );
+    public void validateInfoWrongUrl() throws IOException {
+        final File repositoryLocation = generateTemporaryFile();
+
+        try {
+            final GitRepositoryApi.Configuration configuration = new DefaultGitRepositoryApi.Configuration(repositoryLocation, URI.create("https://github.com/sebge2/unknown.git"));
+
+            try (GitRepositoryApi api = DefaultGitRepositoryApi.createAPI(configuration)) {
+                Assertions.assertThrows(ValidationException.class, api::validateInfo);
+            }
+        } finally {
+            FileUtils.deleteDirectory(repositoryLocation);
+        }
     }
 
     @Test
-    public void validateInfoWrongCredentials() {
-        Assertions.assertThrows(ValidationException.class, () ->
-                DefaultGitRepositoryApi
-                        .createAPI(
-                                new DefaultGitRepositoryApi.Configuration(generateTemporaryFile(), URI.create("https://github.com/sebge2/unknown.git"))
-                                        .setUsername("sebge2")
-                                        .setPassword("password")
-                        )
-                        .validateInfo()
-        );
+    public void validateInfoWrongCredentials() throws IOException {
+        final File repositoryLocation = generateTemporaryFile();
+
+        try {
+            final GitRepositoryApi.Configuration configuration = new DefaultGitRepositoryApi.Configuration(repositoryLocation, URI.create("https://github.com/sebge2/unknown.git"))
+                    .setUsername("sebge2")
+                    .setPassword("password");
+
+            try (GitRepositoryApi api = DefaultGitRepositoryApi.createAPI(configuration)) {
+                Assertions.assertThrows(ValidationException.class, api::validateInfo);
+            }
+        } finally {
+            FileUtils.deleteDirectory(repositoryLocation);
+        }
     }
 
     @Test
@@ -80,6 +106,7 @@ public class DefaultGitRepositoryApiTest {
     @Test
     public void getCurrentBranch() {
         final String actual = api.getCurrentBranch();
+
         assertThat(actual).isEqualTo(DefaultGitRepositoryApi.DEFAULT_BRANCH);
     }
 
@@ -257,7 +284,7 @@ public class DefaultGitRepositoryApiTest {
         assertThat(actual).isEqualTo(false);
     }
 
-    public static File generateTemporaryFile() throws IOException {
+    private static File generateTemporaryFile() throws IOException {
         return Files.createTempDirectory("test-").toFile();
     }
 }

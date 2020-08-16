@@ -55,18 +55,13 @@ public abstract class BaseGitRepositoryApi implements GitRepositoryApi {
     protected final URI remoteUri;
     protected final File repositoryLocation;
     private final List<File> modifiedFiles = new ArrayList<>();
-    private final File tempDirectory;
+
+    private File tempDirectory;
     private boolean closed = false;
 
     public BaseGitRepositoryApi(Configuration configuration) {
         this.remoteUri = configuration.getRemoteUri().orElse(null);
         this.repositoryLocation = configuration.getRepositoryLocation();
-
-        try {
-            this.tempDirectory = Files.createTempDirectory("repo-api-").toFile();
-        } catch (IOException e) {
-            throw new RuntimeException("Cannot create temporary directory.", e);
-        }
     }
 
     @Override
@@ -178,7 +173,7 @@ public abstract class BaseGitRepositoryApi implements GitRepositoryApi {
     public File openAsTemp(File file) throws RepositoryException {
         try {
             final Path target = getFQNFile(file).toPath();
-            final Path link = new File(tempDirectory, file.toString()).toPath();
+            final Path link = new File(getOrCreateTemporaryDirectory(), file.toString()).toPath();
 
             Files.createDirectories(link.getParent());
 
@@ -195,6 +190,10 @@ public abstract class BaseGitRepositoryApi implements GitRepositoryApi {
                 FileUtils.deleteDirectory(repositoryLocation);
             }
 
+            if ((tempDirectory != null) && tempDirectory.exists()) {
+                FileUtils.deleteDirectory(tempDirectory);
+            }
+
             return this;
         } catch (Exception e) {
             throw RepositoryException.onDelete(e);
@@ -206,7 +205,7 @@ public abstract class BaseGitRepositoryApi implements GitRepositoryApi {
         try {
             try {
                 try {
-                    if (tempDirectory.exists()) {
+                    if ((tempDirectory != null) && tempDirectory.exists()) {
                         FileUtils.forceDelete(tempDirectory);
                     }
                 } catch (IOException e) {
@@ -215,7 +214,14 @@ public abstract class BaseGitRepositoryApi implements GitRepositoryApi {
 
                 checkNoModifiedFile();
             } finally {
-                checkout(DEFAULT_BRANCH);
+                if (repositoryLocation.exists()) {
+                    try {
+                        checkout(DEFAULT_BRANCH);
+                    } catch (RepositoryException e) {
+                        logger.debug("Error while doing a checkout of the default branch. " +
+                                "The repository may not have been initialized properly.", e);
+                    }
+                }
             }
         } finally {
             this.closed = true;
@@ -287,5 +293,20 @@ public abstract class BaseGitRepositoryApi implements GitRepositoryApi {
      */
     protected void clearModifiedFiles() {
         modifiedFiles.clear();
+    }
+
+    /**
+     * Returns the temporary directory, if it does not exist, a new fresh one is created.
+     */
+    private File getOrCreateTemporaryDirectory() {
+        if (tempDirectory == null) {
+            try {
+                this.tempDirectory = Files.createTempDirectory("repo-api-").toFile();
+            } catch (IOException e) {
+                throw new RuntimeException("Cannot create temporary directory.", e);
+            }
+        }
+
+        return this.tempDirectory;
     }
 }
