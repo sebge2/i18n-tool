@@ -36,13 +36,12 @@ import {GeneratePasswordButtonComponent} from "./component/generate-password-but
 import {RowActionsComponent} from "./component/row-actions/row-actions.component";
 import {RowActionsElementComponent} from "./component/row-actions/row-actions-element/row-actions-element.component";
 import {RowActionsItemComponent} from "./component/row-actions/row-actions-item/row-actions-item.component";
+import {ExpansionPanelComponent} from "./component/expansion-panel/expansion-panel.component";
+import {ExpansionPanelHeaderComponent} from "./component/expansion-panel/expansion-panel-header/expansion-panel-header.component";
+import {ExpansionPanelContentComponent} from "./component/expansion-panel/expansion-panel-content/expansion-panel-content.component";
 
 @NgModule({
     declarations: [
-        MainMessageComponent,
-        ErrorMessageListComponent,
-        CardGridComponent,
-        CardGridItemComponent,
         FormCancelButtonComponent,
         FormSaveButtonComponent,
         FormDeleteButtonComponent,
@@ -54,6 +53,10 @@ import {RowActionsItemComponent} from "./component/row-actions/row-actions-item/
         MoreActionItemButtonComponent,
         GeneratePasswordButtonComponent,
 
+        MainMessageComponent,
+        ErrorMessageListComponent,
+        CardGridComponent,
+        CardGridItemComponent,
         WizardComponent,
         WizardStepComponent,
         TabsComponent,
@@ -69,6 +72,9 @@ import {RowActionsItemComponent} from "./component/row-actions/row-actions-item/
         RowActionsItemComponent,
         RowActionsElementComponent,
         RowActionsItemComponent,
+        ExpansionPanelComponent,
+        ExpansionPanelHeaderComponent,
+        ExpansionPanelContentComponent,
 
         WorkspaceIconPipe,
         WorkspaceIconCssPipe,
@@ -88,10 +94,6 @@ import {RowActionsItemComponent} from "./component/row-actions/row-actions-item/
         TranslateModule,
         CoreSharedLibModule,
 
-        MainMessageComponent,
-        ErrorMessageListComponent,
-        CardGridComponent,
-        CardGridItemComponent,
         FormCancelButtonComponent,
         FormSaveButtonComponent,
         FormDeleteButtonComponent,
@@ -103,6 +105,10 @@ import {RowActionsItemComponent} from "./component/row-actions/row-actions-item/
         MoreActionItemButtonComponent,
         GeneratePasswordButtonComponent,
 
+        MainMessageComponent,
+        ErrorMessageListComponent,
+        CardGridComponent,
+        CardGridItemComponent,
         WizardComponent,
         WizardStepComponent,
         TabsComponent,
@@ -116,6 +122,9 @@ import {RowActionsItemComponent} from "./component/row-actions/row-actions-item/
         RowActionsComponent,
         RowActionsElementComponent,
         RowActionsItemComponent,
+        ExpansionPanelComponent,
+        ExpansionPanelHeaderComponent,
+        ExpansionPanelContentComponent,
 
         WorkspaceIconPipe,
         WorkspaceIconCssPipe,
