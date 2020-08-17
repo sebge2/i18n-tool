@@ -12,9 +12,10 @@ import {
 import {NotificationService} from "../../core/notification/service/notification.service";
 import {synchronizedCollection} from "../../core/shared/utils/synchronized-observable-utils";
 import {Events} from "../../core/event/model/events.model";
-import {catchError, map} from "rxjs/operators";
+import {catchError, distinctUntilChanged, filter, map} from "rxjs/operators";
 import {GitRepository} from "../model/repository/git-repository.model";
 import {GitHubRepository} from "../model/repository/github-repository.model";
+import * as _ from "lodash";
 
 @Injectable({
     providedIn: 'root'
@@ -43,6 +44,15 @@ export class RepositoryService {
 
     public getRepositories(): Observable<Repository[]> {
         return this._repositories$;
+    }
+
+    public getRepository(workspaceId: string): Observable<Repository> {
+        return this.getRepositories()
+            .pipe(
+                map(repositories => _.find(repositories, repository => _.isEqual(repository.id, workspaceId))),
+                filter(repository => !!repository),
+                distinctUntilChanged()
+            );
     }
 
     public createRepository(dto: RepositoryCreationRequestDto): Observable<Repository> {

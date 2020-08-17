@@ -41,7 +41,7 @@ import {FocusMonitor} from '@angular/cdk/a11y';
 // https://material.angular.io/guide/creating-a-custom-form-field-control
 export class TranslationLocaleSelectorComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck, ControlValueAccessor, MatFormFieldControl<TranslationLocale[]> {
 
-    @Input() public labelKey: string = 'SHARED.LOCALES_LABEL';
+    @Input() public labelKey: string = '';
 
     @ViewChild('auto', {static: false}) public matAutocomplete: MatAutocomplete;
     @HostBinding('attr.aria-describedby') public describedBy = '';

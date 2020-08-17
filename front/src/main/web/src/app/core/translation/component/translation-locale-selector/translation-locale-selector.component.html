@@ -8,7 +8,7 @@
                 [selectable]="true"
                 [removable]="true"
                 (removed)="remove(locale)">
-            <span [class]="locale | translationLocaleIcon"></span>
+            <span [class]="locale | translationLocaleIcon" class="app-translation-locale-selector-icon"></span>
             {{locale.displayName}}
             <mat-icon matChipRemove>cancel</mat-icon>
         </mat-chip>
@@ -24,7 +24,7 @@
     </mat-chip-list>
     <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
         <mat-option *ngFor="let locale of filteredLocales$ | async" [value]="locale">
-            <span [class]="locale | translationLocaleIcon"></span> {{locale.displayName}}
+            <span [class]="locale | translationLocaleIcon" class="app-translation-locale-selector-icon"></span> {{locale.displayName}}
         </mat-option>
     </mat-autocomplete>
 </form>

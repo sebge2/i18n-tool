@@ -5,3 +5,7 @@
 .locales-list {
     width: 100%;
 }
+
+.app-translation-locale-selector-icon{
+    margin-top: 5px;
+}
