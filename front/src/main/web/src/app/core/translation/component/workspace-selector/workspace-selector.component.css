@@ -5,3 +5,7 @@
 .workspaces-list {
     width: 100%;
 }
+
+.app-workspace-selector-icon {
+    margin-right: 5px;
+}

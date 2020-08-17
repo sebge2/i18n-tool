@@ -23,6 +23,8 @@ import {coerceBooleanProperty} from "@angular/cdk/coercion";
 import * as _ from "lodash";
 import {MatChipInputEvent} from "@angular/material/chips";
 import {WorkspaceService} from "../../../../translations/service/workspace.service";
+import {Repository} from "../../../../translations/model/repository/repository.model";
+import {RepositoryService} from "../../../../translations/service/repository.service";
 
 @Component({
     selector: 'app-workspace-selector',
@@ -40,7 +42,9 @@ import {WorkspaceService} from "../../../../translations/service/workspace.servi
 // https://itnext.io/creating-a-custom-form-field-control-compatible-with-reactive-forms-and-angular-material-cf195905b451
 // https://material.angular.io/guide/creating-a-custom-form-field-control
 export class WorkspaceSelectorComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck, ControlValueAccessor, MatFormFieldControl<Workspace[]> {
-    @Input() public labelKey: string = 'SHARED.WORKSPACES_LABEL';
+
+    @Input() public labelKey: string = '';
+    @Input() public allowNotInitialized : boolean = false;
 
     @ViewChild('auto', {static: false}) public matAutocomplete: MatAutocomplete;
     @HostBinding('attr.aria-describedby') public describedBy = '';
@@ -73,14 +77,15 @@ export class WorkspaceSelectorComponent implements OnInit, OnDestroy, AfterViewI
                 private focusMonitor: FocusMonitor,
                 private formBuilder: FormBuilder,
                 private elRef: ElementRef<HTMLElement>,
-                private _workspaceService: WorkspaceService) {
+                private _workspaceService: WorkspaceService,
+                private _repositoryService: RepositoryService) {
         this.parts = formBuilder.group({
             input: [null],
             list: [[]]
         });
     }
 
-    ngOnInit() {
+    public ngOnInit() {
         this.ngControl = this.injector.get(NgControl);
 
         if (this.ngControl != null) {
@@ -100,7 +105,7 @@ export class WorkspaceSelectorComponent implements OnInit, OnDestroy, AfterViewI
             );
     }
 
-    ngAfterViewInit(): void {
+    public ngAfterViewInit(): void {
         this.focusMonitor
             .monitor(this.elRef.nativeElement, true)
             .subscribe(origin => {
@@ -109,7 +114,7 @@ export class WorkspaceSelectorComponent implements OnInit, OnDestroy, AfterViewI
             });
     }
 
-    ngOnDestroy(): void {
+    public ngOnDestroy(): void {
         this._destroyed$.next();
         this._destroyed$.complete();
 
@@ -117,7 +122,7 @@ export class WorkspaceSelectorComponent implements OnInit, OnDestroy, AfterViewI
         this.stateChanges.complete();
     }
 
-    ngDoCheck(): void {
+    public ngDoCheck(): void {
         if (this.ngControl) {
             this.errorState = this.ngControl.invalid && this.ngControl.touched;
             this.stateChanges.next();
@@ -125,87 +130,91 @@ export class WorkspaceSelectorComponent implements OnInit, OnDestroy, AfterViewI
     }
 
     @Input()
-    get placeholder(): string {
+    public get placeholder(): string {
         return this._placeholder;
     }
 
-    set placeholder(value: string) {
+    public set placeholder(value: string) {
         this._placeholder = value;
         this.stateChanges.next();
     }
 
     @Input()
-    get disabled(): boolean {
+    public get disabled(): boolean {
         return this._disabled;
     }
 
-    set disabled(value: boolean) {
+    public set disabled(value: boolean) {
         this._disabled = coerceBooleanProperty(value);
         this._disabled ? this.parts.disable() : this.parts.enable();
         this.stateChanges.next();
     }
 
     @Input()
-    get required() {
+    public get required() {
         return this._required;
     }
 
-    set required(req) {
+    public set required(req) {
         this._required = coerceBooleanProperty(req);
         this.stateChanges.next();
     }
 
-    get value(): Workspace[] {
+    public get value(): Workspace[] {
         return this.parts.controls['list'].value;
     }
 
-    set value(value: Workspace[]) {
+    public set value(value: Workspace[]) {
         this.writeValue(value);
 
         this.onChange(value);
         this.stateChanges.next();
     }
 
-    get empty() {
+    public get empty() {
         return _.isEmpty(this.parts.controls['list']);
     }
 
     @HostBinding('class.floating')
-    get shouldLabelFloat() {
+    public get shouldLabelFloat() {
         return this.focused || !this.empty;
     }
 
-    setDescribedByIds(ids: string[]) {
+    public getRepository(workspace: Workspace) : Observable<Repository> {
+        return this._repositoryService.getRepository(workspace.repositoryId);
+    }
+
+    public setDescribedByIds(ids: string[]) {
         this.describedBy = ids.join(' ');
     }
 
-    onContainerClick(event: MouseEvent) {
+    public onContainerClick(event: MouseEvent) {
         if ((event.target as Element).tagName.toLowerCase() != 'input') {
             this.elRef.nativeElement.querySelector('input').focus();
         }
     }
 
-    writeValue(values: Workspace[] | null): void {
+    public writeValue(values: Workspace[] | null): void {
         this.parts.controls['list'].setValue(values);
     }
 
-    registerOnChange(fn: any): void {
+    public registerOnChange(fn: any): void {
         this.onChange = fn;
     }
 
-    registerOnTouched(fn: any): void {
+    public registerOnTouched(fn: any): void {
         this.onTouched = fn;
     }
 
-    setDisabledState(isDisabled: boolean): void {
+    public setDisabledState(isDisabled: boolean): void {
         this.disabled = isDisabled;
     }
 
-    selected(event: MatAutocompleteSelectedEvent): void {
+    public selected(event: MatAutocompleteSelectedEvent): void {
         this.add(<Workspace><unknown>event.option.value);
     }
 
-    add(workspace: Workspace) {
+    public add(workspace: Workspace) {
         this.parts.controls['input'].setValue(null);
 
         const copy = _.clone(this.value);
@@ -214,7 +223,7 @@ export class WorkspaceSelectorComponent implements OnInit, OnDestroy, AfterViewI
         this.setValue(copy);
     }
 
-    remove(workspace: Workspace): void {
+    public remove(workspace: Workspace): void {
         const index = this.getIndex(workspace, this.value);
 
         if (index >= 0) {
@@ -225,7 +234,7 @@ export class WorkspaceSelectorComponent implements OnInit, OnDestroy, AfterViewI
         }
     }
 
-    onTokenEnd(event: MatChipInputEvent): void {
+    public onTokenEnd(event: MatChipInputEvent): void {
         if (!this.matAutocomplete.isOpen) {
             const input = event.input;
 
@@ -245,7 +254,9 @@ export class WorkspaceSelectorComponent implements OnInit, OnDestroy, AfterViewI
     }
 
     private filterOutPresent(workspacesToFilter: Workspace[], others: Workspace[]): Workspace[] {
-        return workspacesToFilter.filter(workspace => this.getIndex(workspace, others) < 0);
+        return workspacesToFilter
+            .filter(workspace => this.allowNotInitialized || !workspace.isNotInitialized())
+            .filter(workspace => this.getIndex(workspace, others) < 0);
     }
 
     private filterRemaining(value: string | Workspace, remainingAvailableWorkspaces: Workspace[]): Workspace[] {
