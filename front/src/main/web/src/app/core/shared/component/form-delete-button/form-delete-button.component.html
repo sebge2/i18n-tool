@@ -1,11 +1,12 @@
 <button mat-icon-button
         color="warn"
+        class="app-button"
         [disabled]="disabled || deleteInProgress"
         (click)="onDelete()"
         [class.enabled]="!disabled"
         [class.spinner]="deleteInProgress">
-<!--    <mat-icon *ngIf="confirmationInProgress">-->
-<!--        <mat-progress-spinner color="accent" diameter="20" [mode]="'determinate'" [value]="progressbarValue"></mat-progress-spinner>-->
-<!--    </mat-icon>-->
+    <!--    <mat-icon *ngIf="confirmationInProgress">-->
+    <!--        <mat-progress-spinner color="accent" diameter="20" [mode]="'determinate'" [value]="progressbarValue"></mat-progress-spinner>-->
+    <!--    </mat-icon>-->
     <mat-icon>delete</mat-icon>
 </button>

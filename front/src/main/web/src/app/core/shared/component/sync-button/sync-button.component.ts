@@ -1,21 +1,20 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 
 @Component({
-  selector: 'app-sync-button',
-  templateUrl: './sync-button.component.html',
-  styleUrls: ['./sync-button.component.css']
+    selector: 'app-sync-button',
+    templateUrl: './sync-button.component.html',
 })
 export class SyncButtonComponent {
 
-  @Input() public syncInProgress: boolean;
-  @Input() public disabled: boolean;
-  @Output() public sync = new EventEmitter<void>();
+    @Input() public syncInProgress: boolean;
+    @Input() public disabled: boolean;
+    @Output() public sync = new EventEmitter<void>();
 
-  constructor() {
-  }
+    constructor() {
+    }
 
-  public onSync() {
-    this.sync.emit();
-  }
+    public onSync() {
+        this.sync.emit();
+    }
 
 }

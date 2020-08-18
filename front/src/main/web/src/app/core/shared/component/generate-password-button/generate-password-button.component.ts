@@ -5,7 +5,6 @@ import {NotificationService} from "../../../notification/service/notification.se
 @Component({
     selector: 'app-generate-password-button',
     templateUrl: './generate-password-button.component.html',
-    styleUrls: ['./generate-password-button.component.css']
 })
 export class GeneratePasswordButtonComponent implements OnInit {
 

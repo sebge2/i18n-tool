@@ -14,12 +14,20 @@
   },
   "TRANSLATIONS": {
     "SEARCH_BAR": {
+      "WORKSPACES_LABEL": "Workspaces",
+      "WORKSPACES_HINT": "Workspaces to look into.",
+      "LOCALES_LABEL": "Locales",
+      "LOCALES_HINT": "Locales to display.",
+      "CRITERION_LABEL": "Criterion",
+      "CRITERION_HINT": "Which kind of translations to look for?",
+      "CRITERION": {
+        "ALL": "All",
+        "USER_UPDATED": "I have updated",
+        "UPDATED": "Someone updated it",
+        "MISSING": "Missing"
+      },
       "SEARCH_BUTTON": "Search",
-      "CRITERION_ALL": "All",
-      "TITLE": "Search {criterion, select, ALL{for <b>all</b> translations} MISSING_TRANSLATIONS{for <b>missing</b> translations} TRANSLATIONS_CURRENT_USER_UPDATED{for translations that <b>I have updated</b>} UPDATED_TRANSLATIONS{for <b>updated</b> translations} other{}} {workspace, select, null{} other {on <b>{workspace}</b> branch}} {locales, select, true{for <b>all locales</b>} other{for locales {locales}}}",
-      "CRITERION_USER_UPDATED": "I have updated",
-      "CRITERION_UPDATED": "Someone updated it",
-      "CRITERION_MISSING": "Missing"
+      "TITLE": "Search {criterion, select, ALL{for <b>all</b> translations} MISSING_TRANSLATIONS{for <b>missing</b> translations} TRANSLATIONS_CURRENT_USER_UPDATED{for translations that <b>I have updated</b>} UPDATED_TRANSLATIONS{for <b>updated</b> translations} other{}} {workspace, select, null{} other {on workspace {workspace}}} {locales, select, true{for <b>all locales</b>} other{for locales {locales}}}"
     },
     "PLEASE_WAIT": "The workspace is initializing, please wait.",
     "START_REVIEW": {
@@ -155,7 +163,7 @@
           "INITIALIZE": "Error while initializing the repository."
         }
       },
-      "CONFIG_CARD" : {
+      "CONFIG_CARD": {
         "CARD_TITLE": "Configuration",
         "NAME_LABEL": "Name",
         "NAME_HINT": "Unique name of this repository.",
@@ -168,7 +176,7 @@
         "ACTION_UPDATE_ACCESS_KEY": "Update Access Key",
         "ACTION_UPDATE_WEB_HOOK_SECRET": "Update Web Hook Secret"
       },
-      "DETAILS_CARD" : {
+      "DETAILS_CARD": {
         "CARD_TITLE": "Workspaces",
         "PLEASE_INITIALIZE": "Please initialize your repository first.",
         "WORKSPACES": {

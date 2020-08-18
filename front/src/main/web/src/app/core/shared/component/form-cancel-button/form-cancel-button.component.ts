@@ -4,7 +4,6 @@ import {FormGroup} from "@angular/forms";
 @Component({
     selector: 'app-form-cancel-button',
     templateUrl: './form-cancel-button.component.html',
-    styleUrls: ['./form-cancel-button.component.css']
 })
 export class FormCancelButtonComponent implements OnInit {
 
