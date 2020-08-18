@@ -61,8 +61,10 @@ export class TranslationLocaleSelectorComponent implements OnInit, OnDestroy, Af
 
     private _remainingAvailableLocales$: Observable<TranslationLocale[]>;
 
-    private onChange = (_: any) => {};
-    private onTouched = () => {};
+    private onChange = (_: any) => {
+    };
+    private onTouched = () => {
+    };
     private _placeholder: string;
     private _disabled = false;
     private _required = false;
@@ -102,6 +104,7 @@ export class TranslationLocaleSelectorComponent implements OnInit, OnDestroy, Af
     ngAfterViewInit(): void {
         this.focusMonitor
             .monitor(this.elRef.nativeElement, true)
+            .pipe(takeUntil(this._destroyed$))
             .subscribe(origin => {
                 this.focused = !!origin;
                 this.stateChanges.next();

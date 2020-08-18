@@ -21,6 +21,7 @@ import {coerceBooleanProperty} from "@angular/cdk/coercion";
 import * as _ from "lodash";
 import {WorkspaceService} from "../../../service/workspace.service";
 import {RepositoryService} from "../../../service/repository.service";
+import {takeUntil} from "rxjs/operators";
 
 @Component({
     selector: 'app-translation-criterion-selector',
@@ -78,11 +79,17 @@ export class TranslationCriterionSelectorComponent implements OnInit, OnDestroy,
         if (this.ngControl != null) {
             this.ngControl.valueAccessor = this;
         }
+
+        this.parts.controls['criterion']
+            .valueChanges
+            .pipe(takeUntil(this._destroyed$))
+            .subscribe(_ => this.onChange(this.value))
     }
 
     public ngAfterViewInit(): void {
         this.focusMonitor
             .monitor(this.elRef.nativeElement, true)
+            .pipe(takeUntil(this._destroyed$))
             .subscribe(origin => {
                 this.focused = !!origin;
                 this.stateChanges.next();
