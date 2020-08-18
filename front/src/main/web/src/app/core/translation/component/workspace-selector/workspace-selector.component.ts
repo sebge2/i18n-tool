@@ -44,7 +44,7 @@ import {RepositoryService} from "../../../../translations/service/repository.ser
 export class WorkspaceSelectorComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck, ControlValueAccessor, MatFormFieldControl<Workspace[]> {
 
     @Input() public labelKey: string = '';
-    @Input() public allowNotInitialized : boolean = false;
+    @Input() public allowNotInitialized: boolean = false;
 
     @ViewChild('auto', {static: false}) public matAutocomplete: MatAutocomplete;
     @HostBinding('attr.aria-describedby') public describedBy = '';
@@ -108,6 +108,7 @@ export class WorkspaceSelectorComponent implements OnInit, OnDestroy, AfterViewI
     public ngAfterViewInit(): void {
         this.focusMonitor
             .monitor(this.elRef.nativeElement, true)
+            .pipe(takeUntil(this._destroyed$))
             .subscribe(origin => {
                 this.focused = !!origin;
                 this.stateChanges.next();
@@ -180,7 +181,7 @@ export class WorkspaceSelectorComponent implements OnInit, OnDestroy, AfterViewI
         return this.focused || !this.empty;
     }
 
-    public getRepository(workspace: Workspace) : Observable<Repository> {
+    public getRepository(workspace: Workspace): Observable<Repository> {
         return this._repositoryService.getRepository(workspace.repositoryId);
     }
 

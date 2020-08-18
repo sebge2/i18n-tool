@@ -24,7 +24,7 @@ export class GitRepository extends Repository {
                 public location: string,
                 public defaultBranch: string,
                 public allowedBranches: string) {
-        super(id, name, type, status);
+        super(id, name, type, status, defaultBranch);
     }
 
 }

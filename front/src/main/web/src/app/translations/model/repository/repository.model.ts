@@ -6,7 +6,8 @@ export class Repository {
     constructor(public id: string,
                 public name: string,
                 public type: RepositoryType,
-                public status: RepositoryStatus) {
+                public status: RepositoryStatus,
+                public defaultBranch: string) {
     }
 
     public isNotInitialized(): boolean {
