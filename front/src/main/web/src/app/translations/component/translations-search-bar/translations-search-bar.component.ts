@@ -1,131 +1,126 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {Locale} from "../../../core/translation/model/locale.model";
-import {Workspace} from "../../model/workspace/workspace.model";
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {TranslationsSearchRequest} from "../../model/translations-search-request.model";
 import {TranslationsSearchCriterion} from "../../model/translations-search-criterion.model";
 import {TranslationLocaleService} from "../../service/translation-locale.service";
-import {FormBuilder, FormGroup} from "@angular/forms";
+import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {combineLatest, Observable, Subject} from "rxjs";
+import {map, takeUntil} from "rxjs/operators";
+import {TranslationLocale} from "../../model/translation-locale.model";
+import {TranslationLocaleIconPipe} from "../../../core/shared/pipe/translation-locale-icon.pipe";
+import * as _ from "lodash";
+import {WorkspaceService} from "../../service/workspace.service";
+import {EnrichedWorkspace} from "../../model/workspace/enriched-workspace.model";
+import {RepositoryIconPipe} from "../../../core/shared/pipe/repository-icon.pipe";
 
 @Component({
     selector: 'app-translations-search-bar',
     templateUrl: './translations-search-bar.component.html',
     styleUrls: ['./translations-search-bar.component.css'],
 })
-export class TranslationsSearchBarComponent implements OnInit {
+export class TranslationsSearchBarComponent implements OnInit, OnDestroy {
 
-    @Output()
-    expandedChange: EventEmitter<Boolean> = new EventEmitter();
+    @Output() public expandedChange: EventEmitter<Boolean> = new EventEmitter();
 
-    @Output()
-    requestChange: EventEmitter<TranslationsSearchRequest> = new EventEmitter();
+    @Output() public requestChange: EventEmitter<TranslationsSearchRequest> = new EventEmitter();
+    @Output() public requestInitChange: EventEmitter<TranslationsSearchRequest> = new EventEmitter();
+    @Output() public onSearchChange: EventEmitter<TranslationsSearchRequest> = new EventEmitter();
 
-    @Output()
-    requestInitChange: EventEmitter<TranslationsSearchRequest> = new EventEmitter();
+    public form: FormGroup;
 
-    @Output()
-    onSearchChange: EventEmitter<TranslationsSearchRequest> = new EventEmitter();
-
-    searchRequest: TranslationsSearchRequest;
-
+    private readonly _localeIconPipe: TranslationLocaleIconPipe = new TranslationLocaleIconPipe();
+    private readonly _repositoryIconPipe: RepositoryIconPipe = new RepositoryIconPipe();
+    private readonly _searchForAllLocales: Observable<boolean>;
     private _expanded: boolean;
-    form: FormGroup;
+    private _destroyed$ = new Subject<void>();
 
-    constructor(/*private localeIconPipe: ToolLocaleIconPipe,*/
-                private localeService: TranslationLocaleService,
+    constructor(private _localeService: TranslationLocaleService,
+                private _workspaceService: WorkspaceService,
                 private _formBuilder: FormBuilder) {
-        this.searchRequest = new TranslationsSearchRequest();
         this.form = _formBuilder.group({
-            workspaces: [[]],
-            locales: [[]]
+            workspaces: [[], Validators.minLength(1)],
+            locales: [[], Validators.minLength(1)],
+            criterion: [TranslationsSearchCriterion.MISSING_TRANSLATIONS]
         });
+
+        this._searchForAllLocales = combineLatest([this.form.controls['locales'].valueChanges, this._localeService.getAvailableLocales()])
+            .pipe(map(([_, availableLocales]) => availableLocales.length === this.locales.length));
     }
 
-    ngOnInit() {
+    public ngOnInit() {
+        this._localeService.getDefaultLocales()
+            .pipe(takeUntil(this._destroyed$))
+            .subscribe(defaultLocales => this.form.controls['locales'].setValue(defaultLocales));
+
+        this._workspaceService.getEnrichedWorkspaces()
+            .pipe(takeUntil(this._destroyed$))
+            .subscribe(availableWorkspaces => {
+                if (this.workspaces.length > 0) {
+                    this.form.controls['workspaces'].setValue(
+                        this.workspaces
+                            .map(workspace =>
+                                _.some(availableWorkspaces, availableWorkspace => availableWorkspace.workspace.equals(workspace.workspace))
+                            )
+                    );
+                } else {
+                    this.form.controls['workspaces'].setValue(
+                        availableWorkspaces
+                            .filter(availableWorkspace => availableWorkspace.defaultWorkspace)
+                    );
+                }
+            });
     }
 
-    get expanded(): boolean {
+    public ngOnDestroy(): void {
+        this._destroyed$.next();
+        this._destroyed$.complete();
+    }
+
+    public get expanded(): boolean {
         return this._expanded;
     }
 
     @Input()
-    set expanded(value: boolean) {
+    public set expanded(value: boolean) {
         this._expanded = value;
         this.expandedChange.emit(this.expanded);
     }
 
-    onSelectedWorkspace(workspace: Workspace) {
-        setTimeout(() => {
-                const notFullyLoaded = !this.isFullyLoaded();
-
-                this.searchRequest.workspace = workspace;
-
-                if (notFullyLoaded && this.isFullyLoaded()) {
-                    this.requestInitChange.emit(this.searchRequest);
-                }
-
-                this.requestChange.emit(this.searchRequest);
-            },
-            0
-        );
+    public get criterion(): TranslationsSearchCriterion {
+        return this.form.controls['criterion'].value;
     }
 
-    onSelectedLocales(locales: Locale[]) {
-        setTimeout(() => {
-                const notFullyLoaded = !this.isFullyLoaded();
-
-                this.searchRequest.locales = locales;
-
-                if (notFullyLoaded && this.isFullyLoaded()) {
-                    this.requestInitChange.emit(this.searchRequest);
-                }
-
-                this.requestChange.emit(this.searchRequest);
-            },
-            0
-        );
+    public get workspaces(): EnrichedWorkspace[] {
+        return this.form.controls['workspaces'].value;
     }
 
-    onSelectedCriterion(criterion: TranslationsSearchCriterion) {
-        setTimeout(() => {
-                const notFullyLoaded = !this.isFullyLoaded();
-
-                this.searchRequest.criterion = criterion;
-
-                if (notFullyLoaded && this.isFullyLoaded()) {
-                    this.requestInitChange.emit(this.searchRequest);
-                }
-
-                this.requestChange.emit(this.searchRequest);
-            },
-            0
-        );
+    public get workspacesAsString(): string {
+        return !_.isEmpty(this.workspaces)
+            ? this.workspaces
+                .map(workspace => `<span class="${this._repositoryIconPipe.transform(workspace.repository.type)}"></span> <b>${workspace.repository.name} ${workspace.workspace.branch}</b>`)
+                .join(', ')
+            : null;
     }
 
-    onSearch() {
-        this.onSearchChange.emit(new TranslationsSearchRequest(this.searchRequest));
+    public get locales(): TranslationLocale[] {
+        return this.form.controls['locales'].value;
     }
 
-    isSearchForAllLocales(): boolean {
-        return false;
-        // return this.searchRequest.locales.length == 0 || this.searchRequest.locales.length == this.localeService.getAvailableLocales().length;
+    public get localesAsString(): string {
+        return this.locales
+            .map(locale => `<span class="${this._localeIconPipe.transform(locale)}"></span> ${locale.displayName}`)
+            .join(', ');
     }
 
-    getLocalesAsHtmlList(): String {
-        let title = "";
-        for (let i = 0; i < this.searchRequest.locales.length; i++) {
-            if (i == this.searchRequest.locales.length - 1 && i > 0) {
-                title += " and ";
-            } else if (i > 0) {
-                title += ",";
-            }
-
-            // title += " <span class=\"" + this.localeIconPipe.transform(this.searchRequest.locales[i]) + "\"></span>" + this.searchRequest.locales[i].toString();
-        }
-
-        return title;
+    public isSearchForAllLocales(): Observable<boolean> {
+        return this._searchForAllLocales;
     }
 
-    private isFullyLoaded() {
-        return !(this.searchRequest.workspace == null || this.searchRequest.locales == null || this.searchRequest.criterion == null);
+    public onSearch() {
+        const searchRequest = new TranslationsSearchRequest();
+        searchRequest.criterion = this.criterion;
+        searchRequest.workspaces = this.workspaces;
+        searchRequest.locales = this.locales;
+
+        this.onSearchChange.emit(searchRequest);
     }
 }
