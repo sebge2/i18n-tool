@@ -39,6 +39,7 @@ import {RowActionsItemComponent} from "./component/row-actions/row-actions-item/
 import {ExpansionPanelComponent} from "./component/expansion-panel/expansion-panel.component";
 import {ExpansionPanelHeaderComponent} from "./component/expansion-panel/expansion-panel-header/expansion-panel-header.component";
 import {ExpansionPanelContentComponent} from "./component/expansion-panel/expansion-panel-content/expansion-panel-content.component";
+import {FormSearchButtonComponent} from "./component/form-search-button/form-search-button.component";
 
 @NgModule({
     declarations: [
@@ -47,6 +48,7 @@ import {ExpansionPanelContentComponent} from "./component/expansion-panel/expans
         FormDeleteButtonComponent,
         FormUploadButtonComponent,
         FormOpenTabButtonComponent,
+        FormSearchButtonComponent,
         SyncButtonComponent,
         InitDownloadButtonComponent,
         MoreActionsButtonComponent,
@@ -99,6 +101,7 @@ import {ExpansionPanelContentComponent} from "./component/expansion-panel/expans
         FormDeleteButtonComponent,
         FormUploadButtonComponent,
         FormOpenTabButtonComponent,
+        FormSearchButtonComponent,
         SyncButtonComponent,
         InitDownloadButtonComponent,
         MoreActionsButtonComponent,

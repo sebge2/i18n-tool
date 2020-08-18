@@ -10,6 +10,11 @@
       "CLOSE_ACTION": "Close",
       "NEXT_ACTION": "Next",
       "PREVIOUS_ACTION": "Previous"
+    },
+    "BUTTONS": {
+      "SEARCH": {
+        "LABEL": "Search"
+      }
     }
   },
   "TRANSLATIONS": {
@@ -26,7 +31,6 @@
         "UPDATED": "Someone updated it",
         "MISSING": "Missing"
       },
-      "SEARCH_BUTTON": "Search",
       "TITLE": "Search {criterion, select, ALL{for <b>all</b> translations} MISSING_TRANSLATIONS{for <b>missing</b> translations} TRANSLATIONS_CURRENT_USER_UPDATED{for translations that <b>I have updated</b>} UPDATED_TRANSLATIONS{for <b>updated</b> translations} other{}} {workspace, select, null{} other {on workspace {workspace}}} {locales, select, true{for <b>all locales</b>} other{for locales {locales}}}"
     },
     "PLEASE_WAIT": "The workspace is initializing, please wait.",
