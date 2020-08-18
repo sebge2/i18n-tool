@@ -37,9 +37,9 @@ export class TranslationsSearchBarComponent implements OnInit, OnDestroy {
                 private _workspaceService: WorkspaceService,
                 private _formBuilder: FormBuilder) {
         this.form = _formBuilder.group({
-            workspaces: [[], Validators.minLength(1)],
-            locales: [[], Validators.minLength(1)],
-            criterion: [TranslationsSearchCriterion.MISSING_TRANSLATIONS]
+            workspaces: [[], Validators.required],
+            locales: [[], Validators.required],
+            criterion: [TranslationsSearchCriterion.MISSING_TRANSLATIONS, Validators.required]
         });
 
         this._searchForAllLocales = combineLatest([this.form.controls['locales'].valueChanges, this._localeService.getAvailableLocales()])
