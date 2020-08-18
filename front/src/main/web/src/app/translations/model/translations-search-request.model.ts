@@ -1,22 +1,13 @@
-import {Locale} from "../../core/translation/model/locale.model";
 import {Workspace} from "./workspace/workspace.model";
 import {TranslationsSearchCriterion} from "./translations-search-criterion.model";
+import {TranslationLocale} from "./translation-locale.model";
 
 export class TranslationsSearchRequest {
 
-    public workspace: Workspace;
-    public locales: Locale[] = [];
+    public workspaces: Workspace[] = [];
+    public locales: TranslationLocale[] = [];
     public criterion: TranslationsSearchCriterion = TranslationsSearchCriterion.ALL;
 
-    constructor(searchRequest?: TranslationsSearchRequest) {
-        if (searchRequest != null) {
-            this.workspace = searchRequest.workspace;
-            this.locales = (searchRequest.locales != null) ? searchRequest.locales.slice() : [];
-            this.criterion = searchRequest.criterion;
-        }
-    }
-
-    isValid(): boolean {
-        return (this.workspace != null) && (this.locales != null) && (this.criterion != null);
+    constructor() {
     }
 }
