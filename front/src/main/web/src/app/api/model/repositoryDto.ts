@@ -29,10 +29,9 @@ export interface RepositoryDto {
     type?: RepositoryDto.TypeDtoEnum;
 }
 export namespace RepositoryDto {
-    export type StatusDtoEnum = 'NOT_INITIALIZED' | 'INITIALIZING' | 'INITIALIZED' | 'INITIALIZATION_ERROR';
+    export type StatusDtoEnum = 'NOT_INITIALIZED' | 'INITIALIZED' | 'INITIALIZATION_ERROR';
     export const StatusDtoEnum = {
         NOTINITIALIZED: 'NOT_INITIALIZED' as StatusDtoEnum,
-        INITIALIZING: 'INITIALIZING' as StatusDtoEnum,
         INITIALIZED: 'INITIALIZED' as StatusDtoEnum,
         INITIALIZATIONERROR: 'INITIALIZATION_ERROR' as StatusDtoEnum
     };

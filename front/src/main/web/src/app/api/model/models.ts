@@ -26,6 +26,8 @@ export * from './translationKeyPatternDto';
 export * from './translationLocaleCreationDto';
 export * from './translationLocaleDto';
 export * from './translationsPageDto';
+export * from './translationsPageRowDto';
+export * from './translationsPageTranslationDto';
 export * from './translationsSearchRequestDto';
 export * from './userDto';
 export * from './userLiveSessionDto';

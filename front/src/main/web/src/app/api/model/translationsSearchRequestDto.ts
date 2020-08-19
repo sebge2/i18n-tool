@@ -24,6 +24,10 @@ export interface TranslationsSearchRequestDto {
      */
     locales?: Array<string>;
     /**
+     * Search translations only in those bundle file ids.
+     */
+    bundleFiles?: Array<string>;
+    /**
      * Specify the criterion that translations must have.
      */
     criterion?: TranslationsSearchRequestDto.CriterionDtoEnum;

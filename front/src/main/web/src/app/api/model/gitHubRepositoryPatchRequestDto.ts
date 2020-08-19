@@ -24,11 +24,11 @@ export interface GitHubRepositoryPatchRequestDto extends RepositoryPatchRequestD
      */
     allowedBranches: string;
     /**
-     * Access key to use to access this repository
+     * Access key to use to access this repository (empty means no access key)
      */
     accessKey?: string;
     /**
-     * Access key to use to access this repository
+     * Access key to use to access this repository (empty means no password)
      */
     webHookSecret?: string;
 }

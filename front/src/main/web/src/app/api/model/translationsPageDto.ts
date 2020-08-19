@@ -9,6 +9,7 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
+import { TranslationsPageRowDto } from './translationsPageRowDto';
 
 /**
  * List of paginated translations.
@@ -17,7 +18,7 @@ export interface TranslationsPageDto {
     /**
      * Rows where every row is associated to a bundle key
      */
-    rows: Array<TranslationsPageDto>;
+    rows: Array<TranslationsPageRowDto>;
     /**
      * All the ordered locales (i.e., columns order)
      */

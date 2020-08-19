@@ -16,7 +16,7 @@ import static java.util.Collections.unmodifiableList;
  *
  * @author Sebastien Gerard
  */
-@Schema(name = "TranslationsPage", description = "Page in a list of paginated translations.")
+@Schema(name = "TranslationsPageRow", description = "Page in a list of paginated translations.")
 @JsonDeserialize(builder = TranslationsPageRowDto.Builder.class)
 @Getter
 public class TranslationsPageRowDto {

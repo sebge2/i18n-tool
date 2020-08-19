@@ -19,11 +19,12 @@ import { Observable }                                        from 'rxjs';
 
 import { Body1Dto } from '../model/body1Dto';
 import { BodyDto } from '../model/bodyDto';
+import { ErrorMessagesDto } from '../model/errorMessagesDto';
+import { GitHubRepositoryDtoGitRepositoryDto } from '../model/gitHubRepositoryDtoGitRepositoryDto';
 import { InlineResponse200Dto } from '../model/inlineResponse200Dto';
 
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
 import { Configuration }                                     from '../configuration';
-import {GitHubRepositoryDto, GitRepositoryDto} from "..";
 
 
 @Injectable()
