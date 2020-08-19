@@ -1,13 +1,13 @@
 import {getTestBed, TestBed} from '@angular/core/testing';
 
-import {TranslationsService} from './translations.service';
+import {TranslationService} from './translation.service';
 import {NotificationService} from "../../core/notification/service/notification.service";
 import {HttpClientTestingModule} from "@angular/common/http/testing";
 import {CoreSharedModule} from "../../core/shared/core-shared-module";
 
 describe('TranslationsService', () => {
     let injector: TestBed;
-    let service: TranslationsService;
+    let service: TranslationService;
     let notificationService: NotificationService;
 
     beforeEach(() => {
@@ -22,7 +22,7 @@ describe('TranslationsService', () => {
             });
 
         injector = getTestBed();
-        service = injector.get(TranslationsService);
+        service = injector.get(TranslationService);
     });
 
     it('should be created', () => {

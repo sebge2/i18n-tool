@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
-import {TranslationsSearchRequest} from "../../model/translations-search-request.model";
-import {TranslationsSearchCriterion} from "../../model/translations-search-criterion.model";
+import {TranslationsSearchRequest} from "../../model/search/translations-search-request.model";
+import {TranslationsSearchCriterion} from "../../model/search/translations-search-criterion.model";
 import {TranslationLocaleService} from "../../service/translation-locale.service";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {combineLatest, Observable, Subject} from "rxjs";

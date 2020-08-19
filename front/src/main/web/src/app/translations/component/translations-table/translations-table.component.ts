@@ -1,6 +1,6 @@
 import {Component, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {TranslationsSearchRequest} from "../../model/translations-search-request.model";
-import {TranslationsService} from '../../service/translations.service';
+import {TranslationsSearchRequest} from "../../model/search/translations-search-request.model";
+import {TranslationService} from '../../service/translation.service';
 import {BundleKeysPage} from "../../model/edition/bundle-keys-page.model";
 import {AbstractControl, FormArray, FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {Locale} from "../../../core/translation/model/locale.model";
@@ -34,7 +34,7 @@ export class TranslationsTableComponent implements OnInit, OnDestroy {
     private destroy$ = new Subject();
     private _readOnly = new BehaviorSubject<boolean>(false);
 
-    constructor(private translationsService: TranslationsService,
+    constructor(private translationsService: TranslationService,
                 private localesTranslationsService: TranslationLocaleService,
                 private notificationService: NotificationService,
                 private formBuilder: FormBuilder) {

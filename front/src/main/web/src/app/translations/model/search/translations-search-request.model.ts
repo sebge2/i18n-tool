@@ -1,6 +1,6 @@
 import {TranslationsSearchCriterion} from "./translations-search-criterion.model";
-import {TranslationLocale} from "./translation-locale.model";
-import {EnrichedWorkspace} from "./workspace/enriched-workspace.model";
+import {TranslationLocale} from "../translation-locale.model";
+import {EnrichedWorkspace} from "../workspace/enriched-workspace.model";
 
 export class TranslationsSearchRequest {
 

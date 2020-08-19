@@ -4,13 +4,13 @@ import {CoreSharedModule} from "../../../core/shared/core-shared-module";
 import {TranslationEditingCellComponent} from "./translation-editing-cell/translation-editing-cell.component";
 import {TranslationsTableComponent} from './translations-table.component';
 import {AuthenticationService} from "../../../core/auth/service/authentication.service";
-import {TranslationsService} from "../../service/translations.service";
+import {TranslationService} from "../../service/translation.service";
 
 describe('TranslationsTableComponent', () => {
     let component: TranslationsTableComponent;
     let fixture: ComponentFixture<TranslationsTableComponent>;
     let authenticationService: AuthenticationService;
-    let translationsService: TranslationsService;
+    let translationsService: TranslationService;
 
     beforeEach(async(() => {
         authenticationService = jasmine.createSpyObj('authenticationUser', ['currentUser']);
@@ -28,7 +28,7 @@ describe('TranslationsTableComponent', () => {
                 ],
                 providers: [
                     {provide: AuthenticationService, useValue: authenticationService},
-                    {provide: TranslationsService, useValue: translationsService}
+                    {provide: TranslationService, useValue: translationsService}
                 ]
             })
             .compileComponents();

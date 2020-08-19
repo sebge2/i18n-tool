@@ -11,7 +11,7 @@ import {
     OnInit,
     ViewChild
 } from '@angular/core';
-import {TranslationsSearchCriterion} from "../../../model/translations-search-criterion.model";
+import {TranslationsSearchCriterion} from "../../../model/search/translations-search-criterion.model";
 import {ControlValueAccessor, FormBuilder, FormGroup, NG_VALUE_ACCESSOR, NgControl} from "@angular/forms";
 import {MatFormFieldControl} from "@angular/material/form-field";
 import {MatAutocomplete} from "@angular/material/autocomplete";
