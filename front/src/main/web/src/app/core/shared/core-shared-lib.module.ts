@@ -41,6 +41,7 @@ import {MatProgressButtonsModule} from 'mat-progress-buttons';
 import {ReactiveFormsModule} from "@angular/forms";
 import {FlexLayoutModule} from "@angular/flex-layout";
 import {ClipboardModule} from "ngx-clipboard";
+import {ScrollingModule} from "@angular/cdk/scrolling";
 
 @NgModule({
     exports: [
@@ -85,6 +86,7 @@ import {ClipboardModule} from "ngx-clipboard";
         ReactiveFormsModule,
         FlexLayoutModule,
         ClipboardModule,
+        ScrollingModule,
     ],
 })
 export class CoreSharedLibModule {
