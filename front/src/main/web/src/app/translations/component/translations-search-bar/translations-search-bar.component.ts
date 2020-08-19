@@ -28,6 +28,7 @@ export class TranslationsSearchBarComponent implements OnInit, OnDestroy {
     public form: FormGroup;
 
     private readonly _searchForAllLocales: Observable<boolean>;
+    private readonly _searchForAllWorkspaces: Observable<boolean>;
     private _expanded: boolean;
     private _destroyed$ = new Subject<void>();
 
@@ -44,6 +45,9 @@ export class TranslationsSearchBarComponent implements OnInit, OnDestroy {
 
         this._searchForAllLocales = combineLatest([this.form.controls['locales'].valueChanges, this._localeService.getAvailableLocales()])
             .pipe(map(([_, availableLocales]) => availableLocales.length === this.locales.length));
+
+        this._searchForAllWorkspaces = combineLatest([this.form.controls['workspaces'].valueChanges, this._workspaceService.getEnrichedWorkspaces()])
+            .pipe(map(([_, availableWorkspaces]) => availableWorkspaces.length === this.workspaces.length));
     }
 
     public ngOnInit() {
@@ -101,14 +105,20 @@ export class TranslationsSearchBarComponent implements OnInit, OnDestroy {
             : null;
     }
 
+    public isSearchForAllWorkspaces(): Observable<boolean> {
+        return this._searchForAllWorkspaces;
+    }
+
     public get locales(): TranslationLocale[] {
         return this.form.controls['locales'].value;
     }
 
     public get localesAsString(): string {
-        return this.locales
-            .map(locale => `<span class="${this._localeIconPipe.transform(locale)}"></span> ${locale.displayName}`)
-            .join(', ');
+        return !_.isEmpty(this.locales)
+            ? this.locales
+                .map(locale => `<span class="${this._localeIconPipe.transform(locale)}"></span> ${locale.displayName}`)
+                .join(', ')
+            : null;
     }
 
     public isSearchForAllLocales(): Observable<boolean> {

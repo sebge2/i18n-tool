@@ -1,6 +1,6 @@
 <app-expansion-panel [(expanded)]="expanded">
     <app-expansion-panel-header>
-        <div [innerHTML]="'TRANSLATIONS.SEARCH_BAR.TITLE' | translate:{criterion: criterion, workspaces: workspacesAsString, locales: (((isSearchForAllLocales() | async) ? true : localesAsString))}"></div>
+        <div [innerHTML]="'TRANSLATIONS.SEARCH_BAR.TITLE' | translate:{criterion: criterion, workspaces: (((isSearchForAllWorkspaces() | async) ? true : workspacesAsString)), locales: (((isSearchForAllLocales() | async) ? true : localesAsString))}"></div>
     </app-expansion-panel-header>
 
     <app-expansion-panel-content>
