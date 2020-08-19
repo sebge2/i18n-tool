@@ -6,6 +6,15 @@
     width: 100%;
 }
 
-.app-translation-locale-selector-icon{
+.app-translation-locale-selector-icon {
+    top: -1px;
+}
+
+.app-translation-locale-selector-icon, .app-translation-locale-selector-all-icon {
     margin-right: 5px;
+    position: relative;
+}
+
+.app-translation-locale-selector-all-icon {
+    top: 2px;
 }

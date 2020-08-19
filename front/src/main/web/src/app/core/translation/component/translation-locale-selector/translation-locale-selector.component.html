@@ -23,6 +23,9 @@
                 (matChipInputTokenEnd)="onTokenEnd($event)">
     </mat-chip-list>
     <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
+        <mat-option [value]="'ALL'">
+            <span class="app-icon-check-double-solid app-translation-locale-selector-all-icon"></span> {{'SHARED.FIELDS.LOCALE_SELECTOR.ALL' | translate}}
+        </mat-option>
         <mat-option *ngFor="let locale of filteredLocales$ | async" [value]="locale">
             <span [class]="locale | translationLocaleIcon" class="app-translation-locale-selector-icon"></span> {{locale.displayName}}
         </mat-option>

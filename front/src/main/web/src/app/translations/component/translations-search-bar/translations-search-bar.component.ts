@@ -27,13 +27,13 @@ export class TranslationsSearchBarComponent implements OnInit, OnDestroy {
 
     public form: FormGroup;
 
-    private readonly _localeIconPipe: TranslationLocaleIconPipe = new TranslationLocaleIconPipe();
-    private readonly _repositoryIconPipe: RepositoryIconPipe = new RepositoryIconPipe();
     private readonly _searchForAllLocales: Observable<boolean>;
     private _expanded: boolean;
     private _destroyed$ = new Subject<void>();
 
     constructor(private _localeService: TranslationLocaleService,
+                private _localeIconPipe: TranslationLocaleIconPipe,
+                private _repositoryIconPipe: RepositoryIconPipe,
                 private _workspaceService: WorkspaceService,
                 private _formBuilder: FormBuilder) {
         this.form = _formBuilder.group({

@@ -4,5 +4,5 @@
 }
 
 mat-form-field {
-    width: 500px;
+    min-width: 50%;
 }

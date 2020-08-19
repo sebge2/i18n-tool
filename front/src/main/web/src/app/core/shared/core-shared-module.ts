@@ -136,6 +136,13 @@ import {FormSearchButtonComponent} from "./component/form-search-button/form-sea
         RepositoryIconPipe,
 
         DragDropDirective,
+    ],
+    providers: [
+        WorkspaceIconPipe,
+        WorkspaceIconCssPipe,
+        ToolLocaleIconPipe,
+        TranslationLocaleIconPipe,
+        RepositoryIconPipe,
     ]
 })
 export class CoreSharedModule {

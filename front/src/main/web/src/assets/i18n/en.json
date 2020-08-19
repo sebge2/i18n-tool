@@ -15,6 +15,14 @@
       "SEARCH": {
         "LABEL": "Search"
       }
+    },
+    "FIELDS" : {
+      "WORKSPACE_SELECTOR" : {
+        "ALL": "All Workspaces"
+      },
+      "LOCALE_SELECTOR" : {
+        "ALL": "All Locales"
+      }
     }
   },
   "TRANSLATIONS": {

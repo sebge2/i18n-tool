@@ -23,6 +23,10 @@
                 (matChipInputTokenEnd)="onTokenEnd($event)">
     </mat-chip-list>
     <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
+        <mat-option [value]="'ALL'">
+            <span class="app-icon-check-double-solid app-workspace-selector-all-icon"></span> {{'SHARED.FIELDS.WORKSPACE_SELECTOR.ALL' | translate}}
+        </mat-option>
+
         <mat-option *ngFor="let workspace of filteredWorkspaces$ | async" [value]="workspace">
             <span [class]="workspace?.repository?.type  | repositoryIcon" class="app-workspace-selector-icon"></span>
             {{workspace.repository.name}} {{workspace.workspace.branch}}

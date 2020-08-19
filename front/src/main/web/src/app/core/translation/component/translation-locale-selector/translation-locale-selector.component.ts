@@ -18,7 +18,7 @@ import {TranslationLocaleService} from "../../../../translations/service/transla
 import {MatChipInputEvent} from "@angular/material/chips";
 import {MatAutocomplete, MatAutocompleteSelectedEvent} from "@angular/material/autocomplete";
 import {TranslationLocale} from "../../../../translations/model/translation-locale.model";
-import {map, startWith, takeUntil} from "rxjs/operators";
+import {map, startWith, take, takeUntil} from "rxjs/operators";
 import * as _ from "lodash";
 import {MatFormFieldControl} from "@angular/material/form-field";
 import {coerceBooleanProperty} from "@angular/cdk/coercion";
@@ -81,7 +81,7 @@ export class TranslationLocaleSelectorComponent implements OnInit, OnDestroy, Af
         });
     }
 
-    ngOnInit() {
+    public ngOnInit() {
         this.ngControl = this.injector.get(NgControl);
 
         if (this.ngControl != null) {
@@ -101,7 +101,7 @@ export class TranslationLocaleSelectorComponent implements OnInit, OnDestroy, Af
             );
     }
 
-    ngAfterViewInit(): void {
+    public ngAfterViewInit(): void {
         this.focusMonitor
             .monitor(this.elRef.nativeElement, true)
             .pipe(takeUntil(this._destroyed$))
@@ -111,7 +111,7 @@ export class TranslationLocaleSelectorComponent implements OnInit, OnDestroy, Af
             });
     }
 
-    ngOnDestroy(): void {
+    public ngOnDestroy(): void {
         this._destroyed$.next();
         this._destroyed$.complete();
 
@@ -119,7 +119,7 @@ export class TranslationLocaleSelectorComponent implements OnInit, OnDestroy, Af
         this.stateChanges.complete();
     }
 
-    ngDoCheck(): void {
+    public ngDoCheck(): void {
         if (this.ngControl) {
             this.errorState = this.ngControl.invalid && this.ngControl.touched;
             this.stateChanges.next();
@@ -127,96 +127,104 @@ export class TranslationLocaleSelectorComponent implements OnInit, OnDestroy, Af
     }
 
     @Input()
-    get placeholder(): string {
+    public get placeholder(): string {
         return this._placeholder;
     }
 
-    set placeholder(value: string) {
+    public set placeholder(value: string) {
         this._placeholder = value;
         this.stateChanges.next();
     }
 
     @Input()
-    get disabled(): boolean {
+    public get disabled(): boolean {
         return this._disabled;
     }
 
-    set disabled(value: boolean) {
+    public set disabled(value: boolean) {
         this._disabled = coerceBooleanProperty(value);
         this._disabled ? this.parts.disable() : this.parts.enable();
         this.stateChanges.next();
     }
 
     @Input()
-    get required() {
+    public get required() {
         return this._required;
     }
 
-    set required(req) {
+    public set required(req) {
         this._required = coerceBooleanProperty(req);
         this.stateChanges.next();
     }
 
-    get value(): TranslationLocale[] {
+    public get value(): TranslationLocale[] {
         return this.parts.controls['list'].value;
     }
 
-    set value(value: TranslationLocale[]) {
+    public set value(value: TranslationLocale[]) {
         this.writeValue(value);
 
         this.onChange(value);
         this.stateChanges.next();
     }
 
-    get empty() {
+    public get empty() {
         return _.isEmpty(this.parts.controls['list']);
     }
 
     @HostBinding('class.floating')
-    get shouldLabelFloat() {
+    public get shouldLabelFloat() {
         return this.focused || !this.empty;
     }
 
-    setDescribedByIds(ids: string[]) {
+    public setDescribedByIds(ids: string[]) {
         this.describedBy = ids.join(' ');
     }
 
-    onContainerClick(event: MouseEvent) {
+    public onContainerClick(event: MouseEvent) {
         if ((event.target as Element).tagName.toLowerCase() != 'input') {
             this.elRef.nativeElement.querySelector('input').focus();
         }
     }
 
-    writeValue(values: TranslationLocale[] | null): void {
+    public writeValue(values: TranslationLocale[] | null): void {
         this.parts.controls['list'].setValue(values);
     }
 
-    registerOnChange(fn: any): void {
+    public registerOnChange(fn: any): void {
         this.onChange = fn;
     }
 
-    registerOnTouched(fn: any): void {
+    public registerOnTouched(fn: any): void {
         this.onTouched = fn;
     }
 
-    setDisabledState(isDisabled: boolean): void {
+    public setDisabledState(isDisabled: boolean): void {
         this.disabled = isDisabled;
     }
 
-    selected(event: MatAutocompleteSelectedEvent): void {
+    public selected(event: MatAutocompleteSelectedEvent): void {
         this.add(<TranslationLocale><unknown>event.option.value);
     }
 
-    add(selectedLocale: TranslationLocale) {
+    public add(selection: TranslationLocale | string) {
         this.parts.controls['input'].setValue(null);
 
-        const copy = _.clone(this.value);
-        copy.push(selectedLocale);
+        if (selection === 'ALL') {
+            this._remainingAvailableLocales$
+                .pipe(take(1))
+                .toPromise()
+                .then(remainingAvailableLocales => this.setValue(_.concat(this.value, remainingAvailableLocales)));
+        } else {
+            const copy = _.clone(this.value);
 
-        this.setValue(copy);
+            copy.push(<TranslationLocale> selection);
+
+            this.setValue(copy);
+        }
     }
 
-    remove(locale: TranslationLocale): void {
+    public remove(locale: TranslationLocale): void {
         const index = this.getIndex(locale, this.value);
 
         if (index >= 0) {
@@ -227,7 +235,7 @@ export class TranslationLocaleSelectorComponent implements OnInit, OnDestroy, Af
         }
     }
 
-    onTokenEnd(event: MatChipInputEvent): void {
+    public onTokenEnd(event: MatChipInputEvent): void {
         if (!this.matAutocomplete.isOpen) {
             const input = event.input;
 

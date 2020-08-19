@@ -17,7 +17,7 @@ import {MatAutocomplete, MatAutocompleteSelectedEvent} from "@angular/material/a
 import {combineLatest, Observable, Subject} from "rxjs";
 import {COMMA, ENTER} from "@angular/cdk/keycodes";
 import {FocusMonitor} from "@angular/cdk/a11y";
-import {map, startWith, takeUntil} from "rxjs/operators";
+import {map, startWith, take, takeUntil} from "rxjs/operators";
 import {coerceBooleanProperty} from "@angular/cdk/coercion";
 import * as _ from "lodash";
 import {MatChipInputEvent} from "@angular/material/chips";
@@ -210,13 +210,21 @@ export class WorkspaceSelectorComponent implements OnInit, OnDestroy, AfterViewI
         this.add(<EnrichedWorkspace><unknown>event.option.value);
     }
 
-    public add(workspace: EnrichedWorkspace) {
+    public add(selection: EnrichedWorkspace | string) {
         this.parts.controls['input'].setValue(null);
 
-        const copy = _.clone(this.value);
-        copy.push(workspace);
+        if (selection === 'ALL') {
+            this._remainingAvailableWorkspaces$
+                .pipe(take(1))
+                .toPromise()
+                .then(remainingAvailableWorkspaces => this.setValue(_.concat(this.value, remainingAvailableWorkspaces)));
+        } else {
+            const copy = _.clone(this.value);
 
-        this.setValue(copy);
+            copy.push(<EnrichedWorkspace>selection);
+
+            this.setValue(copy);
+        }
     }
 
     public remove(workspace: EnrichedWorkspace): void {
