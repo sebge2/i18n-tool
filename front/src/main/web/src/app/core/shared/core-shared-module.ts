@@ -42,7 +42,6 @@ import {ExpansionPanelContentComponent} from "./component/expansion-panel/expans
 import {FormSearchButtonComponent} from "./component/form-search-button/form-search-button.component";
 import {ScrollerComponent} from "./component/scroller/scroller.component";
 import {ScrollerHeaderComponent} from "./component/scroller/scroller-header/scroller-header.component";
-import {ScrollerElementTemplateComponent} from "./component/scroller/scroller-element-template/scroller-element-template.component";
 
 @NgModule({
     declarations: [
@@ -82,7 +81,6 @@ import {ScrollerElementTemplateComponent} from "./component/scroller/scroller-el
         ExpansionPanelContentComponent,
         ScrollerComponent,
         ScrollerHeaderComponent,
-        ScrollerElementTemplateComponent,
 
         WorkspaceIconPipe,
         WorkspaceIconCssPipe,
@@ -136,7 +134,6 @@ import {ScrollerElementTemplateComponent} from "./component/scroller/scroller-el
         ExpansionPanelContentComponent,
         ScrollerComponent,
         ScrollerHeaderComponent,
-        ScrollerElementTemplateComponent,
 
         WorkspaceIconPipe,
         WorkspaceIconCssPipe,

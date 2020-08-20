@@ -1,15 +1,19 @@
-table {
+.app-translations-scroller-viewport {
+    height: 1000%;
     width: 100%;
 }
 
-.table-container {
-    position: absolute;
-    top: 90px;
-    width: calc(100% - 60px);
-    max-height: calc(100vh - 220px);
-    overflow: auto;
+.app-scroller-rows-container {
+    display: grid;
+    grid-auto-rows: 60px;
+    grid-gap: 10px;
+    width: 100%;
 }
 
-.mat-column-key {
-    max-width: 300px !important;
+.app-translations-header-locale-icon {
+    top: -1px;
+}
+
+.app-scroller-spread-row {
+    grid-column: 1 / 4;
 }

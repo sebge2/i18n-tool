@@ -31,13 +31,17 @@ export class TreeNodeTemplateComponent implements AfterViewInit, OnDestroy {
 
     public ngAfterViewInit() {
         let factory: ComponentFactory<any> = this.resolver.resolveComponentFactory(this.nodeComponent);
-        this.componentRef = this.target.createComponent(factory);
 
+        this.ngOnDestroy();
+
+        this.componentRef = this.target.createComponent(factory);
         this.componentRef.instance.node = this.node;
+        this.componentRef.changeDetectorRef.detectChanges();
     }
 
     public ngOnDestroy(): void {
         if (this.componentRef) {
+            this.componentRef.changeDetectorRef.detach();
             this.componentRef.destroy();
             this.componentRef = null;
         }
