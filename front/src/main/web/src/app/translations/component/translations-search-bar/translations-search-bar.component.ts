@@ -20,9 +20,6 @@ import {RepositoryIconPipe} from "../../../core/shared/pipe/repository-icon.pipe
 export class TranslationsSearchBarComponent implements OnInit, OnDestroy {
 
     @Output() public expandedChange: EventEmitter<Boolean> = new EventEmitter();
-
-    @Output() public requestChange: EventEmitter<TranslationsSearchRequest> = new EventEmitter();
-    @Output() public requestInitChange: EventEmitter<TranslationsSearchRequest> = new EventEmitter();
     @Output() public onSearchChange: EventEmitter<TranslationsSearchRequest> = new EventEmitter();
 
     public form: FormGroup;
