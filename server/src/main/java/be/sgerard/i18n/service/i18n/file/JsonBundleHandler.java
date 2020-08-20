@@ -20,12 +20,8 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static be.sgerard.i18n.service.i18n.file.TranslationFileUtils.mapToNullIfEmpty;
 import static java.util.Collections.singleton;
@@ -109,7 +105,7 @@ public class JsonBundleHandler implements BundleHandler {
                                 .doOnTerminate(() -> {
                                     try {
                                         inputStream.close();
-                                    } catch (IOException e) {
+                                    } catch (Exception e) {
                                         logger.info("Error while closing stream.", e);
                                     }
                                 })
@@ -136,7 +132,7 @@ public class JsonBundleHandler implements BundleHandler {
         return context
                 .getLocales()
                 .stream()
-                .filter(locale -> file.getName().endsWith(getFileName(locale)))
+                .filter(locale -> Objects.equals(file.getName(), getFileName(locale)))
                 .findFirst();
     }
 
@@ -165,7 +161,7 @@ public class JsonBundleHandler implements BundleHandler {
         try {
             return objectMapper.readValue(inputStream, new TypeReference<>() {
             });
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw WorkspaceException.onFileReading(file, e);
         }
     }
@@ -221,7 +217,7 @@ public class JsonBundleHandler implements BundleHandler {
                 .doOnNext(structuredMap -> {
                     try {
                         objectMapper.writeValue(outputStream, structuredMap);
-                    } catch (IOException e) {
+                    } catch (Exception e) {
                         throw WorkspaceException.onFileWriting(file, e);
                     }
                 })

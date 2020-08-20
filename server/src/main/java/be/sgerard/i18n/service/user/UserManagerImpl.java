@@ -314,9 +314,9 @@ public class UserManagerImpl implements UserManager {
                             .orElseGet(() -> {
                                 final String generatedPassword = UUID.randomUUID().toString();
 
-                                System.out.println("====================================================");
-                                System.out.println("Admin password: " + generatedPassword);
-                                System.out.println("====================================================");
+                                logger.info("====================================================");
+                                logger.info("Admin password: " + generatedPassword);
+                                logger.info("====================================================");
 
                                 return generatedPassword;
                             });

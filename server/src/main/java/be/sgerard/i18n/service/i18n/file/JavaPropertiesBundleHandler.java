@@ -18,7 +18,6 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Optional;
 import java.util.PropertyResourceBundle;
@@ -98,7 +97,7 @@ public class JavaPropertiesBundleHandler implements BundleHandler {
                                 .doOnTerminate(() -> {
                                     try {
                                         inputStream.close();
-                                    } catch (IOException e) {
+                                    } catch (Exception e) {
                                         logger.info("Error while closing stream.", e);
                                     }
                                 })
@@ -159,7 +158,7 @@ public class JavaPropertiesBundleHandler implements BundleHandler {
     private PropertyResourceBundle readTranslations(File file, InputStream fileStream) {
         try {
             return new PropertyResourceBundle(fileStream);
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw WorkspaceException.onFileReading(file, e);
         }
     }
