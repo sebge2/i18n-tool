@@ -1,7 +1,7 @@
 import {Component, Input} from '@angular/core';
-import {FactService} from "../../../core/shared/component/scroller/fact.service";
-import {FactsDataSource} from "../../../core/shared/component/scroller/scroller.component";
 import {TranslationsSearchRequest} from "../../model/search/translations-search-request.model";
+import {TranslationsDataSource} from "./translations.datasource";
+import {TranslationService} from "../../service/translation.service";
 
 @Component({
     selector: 'app-translations-table',
@@ -10,12 +10,12 @@ import {TranslationsSearchRequest} from "../../model/search/translations-search-
 })
 export class TranslationsTableComponent {
 
-    public dataSource: FactsDataSource;
+    public dataSource: TranslationsDataSource;
 
     private _searchRequest: TranslationsSearchRequest;
 
-    constructor(private factService: FactService) {
-        this.dataSource = new FactsDataSource(factService);
+    constructor(private _translationService: TranslationService) {
+        this.dataSource = new TranslationsDataSource(_translationService);
     }
 
     @Input()
@@ -25,5 +25,7 @@ export class TranslationsTableComponent {
 
     public set searchRequest(request: TranslationsSearchRequest) {
         this._searchRequest = request;
+
+        this.dataSource.setRequest(request);
     }
 }
