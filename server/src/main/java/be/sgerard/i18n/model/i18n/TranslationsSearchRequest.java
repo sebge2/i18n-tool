@@ -54,11 +54,6 @@ public class TranslationsSearchRequest {
     private final TranslationKeyPatternDto keyPattern;
 
     /**
-     * The list of fields to sort by.
-     */
-    private final List<String> sortBy;
-
-    /**
      * The current user id.
      */
     private final String currentUser;
@@ -69,9 +64,9 @@ public class TranslationsSearchRequest {
     private final Integer maxTranslations;
 
     /**
-     * The index of the page to look for. The first page has the index 0.
+     * The last element of the previous page (used to identify the following page).
      */
-    private final int pageIndex;
+    private final String lastPageKey;
 
     /**
      * @see #keyPattern
@@ -85,6 +80,13 @@ public class TranslationsSearchRequest {
      */
     public Optional<Integer> getMaxTranslations() {
         return Optional.ofNullable(maxTranslations);
+    }
+
+    /**
+     * @see #lastPageKey
+     */
+    public Optional<String> getLastPageKey() {
+        return Optional.ofNullable(lastPageKey);
     }
 
     /**

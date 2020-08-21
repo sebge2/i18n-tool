@@ -123,7 +123,7 @@ public class TranslationsTestHelper {
                     .contentType(MediaType.APPLICATION_JSON)
                     .body(BodyInserters.fromValue(
                             TranslationsSearchRequestDto.builder()
-                                    .workspaces(workspace.getId())
+                                    .workspace(workspace.getId())
                                     .maxKeys(500)
                                     .build()
                     ))

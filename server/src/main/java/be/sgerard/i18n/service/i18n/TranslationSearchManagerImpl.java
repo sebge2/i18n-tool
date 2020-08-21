@@ -5,23 +5,21 @@ import be.sgerard.i18n.model.i18n.dto.TranslationsPageDto;
 import be.sgerard.i18n.model.i18n.dto.TranslationsPageRowDto;
 import be.sgerard.i18n.model.i18n.dto.TranslationsPageTranslationDto;
 import be.sgerard.i18n.model.i18n.dto.TranslationsSearchRequestDto;
+import be.sgerard.i18n.model.i18n.persistence.BundleKeyEntity;
 import be.sgerard.i18n.model.i18n.persistence.BundleKeyTranslationEntity;
 import be.sgerard.i18n.model.i18n.persistence.TranslationLocaleEntity;
 import be.sgerard.i18n.model.workspace.persistence.WorkspaceEntity;
-import be.sgerard.i18n.repository.i18n.BundleKeyTranslationRepository;
+import be.sgerard.i18n.repository.i18n.BundleKeyEntityRepository;
 import be.sgerard.i18n.service.security.auth.AuthenticationUserManager;
 import be.sgerard.i18n.service.workspace.WorkspaceManager;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
-import static be.sgerard.i18n.repository.i18n.BundleKeyTranslationRepository.*;
-import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -32,12 +30,12 @@ import static java.util.stream.Collectors.toList;
 @Service
 public class TranslationSearchManagerImpl implements TranslationSearchManager {
 
-    private final BundleKeyTranslationRepository keyEntryRepository;
+    private final BundleKeyEntityRepository keyEntryRepository;
     private final TranslationLocaleManager localeManager;
     private final AuthenticationUserManager authenticationUserManager;
     private final WorkspaceManager workspaceManager;
 
-    public TranslationSearchManagerImpl(BundleKeyTranslationRepository keyEntryRepository,
+    public TranslationSearchManagerImpl(BundleKeyEntityRepository keyEntryRepository,
                                         TranslationLocaleManager localeManager,
                                         AuthenticationUserManager authenticationUserManager,
                                         WorkspaceManager workspaceManager) {
@@ -99,48 +97,37 @@ public class TranslationSearchManagerImpl implements TranslationSearchManager {
                                 .criterion(searchRequest.getCriterion())
                                 .keyPattern(searchRequest.getKeyPattern().orElse(null))
                                 .maxTranslations(searchRequest.getMaxKeys() * locales.size())
-                                .pageIndex(searchRequest.getPageIndex())
-                                .sortBy(asList(FIELD_WORKSPACE, FIELD_BUNDLE_FILE, FIELD_BUNDLE_KEY))
+                                .lastPageKey(searchRequest.getLastPageKey().orElse(null))
                                 .currentUser(currentUser.getUserId())
                                 .build()
                 );
     }
 
     /**
-     * Returns the {@link FoundTranslationGroupKey key} of this translation.
-     */
-    private FoundTranslationGroupKey toGroupKey(BundleKeyTranslationEntity translation) {
-        return new FoundTranslationGroupKey(translation.getWorkspace(), translation.getBundleFile(), translation.getBundleKey());
-    }
-
-    /**
      * Creates the {@link TranslationsPageRowDto rows} for {@link BundleKeyTranslationEntity translations} by grouping them.
      */
-    private List<TranslationsPageRowDto> createRows(List<BundleKeyTranslationEntity> translations, TranslationsSearchRequest request) {
-        return translations
-                .stream()
-                .collect(Collectors.groupingBy(this::toGroupKey, LinkedHashMap::new, toList()))
-                .entrySet()
-                .stream()
+    private List<TranslationsPageRowDto> createRows(List<BundleKeyEntity> bundleKeys, TranslationsSearchRequest request) {
+        return bundleKeys.stream()
                 .map(group -> createRow(group, request))
                 .collect(toList());
     }
 
     /**
-     * Creates the {@link TranslationsPageRowDto row} for the grouped flow by bundle key.
+     * Creates the {@link TranslationsPageRowDto row} for the bundle key.
      */
-    private TranslationsPageRowDto createRow(Map.Entry<FoundTranslationGroupKey, List<BundleKeyTranslationEntity>> group,
-                                             TranslationsSearchRequest searchRequest) {
-        final FoundTranslationGroupKey key = group.getKey();
-
-        final List<BundleKeyTranslationEntity> orderedTranslations = new ArrayList<>(group.getValue());
+    private TranslationsPageRowDto createRow(BundleKeyEntity bundleKey, TranslationsSearchRequest searchRequest) {
+        final List<BundleKeyTranslationEntity> orderedTranslations = new ArrayList<>(bundleKey.getTranslations().values());
         orderedTranslations.sort(Comparator.comparingInt(translation -> searchRequest.getLocales().indexOf(translation.getLocale())));
 
         return TranslationsPageRowDto.builder()
-                .workspace(key.getWorkspace())
-                .bundleFile(key.getBundleFile())
-                .bundleKey(key.getBundleKey())
-                .translations(orderedTranslations.stream().map(translation -> TranslationsPageTranslationDto.builder(translation).build()).collect(toList()))
+                .workspace(bundleKey.getWorkspace())
+                .bundleFile(bundleKey.getBundleFile())
+                .bundleKey(bundleKey.getKey())
+                .translations(
+                        orderedTranslations.stream()
+                                .map(translation -> TranslationsPageTranslationDto.builder(translation).build())
+                                .collect(toList())
+                )
                 .build();
     }
 
@@ -149,28 +136,9 @@ public class TranslationSearchManagerImpl implements TranslationSearchManager {
      */
     private TranslationsPageDto createPage(List<TranslationsPageRowDto> rows, TranslationsSearchRequest searchRequest) {
         return TranslationsPageDto.builder()
-                .pageIndex(searchRequest.getPageIndex())
                 .rows(rows)
                 .locales(searchRequest.getLocales())
+                .lastPageKey(!rows.isEmpty() ? rows.get(rows.size() - 1).getBundleKey() : null)
                 .build();
     }
-
-    /**
-     * Key grouping a {@link BundleKeyTranslationEntity translation} in a row.
-     */
-    @Getter
-    @EqualsAndHashCode
-    private static final class FoundTranslationGroupKey {
-
-        private final String workspace;
-        private final String bundleFile;
-        private final String bundleKey;
-
-        private FoundTranslationGroupKey(String workspace, String bundleFile, String bundleKey) {
-            this.workspace = workspace;
-            this.bundleFile = bundleFile;
-            this.bundleKey = bundleKey;
-        }
-    }
-
 }

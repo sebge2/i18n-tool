@@ -1,49 +1,20 @@
 package be.sgerard.i18n.model.i18n.persistence;
 
-import be.sgerard.i18n.model.workspace.persistence.WorkspaceEntity;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotNull;
 import java.util.Optional;
-import java.util.UUID;
 
 /**
- * Translation of a certain key part of translation bundle.
+ * Translation of a certain {@link BundleKeyEntity key} part of translation bundle.
  *
  * @author Sebastien Gerard
  */
-@Document("bundle_key_translation")
 @Getter
 @Setter
 public class BundleKeyTranslationEntity {
-
-    /**
-     * The unique translation key id.
-     */
-    @Id
-    private String id;
-
-    /**
-     * The associated {@link WorkspaceEntity workspace}.
-     */
-    @NotNull
-    private String workspace;
-
-    /**
-     * The associated {@link BundleFileEntity bundle file}.
-     */
-    @NotNull
-    private String bundleFile;
-
-    /**
-     * The associated translation key.
-     */
-    @NotNull
-    private String bundleKey;
 
     /**
      * The {@link TranslationLocaleEntity locale} of the translation.
@@ -73,16 +44,9 @@ public class BundleKeyTranslationEntity {
     BundleKeyTranslationEntity() {
     }
 
-    public BundleKeyTranslationEntity(String workspace,
-                                      String bundleFile,
-                                      String bundleKey,
-                                      String locale,
+    public BundleKeyTranslationEntity(String locale,
                                       long index,
                                       String originalValue) {
-        this.id = UUID.randomUUID().toString();
-        this.workspace = workspace;
-        this.bundleFile = bundleFile;
-        this.bundleKey = bundleKey;
         this.locale = locale;
         this.index = index;
         this.originalValue = originalValue;
