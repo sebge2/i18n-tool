@@ -3,7 +3,7 @@ package be.sgerard.i18n.service.user.listener;
 import be.sgerard.i18n.model.i18n.TranslationsSearchRequest;
 import be.sgerard.i18n.model.i18n.dto.TranslationSearchCriterion;
 import be.sgerard.i18n.model.security.user.persistence.UserEntity;
-import be.sgerard.i18n.repository.i18n.BundleKeyTranslationRepository;
+import be.sgerard.i18n.repository.i18n.BundleKeyEntityRepository;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
@@ -15,9 +15,9 @@ import reactor.core.publisher.Mono;
 @Component
 public class TranslationAuthorUserListener implements UserListener {
 
-    private final BundleKeyTranslationRepository translationRepository;
+    private final BundleKeyEntityRepository translationRepository;
 
-    public TranslationAuthorUserListener(BundleKeyTranslationRepository translationRepository) {
+    public TranslationAuthorUserListener(BundleKeyEntityRepository translationRepository) {
         this.translationRepository = translationRepository;
     }
 
