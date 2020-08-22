@@ -59,9 +59,9 @@ public class TranslationsSearchRequest {
     private final String currentUser;
 
     /**
-     * The maximum number of translations for the next page.
+     * The maximum number of bundle keys for the next page.
      */
-    private final Integer maxTranslations;
+    private final Integer maxKeys;
 
     /**
      * The last element of the previous page (used to identify the following page).
@@ -76,10 +76,10 @@ public class TranslationsSearchRequest {
     }
 
     /**
-     * @see #maxTranslations
+     * @see #maxKeys
      */
-    public Optional<Integer> getMaxTranslations() {
-        return Optional.ofNullable(maxTranslations);
+    public Optional<Integer> getMaxKeys() {
+        return Optional.ofNullable(maxKeys);
     }
 
     /**

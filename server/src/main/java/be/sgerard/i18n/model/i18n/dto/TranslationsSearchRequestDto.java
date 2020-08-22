@@ -106,6 +106,9 @@ public class TranslationsSearchRequestDto {
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder {
 
+        @SuppressWarnings({"FieldCanBeLocal", "unused", "FieldMayBeFinal"})
+        private TranslationSearchCriterion criterion = TranslationSearchCriterion.ALL;
+
         @SuppressWarnings({"FieldCanBeLocal", "unused"})
         private int maxKeys = DEFAULT_MAX_KEYS;
 
