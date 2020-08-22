@@ -1,6 +1,6 @@
 package be.sgerard.i18n.service.i18n.listener;
 
-import be.sgerard.i18n.model.i18n.persistence.BundleKeyTranslationEntity;
+import be.sgerard.i18n.model.i18n.persistence.BundleKeyEntity;
 import be.sgerard.i18n.model.validation.ValidationResult;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;

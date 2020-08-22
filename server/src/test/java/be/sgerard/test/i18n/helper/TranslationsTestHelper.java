@@ -71,26 +71,35 @@ public class TranslationsTestHelper {
             return translations;
         }
 
-        public Optional<TranslationsPageTranslationDto> find(String key, Locale locale) {
+        public Optional<TranslationsPageRowDto> findBunglePageRow(String bundleKey) {
             loadTranslations(workspace);
 
-            final TranslationLocaleDto translationLocaleDto = localeTestHelper.findRegisteredLocale(locale);
-
             return translations.getRows().stream()
-                    .filter(row -> Objects.equals(row.getBundleKey(), key))
-                    .map(row -> row.getTranslations().get(translations.getLocales().indexOf(translationLocaleDto.getId())))
+                    .filter(row -> Objects.equals(row.getBundleKey(), bundleKey))
                     .findFirst();
         }
 
-        public TranslationsPageTranslationDto findOrDie(String key, Locale locale) {
-            return find(key, locale)
+        public TranslationsPageRowDto findBunglePageRowOrDie(String bundleKey) {
+            return findBunglePageRow(bundleKey)
+                    .orElseThrow(() -> new AssertionFailedError("There is no bundle with key [" + bundleKey + "]."));
+        }
+
+        public Optional<TranslationsPageTranslationDto> findTranslation(String key, Locale locale) {
+            final TranslationLocaleDto translationLocaleDto = localeTestHelper.findRegisteredLocale(locale);
+
+            return findBunglePageRow(key)
+                    .map(row -> row.getTranslations().get(translations.getLocales().indexOf(translationLocaleDto.getId())));
+        }
+
+        public TranslationsPageTranslationDto findTranslationOrDie(String key, Locale locale) {
+            return findTranslation(key, locale)
                     .orElseThrow(() -> new AssertionFailedError("There is no translation with key [" + key + "] in locale [" + locale + "]."));
         }
 
         public StepWorkspace expectTranslation(String key, Locale locale, String expected) {
             loadTranslations(workspace);
 
-            final Optional<String> actual = find(key, locale)
+            final Optional<String> actual = findTranslation(key, locale)
                     .flatMap(translation -> translation.getUpdatedValue().or(translation::getOriginalValue));
 
             assertThat(actual).contains(expected);

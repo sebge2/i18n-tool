@@ -1,17 +1,16 @@
 package be.sgerard.i18n.service.i18n.listener;
 
+import be.sgerard.i18n.model.i18n.persistence.BundleKeyEntity;
 import be.sgerard.i18n.model.i18n.persistence.BundleKeyTranslationEntity;
 import be.sgerard.i18n.service.event.EventService;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
-import java.util.Collection;
-
 /**
  * @author Sebastien Gerard
  */
 @Component
-public class TranslationsEventListener implements TranslationsListener{
+public class TranslationsEventListener implements TranslationsListener {
 
     private final EventService eventService;
 
@@ -20,7 +19,7 @@ public class TranslationsEventListener implements TranslationsListener{
     }
 
     @Override
-    public Mono<Void> afterUpdate(BundleKeyTranslationEntity translation) {
+    public Mono<Void> afterUpdate(BundleKeyEntity bundleKey, BundleKeyTranslationEntity translation) {
         // TODO
 //        eventService.broadcastEvent(
 //                UPDATED_TRANSLATIONS,

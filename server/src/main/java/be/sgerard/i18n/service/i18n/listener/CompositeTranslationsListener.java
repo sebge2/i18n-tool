@@ -1,5 +1,6 @@
 package be.sgerard.i18n.service.i18n.listener;
 
+import be.sgerard.i18n.model.i18n.persistence.BundleKeyEntity;
 import be.sgerard.i18n.model.i18n.persistence.BundleKeyTranslationEntity;
 import be.sgerard.i18n.model.validation.ValidationResult;
 import org.springframework.context.annotation.Lazy;
@@ -27,19 +28,19 @@ public class CompositeTranslationsListener implements TranslationsListener {
     }
 
     @Override
-    public Mono<ValidationResult> beforeUpdate(BundleKeyTranslationEntity translation, String updatedValue) {
+    public Mono<ValidationResult> beforeUpdate(BundleKeyEntity bundleKey, String localeId, String updatedValue) {
         return Flux
                 .fromIterable(listeners)
-                .flatMap(listener -> listener.beforeUpdate(translation, updatedValue))
+                .flatMap(listener -> listener.beforeUpdate(bundleKey, localeId, updatedValue))
                 .reduce(ValidationResult::merge)
                 .switchIfEmpty(Mono.just(ValidationResult.EMPTY));
     }
 
     @Override
-    public Mono<Void> afterUpdate(BundleKeyTranslationEntity translation) {
+    public Mono<Void> afterUpdate(BundleKeyEntity bundleKey, BundleKeyTranslationEntity translation) {
         return Flux
                 .fromIterable(listeners)
-                .flatMap(listener -> listener.afterUpdate(translation))
+                .flatMap(listener -> listener.afterUpdate(bundleKey, translation))
                 .then();
     }
 }
