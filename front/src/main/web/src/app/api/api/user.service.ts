@@ -191,13 +191,13 @@ export class UserService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public findById3(id: string, observe?: 'body', reportProgress?: boolean): Observable<UserDto>;
-    public findById3(id: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<UserDto>>;
-    public findById3(id: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<UserDto>>;
-    public findById3(id: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public findById2(id: string, observe?: 'body', reportProgress?: boolean): Observable<UserDto>;
+    public findById2(id: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<UserDto>>;
+    public findById2(id: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<UserDto>>;
+    public findById2(id: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (id === null || id === undefined) {
-            throw new Error('Required parameter id was null or undefined when calling findById3.');
+            throw new Error('Required parameter id was null or undefined when calling findById2.');
         }
 
         let headers = this.defaultHeaders;

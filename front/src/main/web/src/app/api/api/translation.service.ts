@@ -59,60 +59,26 @@ export class TranslationService {
 
 
     /**
-     * Returns the translation having the specified id.
-     * 
-     * @param id 
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
-     */
-    public findById1(id: string, observe?: 'body', reportProgress?: boolean): Observable<BundleKeyTranslationDto>;
-    public findById1(id: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<BundleKeyTranslationDto>>;
-    public findById1(id: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<BundleKeyTranslationDto>>;
-    public findById1(id: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
-
-        if (id === null || id === undefined) {
-            throw new Error('Required parameter id was null or undefined when calling findById1.');
-        }
-
-        let headers = this.defaultHeaders;
-
-        // to determine the Accept header
-        let httpHeaderAccepts: string[] = [
-            '*/*'
-        ];
-        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set('Accept', httpHeaderAcceptSelected);
-        }
-
-        // to determine the Content-Type header
-        const consumes: string[] = [
-        ];
-
-        return this.httpClient.request<BundleKeyTranslationDto>('get',`${this.basePath}/api/translation/${encodeURIComponent(String(id))}`,
-            {
-                withCredentials: this.configuration.withCredentials,
-                headers: headers,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
-    }
-
-    /**
      * Returns translations of the workspace having the specified id.
      * 
      * @param body 
+     * @param action 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public searchTranslations(body: TranslationsSearchRequestDto, observe?: 'body', reportProgress?: boolean): Observable<TranslationsPageDto>;
-    public searchTranslations(body: TranslationsSearchRequestDto, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<TranslationsPageDto>>;
-    public searchTranslations(body: TranslationsSearchRequestDto, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<TranslationsPageDto>>;
-    public searchTranslations(body: TranslationsSearchRequestDto, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public searchTranslations(body: TranslationsSearchRequestDto, action?: string, observe?: 'body', reportProgress?: boolean): Observable<TranslationsPageDto>;
+    public searchTranslations(body: TranslationsSearchRequestDto, action?: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<TranslationsPageDto>>;
+    public searchTranslations(body: TranslationsSearchRequestDto, action?: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<TranslationsPageDto>>;
+    public searchTranslations(body: TranslationsSearchRequestDto, action?: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (body === null || body === undefined) {
             throw new Error('Required parameter body was null or undefined when calling searchTranslations.');
+        }
+
+
+        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        if (action !== undefined && action !== null) {
+            queryParameters = queryParameters.set('action', <any>action);
         }
 
         let headers = this.defaultHeaders;
@@ -138,6 +104,7 @@ export class TranslationService {
         return this.httpClient.request<TranslationsPageDto>('post',`${this.basePath}/api/translation/do`,
             {
                 body: body,
+                params: queryParameters,
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
                 observe: observe,
@@ -149,18 +116,25 @@ export class TranslationService {
     /**
      * Updates translations of the workspace having the specified id.
      * 
+     * @param bundleKeyId 
+     * @param localeId 
      * @param body 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public updateWorkspaceTranslations(body: { [key: string]: string; }, observe?: 'body', reportProgress?: boolean): Observable<Array<BundleKeyTranslationDto>>;
-    public updateWorkspaceTranslations(body: { [key: string]: string; }, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<BundleKeyTranslationDto>>>;
-    public updateWorkspaceTranslations(body: { [key: string]: string; }, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<BundleKeyTranslationDto>>>;
-    public updateWorkspaceTranslations(body: { [key: string]: string; }, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public updateWorkspaceTranslations(bundleKeyId: string, localeId: string, body?: string, observe?: 'body', reportProgress?: boolean): Observable<BundleKeyTranslationDto>;
+    public updateWorkspaceTranslations(bundleKeyId: string, localeId: string, body?: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<BundleKeyTranslationDto>>;
+    public updateWorkspaceTranslations(bundleKeyId: string, localeId: string, body?: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<BundleKeyTranslationDto>>;
+    public updateWorkspaceTranslations(bundleKeyId: string, localeId: string, body?: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
-        if (body === null || body === undefined) {
-            throw new Error('Required parameter body was null or undefined when calling updateWorkspaceTranslations.');
+        if (bundleKeyId === null || bundleKeyId === undefined) {
+            throw new Error('Required parameter bundleKeyId was null or undefined when calling updateWorkspaceTranslations.');
         }
+
+        if (localeId === null || localeId === undefined) {
+            throw new Error('Required parameter localeId was null or undefined when calling updateWorkspaceTranslations.');
+        }
+
 
         let headers = this.defaultHeaders;
 
@@ -175,14 +149,14 @@ export class TranslationService {
 
         // to determine the Content-Type header
         const consumes: string[] = [
-            'application/json'
+            'text/plain'
         ];
         const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
             headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
-        return this.httpClient.request<Array<BundleKeyTranslationDto>>('patch',`${this.basePath}/api/translation`,
+        return this.httpClient.request<BundleKeyTranslationDto>('patch',`${this.basePath}/api/translation/bundle-key/${encodeURIComponent(String(bundleKeyId))}/locale/${encodeURIComponent(String(localeId))}`,
             {
                 body: body,
                 withCredentials: this.configuration.withCredentials,

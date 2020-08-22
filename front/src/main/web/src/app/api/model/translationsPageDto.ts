@@ -24,7 +24,7 @@ export interface TranslationsPageDto {
      */
     locales: Array<string>;
     /**
-     * The index of the page to look for (the first page has the index 0)
+     * The last element of the current page
      */
-    pageIndex: number;
+    lastPageKey?: string;
 }

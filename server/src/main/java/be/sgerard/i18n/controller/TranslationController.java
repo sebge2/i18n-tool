@@ -6,6 +6,9 @@ import be.sgerard.i18n.model.i18n.dto.TranslationsSearchRequestDto;
 import be.sgerard.i18n.service.i18n.TranslationManager;
 import be.sgerard.i18n.service.i18n.TranslationSearchManager;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -35,7 +38,7 @@ public class TranslationController {
     @PostMapping(path = "/translation/do", params = "action=search")
     @Operation(
             summary = "Returns translations of the workspace having the specified id.",
-            parameters = @Parameter(name = "action", schema = @Schema(allowableValues = "search"))
+            parameters = @Parameter(name = "action", in = ParameterIn.QUERY, schema = @Schema(allowableValues = "search"))
     )
     public Mono<TranslationsPageDto> searchTranslations(@RequestBody TranslationsSearchRequestDto searchRequest) {
         return translationSearchManager.search(searchRequest);

@@ -15,10 +15,6 @@
  */
 export interface TranslationsPageTranslationDto { 
     /**
-     * Unique identifier of a translation.
-     */
-    id: string;
-    /**
      * The original value found when scanning bundle files (initializing step).
      */
     originalValue: string;

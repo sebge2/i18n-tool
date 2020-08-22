@@ -37,9 +37,9 @@ export interface TranslationsSearchRequestDto {
      */
     maxKeys?: number;
     /**
-     * The index of the page to look for (the first page has the index 0)
+     * The last element of the previous page, used to get the next page.
      */
-    pageIndex?: number;
+    lastPageKey?: string;
 }
 export namespace TranslationsSearchRequestDto {
     export type CriterionDtoEnum = 'ALL' | 'MISSING_TRANSLATIONS' | 'TRANSLATIONS_CURRENT_USER_UPDATED' | 'UPDATED_TRANSLATIONS';

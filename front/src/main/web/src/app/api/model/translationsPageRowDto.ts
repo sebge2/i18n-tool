@@ -16,6 +16,10 @@ import { TranslationsPageTranslationDto } from './translationsPageTranslationDto
  */
 export interface TranslationsPageRowDto { 
     /**
+     * Unique id of this row which is the id of the bundle key
+     */
+    id: string;
+    /**
      * Workspace id associated to this translation.
      */
     workspace: string;
