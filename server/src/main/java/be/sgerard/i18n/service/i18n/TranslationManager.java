@@ -1,13 +1,11 @@
 package be.sgerard.i18n.service.i18n;
 
 import be.sgerard.i18n.model.i18n.persistence.BundleFileEntity;
-import be.sgerard.i18n.model.i18n.persistence.BundleKeyTranslationEntity;
+import be.sgerard.i18n.model.i18n.persistence.BundleKeyEntity;
 import be.sgerard.i18n.model.workspace.persistence.WorkspaceEntity;
 import be.sgerard.i18n.service.ResourceNotFoundException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.util.Map;
 
 /**
  * Manager of translations found in bundle files.
@@ -15,18 +13,6 @@ import java.util.Map;
  * @author Sebastien Gerard
  */
 public interface TranslationManager {
-    /**
-     * Finds the {@link BundleKeyTranslationEntity translation} having the specified id.
-     */
-    Mono<BundleKeyTranslationEntity> findTranslation(String id);
-
-    /**
-     * Finds the {@link BundleKeyTranslationEntity translation} having the specified id.
-     */
-    default Mono<BundleKeyTranslationEntity> findTranslationOrDie(String id) {
-        return findTranslation(id)
-                .switchIfEmpty(Mono.error(ResourceNotFoundException.translationNotFoundException(id)));
-    }
 
     /**
      * Reads all the translations of the specified {@link WorkspaceEntity workspace} using the {@link TranslationRepositoryReadApi read API}.
@@ -40,8 +26,7 @@ public interface TranslationManager {
     Mono<Void> writeTranslations(WorkspaceEntity workspace, TranslationRepositoryWriteApi api);
 
     /**
-     * Updates translations of the specified {@link WorkspaceEntity workspace}, the map associates the
-     * {@link BundleKeyTranslationEntity#getId() translation id} to the actual translation value.
+     * Updates the translation of the specified {@link BundleKeyEntity#getId() bundle key} for the specified locale.
      */
-    Flux<BundleKeyTranslationEntity> updateTranslations(Map<String, String> translations) throws ResourceNotFoundException;
+    Mono<BundleKeyEntity> updateTranslation(String bundleKeyId, String localeId, String translation) throws ResourceNotFoundException;
 }

@@ -121,6 +121,23 @@ public class BundleKeyEntity {
     }
 
     /**
+     * Returns the {@link BundleKeyTranslationEntity translation} for the specified locale. If there is no such translation,
+     * a new one is created.
+     *
+     * @see TranslationLocaleEntity#getId()
+     */
+    public BundleKeyTranslationEntity getTranslationOrCreate(String translationLocale) {
+        return getTranslation(translationLocale)
+                .orElseGet(() -> {
+                    final BundleKeyTranslationEntity translation = new BundleKeyTranslationEntity(translationLocale, -1, null);
+
+                    translations.put(translationLocale, translation);
+
+                    return translation;
+                });
+    }
+
+    /**
      * Adds all {@link #getTranslations() translations} for the other entity into this one.
      */
     public void addAllTranslations(BundleKeyEntity otherEntity) {

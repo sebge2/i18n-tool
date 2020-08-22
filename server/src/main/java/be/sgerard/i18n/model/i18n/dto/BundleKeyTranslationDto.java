@@ -28,10 +28,6 @@ public class BundleKeyTranslationDto {
 
     public static Builder builder(BundleKeyTranslationEntity translation) {
         return builder()
-                .id(translation.getId())
-                .workspace(translation.getWorkspace())
-                .bundleFile(translation.getBundleFile())
-                .bundleKey(translation.getBundleKey())
                 .locale(translation.getLocale())
                 .originalValue(translation.getOriginalValue().orElse(null))
                 .updatedValue(translation.getModification().flatMap(BundleKeyTranslationModificationEntity::getUpdatedValue).orElse(null))

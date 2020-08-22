@@ -7,11 +7,9 @@ import be.sgerard.i18n.service.i18n.TranslationManager;
 import be.sgerard.i18n.service.i18n.TranslationSearchManager;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.util.Map;
 
 /**
  * {@link RestController Controller} handling translations.
@@ -32,21 +30,13 @@ public class TranslationController {
     }
 
     /**
-     * Returns the translation having the specified id.
-     */
-    @GetMapping(path = "/translation/{id}")
-    @Operation(summary = "Returns the translation having the specified id.")
-    public Mono<BundleKeyTranslationDto> findById(@PathVariable String id) {
-        return translationManager
-                .findTranslationOrDie(id)
-                .map(translation -> BundleKeyTranslationDto.builder(translation).build());
-    }
-
-    /**
      * Performs the specified {@link TranslationsSearchRequestDto search request} and returns a page of {@link TranslationsPageDto translations}.
      */
     @PostMapping(path = "/translation/do", params = "action=search")
-    @Operation(summary = "Returns translations of the workspace having the specified id.")
+    @Operation(
+            summary = "Returns translations of the workspace having the specified id.",
+            parameters = @Parameter(name = "action", schema = @Schema(allowableValues = "search"))
+    )
     public Mono<TranslationsPageDto> searchTranslations(@RequestBody TranslationsSearchRequestDto searchRequest) {
         return translationSearchManager.search(searchRequest);
     }
@@ -54,11 +44,14 @@ public class TranslationController {
     /**
      * Updates translations. The maps associated {@link BundleKeyTranslationDto#getId() translation ids} to their translations.
      */
-    @PatchMapping(path = "/translation")
+    @PatchMapping(path = "/translation/bundle-key/{bundleKeyId}/locale/{localeId}", consumes = MediaType.TEXT_PLAIN_VALUE)
     @Operation(summary = "Updates translations of the workspace having the specified id.")
-    public Flux<BundleKeyTranslationDto> updateWorkspaceTranslations(@RequestBody Map<String, String> translations) {
+    public Mono<BundleKeyTranslationDto> updateWorkspaceTranslations(@RequestBody(required = false) String translation,
+                                                                     @PathVariable String bundleKeyId,
+                                                                     @PathVariable String localeId) {
         return translationManager
-                .updateTranslations(translations)
+                .updateTranslation(bundleKeyId, localeId, translation)
+                .map(bundleKey -> bundleKey.getTranslationOrDie(localeId))
                 .map(key -> BundleKeyTranslationDto.builder(key).build());
     }
 }
