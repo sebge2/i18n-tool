@@ -16,8 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
 
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -117,17 +115,14 @@ public class TranslationSearchManagerImpl implements TranslationSearchManager {
      * Creates the {@link TranslationsPageRowDto row} for the bundle key.
      */
     private TranslationsPageRowDto createRow(BundleKeyEntity bundleKey, TranslationsSearchRequest searchRequest) {
-        final List<BundleKeyTranslationEntity> orderedTranslations = new ArrayList<>(bundleKey.getTranslations().values());
-        orderedTranslations.sort(Comparator.comparingInt(translation -> searchRequest.getLocales().indexOf(translation.getLocale())));
-
         return TranslationsPageRowDto.builder()
                 .id(bundleKey.getId())
                 .workspace(bundleKey.getWorkspace())
                 .bundleFile(bundleKey.getBundleFile())
                 .bundleKey(bundleKey.getKey())
                 .translations(
-                        orderedTranslations.stream()
-                                .filter(translation -> searchRequest.getLocales().contains(translation.getLocale()))
+                        searchRequest.getLocales().stream()
+                                .map(bundleKey::getTranslationOrCreate)
                                 .map(translation -> TranslationsPageTranslationDto.builder(translation).build())
                                 .collect(toList())
                 )

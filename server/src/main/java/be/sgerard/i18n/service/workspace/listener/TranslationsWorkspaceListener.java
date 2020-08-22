@@ -1,7 +1,7 @@
 package be.sgerard.i18n.service.workspace.listener;
 
 import be.sgerard.i18n.model.workspace.persistence.WorkspaceEntity;
-import be.sgerard.i18n.repository.i18n.BundleKeyTranslationRepository;
+import be.sgerard.i18n.repository.i18n.BundleKeyEntityRepository;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
@@ -13,9 +13,9 @@ import reactor.core.publisher.Mono;
 @Component
 public class TranslationsWorkspaceListener implements WorkspaceListener {
 
-    private final BundleKeyTranslationRepository translationRepository;
+    private final BundleKeyEntityRepository translationRepository;
 
-    public TranslationsWorkspaceListener(BundleKeyTranslationRepository translationRepository) {
+    public TranslationsWorkspaceListener(BundleKeyEntityRepository translationRepository) {
         this.translationRepository = translationRepository;
     }
 
