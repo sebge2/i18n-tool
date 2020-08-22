@@ -12,6 +12,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import javax.validation.constraints.NotNull;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -53,8 +54,7 @@ public class BundleKeyEntity {
      * <ol>
      *     <li>the workspace,</li>
      *     <li>the bundle file,</li>
-     *     <li>the bundle key and</li>
-     *     <li>the locale id.</li>
+     *     <li>the bundle key</li>
      * </ol>
      */
     @NotNull
@@ -74,12 +74,56 @@ public class BundleKeyEntity {
 
     public BundleKeyEntity(String workspace,
                            String bundleFile,
-                           String key,
-                           String locale) {
+                           String key) {
         this.id = UUID.randomUUID().toString();
         this.workspace = workspace;
         this.bundleFile = bundleFile;
         this.key = key;
-        this.sortingKey = String.format("%s%s%s%s", workspace, bundleFile, key, locale);
+        this.sortingKey = String.format("%s%s%s", workspace, bundleFile, key);
+    }
+
+    public BundleKeyEntity(String workspace,
+                           String bundleFile,
+                           String key,
+                           BundleKeyTranslationEntity translation) {
+        this(workspace, bundleFile, key);
+
+        translations.put(translation.getLocale(), translation);
+    }
+
+    /**
+     * Returns whether there is a translation for the specified locale.
+     *
+     * @see TranslationLocaleEntity#getId()
+     */
+    public boolean hasTranslations(String translationLocale) {
+        return translations.containsKey(translationLocale);
+    }
+
+    /**
+     * Returns the {@link BundleKeyTranslationEntity translation} for the specified locale.
+     *
+     * @see TranslationLocaleEntity#getId()
+     */
+    public Optional<BundleKeyTranslationEntity> getTranslation(String translationLocale) {
+        return Optional
+                .ofNullable(translations.get(translationLocale));
+    }
+
+    /**
+     * Returns the {@link BundleKeyTranslationEntity translation} for the specified locale.
+     *
+     * @see TranslationLocaleEntity#getId()
+     */
+    public BundleKeyTranslationEntity getTranslationOrDie(String translationLocale) {
+        return getTranslation(translationLocale)
+                .orElseThrow(() -> new IllegalStateException("There is no translation for locale [" + translationLocale + "]"));
+    }
+
+    /**
+     * Adds all {@link #getTranslations() translations} for the other entity into this one.
+     */
+    public void addAllTranslations(BundleKeyEntity otherEntity) {
+        this.translations.putAll(otherEntity.getTranslations());
     }
 }

@@ -55,7 +55,7 @@ public class TranslationSearchManagerImpl implements TranslationSearchManager {
                         keyEntryRepository
                                 .search(request)
                                 .collectList()
-                                .map(translations -> createPage(createRows(translations, request), request))
+                                .map(bundleKeys -> createPage(bundleKeys, searchRequest))
                 );
     }
 
@@ -92,7 +92,6 @@ public class TranslationSearchManagerImpl implements TranslationSearchManager {
                 .map(currentUser ->
                         TranslationsSearchRequest.builder()
                                 .workspaces(workspaces)
-                                .locales(locales)
                                 .bundleFiles(searchRequest.getBundleFiles())
                                 .criterion(searchRequest.getCriterion())
                                 .keyPattern(searchRequest.getKeyPattern().orElse(null))
@@ -106,7 +105,7 @@ public class TranslationSearchManagerImpl implements TranslationSearchManager {
     /**
      * Creates the {@link TranslationsPageRowDto rows} for {@link BundleKeyTranslationEntity translations} by grouping them.
      */
-    private List<TranslationsPageRowDto> createRows(List<BundleKeyEntity> bundleKeys, TranslationsSearchRequest request) {
+    private List<TranslationsPageRowDto> createRows(List<BundleKeyEntity> bundleKeys, TranslationsSearchRequestDto request) {
         return bundleKeys.stream()
                 .map(group -> createRow(group, request))
                 .collect(toList());
@@ -115,7 +114,7 @@ public class TranslationSearchManagerImpl implements TranslationSearchManager {
     /**
      * Creates the {@link TranslationsPageRowDto row} for the bundle key.
      */
-    private TranslationsPageRowDto createRow(BundleKeyEntity bundleKey, TranslationsSearchRequest searchRequest) {
+    private TranslationsPageRowDto createRow(BundleKeyEntity bundleKey, TranslationsSearchRequestDto searchRequest) {
         final List<BundleKeyTranslationEntity> orderedTranslations = new ArrayList<>(bundleKey.getTranslations().values());
         orderedTranslations.sort(Comparator.comparingInt(translation -> searchRequest.getLocales().indexOf(translation.getLocale())));
 
@@ -125,6 +124,7 @@ public class TranslationSearchManagerImpl implements TranslationSearchManager {
                 .bundleKey(bundleKey.getKey())
                 .translations(
                         orderedTranslations.stream()
+                                .filter(translation -> searchRequest.getLocales().contains(translation.getLocale()))
                                 .map(translation -> TranslationsPageTranslationDto.builder(translation).build())
                                 .collect(toList())
                 )
@@ -132,13 +132,13 @@ public class TranslationSearchManagerImpl implements TranslationSearchManager {
     }
 
     /**
-     * Creates the {@link TranslationsPageDto page} with the specified {@link TranslationsPageRowDto rows}.
+     * Creates the {@link TranslationsPageDto page} containing translations of the specified {@link BundleKeyEntity bundle keys}.
      */
-    private TranslationsPageDto createPage(List<TranslationsPageRowDto> rows, TranslationsSearchRequest searchRequest) {
+    private TranslationsPageDto createPage(List<BundleKeyEntity> bundleKeys, TranslationsSearchRequestDto request) {
         return TranslationsPageDto.builder()
-                .rows(rows)
-                .locales(searchRequest.getLocales())
-                .lastPageKey(!rows.isEmpty() ? rows.get(rows.size() - 1).getBundleKey() : null)
+                .rows(createRows(bundleKeys, request))
+                .locales(request.getLocales())
+                .lastPageKey(!bundleKeys.isEmpty() ? bundleKeys.get(bundleKeys.size() - 1).getSortingKey() : null)
                 .build();
     }
 }
