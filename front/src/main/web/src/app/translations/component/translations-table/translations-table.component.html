@@ -1,9 +1,9 @@
 <cdk-virtual-scroll-viewport itemSize="100" class="app-translations-scroller-viewport" *ngIf="searchRequest">
     <div class="app-translations-container" [ngStyle]="{'grid-template-columns': '250px repeat(' + (searchRequest.locales.length) + ', 1fr)'}">
-        <div>
+        <div class="app-translations-header">
             <b>{{'TRANSLATIONS.TABLE.KEY_COLUMN' | translate}}</b>
         </div>
-        <div *ngFor="let locale of searchRequest.locales">
+        <div *ngFor="let locale of searchRequest.locales" class="app-translations-header">
             <span [class]="locale | translationLocaleIcon" class="app-translations-header-locale-icon"></span> <b>{{locale.displayName}}</b>
         </div>
 
