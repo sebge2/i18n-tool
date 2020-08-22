@@ -19,12 +19,12 @@
 }
 
 .app-translations-bundle-key-column {
-    white-space: nowrap;
-    width: calc(100% - 20px);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    margin: auto;
+    margin: auto auto auto 0;
 }
 
-.app-translations-translation-column {
+.app-translations-bundle-key-column div {
+    white-space: nowrap;
+    width: calc(250px - 20px);
+    overflow: hidden;
+    text-overflow: ellipsis;
 }

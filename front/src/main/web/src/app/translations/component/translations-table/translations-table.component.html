@@ -1,7 +1,7 @@
 <cdk-virtual-scroll-viewport itemSize="100" class="app-translations-scroller-viewport" *ngIf="searchRequest">
     <div class="app-translations-container" [ngStyle]="{'grid-template-columns': '250px repeat(' + (searchRequest.locales.length) + ', 1fr)'}">
         <div>
-            <b>Key</b>
+            <b>{{'TRANSLATIONS.TABLE.KEY_COLUMN' | translate}}</b>
         </div>
         <div *ngFor="let locale of searchRequest.locales">
             <span [class]="locale | translationLocaleIcon" class="app-translations-header-locale-icon"></span> <b>{{locale.displayName}}</b>
@@ -17,14 +17,13 @@
                 </div>
                 <ng-container *ngSwitchCase="'BUNDLE_KEY'">
                     <div class="app-translations-bundle-key-column">
-                        <span [matTooltip]="row.bundleKey" [matTooltipPosition]="'right'">
+                        <div [matTooltip]="row.bundleKey" [matTooltipPosition]="'right'">
                             {{row.bundleKey}}
-                        </span>
+                        </div>
                     </div>
 
                     <div *ngFor="let translation of row.translations" class="app-translations-translation-column">
-                        <app-translation-editing-cell [translation]="translation">
-                        </app-translation-editing-cell>
+                        <app-translation-editing-cell [translation]="translation"></app-translation-editing-cell>
                     </div>
                 </ng-container>
             </ng-container>
