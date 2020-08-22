@@ -184,19 +184,21 @@ public class TranslationManagerImpl implements TranslationManager {
                 .fromIterable(bundleFile.getFiles())
                 .map(ScannedBundleFileEntry::getLocale)
                 .flatMap(locale ->
-                        handler
-                                .scanTranslations(bundleFileEntity.toLocation(), locale, context)
-                                .index()
-                                .flatMap(indexedTranslation ->
-                                        createTranslation(
-                                                workspaceEntity,
-                                                bundleFileEntity,
-                                                locale.getId(),
-                                                indexedTranslation.getT1(), // index
-                                                indexedTranslation.getT2().getKey(), // bundle key
-                                                indexedTranslation.getT2().getValue() // translation
+                        translationRepository.saveAll(
+                                handler
+                                        .scanTranslations(bundleFileEntity.toLocation(), locale, context)
+                                        .index()
+                                        .map(indexedTranslation ->
+                                                createTranslation(
+                                                        workspaceEntity,
+                                                        bundleFileEntity,
+                                                        locale.getId(),
+                                                        indexedTranslation.getT1(), // index
+                                                        indexedTranslation.getT2().getKey(), // bundle key
+                                                        indexedTranslation.getT2().getValue() // translation
+                                                )
                                         )
-                                )
+                        )
                 )
                 .thenMany(groupIntoBundleKeys(bundleFileEntity))
                 .then(Mono.just(bundleFileEntity));
@@ -205,18 +207,18 @@ public class TranslationManagerImpl implements TranslationManager {
     /**
      * Creates and saves a new {@link BundleKeyEntity bundle key entity}.
      */
-    private Mono<BundleKeyEntity> createTranslation(WorkspaceEntity workspaceEntity,
-                                                    BundleFileEntity bundleFileEntity,
-                                                    String locale,
-                                                    long index,
-                                                    String bundleKey,
-                                                    String translation) {
-        return translationRepository.save(new BundleKeyEntity(
+    private BundleKeyEntity createTranslation(WorkspaceEntity workspaceEntity,
+                                              BundleFileEntity bundleFileEntity,
+                                              String locale,
+                                              long index,
+                                              String bundleKey,
+                                              String translation) {
+        return new BundleKeyEntity(
                 workspaceEntity.getId(),
                 bundleFileEntity.getId(),
                 bundleKey,
                 new BundleKeyTranslationEntity(locale, index, mapToNullIfEmpty(translation))
-        ));
+        );
     }
 
     /**
@@ -259,7 +261,7 @@ public class TranslationManagerImpl implements TranslationManager {
      *
      * @see BundleKeyGroupKey
      */
-    private Mono<Void> groupIntoBundleKeys(BundleFileEntity bundleFile) {
+    private Flux<BundleKeyEntity> groupIntoBundleKeys(BundleFileEntity bundleFile) {
         return this
                 .findBundleKeys(bundleFile)
                 .groupBy(BundleKeyGroupKey::new)
@@ -276,13 +278,11 @@ public class TranslationManagerImpl implements TranslationManager {
                                     final BundleKeyEntity entity = new BundleKeyEntity(key.getWorkspace(), key.getBundleFile(), key.getKey());
                                     bundleKeys.forEach(entity::addAllTranslations);
 
-                                    return Mono.zip(
-                                            translationRepository.save(entity),
-                                            translationRepository.deleteAll(bundleKeys)
-                                    );
+                                    return translationRepository
+                                            .deleteAll(bundleKeys)
+                                            .then(translationRepository.save(entity));
                                 })
-                )
-                .then();
+                );
     }
 
     /**
