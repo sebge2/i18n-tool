@@ -371,6 +371,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
             translations
                     .forRepositoryHint("my-repo")
                     .forWorkspaceName("master")
+                    .translations()
                     .expectTranslation("ResourceNotFoundException.user.message", Locale.ENGLISH, "There is no user with reference [{0}].")
                     .expectTranslation("SHARED.WORKSPACES_TITLE", Locale.ENGLISH, "Workspaces")
                     .expectNoModification();
@@ -532,6 +533,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
             translations
                     .forRepositoryHint("my-repo")
                     .forWorkspaceName("master")
+                    .translations()
                     .expectTranslation("ResourceNotFoundException.user.message", Locale.ENGLISH, "There is no user with reference [{0}].")
                     .expectTranslation("SHARED.WORKSPACES_TITLE", Locale.ENGLISH, "Workspaces")
                     .expectNoModification();

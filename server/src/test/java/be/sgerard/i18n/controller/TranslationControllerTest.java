@@ -12,7 +12,6 @@ import java.util.Locale;
 import static be.sgerard.test.i18n.model.GitRepositoryCreationDtoTestUtils.i18nToolRepositoryCreationDto;
 import static be.sgerard.test.i18n.model.TranslationLocaleCreationDtoTestUtils.enLocaleCreationDto;
 import static be.sgerard.test.i18n.model.TranslationLocaleCreationDtoTestUtils.frLocaleCreationDto;
-import static java.util.Collections.singletonMap;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.Matchers.hasSize;
 
@@ -49,39 +48,6 @@ public class TranslationControllerTest extends AbstractControllerTest {
                 .workspaces()
                 .workspaceForBranch("master")
                 .initialize();
-    }
-
-    @Test
-    @TransactionalReactiveTest
-    @WithJaneDoeAdminUser
-    public void findTranslation() {
-        final TranslationsPageTranslationDto translation = translations
-                .forRepositoryHint("my-repo")
-                .forWorkspaceName("master")
-                .findOrDie("validation.repository.name-not-unique", Locale.ENGLISH);
-
-        webClient
-                .get()
-                .uri("/api/translation/{id}", translation.getId())
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody()
-                .jsonPath("$.id").isEqualTo(translation.getId())
-                .jsonPath("$.locale").isEqualTo(locale.findRegisteredLocale(Locale.ENGLISH).getId())
-                .jsonPath("$.originalValue").isEqualTo("Another repository is already named [{0}]. Names must be unique.")
-                .jsonPath("$.updatedValue").isEmpty()
-                .jsonPath("$.lastEditor").isEmpty();
-    }
-
-    @Test
-    @TransactionalReactiveTest
-    @WithJaneDoeAdminUser
-    public void findTranslationUnknown() {
-        webClient
-                .get()
-                .uri("/api/translation/{id}", "unknown-id")
-                .exchange()
-                .expectStatus().isNotFound();
     }
 
     @Test
@@ -211,7 +177,7 @@ public class TranslationControllerTest extends AbstractControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(
                         TranslationsSearchRequestDto.builder()
-                                .locales(locale.getLocales().get(0).getId())
+                                .locale(locale.getLocales().get(0).getId())
                                 .build()
                 )
                 .exchange()
@@ -245,13 +211,13 @@ public class TranslationControllerTest extends AbstractControllerTest {
     public void searchTranslationsPagination() {
         final TranslationsPageDto workspaceTranslations = translations
                 .forRepositoryHint("my-repo")
-                .forWorkspaceName("master")
-                .get();
+                .forWorkspaceName("master").translations().get();
 
         final List<String> locales = this.locale.getSortedLocales().stream().map(TranslationLocaleDto::getId).collect(toList());
 
         final TranslationsPageRowDto firstRow = workspaceTranslations.getRows().get(0);
         final TranslationsPageRowDto secondRow = workspaceTranslations.getRows().get(1);
+        final String expectedLastFistKey = firstRow.getWorkspace() + firstRow.getBundleFile() + firstRow.getBundleKey();
 
         webClient
                 .post()
@@ -259,7 +225,7 @@ public class TranslationControllerTest extends AbstractControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(
                         TranslationsSearchRequestDto.builder()
-                                .workspaces(firstRow.getWorkspace())
+                                .workspace(firstRow.getWorkspace())
                                 .locales(locales)
                                 .maxKeys(1)
                                 .build()
@@ -267,7 +233,7 @@ public class TranslationControllerTest extends AbstractControllerTest {
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
-                .jsonPath("$.pageIndex").isEqualTo(0)
+                .jsonPath("$.lastPageKey").isEqualTo(expectedLastFistKey)
                 .jsonPath("$.rows").value(hasSize(1))
                 .jsonPath("$.locales").isEqualTo(locales)
                 .jsonPath("$.rows[0].bundleKey").isEqualTo(firstRow.getBundleKey())
@@ -282,15 +248,15 @@ public class TranslationControllerTest extends AbstractControllerTest {
                 .bodyValue(
                         TranslationsSearchRequestDto.builder()
                                 .locales(locales)
-                                .workspaces(firstRow.getWorkspace())
-                                .pageIndex(1)
+                                .workspace(firstRow.getWorkspace())
+                                .lastPageKey(expectedLastFistKey)
                                 .maxKeys(1)
                                 .build()
                 )
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
-                .jsonPath("$.pageIndex").isEqualTo(1)
+                .jsonPath("$.lastPageKey").isNotEmpty()
                 .jsonPath("$.rows").value(hasSize(1))
                 .jsonPath("$.locales").isEqualTo(locales)
                 .jsonPath("$.rows[0].bundleKey").isEqualTo(secondRow.getBundleKey())
@@ -303,18 +269,10 @@ public class TranslationControllerTest extends AbstractControllerTest {
     @TransactionalReactiveTest
     @WithJaneDoeAdminUser
     public void searchTranslationsUpdated() {
-        final TranslationsPageTranslationDto translation = translations
+        translations
                 .forRepositoryHint("my-repo")
                 .forWorkspaceName("master")
-                .findOrDie("validation.repository.name-not-unique", Locale.ENGLISH);
-
-        webClient
-                .patch()
-                .uri("/api/translation")
-                .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(singletonMap(translation.getId(), "my value updated"))
-                .exchange()
-                .expectStatus().isOk();
+                .updateTranslation("validation.repository.name-not-unique", Locale.ENGLISH, "my value updated");
 
         webClient
                 .post()
@@ -335,37 +293,39 @@ public class TranslationControllerTest extends AbstractControllerTest {
     @Test
     @TransactionalReactiveTest
     @WithJaneDoeAdminUser
-    public void writeTranslations() {
-        final TranslationsPageTranslationDto translation = translations
+    public void writeTranslation() {
+        final String bundleKeyId = translations
                 .forRepositoryHint("my-repo")
                 .forWorkspaceName("master")
-                .findOrDie("validation.repository.name-not-unique", Locale.ENGLISH);
+                .translations()
+                .findBunglePageRowOrDie("validation.repository.name-not-unique")
+                .getId();
+
+        final String localeId = locale.findRegisteredLocale(Locale.ENGLISH).getId();
 
         webClient
                 .patch()
-                .uri("/api/translation")
-                .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(singletonMap(translation.getId(), "my value updated"))
+                .uri("/api/translation/bundle-key/{bundleKeyId}/locale/{localeId}", bundleKeyId, localeId)
+                .contentType(MediaType.TEXT_PLAIN)
+                .bodyValue("my value updated")
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
-                .jsonPath("$").value(hasSize(1))
-                .jsonPath("$[0].id").isEqualTo(translation.getId())
-                .jsonPath("$[0].locale").isEqualTo(locale.findRegisteredLocale(Locale.ENGLISH).getId())
-                .jsonPath("$[0].originalValue").isEqualTo("Another repository is already named [{0}]. Names must be unique.")
-                .jsonPath("$[0].updatedValue").isEqualTo("my value updated")
-                .jsonPath("$[0].lastEditor").isNotEmpty();
+                .jsonPath("$.locale").isEqualTo(locale.findRegisteredLocale(Locale.ENGLISH).getId())
+                .jsonPath("$.originalValue").isEqualTo("Another repository is already named [{0}]. Names must be unique.")
+                .jsonPath("$.updatedValue").isEqualTo("my value updated")
+                .jsonPath("$.lastEditor").isNotEmpty();
     }
 
     @Test
     @TransactionalReactiveTest
     @WithJaneDoeAdminUser
-    public void writeTranslationsUnknownId() {
+    public void writeTranslationUnknownId() {
         webClient
                 .patch()
-                .uri("/api/translation")
-                .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(singletonMap("an-unknown-id", "my value updated"))
+                .uri("/api/translation/bundle-key/{bundleKeyId}/locale/{localeId}", "unknown-id", "another-unknown-id")
+                .contentType(MediaType.TEXT_PLAIN)
+                .bodyValue("my value updated")
                 .exchange()
                 .expectStatus().isNotFound();
     }
