@@ -3,7 +3,7 @@
     width: 100%;
 }
 
-.app-scroller-rows-container {
+.app-translations-container {
     display: grid;
     grid-auto-rows: 60px;
     grid-gap: 10px;
@@ -16,4 +16,15 @@
 
 .app-scroller-spread-row {
     grid-column: 1 / 4;
+}
+
+.app-translations-bundle-key-column {
+    white-space: nowrap;
+    width: calc(100% - 20px);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin: auto;
+}
+
+.app-translations-translation-column {
 }
