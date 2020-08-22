@@ -7,12 +7,12 @@ export class TranslationsPage {
         return new TranslationsPage(
             dto.rows.map(row => TranslationsPageRow.fromDto(row)),
             dto.locales,
-            dto.pageIndex
+            dto.lastPageKey
         )
     }
 
     constructor(public rows: TranslationsPageRow[],
                 public locales: string[],
-                public pageIndex: number) {
+                public lastPageKey: string) {
     }
 }
