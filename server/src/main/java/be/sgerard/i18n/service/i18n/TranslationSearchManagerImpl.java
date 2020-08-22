@@ -121,6 +121,7 @@ public class TranslationSearchManagerImpl implements TranslationSearchManager {
         orderedTranslations.sort(Comparator.comparingInt(translation -> searchRequest.getLocales().indexOf(translation.getLocale())));
 
         return TranslationsPageRowDto.builder()
+                .id(bundleKey.getId())
                 .workspace(bundleKey.getWorkspace())
                 .bundleFile(bundleKey.getBundleFile())
                 .bundleKey(bundleKey.getKey())

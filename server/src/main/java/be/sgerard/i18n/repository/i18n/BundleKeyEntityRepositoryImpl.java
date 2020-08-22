@@ -85,25 +85,25 @@ public class BundleKeyEntityRepositoryImpl implements BundleKeyEntityRepositoryC
      */
     private Criteria[] createCriteria(TranslationSearchCriterion criterion, List<String> locales, String currentUser) {
         return locales.stream()
-                    .map(locale -> {
-                        switch (criterion) {
-                            case MISSING_TRANSLATIONS:
-                                return new Criteria().andOperator(
-                                        Criteria.where(locale + "." + SUB_FIELD_ORIGINAL_VALUE).is(null),
-                                        Criteria.where(locale + "." + SUB_FIELD_UPDATED_VALUE).is(null)
-                                );
-                            case UPDATED_TRANSLATIONS:
-                                return Criteria.where(locale + "." + SUB_FIELD_MODIFICATION).ne(null);
-                            case TRANSLATIONS_CURRENT_USER_UPDATED:
-                                return Criteria.where(locale + "." + SUB_FIELD_LAST_EDITOR).is(currentUser);
-                            case ALL:
-                                return null;
-                            default:
-                                throw new UnsupportedOperationException("Unsupported criterion [" + criterion + "].");
-                        }
-                    })
-                    .filter(Objects::nonNull)
-                    .toArray(Criteria[]::new);
+                .map(locale -> {
+                    switch (criterion) {
+                        case MISSING_TRANSLATIONS:
+                            return new Criteria().andOperator(
+                                    Criteria.where(getTranslationField(locale, TRANSLATION_FIELD_ORIGINAL_VALUE)).is(null),
+                                    Criteria.where(getTranslationField(locale, TRANSLATION_FIELD_UPDATED_VALUE)).is(null)
+                            );
+                        case UPDATED_TRANSLATIONS:
+                            return Criteria.where(getTranslationField(locale, TRANSLATION_FIELD_MODIFICATION)).ne(null);
+                        case TRANSLATIONS_CURRENT_USER_UPDATED:
+                            return Criteria.where(getTranslationField(locale, TRANSLATION_FIELD_LAST_EDITOR)).is(currentUser);
+                        case ALL:
+                            return null;
+                        default:
+                            throw new UnsupportedOperationException("Unsupported criterion [" + criterion + "].");
+                    }
+                })
+                .filter(Objects::nonNull)
+                .toArray(Criteria[]::new);
     }
 
     /**
