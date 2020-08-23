@@ -1,28 +1,28 @@
-<cdk-virtual-scroll-viewport itemSize="100" class="app-translations-scroller-viewport" *ngIf="searchRequest">
+<cdk-virtual-scroll-viewport itemSize="20" class="app-translations-scroller-viewport" *ngIf="searchRequest">
     <div class="app-translations-container" [ngStyle]="{'grid-template-columns': '250px repeat(' + (searchRequest.locales.length) + ', 1fr)'}">
-        <div class="app-translations-header">
+        <div class="app-translations-header app-scroller-cell">
             <b>{{'TRANSLATIONS.TABLE.KEY_COLUMN' | translate}}</b>
         </div>
-        <div *ngFor="let locale of searchRequest.locales" class="app-translations-header">
+        <div *ngFor="let locale of searchRequest.locales" class="app-translations-header app-scroller-cell">
             <span [class]="locale | translationLocaleIcon" class="app-translations-header-locale-icon"></span> <b>{{locale.displayName}}</b>
         </div>
 
-        <ng-container *cdkVirtualFor="let row of dataSource">
+        <ng-container *cdkVirtualFor="let row of dataSource; let index = index">
             <ng-container [ngSwitch]="row.type">
-                <div class="app-scroller-spread-row" *ngSwitchCase="'WORKSPACE'">
+                <div class="app-scroller-spread-row app-scroller-cell" *ngSwitchCase="'WORKSPACE'">
 
                 </div>
-                <div class="app-scroller-spread-row" *ngSwitchCase="'BUNDLE_FILE'">
+                <div class="app-scroller-spread-row app-scroller-cell" *ngSwitchCase="'BUNDLE_FILE'">
 
                 </div>
                 <ng-container *ngSwitchCase="'BUNDLE_KEY'">
-                    <div class="app-translations-bundle-key-column">
+                    <div class="app-translations-bundle-key-column app-scroller-cell">
                         <div [matTooltip]="row.bundleKey" [matTooltipPosition]="'right'">
                             {{row.bundleKey}}
                         </div>
                     </div>
 
-                    <div *ngFor="let translation of row.translations" class="app-translations-translation-column">
+                    <div *ngFor="let translation of row.translations; trackBy: trackByFn.bind(this, index)" class="app-translations-translation-column app-scroller-cell">
                         <app-translation-editing-cell [translation]="translation"></app-translation-editing-cell>
                     </div>
                 </ng-container>

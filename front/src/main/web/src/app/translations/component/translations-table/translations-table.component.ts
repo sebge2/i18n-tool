@@ -28,4 +28,8 @@ export class TranslationsTableComponent {
 
         this.dataSource.setRequest(request);
     }
+
+    public trackByFn(indexInSource, index, item) {
+        return indexInSource;
+    }
 }
