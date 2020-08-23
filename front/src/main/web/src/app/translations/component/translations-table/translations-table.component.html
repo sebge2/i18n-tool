@@ -17,7 +17,7 @@
                 </div>
                 <ng-container *ngSwitchCase="'BUNDLE_KEY'">
                     <div class="app-translations-bundle-key-column app-scroller-cell">
-                        <div [matTooltip]="row.bundleKey" [matTooltipPosition]="'right'">
+                        <div class="app-translations-bundle-key-column-inner" [matTooltip]="row.bundleKey" [matTooltipPosition]="'right'"  matTooltipClass="app-translations-bundle-key-tooltip">
                             {{row.bundleKey}}
                         </div>
                     </div>

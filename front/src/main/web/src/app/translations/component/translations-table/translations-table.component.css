@@ -29,9 +29,14 @@
     margin: auto auto auto 0;
 }
 
-.app-translations-bundle-key-column div {
+.app-translations-bundle-key-column .app-translations-bundle-key-column-inner {
     white-space: nowrap;
     width: calc(250px - 20px);
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+::ng-deep .app-translations-bundle-key-tooltip {
+    max-width: unset !important;
+    width: unset !important;
 }
