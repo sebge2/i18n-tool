@@ -15,7 +15,6 @@ import be.sgerard.i18n.service.i18n.file.BundleHandler;
 import be.sgerard.i18n.service.i18n.file.BundleWalker;
 import be.sgerard.i18n.service.i18n.listener.TranslationsListener;
 import be.sgerard.i18n.service.repository.RepositoryManager;
-import lombok.Data;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +27,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -179,6 +179,8 @@ public class TranslationManagerImpl implements TranslationManager {
         final BundleFileEntity bundleFileEntity = new BundleFileEntity(bundleFile);
         workspaceEntity.addFile(bundleFileEntity);
 
+        final BundleKeys bundleKeys = new BundleKeys();
+
         return Flux
                 .fromIterable(bundleFile.getFiles())
                 .map(ScannedBundleFileEntry::getLocale)
@@ -187,41 +189,17 @@ public class TranslationManagerImpl implements TranslationManager {
                                 .scanTranslations(bundleFileEntity.toLocation(), locale, context)
                                 .index()
                                 .map(indexedTranslation ->
-                                        createTranslation(
-                                                workspaceEntity,
-                                                bundleFileEntity,
-                                                locale.getId(),
-                                                indexedTranslation.getT1(), // index
-                                                indexedTranslation.getT2().getKey(), // bundle key
-                                                indexedTranslation.getT2().getValue() // translation
-                                        )
+                                        bundleKeys
+                                                .getOrCreate(workspaceEntity, bundleFileEntity, indexedTranslation.getT2().getKey())
+                                                .addTranslation(locale.getId(), indexedTranslation.getT1(), indexedTranslation.getT2().getValue())
                                 )
                 )
-                .groupBy(BundleKeyGroupKey::new)
-                .flatMap(bundleKeyGroup ->
-                        bundleKeyGroup
-                                .collectList()
-                                .map(groupedBundleKeys -> mergeAll(bundleKeyGroup.key(), groupedBundleKeys))
-                )
-                .flatMap(translationRepository::save)
-                .then(Mono.just(bundleFileEntity));
-    }
-
-    /**
-     * Creates a new {@link BundleKeyEntity bundle key entity} for a single translation.
-     */
-    private BundleKeyEntity createTranslation(WorkspaceEntity workspaceEntity,
-                                              BundleFileEntity bundleFileEntity,
-                                              String locale,
-                                              long index,
-                                              String bundleKey,
-                                              String translation) {
-        return new BundleKeyEntity(
-                workspaceEntity.getId(),
-                bundleFileEntity.getId(),
-                bundleKey,
-                new BundleKeyTranslationEntity(locale, index, mapToNullIfEmpty(translation))
-        );
+                .then(
+                        bundleKeys
+                                .stream()
+                                .flatMap(translationRepository::save)
+                                .then(Mono.just(bundleFileEntity))
+                );
     }
 
     /**
@@ -246,20 +224,6 @@ public class TranslationManagerImpl implements TranslationManager {
                 )
                 .filter(bundleKey -> bundleKey.hasTranslations(locale.getId()))
                 .map(bundleKey -> Pair.of(bundleKey.getKey(), bundleKey.getTranslationOrDie(locale.getId()).getValue().orElse(null)));
-    }
-
-    /**
-     * Merges all {@link BundleKeyEntity bundle keys} (one per translation) into a single one.
-     */
-    private BundleKeyEntity mergeAll(BundleKeyGroupKey key, List<BundleKeyEntity> groupedBundleKeys) {
-        if (key == null) {
-            throw new IllegalStateException("The grouping key is null.");
-        }
-
-        final BundleKeyEntity entity = new BundleKeyEntity(key.getWorkspace(), key.getBundleFile(), key.getKey());
-        groupedBundleKeys.forEach(entity::addAllTranslations);
-
-        return entity;
     }
 
     /**
@@ -289,18 +253,35 @@ public class TranslationManagerImpl implements TranslationManager {
     }
 
     /**
-     * Key grouping bundle keys.
+     * Collection of {@link BundleKeyEntity bundle keys}.
      */
-    @Data
-    private static final class BundleKeyGroupKey {
-        private final String workspace;
-        private final String bundleFile;
-        private final String key;
+    private static final class BundleKeys {
 
-        public BundleKeyGroupKey(BundleKeyEntity bundleKey) {
-            this.workspace = bundleKey.getWorkspace();
-            this.bundleFile = bundleKey.getBundleFile();
-            this.key = bundleKey.getKey();
+        private final Map<String, BundleKeyEntity> bundleKeys = new HashMap<>();
+
+        public BundleKeys() {
+        }
+
+        /**
+         * Returns or creates if it does not exist, the {@link BundleKeyEntity bundle key} associated to the specified key.
+         */
+        public BundleKeyEntity getOrCreate(WorkspaceEntity workspace, BundleFileEntity bundleFile, String key) {
+            BundleKeyEntity bundleKey = bundleKeys.get(key);
+
+            if (bundleKey == null) {
+                bundleKey = new BundleKeyEntity(workspace.getId(), bundleFile.getId(), key);
+
+                bundleKeys.put(key, bundleKey);
+            }
+
+            return bundleKey;
+        }
+
+        /**
+         * Streams all {@link BundleKeyEntity bundle keys}.
+         */
+        public Flux<BundleKeyEntity> stream() {
+            return Flux.fromIterable(bundleKeys.values());
         }
     }
 }

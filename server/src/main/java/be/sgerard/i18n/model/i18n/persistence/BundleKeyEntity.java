@@ -82,15 +82,6 @@ public class BundleKeyEntity {
         this.sortingKey = String.format("%s%s%s", workspace, bundleFile, key);
     }
 
-    public BundleKeyEntity(String workspace,
-                           String bundleFile,
-                           String key,
-                           BundleKeyTranslationEntity translation) {
-        this(workspace, bundleFile, key);
-
-        translations.put(translation.getLocale(), translation);
-    }
-
     /**
      * Returns whether there is a translation for the specified locale.
      *
@@ -138,9 +129,17 @@ public class BundleKeyEntity {
     }
 
     /**
-     * Adds all {@link #getTranslations() translations} for the other entity into this one.
+     * Adds a new translation to this bundle.
      */
-    public void addAllTranslations(BundleKeyEntity otherEntity) {
-        this.translations.putAll(otherEntity.getTranslations());
+    public BundleKeyEntity addTranslation(String locale, long index, String originalValue) {
+        return addTranslation(new BundleKeyTranslationEntity(locale, index, originalValue));
+    }
+
+    /**
+     * Adds a new translation to this bundle.
+     */
+    public BundleKeyEntity addTranslation(BundleKeyTranslationEntity translation) {
+        this.translations.put(translation.getLocale(), translation);
+        return this;
     }
 }

@@ -28,15 +28,15 @@ public class SimpleLockService implements LockService {
     public <T> Mono<T> executeAndGetMono(Callable<Mono<T>> runnable) throws LockTimeoutException {
         // TODO
         try {
-            if (lock.tryLock(timeoutInS, TimeUnit.SECONDS)) {
-                try {
+//            if (lock.tryLock(timeoutInS, TimeUnit.SECONDS)) {
+//                try {
                     return runnable.call();
-                } finally {
-                    lock.unlock();
-                }
-            } else {
-                throw new LockTimeoutException("Cannot obtain lock after " + timeoutInS + " second(s).");
-            }
+//                } finally {
+//                    lock.unlock();
+//                }
+//            } else {
+//                throw new LockTimeoutException("Cannot obtain lock after " + timeoutInS + " second(s).");
+//            }
         } catch (Exception e) {
             return Mono.error(e);
         }
@@ -45,15 +45,15 @@ public class SimpleLockService implements LockService {
     @Override
     public <T> Flux<T> executeAndGetFlux(Callable<Flux<T>> runnable) throws LockTimeoutException {
         try {
-            if (lock.tryLock(timeoutInS, TimeUnit.SECONDS)) {
-                try {
+//            if (lock.tryLock(timeoutInS, TimeUnit.SECONDS)) {
+//                try {
                     return runnable.call();
-                } finally {
-                    lock.unlock();
-                }
-            } else {
-                throw new LockTimeoutException("Cannot obtain lock after " + timeoutInS + " second(s).");
-            }
+//                } finally {
+//                    lock.unlock();
+//                }
+//            } else {
+//                throw new LockTimeoutException("Cannot obtain lock after " + timeoutInS + " second(s).");
+//            }
         } catch (Exception e) {
             return Flux.error(e);
         }

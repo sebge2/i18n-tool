@@ -192,6 +192,7 @@ public class RepositoryManagerImpl implements RepositoryManager {
     }
 
     @Override
+    @Transactional
     public <A extends RepositoryApi, T> Flux<T> applyGetFlux(String repositoryId,
                                                              Class<A> apiType,
                                                              RepositoryApi.ApiFunction<A, Flux<T>> apiConsumer) throws RepositoryException {
