@@ -4,15 +4,13 @@ export class BundleKeyTranslation {
 
     public static fromPage(translation: TranslationsPageTranslation): BundleKeyTranslation {
         return new BundleKeyTranslation(
-            translation.id,
             translation.lastEditor,
             translation.originalValue,
             translation.updatedValue
         );
     }
 
-    constructor(public id: String,
-                public lastEditor: String,
+    constructor(public lastEditor: String,
                 public originalValue: String,
                 public updatedValue: String) {
     }
