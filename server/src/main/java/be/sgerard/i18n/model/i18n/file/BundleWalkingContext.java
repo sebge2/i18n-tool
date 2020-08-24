@@ -13,15 +13,15 @@ import java.util.function.Predicate;
  *
  * @author Sebastien Gerard
  */
-public class BundleWalkContext {
+public class BundleWalkingContext {
 
     private final TranslationRepositoryReadApi api;
     private final Map<BundleType, Predicate<Path>> inclusionPredicates;
     private final Set<TranslationLocaleEntity> locales;
 
-    public BundleWalkContext(TranslationRepositoryReadApi api,
-                             Map<BundleType, Predicate<Path>> inclusionPredicates,
-                             Collection<TranslationLocaleEntity> locales) {
+    public BundleWalkingContext(TranslationRepositoryReadApi api,
+                                Map<BundleType, Predicate<Path>> inclusionPredicates,
+                                Collection<TranslationLocaleEntity> locales) {
         this.inclusionPredicates = inclusionPredicates;
         this.api = api;
         this.locales = new HashSet<>(locales);

@@ -25,12 +25,12 @@ public interface BundleHandler {
     /**
      * Returns whether the specified directory can be scanned by the walker.
      */
-    boolean continueScanning(File directory, BundleWalkContext context);
+    boolean continueScanning(File directory, BundleWalkingContext context);
 
     /**
      * Scans the specified directory and finds {@link ScannedBundleFile bundle files}.
      */
-    Flux<ScannedBundleFile> scanBundles(File directory, BundleWalkContext context);
+    Flux<ScannedBundleFile> scanBundles(File directory, BundleWalkingContext context);
 
     /**
      * Scans all the translations in the specified locale and associated to the specified
@@ -38,7 +38,7 @@ public interface BundleHandler {
      */
     Flux<Pair<String, String>> scanTranslations(ScannedBundleFileLocation bundleFile,
                                                 TranslationLocaleEntity locale,
-                                                BundleWalkContext context);
+                                                BundleWalkingContext context);
 
     /**
      * Writes all the translations into the specified locale and associated to the specified

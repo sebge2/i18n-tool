@@ -1,7 +1,7 @@
 package be.sgerard.i18n.service.i18n.file;
 
 import be.sgerard.i18n.model.i18n.BundleType;
-import be.sgerard.i18n.model.i18n.file.BundleWalkContext;
+import be.sgerard.i18n.model.i18n.file.BundleWalkingContext;
 import be.sgerard.i18n.model.i18n.file.ScannedBundleFile;
 import be.sgerard.i18n.model.i18n.file.ScannedBundleFileEntry;
 import be.sgerard.i18n.model.i18n.file.ScannedBundleFileLocation;
@@ -48,12 +48,12 @@ public class JavaPropertiesBundleHandler implements BundleHandler {
     }
 
     @Override
-    public boolean continueScanning(File directory, BundleWalkContext context) {
+    public boolean continueScanning(File directory, BundleWalkingContext context) {
         return context.canWalkTrough(BundleType.JAVA_PROPERTIES, directory.toPath());
     }
 
     @Override
-    public Flux<ScannedBundleFile> scanBundles(File directory, BundleWalkContext context) {
+    public Flux<ScannedBundleFile> scanBundles(File directory, BundleWalkingContext context) {
         return context
                 .getApi()
                 .listNormalFiles(directory)
@@ -79,7 +79,7 @@ public class JavaPropertiesBundleHandler implements BundleHandler {
     @Override
     public Flux<Pair<String, String>> scanTranslations(ScannedBundleFileLocation bundleFile,
                                                        TranslationLocaleEntity locale,
-                                                       BundleWalkContext context) {
+                                                       BundleWalkingContext context) {
         final File bundleFileEntry = getBundleFileEntry(bundleFile, locale);
 
         return context
@@ -120,7 +120,7 @@ public class JavaPropertiesBundleHandler implements BundleHandler {
      * Finds the {@link TranslationLocaleEntity locale} from the specified file. If the file is not a bundle,
      * nothing is returned.
      */
-    private Optional<TranslationLocaleEntity> findLocales(File file, BundleWalkContext context) {
+    private Optional<TranslationLocaleEntity> findLocales(File file, BundleWalkingContext context) {
         return context
                 .getLocales()
                 .stream()

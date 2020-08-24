@@ -1,6 +1,6 @@
 package be.sgerard.i18n.service.i18n.file;
 
-import be.sgerard.i18n.model.i18n.file.BundleWalkContext;
+import be.sgerard.i18n.model.i18n.file.BundleWalkingContext;
 import be.sgerard.i18n.model.i18n.file.ScannedBundleFile;
 import be.sgerard.i18n.model.i18n.persistence.BundleFileEntity;
 import be.sgerard.i18n.service.i18n.TranslationRepositoryReadApi;
@@ -29,7 +29,7 @@ public class BundleWalker {
      * Browses the repository using the specified {@link TranslationRepositoryReadApi API} using the specified
      * {@link BundleHandler handler} that indicates where are those translations.
      */
-    public Flux<BundleFileEntity> walk(TranslationBundleConsumer consumer, BundleWalkContext context) {
+    public Flux<BundleFileEntity> walk(TranslationBundleConsumer consumer, BundleWalkingContext context) {
         return walk(new File("/"), consumer, context, handlers);
     }
 
@@ -39,7 +39,7 @@ public class BundleWalker {
      */
     private Flux<BundleFileEntity> walk(File directory,
                                         TranslationBundleConsumer consumer,
-                                        BundleWalkContext context,
+                                        BundleWalkingContext context,
                                         List<BundleHandler> handlers) {
         final List<BundleHandler> updatedHandlers = handlers.stream()
                 .filter(handler -> handler.continueScanning(directory, context))
