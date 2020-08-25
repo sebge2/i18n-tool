@@ -6,7 +6,7 @@
 .app-translations-container {
     display: grid;
     grid-auto-rows: 60px;
-    grid-gap: 10px;
+    grid-gap: 20px;
     width: 100%;
 }
 
@@ -17,8 +17,9 @@
 .app-translations-header {
 }
 
-.app-translations-header-locale-icon {
+.app-translations-header-icon {
     top: -1px;
+    margin-right: 5px;
 }
 
 .app-scroller-spread-row {
@@ -31,7 +32,7 @@
 
 .app-translations-bundle-key-column .app-translations-bundle-key-column-inner {
     white-space: nowrap;
-    width: calc(250px - 20px);
+    width: 230px;
     overflow: hidden;
     text-overflow: ellipsis;
 }

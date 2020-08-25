@@ -1,10 +1,13 @@
 <cdk-virtual-scroll-viewport itemSize="20" class="app-translations-scroller-viewport" *ngIf="searchRequest">
-    <div class="app-translations-container" [ngStyle]="{'grid-template-columns': '250px repeat(' + (searchRequest.locales.length) + ', 1fr)'}">
+    <div class="app-translations-container"
+         [ngStyle]="{'grid-template-columns': '230px repeat(' + (searchRequest.locales.length) + ', 1fr)'}">
         <div class="app-translations-header app-scroller-cell">
+            <span class="app-icon-key-solid app-translations-header-icon"></span>
             <b>{{'TRANSLATIONS.TABLE.KEY_COLUMN' | translate}}</b>
         </div>
         <div *ngFor="let locale of searchRequest.locales" class="app-translations-header app-scroller-cell">
-            <span [class]="locale | translationLocaleIcon" class="app-translations-header-locale-icon"></span> <b>{{locale.displayName}}</b>
+            <span [class]="locale | translationLocaleIcon" class="app-translations-header-icon"></span>
+            <b>{{locale.displayName}}</b>
         </div>
 
         <ng-container *cdkVirtualFor="let row of dataSource; let index = index">
@@ -17,7 +20,7 @@
                 </div>
                 <ng-container *ngSwitchCase="'BUNDLE_KEY'">
                     <div class="app-translations-bundle-key-column app-scroller-cell">
-                        <div class="app-translations-bundle-key-column-inner" [matTooltip]="row.bundleKey" [matTooltipPosition]="'right'"  matTooltipClass="app-translations-bundle-key-tooltip">
+                        <div class="app-translations-bundle-key-column-inner" [matTooltip]="row.bundleKey" [matTooltipPosition]="'right'" matTooltipClass="app-translations-bundle-key-tooltip">
                             {{row.bundleKey}}
                         </div>
                     </div>
@@ -30,3 +33,5 @@
         </ng-container>
     </div>
 </cdk-virtual-scroll-viewport>
+
+
