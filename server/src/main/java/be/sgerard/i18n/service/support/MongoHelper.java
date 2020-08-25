@@ -2,6 +2,7 @@ package be.sgerard.i18n.service.support;
 
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.core.annotation.Order;
 import org.springframework.data.mapping.context.MappingContext;
 import org.springframework.data.mapping.model.BasicPersistentEntity;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -57,6 +58,7 @@ public class MongoHelper {
      * Setup indexes and creates document collections.
      */
     @EventListener(ApplicationReadyEvent.class)
+    @Order(50)
     public void setup() {
         final MappingContext<?, ?> mappingContext = mongoConverter.getMappingContext();
 

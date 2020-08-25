@@ -21,13 +21,15 @@ import net.coobird.thumbnailator.Thumbnails;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import javax.annotation.PostConstruct;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -296,13 +298,11 @@ public class UserManagerImpl implements UserManager {
         return internalUserRepository.findByUsername(username);
     }
 
-    /**
-     * Initializes the default admin user if no user has been defined yet.
-     */
-    @PostConstruct
-    @Transactional
-    public void initializeDefaultAdmin() {
-        internalUserRepository
+    @Override
+    @EventListener(ApplicationReadyEvent.class)
+    @Order(100)
+    public Mono<InternalUserEntity> initializeDefaultAdmin() {
+        return internalUserRepository
                 .findAll()
                 .hasElements()
                 .flatMap(hasUsers -> {
@@ -314,9 +314,9 @@ public class UserManagerImpl implements UserManager {
                             .orElseGet(() -> {
                                 final String generatedPassword = UUID.randomUUID().toString();
 
-                                logger.info("====================================================");
-                                logger.info("Admin password: " + generatedPassword);
-                                logger.info("====================================================");
+                                System.out.println("====================================================");
+                                System.out.println("Admin password: " + generatedPassword);
+                                System.out.println("====================================================");
 
                                 return generatedPassword;
                             });
@@ -339,8 +339,7 @@ public class UserManagerImpl implements UserManager {
                                 return user;
                             })
                             .flatMap(internalUserRepository::save);
-                })
-                .subscribe();
+                });
     }
 
     /**

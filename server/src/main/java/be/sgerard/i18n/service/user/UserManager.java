@@ -100,4 +100,10 @@ public interface UserManager {
      * Deletes the {@link UserEntity user} having the specified id.
      */
     Mono<UserEntity> delete(String id);
+
+    /**
+     * Initializes the default admin user if no user has been defined yet.
+     */
+    @SuppressWarnings("unused")
+    Mono<InternalUserEntity> initializeDefaultAdmin();
 }
