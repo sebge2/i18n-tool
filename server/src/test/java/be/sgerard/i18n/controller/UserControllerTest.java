@@ -5,7 +5,6 @@ import be.sgerard.i18n.model.security.user.dto.CurrentUserPatchDto;
 import be.sgerard.i18n.model.security.user.dto.UserDto;
 import be.sgerard.i18n.model.security.user.dto.UserPatchDto;
 import be.sgerard.i18n.service.security.UserRole;
-import be.sgerard.i18n.service.user.UserManager;
 import be.sgerard.test.i18n.support.CleanupDatabase;
 import be.sgerard.test.i18n.support.WithJaneDoeAdminUser;
 import be.sgerard.test.i18n.support.WithJohnDoeSimpleUser;
@@ -38,7 +37,7 @@ public class UserControllerTest extends AbstractControllerTest {
                 .expectBody()
                 .jsonPath("$").value(hasSize(greaterThanOrEqualTo(2)))
                 .jsonPath("$[?(@.username=='" + johnDoe.getUsername() + "')]").exists()
-                .jsonPath("$[?(@.username=='" + UserManager.ADMIN_USER_NAME + "')]").exists();
+                .jsonPath("$[?(@.username=='" + JANE_DOE_USERNAME + "')]").exists();
     }
 
     @Test
