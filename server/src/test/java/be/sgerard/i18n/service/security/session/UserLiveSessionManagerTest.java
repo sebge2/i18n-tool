@@ -3,7 +3,7 @@ package be.sgerard.i18n.service.security.session;
 import be.sgerard.i18n.AbstractIntegrationTest;
 import be.sgerard.i18n.model.security.session.persistence.UserLiveSessionEntity;
 import be.sgerard.i18n.service.ResourceNotFoundException;
-import be.sgerard.test.i18n.support.TransactionalReactiveTest;
+import be.sgerard.test.i18n.support.CleanupDatabase;
 import be.sgerard.test.i18n.support.WithJohnDoeSimpleUser;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +25,7 @@ public class UserLiveSessionManagerTest extends AbstractIntegrationTest {
 
     @Test
     @WithJohnDoeSimpleUser
-    @TransactionalReactiveTest
+    @CleanupDatabase
     public void startSession() {
         StepVerifier
                 .create(sessionManager.startSession())
@@ -36,7 +36,7 @@ public class UserLiveSessionManagerTest extends AbstractIntegrationTest {
 
     @Test
     @WithJohnDoeSimpleUser
-    @TransactionalReactiveTest
+    @CleanupDatabase
     public void getCurrentLiveSessions() {
         StepVerifier
                 .create(sessionManager.startSession())
@@ -53,7 +53,7 @@ public class UserLiveSessionManagerTest extends AbstractIntegrationTest {
 
     @Test
     @WithJohnDoeSimpleUser
-    @TransactionalReactiveTest
+    @CleanupDatabase
     public void getSessionOrDie() {
         final UserLiveSessionEntity session = createSession();
 
@@ -66,7 +66,7 @@ public class UserLiveSessionManagerTest extends AbstractIntegrationTest {
 
     @Test
     @WithJohnDoeSimpleUser
-    @TransactionalReactiveTest
+    @CleanupDatabase
     public void getSessionOrDieFailed() {
         StepVerifier
                 .create(sessionManager.getSessionOrDie("unknown"))
@@ -76,7 +76,7 @@ public class UserLiveSessionManagerTest extends AbstractIntegrationTest {
 
     @Test
     @WithJohnDoeSimpleUser
-    @TransactionalReactiveTest
+    @CleanupDatabase
     public void stopSession() {
         final UserLiveSessionEntity session = createSession();
 
@@ -99,7 +99,7 @@ public class UserLiveSessionManagerTest extends AbstractIntegrationTest {
 
     @Test
     @WithJohnDoeSimpleUser
-    @TransactionalReactiveTest
+    @CleanupDatabase
     public void deleteSession() {
         final UserLiveSessionEntity session = createSession();
 
@@ -116,7 +116,7 @@ public class UserLiveSessionManagerTest extends AbstractIntegrationTest {
 
     @Test
     @WithJohnDoeSimpleUser
-    @TransactionalReactiveTest
+    @CleanupDatabase
     public void deleteAll() {
         final UserLiveSessionEntity session = createSession();
 

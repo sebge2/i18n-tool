@@ -4,7 +4,7 @@ import be.sgerard.i18n.model.github.GitHubPullRequestStatus;
 import be.sgerard.i18n.model.repository.dto.*;
 import be.sgerard.i18n.model.workspace.WorkspaceStatus;
 import be.sgerard.i18n.model.workspace.dto.WorkspaceDto;
-import be.sgerard.test.i18n.support.TransactionalReactiveTest;
+import be.sgerard.test.i18n.support.CleanupDatabase;
 import be.sgerard.test.i18n.support.WithJaneDoeAdminUser;
 import org.junit.jupiter.api.*;
 
@@ -52,7 +52,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @TransactionalReactiveTest
+    @CleanupDatabase
     @WithJaneDoeAdminUser
     public void findAll() {
         this.repository
@@ -70,7 +70,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @TransactionalReactiveTest
+    @CleanupDatabase
     @WithJaneDoeAdminUser
     public void findAllOfRepository() {
         final RepositoryDto repository = this.repository
@@ -89,7 +89,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @TransactionalReactiveTest
+    @CleanupDatabase
     @WithJaneDoeAdminUser
     public void findById() {
         final WorkspaceDto masterWorkspace = repository
@@ -112,7 +112,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @TransactionalReactiveTest
+    @CleanupDatabase
     @WithJaneDoeAdminUser
     public void findWorkspaceBundleFiles() {
         final WorkspaceDto masterWorkspace = repository
@@ -142,7 +142,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
     class GitHub extends AbstractControllerTest {
 
         @Test
-        @TransactionalReactiveTest
+        @CleanupDatabase
         @WithJaneDoeAdminUser
         public void synchronizeBranchAdded() {
             final GitHubRepositoryCreationDto creationDto = i18nToolRepositoryCreationDto();
@@ -172,7 +172,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
         }
 
         @Test
-        @TransactionalReactiveTest
+        @CleanupDatabase
         @WithJaneDoeAdminUser
         public void synchronizeBranchRemoved() {
             final GitHubRepositoryCreationDto creationDto = i18nToolRepositoryCreationDto();
@@ -198,7 +198,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
         }
 
         @Test
-        @TransactionalReactiveTest
+        @CleanupDatabase
         @WithJaneDoeAdminUser
         public void synchronizeInReviewBranchDeleted() {
             final GitHubRepositoryCreationDto creationDto = i18nToolRepositoryCreationDto();
@@ -234,7 +234,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
         }
 
         @Test
-        @TransactionalReactiveTest
+        @CleanupDatabase
         @WithJaneDoeAdminUser
         public void synchronizeInReviewStillInReview() {
             final GitHubRepositoryCreationDto creationDto = i18nToolRepositoryCreationDto();
@@ -270,7 +270,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
         }
 
         @Test
-        @TransactionalReactiveTest
+        @CleanupDatabase
         @WithJaneDoeAdminUser
         public void synchronizeInReviewReviewFinished() {
             final GitHubRepositoryCreationDto creationDto = i18nToolRepositoryCreationDto();
@@ -308,7 +308,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
         }
 
         @Test
-        @TransactionalReactiveTest
+        @CleanupDatabase
         @WithJaneDoeAdminUser
         public void synchronizeInReviewReviewFinishedBranchDeleted() {
             final GitHubRepositoryCreationDto creationDto = i18nToolRepositoryCreationDto();
@@ -345,7 +345,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
         }
 
         @Test
-        @TransactionalReactiveTest
+        @CleanupDatabase
         @WithJaneDoeAdminUser
         public void initialize() {
             final WorkspaceDto masterWorkspace = repository
@@ -378,7 +378,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
         }
 
         @Test
-        @TransactionalReactiveTest
+        @CleanupDatabase
         @WithJaneDoeAdminUser
         public void publish() {
             final WorkspaceDto masterWorkspace = repository
@@ -408,7 +408,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
         }
 
         @Test
-        @TransactionalReactiveTest
+        @CleanupDatabase
         @WithJaneDoeAdminUser
         public void deleteInitialized() {
             final WorkspaceDto masterWorkspace = repository
@@ -427,7 +427,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
         }
 
         @Test
-        @TransactionalReactiveTest
+        @CleanupDatabase
         @WithJaneDoeAdminUser
         public void deletePublished() {
             final WorkspaceDto masterWorkspace = repository
@@ -452,7 +452,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
     class Git extends AbstractControllerTest {
 
         @Test
-        @TransactionalReactiveTest
+        @CleanupDatabase
         @WithJaneDoeAdminUser
         public void synchronizeBranchAdded() {
             final GitRepositoryCreationDto creationDto = i18nToolLocalRepositoryCreationDto();
@@ -482,7 +482,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
         }
 
         @Test
-        @TransactionalReactiveTest
+        @CleanupDatabase
         @WithJaneDoeAdminUser
         public void synchronizeBranchRemoved() {
             final GitRepositoryCreationDto creationDto = i18nToolLocalRepositoryCreationDto();
@@ -508,7 +508,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
         }
 
         @Test
-        @TransactionalReactiveTest
+        @CleanupDatabase
         @WithJaneDoeAdminUser
         public void initialize() {
             final WorkspaceDto masterWorkspace = repository
@@ -540,7 +540,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
         }
 
         @Test
-        @TransactionalReactiveTest
+        @CleanupDatabase
         @WithJaneDoeAdminUser
         public void publish() {
             final WorkspaceDto masterWorkspace = repository
@@ -562,7 +562,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
         }
 
         @Test
-        @TransactionalReactiveTest
+        @CleanupDatabase
         @WithJaneDoeAdminUser
         public void deleteInitialized() {
             final WorkspaceDto masterWorkspace = repository
@@ -581,7 +581,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
         }
 
         @Test
-        @TransactionalReactiveTest
+        @CleanupDatabase
         @WithJaneDoeAdminUser
         public void deletePublished() {
             final WorkspaceDto masterWorkspace = repository

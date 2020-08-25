@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.core.index.IndexOperations;
 import org.springframework.data.mongodb.core.index.MongoPersistentEntityIndexResolver;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
@@ -53,7 +54,7 @@ public class MongoHelper {
     }
 
     /**
-     * Setup indexes and documents.
+     * Setup indexes and creates document collections.
      */
     @EventListener(ApplicationReadyEvent.class)
     public void setup() {
@@ -73,5 +74,13 @@ public class MongoHelper {
                         resolver.resolveIndexFor(documentType).forEach(indexOps::ensureIndex);
                     });
         }
+    }
+
+    /**
+     * Removes all documents from all collections.
+     */
+    public void cleanupAll() {
+        getDocumentTypes()
+                .forEach(documentType -> mongoTemplate.findAllAndRemove(new Query(), documentType));
     }
 }

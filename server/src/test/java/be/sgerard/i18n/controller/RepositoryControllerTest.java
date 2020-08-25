@@ -2,7 +2,7 @@ package be.sgerard.i18n.controller;
 
 import be.sgerard.i18n.model.repository.RepositoryStatus;
 import be.sgerard.i18n.model.repository.dto.*;
-import be.sgerard.test.i18n.support.TransactionalReactiveTest;
+import be.sgerard.test.i18n.support.CleanupDatabase;
 import be.sgerard.test.i18n.support.WithJaneDoeAdminUser;
 import org.junit.jupiter.api.*;
 import org.springframework.http.MediaType;
@@ -42,7 +42,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @TransactionalReactiveTest
+    @CleanupDatabase
     @WithJaneDoeAdminUser
     public void findAll() {
         final GitRepositoryDto repository = this.repository.create(i18nToolLocalRepositoryCreationDto(), GitRepositoryDto.class).get();
@@ -59,7 +59,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @TransactionalReactiveTest
+    @CleanupDatabase
     @WithJaneDoeAdminUser
     public void findById() {
         final GitRepositoryDto repository = this.repository.create(i18nToolLocalRepositoryCreationDto(), GitRepositoryDto.class).get();
@@ -75,7 +75,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @TransactionalReactiveTest
+    @CleanupDatabase
     @WithJaneDoeAdminUser
     public void findByIdNotFound() {
         repository.create(i18nToolLocalRepositoryCreationDto(), GitRepositoryDto.class);
@@ -91,7 +91,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
     class GitHub extends AbstractControllerTest {
 
         @Test
-        @TransactionalReactiveTest
+        @CleanupDatabase
         @WithJaneDoeAdminUser
         public void create() {
             final GitHubRepositoryCreationDto creationDto = i18nToolRepositoryCreationDto();
@@ -113,7 +113,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
         }
 
         @Test
-        @TransactionalReactiveTest
+        @CleanupDatabase
         @WithJaneDoeAdminUser
         public void createWrongUrl() {
             final GitHubRepositoryCreationDto creationDto = new GitHubRepositoryCreationDto("unknown", "unknown", null);
@@ -129,7 +129,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
         }
 
         @Test
-        @TransactionalReactiveTest
+        @CleanupDatabase
         @WithJaneDoeAdminUser
         public void createInvalidAccessKeyCredentials() {
             final GitHubRepositoryCreationDto creationDto = new GitHubRepositoryCreationDto("sebge2", "private-i18n-tool", "ZEF");
@@ -145,7 +145,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
         }
 
         @Test
-        @TransactionalReactiveTest
+        @CleanupDatabase
         @WithJaneDoeAdminUser
         public void createNoAccessKeyCredentials() {
             final GitHubRepositoryCreationDto creationDto = new GitHubRepositoryCreationDto("sebge2", "private-i18n-tool", null);
@@ -161,7 +161,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
         }
 
         @Test
-        @TransactionalReactiveTest
+        @CleanupDatabase
         @WithJaneDoeAdminUser
         public void createValidAccessKeyCredentials() {
             final GitHubRepositoryCreationDto creationDto = privateI18nToolRepositoryCreationDto();
@@ -175,7 +175,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
         }
 
         @Test
-        @TransactionalReactiveTest
+        @CleanupDatabase
         @WithJaneDoeAdminUser
         public void createSameName() {
             final GitHubRepositoryCreationDto creationDto = i18nToolRepositoryCreationDto();
@@ -198,7 +198,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
         }
 
         @Test
-        @TransactionalReactiveTest
+        @CleanupDatabase
         @WithJaneDoeAdminUser
         public void initialize() {
             final GitHubRepositoryDto repository = this.repository.create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class).get();
@@ -212,7 +212,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
         }
 
         @Test
-        @TransactionalReactiveTest
+        @CleanupDatabase
         @WithJaneDoeAdminUser
         public void initializeTwice() {
             final GitHubRepositoryDto repository = this.repository.create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class).get();
@@ -233,7 +233,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
         }
 
         @Test
-        @TransactionalReactiveTest
+        @CleanupDatabase
         @WithJaneDoeAdminUser
         public void updateWebHookAndAccessKey() {
             final GitHubRepositoryDto repository = this.repository.create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class).get();
@@ -254,7 +254,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
         }
 
         @Test
-        @TransactionalReactiveTest
+        @CleanupDatabase
         @WithJaneDoeAdminUser
         public void updateAllowedBranch() {
             final GitHubRepositoryDto repository = this.repository.create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class).get();
@@ -274,7 +274,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
         }
 
         @Test
-        @TransactionalReactiveTest
+        @CleanupDatabase
         @WithJaneDoeAdminUser
         public void updateAllowedBranchDefaultBranchNotMatching() {
             final GitHubRepositoryDto repository = this.repository.create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class).get();
@@ -296,7 +296,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
         }
 
         @Test
-        @TransactionalReactiveTest
+        @CleanupDatabase
         @WithJaneDoeAdminUser
         public void updateAllowedBranchPatternInvalid() {
             final GitHubRepositoryDto repository = this.repository.create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class).get();
@@ -318,7 +318,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
         }
 
         @Test
-        @TransactionalReactiveTest
+        @CleanupDatabase
         @WithJaneDoeAdminUser
         public void updateDefaultBranch() {
             final GitHubRepositoryDto repository = this.repository.create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class).get();
@@ -338,7 +338,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
         }
 
         @Test
-        @TransactionalReactiveTest
+        @CleanupDatabase
         @WithJaneDoeAdminUser
         public void updateDefaultBranchNotMatching() {
             final GitHubRepositoryDto repository = this.repository.create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class).get();
@@ -360,7 +360,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
         }
 
         @Test
-        @TransactionalReactiveTest
+        @CleanupDatabase
         @WithJaneDoeAdminUser
         public void updateAccessKey() {
             final GitHubRepositoryDto repository = this.repository.create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class).get();
@@ -380,7 +380,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
         }
 
         @Test
-        @TransactionalReactiveTest
+        @CleanupDatabase
         @WithJaneDoeAdminUser
         public void updateWebHookSecret() {
             final GitHubRepositoryDto repository = this.repository.create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class).get();
@@ -400,7 +400,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
         }
 
         @Test
-        @TransactionalReactiveTest
+        @CleanupDatabase
         @WithJaneDoeAdminUser
         public void deleteRepository() {
             final GitHubRepositoryDto repository = this.repository.create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class).get();
@@ -422,7 +422,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
     class Git extends AbstractControllerTest {
 
         @Test
-        @TransactionalReactiveTest
+        @CleanupDatabase
         @WithJaneDoeAdminUser
         public void create() {
             final GitRepositoryCreationDto creationDto = i18nToolLocalRepositoryCreationDto();
@@ -442,7 +442,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
         }
 
         @Test
-        @TransactionalReactiveTest
+        @CleanupDatabase
         @WithJaneDoeAdminUser
         public void initialize() {
             final GitRepositoryDto repository = this.repository.create(i18nToolLocalRepositoryCreationDto(), GitRepositoryDto.class).get();
@@ -456,7 +456,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
         }
 
         @Test
-        @TransactionalReactiveTest
+        @CleanupDatabase
         @WithJaneDoeAdminUser
         public void updateAllowedBranch() {
             final GitRepositoryDto repository = this.repository.create(i18nToolLocalRepositoryCreationDto(), GitRepositoryDto.class).get();
@@ -476,7 +476,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
         }
 
         @Test
-        @TransactionalReactiveTest
+        @CleanupDatabase
         @WithJaneDoeAdminUser
         public void updateName() {
             final GitRepositoryDto repository = this.repository.create(i18nToolLocalRepositoryCreationDto(), GitRepositoryDto.class).get();
@@ -498,7 +498,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
         }
 
         @Test
-        @TransactionalReactiveTest
+        @CleanupDatabase
         @WithJaneDoeAdminUser
         public void updateAllowedBranchDefaultBranchNotMatching() {
             final GitRepositoryDto repository = this.repository.create(i18nToolLocalRepositoryCreationDto(), GitRepositoryDto.class).get();
@@ -520,7 +520,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
         }
 
         @Test
-        @TransactionalReactiveTest
+        @CleanupDatabase
         @WithJaneDoeAdminUser
         public void updateAllowedBranchPatternInvalid() {
             final GitRepositoryDto repository = this.repository.create(i18nToolLocalRepositoryCreationDto(), GitRepositoryDto.class).get();
@@ -542,7 +542,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
         }
 
         @Test
-        @TransactionalReactiveTest
+        @CleanupDatabase
         @WithJaneDoeAdminUser
         public void updateDefaultBranch() {
             final GitRepositoryDto repository = this.repository.create(i18nToolLocalRepositoryCreationDto(), GitRepositoryDto.class).get();
@@ -562,7 +562,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
         }
 
         @Test
-        @TransactionalReactiveTest
+        @CleanupDatabase
         @WithJaneDoeAdminUser
         public void updateDefaultBranchNotMatching() {
             final GitRepositoryDto repository = this.repository.create(i18nToolLocalRepositoryCreationDto(), GitRepositoryDto.class).get();
@@ -584,7 +584,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
         }
 
         @Test
-        @TransactionalReactiveTest
+        @CleanupDatabase
         @WithJaneDoeAdminUser
         public void deleteRepository() {
             final GitRepositoryDto repository = this.repository.create(i18nToolLocalRepositoryCreationDto(), GitRepositoryDto.class).get();

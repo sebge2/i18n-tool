@@ -2,7 +2,7 @@ package be.sgerard.i18n.controller;
 
 import be.sgerard.i18n.model.i18n.dto.TranslationLocaleCreationDto;
 import be.sgerard.i18n.model.i18n.dto.TranslationLocaleDto;
-import be.sgerard.test.i18n.support.TransactionalReactiveTest;
+import be.sgerard.test.i18n.support.CleanupDatabase;
 import be.sgerard.test.i18n.support.WithJaneDoeAdminUser;
 import be.sgerard.test.i18n.support.WithJohnDoeSimpleUser;
 import org.junit.jupiter.api.AfterAll;
@@ -37,7 +37,7 @@ public class TranslationLocaleControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @TransactionalReactiveTest
+    @CleanupDatabase
     @WithJohnDoeSimpleUser
     public void findAllTranslationsNonAdminAllowed() {
         webClient.get()
@@ -48,7 +48,7 @@ public class TranslationLocaleControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @TransactionalReactiveTest
+    @CleanupDatabase
     @WithJaneDoeAdminUser
     public void findAllTranslations() {
         locale.createLocale(frBeWallonLocaleCreationDto());
@@ -65,7 +65,7 @@ public class TranslationLocaleControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @TransactionalReactiveTest
+    @CleanupDatabase
     @WithJaneDoeAdminUser
     public void create() {
         final TranslationLocaleCreationDto translationLocale = frBeWallonLocaleCreationDto().build();
@@ -85,7 +85,7 @@ public class TranslationLocaleControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @TransactionalReactiveTest
+    @CleanupDatabase
     @WithJaneDoeAdminUser
     public void createTwice() {
         locale.createLocale(frBeWallonLocaleCreationDto().build());
@@ -101,7 +101,7 @@ public class TranslationLocaleControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @TransactionalReactiveTest
+    @CleanupDatabase
     @WithJaneDoeAdminUser
     public void update() {
         final TranslationLocaleDto originalLocale = locale.createLocale(TranslationLocaleCreationDto.builder().language("fr").icon("flag-icon-fr")).get();
@@ -130,7 +130,7 @@ public class TranslationLocaleControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @TransactionalReactiveTest
+    @CleanupDatabase
     @WithJaneDoeAdminUser
     public void updateConflict() {
         final TranslationLocaleDto otherLocale = locale.createLocale(frBeWallonLocaleCreationDto()).get();
@@ -153,7 +153,7 @@ public class TranslationLocaleControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @TransactionalReactiveTest
+    @CleanupDatabase
     @WithJaneDoeAdminUser
     public void delete() {
         final TranslationLocaleDto translationLocale = locale.createLocale(frBeWallonLocaleCreationDto()).get();
@@ -171,7 +171,7 @@ public class TranslationLocaleControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @TransactionalReactiveTest
+    @CleanupDatabase
     @WithJaneDoeAdminUser
     public void deleteForbiddenTranslationsAssociated() {
         final TranslationLocaleDto translationLocale = locale.createLocale(frLocaleCreationDto()).get();

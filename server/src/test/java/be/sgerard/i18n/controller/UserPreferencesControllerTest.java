@@ -3,7 +3,7 @@ package be.sgerard.i18n.controller;
 import be.sgerard.i18n.model.ToolLocale;
 import be.sgerard.i18n.model.i18n.dto.TranslationLocaleDto;
 import be.sgerard.i18n.model.security.user.dto.UserPreferencesDto;
-import be.sgerard.test.i18n.support.TransactionalReactiveTest;
+import be.sgerard.test.i18n.support.CleanupDatabase;
 import be.sgerard.test.i18n.support.WithJaneDoeAdminUser;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -17,7 +17,7 @@ import static org.hamcrest.Matchers.hasSize;
 public class UserPreferencesControllerTest extends AbstractControllerTest {
 
     @Test
-    @TransactionalReactiveTest
+    @CleanupDatabase
     @WithJaneDoeAdminUser
     public void getUserPreferences() {
         webClient
@@ -28,7 +28,7 @@ public class UserPreferencesControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @TransactionalReactiveTest
+    @CleanupDatabase
     @WithJaneDoeAdminUser
     public void updateUserPreferences() {
         final TranslationLocaleDto frenchLocale = locale.createLocale(frLocaleCreationDto()).get();
@@ -64,7 +64,7 @@ public class UserPreferencesControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @TransactionalReactiveTest
+    @CleanupDatabase
     @WithJaneDoeAdminUser
     public void updateUserPreferencesMissingLocale() {
         try {
@@ -88,7 +88,7 @@ public class UserPreferencesControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @TransactionalReactiveTest
+    @CleanupDatabase
     @WithJaneDoeAdminUser
     public void getUserPreferencesAfterLocaleDeletion() {
         final TranslationLocaleDto frenchLocale = locale.createLocale(frLocaleCreationDto()).get();

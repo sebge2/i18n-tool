@@ -5,7 +5,7 @@ import be.sgerard.i18n.model.workspace.WorkspaceStatus;
 import be.sgerard.i18n.model.workspace.dto.WorkspaceDto;
 import be.sgerard.i18n.service.github.GitHubWebHookService;
 import be.sgerard.i18n.service.github.external.GitHubEventType;
-import be.sgerard.test.i18n.support.TransactionalReactiveTest;
+import be.sgerard.test.i18n.support.CleanupDatabase;
 import be.sgerard.test.i18n.support.WithJaneDoeAdminUser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.codec.digest.HmacAlgorithms;
@@ -54,7 +54,7 @@ public class GitHubControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @TransactionalReactiveTest
+    @CleanupDatabase
     @WithJaneDoeAdminUser
     public void deletedBranchEvent() throws Exception {
         repository
@@ -86,7 +86,7 @@ public class GitHubControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @TransactionalReactiveTest
+    @CleanupDatabase
     @WithJaneDoeAdminUser
     public void createdBranchEvent() throws Exception {
         repository
@@ -114,7 +114,7 @@ public class GitHubControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @TransactionalReactiveTest
+    @CleanupDatabase
     @WithJaneDoeAdminUser
     public void pullRequestEvent() throws Exception {
         repository
@@ -141,7 +141,7 @@ public class GitHubControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @TransactionalReactiveTest
+    @CleanupDatabase
     @WithJaneDoeAdminUser
     public void wrongCredentials() throws Exception {
         repository
@@ -157,7 +157,7 @@ public class GitHubControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @TransactionalReactiveTest
+    @CleanupDatabase
     @WithJaneDoeAdminUser
     public void noCredentialsNeeded() throws Exception {
         repository

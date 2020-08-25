@@ -4,7 +4,7 @@ import be.sgerard.i18n.AbstractIntegrationTest;
 import be.sgerard.i18n.model.repository.dto.GitHubRepositoryPatchDto;
 import be.sgerard.i18n.model.repository.persistence.GitHubRepositoryEntity;
 import be.sgerard.i18n.service.repository.RepositoryManager;
-import be.sgerard.test.i18n.support.TransactionalReactiveTest;
+import be.sgerard.test.i18n.support.CleanupDatabase;
 import be.sgerard.test.i18n.support.WithJaneDoeAdminUser;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -44,7 +44,7 @@ public class GitHubRepositoryHandlerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @TransactionalReactiveTest
+    @CleanupDatabase
     @WithJaneDoeAdminUser
     public void updateAccessKeyNewOne() {
         final String accessKey = "abzec";
@@ -70,7 +70,7 @@ public class GitHubRepositoryHandlerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @TransactionalReactiveTest
+    @CleanupDatabase
     @WithJaneDoeAdminUser
     public void updateAccessKeyNoChange() {
         final String accessKey = "abzec";
@@ -104,7 +104,7 @@ public class GitHubRepositoryHandlerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @TransactionalReactiveTest
+    @CleanupDatabase
     @WithJaneDoeAdminUser
     public void updateAccessKeyRemoved() {
         final String accessKey = "abzec";

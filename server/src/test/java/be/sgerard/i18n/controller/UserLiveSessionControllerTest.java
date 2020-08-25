@@ -1,7 +1,7 @@
 package be.sgerard.i18n.controller;
 
 import be.sgerard.i18n.service.security.session.UserLiveSessionManager;
-import be.sgerard.test.i18n.support.TransactionalReactiveTest;
+import be.sgerard.test.i18n.support.CleanupDatabase;
 import be.sgerard.test.i18n.support.WithJohnDoeSimpleUser;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,7 @@ public class UserLiveSessionControllerTest extends AbstractControllerTest {
 
     @Test
     @WithJohnDoeSimpleUser
-    @TransactionalReactiveTest
+    @CleanupDatabase
     public void getCurrentLiveSessions() {
         StepVerifier
                 .create(sessionManager.startSession())

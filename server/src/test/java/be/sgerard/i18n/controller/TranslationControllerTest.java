@@ -1,7 +1,7 @@
 package be.sgerard.i18n.controller;
 
 import be.sgerard.i18n.model.i18n.dto.*;
-import be.sgerard.test.i18n.support.TransactionalReactiveTest;
+import be.sgerard.test.i18n.support.CleanupDatabase;
 import be.sgerard.test.i18n.support.WithJaneDoeAdminUser;
 import org.junit.jupiter.api.*;
 import org.springframework.http.MediaType;
@@ -51,7 +51,7 @@ public class TranslationControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @TransactionalReactiveTest
+    @CleanupDatabase
     @WithJaneDoeAdminUser
     public void searchTranslationsFromJavaProperties() {
         final String key = "validation.repository.name-not-unique";
@@ -74,7 +74,7 @@ public class TranslationControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @TransactionalReactiveTest
+    @CleanupDatabase
     @WithJaneDoeAdminUser
     public void searchTranslationsFromJson() {
         final String key = "SHARED.REPOSITORY_TITLE";
@@ -97,7 +97,7 @@ public class TranslationControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @TransactionalReactiveTest
+    @CleanupDatabase
     @WithJaneDoeAdminUser
     public void searchTranslationsByKeyEqual() {
         final String key = "validation.repository.name-not-unique";
@@ -120,7 +120,7 @@ public class TranslationControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @TransactionalReactiveTest
+    @CleanupDatabase
     @WithJaneDoeAdminUser
     public void searchTranslationsByKeyStartWith() {
         final String key = "validation.repository.name-not-unique";
@@ -144,7 +144,7 @@ public class TranslationControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @TransactionalReactiveTest
+    @CleanupDatabase
     @WithJaneDoeAdminUser
     public void searchTranslationsByKeyEndWith() {
         final String key = "validation.repository.name-not-unique";
@@ -168,7 +168,7 @@ public class TranslationControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @TransactionalReactiveTest
+    @CleanupDatabase
     @WithJaneDoeAdminUser
     public void searchTranslationsByLocale() {
         webClient
@@ -187,7 +187,7 @@ public class TranslationControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @TransactionalReactiveTest
+    @CleanupDatabase
     @WithJaneDoeAdminUser
     public void searchTranslationsMax1Key() {
         webClient
@@ -206,7 +206,7 @@ public class TranslationControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @TransactionalReactiveTest
+    @CleanupDatabase
     @WithJaneDoeAdminUser
     public void searchTranslationsPagination() {
         final TranslationsPageDto workspaceTranslations = translations
@@ -266,7 +266,7 @@ public class TranslationControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @TransactionalReactiveTest
+    @CleanupDatabase
     @WithJaneDoeAdminUser
     public void searchTranslationsUpdated() {
         translations
@@ -291,7 +291,7 @@ public class TranslationControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @TransactionalReactiveTest
+    @CleanupDatabase
     @WithJaneDoeAdminUser
     public void writeTranslation() {
         final String bundleKeyId = translations
@@ -318,7 +318,7 @@ public class TranslationControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @TransactionalReactiveTest
+    @CleanupDatabase
     @WithJaneDoeAdminUser
     public void writeTranslationUnknownId() {
         webClient

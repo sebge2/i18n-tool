@@ -6,7 +6,7 @@ import be.sgerard.i18n.model.security.user.dto.UserDto;
 import be.sgerard.i18n.model.security.user.dto.UserPatchDto;
 import be.sgerard.i18n.service.security.UserRole;
 import be.sgerard.i18n.service.user.UserManager;
-import be.sgerard.test.i18n.support.TransactionalReactiveTest;
+import be.sgerard.test.i18n.support.CleanupDatabase;
 import be.sgerard.test.i18n.support.WithJaneDoeAdminUser;
 import be.sgerard.test.i18n.support.WithJohnDoeSimpleUser;
 import org.apache.commons.io.IOUtils;
@@ -25,7 +25,7 @@ import static org.hamcrest.Matchers.*;
 public class UserControllerTest extends AbstractControllerTest {
 
     @Test
-    @TransactionalReactiveTest
+    @CleanupDatabase
     @WithJaneDoeAdminUser
     public void findAllUsers() {
         final UserDto johnDoe = user.createUser(userJohnDoeCreation().build());
@@ -42,7 +42,7 @@ public class UserControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @TransactionalReactiveTest
+    @CleanupDatabase
     @WithJaneDoeAdminUser
     public void getUserById() {
         final UserDto johnDoe = user.createUser(userJohnDoeCreation().build());
@@ -61,7 +61,7 @@ public class UserControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @TransactionalReactiveTest
+    @CleanupDatabase
     @WithJohnDoeSimpleUser
     public void getCurrentUser() {
         webClient
@@ -78,7 +78,7 @@ public class UserControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @TransactionalReactiveTest
+    @CleanupDatabase
     @WithJaneDoeAdminUser
     public void createSameUserName() {
         user.createUser(userJohnDoeCreation().build());
@@ -95,7 +95,7 @@ public class UserControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @TransactionalReactiveTest
+    @CleanupDatabase
     @WithJaneDoeAdminUser
     public void updateUser() {
         final UserDto johnDoe = user.createUser(userJohnDoeCreation().build());
@@ -122,7 +122,7 @@ public class UserControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @TransactionalReactiveTest
+    @CleanupDatabase
     @WithJaneDoeAdminUser
     public void updateUserUsernameExists() {
         final UserDto johnDoe = user.createUser(userJohnDoeCreation().build());
@@ -143,7 +143,7 @@ public class UserControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @TransactionalReactiveTest
+    @CleanupDatabase
     @WithJaneDoeAdminUser
     public void updateUserRoleNotAssignable() {
         final UserDto johnDoe = user.createUser(userJohnDoeCreation().build());
@@ -164,7 +164,7 @@ public class UserControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @TransactionalReactiveTest
+    @CleanupDatabase
     @WithJohnDoeSimpleUser
     public void updateCurrentUser() {
         webClient
@@ -189,7 +189,7 @@ public class UserControllerTest extends AbstractControllerTest {
     // TODO update current user admin
 
     @Test
-    @TransactionalReactiveTest
+    @CleanupDatabase
     @WithJohnDoeSimpleUser
     public void updateCurrentUserPassword() {
         webClient
@@ -204,7 +204,7 @@ public class UserControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @TransactionalReactiveTest
+    @CleanupDatabase
     @WithJohnDoeSimpleUser
     public void updateCurrentUserPasswordWrongPassword() {
         webClient
@@ -221,7 +221,7 @@ public class UserControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @TransactionalReactiveTest
+    @CleanupDatabase
     @WithJohnDoeSimpleUser
     public void updateCurrentUserAvatar() throws IOException {
         webClient
@@ -234,7 +234,7 @@ public class UserControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @TransactionalReactiveTest
+    @CleanupDatabase
     @WithJaneDoeAdminUser
     public void getUserAvatar() {
         final UserDto johnDoe = user.createUser(userJohnDoeCreation().build());
@@ -249,7 +249,7 @@ public class UserControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @TransactionalReactiveTest
+    @CleanupDatabase
     @WithJaneDoeAdminUser
     public void deleteUser() {
         final UserDto johnDoe = user.createUser(userJohnDoeCreation().build());
@@ -268,7 +268,7 @@ public class UserControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @TransactionalReactiveTest
+    @CleanupDatabase
     @WithJohnDoeSimpleUser
     public void deleteUserNotAllowed() {
         final String currentUserId = user.getCurrentUser().getId();
