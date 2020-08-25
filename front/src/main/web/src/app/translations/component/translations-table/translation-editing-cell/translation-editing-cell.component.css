@@ -1,3 +1,11 @@
 mat-form-field {
     width: calc(100% - 30px);
 }
+
+mat-form-field app-form-cancel-button {
+    visibility: hidden;
+}
+
+mat-form-field:hover app-form-cancel-button, .mat-focused app-form-cancel-button {
+    visibility: visible;
+}
