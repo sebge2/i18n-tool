@@ -1,6 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {BundleKeyTranslation} from "../../../model/edition/bundle-key-translation.model";
-import {FormGroup} from "@angular/forms";
+import {BundleKeyTranslation} from "../../../model/workspace/bundle-key-translation.model";
+import {FormBuilder, FormGroup} from "@angular/forms";
+import {TranslationService} from "../../../../api";
 
 @Component({
     selector: 'app-translation-editing-cell',
@@ -9,34 +10,32 @@ import {FormGroup} from "@angular/forms";
 })
 export class TranslationEditingCellComponent implements OnInit {
 
+    public form: FormGroup;
+    private _translation: BundleKeyTranslation;
+
+    constructor(private _formBuilder: FormBuilder,
+                private _translationService: TranslationService) {
+        this.form = _formBuilder.group({
+            value: _formBuilder.control(null)
+        });
+    }
+
+    public ngOnInit() {
+    }
+
     @Input()
-    formGroup: FormGroup;
-
-    editionStyle: any = {};
-
-    constructor() {
+    public get translation(): BundleKeyTranslation {
+        return this._translation;
     }
 
-    ngOnInit() {
-        this.update(<BundleKeyTranslation>this.formGroup.value.translation);
+    public set translation(translation: BundleKeyTranslation) {
+        this._translation = translation;
 
-        this.formGroup.valueChanges.subscribe(
-            (formGroup: FormGroup) => {
-                this.editionStyle = {'border-color': 'red'};
-            }
-        )
+        this.onReset();
     }
 
-    private update(translation: BundleKeyTranslation) {
-        this.editionStyle = this.updateEditionStyle(translation);
-    }
-
-    private updateEditionStyle(translation: BundleKeyTranslation): any {
-        if (translation.updatedValue) {
-            return {'border-color': 'red'};
-            // return {'border-color': 'red', 'animation': 'editing .8s steps(100) infinite'};
-        } else {
-            return {'border-color': 'transparent'};
-        }
+    public onReset() {
+        this.form.controls['value'].setValue(this.translation.currentValue);
+        this.form.markAsPristine();
     }
 }
