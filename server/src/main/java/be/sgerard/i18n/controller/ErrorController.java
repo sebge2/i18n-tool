@@ -1,8 +1,8 @@
 package be.sgerard.i18n.controller;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import springfox.documentation.annotations.ApiIgnore;
 
 /**
  * Web error controller.
@@ -10,7 +10,7 @@ import springfox.documentation.annotations.ApiIgnore;
  * @author Sebastien Gerard
  */
 @Controller
-@ApiIgnore
+@Hidden
 public class ErrorController implements org.springframework.boot.web.servlet.error.ErrorController {
 
     /**
