@@ -78,6 +78,15 @@ export class WorkspaceService {
             );
     }
 
+    public getEnrichedWorkspace(workspaceId: string): Observable<EnrichedWorkspace> {
+        return this.getEnrichedWorkspaces()
+            .pipe(
+                map(workspaces => _.find(workspaces, workspace => _.isEqual(workspace.workspace.id, workspaceId))),
+                filter(workspace => !!workspace),
+                distinctUntilChanged()
+            );
+    }
+
     public getWorkspaceBundleFile(workspaceId: string): Observable<BundleFile[]> {
         return this.getWorkspace(workspaceId)
             .pipe(

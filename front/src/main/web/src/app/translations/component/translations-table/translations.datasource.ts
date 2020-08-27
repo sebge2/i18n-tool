@@ -23,8 +23,9 @@ export class TranslationsDataSource extends DataSource<FormGroup> {
 
     private static readonly PAGE_SIZE: number = 100;
 
-    public loading: boolean = false;
     public readonly form: FormArray;
+    public loading: boolean = false;
+    public totalTranslations: number = 0;
 
     private readonly _dataStream = new BehaviorSubject<FormGroup[]>([]);
 
@@ -52,6 +53,8 @@ export class TranslationsDataSource extends DataSource<FormGroup> {
                         .then((page: TranslationsPage) => {
                             if (!page.lastPageKey) {
                                 // no more result
+
+                                console.log(`Total translations: ${this.totalTranslations}.`);
                             }
 
                             this.updateSource(page);
@@ -90,6 +93,7 @@ export class TranslationsDataSource extends DataSource<FormGroup> {
     public setRequest(request: TranslationsSearchRequest) {
         this._searchRequest = request;
         this._lastPageKey = null;
+        this.totalTranslations = 0;
 
         this._dataStream.next([]);
         this.loadNextPage();
@@ -133,11 +137,11 @@ export class TranslationsDataSource extends DataSource<FormGroup> {
             if (_.some(this.form.controls)) {
                 const lastRow = <FormGroup>_.last(this.form.controls);
 
-                if(!_.isEqual(this.getWorkspace(lastRow), this.getWorkspace(currentRow))){
+                if (!_.isEqual(this.getWorkspace(lastRow), this.getWorkspace(currentRow))) {
                     this.form.push(this.createWorkspaceRow(pageRow));
                 }
 
-                if(!_.isEqual(this.getBundleFile(lastRow), this.getBundleFile(currentRow))){
+                if (!_.isEqual(this.getBundleFile(lastRow), this.getBundleFile(currentRow))) {
                     this.form.push(this.createBundleFileRow(pageRow));
                 }
             } else {
@@ -149,6 +153,7 @@ export class TranslationsDataSource extends DataSource<FormGroup> {
         }
 
         this._lastPageKey = page.lastPageKey;
+        this.totalTranslations += this.totalTranslations + page.rows.length;
         this._dataStream.next(<FormGroup[]>this.form.controls);
     }
 
