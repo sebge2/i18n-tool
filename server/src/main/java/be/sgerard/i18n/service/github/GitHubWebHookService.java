@@ -75,7 +75,7 @@ public class GitHubWebHookService {
         if (eventType.isEmpty()) {
             logger.debug("Ignore GitHub event type [" + eventType + "].");
 
-            return Mono.just("Unsupported event type [" + eventType + "]. Ignoring it.");
+            return Mono.just("Unsupported event type [" + eventType.orElse(null) + "]. Ignoring it.");
         }
 
         final BaseGitHubWebHookEventDto event = readEvent(requestEntity, eventType.get());
