@@ -10,6 +10,8 @@ import {TranslationsStartReviewComponent} from './component/translations-start-r
 import {CoreSharedModule} from "../core/shared/core-shared-module";
 import {CoreAuthModule} from "../core/auth/core-auth.module";
 import {CoreTranslationModule} from "../core/translation/core-translation-module";
+import { TranslationsWorkspaceRowComponent } from './component/translations-table/translations-workspace-row/translations-workspace-row.component';
+import { TranslationsBundleFileRowComponent } from './component/translations-table/translations-bundle-file-row/translations-bundle-file-row.component';
 
 const appRoutes: Routes = [
     {
@@ -24,7 +26,9 @@ const appRoutes: Routes = [
         TranslationCriterionSelectorComponent,
         TranslationsTableComponent,
         TranslationEditingCellComponent,
-        TranslationsStartReviewComponent
+        TranslationsStartReviewComponent,
+        TranslationsWorkspaceRowComponent,
+        TranslationsBundleFileRowComponent
     ],
     entryComponents: [
         TranslationsStartReviewComponent

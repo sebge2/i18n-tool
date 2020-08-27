@@ -12,11 +12,13 @@
 
         <ng-container *cdkVirtualFor="let rowForm of dataSource; let rowIndex = index">
             <ng-container [ngSwitch]="dataSource.getRowType(rowForm)">
-                <div class="app-scroller-spread-row app-scroller-cell" *ngSwitchCase="RowType.WORKSPACE">
-                    WORKSPACE :)
+                <div class="app-scroller-spread-row app-scroller-cell app-translations-workspace-row" *ngSwitchCase="RowType.WORKSPACE">
+                    <app-translations-workspace-row [workspace]="dataSource.getWorkspace(rowForm)"></app-translations-workspace-row>
                 </div>
-                <div class="app-scroller-spread-row app-scroller-cell" *ngSwitchCase="RowType.BUNDLE_FILE">
-                    BUNDLE FILE :)
+                <div class="app-scroller-spread-row app-scroller-cell app-translations-bundle-file-row" *ngSwitchCase="RowType.BUNDLE_FILE">
+                    <app-translations-bundle-file-row [workspaceId]="dataSource.getWorkspace(rowForm)"
+                                                      [bundleFileId]="dataSource.getBundleFile(rowForm)">
+                    </app-translations-bundle-file-row>
                 </div>
                 <ng-container *ngSwitchCase="RowType.BUNDLE_KEY">
                     <div class="app-translations-bundle-key-column app-scroller-cell">

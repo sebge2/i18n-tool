@@ -26,6 +26,14 @@
     grid-column: 1 / 4;
 }
 
+.app-translations-workspace-row {
+    padding-top: 20px;
+}
+
+.app-translations-bundle-file-row {
+    padding-top: 20px;
+}
+
 .app-translations-bundle-key-column {
     margin: auto auto auto 0;
 }
