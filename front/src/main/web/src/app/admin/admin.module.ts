@@ -1,9 +1,7 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {RouterModule, Routes} from "@angular/router";
-import {WorkspaceTableComponent} from './component/workspace-table/workspace-table.component';
 import {CoreSharedModule} from "../core/shared/core-shared-module";
-import {ConfirmWorkspaceDeletionComponent} from './component/workspace-table/confirm-deletion/confirm-workspace-deletion.component';
 import {CoreAuthModule} from "../core/auth/core-auth.module";
 import {UsersComponent} from './component/users/users.component';
 import {RepositoriesComponent} from './component/repositories/repositories.component';
@@ -33,8 +31,6 @@ const appRoutes: Routes = [
 
 @NgModule({
     declarations: [
-        WorkspaceTableComponent,
-        ConfirmWorkspaceDeletionComponent,
         LocalesComponent,
         LocaleViewCardComponent,
 
@@ -58,7 +54,6 @@ const appRoutes: Routes = [
         RepositoryDetailsWorkspaceTreeNodeComponent
     ],
     entryComponents: [
-        ConfirmWorkspaceDeletionComponent,
         RepositoryAddWizardComponent
     ],
     imports: [
