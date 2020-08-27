@@ -75,9 +75,7 @@ export class TranslationsDataSource extends DataSource<FormGroup> {
             .viewChange
             .pipe(takeUntil(this._destroyed$))
             .subscribe(range => {
-                if ((range.end >= this._dataStream.value.length)
-                    && (this._dataStream.value.length % TranslationsDataSource.PAGE_SIZE == 0)
-                    && !this.loading) {
+                if ((range.end >= this._dataStream.value.length) && (this._dataStream.value.length % TranslationsDataSource.PAGE_SIZE == 0)) {
                     this.loadNextPage();
                 }
             });
@@ -95,6 +93,7 @@ export class TranslationsDataSource extends DataSource<FormGroup> {
         this._lastPageKey = null;
         this.totalTranslations = 0;
 
+        this.form.clear();
         this._dataStream.next([]);
         this.loadNextPage();
     }

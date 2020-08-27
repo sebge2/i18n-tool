@@ -65,4 +65,8 @@ export class TranslationsTableComponent implements OnInit, OnDestroy {
     public get unsavedChanges(): boolean {
         return this.dataSource.form.dirty;
     }
+
+    public get spreadRowClass(): string {
+        return `app-scroller-spread-row-${this.searchRequest.locales.length}`;
+    }
 }
