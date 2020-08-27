@@ -1,7 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {BundleKeyTranslation} from "../../../model/workspace/bundle-key-translation.model";
-import {FormBuilder, FormGroup} from "@angular/forms";
-import {TranslationService} from "../../../../api";
+import {FormGroup} from "@angular/forms";
 
 @Component({
     selector: 'app-translation-editing-cell',
@@ -10,32 +8,29 @@ import {TranslationService} from "../../../../api";
 })
 export class TranslationEditingCellComponent implements OnInit {
 
-    public form: FormGroup;
-    private _translation: BundleKeyTranslation;
+    private _form: FormGroup;
 
-    constructor(private _formBuilder: FormBuilder,
-                private _translationService: TranslationService) {
-        this.form = _formBuilder.group({
-            value: _formBuilder.control(null)
-        });
+    constructor() {
     }
 
     public ngOnInit() {
     }
 
     @Input()
-    public get translation(): BundleKeyTranslation {
-        return this._translation;
+    public get form(): FormGroup {
+        return this._form;
     }
 
-    public set translation(translation: BundleKeyTranslation) {
-        this._translation = translation;
-
-        this.onReset();
+    public set form(form: FormGroup) {
+        this._form = form;
     }
 
     public onReset() {
-        this.form.controls['value'].setValue(this.translation.currentValue);
+        this.form.controls['value'].setValue(this.originalValue);
         this.form.markAsPristine();
+    }
+
+    public get originalValue(): string {
+        return this.form.controls['originalValue'].value;
     }
 }

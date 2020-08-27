@@ -29,22 +29,8 @@ export class TranslationService {
             .pipe(map(dto => TranslationsPage.fromDto(dto)));
     }
 
-    updateTranslations(workspaceId: string, translations: Map<string, string>): Promise<any> {
-        return Promise.resolve();
-        // if (translations.size == 0) {
-        //     return Promise.resolve();
-        // }
-        //
-        // const payload = {};
-        // translations.forEach((value, key) => payload[key] = value);
-        //
-        // return this.httpClient
-        //     .patch('/api/workspace/' + workspaceId + '/translation', payload, {headers: {'content-type': 'application/json'}})
-        //     .toPromise()
-        //     .catch(reason => {
-        //         console.error("Error while updating translations.", reason);
-        //         this.notificationService.displayErrorMessage("Error while updating translations.")
-        //     });
+    public updateTranslation(bundleKeyId: string, localeId: string, translation: string): Observable<any> {
+        return this._translationService.updateWorkspaceTranslations(bundleKeyId, localeId, translation);
     }
 
 }
