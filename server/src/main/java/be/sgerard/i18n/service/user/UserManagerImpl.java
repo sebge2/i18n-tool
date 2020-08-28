@@ -37,6 +37,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+import static java.util.Collections.singleton;
+
 /**
  * Implementation of the {@link UserManager user manager}.
  *
@@ -130,7 +132,13 @@ public class UserManagerImpl implements UserManager {
 
         return externalUserRepository
                 .findByExternalId(externalUser.getExternalId())
-                .switchIfEmpty(Mono.just(new ExternalUserEntity(externalUser.getExternalId(), externalUser.getAuthSystem())))
+                .switchIfEmpty(Mono.defer(() -> {
+                    final ExternalUserEntity userEntity = new ExternalUserEntity(externalUser.getExternalId(), externalUser.getAuthSystem());
+
+                    userEntity.setRoles(singleton(UserRole.MEMBER_OF_ORGANIZATION));
+
+                    return Mono.just(userEntity);
+                }))
                 .flatMap(externalUserEntity ->
                         listener
                                 .beforePersist(externalUser)
