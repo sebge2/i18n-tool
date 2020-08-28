@@ -7,6 +7,9 @@ import be.sgerard.i18n.service.BadRequestException;
 import be.sgerard.i18n.service.repository.RepositoryDtoMapper;
 import be.sgerard.i18n.service.repository.RepositoryManager;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -39,7 +42,6 @@ public class RepositoryController {
      */
     @GetMapping(path = "/repository")
     @Operation(summary = "Finds all repositories.")
-    @PreAuthorize("hasRole('ADMIN')")
     public Flux<RepositoryDto> findAll() {
         return repositoryManager.findAll()
                 .map(dtoMapper::mapToDto);
@@ -50,7 +52,6 @@ public class RepositoryController {
      */
     @GetMapping(path = "/repository/{id}")
     @Operation(summary = "Finds the repository having the specified id.")
-    @PreAuthorize("hasRole('ADMIN')")
     public Mono<RepositoryDto> findById(@PathVariable String id) {
         return repositoryManager.findByIdOrDie(id)
                 .map(dtoMapper::mapToDto);
@@ -85,19 +86,15 @@ public class RepositoryController {
                 .map(dtoMapper::mapToDto);
     }
 
-    @PostMapping(path = "/repository/{id}/do")
-    @Operation(summary = "Executes an action on a repository.")
+    @PostMapping(path = "/repository/{id}/do", params = "action=INITIALIZE")
+    @Operation(
+            summary = "Executes an action on a repository.",
+            parameters = @Parameter(name = "action", in = ParameterIn.QUERY, schema = @Schema(allowableValues = "INITIALIZE"))
+    )
     @PreAuthorize("hasRole('ADMIN')")
-    @SuppressWarnings("SwitchStatementWithTooFewBranches")
-    public Mono<RepositoryDto> executeRepositoryAction(@PathVariable String id,
-                                                       @RequestParam RepositoryAction action) {
-        switch (action) {
-            case INITIALIZE:
-                return repositoryManager.initialize(id)
-                        .map(dtoMapper::mapToDto);
-            default:
-                return Mono.error(BadRequestException.actionNotSupportedException(action.toString()));
-        }
+    public Mono<RepositoryDto> initialize(@PathVariable String id) {
+        return repositoryManager.initialize(id)
+                .map(dtoMapper::mapToDto);
     }
 
     /**
@@ -111,16 +108,4 @@ public class RepositoryController {
         return repositoryManager.delete(id)
                 .map(dtoMapper::mapToDto);
     }
-
-    /**
-     * All the possible actions that can be performed over a repository.
-     */
-    public enum RepositoryAction {
-
-        /**
-         * @see RepositoryManager#initialize(String)
-         */
-        INITIALIZE
-    }
-
 }

@@ -7,6 +7,8 @@ import be.sgerard.i18n.service.BadRequestException;
 import be.sgerard.i18n.service.workspace.WorkspaceManager;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -89,62 +91,50 @@ public class WorkspaceController {
     /**
      * Executes an action on workspaces associated to the specified repository.
      */
-    @PostMapping(path = "/repository/{repositoryId}/workspace/do")
-    @Operation(summary = "Executes an action on workspaces of a particular repository.")
+    @PostMapping(path = "/repository/{repositoryId}/workspace/do", params = "action=SYNCHRONIZE")
+    @Operation(
+            summary = "Executes an action on workspaces of a particular repository.",
+            parameters = @Parameter(name = "action", in = ParameterIn.QUERY, schema = @Schema(allowableValues = "SYNCHRONIZE"))
+    )
     @PreAuthorize("hasRole('ADMIN')")
-    @SuppressWarnings("SwitchStatementWithTooFewBranches")
-    public Flux<WorkspaceDto> executeWorkspacesAction(@PathVariable String repositoryId,
-                                                      @Parameter(description = "The action to execute.") @RequestParam(name = "action") WorkspacesAction action) {
-        switch (action) {
-            case SYNCHRONIZE:
-                return workspaceManager.synchronize(repositoryId)
-                        .map(entity -> WorkspaceDto.builder(entity).build());
-            default:
-                throw BadRequestException.actionNotSupportedException(action.name());
-        }
+    public Flux<WorkspaceDto> synchronizeRepository(@PathVariable String repositoryId) {
+        return workspaceManager.synchronize(repositoryId)
+                .map(entity -> WorkspaceDto.builder(entity).build());
     }
 
     /**
      * Publishes all the modifications made on the specified workspace. Based on the type of repository, a review may start afterwards.
      * If it's not the case, a new fresh workspace will be created and returned.
      */
-    @PostMapping(path = "/repository/workspace/{id}/do")
-    @Operation(summary = "Executes an action on the specified workspace.")
+    @PostMapping(path = "/repository/workspace/{id}/do", params = "action=INITIALIZE")
+    @Operation(
+            summary = "Executes an action on the specified workspace.",
+            parameters = @Parameter(name = "action", in = ParameterIn.QUERY, schema = @Schema(allowableValues = "INITIALIZE"))
+    )
     @PreAuthorize("hasRole('ADMIN')")
-    public Mono<WorkspaceDto> executeWorkspaceAction(@PathVariable String id,
-                                                     @Parameter(description = "The action to execute.") @RequestParam(name = "action") WorkspaceAction action,
-                                                     @Parameter(description = "Message required when publishing, it describe the changes.") @RequestParam(name = "message", required = false) String message) {
-        switch (action) {
-            case INITIALIZE:
-                return workspaceManager.initialize(id)
-                        .map(workspace -> WorkspaceDto.builder(workspace).build());
-            case PUBLISH:
-                if (StringUtils.isEmpty(message)) {
-                    throw BadRequestException.missingReviewMessage();
-                }
+    public Mono<WorkspaceDto> executeWorkspaceAction(@PathVariable String id) {
+        return workspaceManager.initialize(id)
+                .map(workspace -> WorkspaceDto.builder(workspace).build());
+    }
 
-                return workspaceManager.publish(id, message)
-                        .map(workspace -> WorkspaceDto.builder(workspace).build());
-            default:
-                throw BadRequestException.actionNotSupportedException(action.toString());
+    /**
+     * Publishes all the modifications made on the specified workspace. Based on the type of repository, a review may start afterwards.
+     * If it's not the case, a new fresh workspace will be created and returned.
+     */
+    @PostMapping(path = "/repository/workspace/{id}/do", params = "action=PUBLISH")
+    @Operation(
+            summary = "Executes an action on the specified workspace.",
+            parameters = @Parameter(name = "action", in = ParameterIn.QUERY, schema = @Schema(allowableValues = "PUBLISH"))
+    )
+    @PreAuthorize("hasRole('ADMIN')")
+    public Mono<WorkspaceDto> publish(@PathVariable String id,
+                                      @Parameter(description = "Message required when publishing, it describe the changes.") @RequestParam(name = "message") String message) {
+
+        if (StringUtils.isEmpty(message)) {
+            throw BadRequestException.missingReviewMessage();
         }
-    }
 
-    /**
-     * Action possible on a group of workspaces.
-     */
-    public enum WorkspacesAction {
-
-        SYNCHRONIZE
-    }
-
-    /**
-     * Action possible on a workspace.
-     */
-    public enum WorkspaceAction {
-
-        INITIALIZE,
-
-        PUBLISH
+        return workspaceManager.publish(id, message)
+                .map(workspace -> WorkspaceDto.builder(workspace).build());
     }
 }
