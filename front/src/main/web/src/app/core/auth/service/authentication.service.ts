@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpResponse} from "@angular/common/http";
 import {BehaviorSubject, Observable, Subject} from "rxjs";
-import {flatMap, map, shareReplay, skip} from "rxjs/operators";
+import { map, mergeMap, shareReplay, skip} from "rxjs/operators";
 import {AuthenticationErrorType} from "../model/authentication-error-type.model";
 import {AuthenticationService as ApiAuthenticationService, Configuration} from "../../../api";
 import {EventService} from "../../event/service/event.service";
@@ -64,7 +64,7 @@ export class AuthenticationService {
             .subscribe(currentUser => currentUser ? eventService.enabledEvents() : eventService.disableEvents());
 
         this._currentUser$ = this.currentAuthenticatedUser()
-            .pipe(flatMap(currentUser => currentUser ? this.userService.getCurrentUser() : null));
+            .pipe(mergeMap(currentUser => currentUser ? this.userService.getCurrentUser() : null));
     }
 
     public currentAuthenticatedUser(): Observable<AuthenticatedUser> {

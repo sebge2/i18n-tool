@@ -2,7 +2,7 @@ import {Injectable, NgZone} from '@angular/core';
 import {BehaviorSubject, EMPTY, Observable} from "rxjs";
 import {NotificationService} from "../../notification/service/notification.service";
 import {EventObjectDto} from "../../../api";
-import {catchError, filter, flatMap, map, shareReplay, skip} from "rxjs/operators";
+import {catchError, filter, map, mergeMap, shareReplay, skip} from "rxjs/operators";
 import * as _ from "lodash";
 
 @Injectable({
@@ -14,24 +14,30 @@ export class EventService {
     private readonly _observableObs = this._observable$.pipe(skip(1), shareReplay(1));
     private readonly _enabled$ = new BehaviorSubject<boolean>(false);
 
+    private _eventSource: EventSource;
+
     constructor(private _zone: NgZone,
                 private notificationService: NotificationService) {
         this._enabled$
-            .pipe(flatMap(enabled => {
+            .pipe(mergeMap(enabled => {
+                if (this._eventSource) {
+                    this._eventSource.close();
+                }
+
                 if (!enabled) {
                     return EMPTY;
                 }
 
-                const eventSource = new EventSource("./api/event", {withCredentials: true});
+                this._eventSource = new EventSource("./api/event", {withCredentials: true});
 
                 return new Observable<EventObjectDto>(observer => {
-                    eventSource.addEventListener('message', function (e) {
+                    this._eventSource.addEventListener('message', function (e) {
                         _zone.run(() => {
                             observer.next(<EventObjectDto>JSON.parse(e.data));
                         });
                     }, false);
 
-                    eventSource.addEventListener('error', function (e) {
+                    this._eventSource.addEventListener('error', function (e) {
                         _zone.run(() => observer.error(e));
                     }, false);
                 });
