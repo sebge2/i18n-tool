@@ -15,6 +15,7 @@ export class RepositoryDetailsWorkspaceNodeComponent {
     @Input() public loading: boolean = false;
 
     public initializationInProgress: boolean = false;
+    public deleteInProgress: boolean = false;
 
     constructor(private _workspaceService: WorkspaceService,
                 private _notificationService: NotificationService) {
@@ -64,5 +65,18 @@ export class RepositoryDetailsWorkspaceNodeComponent {
                 this._notificationService.displayErrorMessage('ADMIN.REPOSITORIES.ERROR.INITIALIZE_WORKSPACE', error);
             })
             .finally(() => this.initializationInProgress = false);
+    }
+
+    public onDelete() {
+        this.deleteInProgress = true;
+
+        this._workspaceService
+            .delete(this.node.workspace.id)
+            .toPromise()
+            .catch(error => {
+                console.error('Error while deleting workspace.', error);
+                this._notificationService.displayErrorMessage('ADMIN.REPOSITORIES.ERROR.DELETE_WORKSPACE', error);
+            })
+            .finally(() => this.deleteInProgress = false);
     }
 }

@@ -109,7 +109,7 @@ public class WorkspaceController {
     @PostMapping(path = "/repository/workspace/{id}/do", params = "action=INITIALIZE")
     @Operation(
             summary = "Executes an action on the specified workspace.",
-            parameters = @Parameter(name = "action", in = ParameterIn.QUERY, schema = @Schema(allowableValues = "INITIALIZE"))
+            parameters = @Parameter(name = "action", in = ParameterIn.QUERY, schema = @Schema(allowableValues = {"INITIALIZE", "PUBLISH"}))
     )
     @PreAuthorize("hasRole('ADMIN')")
     public Mono<WorkspaceDto> executeWorkspaceAction(@PathVariable String id) {
@@ -123,8 +123,7 @@ public class WorkspaceController {
      */
     @PostMapping(path = "/repository/workspace/{id}/do", params = "action=PUBLISH")
     @Operation(
-            summary = "Executes an action on the specified workspace.",
-            parameters = @Parameter(name = "action", in = ParameterIn.QUERY, schema = @Schema(allowableValues = "PUBLISH"))
+            summary = "Executes an action on the specified workspace."
     )
     @PreAuthorize("hasRole('ADMIN')")
     public Mono<WorkspaceDto> publish(@PathVariable String id,

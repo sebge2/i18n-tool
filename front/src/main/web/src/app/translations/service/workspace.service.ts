@@ -100,6 +100,11 @@ export class WorkspaceService {
             .executeWorkspaceAction(workspaceId, 'INITIALIZE')
             .pipe(map(workspace => Workspace.fromDto(workspace)));
     }
+
+    public delete(workspaceId: string): Observable<any> {
+        return this.apiWorkspaceService
+            .deleteWorkspace(workspaceId);
+    }
 }
 
 export function workspaceSorter(first: Workspace, second: Workspace): number {
