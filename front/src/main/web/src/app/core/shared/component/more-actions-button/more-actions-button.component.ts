@@ -7,6 +7,7 @@ import {Component, Input, OnInit} from '@angular/core';
 export class MoreActionsButtonComponent implements OnInit {
 
     @Input() public disabled: boolean = false;
+    @Input() public inProgress: boolean = false;
 
     constructor() {
     }

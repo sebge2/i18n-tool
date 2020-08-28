@@ -89,13 +89,14 @@ export class RepositoryDetailsWorkspacesComponent implements OnInit {
 
     public workspacesDataSource: TreeObjectDataSource = new EmptyTreeObjectDataSource();
     public initInProgress = false;
+    public moreActionInProgress = false;
 
     constructor(private _repositoryService: RepositoryService,
                 private _workspaceService: WorkspaceService,
                 private _notificationService: NotificationService) {
     }
 
-    ngOnInit(): void {
+    public ngOnInit(): void {
         this.workspacesDataSource = new WorkspaceTreeObjectDataSource(this._workspaceService, this.repository);
     }
 
@@ -111,5 +112,22 @@ export class RepositoryDetailsWorkspacesComponent implements OnInit {
                 this._notificationService.displayErrorMessage('ADMIN.REPOSITORIES.ERROR.INITIALIZE', error);
             })
             .finally(() => this.initInProgress = false);
+    }
+
+    public onSynchronize() {
+        this.moreActionInProgress = true;
+
+        this._workspaceService
+            .synchronize(this.repository.id)
+            .toPromise()
+            .catch(error => {
+                console.error('Error while synchronizing workspaces.', error);
+                this._notificationService.displayErrorMessage('ADMIN.REPOSITORIES.ERROR.WORKSPACES_SYNCHRONIZE', error);
+            })
+            .finally(() => this.moreActionInProgress = false);
+    }
+
+    public onOpenExclusion() {
+        // TODO
     }
 }

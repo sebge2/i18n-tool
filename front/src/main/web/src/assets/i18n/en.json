@@ -201,6 +201,10 @@
           "READY": "Ready",
           "NOT_READY": "Not Ready",
           "IN_REVIEW": "In Review"
+        },
+        "ACTIONS" : {
+          "SYNCHRONIZE": "Synchronize",
+          "EXCLUSION": "Excluded/Included Files"
         }
       },
       "ERROR": {
@@ -208,7 +212,8 @@
         "DELETE": "Error while deleting the repository.",
         "INITIALIZE": "Error while initializing the repository.",
         "INITIALIZE_WORKSPACE": "Error while initializing the workspace",
-        "DELETE_WORKSPACE": "Error while deleting the workspace"
+        "DELETE_WORKSPACE": "Error while deleting the workspace",
+        "WORKSPACES_SYNCHRONIZE": "Error while synchronizing workspaces."
       }
     }
   },

@@ -101,6 +101,12 @@ export class WorkspaceService {
             .pipe(map(workspace => Workspace.fromDto(workspace)));
     }
 
+    public synchronize(repositoryId: string): Observable<Workspace[]> {
+        return this.apiWorkspaceService
+            .executeWorkspacesAction(repositoryId, 'SYNCHRONIZE')
+            .pipe(map(workspaces => workspaces.map(workspace => Workspace.fromDto(workspace))));
+    }
+
     public delete(workspaceId: string): Observable<any> {
         return this.apiWorkspaceService
             .deleteWorkspace(workspaceId);
