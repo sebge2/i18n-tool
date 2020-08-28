@@ -6,6 +6,9 @@ spring:
           github:
             client-id: MY_CLIENT_ID
             client-secret: MY_CLIENT_SECRET
+  data:
+    mongodb:
+      uri: "mongodb://localhost:37436/test"
 
 be:
   sgerard:
