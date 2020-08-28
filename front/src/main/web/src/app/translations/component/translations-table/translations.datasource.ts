@@ -19,9 +19,18 @@ export enum RowType {
     BUNDLE_KEY = 'BUNDLE_KEY'
 }
 
+export class CurrentPage {
+
+    public readonly complete: boolean;
+
+    constructor(public index: number, public lastPageKey: string, public pageSize: number) {
+        this.complete = (pageSize == 0) || (pageSize % TranslationsDataSource.PAGE_SIZE == 0);
+    }
+}
+
 export class TranslationsDataSource extends DataSource<FormGroup> {
 
-    private static readonly PAGE_SIZE: number = 100;
+    public static readonly PAGE_SIZE: number = 100;
 
     public readonly form: FormArray;
     public loading: boolean = false;
@@ -30,8 +39,10 @@ export class TranslationsDataSource extends DataSource<FormGroup> {
     private readonly _dataStream = new BehaviorSubject<FormGroup[]>([]);
 
     private _searchRequest: TranslationsSearchRequest = null;
-    private _lastPageKey: string;
-    private _nextPage = new Subject<void>();
+
+    private _currentPage: CurrentPage;
+
+    private _nextPage = new BehaviorSubject<number>(0);
     private _destroyed$ = new Subject<void>();
 
     constructor(private _translationService: TranslationService,
@@ -43,21 +54,19 @@ export class TranslationsDataSource extends DataSource<FormGroup> {
 
         this._nextPage
             .pipe(takeUntil(this._destroyed$))
-            .subscribe(_ => {
+            .subscribe(() => {
                 if (this._searchRequest) {
                     this.loading = true;
 
                     this._translationService
-                        .searchTranslations(this._searchRequest, TranslationsDataSource.PAGE_SIZE, this._lastPageKey)
+                        .searchTranslations(this._searchRequest, TranslationsDataSource.PAGE_SIZE, _.get(this._currentPage, 'lastPageKey'))
                         .toPromise()
                         .then((page: TranslationsPage) => {
-                            if (!page.lastPageKey) {
-                                // no more result
+                            this.updateSource(page);
 
+                            if (!this._currentPage.complete) {
                                 console.log(`Total translations: ${this.totalTranslations}.`);
                             }
-
-                            this.updateSource(page);
                         })
                         .catch(error => {
                             console.error('Error while searching for translations.', error);
@@ -75,7 +84,9 @@ export class TranslationsDataSource extends DataSource<FormGroup> {
             .viewChange
             .pipe(takeUntil(this._destroyed$))
             .subscribe(range => {
-                if ((range.end >= this._dataStream.value.length) && (this._dataStream.value.length % TranslationsDataSource.PAGE_SIZE == 0)) {
+                if ((range.end >= this._dataStream.value.length) &&
+                    ((!this._currentPage || this._currentPage.complete))
+                    && (this._nextPage.value != this.nextPageIndex)) {
                     this.loadNextPage();
                 }
             });
@@ -90,7 +101,7 @@ export class TranslationsDataSource extends DataSource<FormGroup> {
 
     public setRequest(request: TranslationsSearchRequest) {
         this._searchRequest = request;
-        this._lastPageKey = null;
+        this._currentPage = null;
         this.totalTranslations = 0;
 
         this.form.clear();
@@ -118,14 +129,19 @@ export class TranslationsDataSource extends DataSource<FormGroup> {
         return row.controls['bundleFile'].value;
     }
 
+    private get nextPageIndex(): number {
+        return _.get(this._currentPage, 'index', -1) + 1;
+    }
+
     private loadNextPage() {
-        this._nextPage.next();
+        this._nextPage.next(this.nextPageIndex);
     }
 
     private updateSource(page: TranslationsPage) {
         if (!page) {
             this.form.clear();
             this._dataStream.next([]);
+            this._currentPage = null;
 
             return;
         }
@@ -151,8 +167,8 @@ export class TranslationsDataSource extends DataSource<FormGroup> {
             this.form.push(currentRow);
         }
 
-        this._lastPageKey = page.lastPageKey;
-        this.totalTranslations += this.totalTranslations + page.rows.length;
+        this._currentPage = new CurrentPage(this.nextPageIndex, page.lastPageKey, page.rows.length);
+        this.totalTranslations += page.rows.length;
         this._dataStream.next(<FormGroup[]>this.form.controls);
     }
 
