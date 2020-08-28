@@ -2,7 +2,7 @@ import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {TranslationsSearchRequest} from "../../model/search/translations-search-request.model";
 import {RowType, TranslationsDataSource} from "./translations.datasource";
 import {TranslationService} from "../../service/translation.service";
-import {AbstractControl, FormBuilder} from "@angular/forms";
+import {FormBuilder} from "@angular/forms";
 import {Subject} from "rxjs";
 import {auditTime, takeUntil} from "rxjs/operators";
 import {NotificationService} from "../../../core/notification/service/notification.service";
@@ -44,8 +44,12 @@ export class TranslationsTableComponent implements OnInit, OnDestroy {
                 takeUntil(this._destroyed$),
                 auditTime(2000)
             )
-            .subscribe((formData: AbstractControl[]) => {
-                console.log('form changed', formData);
+            .subscribe(() => {
+                for (const rowForm of this.dataSource.form.controls) {
+                    if (rowForm.dirty) {
+                        // TODO save
+                    }
+                }
             });
     }
 
