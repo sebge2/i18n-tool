@@ -24,7 +24,7 @@ export class CurrentPage {
     public readonly complete: boolean;
 
     constructor(public index: number, public lastPageKey: string, public pageSize: number) {
-        this.complete = (pageSize == 0) || (pageSize % TranslationsDataSource.PAGE_SIZE == 0);
+        this.complete = (pageSize > 0) && (pageSize % TranslationsDataSource.PAGE_SIZE == 0);
     }
 }
 
