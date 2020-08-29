@@ -3,5 +3,6 @@
         <span [ngClass]="fileTypeClass" class="app-file-icon"></span> {{name}}
     </app-row-actions-element>
     <app-row-actions-item>
+        <app-git-hub-link-button [link]="bundleLink" *ngIf="gitHubLinkAvailable"></app-git-hub-link-button>
     </app-row-actions-item>
 </app-row-actions>

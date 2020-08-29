@@ -5,6 +5,9 @@ import {map, takeUntil} from "rxjs/operators";
 import {TranslationLocale} from "../../../../../../translations/model/translation-locale.model";
 import {BehaviorSubject, combineLatest, Observable, Subject} from "rxjs";
 import * as _ from "lodash";
+import {RepositoryType} from "../../../../../../translations/model/repository/repository-type.model";
+import {GitHubLink} from "../../../../../../core/shared/component/git-hub-link-button/git-hub-link-button.component";
+import {GitHubRepository} from "../../../../../../translations/model/repository/github-repository.model";
 
 @Component({
     selector: 'app-repository-details-bundle-file-entry-node',
@@ -14,6 +17,7 @@ import * as _ from "lodash";
 export class RepositoryDetailsBundleFileEntryNodeComponent implements OnInit, OnDestroy {
 
     public locale$: Observable<TranslationLocale>;
+    public bundleLink: GitHubLink;
 
     private _node: WorkspaceBundleFileEntryTreeNode;
     private readonly _localeId$ = new BehaviorSubject<string>(null);
@@ -22,12 +26,23 @@ export class RepositoryDetailsBundleFileEntryNodeComponent implements OnInit, On
     constructor(private translationLocaleService: TranslationLocaleService) {
     }
 
-    ngOnInit(): void {
+    public ngOnInit(): void {
         this.locale$ = combineLatest([this._localeId$, this.translationLocaleService.getAvailableLocales()])
             .pipe(
                 takeUntil(this._destroyed$),
                 map(([localeId, availableLocales]) => _.find(availableLocales, availableLocale => _.isEqual(availableLocale.id, localeId)))
             );
+
+        if (this.gitHubLinkAvailable) {
+            const repository = <GitHubRepository>this.node.repository;
+
+            this.bundleLink = new GitHubLink(
+                repository.username,
+                repository.repository,
+                this.node.workspace.branch,
+                this.node.bundleFileEntry.file
+            );
+        }
     }
 
     public ngOnDestroy(): void {
@@ -36,7 +51,7 @@ export class RepositoryDetailsBundleFileEntryNodeComponent implements OnInit, On
     }
 
     @Input()
-    public get node(): WorkspaceBundleFileEntryTreeNode{
+    public get node(): WorkspaceBundleFileEntryTreeNode {
         return this._node;
     }
 
@@ -47,6 +62,10 @@ export class RepositoryDetailsBundleFileEntryNodeComponent implements OnInit, On
 
     public get name(): string {
         return this.node.bundleFileEntry.file;
+    }
+
+    public get gitHubLinkAvailable(): boolean {
+        return this.node && this.node.repository.type === RepositoryType.GITHUB;
     }
 
 }

@@ -18,7 +18,8 @@ import {RepositoryDetailsWorkspaceTreeNodeComponent} from './repository-details-
 
 export class WorkspaceTreeNode implements TreeObject {
 
-    constructor(public workspace: Workspace) {
+    constructor(public workspace: Workspace,
+                public repository: Repository) {
     }
 
     public get expandable(): boolean {
@@ -28,7 +29,9 @@ export class WorkspaceTreeNode implements TreeObject {
 
 export class WorkspaceBundleTreeNode implements TreeObject {
 
-    constructor(public bundleFile: BundleFile) {
+    constructor(public bundleFile: BundleFile,
+                public workspace: Workspace,
+                public repository: Repository) {
     }
 
     public get expandable(): boolean {
@@ -38,7 +41,9 @@ export class WorkspaceBundleTreeNode implements TreeObject {
 
 export class WorkspaceBundleFileEntryTreeNode implements TreeObject {
 
-    constructor(public bundleFileEntry: BundleFileEntry) {
+    constructor(public bundleFileEntry: BundleFileEntry,
+                public workspace: Workspace,
+                public repository: Repository) {
     }
 
     public get expandable(): boolean {
@@ -55,7 +60,7 @@ export class WorkspaceTreeObjectDataSource implements TreeObjectDataSource {
     getRootObjects(): Observable<TreeObject[]> {
         return this.workspaceService
             .getRepositoryWorkspaces(this.repository.id)
-            .pipe(map(workspaces => workspaces.map(workspace => new WorkspaceTreeNode(workspace))));
+            .pipe(map(workspaces => workspaces.map(workspace => new WorkspaceTreeNode(workspace, this.repository))));
     }
 
     getChildren(parent: TreeObject, level: number): Observable<TreeObject[]> {
@@ -64,11 +69,11 @@ export class WorkspaceTreeObjectDataSource implements TreeObjectDataSource {
 
             return this.workspaceService
                 .getWorkspaceBundleFile(workspaceNode.workspace.id)
-                .pipe(map(bundleFiles => bundleFiles.map(bundleFile => new WorkspaceBundleTreeNode(bundleFile))));
+                .pipe(map(bundleFiles => bundleFiles.map(bundleFile => new WorkspaceBundleTreeNode(bundleFile, workspaceNode.workspace, this.repository))));
         } else if (level == 3) {
             const bundleTreeNode: WorkspaceBundleTreeNode = <WorkspaceBundleTreeNode>parent;
 
-            return of(bundleTreeNode.bundleFile.files.map(fileEntry => new WorkspaceBundleFileEntryTreeNode(fileEntry)));
+            return of(bundleTreeNode.bundleFile.files.map(fileEntry => new WorkspaceBundleFileEntryTreeNode(fileEntry, bundleTreeNode.workspace, this.repository)));
         } else {
             return of([]);
         }
