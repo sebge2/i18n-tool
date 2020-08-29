@@ -71,7 +71,7 @@ export class RepositoryDetailsWorkspaceNodeComponent {
         this.deleteInProgress = true;
 
         this._workspaceService
-            .delete(this.node.workspace.id)
+            .delete(this.node.workspace)
             .toPromise()
             .catch(error => {
                 console.error('Error while deleting workspace.', error);

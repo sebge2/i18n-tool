@@ -3,21 +3,23 @@ import {EventService} from "../../core/event/service/event.service";
 import {Workspace} from "../model/workspace/workspace.model";
 import {combineLatest, Observable} from "rxjs";
 import {Events} from 'src/app/core/event/model/events.model';
-import {catchError, distinctUntilChanged, filter, map, mergeMap} from "rxjs/operators";
+import {catchError, distinctUntilChanged, filter, map, mergeMap, tap} from "rxjs/operators";
 import {NotificationService} from "../../core/notification/service/notification.service";
-import {synchronizedCollection} from "../../core/shared/utils/synchronized-observable-utils";
-import {WorkspaceService as ApiWorkspaceService} from "../../api";
+import {WorkspaceDto, WorkspaceService as ApiWorkspaceService} from "../../api";
 import * as _ from "lodash";
 import {BundleFile} from "../model/workspace/bundle-file.model";
 import {RepositoryService} from "./repository.service";
 import {EnrichedWorkspace} from "../model/workspace/enriched-workspace.model";
+import {SynchronizedCollection} from "../../core/shared/utils/synchronized-collection";
 
 @Injectable({
     providedIn: 'root'
 })
 export class WorkspaceService {
 
+    private _synchronizedWorkspaces$: SynchronizedCollection<WorkspaceDto, WorkspaceDto>;
     private _workspaces$: Observable<Workspace[]>;
+
     private _enrichedWorkspaces$: Observable<EnrichedWorkspace[]>;
 
     constructor(private apiWorkspaceService: ApiWorkspaceService,
@@ -27,18 +29,22 @@ export class WorkspaceService {
     }
 
     public getWorkspaces(): Observable<Workspace[]> {
-        if (!this._workspaces$) {
-            this._workspaces$ = synchronizedCollection(
-                this.apiWorkspaceService.findAll4(),
+        if (!this._synchronizedWorkspaces$) {
+            this._synchronizedWorkspaces$ = new SynchronizedCollection<WorkspaceDto, WorkspaceDto>(
+                () => this.apiWorkspaceService.findAll4(),
                 this.eventService.subscribeDto(Events.ADDED_WORKSPACE),
                 this.eventService.subscribeDto(Events.UPDATED_WORKSPACE),
                 this.eventService.subscribeDto(Events.DELETED_WORKSPACE),
+                this.eventService.reconnected(),
                 dto => Workspace.fromDto(dto),
                 ((first, second) => first.id === second.id)
-            )
+            );
+
+            this._workspaces$ = this._synchronizedWorkspaces$
+                .collection
                 .pipe(catchError((reason) => {
-                    console.error("Error while retrieving workspaces.", reason);
-                    this.notificationService.displayErrorMessage("Error while retrieving workspaces.");
+                    console.error('Error while retrieving workspaces.', reason);
+                    this.notificationService.displayErrorMessage('ADMIN.WORKSPACES.ERROR.GET_ALL');
                     return [];
                 }));
         }
@@ -98,18 +104,25 @@ export class WorkspaceService {
     public initialize(workspaceId: string): Observable<Workspace> {
         return this.apiWorkspaceService
             .executeWorkspaceAction(workspaceId, 'INITIALIZE')
-            .pipe(map(workspace => Workspace.fromDto(workspace)));
+            .pipe(
+                map(workspace => Workspace.fromDto(workspace)),
+                tap(workspace => this._synchronizedWorkspaces$.update(workspace))
+            );
     }
 
     public synchronize(repositoryId: string): Observable<Workspace[]> {
         return this.apiWorkspaceService
             .executeWorkspacesAction(repositoryId, 'SYNCHRONIZE')
-            .pipe(map(workspaces => workspaces.map(workspace => Workspace.fromDto(workspace))));
+            .pipe(
+                map(workspaces => workspaces.map(workspace => Workspace.fromDto(workspace))),
+                tap(workspaces => workspaces.forEach(workspace => this._synchronizedWorkspaces$.update(workspace)))
+            );
     }
 
-    public delete(workspaceId: string): Observable<any> {
+    public delete(workspace: Workspace): Observable<any> {
         return this.apiWorkspaceService
-            .deleteWorkspace(workspaceId);
+            .deleteWorkspace(workspace.id)
+            .pipe(tap(workspace => this._synchronizedWorkspaces$.delete(workspace)));
     }
 }
 

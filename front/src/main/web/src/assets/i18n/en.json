@@ -135,7 +135,10 @@
         "PLEASE": "Please fill the name of the workspace to confirm:",
         "TITLE": "Confirm Erasing"
       },
-      "REFRESH_ACTION": "Refresh"
+      "REFRESH_ACTION": "Refresh",
+      "ERROR": {
+        "GET_ALL": "Error while retrieving workspaces."
+      }
     },
     "REPOSITORIES": {
       "TAB_LABEL": "Repositories",
