@@ -93,7 +93,7 @@ export class RepositoryDetailsConfigComponent {
         this.deleteInProgress = true;
 
         this.repositoryService
-            .deleteRepository(this.repository.id)
+            .deleteRepository(this.repository)
             .toPromise()
             .catch(error => this.notificationService.displayErrorMessage('ADMIN.REPOSITORIES.ERROR.DELETE', error))
             .finally(() => this.deleteInProgress = false);

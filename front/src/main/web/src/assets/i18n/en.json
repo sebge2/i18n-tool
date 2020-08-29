@@ -16,15 +16,15 @@
         "LABEL": "Search"
       }
     },
-    "FIELDS" : {
-      "WORKSPACE_SELECTOR" : {
+    "FIELDS": {
+      "WORKSPACE_SELECTOR": {
         "ALL": "All Workspaces"
       },
-      "LOCALE_SELECTOR" : {
+      "LOCALE_SELECTOR": {
         "ALL": "All Locales"
       }
     },
-    "EVENTS" : {
+    "EVENTS": {
       "ERROR_DISCONNECTED": "Connection issue to the server. Please check your internet connection.",
       "INFO_RECONNECTED": "Connection re-established."
     }
@@ -48,8 +48,6 @@
     "ERROR": {
       "SEARCH": "Error while searching for translations."
     },
-
-
     "PLEASE_WAIT": "The workspace is initializing, please wait.",
     "START_REVIEW": {
       "START_ACTION": "Start",
@@ -207,12 +205,13 @@
           "NOT_READY": "Not Ready",
           "IN_REVIEW": "In Review"
         },
-        "ACTIONS" : {
+        "ACTIONS": {
           "SYNCHRONIZE": "Synchronize",
           "EXCLUSION": "Excluded/Included Files"
         }
       },
       "ERROR": {
+        "GET_ALL": "Error while retrieving repositories.",
         "UPDATE": "Error while updating the repository",
         "DELETE": "Error while deleting the repository.",
         "INITIALIZE": "Error while initializing the repository.",

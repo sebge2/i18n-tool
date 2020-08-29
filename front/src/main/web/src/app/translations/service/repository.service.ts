@@ -4,40 +4,49 @@ import {Observable} from "rxjs";
 import {Repository} from "../model/repository/repository.model";
 import {
     BodyDto,
-    GitHubRepositoryCreationRequestDto, GitHubRepositoryDto,
-    GitRepositoryCreationRequestDto, GitRepositoryDto,
-    RepositoryCreationRequestDto, RepositoryDto, RepositoryPatchRequestDto,
+    GitHubRepositoryCreationRequestDto,
+    GitHubRepositoryDto,
+    GitRepositoryCreationRequestDto,
+    GitRepositoryDto,
+    RepositoryCreationRequestDto,
+    RepositoryDto,
+    RepositoryPatchRequestDto,
     RepositoryService as ApiRepositoryService
 } from "../../api";
 import {NotificationService} from "../../core/notification/service/notification.service";
-import {synchronizedCollection} from "../../core/shared/utils/synchronized-observable-utils";
 import {Events} from "../../core/event/model/events.model";
-import {catchError, distinctUntilChanged, filter, map} from "rxjs/operators";
+import {catchError, distinctUntilChanged, filter, map, tap} from "rxjs/operators";
 import {GitRepository} from "../model/repository/git-repository.model";
 import {GitHubRepository} from "../model/repository/github-repository.model";
 import * as _ from "lodash";
+import {SynchronizedCollection} from "../../core/shared/utils/synchronized-collection";
 
 @Injectable({
     providedIn: 'root'
 })
 export class RepositoryService {
 
+    private readonly _synchronizedRepositories: SynchronizedCollection<RepositoryDto, Repository>;
     private readonly _repositories$: Observable<Repository[]>;
 
     constructor(private apiRepositoryService: ApiRepositoryService,
                 private eventService: EventService,
                 private notificationService: NotificationService) {
-        this._repositories$ = synchronizedCollection(
-            apiRepositoryService.findAll(),
+        this._synchronizedRepositories = new SynchronizedCollection<RepositoryDto, Repository>(
+            () => apiRepositoryService.findAll(),
             this.eventService.subscribeDto(Events.ADDED_REPOSITORY),
             this.eventService.subscribeDto(Events.UPDATED_REPOSITORY),
             this.eventService.subscribeDto(Events.DELETED_REPOSITORY),
+            this.eventService.reconnected(),
             dto => RepositoryService.fromDto(dto),
             ((first, second) => first.id === second.id)
-        )
+        );
+
+        this._repositories$ = this._synchronizedRepositories
+            .collection
             .pipe(catchError((reason) => {
-                console.error("Error while retrieving repositories.", reason);
-                this.notificationService.displayErrorMessage("Error while retrieving repositories.");
+                console.error('Error while retrieving repositories.', reason);
+                this.notificationService.displayErrorMessage('ADMIN.REPOSITORIES.ERROR.GET_ALL');
                 return [];
             }));
     }
@@ -58,24 +67,34 @@ export class RepositoryService {
     public createRepository(dto: RepositoryCreationRequestDto): Observable<Repository> {
         return this.apiRepositoryService
             .create(<(GitHubRepositoryCreationRequestDto | GitRepositoryCreationRequestDto)>dto)
-            .pipe(map(dto => RepositoryService.fromDto(dto)));
+            .pipe(
+                map(dto => RepositoryService.fromDto(dto)),
+                tap(repository => this._synchronizedRepositories.add(repository))
+            );
     }
 
     public initializeRepository(id: string): Observable<Repository> {
         return this.apiRepositoryService
             .executeRepositoryAction(id, 'INITIALIZE')
-            .pipe(map(dto => RepositoryService.fromDto(dto)));
+            .pipe(
+                map(dto => RepositoryService.fromDto(dto)),
+                tap(repository => this._synchronizedRepositories.update(repository))
+            );
     }
 
     public updateRepository(id: string, patch: RepositoryPatchRequestDto): Observable<Repository> {
         return this.apiRepositoryService
-            .update(<BodyDto> patch, id)
-            .pipe(map(dto => RepositoryService.fromDto(dto)));
+            .update(<BodyDto>patch, id)
+            .pipe(
+                map(dto => RepositoryService.fromDto(dto)),
+                tap(repository => this._synchronizedRepositories.update(repository))
+            );
     }
 
-    public deleteRepository(id: string): Observable<any> {
+    public deleteRepository(repository: Repository): Observable<any> {
         return this.apiRepositoryService
-            ._delete(id);
+            ._delete(repository.id)
+            .pipe(tap(repository => this._synchronizedRepositories.delete(repository)));
     }
 
     private static fromDto(dto: RepositoryDto): Repository {
