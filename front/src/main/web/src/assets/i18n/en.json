@@ -73,7 +73,10 @@
       "LABEL": "My Spoken Languages",
       "AUTO_DETECTED": "Auto-detected languages"
     },
-    "SAVE": "Save"
+    "SAVE": "Save",
+    "ERROR": {
+      "GET": "Error while retrieving user preferences."
+    }
   },
   "MENU": {
     "ACCOUNT_LABEL": "Account",
