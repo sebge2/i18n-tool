@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {User, UserType} from "../../../core/auth/model/user.model";
+import {User} from "../../../core/auth/model/user.model";
 import {BehaviorSubject, combineLatest, Subject} from "rxjs";
 import {takeUntil} from "rxjs/operators";
 import {UserService} from "../../../core/auth/service/user.service";
@@ -36,10 +36,10 @@ export class UsersComponent implements OnInit, OnDestroy {
     }
 
     public onAdd() {
-        const locales = this._addedUsers.getValue();
-        locales.push(User.createInternalUser());
+        const users = this._addedUsers.getValue();
+        users.push(User.createInternalUser());
 
-        this._addedUsers.next(locales);
+        this._addedUsers.next(users);
     }
 
     public onSave(user: User) {
@@ -51,12 +51,12 @@ export class UsersComponent implements OnInit, OnDestroy {
     }
 
     private removeFromAddedUsers(user: User) {
-        const locales = this._addedUsers.getValue();
-        const indexOf = locales.indexOf(user);
+        const users = this._addedUsers.getValue();
+        const indexOf = users.indexOf(user);
 
         if (indexOf >= 0) {
-            locales.splice(indexOf, 1);
-            this._addedUsers.next(locales);
+            users.splice(indexOf, 1);
+            this._addedUsers.next(users);
         }
     }
 }
