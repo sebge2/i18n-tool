@@ -122,7 +122,8 @@
       "ERROR": {
         "SAVE": "Error while saving user.",
         "UPDATE": "Error while updating user.",
-        "DELETE": "Error while deleting user."
+        "DELETE": "Error while deleting user.",
+        "GET_ALL": "Error while retrieving users."
       },
       "USER_TYPE": {
         "INTERNAL": "Internal"

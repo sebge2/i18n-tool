@@ -146,7 +146,7 @@ export class UserViewCardComponent {
         if (this.user.id) {
             this.deleteInProgress = true;
             this.userService
-                .deleteUser(this.user.id)
+                .deleteUser(this.user)
                 .toPromise()
                 .catch(error => this.notificationService.displayErrorMessage('ADMIN.USERS.ERROR.DELETE', error))
                 .finally(() => this.deleteInProgress = false);
