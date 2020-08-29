@@ -4,15 +4,12 @@ import {Component, Input, OnInit} from '@angular/core';
     selector: 'app-more-actions-button',
     templateUrl: './more-actions-button.component.html',
 })
-export class MoreActionsButtonComponent implements OnInit {
+export class MoreActionsButtonComponent {
 
     @Input() public disabled: boolean = false;
-    @Input() public inProgress: boolean = false;
+    @Input() public actionInProgress: boolean = false;
 
     constructor() {
-    }
-
-    ngOnInit(): void {
     }
 
 }

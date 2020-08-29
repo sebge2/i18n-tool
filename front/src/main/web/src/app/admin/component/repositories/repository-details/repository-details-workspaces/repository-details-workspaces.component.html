@@ -1,7 +1,7 @@
 <app-card [maxSizePx]="900" [title]="'ADMIN.REPOSITORIES.DETAILS_CARD.CARD_TITLE' | translate"
           [headerMatIcon]="'sources'">
     <app-card-header-actions>
-        <app-more-actions-button [inProgress]="moreActionInProgress" *ngIf="repository.status === RepositoryStatus.INITIALIZED">
+        <app-more-actions-button [actionInProgress]="moreActionInProgress" *ngIf="repository.status === RepositoryStatus.INITIALIZED">
             <app-more-action-item-button>
                 <button mat-menu-item (click)="onSynchronize()">
                     <mat-icon>sync</mat-icon>
