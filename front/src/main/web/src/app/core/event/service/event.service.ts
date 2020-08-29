@@ -1,8 +1,9 @@
 import {Injectable, NgZone} from '@angular/core';
-import {BehaviorSubject, EMPTY, Observable} from "rxjs";
+import {Observable} from "rxjs";
 import {NotificationService} from "../../notification/service/notification.service";
 import {EventObjectDto} from "../../../api";
-import {catchError, filter, map, mergeMap, shareReplay, skip} from "rxjs/operators";
+import {filter, map} from "rxjs/operators";
+import {ObservableEventSource} from "./observable-event-source";
 import * as _ from "lodash";
 
 @Injectable({
@@ -10,51 +11,15 @@ import * as _ from "lodash";
 })
 export class EventService {
 
-    private readonly _observable$ = new BehaviorSubject<EventObjectDto>(null);
-    private readonly _observableObs = this._observable$.pipe(skip(1), shareReplay(1));
-    private readonly _enabled$ = new BehaviorSubject<boolean>(false);
+    private _observableEventSource$: ObservableEventSource;
 
-    private _eventSource: EventSource;
-
-    constructor(private _zone: NgZone,
-                private notificationService: NotificationService) {
-        this._enabled$
-            .pipe(mergeMap(enabled => {
-                if (this._eventSource) {
-                    this._eventSource.close();
-                }
-
-                if (!enabled) {
-                    return EMPTY;
-                }
-
-                this._eventSource = new EventSource("./api/event", {withCredentials: true});
-
-                return new Observable<EventObjectDto>(observer => {
-                    this._eventSource.addEventListener('message', function (e) {
-                        _zone.run(() => {
-                            observer.next(<EventObjectDto>JSON.parse(e.data));
-                        });
-                    }, false);
-
-                    this._eventSource.addEventListener('error', function (e) {
-                        _zone.run(() => observer.error(e));
-                    }, false);
-                });
-            }))
-            .pipe(
-                catchError((e) => {
-                    // TODO display once
-                    this.notificationService.displayErrorMessage('Connection issue to the server. Please check your internet connection.');
-
-                    return EMPTY;
-                }),
-            )
-            .subscribe(event => this._observable$.next(event))
+    constructor(_zone: NgZone,
+                notificationService: NotificationService) {
+        this._observableEventSource$ = new ObservableEventSource(_zone, notificationService, './api/event', {withCredentials: true});
     }
 
     public subscribeDto<D>(eventType: string): Observable<D> {
-        return this._observableObs
+        return this._observableEventSource$.source()
             .pipe(
                 filter((event: EventObjectDto) => !_.isNil(event)),
                 filter((event: EventObjectDto) => event.type === eventType),
@@ -64,14 +29,18 @@ export class EventService {
 
     public subscribe<T>(eventType: string, type: { new(raw: any): T; }): Observable<T> {
         return this.subscribeDto(eventType)
-            .pipe(map(event => new type(<T>event)));
+            .pipe(map(event => event ? new type(<T>event) : null));
     }
 
     public disableEvents() {
-        this._enabled$.next(false);
+        this._observableEventSource$.disconnect();
     }
 
     public enabledEvents() {
-        this._enabled$.next(true);
+        this._observableEventSource$.connect();
+    }
+
+    public reconnected(): Observable<void> {
+        return this._observableEventSource$.reconnected();
     }
 }

@@ -1,4 +1,4 @@
-import {BehaviorSubject, EMPTY, Observable} from "rxjs";
+import {BehaviorSubject, EMPTY, Observable, Subject} from "rxjs";
 import {EventObjectDto} from "../../../api";
 import {NgZone} from "@angular/core";
 import {filter, mergeMap, shareReplay, skip} from "rxjs/operators";
@@ -31,6 +31,7 @@ export class ObservableEventSource {
 
     private readonly _observable$ = new BehaviorSubject<EventObjectDto>(null);
     private readonly _observableObs = this._observable$.pipe(skip(1), shareReplay(1));
+    private readonly _reconnected$ = new Subject<void>();
 
     private _eventSource: EventSource;
     private readonly _request$ = new BehaviorSubject<RequestType>(RequestType.DISCONNECT);
@@ -104,15 +105,17 @@ export class ObservableEventSource {
                             },
                             ObservableEventSource.randomIntFromInterval(MIN_DELAY_BETWEEN_RECONNECT_IN_MS, MAX_DELAY_BETWEEN_RECONNECT_IN_MS)
                         );
+                    } else if (event === TechnicalEvent.CONNECTION) {
+                        if (this._reconnectAttempt > 0) {
+                            console.log(`Connection re-established after ${this._reconnectAttempt} attempt(s).`);
+                            this._reconnected$.next();
+                        }
 
-                        this._observable$.next(null);
-                    } else if(event === TechnicalEvent.CONNECTION) {
-                        if(this._reconnectAttempt >= ATTEMPTS_BEFORE_NOTIFICATION){
+                        if (this._reconnectAttempt >= ATTEMPTS_BEFORE_NOTIFICATION) {
                             this.notificationService.displayInfoMessage('SHARED.EVENTS.INFO_RECONNECTED');
                         }
 
                         this._reconnectAttempt = 0;
-                        this._observable$.next(null);
                     } else {
                         this._reconnectAttempt = 0;
                         this._observable$.next(event);
@@ -135,6 +138,10 @@ export class ObservableEventSource {
 
     public disconnect() {
         this._request$.next(RequestType.DISCONNECT);
+    }
+
+    public reconnected(): Observable<void> {
+        return this._reconnected$;
     }
 
     private static randomIntFromInterval(min: number, max: number) {
