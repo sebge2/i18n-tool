@@ -23,6 +23,10 @@
       "LOCALE_SELECTOR" : {
         "ALL": "All Locales"
       }
+    },
+    "EVENTS" : {
+      "ERROR_DISCONNECTED": "Connection issue to the server. Please check your internet connection.",
+      "INFO_RECONNECTED": "Connection re-established."
     }
   },
   "TRANSLATIONS": {
