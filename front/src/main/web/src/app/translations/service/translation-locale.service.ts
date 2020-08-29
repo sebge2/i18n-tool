@@ -1,22 +1,28 @@
 import {Injectable} from '@angular/core';
 import {TranslationLocale} from "../model/translation-locale.model";
-import {TranslationLocaleCreationDto, TranslationLocaleService as ApiTranslationLocaleService} from "../../api";
+import {
+    TranslationLocaleCreationDto,
+    TranslationLocaleDto,
+    TranslationLocaleService as ApiTranslationLocaleService
+} from "../../api";
 import {NotificationService} from "../../core/notification/service/notification.service";
 import {combineLatest, Observable} from "rxjs";
-import {synchronizedCollection} from "../../core/shared/utils/synchronized-observable-utils";
 import {Events} from "../../core/event/model/events.model";
-import {catchError, distinctUntilChanged, map} from "rxjs/operators";
+import {catchError, distinctUntilChanged, map, tap} from "rxjs/operators";
 import {EventService} from "../../core/event/service/event.service";
 import {Locale} from "../../core/translation/model/locale.model";
 import * as _ from "lodash";
 import {UserPreferencesService} from "../../account/service/user-preferences.service";
+import {SynchronizedCollection} from "../../core/shared/utils/synchronized-collection";
 
 @Injectable({
     providedIn: 'root'
 })
 export class TranslationLocaleService {
 
-    private readonly _availableLocales$: Observable<TranslationLocale[]>;
+    private readonly _synchronizedLocales$: SynchronizedCollection<TranslationLocaleDto, TranslationLocale>;
+    private readonly _locales$: Observable<TranslationLocale[]>;
+
     private readonly _preferredLocales$: Observable<TranslationLocale[]>;
     private readonly _defaultLocales$: Observable<TranslationLocale[]>;
     private readonly _autoDetectedLocales$: Observable<TranslationLocale[]>;
@@ -26,17 +32,21 @@ export class TranslationLocaleService {
                 private userPreferencesService: UserPreferencesService,
                 private eventService: EventService,
                 private notificationService: NotificationService) {
-        this._availableLocales$ = synchronizedCollection(
-            this.apiService.findAll1(),
+        this._synchronizedLocales$ = new SynchronizedCollection<TranslationLocaleDto, TranslationLocale>(
+            () => this.apiService.findAll1(),
             this.eventService.subscribeDto(Events.ADDED_TRANSLATION_LOCALE),
             this.eventService.subscribeDto(Events.UPDATED_TRANSLATION_LOCALE),
             this.eventService.subscribeDto(Events.DELETED_TRANSLATION_LOCALE),
+            this.eventService.reconnected(),
             dto => TranslationLocale.fromDto(dto),
             (first, second) => first.id === second.id
-        )
+        );
+
+        this._locales$ = this._synchronizedLocales$
+            .collection
             .pipe(catchError((reason) => {
-                console.error("Error while retrieving locales.", reason);
-                this.notificationService.displayErrorMessage("Error while retrieving available locales.");
+                console.error('Error while retrieving locales.', reason);
+                this.notificationService.displayErrorMessage('ADMIN.LOCALES.ERROR.GET_ALL');
                 return [];
             }));
 
@@ -75,7 +85,7 @@ export class TranslationLocaleService {
     }
 
     public getAvailableLocales(): Observable<TranslationLocale[]> {
-        return this._availableLocales$;
+        return this._locales$;
     }
 
     public getDefaultLocales(): Observable<TranslationLocale[]> {
@@ -89,19 +99,28 @@ export class TranslationLocaleService {
     public createLocale(creationTranslationLocale: TranslationLocaleCreationDto): Observable<TranslationLocale> {
         return this.apiService
             .create1(creationTranslationLocale)
-            .pipe(map(dto => TranslationLocale.fromDto(dto)));
+            .pipe(
+                map(dto => TranslationLocale.fromDto(dto)),
+                tap(translationLocale => this._synchronizedLocales$.add(translationLocale))
+            );
     }
 
     public updateLocale(translationLocale: TranslationLocale): Observable<TranslationLocale> {
         return this.apiService
             .update1(translationLocale.toDto(), translationLocale.id)
-            .pipe(map(dto => TranslationLocale.fromDto(dto)));
+            .pipe(
+                map(dto => TranslationLocale.fromDto(dto)),
+                tap(translationLocale => this._synchronizedLocales$.update(translationLocale))
+            );
     }
 
-    public deleteLocale(translationLocale: string): Observable<TranslationLocale> {
+    public deleteLocale(translationLocale: TranslationLocale): Observable<TranslationLocale> {
         return this.apiService
-            .delete1(translationLocale)
-            .pipe(map(dto => TranslationLocale.fromDto(dto)));
+            .delete1(translationLocale.id)
+            .pipe(
+                map(dto => TranslationLocale.fromDto(dto)),
+                tap(translationLocale => this._synchronizedLocales$.delete(translationLocale))
+            );
     }
 
     private static getLocalesFromBrowserPreferences(): Locale[] {

@@ -98,7 +98,8 @@
       "ERROR": {
         "SAVE": "Error while saving language.",
         "UPDATE": "Error while updating language.",
-        "DELETE": "Error while deleting language."
+        "DELETE": "Error while deleting language.",
+        "GET_ALL": "Error while retrieving translation locales."
       }
     },
     "USERS": {

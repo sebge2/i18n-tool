@@ -127,7 +127,7 @@ export class LocaleViewCardComponent implements OnInit {
         if (this.locale.id) {
             this.deleteInProgress = true;
             this.translationLocaleService
-                .deleteLocale(this.locale.id)
+                .deleteLocale(this.locale)
                 .toPromise()
                 .then(translationLocale => this.locale = translationLocale)
                 .then(translationLocale => this.save.emit(translationLocale))
