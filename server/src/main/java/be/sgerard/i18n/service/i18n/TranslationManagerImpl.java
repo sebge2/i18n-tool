@@ -2,6 +2,7 @@ package be.sgerard.i18n.service.i18n;
 
 import be.sgerard.i18n.controller.AuthenticationController;
 import be.sgerard.i18n.model.i18n.BundleType;
+import be.sgerard.i18n.model.i18n.dto.TranslationUpdateDto;
 import be.sgerard.i18n.model.i18n.file.BundleWalkingContext;
 import be.sgerard.i18n.model.i18n.file.ScannedBundleFile;
 import be.sgerard.i18n.model.i18n.file.ScannedBundleFileEntry;
@@ -13,6 +14,7 @@ import be.sgerard.i18n.service.ResourceNotFoundException;
 import be.sgerard.i18n.service.ValidationException;
 import be.sgerard.i18n.service.i18n.file.BundleHandler;
 import be.sgerard.i18n.service.i18n.file.BundleWalker;
+import be.sgerard.i18n.service.i18n.file.TranslationFileUtils;
 import be.sgerard.i18n.service.i18n.listener.TranslationsListener;
 import be.sgerard.i18n.service.repository.RepositoryManager;
 import org.apache.commons.lang3.tuple.Pair;
@@ -27,15 +29,11 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import static be.sgerard.i18n.repository.i18n.BundleKeyEntityRepository.*;
-import static be.sgerard.i18n.service.i18n.file.TranslationFileUtils.mapToNullIfEmpty;
 import static java.util.stream.Collectors.toMap;
 
 /**
@@ -100,25 +98,53 @@ public class TranslationManagerImpl implements TranslationManager {
 
     @Override
     @Transactional
-    public Mono<BundleKeyEntity> updateTranslation(String bundleKeyId, String localeId, String value) throws ResourceNotFoundException {
-        return Mono
-                .zip(
-                        authenticationManager.getCurrentUser().map(AuthenticatedUserDto::getUserId),
-                        findBundleKeyOrDie(bundleKeyId)
-                )
-                .map(pair -> Pair.of((String) pair.get(0), (BundleKeyEntity) pair.get(1)))
-                .flatMap(pair ->
-                        listener
-                                .beforeUpdate(pair.getValue(), localeId, value)
-                                .doOnNext(ValidationException::throwIfFailed)
-                                .thenReturn(pair)
-                )
-                .map(pair -> updateTranslation(pair.getValue(), localeId, mapToNullIfEmpty(value), pair.getLeft()))
-                .flatMap(translationRepository::save)
-                .flatMap(bundleKey ->
-                        listener.afterUpdate(bundleKey, bundleKey.getTranslationOrDie(localeId))
-                                .thenReturn(bundleKey)
+    public Mono<BundleKeyTranslationEntity> updateTranslation(TranslationUpdateDto translationUpdate) throws ResourceNotFoundException {
+        return listener
+                .beforeUpdate(translationUpdate)
+                .doOnNext(ValidationException::throwIfFailed)
+                .then(
+                        Mono
+                                .zip(
+                                        authenticationManager.getCurrentUser().map(AuthenticatedUserDto::getUserId),
+                                        findBundleKeyOrDie(translationUpdate.getBundleKeyId())
+                                )
+                                .flatMap(pair ->
+                                        listener
+                                                .beforeUpdate(translationUpdate)
+                                                .doOnNext(ValidationException::throwIfFailed)
+                                                .thenReturn(pair)
+                                )
+                                .map(pair -> updateTranslation(pair.getT2(), translationUpdate, pair.getT1()))
+                                .flatMap(translationRepository::save)
+                                .flatMap(bundleKey ->
+                                        listener.afterUpdate(bundleKey, translationUpdate)
+                                                .thenReturn(bundleKey.getTranslationOrCreate(translationUpdate.getLocaleId()))
+                                )
                 );
+    }
+
+    @Override
+    @Transactional
+    public Flux<BundleKeyTranslationEntity> updateTranslations(Collection<TranslationUpdateDto> translations) throws ResourceNotFoundException {
+        return Flux.empty();
+//        return Mono
+//                .zip(
+//                        authenticationManager.getCurrentUser().map(AuthenticatedUserDto::getUserId),
+//                        findBundleKeyOrDie(bundleKeyId)
+//                )
+//                .map(pair -> Pair.of((String) pair.get(0), (BundleKeyEntity) pair.get(1)))
+//                .flatMap(pair ->
+//                        listener
+//                                .beforeUpdate(pair.getValue(), localeId, value)
+//                                .doOnNext(ValidationException::throwIfFailed)
+//                                .thenReturn(pair)
+//                )
+//                .map(pair -> updateTranslation(pair.getValue(), localeId, mapToNullIfEmpty(value), pair.getLeft()))
+//                .flatMap(translationRepository::save)
+//                .flatMap(bundleKey ->
+//                        listener.afterUpdate(bundleKey, bundleKey.getTranslationOrDie(localeId))
+//                                .thenReturn(bundleKey.getTranslationOrCreate(localeId))
+//                );
     }
 
     /**
@@ -236,7 +262,9 @@ public class TranslationManagerImpl implements TranslationManager {
     /**
      * Updates the translation of the specified {@link BundleKeyEntity bundle key} using the new updated value.
      */
-    private BundleKeyEntity updateTranslation(BundleKeyEntity bundleKey, String localeId, String newUpdatedValue, String currentUser) {
+    private BundleKeyEntity updateTranslation(BundleKeyEntity bundleKey, TranslationUpdateDto update, String currentUser) {
+        final String localeId = update.getLocaleId();
+        final String newUpdatedValue = update.getTranslation().map(TranslationFileUtils::mapToNullIfEmpty).orElse(null);
         final BundleKeyTranslationEntity translation = bundleKey.getTranslationOrCreate(localeId);
 
         final String currentUpdatedValue =

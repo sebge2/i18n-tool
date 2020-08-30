@@ -1,6 +1,6 @@
 package be.sgerard.i18n.service.i18n.listener;
 
-import be.sgerard.i18n.model.i18n.persistence.BundleKeyEntity;
+import be.sgerard.i18n.model.i18n.dto.TranslationUpdateDto;
 import be.sgerard.i18n.model.validation.ValidationResult;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
@@ -12,10 +12,10 @@ import reactor.core.publisher.Mono;
 public class TranslationsWorkspaceValidator implements TranslationsListener {
 
     @Override
-    public Mono<ValidationResult> beforeUpdate(BundleKeyTranslationEntity translation, String updatedValue) {
-        final WorkspaceEntity workspace = translation.getBundleKey().getBundleFile().getWorkspace();
-
-        if (workspace.getStatus() != WorkspaceStatus.INITIALIZED) {
+    public Mono<ValidationResult> beforeUpdate(TranslationUpdateDto translationUpdate) {
+//        final WorkspaceEntity workspace = translation.getBundleKey().getBundleFile().getWorkspace();
+//
+//        if (workspace.getStatus() != WorkspaceStatus.INITIALIZED) {
 //            throw BadRequestException.actionNotAllowedInStateException(WorkspaceStatus.INITIALIZED.name(), workspace.getStatus().name());
         }
 // TODO

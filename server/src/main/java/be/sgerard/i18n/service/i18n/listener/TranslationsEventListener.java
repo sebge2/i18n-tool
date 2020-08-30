@@ -1,9 +1,9 @@
 package be.sgerard.i18n.service.i18n.listener;
 
 import be.sgerard.i18n.model.i18n.dto.TranslationDto;
+import be.sgerard.i18n.model.i18n.dto.TranslationUpdateDto;
 import be.sgerard.i18n.model.i18n.dto.TranslationsUpdateEventDto;
 import be.sgerard.i18n.model.i18n.persistence.BundleKeyEntity;
-import be.sgerard.i18n.model.i18n.persistence.BundleKeyTranslationEntity;
 import be.sgerard.i18n.service.event.EventService;
 import be.sgerard.i18n.service.security.auth.AuthenticationUserManager;
 import be.sgerard.i18n.service.user.UserManager;
@@ -33,7 +33,7 @@ public class TranslationsEventListener implements TranslationsListener {
     }
 
     @Override
-    public Mono<Void> afterUpdate(BundleKeyEntity bundleKey, BundleKeyTranslationEntity translation) {
+    public Mono<Void> afterUpdate(BundleKeyEntity bundleKey, TranslationUpdateDto update) {
         return authenticationManager
                 .getCurrentUserOrDie()
                 .flatMap(authenticatedUser -> userManager.findByIdOrDie(authenticatedUser.getUserId()))
@@ -44,7 +44,7 @@ public class TranslationsEventListener implements TranslationsListener {
                                         .userId(currentUser.getId())
                                         .userDisplayName(currentUser.getDisplayName())
                                         .translation(
-                                                TranslationDto.builder(translation).build()
+                                                TranslationDto.builder(bundleKey.getTranslationOrDie(update.getLocaleId())).build()
                                         )
                                         .build()
                         )

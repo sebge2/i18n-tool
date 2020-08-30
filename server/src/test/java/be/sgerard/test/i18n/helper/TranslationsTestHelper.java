@@ -72,7 +72,7 @@ public class TranslationsTestHelper {
             final String localeId = localeTestHelper.findRegisteredLocale(locale).getId();
 
             webClient
-                    .patch()
+                    .put()
                     .uri("/api/translation/bundle-key/{bundleKeyId}/locale/{localeId}", bundleKeyId, localeId)
                     .contentType(MediaType.TEXT_PLAIN)
                     .bodyValue(updatedValue)

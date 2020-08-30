@@ -304,7 +304,7 @@ public class TranslationControllerTest extends AbstractControllerTest {
         final String localeId = locale.findRegisteredLocale(Locale.ENGLISH).getId();
 
         webClient
-                .patch()
+                .put()
                 .uri("/api/translation/bundle-key/{bundleKeyId}/locale/{localeId}", bundleKeyId, localeId)
                 .contentType(MediaType.TEXT_PLAIN)
                 .bodyValue("my value updated")
@@ -322,7 +322,7 @@ public class TranslationControllerTest extends AbstractControllerTest {
     @WithJaneDoeAdminUser
     public void writeTranslationUnknownId() {
         webClient
-                .patch()
+                .put()
                 .uri("/api/translation/bundle-key/{bundleKeyId}/locale/{localeId}", "unknown-id", "another-unknown-id")
                 .contentType(MediaType.TEXT_PLAIN)
                 .bodyValue("my value updated")
