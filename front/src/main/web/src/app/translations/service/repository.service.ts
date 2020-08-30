@@ -75,7 +75,7 @@ export class RepositoryService {
 
     public initializeRepository(id: string): Observable<Repository> {
         return this.apiRepositoryService
-            .executeRepositoryAction(id, 'INITIALIZE')
+            .initialize(id, 'INITIALIZE')
             .pipe(
                 map(dto => RepositoryService.fromDto(dto)),
                 tap(repository => this._synchronizedRepositories.update(repository))

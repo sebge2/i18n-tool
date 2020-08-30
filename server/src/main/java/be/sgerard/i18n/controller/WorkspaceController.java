@@ -93,8 +93,9 @@ public class WorkspaceController {
      */
     @PostMapping(path = "/repository/{repositoryId}/workspace/do", params = "action=SYNCHRONIZE")
     @Operation(
+            operationId = "synchronize",
             summary = "Executes an action on workspaces of a particular repository.",
-            parameters = @Parameter(name = "action", in = ParameterIn.QUERY, schema = @Schema(allowableValues = "SYNCHRONIZE"))
+            parameters = @Parameter(name = "action", in = ParameterIn.QUERY, schema = @Schema(allowableValues = {"SYNCHRONIZE"}))
     )
     @PreAuthorize("hasRole('ADMIN')")
     public Flux<WorkspaceDto> synchronizeRepository(@PathVariable String repositoryId) {
@@ -103,27 +104,29 @@ public class WorkspaceController {
     }
 
     /**
-     * Publishes all the modifications made on the specified workspace. Based on the type of repository, a review may start afterwards.
-     * If it's not the case, a new fresh workspace will be created and returned.
+     * Initializes the {@link WorkspaceDto workspace} having the specified id and returns it.
      */
     @PostMapping(path = "/repository/workspace/{id}/do", params = "action=INITIALIZE")
     @Operation(
-            summary = "Executes an action on the specified workspace.",
+            operationId = "initialize",
+            summary = "Initializes the specified workspace.",
             parameters = @Parameter(name = "action", in = ParameterIn.QUERY, schema = @Schema(allowableValues = {"INITIALIZE", "PUBLISH"}))
     )
     @PreAuthorize("hasRole('ADMIN')")
-    public Mono<WorkspaceDto> executeWorkspaceAction(@PathVariable String id) {
+    public Mono<WorkspaceDto> initialize(@PathVariable String id) {
         return workspaceManager.initialize(id)
                 .map(workspace -> WorkspaceDto.builder(workspace).build());
     }
 
     /**
-     * Publishes all the modifications made on the specified workspace. Based on the type of repository, a review may start afterwards.
+     * Publishes the modifications made on the specified workspace. Based on the type of repository, a review may start afterwards.
      * If it's not the case, a new fresh workspace will be created and returned.
      */
     @PostMapping(path = "/repository/workspace/{id}/do", params = "action=PUBLISH")
     @Operation(
-            summary = "Executes an action on the specified workspace."
+            operationId = "publish",
+            summary = "Publishes all modifications made on the specified workspace.",
+            parameters = @Parameter(name = "action", in = ParameterIn.QUERY, schema = @Schema(allowableValues = {"INITIALIZE", "PUBLISH"}))
     )
     @PreAuthorize("hasRole('ADMIN')")
     public Mono<WorkspaceDto> publish(@PathVariable String id,

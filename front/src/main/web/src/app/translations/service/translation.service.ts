@@ -30,7 +30,7 @@ export class TranslationService {
     }
 
     public updateTranslation(bundleKeyId: string, localeId: string, translation: string): Observable<any> {
-        return this._translationService.updateWorkspaceTranslations(bundleKeyId, localeId, translation);
+        return this._translationService.updateTranslation(bundleKeyId, localeId, translation);
     }
 
 }
