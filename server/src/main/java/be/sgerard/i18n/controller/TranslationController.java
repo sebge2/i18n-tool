@@ -1,6 +1,7 @@
 package be.sgerard.i18n.controller;
 
 import be.sgerard.i18n.model.i18n.dto.TranslationDto;
+import be.sgerard.i18n.model.i18n.dto.TranslationUpdateDto;
 import be.sgerard.i18n.model.i18n.dto.TranslationsPageDto;
 import be.sgerard.i18n.model.i18n.dto.TranslationsSearchRequestDto;
 import be.sgerard.i18n.service.i18n.TranslationManager;
@@ -12,7 +13,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.util.Collection;
 
 /**
  * {@link RestController Controller} handling translations.
@@ -45,16 +49,32 @@ public class TranslationController {
     }
 
     /**
-     * Updates translations. The maps associated {@link TranslationDto#getId() translation ids} to their translations.
+     * Updates a particular {@link TranslationDto translation}.
      */
-    @PatchMapping(path = "/translation/bundle-key/{bundleKeyId}/locale/{localeId}", consumes = MediaType.TEXT_PLAIN_VALUE)
-    @Operation(summary = "Updates translations of the workspace having the specified id.")
-    public Mono<TranslationDto> updateWorkspaceTranslations(@RequestBody(required = false) String translation,
-                                                            @PathVariable String bundleKeyId,
-                                                            @PathVariable String localeId) {
+    @PutMapping(path = "/translation/bundle-key/{bundleKeyId}/locale/{localeId}", consumes = MediaType.TEXT_PLAIN_VALUE)
+    @Operation(summary = "Updates a particular translation.")
+    public Mono<TranslationDto> updateTranslation(@RequestBody(required = false) String translation,
+                                                  @PathVariable String bundleKeyId,
+                                                  @PathVariable String localeId) {
         return translationManager
-                .updateTranslation(bundleKeyId, localeId, translation)
-                .map(bundleKey -> bundleKey.getTranslationOrDie(localeId))
-                .map(key -> TranslationDto.builder(key).build());
+                .updateTranslation(
+                        TranslationUpdateDto.builder()
+                                .bundleKeyId(bundleKeyId)
+                                .localeId(localeId)
+                                .translation(translation)
+                                .build()
+                )
+                .map(bundleKeyTranslation -> TranslationDto.builder(bundleKeyTranslation).build());
+    }
+
+    /**
+     * Updates the specified {@link TranslationDto translations} and returns them.
+     */
+    @PutMapping(path = "/translation")
+    @Operation(summary = "Updates translations.")
+    public Flux<TranslationDto> updateTranslations(@RequestBody(required = false) Collection<TranslationUpdateDto> translations) {
+        return translationManager
+                .updateTranslations(translations)
+                .map(bundleKeyTranslation -> TranslationDto.builder(bundleKeyTranslation).build());
     }
 }

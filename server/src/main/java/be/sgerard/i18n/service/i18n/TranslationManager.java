@@ -1,11 +1,15 @@
 package be.sgerard.i18n.service.i18n;
 
+import be.sgerard.i18n.model.i18n.dto.TranslationUpdateDto;
 import be.sgerard.i18n.model.i18n.persistence.BundleFileEntity;
 import be.sgerard.i18n.model.i18n.persistence.BundleKeyEntity;
+import be.sgerard.i18n.model.i18n.persistence.BundleKeyTranslationEntity;
 import be.sgerard.i18n.model.workspace.persistence.WorkspaceEntity;
 import be.sgerard.i18n.service.ResourceNotFoundException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.util.Collection;
 
 /**
  * Manager of translations found in bundle files.
@@ -26,7 +30,12 @@ public interface TranslationManager {
     Mono<Void> writeTranslations(WorkspaceEntity workspace, TranslationRepositoryWriteApi api);
 
     /**
-     * Updates the translation of the specified {@link BundleKeyEntity#getId() bundle key} for the specified locale.
+     * Updates a translation based on the specified {@link TranslationUpdateDto update}.
      */
-    Mono<BundleKeyEntity> updateTranslation(String bundleKeyId, String localeId, String translation) throws ResourceNotFoundException;
+    Mono<BundleKeyTranslationEntity> updateTranslation(TranslationUpdateDto translationUpdate) throws ResourceNotFoundException;
+
+    /**
+     * Updates translations based on the specified {@link TranslationUpdateDto updates}.
+     */
+    Flux<BundleKeyTranslationEntity> updateTranslations(Collection<TranslationUpdateDto> translationsUpdate) throws ResourceNotFoundException;
 }
