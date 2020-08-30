@@ -11,6 +11,7 @@
 
 .inner-container {
     padding: 30px;
+    height: calc(100% - 40px);
 }
 
 .smallSize .header {
