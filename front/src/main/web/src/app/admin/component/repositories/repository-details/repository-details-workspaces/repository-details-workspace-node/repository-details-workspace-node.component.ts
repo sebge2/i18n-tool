@@ -62,7 +62,7 @@ export class RepositoryDetailsWorkspaceNodeComponent {
             .toPromise()
             .catch(error => {
                 console.error('Error while initializing workspace.', error);
-                this._notificationService.displayErrorMessage('ADMIN.REPOSITORIES.ERROR.INITIALIZE_WORKSPACE', error);
+                this._notificationService.displayErrorMessage('ADMIN.WORKSPACES.ERROR.INITIALIZE_WORKSPACE', error);
             })
             .finally(() => this.initializationInProgress = false);
     }
@@ -75,7 +75,7 @@ export class RepositoryDetailsWorkspaceNodeComponent {
             .toPromise()
             .catch(error => {
                 console.error('Error while deleting workspace.', error);
-                this._notificationService.displayErrorMessage('ADMIN.REPOSITORIES.ERROR.DELETE_WORKSPACE', error);
+                this._notificationService.displayErrorMessage('ADMIN.WORKSPACES.ERROR.DELETE_WORKSPACE', error);
             })
             .finally(() => this.deleteInProgress = false);
     }

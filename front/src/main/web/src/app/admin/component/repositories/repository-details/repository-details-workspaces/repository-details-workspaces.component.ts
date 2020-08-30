@@ -127,7 +127,7 @@ export class RepositoryDetailsWorkspacesComponent implements OnInit {
             .toPromise()
             .catch(error => {
                 console.error('Error while synchronizing workspaces.', error);
-                this._notificationService.displayErrorMessage('ADMIN.REPOSITORIES.ERROR.WORKSPACES_SYNCHRONIZE', error);
+                this._notificationService.displayErrorMessage('ADMIN.WORKSPACES.ERROR.WORKSPACES_SYNCHRONIZE', error);
             })
             .finally(() => this.moreActionInProgress = false);
     }

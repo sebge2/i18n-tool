@@ -48,20 +48,12 @@
     "ERROR": {
       "SEARCH": "Error while searching for translations."
     },
-    "PLEASE_WAIT": "The workspace is initializing, please wait.",
-    "START_REVIEW": {
-      "START_ACTION": "Start",
-      "COMMENT": "Comment",
-      "TITLE": "Start a review"
-    },
-    "INITIALIZING_ALT": "Initializing workspace",
     "TABLE": {
       "NO_RESULT": "There are no result, please modify your criteria.",
       "KEY_HEADER": "Key",
       "UNSAVED": "Your changes are not saved yet",
       "KEY_COLUMN": "Key"
-    },
-    "START_REVIEW_BUTTON": "Publish and ask a review"
+    }
   },
   "PREFERENCES": {
     "TITLE": "My Preferences",
@@ -132,15 +124,12 @@
       }
     },
     "WORKSPACES": {
-      "CONFIRM_DELETION": {
-        "ERASE_ACTION": "Erase",
-        "EXPLAIN": "Please confirm the <b>erasing</b> of <b>{workspace}</b> (all modifications will be lost).",
-        "PLEASE": "Please fill the name of the workspace to confirm:",
-        "TITLE": "Confirm Erasing"
-      },
       "REFRESH_ACTION": "Refresh",
       "ERROR": {
-        "GET_ALL": "Error while retrieving workspaces."
+        "GET_ALL": "Error while retrieving workspaces.",
+        "DELETE_WORKSPACE": "Error while deleting the workspace",
+        "INITIALIZE_WORKSPACE": "Error while initializing the workspace",
+        "WORKSPACES_SYNCHRONIZE": "Error while synchronizing workspaces."
       }
     },
     "REPOSITORIES": {
@@ -221,10 +210,7 @@
         "GET_ALL": "Error while retrieving repositories.",
         "UPDATE": "Error while updating the repository",
         "DELETE": "Error while deleting the repository.",
-        "INITIALIZE": "Error while initializing the repository.",
-        "INITIALIZE_WORKSPACE": "Error while initializing the workspace",
-        "DELETE_WORKSPACE": "Error while deleting the workspace",
-        "WORKSPACES_SYNCHRONIZE": "Error while synchronizing workspaces."
+        "INITIALIZE": "Error while initializing the repository."
       }
     }
   },
