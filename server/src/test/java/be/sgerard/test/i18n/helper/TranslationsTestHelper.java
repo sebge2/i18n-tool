@@ -68,7 +68,7 @@ public class TranslationsTestHelper {
         }
 
         public void updateTranslation(String bundleKey, Locale locale, String updatedValue) {
-            final String bundleKeyId = translations().findBunglePageRowOrDie(bundleKey).getId();
+            final String bundleKeyId = translations().findBundlePageRowOrDie(bundleKey).getId();
             final String localeId = localeTestHelper.findRegisteredLocale(locale).getId();
 
             webClient
@@ -122,7 +122,7 @@ public class TranslationsTestHelper {
                     .findFirst();
         }
 
-        public TranslationsPageRowDto findBunglePageRowOrDie(String bundleKey) {
+        public TranslationsPageRowDto findBundlePageRowOrDie(String bundleKey) {
             return findBunglePageRow(bundleKey)
                     .orElseThrow(() -> new AssertionFailedError("There is no bundle with key [" + bundleKey + "]."));
         }

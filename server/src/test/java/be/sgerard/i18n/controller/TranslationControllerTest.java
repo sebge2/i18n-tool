@@ -12,6 +12,7 @@ import java.util.Locale;
 import static be.sgerard.test.i18n.model.GitRepositoryCreationDtoTestUtils.i18nToolRepositoryCreationDto;
 import static be.sgerard.test.i18n.model.TranslationLocaleCreationDtoTestUtils.enLocaleCreationDto;
 import static be.sgerard.test.i18n.model.TranslationLocaleCreationDtoTestUtils.frLocaleCreationDto;
+import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.Matchers.hasSize;
 
@@ -298,7 +299,7 @@ public class TranslationControllerTest extends AbstractControllerTest {
                 .forRepositoryHint("my-repo")
                 .forWorkspaceName("master")
                 .translations()
-                .findBunglePageRowOrDie("validation.repository.name-not-unique")
+                .findBundlePageRowOrDie("validation.repository.name-not-unique")
                 .getId();
 
         final String localeId = locale.findRegisteredLocale(Locale.ENGLISH).getId();
@@ -311,7 +312,7 @@ public class TranslationControllerTest extends AbstractControllerTest {
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
-                .jsonPath("$.locale").isEqualTo(locale.findRegisteredLocale(Locale.ENGLISH).getId())
+                .jsonPath("$.locale").isEqualTo(localeId)
                 .jsonPath("$.originalValue").isEqualTo("Another repository is already named [{0}]. Names must be unique.")
                 .jsonPath("$.updatedValue").isEqualTo("my value updated")
                 .jsonPath("$.lastEditor").isNotEmpty();
@@ -328,5 +329,40 @@ public class TranslationControllerTest extends AbstractControllerTest {
                 .bodyValue("my value updated")
                 .exchange()
                 .expectStatus().isNotFound();
+    }
+
+    @Test
+    @CleanupDatabase
+    @WithJaneDoeAdminUser
+    public void writeTranslations() {
+        final String bundleKeyId = translations
+                .forRepositoryHint("my-repo")
+                .forWorkspaceName("master")
+                .translations()
+                .findBundlePageRowOrDie("validation.repository.name-not-unique")
+                .getId();
+
+        final String englishLocaleId = locale.findRegisteredLocale(Locale.ENGLISH).getId();
+        final String frenchLocaleId = locale.findRegisteredLocale(Locale.FRENCH).getId();
+
+        webClient
+                .put()
+                .uri("/api/translation/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(asList(
+                        TranslationUpdateDto.builder().bundleKeyId(bundleKeyId).localeId(englishLocaleId).translation("my value updated").build(),
+                        TranslationUpdateDto.builder().bundleKeyId(bundleKeyId).localeId(frenchLocaleId).translation("ma valeur").build()
+                ))
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$[0].locale").isEqualTo(englishLocaleId)
+                .jsonPath("$[0].originalValue").isEqualTo("Another repository is already named [{0}]. Names must be unique.")
+                .jsonPath("$[0].updatedValue").isEqualTo("my value updated")
+                .jsonPath("$[0].lastEditor").isNotEmpty()
+                .jsonPath("$[1].locale").isEqualTo(frenchLocaleId)
+                .jsonPath("$[1].originalValue").isEqualTo("Il existe déjà un répository nommé [{0]. Les noms doivent être unique.")
+                .jsonPath("$[1].updatedValue").isEqualTo("ma valeur")
+                .jsonPath("$[1].lastEditor").isNotEmpty();
     }
 }
