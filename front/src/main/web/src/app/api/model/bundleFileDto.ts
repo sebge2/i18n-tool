@@ -31,10 +31,11 @@ export interface BundleFileDto {
      * Type of bundle file
      */
     type: BundleFileDto.TypeDtoEnum;
+    files?: Array<BundleFileEntryDto>;
     /**
-     * All the file paths of this bundle.
+     * The number of bundle keys composing this bundle.
      */
-    files: Array<BundleFileEntryDto>;
+    numberKeys: number;
 }
 export namespace BundleFileDto {
     export type TypeDtoEnum = 'JAVA_PROPERTIES' | 'JSON_ICU';
