@@ -19,7 +19,7 @@ import { Observable }                                        from 'rxjs';
 
 import { ErrorMessagesDto } from '../model/errorMessagesDto';
 import { TranslationDto } from '../model/translationDto';
-import { TranslationUpdateDtoDto } from '../model/translationUpdateDtoDto';
+import { TranslationUpdateDto } from '../model/translationUpdateDto';
 import { TranslationsPageDto } from '../model/translationsPageDto';
 import { TranslationsSearchRequestDto } from '../model/translationsSearchRequestDto';
 

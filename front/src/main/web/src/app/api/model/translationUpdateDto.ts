@@ -10,7 +10,10 @@
  * Do not edit the class manually.
  */
 
-export interface TranslationUpdateDto {
+/**
+ * Update of a particular translation.
+ */
+export interface TranslationUpdateDto { 
     /**
      * Id of the bundleKey.
      */

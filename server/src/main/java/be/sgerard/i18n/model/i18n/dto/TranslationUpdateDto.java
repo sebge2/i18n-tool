@@ -14,6 +14,7 @@ import java.util.Optional;
  *
  * @author Sebastien Gerard
  */
+@Schema(name = "TranslationUpdate", description = "Update of a particular translation.")
 @Getter
 @Builder(builderClassName = "Builder")
 @JsonDeserialize(builder = TranslationUpdateDto.Builder.class)

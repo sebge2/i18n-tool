@@ -15,6 +15,7 @@ import java.util.Collection;
  *
  * @author Sebastien Gerard
  */
+@Schema(name = "TranslationsUpdate", description = "Event sent when translations have been updated.")
 @Getter
 @Builder(builderClassName = "Builder")
 @JsonDeserialize(builder = TranslationsUpdateEventDto.Builder.class)
