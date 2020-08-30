@@ -1,6 +1,6 @@
 package be.sgerard.i18n.controller;
 
-import be.sgerard.i18n.model.i18n.dto.BundleKeyTranslationDto;
+import be.sgerard.i18n.model.i18n.dto.TranslationDto;
 import be.sgerard.i18n.model.i18n.dto.TranslationsPageDto;
 import be.sgerard.i18n.model.i18n.dto.TranslationsSearchRequestDto;
 import be.sgerard.i18n.service.i18n.TranslationManager;
@@ -45,16 +45,16 @@ public class TranslationController {
     }
 
     /**
-     * Updates translations. The maps associated {@link BundleKeyTranslationDto#getId() translation ids} to their translations.
+     * Updates translations. The maps associated {@link TranslationDto#getId() translation ids} to their translations.
      */
     @PatchMapping(path = "/translation/bundle-key/{bundleKeyId}/locale/{localeId}", consumes = MediaType.TEXT_PLAIN_VALUE)
     @Operation(summary = "Updates translations of the workspace having the specified id.")
-    public Mono<BundleKeyTranslationDto> updateWorkspaceTranslations(@RequestBody(required = false) String translation,
-                                                                     @PathVariable String bundleKeyId,
-                                                                     @PathVariable String localeId) {
+    public Mono<TranslationDto> updateWorkspaceTranslations(@RequestBody(required = false) String translation,
+                                                            @PathVariable String bundleKeyId,
+                                                            @PathVariable String localeId) {
         return translationManager
                 .updateTranslation(bundleKeyId, localeId, translation)
                 .map(bundleKey -> bundleKey.getTranslationOrDie(localeId))
-                .map(key -> BundleKeyTranslationDto.builder(key).build());
+                .map(key -> TranslationDto.builder(key).build());
     }
 }

@@ -16,11 +16,11 @@ import java.util.Optional;
  *
  * @author Sebastien Gerard
  */
-@Schema(name = "BundleKeyTranslation", description = "Translation of a key of a bundle file and associated to a locale.")
-@JsonDeserialize(builder = BundleKeyTranslationDto.Builder.class)
+@Schema(name = "Translation", description = "Translation of a key of a bundle file and associated to a locale.")
+@JsonDeserialize(builder = TranslationDto.Builder.class)
 @Getter
 @Builder(builderClassName = "Builder")
-public class BundleKeyTranslationDto {
+public class TranslationDto {
 
     public static Builder builder() {
         return new Builder();
@@ -80,7 +80,7 @@ public class BundleKeyTranslationDto {
     }
 
     /**
-     * Builder of {@link BundleKeyTranslationDto bundle key translation}.
+     * Builder of {@link TranslationDto bundle key translation}.
      */
     @JsonPOJOBuilder(withPrefix = "")
     @JsonIgnoreProperties(ignoreUnknown = true)

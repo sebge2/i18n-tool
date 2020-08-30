@@ -28,7 +28,7 @@ public class TranslationsUpdateEventDto {
 
     @Schema(description = "Updated translations.", required = true)
     @Singular
-    private final Collection<BundleKeyTranslationDto> translations;
+    private final Collection<TranslationDto> translations;
 
     @JsonPOJOBuilder(withPrefix = "")
     @JsonIgnoreProperties(ignoreUnknown = true)

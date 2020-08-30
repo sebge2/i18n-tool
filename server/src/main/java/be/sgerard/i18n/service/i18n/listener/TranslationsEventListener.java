@@ -1,6 +1,6 @@
 package be.sgerard.i18n.service.i18n.listener;
 
-import be.sgerard.i18n.model.i18n.dto.BundleKeyTranslationDto;
+import be.sgerard.i18n.model.i18n.dto.TranslationDto;
 import be.sgerard.i18n.model.i18n.dto.TranslationsUpdateEventDto;
 import be.sgerard.i18n.model.i18n.persistence.BundleKeyEntity;
 import be.sgerard.i18n.model.i18n.persistence.BundleKeyTranslationEntity;
@@ -44,7 +44,7 @@ public class TranslationsEventListener implements TranslationsListener {
                                         .userId(currentUser.getId())
                                         .userDisplayName(currentUser.getDisplayName())
                                         .translation(
-                                                BundleKeyTranslationDto.builder(translation).build()
+                                                TranslationDto.builder(translation).build()
                                         )
                                         .build()
                         )
