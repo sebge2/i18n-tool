@@ -65,7 +65,7 @@ export class TranslationsSearchBarComponent implements OnInit, OnDestroy {
                 } else {
                     this.form.controls['workspaces'].setValue(
                         availableWorkspaces
-                            .filter(availableWorkspace => availableWorkspace.defaultWorkspace)
+                            .filter(availableWorkspace => !!availableWorkspace.defaultWorkspace)
                     );
                 }
             });

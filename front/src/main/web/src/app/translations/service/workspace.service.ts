@@ -67,7 +67,7 @@ export class WorkspaceService {
                                 workspace
                             )
                         )
-                        .filter(enrichedWorkspace => enrichedWorkspace.repository)
+                        .filter(enrichedWorkspace => !!enrichedWorkspace.repository)
                 }));
         }
 
