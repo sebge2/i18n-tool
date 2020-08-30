@@ -8,6 +8,7 @@ import {auditTime, takeUntil} from "rxjs/operators";
 import {NotificationService} from "../../../core/notification/service/notification.service";
 import {EnrichedWorkspace} from "../../model/workspace/enriched-workspace.model";
 import {WorkspaceService} from "../../service/workspace.service";
+import {BundleFile} from "../../model/workspace/bundle-file.model";
 
 @Component({
     selector: 'app-translations-table',
@@ -79,5 +80,12 @@ export class TranslationsTableComponent implements OnInit, OnDestroy {
 
     public getWorkspace(rowForm: FormGroup): Observable<EnrichedWorkspace> {
         return this._workspaceService.getEnrichedWorkspace(this.dataSource.getWorkspace(rowForm));
+    }
+
+    public getBundleFile(rowForm: FormGroup): Observable<BundleFile> {
+        const workspace = this.dataSource.getWorkspace(rowForm);
+        const bundleFile = this.dataSource.getBundleFile(rowForm);
+
+        return this._workspaceService.getWorkspaceBundleFile(workspace, bundleFile);
     }
 }

@@ -1,5 +1,4 @@
 import {Component, Input} from '@angular/core';
-import {WorkspaceService} from "../../../service/workspace.service";
 import {EnrichedWorkspace} from "../../../model/workspace/enriched-workspace.model";
 
 @Component({
@@ -11,6 +10,6 @@ export class TranslationsWorkspaceRowComponent {
 
     @Input() public workspace: EnrichedWorkspace;
 
-    constructor(private _workspaceService: WorkspaceService) {
+    constructor() {
     }
 }

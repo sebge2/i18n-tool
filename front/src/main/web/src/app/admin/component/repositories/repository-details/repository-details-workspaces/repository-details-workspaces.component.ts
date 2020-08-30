@@ -68,7 +68,7 @@ export class WorkspaceTreeObjectDataSource implements TreeObjectDataSource {
             const workspaceNode: WorkspaceTreeNode = <WorkspaceTreeNode>parent;
 
             return this.workspaceService
-                .getWorkspaceBundleFile(workspaceNode.workspace.id)
+                .getWorkspaceBundleFiles(workspaceNode.workspace.id)
                 .pipe(map(bundleFiles => bundleFiles.map(bundleFile => new WorkspaceBundleTreeNode(bundleFile, workspaceNode.workspace, this.repository))));
         } else if (level == 3) {
             const bundleTreeNode: WorkspaceBundleTreeNode = <WorkspaceBundleTreeNode>parent;

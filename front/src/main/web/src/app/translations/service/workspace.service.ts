@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {EventService} from "../../core/event/service/event.service";
 import {Workspace} from "../model/workspace/workspace.model";
-import {combineLatest, Observable} from "rxjs";
+import {combineLatest, Observable, of} from "rxjs";
 import {Events} from 'src/app/core/event/model/events.model';
 import {catchError, distinctUntilChanged, filter, map, mergeMap, tap} from "rxjs/operators";
 import {NotificationService} from "../../core/notification/service/notification.service";
@@ -17,38 +17,42 @@ import {SynchronizedCollection} from "../../core/shared/utils/synchronized-colle
 })
 export class WorkspaceService {
 
-    private _synchronizedWorkspaces$: SynchronizedCollection<WorkspaceDto, WorkspaceDto>;
-    private _workspaces$: Observable<Workspace[]>;
+    private static readonly MAX_CACHED_BUNDLE_FILES = 100;
+
+    private readonly _synchronizedWorkspaces$: SynchronizedCollection<WorkspaceDto, WorkspaceDto>;
+    private readonly _workspaces$: Observable<Workspace[]>;
 
     private _enrichedWorkspaces$: Observable<EnrichedWorkspace[]>;
+    private _cachedWorkspaceBundleFiles = new Map<string, BundleFile[]>();
 
     constructor(private apiWorkspaceService: ApiWorkspaceService,
                 private repositoryService: RepositoryService,
                 private eventService: EventService,
                 private notificationService: NotificationService) {
+
+        this._synchronizedWorkspaces$ = new SynchronizedCollection<WorkspaceDto, WorkspaceDto>(
+            () => this.apiWorkspaceService.findAll4(),
+            this.eventService.subscribeDto(Events.ADDED_WORKSPACE),
+            this.eventService.subscribeDto(Events.UPDATED_WORKSPACE),
+            this.eventService.subscribeDto(Events.DELETED_WORKSPACE),
+            this.eventService.reconnected(),
+            dto => Workspace.fromDto(dto),
+            ((first, second) => first.id === second.id)
+        );
+
+        this._workspaces$ = this._synchronizedWorkspaces$
+            .collection
+            .pipe(catchError((reason) => {
+                console.error('Error while retrieving workspaces.', reason);
+                this.notificationService.displayErrorMessage('ADMIN.WORKSPACES.ERROR.GET_ALL');
+                return [];
+            }));
+
+        this.getWorkspaces()
+            .subscribe(() => this._cachedWorkspaceBundleFiles.clear());
     }
 
     public getWorkspaces(): Observable<Workspace[]> {
-        if (!this._synchronizedWorkspaces$) {
-            this._synchronizedWorkspaces$ = new SynchronizedCollection<WorkspaceDto, WorkspaceDto>(
-                () => this.apiWorkspaceService.findAll4(),
-                this.eventService.subscribeDto(Events.ADDED_WORKSPACE),
-                this.eventService.subscribeDto(Events.UPDATED_WORKSPACE),
-                this.eventService.subscribeDto(Events.DELETED_WORKSPACE),
-                this.eventService.reconnected(),
-                dto => Workspace.fromDto(dto),
-                ((first, second) => first.id === second.id)
-            );
-
-            this._workspaces$ = this._synchronizedWorkspaces$
-                .collection
-                .pipe(catchError((reason) => {
-                    console.error('Error while retrieving workspaces.', reason);
-                    this.notificationService.displayErrorMessage('ADMIN.WORKSPACES.ERROR.GET_ALL');
-                    return [];
-                }));
-        }
-
         return this._workspaces$;
     }
 
@@ -93,12 +97,22 @@ export class WorkspaceService {
             );
     }
 
-    public getWorkspaceBundleFile(workspaceId: string): Observable<BundleFile[]> {
+    public getWorkspaceBundleFiles(workspaceId: string): Observable<BundleFile[]> {
+        if (this._cachedWorkspaceBundleFiles.has(workspaceId)) {
+            return of(this._cachedWorkspaceBundleFiles.get(workspaceId));
+        }
+
         return this.getWorkspace(workspaceId)
             .pipe(
                 mergeMap(_ => this.apiWorkspaceService.findWorkspaceBundleFiles(workspaceId)),
-                map(bundleFiles => bundleFiles.map(bundleFileDto => BundleFile.fromDto(bundleFileDto)))
+                map(bundleFiles => bundleFiles.map(bundleFileDto => BundleFile.fromDto(bundleFileDto))),
+                tap(bundleFiles => this.cacheBundleFiles(workspaceId, bundleFiles))
             );
+    }
+
+    public getWorkspaceBundleFile(workspaceId: string, bundleFiledId: string): Observable<BundleFile> {
+        return this.getWorkspaceBundleFiles(workspaceId)
+            .pipe(map(bundleFiles => bundleFiles.find(bundleFile => _.eq(bundleFile.id, bundleFiledId))));
     }
 
     public initialize(workspaceId: string): Observable<Workspace> {
@@ -123,6 +137,17 @@ export class WorkspaceService {
         return this.apiWorkspaceService
             .deleteWorkspace(workspace.id)
             .pipe(tap(workspace => this._synchronizedWorkspaces$.delete(workspace)));
+    }
+
+    private cacheBundleFiles(workspaceId: string, bundleFiles: BundleFile[]) {
+        let numberCachedElements = 0;
+        this._cachedWorkspaceBundleFiles.forEach((cachedWorkspace, cachedFiles) => numberCachedElements += cachedFiles.length);
+
+        if (numberCachedElements >= WorkspaceService.MAX_CACHED_BUNDLE_FILES) {
+            this._cachedWorkspaceBundleFiles.clear();
+        }
+
+        this._cachedWorkspaceBundleFiles.set(workspaceId, bundleFiles);
     }
 }
 

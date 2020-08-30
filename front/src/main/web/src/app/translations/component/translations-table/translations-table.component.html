@@ -16,9 +16,7 @@
                     <app-translations-workspace-row [workspace]="getWorkspace(rowForm) | async"></app-translations-workspace-row>
                 </div>
                 <div class="{{spreadRowClass}} app-scroller-cell app-translations-bundle-file-row" *ngSwitchCase="RowType.BUNDLE_FILE">
-                    <app-translations-bundle-file-row [workspaceId]="dataSource.getWorkspace(rowForm)"
-                                                      [bundleFileId]="dataSource.getBundleFile(rowForm)">
-                    </app-translations-bundle-file-row>
+                    <app-translations-bundle-file-row [bundleFile]="getBundleFile(rowForm) | async"></app-translations-bundle-file-row>
                 </div>
                 <ng-container *ngSwitchCase="RowType.BUNDLE_KEY">
                     <div class="app-translations-bundle-key-column app-scroller-cell">
