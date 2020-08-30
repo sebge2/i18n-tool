@@ -30,6 +30,10 @@ export interface TranslationsPageRowDto {
     /**
      * The key for all the translations of this row
      */
+    bundleKeyId: string;
+    /**
+     * The key for all the translations of this row
+     */
     bundleKey: string;
     /**
      * All the translations of this row

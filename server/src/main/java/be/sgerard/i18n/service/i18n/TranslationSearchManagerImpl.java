@@ -119,6 +119,7 @@ public class TranslationSearchManagerImpl implements TranslationSearchManager {
                 .id(bundleKey.getId())
                 .workspace(bundleKey.getWorkspace())
                 .bundleFile(bundleKey.getBundleFile())
+                .bundleKeyId(bundleKey.getId())
                 .bundleKey(bundleKey.getKey())
                 .translations(
                         searchRequest.getLocales().stream()

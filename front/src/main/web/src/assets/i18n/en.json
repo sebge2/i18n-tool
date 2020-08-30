@@ -46,7 +46,8 @@
       "TITLE": "Search {criterion, select, ALL{for <b>all</b> translations} MISSING_TRANSLATIONS{for <b>missing</b> translations} TRANSLATIONS_CURRENT_USER_UPDATED{for translations that <b>I have updated</b>} UPDATED_TRANSLATIONS{for <b>updated</b> translations} other{}}{workspaces, select, true{ for <b>all workspaces</b>} null{} other { on workspaces {workspaces}}}{locales, select, true{ for <b>all locales</b>} null{} other{ for locales {locales}}}."
     },
     "ERROR": {
-      "SEARCH": "Error while searching for translations."
+      "SEARCH": "Error while searching for translations.",
+      "UPDATE": "Error while updating translations."
     },
     "TABLE": {
       "NO_RESULT": "There are no result, please modify your criteria.",

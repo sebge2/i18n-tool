@@ -2,13 +2,24 @@ import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {TranslationsSearchRequest} from "../../model/search/translations-search-request.model";
 import {RowType, TranslationsDataSource} from "./translations.datasource";
 import {TranslationService} from "../../service/translation.service";
-import {FormBuilder, FormGroup} from "@angular/forms";
+import {FormArray, FormBuilder, FormGroup} from "@angular/forms";
 import {Observable, Subject} from "rxjs";
 import {auditTime, takeUntil} from "rxjs/operators";
 import {NotificationService} from "../../../core/notification/service/notification.service";
 import {EnrichedWorkspace} from "../../model/workspace/enriched-workspace.model";
 import {WorkspaceService} from "../../service/workspace.service";
 import {BundleFile} from "../../model/workspace/bundle-file.model";
+import * as _ from "lodash";
+import {TranslationUpdateDto} from "../../../api";
+
+class DirtyTranslationForm {
+
+    constructor(public bundleKeyId: string,
+                public localeId: string,
+                public translation: string,
+                public translationForm: FormGroup) {
+    }
+}
 
 @Component({
     selector: 'app-translations-table',
@@ -46,7 +57,7 @@ export class TranslationsTableComponent implements OnInit, OnDestroy {
             .valueChanges
             .pipe(
                 takeUntil(this._destroyed$),
-                auditTime(2000)
+                auditTime(5000)
             )
             .subscribe(() => {
                 for (const rowForm of this.dataSource.form.controls) {

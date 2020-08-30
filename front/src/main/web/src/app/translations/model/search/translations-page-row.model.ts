@@ -7,6 +7,7 @@ export class TranslationsPageRow {
         return new TranslationsPageRow(
             dto.workspace,
             dto.bundleFile,
+            dto.bundleKeyId,
             dto.bundleKey,
             dto.translations.map(translation => TranslationsPageTranslation.fromDto(translation))
         )
@@ -14,6 +15,7 @@ export class TranslationsPageRow {
 
     constructor(public workspace: string,
                 public bundleFile: string,
+                public bundleKeyId: string,
                 public bundleKey: string,
                 public translations: TranslationsPageTranslation[]) {
     }

@@ -129,6 +129,14 @@ export class TranslationsDataSource extends DataSource<FormGroup> {
         return row.controls['bundleFile'].value;
     }
 
+    public getBundleKeyId(row: FormGroup): string {
+        return row.controls['bundleKeyId'].value;
+    }
+
+    public getTranslationValue(translationForm: FormGroup): string {
+        return translationForm.controls['value'].value;
+    }
+
     private get nextPageIndex(): number {
         return _.get(this._currentPage, 'index', -1) + 1;
     }
@@ -193,6 +201,7 @@ export class TranslationsDataSource extends DataSource<FormGroup> {
             type: this._formBuilder.control(RowType.BUNDLE_KEY),
             workspace: this._formBuilder.control(pageRow.workspace),
             bundleFile: this._formBuilder.control(pageRow.bundleFile),
+            bundleKeyId: this._formBuilder.control(pageRow.bundleKeyId),
             bundleKey: this._formBuilder.control(pageRow.bundleKey),
             translations: this._formBuilder.array(
                 _.range(0, this._searchRequest.locales.length).map(i => this.createBundleKeyCell(pageRow.translations[i]))

@@ -25,8 +25,8 @@ public class ResourceNotFoundException extends RuntimeException implements Local
         return new ResourceNotFoundException("ResourceNotFoundException.translation-locale.message", "translation locale", reference);
     }
 
-    public static ResourceNotFoundException translationNotFoundException(String reference) {
-        return new ResourceNotFoundException("ResourceNotFoundException.translation.message", "translation", reference);
+    public static ResourceNotFoundException bundleFileNotFoundException(String reference) {
+        return new ResourceNotFoundException("ResourceNotFoundException.bundle-file.message", "translation", reference);
     }
 
     public static ResourceNotFoundException userLiveSessionNotFoundException(String reference) {

@@ -237,7 +237,7 @@ public class TranslationManagerImpl implements TranslationManager {
     private Mono<BundleKeyEntity> findBundleKeyOrDie(String bundleKeyId) {
         return translationRepository
                 .findById(bundleKeyId)
-                .switchIfEmpty(Mono.error(ResourceNotFoundException.translationNotFoundException(bundleKeyId)));
+                .switchIfEmpty(Mono.error(ResourceNotFoundException.bundleFileNotFoundException(bundleKeyId)));
     }
 
     /**

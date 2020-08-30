@@ -33,6 +33,9 @@ public class TranslationsPageRowDto {
     @Schema(description = "Bundle id associated to this translation.", required = true)
     private final String bundleFile;
 
+    @Schema(description = "The id of the key for all the translations of this row", required = true)
+    private final String bundleKeyId;
+
     @Schema(description = "The key for all the translations of this row", required = true)
     private final String bundleKey;
 
