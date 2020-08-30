@@ -2,10 +2,12 @@ import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {TranslationsSearchRequest} from "../../model/search/translations-search-request.model";
 import {RowType, TranslationsDataSource} from "./translations.datasource";
 import {TranslationService} from "../../service/translation.service";
-import {FormBuilder} from "@angular/forms";
-import {Subject} from "rxjs";
+import {FormBuilder, FormGroup} from "@angular/forms";
+import {Observable, Subject} from "rxjs";
 import {auditTime, takeUntil} from "rxjs/operators";
 import {NotificationService} from "../../../core/notification/service/notification.service";
+import {EnrichedWorkspace} from "../../model/workspace/enriched-workspace.model";
+import {WorkspaceService} from "../../service/workspace.service";
 
 @Component({
     selector: 'app-translations-table',
@@ -22,7 +24,8 @@ export class TranslationsTableComponent implements OnInit, OnDestroy {
 
     constructor(private _formBuilder: FormBuilder,
                 private _translationService: TranslationService,
-                private _notificationService: NotificationService) {
+                private _notificationService: NotificationService,
+                private _workspaceService: WorkspaceService) {
         this.dataSource = new TranslationsDataSource(_translationService, _notificationService, _formBuilder);
     }
 
@@ -72,5 +75,9 @@ export class TranslationsTableComponent implements OnInit, OnDestroy {
 
     public get spreadRowClass(): string {
         return `app-scroller-spread-row-${this.searchRequest.locales.length}`;
+    }
+
+    public getWorkspace(rowForm: FormGroup): Observable<EnrichedWorkspace> {
+        return this._workspaceService.getEnrichedWorkspace(this.dataSource.getWorkspace(rowForm));
     }
 }

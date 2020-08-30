@@ -198,7 +198,14 @@ public class TranslationManagerImpl implements TranslationManager {
                         bundleKeys
                                 .stream()
                                 .flatMap(translationRepository::save)
-                                .then(Mono.just(bundleFileEntity))
+                                .then(Mono.defer(() -> {
+                                    bundleFileEntity.setNumberKeys(bundleKeys.bundleKeys.size());
+
+                                    logger.info("The bundle file located in [{}] named [{}] with {} file(s) contains {} translation(s).",
+                                            bundleFile.getLocationDirectory(), bundleFile.getName(), bundleFile.getFiles().size(), bundleFileEntity.getNumberKeys());
+
+                                    return Mono.just(bundleFileEntity);
+                                }))
                 );
     }
 

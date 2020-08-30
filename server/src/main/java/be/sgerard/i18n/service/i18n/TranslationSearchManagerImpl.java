@@ -94,7 +94,7 @@ public class TranslationSearchManagerImpl implements TranslationSearchManager {
                                 .bundleFiles(searchRequest.getBundleFiles())
                                 .criterion(searchRequest.getCriterion())
                                 .keyPattern(searchRequest.getKeyPattern().orElse(null))
-                                .maxKeys(searchRequest.getMaxKeys() * locales.size())
+                                .maxKeys(searchRequest.getMaxKeys())
                                 .lastPageKey(searchRequest.getLastPageKey().orElse(null))
                                 .currentUser(currentUser.getUserId())
                                 .maxKeys(searchRequest.getMaxKeys())

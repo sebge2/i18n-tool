@@ -77,7 +77,7 @@ public class BundleKeyEntityRepositoryImpl implements BundleKeyEntityRepositoryC
         request.getMaxKeys().ifPresent(query::limit);
 
         return query
-                .with(Sort.by(FIELD_WORKSPACE, FIELD_BUNDLE_FILE, FIELD_BUNDLE_KEY));
+                .with(Sort.by(FIELD_SORTING_KEY));
     }
 
     /**

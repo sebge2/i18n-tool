@@ -13,7 +13,7 @@
         <ng-container *cdkVirtualFor="let rowForm of dataSource; let rowIndex = index">
             <ng-container [ngSwitch]="dataSource.getRowType(rowForm)">
                 <div class="{{spreadRowClass}} app-scroller-cell app-translations-workspace-row" *ngSwitchCase="RowType.WORKSPACE">
-                    <app-translations-workspace-row [workspaceId]="dataSource.getWorkspace(rowForm)"></app-translations-workspace-row>
+                    <app-translations-workspace-row [workspace]="getWorkspace(rowForm) | async"></app-translations-workspace-row>
                 </div>
                 <div class="{{spreadRowClass}} app-scroller-cell app-translations-bundle-file-row" *ngSwitchCase="RowType.BUNDLE_FILE">
                     <app-translations-bundle-file-row [workspaceId]="dataSource.getWorkspace(rowForm)"

@@ -5,6 +5,7 @@ import be.sgerard.i18n.model.i18n.file.ScannedBundleFile;
 import be.sgerard.i18n.model.i18n.file.ScannedBundleFileLocation;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.springframework.data.annotation.AccessType;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
@@ -25,6 +26,7 @@ import static java.util.stream.Collectors.toList;
  */
 @Getter
 @Setter
+@Accessors(chain = true)
 public class BundleFileEntity {
 
     /**
@@ -56,6 +58,11 @@ public class BundleFileEntity {
      */
     @AccessType(AccessType.Type.PROPERTY)
     private Set<BundleFileEntryEntity> files = new HashSet<>();
+
+    /**
+     * The number of bundle keys composing this bundle.
+     */
+    private long numberKeys;
 
     @PersistenceConstructor
     BundleFileEntity() {
