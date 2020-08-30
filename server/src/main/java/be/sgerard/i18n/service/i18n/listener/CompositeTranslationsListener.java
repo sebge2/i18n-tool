@@ -29,15 +29,6 @@ public class CompositeTranslationsListener implements TranslationsListener {
     }
 
     @Override
-    public Mono<ValidationResult> beforeUpdate(TranslationUpdateDto translationUpdate) {
-        return Flux
-                .fromIterable(listeners)
-                .flatMap(listener -> listener.beforeUpdate(translationUpdate))
-                .reduce(ValidationResult::merge)
-                .switchIfEmpty(Mono.just(ValidationResult.EMPTY));
-    }
-
-    @Override
     public Mono<ValidationResult> beforeUpdate(Collection<TranslationUpdateDto> translationUpdates) {
         return Flux
                 .fromIterable(listeners)
@@ -47,10 +38,10 @@ public class CompositeTranslationsListener implements TranslationsListener {
     }
 
     @Override
-    public Mono<Void> afterUpdate(BundleKeyEntity bundleKey, TranslationUpdateDto update) {
+    public Mono<Void> afterUpdate(List<BundleKeyEntity> bundleKeys, List<TranslationUpdateDto> updates) {
         return Flux
                 .fromIterable(listeners)
-                .flatMap(listener -> listener.afterUpdate(bundleKey, update))
+                .flatMap(listener -> listener.afterUpdate(bundleKeys, updates))
                 .then();
     }
 }

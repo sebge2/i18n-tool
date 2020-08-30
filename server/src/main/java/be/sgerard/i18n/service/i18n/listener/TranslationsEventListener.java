@@ -10,7 +10,11 @@ import be.sgerard.i18n.service.user.UserManager;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+import java.util.stream.IntStream;
+
 import static be.sgerard.i18n.model.event.EventType.UPDATED_TRANSLATIONS;
+import static java.util.stream.Collectors.toList;
 
 /**
  * {@link TranslationsListener Translations listener} emitting an event every time translations are updated.
@@ -33,7 +37,7 @@ public class TranslationsEventListener implements TranslationsListener {
     }
 
     @Override
-    public Mono<Void> afterUpdate(BundleKeyEntity bundleKey, TranslationUpdateDto update) {
+    public Mono<Void> afterUpdate(List<BundleKeyEntity> bundleKeys, List<TranslationUpdateDto> updates) {
         return authenticationManager
                 .getCurrentUserOrDie()
                 .flatMap(authenticatedUser -> userManager.findByIdOrDie(authenticatedUser.getUserId()))
@@ -43,8 +47,11 @@ public class TranslationsEventListener implements TranslationsListener {
                                 TranslationsUpdateEventDto.builder()
                                         .userId(currentUser.getId())
                                         .userDisplayName(currentUser.getDisplayName())
-                                        .translation(
-                                                TranslationDto.builder(bundleKey.getTranslationOrDie(update.getLocaleId())).build()
+                                        .translations(
+                                                IntStream.range(0, updates.size())
+                                                        .mapToObj(i -> bundleKeys.get(i).getTranslationOrCreate(updates.get(i).getLocaleId()))
+                                                        .map(translation -> TranslationDto.builder(translation).build())
+                                                        .collect(toList())
                                         )
                                         .build()
                         )

@@ -7,6 +7,7 @@ import be.sgerard.i18n.model.validation.ValidationResult;
 import reactor.core.publisher.Mono;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Listener of the lifecycle of {@link BundleKeyTranslationEntity translations}.
@@ -16,13 +17,6 @@ import java.util.Collection;
 public interface TranslationsListener {
 
     /**
-     * Validates before updating the translation in the specified locale of the specified {@link BundleKeyEntity bundle key}.
-     */
-    default Mono<ValidationResult> beforeUpdate(TranslationUpdateDto translationUpdate) {
-        return Mono.empty();
-    }
-
-    /**
      * Validates before updating translations based on the specified {@link TranslationUpdateDto update}.
      */
     default Mono<ValidationResult> beforeUpdate(Collection<TranslationUpdateDto> translationUpdates) {
@@ -30,9 +24,9 @@ public interface TranslationsListener {
     }
 
     /**
-     * Performs an action when the specified {@link BundleKeyTranslationEntity translation} has been updated.
+     * Performs an action when the specified {@link BundleKeyTranslationEntity translation} have been updated.
      */
-    default Mono<Void> afterUpdate(BundleKeyEntity bundleKey, TranslationUpdateDto update) {
+    default Mono<Void> afterUpdate(List<BundleKeyEntity> bundleKeys, List<TranslationUpdateDto> updates) {
         return Mono.empty();
     }
 }

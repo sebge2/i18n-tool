@@ -5,6 +5,8 @@ import be.sgerard.i18n.model.validation.ValidationResult;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
+import java.util.Collection;
+
 /**
  * @author Sebastien Gerard
  */
@@ -12,7 +14,7 @@ import reactor.core.publisher.Mono;
 public class TranslationsWorkspaceValidator implements TranslationsListener {
 
     @Override
-    public Mono<ValidationResult> beforeUpdate(TranslationUpdateDto translationUpdate) {
+    public Mono<ValidationResult> beforeUpdate(Collection<TranslationUpdateDto> translationUpdates) {
 //        final WorkspaceEntity workspace = translation.getBundleKey().getBundleFile().getWorkspace();
 //
 //        if (workspace.getStatus() != WorkspaceStatus.INITIALIZED) {

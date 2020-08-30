@@ -13,10 +13,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.Collection;
+import java.util.List;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * {@link RestController Controller} handling translations.
@@ -72,9 +73,13 @@ public class TranslationController {
      */
     @PutMapping(path = "/translation")
     @Operation(summary = "Updates translations.")
-    public Flux<TranslationDto> updateTranslations(@RequestBody(required = false) Collection<TranslationUpdateDto> translations) {
+    public Mono<List<TranslationDto>> updateTranslations(@RequestBody(required = false) List<TranslationUpdateDto> translations) {
         return translationManager
                 .updateTranslations(translations)
-                .map(bundleKeyTranslation -> TranslationDto.builder(bundleKeyTranslation).build());
+                .map(updatedTranslations ->
+                        updatedTranslations.stream()
+                                .map(updatedTranslation -> TranslationDto.builder(updatedTranslation).build())
+                                .collect(toList())
+                );
     }
 }
