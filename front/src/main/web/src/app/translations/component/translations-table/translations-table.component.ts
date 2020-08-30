@@ -60,11 +60,22 @@ export class TranslationsTableComponent implements OnInit, OnDestroy {
                 auditTime(5000)
             )
             .subscribe(() => {
-                for (const rowForm of this.dataSource.form.controls) {
-                    if (rowForm.dirty) {
-                        // TODO save
-                    }
-                }
+                const dirtyTranslations = this.findDirtyTranslations();
+
+                this._translationService
+                    .updateTranslations(
+                        dirtyTranslations.map(dirtyTranslation => <TranslationUpdateDto>{
+                            bundleKeyId: dirtyTranslation.bundleKeyId,
+                            localeId: dirtyTranslation.localeId,
+                            translation: dirtyTranslation.translation
+                        })
+                    )
+                    .toPromise()
+                    .then(() => this.updateDirtyFlags(dirtyTranslations))
+                    .catch(error => {
+                        console.error('Error while updating translations.', error);
+                        this._notificationService.displayErrorMessage('TRANSLATIONS.ERROR.UPDATE', error);
+                    })
             });
     }
 
@@ -98,5 +109,34 @@ export class TranslationsTableComponent implements OnInit, OnDestroy {
         const bundleFile = this.dataSource.getBundleFile(rowForm);
 
         return this._workspaceService.getWorkspaceBundleFile(workspace, bundleFile);
+    }
+
+    private findDirtyTranslations(): DirtyTranslationForm[] {
+        return <DirtyTranslationForm[]>_.flatten(
+            this.dataSource.form.controls
+                .filter(rowForm => rowForm.dirty)
+                .map((rowForm: FormGroup) => {
+                    const translationForms = (<FormArray>((<FormGroup>rowForm).controls['translations'])).controls;
+
+                    return translationForms
+                        .filter(control => control.dirty)
+                        .map((translationForm: FormGroup) =>
+                            new DirtyTranslationForm(
+                                this.dataSource.getBundleKeyId(rowForm),
+                                this.searchRequest.locales[translationForms.indexOf(translationForm)].id,
+                                this.dataSource.getTranslationValue(translationForm),
+                                translationForm
+                            )
+                        )
+                })
+        );
+    }
+
+    private updateDirtyFlags(dirtyTranslations: DirtyTranslationForm[]) {
+        dirtyTranslations.forEach(dirtyTranslation => {
+            if (_.eq(dirtyTranslation.translation, this.dataSource.getTranslationValue(dirtyTranslation.translationForm))) {
+                dirtyTranslation.translationForm.markAsPristine();
+            }
+        });
     }
 }
