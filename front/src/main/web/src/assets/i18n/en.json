@@ -51,9 +51,8 @@
     },
     "TABLE": {
       "NO_RESULT": "There are no result, please modify your criteria.",
-      "KEY_HEADER": "Key",
-      "UNSAVED": "Your changes are not saved yet",
-      "KEY_COLUMN": "Key"
+      "KEY_COLUMN": "Key",
+      "UNSAVED_CHANGES": "Your changes are not saved yet"
     }
   },
   "PREFERENCES": {

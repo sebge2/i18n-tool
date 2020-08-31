@@ -1,8 +1,8 @@
-<h2 *ngIf="workspace">
+<h3 *ngIf="workspace">
     <span [class]="workspace.repository.type  | repositoryIcon" class="app-workspace-selector-icon"></span>
     {{workspace.repository.name}} {{workspace.workspace.branch}}
-</h2>
+</h3>
 
-<h2 *ngIf="!workspace">
+<h3 *ngIf="!workspace">
     ---
-</h2>
+</h3>

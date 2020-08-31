@@ -46,10 +46,16 @@
     width: unset !important;
 }
 
-.app-translations-loading {
+.app-translations-loading, .app-translations-unsaved {
     position: fixed;
     bottom: 10px;
     right: 30px;
+}
+
+.app-translations-unsaved-icon {
+    color: orange;
+    font-size: larger;
+    margin-right: 10px;
 }
 
 
