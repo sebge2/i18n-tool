@@ -28,7 +28,7 @@ export interface TranslationsPageRowDto {
      */
     bundleFile: string;
     /**
-     * The key for all the translations of this row
+     * The id of the key for all the translations of this row
      */
     bundleKeyId: string;
     /**
