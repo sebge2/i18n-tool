@@ -8,6 +8,7 @@ import be.sgerard.test.i18n.support.CleanupDatabase;
 import be.sgerard.test.i18n.support.WithJaneDoeAdminUser;
 import org.junit.jupiter.api.*;
 
+import java.io.File;
 import java.util.Locale;
 
 import static be.sgerard.test.i18n.model.GitRepositoryCreationDtoTestUtils.i18nToolLocalRepositoryCreationDto;
@@ -545,11 +546,16 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
         public void publish() {
             final WorkspaceDto masterWorkspace = repository
                     .create(i18nToolLocalRepositoryCreationDto(), GitRepositoryDto.class)
+                    .hint("my-repo")
                     .initialize()
                     .workspaces()
                     .workspaceForBranch("master")
                     .initialize()
                     .get();
+
+            translations.forRepositoryHint("my-repo")
+                    .forWorkspaceName("master")
+                    .updateTranslation("validation.repository.name-not-unique", Locale.ENGLISH, "my updated value");
 
             webClient
                     .post()
@@ -559,6 +565,10 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                     .expectBody()
                     .jsonPath("$.branch").isEqualTo("master")
                     .jsonPath("$.status").isEqualTo(WorkspaceStatus.INITIALIZED.name());
+
+            gitRepo
+                    .getRepo(i18nToolLocalRepositoryCreationDto())
+                    .assertFileContent(new File("/server/src/main/resources/i18n/validation_en.properties"), "validation.repository.name-not-unique = my updated value");
         }
 
         @Test

@@ -84,22 +84,22 @@ public class TranslationManagerImpl implements TranslationManager {
 
     @Override
     @Transactional
-    public Mono<Void> writeTranslations(WorkspaceEntity workspace, TranslationRepositoryWriteApi api) {
+    public Flux<BundleFileEntity> writeTranslations(WorkspaceEntity workspace, TranslationRepositoryWriteApi api) {
         return Flux
                 .fromIterable(workspace.getFiles())
+                .doOnNext(bundleFile ->
+                        logger.info("Updating the bundle file located in [{}] named [{}] with {} file(s) and containing {} translation(s).",
+                                bundleFile.getLocation(), bundleFile.getName(), bundleFile.getFiles().size(), bundleFile.getNumberKeys()
+                        )
+                )
                 .flatMap(bundleFile ->
                         localeManager.findAll()
-                                .map(locale ->
+                                .flatMap(locale ->
                                         getHandler(bundleFile.getType())
-                                                .updateTranslations(
-                                                        bundleFile.toLocation(),
-                                                        locale,
-                                                        findTranslations(bundleFile, locale),
-                                                        api
-                                                )
+                                                .updateTranslations(bundleFile.toLocation(), locale, findTranslations(bundleFile, locale), api)
                                 )
-                )
-                .then();
+                                .then(Mono.just(bundleFile))
+                );
     }
 
     @Override

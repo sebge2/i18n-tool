@@ -26,7 +26,7 @@ public interface TranslationManager {
      * Writes back all the translations using the specified {@link WorkspaceEntity workspace} using the
      * {@link TranslationRepositoryWriteApi write API}.
      */
-    Mono<Void> writeTranslations(WorkspaceEntity workspace, TranslationRepositoryWriteApi api);
+    Flux<BundleFileEntity> writeTranslations(WorkspaceEntity workspace, TranslationRepositoryWriteApi api);
 
     /**
      * Updates a translation based on the specified {@link TranslationUpdateDto update}.

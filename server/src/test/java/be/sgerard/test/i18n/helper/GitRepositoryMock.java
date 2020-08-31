@@ -3,6 +3,7 @@ package be.sgerard.test.i18n.helper;
 import be.sgerard.i18n.service.repository.git.DefaultGitRepositoryApi;
 import be.sgerard.i18n.service.repository.git.GitRepositoryApi;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.ObjectId;
@@ -14,6 +15,7 @@ import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.treewalk.TreeWalk;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
 import java.util.Collection;
@@ -22,6 +24,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import static java.util.Arrays.asList;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Repository mocking a remote Git repository.
@@ -146,6 +149,16 @@ public class GitRepositoryMock {
         } catch (Exception e) {
             throw new IllegalStateException("Cannot delete mock repository.", e);
         }
+    }
+
+    public GitRepositoryMock assertFileContent(File file, String expectedString) {
+        try {
+            assertThat(IOUtils.toString(getApi().openInputStream(file))).contains(expectedString);
+        } catch (IOException e) {
+            throw new IllegalStateException("Error while reading file.", e);
+        }
+
+        return this;
     }
 
     @Override

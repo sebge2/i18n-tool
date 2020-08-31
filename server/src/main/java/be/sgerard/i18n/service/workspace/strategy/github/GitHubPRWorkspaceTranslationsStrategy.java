@@ -66,6 +66,7 @@ public class GitHubPRWorkspaceTranslationsStrategy extends BaseGitWorkspaceTrans
                                         .flatMap(prBranch ->
                                                 translationManager
                                                         .writeTranslations(workspace, new GitTranslationRepositoryWriteApi(api, workspace.getBranch(), prBranch))
+                                                        .then()
                                                         .doOnSuccess(v -> api.commitAll(message).push())
                                                         .then(Mono.defer(() ->
                                                                 gitHubClient
