@@ -108,7 +108,7 @@ public class WorkspaceController {
      */
     @PostMapping(path = "/repository/workspace/{id}/do", params = "action=INITIALIZE")
     @Operation(
-            operationId = "initialize",
+            hidden = true,
             summary = "Initializes the specified workspace.",
             parameters = @Parameter(name = "action", in = ParameterIn.QUERY, schema = @Schema(allowableValues = {"INITIALIZE", "PUBLISH"}))
     )
@@ -124,7 +124,7 @@ public class WorkspaceController {
      */
     @PostMapping(path = "/repository/workspace/{id}/do", params = "action=PUBLISH")
     @Operation(
-            operationId = "publish",
+            operationId = "executeAction",
             summary = "Publishes all modifications made on the specified workspace.",
             parameters = @Parameter(name = "action", in = ParameterIn.QUERY, schema = @Schema(allowableValues = {"INITIALIZE", "PUBLISH"}))
     )
