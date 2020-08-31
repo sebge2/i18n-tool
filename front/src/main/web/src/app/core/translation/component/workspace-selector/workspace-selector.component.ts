@@ -254,7 +254,7 @@ export class WorkspaceSelectorComponent implements OnInit, OnDestroy, AfterViewI
     }
 
     private getIndex(workspace: EnrichedWorkspace, workspaces: EnrichedWorkspace[]) {
-        return _.findIndex(workspaces, first => workspace.workspace.equals(first.workspace));
+        return _.findIndex(workspaces, first => _.eq(workspace.workspace.id, first.workspace.id));
     }
 
     private filterOutPresent(workspacesToFilter: EnrichedWorkspace[], others: EnrichedWorkspace[]): EnrichedWorkspace[] {
@@ -267,7 +267,7 @@ export class WorkspaceSelectorComponent implements OnInit, OnDestroy, AfterViewI
         if (!value) {
             return remainingAvailableWorkspaces;
         } else if (value instanceof EnrichedWorkspace) {
-            return remainingAvailableWorkspaces.filter(workspace => !workspace.workspace.equals(value.workspace));
+            return remainingAvailableWorkspaces.filter(workspace => !_.eq(workspace.workspace.id, value.workspace.id));
         } else {
             const filterValue = value.toLowerCase();
 

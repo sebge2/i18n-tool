@@ -29,8 +29,4 @@ export class Workspace {
     public isInReview(): boolean {
         return this.status == WorkspaceStatus.IN_REVIEW;
     }
-
-    public equals(other: Workspace): boolean {
-        return this.id === other.id;
-    }
 }
