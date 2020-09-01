@@ -99,7 +99,7 @@ export class UserViewCardComponent {
     }
 
     public get deleteAllowed(): boolean {
-        return !this.user.isAdminUser() && !this.user.isExternal();
+        return !this.user.isAdminUser();
     }
 
     public get isMoreActionsEnabled(): boolean {
