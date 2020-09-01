@@ -152,6 +152,8 @@ public class GitRepositoryMock {
     }
 
     public GitRepositoryMock assertFileContent(File file, String expectedString) {
+        getApi().resetHardHead(); // TODO why files are un-staged?
+
         try {
             assertThat(IOUtils.toString(getApi().openInputStream(file))).contains(expectedString);
         } catch (IOException e) {

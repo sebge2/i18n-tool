@@ -121,6 +121,11 @@ public interface GitRepositoryApi extends RepositoryApi {
     GitRepositoryApi push() throws RepositoryException;
 
     /**
+     * Resets all files to the HEAD version.
+     */
+    GitRepositoryApi resetHardHead() throws RepositoryException;
+
+    /**
      * Deletes the current repository.
      */
     GitRepositoryApi delete() throws RepositoryException;

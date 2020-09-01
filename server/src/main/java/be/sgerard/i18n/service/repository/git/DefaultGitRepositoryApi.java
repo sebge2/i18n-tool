@@ -5,10 +5,7 @@ import be.sgerard.i18n.model.validation.ValidationResult;
 import be.sgerard.i18n.service.ValidationException;
 import be.sgerard.i18n.service.repository.RepositoryException;
 import org.apache.commons.io.FileUtils;
-import org.eclipse.jgit.api.CreateBranchCommand;
-import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.api.ListBranchCommand;
-import org.eclipse.jgit.api.PullResult;
+import org.eclipse.jgit.api.*;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
@@ -181,12 +178,9 @@ public class DefaultGitRepositoryApi extends BaseGitRepositoryApi {
     @Override
     public GitRepositoryApi commitAll(String message) throws RepositoryException {
         try {
-            //                final UserDto currentAuthenticatedUser = credentialsProvider.getCurrentUserOrFail().getUser(); TODO
-
             openGit().add().addFilepattern(".").call();
 
             openGit().commit()
-//                    .setAuthor(username, email) TODO
                     .setMessage(message)
                     .call();
 
@@ -206,6 +200,17 @@ public class DefaultGitRepositoryApi extends BaseGitRepositoryApi {
             return this;
         } catch (Exception e) {
             throw RepositoryException.onPush(e);
+        }
+    }
+
+    @Override
+    public GitRepositoryApi resetHardHead() throws RepositoryException {
+        try {
+            openGit().reset().setMode(ResetCommand.ResetType.HARD).setRef("HEAD").call();
+
+            return this;
+        } catch (Exception e) {
+            throw RepositoryException.onRevert(e);
         }
     }
 
