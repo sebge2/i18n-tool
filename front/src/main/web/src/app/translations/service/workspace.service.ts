@@ -117,7 +117,7 @@ export class WorkspaceService {
 
     public initialize(workspaceId: string): Observable<Workspace> {
         return this.apiWorkspaceService
-            .executeAction(workspaceId, null, 'INITIALIZE')
+            .executeAction(workspaceId, '', 'INITIALIZE')
             .pipe(
                 map(workspace => Workspace.fromDto(workspace)),
                 tap(workspace => this._synchronizedWorkspaces$.update(workspace))
