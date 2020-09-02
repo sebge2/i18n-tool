@@ -1,20 +1,18 @@
-package be.sgerard.i18n.service.workspace.listener;
+package be.sgerard.i18n.service.workspace.validator;
 
+import be.sgerard.i18n.model.validation.ValidationResult;
 import be.sgerard.i18n.model.workspace.WorkspaceStatus;
 import be.sgerard.i18n.model.workspace.persistence.WorkspaceEntity;
-import be.sgerard.i18n.model.validation.ValidationResult;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 /**
- * {@link WorkspaceListener Workspace listener} performing validation.
- *
  * @author Sebastien Gerard
  */
 @Component
-public class WorkspaceValidationListener implements WorkspaceListener {
+public class GlobalWorkspaceValidator implements WorkspaceValidator {
 
-    public WorkspaceValidationListener() {
+    public GlobalWorkspaceValidator() {
     }
 
     @Override

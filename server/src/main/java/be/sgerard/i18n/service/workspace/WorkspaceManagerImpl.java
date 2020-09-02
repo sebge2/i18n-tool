@@ -11,6 +11,7 @@ import be.sgerard.i18n.service.repository.RepositoryException;
 import be.sgerard.i18n.service.repository.RepositoryManager;
 import be.sgerard.i18n.service.workspace.listener.WorkspaceListener;
 import be.sgerard.i18n.service.workspace.strategy.WorkspaceTranslationsStrategy;
+import be.sgerard.i18n.service.workspace.validator.WorkspaceValidator;
 import be.sgerard.i18n.support.ReactiveUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,15 +35,18 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
     private final WorkspaceRepository repository;
     private final RepositoryManager repositoryManager;
     private final WorkspaceListener listener;
+    private final WorkspaceValidator validator;
     private final WorkspaceTranslationsStrategy translationsStrategy;
 
     public WorkspaceManagerImpl(WorkspaceRepository repository,
                                 RepositoryManager repositoryManager,
                                 WorkspaceListener listener,
+                                WorkspaceValidator validator,
                                 WorkspaceTranslationsStrategy translationsStrategy) {
         this.repository = repository;
         this.repositoryManager = repositoryManager;
         this.listener = listener;
+        this.validator = validator;
         this.translationsStrategy = translationsStrategy;
     }
 
@@ -135,7 +139,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
                         return Mono.just(workspace);
                     }
 
-                    return listener
+                    return validator
                             .beforeInitialize(workspace)
                             .map(validationResult -> {
                                 ValidationException.throwIfFailed(validationResult);
@@ -160,7 +164,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
                         return Mono.just(workspace);
                     }
 
-                    return listener
+                    return validator
                             .beforePublish(workspace)
                             .map(validationResult -> {
                                 ValidationException.throwIfFailed(validationResult);
@@ -195,7 +199,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
     @Override
     @Transactional
     public Mono<WorkspaceEntity> update(WorkspaceEntity workspace) throws ResourceNotFoundException, RepositoryException {
-        return listener
+        return validator
                 .beforeUpdate(workspace)
                 .then(
                         repository
@@ -276,7 +280,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
      * Terminates the review on the specified workspace.
      */
     private Mono<WorkspaceEntity> doFinishReview(WorkspaceEntity workspace) throws RepositoryException {
-        return listener
+        return validator
                 .beforeFinishReview(workspace)
                 .map(validationResult -> {
                     ValidationException.throwIfFailed(validationResult);

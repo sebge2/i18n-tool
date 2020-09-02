@@ -1,6 +1,5 @@
 package be.sgerard.i18n.service.workspace.listener;
 
-import be.sgerard.i18n.model.validation.ValidationResult;
 import be.sgerard.i18n.model.workspace.persistence.WorkspaceEntity;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
@@ -39,16 +38,6 @@ public class CompositeWorkspaceListener implements WorkspaceListener {
     }
 
     @Override
-    public Mono<ValidationResult> beforeInitialize(WorkspaceEntity workspace) {
-        return Flux
-                .fromIterable(listeners)
-                .filter(listener -> listener.support(workspace))
-                .flatMap(listener -> listener.beforeInitialize(workspace))
-                .reduce(ValidationResult::merge)
-                .switchIfEmpty(Mono.just(ValidationResult.EMPTY));
-    }
-
-    @Override
     public Mono<Void> onInitialize(WorkspaceEntity workspace) {
         return Flux
                 .fromIterable(listeners)
@@ -58,42 +47,12 @@ public class CompositeWorkspaceListener implements WorkspaceListener {
     }
 
     @Override
-    public Mono<ValidationResult> beforePublish(WorkspaceEntity workspace) {
-        return Flux
-                .fromIterable(listeners)
-                .filter(listener -> listener.support(workspace))
-                .flatMap(listener -> listener.beforePublish(workspace))
-                .reduce(ValidationResult::merge)
-                .switchIfEmpty(Mono.just(ValidationResult.EMPTY));
-    }
-
-    @Override
     public Mono<Void> onReview(WorkspaceEntity workspace) {
         return Flux
                 .fromIterable(listeners)
                 .filter(listener -> listener.support(workspace))
                 .flatMap(listener -> listener.onReview(workspace))
                 .then();
-    }
-
-    @Override
-    public Mono<ValidationResult> beforeFinishReview(WorkspaceEntity workspace) {
-        return Flux
-                .fromIterable(listeners)
-                .filter(listener -> listener.support(workspace))
-                .flatMap(listener -> listener.beforeFinishReview(workspace))
-                .reduce(ValidationResult::merge)
-                .switchIfEmpty(Mono.just(ValidationResult.EMPTY));
-    }
-
-    @Override
-    public Mono<ValidationResult> beforeUpdate(WorkspaceEntity workspace) {
-        return Flux
-                .fromIterable(listeners)
-                .filter(listener -> listener.support(workspace))
-                .flatMap(listener -> listener.beforeUpdate(workspace))
-                .reduce(ValidationResult::merge)
-                .switchIfEmpty(Mono.just(ValidationResult.EMPTY));
     }
 
     @Override

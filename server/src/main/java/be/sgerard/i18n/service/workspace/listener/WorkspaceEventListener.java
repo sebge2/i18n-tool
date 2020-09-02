@@ -3,6 +3,7 @@ package be.sgerard.i18n.service.workspace.listener;
 import be.sgerard.i18n.model.workspace.persistence.WorkspaceEntity;
 import be.sgerard.i18n.service.event.EventService;
 import be.sgerard.i18n.service.workspace.WorkspaceDtoEnricher;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
@@ -14,6 +15,7 @@ import static be.sgerard.i18n.model.event.EventType.*;
  * @author Sebastien Gerard
  */
 @Component
+@Order
 public class WorkspaceEventListener implements WorkspaceListener {
 
     private final EventService eventService;

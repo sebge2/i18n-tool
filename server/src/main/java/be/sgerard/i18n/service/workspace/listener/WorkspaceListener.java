@@ -1,6 +1,5 @@
 package be.sgerard.i18n.service.workspace.listener;
 
-import be.sgerard.i18n.model.validation.ValidationResult;
 import be.sgerard.i18n.model.workspace.persistence.WorkspaceEntity;
 import reactor.core.publisher.Mono;
 
@@ -24,24 +23,10 @@ public interface WorkspaceListener {
     }
 
     /**
-     * Validates before the workspace is initialized.
-     */
-    default Mono<ValidationResult> beforeInitialize(WorkspaceEntity workspace) {
-        return Mono.just(ValidationResult.EMPTY);
-    }
-
-    /**
      * Performs an action after the initialization of the specified workspace.
      */
     default Mono<Void> onInitialize(WorkspaceEntity workspace) {
         return Mono.empty();
-    }
-
-    /**
-     * Validates that the specified workspace can be published and eventually be in review.
-     */
-    default Mono<ValidationResult> beforePublish(WorkspaceEntity workspace) {
-        return Mono.just(ValidationResult.EMPTY);
     }
 
     /**
@@ -52,23 +37,8 @@ public interface WorkspaceListener {
     }
 
     /**
-     * Validates that the review on the specified workspace can finish.
-     */
-    default Mono<ValidationResult> beforeFinishReview(WorkspaceEntity workspace) {
-        return Mono.just(ValidationResult.EMPTY);
-    }
-
-    /**
-     * Validates that the specified workspace can be updated.
-     */
-    default Mono<ValidationResult> beforeUpdate(WorkspaceEntity workspace) {
-        return Mono.just(ValidationResult.EMPTY);
-    }
-
-    /**
      * Performs an action when the specified workspace has been updated. Called before
      * {@link #onInitialize(WorkspaceEntity) on-initialize} and {@link #onReview(WorkspaceEntity) on-review}.
-     *
      */
     default Mono<Void> onUpdate(WorkspaceEntity workspace) {
         return Mono.empty();
