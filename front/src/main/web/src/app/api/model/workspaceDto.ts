@@ -23,6 +23,10 @@ export interface WorkspaceDto {
      */
     branch: string;
     /**
+     * Flag indicating whether this workspace is the default one of the repository.
+     */
+    defaultWorkspace: boolean;
+    /**
      * The current workspace status. First, the workspace is created, but not initialized. Then, the workspace is initialized and all the translations are retrieved. Once they are edited, they are sent for review.
      */
     status: WorkspaceDto.StatusDtoEnum;
@@ -30,6 +34,18 @@ export interface WorkspaceDto {
      * The unique id of the associated repository.
      */
     repositoryId: string;
+    /**
+     * The unique name of the associated repository.
+     */
+    repositoryName: string;
+    /**
+     * All possible repository statuses.
+     */
+    repositoryStatus: WorkspaceDto.RepositoryStatusDtoEnum;
+    /**
+     * The type of the associated repository
+     */
+    repositoryType: WorkspaceDto.RepositoryTypeDtoEnum;
 }
 export namespace WorkspaceDto {
     export type StatusDtoEnum = 'NOT_INITIALIZED' | 'INITIALIZED' | 'IN_REVIEW';
@@ -37,5 +53,16 @@ export namespace WorkspaceDto {
         NOTINITIALIZED: 'NOT_INITIALIZED' as StatusDtoEnum,
         INITIALIZED: 'INITIALIZED' as StatusDtoEnum,
         INREVIEW: 'IN_REVIEW' as StatusDtoEnum
+    };
+    export type RepositoryStatusDtoEnum = 'NOT_INITIALIZED' | 'INITIALIZED' | 'INITIALIZATION_ERROR';
+    export const RepositoryStatusDtoEnum = {
+        NOTINITIALIZED: 'NOT_INITIALIZED' as RepositoryStatusDtoEnum,
+        INITIALIZED: 'INITIALIZED' as RepositoryStatusDtoEnum,
+        INITIALIZATIONERROR: 'INITIALIZATION_ERROR' as RepositoryStatusDtoEnum
+    };
+    export type RepositoryTypeDtoEnum = 'GIT' | 'GITHUB';
+    export const RepositoryTypeDtoEnum = {
+        GIT: 'GIT' as RepositoryTypeDtoEnum,
+        GITHUB: 'GITHUB' as RepositoryTypeDtoEnum
     };
 }
