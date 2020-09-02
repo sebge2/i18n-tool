@@ -182,7 +182,8 @@
           "INITIALIZED": "Initialized"
         },
         "WORKSPACE_LABEL": "Workspaces:",
-        "WORKSPACES_READY": "<b>{number}</b> workspaces are initialized and <b>ready to use</b>",
+        "WORKSPACES_READY": "<b>{number}</b> workspaces are initialized and <b><font class=\"status-success\">ready to use</font></b>",
+        "WORKSPACES_NOT_READY": "<b><font class=\"status-warning\">no workspace</font></b> is initialized and ready to use",
         "DEFAULT_WORKSPACE_LABEL": "Default Workspace:",
         "STATUS_DEFAULT": "<b>{name}</b> with <b>{numberBundleKeys}</b> translation key(s)",
         "ACCESS_LABEL": "Your access:",

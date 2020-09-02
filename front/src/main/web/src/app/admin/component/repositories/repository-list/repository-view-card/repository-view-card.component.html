@@ -28,7 +28,8 @@
                     {{'ADMIN.REPOSITORIES.VIEW_CARD.WORKSPACE_LABEL' | translate}}
                 </td>
                 <td>
-                    <span [innerHTML]="'ADMIN.REPOSITORIES.VIEW_CARD.WORKSPACES_READY' | translate: {number:numberReadyWorkspaces}"></span>
+                    <span [innerHTML]="'ADMIN.REPOSITORIES.VIEW_CARD.WORKSPACES_READY' | translate: {number:numberReadyWorkspaces}" *ngIf="numberReadyWorkspaces > 0"></span>
+                    <span [innerHTML]="'ADMIN.REPOSITORIES.VIEW_CARD.WORKSPACES_NOT_READY' | translate" *ngIf="numberReadyWorkspaces == 0"></span>
                 </td>
             </tr>
             <tr class="info-table-row">
