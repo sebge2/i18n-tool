@@ -45,7 +45,7 @@ public class WorkspaceController {
     @Operation(summary = "Returns registered workspaces.")
     public Flux<WorkspaceDto> findAll() {
         return workspaceManager.findAll()
-                .map(dtoEnricher::mapAndEnrich);
+                .flatMapSequential(dtoEnricher::mapAndEnrich);
     }
 
     /**
@@ -55,7 +55,7 @@ public class WorkspaceController {
     @Operation(summary = "Returns registered workspaces.")
     public Flux<WorkspaceDto> findAll(@PathVariable String id) {
         return workspaceManager.findAll(id)
-                .map(dtoEnricher::mapAndEnrich);
+                .flatMapSequential(dtoEnricher::mapAndEnrich);
     }
 
     /**
@@ -65,7 +65,7 @@ public class WorkspaceController {
     @Operation(summary = "Returns the workspace having the specified id.")
     public Mono<WorkspaceDto> findById(@PathVariable String id) {
         return workspaceManager.findByIdOrDie(id)
-                .map(dtoEnricher::mapAndEnrich);
+                .flatMap(dtoEnricher::mapAndEnrich);
     }
 
     /**
@@ -103,7 +103,7 @@ public class WorkspaceController {
     @PreAuthorize("hasRole('ADMIN')")
     public Flux<WorkspaceDto> synchronizeRepository(@PathVariable String repositoryId) {
         return workspaceManager.synchronize(repositoryId)
-                .map(dtoEnricher::mapAndEnrich);
+                .flatMapSequential(dtoEnricher::mapAndEnrich);
     }
 
     /**
@@ -118,7 +118,7 @@ public class WorkspaceController {
     @PreAuthorize("hasRole('ADMIN')")
     public Mono<WorkspaceDto> initialize(@PathVariable String id) {
         return workspaceManager.initialize(id)
-                .map(dtoEnricher::mapAndEnrich);
+                .flatMap(dtoEnricher::mapAndEnrich);
     }
 
     /**
@@ -140,6 +140,6 @@ public class WorkspaceController {
         }
 
         return workspaceManager.publish(id, message)
-                .map(dtoEnricher::mapAndEnrich);
+                .flatMap(dtoEnricher::mapAndEnrich);
     }
 }

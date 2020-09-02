@@ -1,6 +1,7 @@
 package be.sgerard.i18n.controller;
 
 import be.sgerard.i18n.model.github.GitHubPullRequestStatus;
+import be.sgerard.i18n.model.repository.RepositoryType;
 import be.sgerard.i18n.model.repository.dto.*;
 import be.sgerard.i18n.model.workspace.WorkspaceStatus;
 import be.sgerard.i18n.model.workspace.dto.WorkspaceDto;
@@ -108,8 +109,11 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.branch").isEqualTo("master")
+                .jsonPath("$.defaultWorkspace").isEqualTo(true)
                 .jsonPath("$.status").isEqualTo(WorkspaceStatus.INITIALIZED.name())
-                .jsonPath("$.repositoryId").isEqualTo(repository.forHint("repo").get().getId());
+                .jsonPath("$.repositoryId").isEqualTo(repository.forHint("repo").get().getId())
+                .jsonPath("$.repositoryType").isEqualTo(RepositoryType.GITHUB.name())
+                .jsonPath("$.repositoryName").isEqualTo("sebge2/i18n-tool");
     }
 
     @Test
