@@ -80,52 +80,10 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
                                         (branch, workspace) -> branch.compareTo(workspace.getBranch())
                                 )
                                 .flatMap(pair -> {
-                                    if (pair.getRight() == null) {
-                                        logger.info("Synchronize, there is no workspace for the branch [{}], let's create it.", pair.getLeft());
+                                    final String matchingBranch = pair.getLeft();
+                                    final WorkspaceEntity matchingWorkspace = pair.getRight();
 
-                                        return repositoryManager
-                                                .findByIdOrDie(repositoryId)
-                                                .flatMap(repository -> createWorkspace(repository, pair.getLeft()));
-                                    } else {
-                                        switch (pair.getRight().getStatus()) {
-                                            case IN_REVIEW:
-                                                if (pair.getLeft() == null) {
-                                                    logger.info("Synchronize, there is no branch anymore for the workspace [{}] alias [{}], let's delete it.",
-                                                            pair.getRight().getBranch(), pair.getRight().getId());
-
-                                                    return delete(pair.getRight().getId())
-                                                            .then(Mono.empty());
-                                                } else {
-                                                    logger.info("Synchronize, let's check the review status for the workspace [{}] alias [{}].",
-                                                            pair.getRight().getBranch(), pair.getRight().getId());
-
-                                                    return repositoryManager
-                                                            .findByIdOrDie(repositoryId)
-                                                            .flatMap(repository -> translationsStrategy.isReviewFinished(pair.getRight(), repository))
-                                                            .flatMap(reviewFinished ->
-                                                                    reviewFinished
-                                                                            ? doFinishReview(pair.getRight())
-                                                                            : Mono.just(pair.getRight())
-                                                            );
-                                                }
-                                            case INITIALIZED:
-                                            case NOT_INITIALIZED:
-                                                if (pair.getLeft() == null) {
-                                                    logger.info("Synchronize, there is no branch anymore for the workspace [{}] alias [{}], let's delete it.",
-                                                            pair.getRight().getBranch(), pair.getRight().getId());
-
-                                                    return delete(pair.getRight().getId())
-                                                            .then(Mono.empty());
-                                                } else {
-                                                    logger.info("Synchronize, the branch for the workspace [{}] alias [{}] is still there, don't touch.",
-                                                            pair.getRight().getBranch(), pair.getRight().getId());
-
-                                                    return Mono.just(pair.getRight());
-                                                }
-                                            default:
-                                                return Flux.error(new UnsupportedOperationException("Unsupported workspace status [" + pair.getRight().getStatus() + "]."));
-                                        }
-                                    }
+                                    return synchronize(matchingBranch, matchingWorkspace, repositoryId);
                                 })
                 );
     }
@@ -242,6 +200,58 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
                     return translationsStrategy.listBranches(repository);
                 })
                 .sort(String::compareTo);
+    }
+
+    /**
+     * Synchronizes the matching branch (can be <tt>null</tt>) and the matching workspace (can be <tt>null</tt>).
+     */
+    private Mono<WorkspaceEntity> synchronize(String matchingBranch, WorkspaceEntity matchingWorkspace, String repositoryId) {
+        if (matchingWorkspace == null) {
+            logger.info("Synchronize, there is no workspace for the branch [{}], let's create it.", matchingBranch);
+
+            return repositoryManager
+                    .findByIdOrDie(repositoryId)
+                    .flatMap(repository -> createWorkspace(repository, matchingBranch));
+        } else {
+            switch (matchingWorkspace.getStatus()) {
+                case IN_REVIEW:
+                    if (matchingBranch == null) {
+                        logger.info("Synchronize, there is no branch anymore for the workspace [{}] alias [{}], let's delete it.",
+                                matchingWorkspace.getBranch(), matchingWorkspace.getId());
+
+                        return delete(matchingWorkspace.getId())
+                                .then(Mono.empty());
+                    } else {
+                        logger.info("Synchronize, let's check the review status for the workspace [{}] alias [{}].",
+                                matchingWorkspace.getBranch(), matchingWorkspace.getId());
+
+                        return repositoryManager
+                                .findByIdOrDie(repositoryId)
+                                .flatMap(repository -> translationsStrategy.isReviewFinished(matchingWorkspace, repository))
+                                .flatMap(reviewFinished ->
+                                        reviewFinished
+                                                ? doFinishReview(matchingWorkspace)
+                                                : Mono.just(matchingWorkspace)
+                                );
+                    }
+                case INITIALIZED:
+                case NOT_INITIALIZED:
+                    if (matchingBranch == null) {
+                        logger.info("Synchronize, there is no branch anymore for the workspace [{}] alias [{}], let's delete it.",
+                                matchingWorkspace.getBranch(), matchingWorkspace.getId());
+
+                        return delete(matchingWorkspace.getId())
+                                .then(Mono.empty());
+                    } else {
+                        logger.info("Synchronize, the branch for the workspace [{}] alias [{}] is still there, don't touch.",
+                                matchingWorkspace.getBranch(), matchingWorkspace.getId());
+
+                        return Mono.just(matchingWorkspace);
+                    }
+                default:
+                    return Mono.error(new UnsupportedOperationException("Unsupported workspace status [" + matchingWorkspace.getStatus() + "]."));
+            }
+        }
     }
 
     /**

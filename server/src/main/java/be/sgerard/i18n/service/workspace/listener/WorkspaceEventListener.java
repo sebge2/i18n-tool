@@ -33,21 +33,25 @@ public class WorkspaceEventListener implements WorkspaceListener {
 
     @Override
     public Mono<Void> onCreate(WorkspaceEntity workspace) {
-        return eventService.broadcastEvent(ADDED_WORKSPACE, dtoEnricher.mapAndEnrich(workspace));
+        return dtoEnricher.mapAndEnrich(workspace)
+                .flatMap(workspaceDto -> eventService.broadcastEvent(ADDED_WORKSPACE, workspaceDto));
     }
 
     @Override
     public Mono<Void> onInitialize(WorkspaceEntity workspace) {
-        return eventService.broadcastEvent(UPDATED_WORKSPACE, dtoEnricher.mapAndEnrich(workspace));
+        return dtoEnricher.mapAndEnrich(workspace)
+                .flatMap(workspaceDto -> eventService.broadcastEvent(UPDATED_WORKSPACE, workspaceDto));
     }
 
     @Override
     public Mono<Void> onDelete(WorkspaceEntity workspace) {
-        return eventService.broadcastEvent(DELETED_WORKSPACE, dtoEnricher.mapAndEnrich(workspace));
+        return dtoEnricher.mapAndEnrich(workspace)
+                .flatMap(workspaceDto -> eventService.broadcastEvent(DELETED_WORKSPACE, workspaceDto));
     }
 
     @Override
     public Mono<Void> onReview(WorkspaceEntity workspace) {
-        return eventService.broadcastEvent(UPDATED_WORKSPACE, dtoEnricher.mapAndEnrich(workspace));
+        return dtoEnricher.mapAndEnrich(workspace)
+                .flatMap(workspaceDto -> eventService.broadcastEvent(UPDATED_WORKSPACE, workspaceDto));
     }
 }

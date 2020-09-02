@@ -5,6 +5,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import javax.validation.constraints.NotNull;
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 /**
@@ -46,5 +47,10 @@ public abstract class BaseGitRepositoryEntity extends RepositoryEntity {
 
     protected BaseGitRepositoryEntity(String name) {
         super(name);
+    }
+
+    @Override
+    public boolean isDefaultBranch(String branch) {
+        return Objects.equals(branch, this.getDefaultBranch());
     }
 }

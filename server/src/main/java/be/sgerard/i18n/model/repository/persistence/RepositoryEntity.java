@@ -61,4 +61,9 @@ public abstract class RepositoryEntity {
     @Field(name = "type")
     public abstract RepositoryType getType();
 
+    /**
+     * Returns whether the specified branch is the default one.
+     */
+    public abstract boolean isDefaultBranch(String branch);
+
 }
