@@ -51,6 +51,9 @@ public class WorkspaceDto {
     @Schema(description = "The type of the associated repository", required = true)
     private final RepositoryType repositoryType;
 
+    @Schema(description = "Number of bundles keys in this workspace", required = true)
+    private final long numberBundleKeys;
+
     /**
      * Builder of {@link WorkspaceDto workspace DTO}.
      */

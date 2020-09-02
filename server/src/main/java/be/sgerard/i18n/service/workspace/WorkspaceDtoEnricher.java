@@ -1,5 +1,6 @@
 package be.sgerard.i18n.service.workspace;
 
+import be.sgerard.i18n.model.i18n.persistence.BundleFileEntity;
 import be.sgerard.i18n.model.repository.persistence.RepositoryEntity;
 import be.sgerard.i18n.model.workspace.dto.WorkspaceDto;
 import be.sgerard.i18n.model.workspace.persistence.WorkspaceEntity;
@@ -49,6 +50,7 @@ public class WorkspaceDtoEnricher {
                 .repositoryName(nullableRepo.map(RepositoryEntity::getName).orElse(null))
                 .repositoryType(nullableRepo.map(RepositoryEntity::getType).orElse(null))
                 .repositoryStatus(nullableRepo.map(RepositoryEntity::getStatus).orElse(null))
+                .numberBundleKeys(workspace.getFiles().stream().map(BundleFileEntity::getNumberKeys).reduce(0L, Long::sum))
                 .build();
     }
 }
