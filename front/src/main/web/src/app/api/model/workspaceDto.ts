@@ -46,6 +46,10 @@ export interface WorkspaceDto {
      * The type of the associated repository
      */
     repositoryType: WorkspaceDto.RepositoryTypeDtoEnum;
+    /**
+     * Number of bundles keys in this workspace
+     */
+    numberBundleKeys: number;
 }
 export namespace WorkspaceDto {
     export type StatusDtoEnum = 'NOT_INITIALIZED' | 'INITIALIZED' | 'IN_REVIEW';

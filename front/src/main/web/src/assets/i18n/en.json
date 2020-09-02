@@ -175,7 +175,19 @@
       },
       "VIEW_CARD": {
         "STATUS_LABEL": "Status:",
-        "RO_LABEL": "Your Access:",
+        "STATUS_VALUE_LABEL": {
+          "NOT_INITIALIZED": "Not Initialized",
+          "INITIALIZING": "Initializing",
+          "INITIALIZATION_ERROR": "Initialization Error",
+          "INITIALIZED": "Initialized"
+        },
+        "WORKSPACE_LABEL": "Workspaces:",
+        "WORKSPACES_READY": "<b>{number}</b> workspaces are initialized and <b>ready to use</b>",
+        "DEFAULT_WORKSPACE_LABEL": "Default Workspace:",
+        "STATUS_DEFAULT": "<b>{name}</b> with <b>{numberBundleKeys}</b> translation key(s)",
+        "ACCESS_LABEL": "Your access:",
+        "ACCESS_ALLOWED": "You, <b>{displayName}</b>, are <b><font class=\"status-success\">allowed</font></b> to synchronize and publish",
+        "ACCESS_FORBIDDEN": "You, <b>{displayName}</b>, are <b><font class=\"status-warning\">not allowed</font></b> to synchronize and publish",
         "ERROR": {
           "INITIALIZE": "Error while initializing the repository."
         }

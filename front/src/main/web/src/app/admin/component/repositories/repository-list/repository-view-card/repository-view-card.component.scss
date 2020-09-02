@@ -1,5 +1,3 @@
-@import "../../../../front/src/main/web/src/css/variables";
-
 :host ::ng-deep .mat-card-content {
     margin-bottom: 0;
 }
@@ -10,25 +8,11 @@
 
 .info-table-row {
     vertical-align: center;
+    height: 40px;
 }
 
 .info-table-column-label {
-    padding-right: 20px;
+    padding-right: 40px;
 }
 
-.status-warning {
-    color: mat-color($color-warning);
-}
 
-.status-error {
-    color: mat-color($color-error);
-}
-
-.status-healthy {
-    color: green;
-}
-
-.status-progress {
-    width: 24px;
-    font-size: 24px;
-}

@@ -16,22 +16,22 @@ export class AuthenticatedUser {
                 public repositoryRoles: RepositoryRoles[] = []) {
     }
 
-    hasRole(role: UserRole): boolean {
+    public hasRole(role: UserRole): boolean {
         return _.includes(this.sessionRoles, role);
     }
 
-    hasAllRoles(roles: UserRole[]): boolean {
+    public hasAllRoles(roles: UserRole[]): boolean {
         return roles.every(role => this.hasRole(role));
     }
 
-    hasRepositoryRole(repository: string, role: UserRole): boolean {
+    public hasRepositoryRole(repository: string, role: UserRole): boolean {
         return _.some(
             this.repositoryRoles,
                 repositoryRole => (repositoryRole.repository === repository) && (repositoryRole.sessionRoles.includes(role))
         );
     }
 
-    hasRepositoryAccess(repository: string): boolean {
+    public hasRepositoryAccess(repository: string): boolean {
         return this.hasRepositoryRole(repository, UserRole.MEMBER_OF_REPOSITORY);
     }
 }

@@ -103,6 +103,7 @@ export class TranslationsDataSource extends DataSource<FormGroup> {
         this._searchRequest = request;
         this._currentPage = null;
         this.totalTranslations = 0;
+        // TODO don't reload everything if needed + edition status
 
         this.form.clear();
         this._dataStream.next([]);

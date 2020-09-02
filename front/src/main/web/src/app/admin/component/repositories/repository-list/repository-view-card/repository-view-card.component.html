@@ -1,40 +1,53 @@
 <app-card [title]="repository.name"
           [headerClassIcon]="repository?.type | repositoryIcon"
-          [maxSizePx]="350">
+          [maxSizePx]="500">
     <app-card-content>
         <table class="info-table">
             <tr class="info-table-row">
                 <td class="info-table-column-label">
                     {{'ADMIN.REPOSITORIES.VIEW_CARD.STATUS_LABEL' | translate}}
                 </td>
-                <td [ngSwitch]="repository.status">
-                    <div *ngSwitchCase="repositoryStatus.NOT_INITIALIZED">
-                        <mat-icon class="status-warning">warning</mat-icon>
-                    </div>
-                    <div *ngSwitchCase="repositoryStatus.INITIALIZATION_ERROR">
-                        <mat-icon class="status-error">warning</mat-icon>
-                    </div>
-                    <div *ngSwitchCase="repositoryStatus.INITIALIZING">
-                        <mat-spinner [diameter]="24" class="status-progress"></mat-spinner>
-                    </div>
-                    <div *ngSwitchCase="repositoryStatus.INITIALIZED">
-                        <mat-icon class="status-healthy">check_circle_outline</mat-icon>
-                    </div>
+                <td>
+                    <span [ngClass]="statusIconClass"><b>{{statusLabelKey | translate}}</b></span>
+                </td>
+            </tr>
+
+            <tr class="info-table-row">
+                <td class="info-table-column-label">
+                    {{'ADMIN.REPOSITORIES.VIEW_CARD.ACCESS_LABEL' | translate}}
+                </td>
+                <td>
+                    <span [innerHTML]="'ADMIN.REPOSITORIES.VIEW_CARD.ACCESS_ALLOWED' | translate: {displayName:currentUser?.displayName} | safe: 'html'"
+                          *ngIf="hasAccess"></span>
+                    <span [innerHTML]="'ADMIN.REPOSITORIES.VIEW_CARD.ACCESS_FORBIDDEN' | translate: {displayName:currentUser?.displayName} | safe: 'html'"
+                          *ngIf="!hasAccess"></span>
                 </td>
             </tr>
             <tr class="info-table-row">
                 <td class="info-table-column-label">
-                    {{'ADMIN.REPOSITORIES.VIEW_CARD.RO_LABEL' | translate}}
+                    {{'ADMIN.REPOSITORIES.VIEW_CARD.WORKSPACE_LABEL' | translate}}
                 </td>
-                <td [ngSwitch]="(currentAuthenticatedUser | async).hasRepositoryAccess(repository.id)">
-                    <div *ngSwitchCase="false">
-                        <mat-icon class="status-warning">warning</mat-icon>
-                    </div>
-                    <div *ngSwitchCase="true">
-                        <mat-icon class="status-healthy">check_circle_outline</mat-icon>
-                    </div>
+                <td>
+                    <span [innerHTML]="'ADMIN.REPOSITORIES.VIEW_CARD.WORKSPACES_READY' | translate: {number:numberReadyWorkspaces}"></span>
                 </td>
             </tr>
+            <tr class="info-table-row">
+                <td class="info-table-column-label">
+                    {{'ADMIN.REPOSITORIES.VIEW_CARD.DEFAULT_WORKSPACE_LABEL' | translate}}
+                </td>
+                <td>
+                    <span [innerHTML]="'ADMIN.REPOSITORIES.VIEW_CARD.STATUS_DEFAULT' | translate: {name:defaultWorkspace?.branch, numberBundleKeys:defaultWorkspace?.numberBundleKeys}"></span>
+                </td>
+            </tr>
+<!--            TODO-->
+<!--            <tr class="info-table-row">-->
+<!--                <td class="info-table-column-label">-->
+<!--                    Publish:-->
+<!--                </td>-->
+<!--                <td>-->
+<!--                    <b>some modifications can be published</b>-->
+<!--                </td>-->
+<!--            </tr>-->
         </table>
     </app-card-content>
     <app-card-actions>

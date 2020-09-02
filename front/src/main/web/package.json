@@ -43,6 +43,7 @@
     "ngx-flag-icon-css": "^1.0.1",
     "ngx-translate-messageformat-compiler": "^4.8.0",
     "rxjs": "~6.6.2",
+    "safe-pipe": "^1.0.3",
     "zone.js": "~0.10.2"
   },
   "devDependencies": {

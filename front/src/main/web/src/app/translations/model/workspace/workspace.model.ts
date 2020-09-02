@@ -14,7 +14,8 @@ export class Workspace {
             dto.repositoryId,
             dto.repositoryName,
             RepositoryStatus[dto.repositoryStatus],
-            RepositoryType[dto.repositoryType]
+            RepositoryType[dto.repositoryType],
+            dto.numberBundleKeys
         );
     }
 
@@ -25,7 +26,8 @@ export class Workspace {
                 public repositoryId: string,
                 public repositoryName: string,
                 public repositoryStatus: RepositoryStatus,
-                public repositoryType: RepositoryType) {
+                public repositoryType: RepositoryType,
+                public numberBundleKeys: number) {
     }
 
     public isNotInitialized(): boolean {

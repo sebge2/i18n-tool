@@ -26,7 +26,8 @@
             "styles": [
               "src/css/variables.scss",
               "src/css/styles.scss",
-              "src/css/buttons.scss"
+              "src/css/buttons.scss",
+              "src/css/colors.scss"
             ],
             "scripts": []
           },
@@ -88,7 +89,8 @@
             "styles": [
               "src/css/variables.scss",
               "src/css/styles.scss",
-              "src/css/buttons.scss"
+              "src/css/buttons.scss",
+              "src/css/colors.scss"
             ],
             "scripts": [],
             "assets": [

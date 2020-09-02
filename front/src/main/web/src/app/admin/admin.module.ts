@@ -22,6 +22,7 @@ import { RepositoryDetailsWorkspaceNodeComponent } from './component/repositorie
 import { RepositoryDetailsBundleFileNodeComponent } from './component/repositories/repository-details/repository-details-workspaces/repository-details-bundle-file-node/repository-details-bundle-file-node.component';
 import { RepositoryDetailsBundleFileEntryNodeComponent } from './component/repositories/repository-details/repository-details-workspaces/repository-details-bundle-file-entry-node/repository-details-bundle-file-entry-node.component';
 import { RepositoryDetailsWorkspaceTreeNodeComponent } from './component/repositories/repository-details/repository-details-workspaces/repository-details-workspace-tree-node/repository-details-workspace-tree-node.component';
+import {SafePipeModule} from "safe-pipe";
 
 const appRoutes: Routes = [
     {path: 'users', component: UsersComponent},
@@ -61,7 +62,9 @@ const appRoutes: Routes = [
         CoreSharedModule,
         CoreAuthModule,
 
-        RouterModule.forChild(appRoutes)
+        RouterModule.forChild(appRoutes),
+
+        SafePipeModule,
     ],
     exports: [RouterModule]
 })
