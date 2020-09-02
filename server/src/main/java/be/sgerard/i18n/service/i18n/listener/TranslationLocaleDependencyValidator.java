@@ -4,7 +4,7 @@ import be.sgerard.i18n.model.i18n.dto.TranslationLocaleDto;
 import be.sgerard.i18n.model.i18n.persistence.TranslationLocaleEntity;
 import be.sgerard.i18n.model.validation.ValidationMessage;
 import be.sgerard.i18n.model.validation.ValidationResult;
-import be.sgerard.i18n.repository.i18n.BundleKeyTranslationRepository;
+import be.sgerard.i18n.repository.i18n.BundleKeyEntityRepository;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
@@ -22,9 +22,9 @@ public class TranslationLocaleDependencyValidator implements TranslationLocaleLi
      */
     public static final String LOCALE_DEPENDENCIES = "validation.locale.translations-dependencies";
 
-    private final BundleKeyTranslationRepository repository;
+    private final BundleKeyEntityRepository repository;
 
-    public TranslationLocaleDependencyValidator(BundleKeyTranslationRepository repository) {
+    public TranslationLocaleDependencyValidator(BundleKeyEntityRepository repository) {
         this.repository = repository;
     }
 
@@ -42,14 +42,16 @@ public class TranslationLocaleDependencyValidator implements TranslationLocaleLi
      * Validates the specified locale.
      */
     private Mono<ValidationResult> validateNoDependency(TranslationLocaleEntity locale) {
-        return repository
-                .existsByLocale(locale.getId())
-                .map(exists ->
-                        exists
-                                ? ValidationResult.builder()
-                                .messages(new ValidationMessage(LOCALE_DEPENDENCIES))
-                                .build()
-                                : ValidationResult.EMPTY
-                );
+        // TODO
+        return Mono.empty();
+//        return repository
+//                .existsByLocale(locale.getId())
+//                .map(exists ->
+//                        exists
+//                                ? ValidationResult.builder()
+//                                .messages(new ValidationMessage(LOCALE_DEPENDENCIES))
+//                                .build()
+//                                : ValidationResult.EMPTY
+//                );
     }
 }

@@ -19,7 +19,7 @@ public class TranslationsWorkspaceValidator implements TranslationsListener {
 //
 //        if (workspace.getStatus() != WorkspaceStatus.INITIALIZED) {
 //            throw BadRequestException.actionNotAllowedInStateException(WorkspaceStatus.INITIALIZED.name(), workspace.getStatus().name());
-        }
+//        }
 // TODO
         return Mono.just(ValidationResult.EMPTY);
     }

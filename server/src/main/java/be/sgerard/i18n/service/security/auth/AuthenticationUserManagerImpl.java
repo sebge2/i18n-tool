@@ -130,8 +130,20 @@ public class AuthenticationUserManagerImpl implements AuthenticationUserManager 
         return this
                 .findAll()
                 .flatMap(authenticatedUser ->
-                        loadCredentials(repositoryId, authenticatedUser).map(authenticatedUser::updateRepositoryCredentials)
+                        loadCredentials(repositoryId, authenticatedUser)
+                                .map(authenticatedUser::updateRepositoryCredentials)
+                                .switchIfEmpty(Mono.defer(() -> Mono.just(authenticatedUser.removeRepositoryCredentials(repositoryId))))
                 )
+                .flatMap(this::update)
+                .then();
+    }
+
+    @Override
+    @Transactional
+    public Mono<Void> deleteAllRepositoryCredentials(String repositoryId) {
+        return this
+                .findAll()
+                .map(authenticatedUser -> authenticatedUser.removeRepositoryCredentials(repositoryId))
                 .flatMap(this::update)
                 .then();
     }
@@ -167,7 +179,7 @@ public class AuthenticationUserManagerImpl implements AuthenticationUserManager 
         return findSession(authenticatedUser)
                 .switchIfEmpty(Mono.error(ResourceNotFoundException.authenticatedUserNotFoundException(authenticatedUser.getId())))
                 .doOnNext(session -> setAuthenticatedUser(authenticatedUser, session))
-                .flatMap(sessionRepository::save)
+//                .flatMap(sessionRepository::save) TODO
                 .then(
                         listener
                                 .onUpdate(authenticatedUser)
