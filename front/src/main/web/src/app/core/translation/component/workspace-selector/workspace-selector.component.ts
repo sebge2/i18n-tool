@@ -23,7 +23,7 @@ import * as _ from "lodash";
 import {MatChipInputEvent} from "@angular/material/chips";
 import {WorkspaceService} from "../../../../translations/service/workspace.service";
 import {RepositoryService} from "../../../../translations/service/repository.service";
-import {EnrichedWorkspace} from "../../../../translations/model/workspace/enriched-workspace.model";
+import {Workspace} from "../../../../translations/model/workspace/workspace.model";
 
 @Component({
     selector: 'app-workspace-selector',
@@ -40,7 +40,7 @@ import {EnrichedWorkspace} from "../../../../translations/model/workspace/enrich
 })
 // https://itnext.io/creating-a-custom-form-field-control-compatible-with-reactive-forms-and-angular-material-cf195905b451
 // https://material.angular.io/guide/creating-a-custom-form-field-control
-export class WorkspaceSelectorComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck, ControlValueAccessor, MatFormFieldControl<EnrichedWorkspace[]> {
+export class WorkspaceSelectorComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck, ControlValueAccessor, MatFormFieldControl<Workspace[]> {
 
     @Input() public labelKey: string = '';
     @Input() public allowNotInitialized: boolean = false;
@@ -56,12 +56,12 @@ export class WorkspaceSelectorComponent implements OnInit, OnDestroy, AfterViewI
     public ngControl: NgControl;
 
     public readonly parts: FormGroup;
-    public filteredWorkspaces$: Observable<EnrichedWorkspace[]>;
+    public filteredWorkspaces$: Observable<Workspace[]>;
     public readonly separatorKeysCodes: number[] = [ENTER, COMMA];
 
     private static nextId = 0;
 
-    private _remainingAvailableWorkspaces$: Observable<EnrichedWorkspace[]>;
+    private _remainingAvailableWorkspaces$: Observable<Workspace[]>;
 
     private onChange = (_: any) => {
     };
@@ -91,7 +91,7 @@ export class WorkspaceSelectorComponent implements OnInit, OnDestroy, AfterViewI
             this.ngControl.valueAccessor = this;
         }
 
-        this._remainingAvailableWorkspaces$ = combineLatest([this._workspaceService.getEnrichedWorkspaces(), this.parts.valueChanges.pipe(startWith(<string>null))])
+        this._remainingAvailableWorkspaces$ = combineLatest([this._workspaceService.getWorkspaces(), this.parts.valueChanges.pipe(startWith(<string>null))])
             .pipe(
                 takeUntil(this._destroyed$),
                 map(([availableWorkspaces, _]) => this.filterOutPresent(availableWorkspaces, this.value))
@@ -160,11 +160,11 @@ export class WorkspaceSelectorComponent implements OnInit, OnDestroy, AfterViewI
         this.stateChanges.next();
     }
 
-    public get value(): EnrichedWorkspace[] {
+    public get value(): Workspace[] {
         return this.parts.controls['list'].value;
     }
 
-    public set value(value: EnrichedWorkspace[]) {
+    public set value(value: Workspace[]) {
         this.writeValue(value);
 
         this.onChange(value);
@@ -190,7 +190,7 @@ export class WorkspaceSelectorComponent implements OnInit, OnDestroy, AfterViewI
         }
     }
 
-    public writeValue(values: EnrichedWorkspace[] | null): void {
+    public writeValue(values: Workspace[] | null): void {
         this.parts.controls['list'].setValue(values);
     }
 
@@ -207,10 +207,10 @@ export class WorkspaceSelectorComponent implements OnInit, OnDestroy, AfterViewI
     }
 
     public selected(event: MatAutocompleteSelectedEvent): void {
-        this.add(<EnrichedWorkspace><unknown>event.option.value);
+        this.add(<Workspace><unknown>event.option.value);
     }
 
-    public add(selection: EnrichedWorkspace | string) {
+    public add(selection: Workspace | string) {
         this.parts.controls['input'].setValue(null);
 
         if (selection === 'ALL') {
@@ -221,13 +221,13 @@ export class WorkspaceSelectorComponent implements OnInit, OnDestroy, AfterViewI
         } else {
             const copy = _.clone(this.value);
 
-            copy.push(<EnrichedWorkspace>selection);
+            copy.push(<Workspace>selection);
 
             this.setValue(copy);
         }
     }
 
-    public remove(workspace: EnrichedWorkspace): void {
+    public remove(workspace: Workspace): void {
         const index = this.getIndex(workspace, this.value);
 
         if (index >= 0) {
@@ -248,30 +248,30 @@ export class WorkspaceSelectorComponent implements OnInit, OnDestroy, AfterViewI
         }
     }
 
-    private setValue(value: EnrichedWorkspace[]) {
+    private setValue(value: Workspace[]) {
         this.value = value;
         this.stateChanges.next();
     }
 
-    private getIndex(workspace: EnrichedWorkspace, workspaces: EnrichedWorkspace[]) {
-        return _.findIndex(workspaces, first => _.eq(workspace.workspace.id, first.workspace.id));
+    private getIndex(workspace: Workspace, workspaces: Workspace[]) {
+        return _.findIndex(workspaces, first => _.eq(workspace.id, first.id));
     }
 
-    private filterOutPresent(workspacesToFilter: EnrichedWorkspace[], others: EnrichedWorkspace[]): EnrichedWorkspace[] {
+    private filterOutPresent(workspacesToFilter: Workspace[], others: Workspace[]): Workspace[] {
         return workspacesToFilter
-            .filter(workspace => this.allowNotInitialized || !workspace.workspace.isNotInitialized())
+            .filter(workspace => this.allowNotInitialized || !workspace.isNotInitialized())
             .filter(workspace => this.getIndex(workspace, others) < 0);
     }
 
-    private filterRemaining(value: string | EnrichedWorkspace, remainingAvailableWorkspaces: EnrichedWorkspace[]): EnrichedWorkspace[] {
+    private filterRemaining(value: string | Workspace, remainingAvailableWorkspaces: Workspace[]): Workspace[] {
         if (!value) {
             return remainingAvailableWorkspaces;
-        } else if (value instanceof EnrichedWorkspace) {
-            return remainingAvailableWorkspaces.filter(workspace => !_.eq(workspace.workspace.id, value.workspace.id));
+        } else if (value instanceof Workspace) {
+            return remainingAvailableWorkspaces.filter(workspace => !_.eq(workspace.id, value.id));
         } else {
             const filterValue = value.toLowerCase();
 
-            return remainingAvailableWorkspaces.filter(workspace => workspace.workspace.branch.toLowerCase().indexOf(filterValue) === 0);
+            return remainingAvailableWorkspaces.filter(workspace => workspace.branch.toLowerCase().indexOf(filterValue) === 0);
         }
     }
 

@@ -9,8 +9,8 @@ import {TranslationLocale} from "../../model/translation-locale.model";
 import {TranslationLocaleIconPipe} from "../../../core/shared/pipe/translation-locale-icon.pipe";
 import * as _ from "lodash";
 import {WorkspaceService} from "../../service/workspace.service";
-import {EnrichedWorkspace} from "../../model/workspace/enriched-workspace.model";
 import {RepositoryIconPipe} from "../../../core/shared/pipe/repository-icon.pipe";
+import {Workspace} from '../../model/workspace/workspace.model';
 
 @Component({
     selector: 'app-translations-search-bar',
@@ -43,7 +43,7 @@ export class TranslationsSearchBarComponent implements OnInit, OnDestroy {
         this._searchForAllLocales = combineLatest([this.form.controls['locales'].valueChanges, this._localeService.getAvailableLocales()])
             .pipe(map(([_, availableLocales]) => availableLocales.length === this.locales.length));
 
-        this._searchForAllWorkspaces = combineLatest([this.form.controls['workspaces'].valueChanges, this._workspaceService.getEnrichedWorkspaces()])
+        this._searchForAllWorkspaces = combineLatest([this.form.controls['workspaces'].valueChanges, this._workspaceService.getWorkspaces()])
             .pipe(map(([_, availableWorkspaces]) => availableWorkspaces.length === this.workspaces.length));
     }
 
@@ -52,14 +52,14 @@ export class TranslationsSearchBarComponent implements OnInit, OnDestroy {
             .pipe(takeUntil(this._destroyed$))
             .subscribe(defaultLocales => this.form.controls['locales'].setValue(defaultLocales));
 
-        this._workspaceService.getEnrichedWorkspaces()
+        this._workspaceService.getWorkspaces()
             .pipe(takeUntil(this._destroyed$))
             .subscribe(availableWorkspaces => {
                 if (this.workspaces.length > 0) {
                     this.form.controls['workspaces'].setValue(
                         this.workspaces
                             .filter(workspace =>
-                                _.some(availableWorkspaces, availableWorkspace => _.eq(availableWorkspace.workspace.id, workspace.workspace.id))
+                                _.some(availableWorkspaces, availableWorkspace => _.eq(availableWorkspace.id, workspace.id))
                             )
                     );
                 } else {
@@ -90,14 +90,14 @@ export class TranslationsSearchBarComponent implements OnInit, OnDestroy {
         return this.form.controls['criterion'].value;
     }
 
-    public get workspaces(): EnrichedWorkspace[] {
+    public get workspaces(): Workspace[] {
         return this.form.controls['workspaces'].value;
     }
 
     public get workspacesAsString(): string {
         return !_.isEmpty(this.workspaces)
             ? this.workspaces
-                .map(workspace => `<span class="${this._repositoryIconPipe.transform(workspace.repository.type)}"></span> <b>${workspace.repository.name} ${workspace.workspace.branch}</b>`)
+                .map(workspace => `<span class="${this._repositoryIconPipe.transform(workspace.repositoryType)}"></span> <b>${workspace.repositoryName} ${workspace.branch}</b>`)
                 .join(', ')
             : null;
     }

@@ -6,11 +6,11 @@ import {FormArray, FormBuilder, FormGroup} from "@angular/forms";
 import {Observable, Subject} from "rxjs";
 import {auditTime, takeUntil} from "rxjs/operators";
 import {NotificationService} from "../../../core/notification/service/notification.service";
-import {EnrichedWorkspace} from "../../model/workspace/enriched-workspace.model";
 import {WorkspaceService} from "../../service/workspace.service";
 import {BundleFile} from "../../model/workspace/bundle-file.model";
 import * as _ from "lodash";
 import {TranslationUpdateDto} from "../../../api";
+import {Workspace} from "../../model/workspace/workspace.model";
 
 class DirtyTranslationForm {
 
@@ -100,8 +100,8 @@ export class TranslationsTableComponent implements OnInit, OnDestroy {
         return `app-scroller-spread-row-${this.searchRequest.locales.length}`;
     }
 
-    public getWorkspace(rowForm: FormGroup): Observable<EnrichedWorkspace> {
-        return this._workspaceService.getEnrichedWorkspace(this.dataSource.getWorkspace(rowForm));
+    public getWorkspace(rowForm: FormGroup): Observable<Workspace> {
+        return this._workspaceService.getWorkspace(this.dataSource.getWorkspace(rowForm));
     }
 
     public getBundleFile(rowForm: FormGroup): Observable<BundleFile> {

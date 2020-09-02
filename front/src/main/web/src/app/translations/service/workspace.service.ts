@@ -22,7 +22,6 @@ export class WorkspaceService {
     private readonly _synchronizedWorkspaces$: SynchronizedCollection<WorkspaceDto, Workspace>;
     private readonly _workspaces$: Observable<Workspace[]>;
 
-    private _enrichedWorkspaces$: Observable<EnrichedWorkspace[]>;
     private _cachedWorkspaceBundleFiles = new Map<string, BundleFile[]>();
 
     constructor(private apiWorkspaceService: ApiWorkspaceService,
@@ -56,24 +55,6 @@ export class WorkspaceService {
         return this._workspaces$;
     }
 
-    public getEnrichedWorkspaces(): Observable<EnrichedWorkspace[]> {
-        if (!this._enrichedWorkspaces$) {
-            this._enrichedWorkspaces$ = combineLatest([this.getWorkspaces(), this.repositoryService.getRepositories()])
-                .pipe(map(([workspaces, repositories]) => {
-                    return workspaces
-                        .map(workspace =>
-                            new EnrichedWorkspace(
-                                _.find(repositories, repository => _.isEqual(repository.id, workspace.repositoryId)),
-                                workspace
-                            )
-                        )
-                        .filter(enrichedWorkspace => !!enrichedWorkspace.repository)
-                }));
-        }
-
-        return this._enrichedWorkspaces$;
-    }
-
     public getRepositoryWorkspaces(repositoryId: string): Observable<Workspace[]> {
         return this.getWorkspaces()
             .pipe(map(workspaces => workspaces.filter(workspace => _.isEqual(workspace.repositoryId, repositoryId))));
@@ -83,15 +64,6 @@ export class WorkspaceService {
         return this.getWorkspaces()
             .pipe(
                 map(workspaces => _.find(workspaces, workspace => _.isEqual(workspace.id, workspaceId))),
-                filter(workspace => !!workspace),
-                distinctUntilChanged()
-            );
-    }
-
-    public getEnrichedWorkspace(workspaceId: string): Observable<EnrichedWorkspace> {
-        return this.getEnrichedWorkspaces()
-            .pipe(
-                map(workspaces => _.find(workspaces, workspace => _.isEqual(workspace.workspace.id, workspaceId))),
                 filter(workspace => !!workspace),
                 distinctUntilChanged()
             );

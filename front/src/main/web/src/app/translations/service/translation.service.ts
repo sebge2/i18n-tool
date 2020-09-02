@@ -18,7 +18,7 @@ export class TranslationService {
     public searchTranslations(searchRequest: TranslationsSearchRequest, maxKeys: number = 500, lastPageKey?: string): Observable<TranslationsPage> {
         return this._translationService
             .searchTranslations({
-                    workspaces: searchRequest.workspaces.map(workspace => workspace.workspace.id),
+                    workspaces: searchRequest.workspaces.map(workspace => workspace.id),
                     locales: searchRequest.locales.map(locale => locale.id),
                     criterion: searchRequest.criterion,
                     maxKeys: maxKeys,
