@@ -1,4 +1,4 @@
-package be.sgerard.i18n.service.repository.listener;
+package be.sgerard.i18n.service.repository.validation;
 
 import be.sgerard.i18n.model.repository.dto.BaseGitRepositoryPatchDto;
 import be.sgerard.i18n.model.repository.dto.RepositoryPatchDto;
@@ -13,12 +13,12 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 /**
- * {@link RepositoryListener Listener} checking that Git repositories are valid.
+ * {@link RepositoryValidator Validator} checking that Git repositories are valid.
  *
  * @author Sebastien Gerard
  */
 @Component
-public class GitRepositoryValidationListener implements RepositoryListener<RepositoryEntity> {
+public class GitRepositoryValidator implements RepositoryValidator<RepositoryEntity> {
 
     /**
      * Validation message key specifying that the pattern of allowed branches is invalid.
@@ -30,7 +30,7 @@ public class GitRepositoryValidationListener implements RepositoryListener<Repos
      */
     public static final String DEFAULT_BRANCH_NOT_ALLOWED = "validation.repository.default-branch-not-allowed";
 
-    public GitRepositoryValidationListener() {
+    public GitRepositoryValidator() {
     }
 
     @Override

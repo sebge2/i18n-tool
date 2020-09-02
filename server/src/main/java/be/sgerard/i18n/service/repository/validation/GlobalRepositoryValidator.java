@@ -1,4 +1,4 @@
-package be.sgerard.i18n.service.repository.listener;
+package be.sgerard.i18n.service.repository.validation;
 
 import be.sgerard.i18n.model.repository.RepositoryStatus;
 import be.sgerard.i18n.model.repository.dto.RepositoryPatchDto;
@@ -12,12 +12,12 @@ import reactor.core.publisher.Mono;
 import java.util.Objects;
 
 /**
- * {@link RepositoryListener Listener} checking that repositories are valid.
+ * {@link RepositoryValidator Validator} checking that repositories are valid.
  *
  * @author Sebastien Gerard
  */
 @Component
-public class RepositoryValidationListener implements RepositoryListener<RepositoryEntity> {
+public class GlobalRepositoryValidator implements RepositoryValidator<RepositoryEntity> {
 
     /**
      * Validation message key specifying that the repository name is not unique.
@@ -31,7 +31,7 @@ public class RepositoryValidationListener implements RepositoryListener<Reposito
 
     private final RepositoryManager repositoryManager;
 
-    public RepositoryValidationListener(RepositoryManager repositoryManager) {
+    public GlobalRepositoryValidator(RepositoryManager repositoryManager) {
         this.repositoryManager = repositoryManager;
     }
 

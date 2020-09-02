@@ -45,7 +45,7 @@ public interface WorkspaceListener {
     }
 
     /**
-     * Performs an action after the deletion of the specified workspace.
+     * Performs an action before the deletion of the specified workspace.
      */
     default Mono<Void> onDelete(WorkspaceEntity workspace) {
         return Mono.empty();

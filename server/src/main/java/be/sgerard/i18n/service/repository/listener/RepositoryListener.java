@@ -18,24 +18,10 @@ public interface RepositoryListener<R extends RepositoryEntity> {
     boolean support(RepositoryEntity repositoryEntity);
 
     /**
-     * Validates before persisting the specified repository.
-     */
-    default Mono<ValidationResult> beforePersist(R repository) {
-        return Mono.just(ValidationResult.EMPTY);
-    }
-
-    /**
      * Performs an action after the creation of the specified repository.
      */
     default Mono<Void> onCreate(R repository) {
         return Mono.empty();
-    }
-
-    /**
-     * Validates before updating the specified repository.
-     */
-    default Mono<ValidationResult> beforeUpdate(R original, RepositoryPatchDto patch) {
-        return Mono.just(ValidationResult.EMPTY);
     }
 
     /**
@@ -57,13 +43,6 @@ public interface RepositoryListener<R extends RepositoryEntity> {
      */
     default Mono<Void> onUpdate(RepositoryPatchDto patch, R repository) {
         return Mono.empty();
-    }
-
-    /**
-     * Validates before deleting the specified repository.
-     */
-    default Mono<ValidationResult> beforeDelete(R repository) {
-        return Mono.just(ValidationResult.EMPTY);
     }
 
     /**

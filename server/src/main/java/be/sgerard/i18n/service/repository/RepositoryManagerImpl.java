@@ -10,6 +10,7 @@ import be.sgerard.i18n.service.LockTimeoutException;
 import be.sgerard.i18n.service.ResourceNotFoundException;
 import be.sgerard.i18n.service.ValidationException;
 import be.sgerard.i18n.service.repository.listener.RepositoryListener;
+import be.sgerard.i18n.service.repository.validation.RepositoryValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cglib.proxy.Proxy;
@@ -34,15 +35,18 @@ public class RepositoryManagerImpl implements RepositoryManager {
     private final RepositoryHandler<RepositoryEntity, RepositoryCreationDto, RepositoryPatchDto> handler;
     private final LockService lockService;
     private final RepositoryListener<RepositoryEntity> listener;
+    private final RepositoryValidator<RepositoryEntity> validator;
 
     public RepositoryManagerImpl(RepositoryEntityRepository repository,
                                  RepositoryHandler<RepositoryEntity, RepositoryCreationDto, RepositoryPatchDto> handler,
                                  LockService lockService,
-                                 RepositoryListener<RepositoryEntity> listener) {
+                                 RepositoryListener<RepositoryEntity> listener, 
+                                 RepositoryValidator<RepositoryEntity> validator) {
         this.repository = repository;
         this.handler = handler;
         this.lockService = lockService;
         this.listener = listener;
+        this.validator = validator;
     }
 
     @Transactional(readOnly = true)
@@ -63,7 +67,7 @@ public class RepositoryManagerImpl implements RepositoryManager {
         return handler
                 .createRepository(creationDto)
                 .flatMap(rep ->
-                        listener
+                        validator
                                 .beforePersist(rep)
                                 .map(validationResult -> {
                                     ValidationException.throwIfFailed(validationResult);
@@ -119,7 +123,7 @@ public class RepositoryManagerImpl implements RepositoryManager {
         return lockService.executeAndGetMono(() ->
                 findByIdOrDie(patch.getId())
                         .flatMap(repo ->
-                                listener
+                                validator
                                         .beforeUpdate(repo, patch)
                                         .map(validationResult -> {
                                             ValidationException.throwIfFailed(validationResult);
@@ -143,7 +147,7 @@ public class RepositoryManagerImpl implements RepositoryManager {
         return lockService.executeAndGetMono(() ->
                 findById(id)
                         .flatMap(repo ->
-                                listener
+                                validator
                                         .beforeDelete(repo)
                                         .map(validationResult -> {
                                             ValidationException.throwIfFailed(validationResult);
@@ -156,12 +160,11 @@ public class RepositoryManagerImpl implements RepositoryManager {
                                             return Mono.just(repo);
                                         })
                                         .flatMap(rep ->
-                                                repository.delete(rep)
+                                                listener.onDelete(rep)
                                                         .thenReturn(rep)
                                         )
                                         .flatMap(rep ->
-                                                listener
-                                                        .onDelete(rep)
+                                                repository.delete(rep)
                                                         .thenReturn(rep)
                                         )
                         )
