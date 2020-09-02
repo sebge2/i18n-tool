@@ -1,5 +1,7 @@
 import {WorkspaceStatus} from './workspace-status.model';
 import {WorkspaceDto} from "../../../api";
+import {RepositoryStatus} from "../repository/repository-status.model";
+import {RepositoryType} from "../repository/repository-type.model";
 
 export class Workspace {
 
@@ -8,14 +10,22 @@ export class Workspace {
             dto.id,
             dto.branch,
             WorkspaceStatus[dto.status],
-            dto.repositoryId
+            dto.defaultWorkspace,
+            dto.repositoryId,
+            dto.repositoryName,
+            RepositoryStatus[dto.repositoryStatus],
+            RepositoryType[dto.repositoryType]
         );
     }
 
     constructor(public id: string,
                 public branch: string,
                 public status: WorkspaceStatus,
-                public repositoryId: string) {
+                public defaultWorkspace: boolean,
+                public repositoryId: string,
+                public repositoryName: string,
+                public repositoryStatus: RepositoryStatus,
+                public repositoryType: RepositoryType) {
     }
 
     public isNotInitialized(): boolean {

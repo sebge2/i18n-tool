@@ -19,7 +19,7 @@ export class WorkspaceService {
 
     private static readonly MAX_CACHED_BUNDLE_FILES = 100;
 
-    private readonly _synchronizedWorkspaces$: SynchronizedCollection<WorkspaceDto, WorkspaceDto>;
+    private readonly _synchronizedWorkspaces$: SynchronizedCollection<WorkspaceDto, Workspace>;
     private readonly _workspaces$: Observable<Workspace[]>;
 
     private _enrichedWorkspaces$: Observable<EnrichedWorkspace[]>;
@@ -30,8 +30,8 @@ export class WorkspaceService {
                 private eventService: EventService,
                 private notificationService: NotificationService) {
 
-        this._synchronizedWorkspaces$ = new SynchronizedCollection<WorkspaceDto, WorkspaceDto>(
-            () => this.apiWorkspaceService.findAll3(),
+        this._synchronizedWorkspaces$ = new SynchronizedCollection<WorkspaceDto, Workspace>(
+            () => this.apiWorkspaceService.findAll4(),
             this.eventService.subscribeDto(Events.ADDED_WORKSPACE),
             this.eventService.subscribeDto(Events.UPDATED_WORKSPACE),
             this.eventService.subscribeDto(Events.DELETED_WORKSPACE),
