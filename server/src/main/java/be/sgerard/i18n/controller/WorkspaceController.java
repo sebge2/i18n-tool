@@ -4,6 +4,7 @@ import be.sgerard.i18n.model.workspace.dto.BundleFileDto;
 import be.sgerard.i18n.model.workspace.dto.WorkspaceDto;
 import be.sgerard.i18n.model.workspace.persistence.WorkspaceEntity;
 import be.sgerard.i18n.service.BadRequestException;
+import be.sgerard.i18n.service.workspace.WorkspaceDtoEnricher;
 import be.sgerard.i18n.service.workspace.WorkspaceManager;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -30,9 +31,11 @@ import java.util.List;
 public class WorkspaceController {
 
     private final WorkspaceManager workspaceManager;
+    private final WorkspaceDtoEnricher dtoEnricher;
 
-    public WorkspaceController(WorkspaceManager workspaceManager) {
+    public WorkspaceController(WorkspaceManager workspaceManager, WorkspaceDtoEnricher dtoEnricher) {
         this.workspaceManager = workspaceManager;
+        this.dtoEnricher = dtoEnricher;
     }
 
     /**
@@ -42,7 +45,7 @@ public class WorkspaceController {
     @Operation(summary = "Returns registered workspaces.")
     public Flux<WorkspaceDto> findAll() {
         return workspaceManager.findAll()
-                .map(workspace -> WorkspaceDto.builder(workspace).build());
+                .map(dtoEnricher::mapAndEnrich);
     }
 
     /**
@@ -52,7 +55,7 @@ public class WorkspaceController {
     @Operation(summary = "Returns registered workspaces.")
     public Flux<WorkspaceDto> findAll(@PathVariable String id) {
         return workspaceManager.findAll(id)
-                .map(workspace -> WorkspaceDto.builder(workspace).build());
+                .map(dtoEnricher::mapAndEnrich);
     }
 
     /**
@@ -62,7 +65,7 @@ public class WorkspaceController {
     @Operation(summary = "Returns the workspace having the specified id.")
     public Mono<WorkspaceDto> findById(@PathVariable String id) {
         return workspaceManager.findByIdOrDie(id)
-                .map(workspace -> WorkspaceDto.builder(workspace).build());
+                .map(dtoEnricher::mapAndEnrich);
     }
 
     /**
@@ -100,7 +103,7 @@ public class WorkspaceController {
     @PreAuthorize("hasRole('ADMIN')")
     public Flux<WorkspaceDto> synchronizeRepository(@PathVariable String repositoryId) {
         return workspaceManager.synchronize(repositoryId)
-                .map(entity -> WorkspaceDto.builder(entity).build());
+                .map(dtoEnricher::mapAndEnrich);
     }
 
     /**
@@ -115,7 +118,7 @@ public class WorkspaceController {
     @PreAuthorize("hasRole('ADMIN')")
     public Mono<WorkspaceDto> initialize(@PathVariable String id) {
         return workspaceManager.initialize(id)
-                .map(workspace -> WorkspaceDto.builder(workspace).build());
+                .map(dtoEnricher::mapAndEnrich);
     }
 
     /**
@@ -137,6 +140,6 @@ public class WorkspaceController {
         }
 
         return workspaceManager.publish(id, message)
-                .map(workspace -> WorkspaceDto.builder(workspace).build());
+                .map(dtoEnricher::mapAndEnrich);
     }
 }

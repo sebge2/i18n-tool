@@ -1,7 +1,8 @@
 package be.sgerard.i18n.model.workspace.dto;
 
+import be.sgerard.i18n.model.repository.RepositoryStatus;
+import be.sgerard.i18n.model.repository.RepositoryType;
 import be.sgerard.i18n.model.workspace.WorkspaceStatus;
-import be.sgerard.i18n.model.workspace.persistence.WorkspaceEntity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
@@ -25,19 +26,14 @@ public class WorkspaceDto {
         return new Builder();
     }
 
-    public static Builder builder(WorkspaceEntity entity) {
-        return builder()
-                .id(entity.getId())
-                .branch(entity.getBranch())
-                .status(entity.getStatus())
-                .repositoryId(entity.getRepository());
-    }
-
     @Schema(description = "Unique identifier of a workspace.", required = true)
     private final String id;
 
     @Schema(description = "The branch name on which the workspace is based on.", required = true)
     private final String branch;
+
+    @Schema(description = "Flag indicating whether this workspace is the default one of the repository.", required = true)
+    private final boolean defaultWorkspace;
 
     @Schema(description = "The current workspace status. First, the workspace is created, but not initialized. Then, " +
             "the workspace is initialized and all the translations are retrieved. Once they are edited, they are sent for review.", required = true)
@@ -45,6 +41,15 @@ public class WorkspaceDto {
 
     @Schema(description = "The unique id of the associated repository.", required = true)
     private final String repositoryId;
+
+    @Schema(description = "The unique name of the associated repository.", required = true)
+    private final String repositoryName;
+
+    @Schema(description = "The current status of the associated repository", required = true)
+    private final RepositoryStatus repositoryStatus;
+
+    @Schema(description = "The type of the associated repository", required = true)
+    private final RepositoryType repositoryType;
 
     /**
      * Builder of {@link WorkspaceDto workspace DTO}.
