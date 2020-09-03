@@ -6,12 +6,11 @@ import {TranslationsSearchBarComponent} from './component/translations-search-ba
 import {TranslationCriterionSelectorComponent} from './component/translations-search-bar/translation-criterion-selector/translation-criterion-selector.component';
 import {TranslationsTableComponent} from './component/translations-table/translations-table.component';
 import {TranslationEditingCellComponent} from './component/translations-table/translation-editing-cell/translation-editing-cell.component';
-import {TranslationsStartReviewComponent} from './component/translations-start-review/translations-start-review.component';
 import {CoreSharedModule} from "../core/shared/core-shared-module";
 import {CoreAuthModule} from "../core/auth/core-auth.module";
 import {CoreTranslationModule} from "../core/translation/core-translation-module";
-import { TranslationsWorkspaceRowComponent } from './component/translations-table/translations-workspace-row/translations-workspace-row.component';
-import { TranslationsBundleFileRowComponent } from './component/translations-table/translations-bundle-file-row/translations-bundle-file-row.component';
+import {TranslationsWorkspaceRowComponent} from './component/translations-table/translations-workspace-row/translations-workspace-row.component';
+import {TranslationsBundleFileRowComponent} from './component/translations-table/translations-bundle-file-row/translations-bundle-file-row.component';
 
 const appRoutes: Routes = [
     {
@@ -26,12 +25,8 @@ const appRoutes: Routes = [
         TranslationCriterionSelectorComponent,
         TranslationsTableComponent,
         TranslationEditingCellComponent,
-        TranslationsStartReviewComponent,
         TranslationsWorkspaceRowComponent,
         TranslationsBundleFileRowComponent
-    ],
-    entryComponents: [
-        TranslationsStartReviewComponent
     ],
     imports: [
         CommonModule,

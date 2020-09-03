@@ -125,6 +125,11 @@
     },
     "WORKSPACES": {
       "REFRESH_ACTION": "Refresh",
+      "REVIEW": {
+        "POPUP": {
+          "TITLE": "Publish Modifications"
+        }
+      },
       "ERROR": {
         "GET_ALL": "Error while retrieving workspaces.",
         "DELETE_WORKSPACE": "Error while deleting the workspace",

@@ -17,11 +17,13 @@ import {FormWorkspacesStartReviewButtonComponent} from "./component/form-publish
         TranslationLocaleSelectorComponent,
         WorkspaceSelectorComponent,
         FormWorkspacesStartReviewButtonComponent,
+        WorkspacesStartReviewDialogComponent
     ],
     exports: [
         TranslationLocaleSelectorComponent,
         WorkspaceSelectorComponent,
         FormWorkspacesStartReviewButtonComponent,
+        WorkspacesStartReviewDialogComponent
     ],
     entryComponents: [
         WorkspacesStartReviewDialogComponent
