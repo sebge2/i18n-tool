@@ -1,0 +1,18 @@
+.app-dialog-close-button {
+    float: right;
+    top: -24px;
+    right: -24px;
+    opacity: 0.5;
+}
+
+.app-dialog-close-icon {
+    transition: 1s ease-in-out;
+}
+
+.app-dialog-close-button:hover {
+    opacity: 1;
+}
+
+.mat-dialog-actions {
+    justify-content: flex-end;
+}

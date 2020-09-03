@@ -11,6 +11,8 @@ import {Workspace} from "../../../../../translations/model/workspace/workspace.m
 import * as _ from "lodash";
 import {UserService} from "../../../../../core/auth/service/user.service";
 import {User} from "../../../../../core/auth/model/user.model";
+import {WorkspacesStartReviewDialogComponent} from "../../../../../core/translation/component/workspaces-start-review-dialog/workspaces-start-review-dialog.component";
+import {MatDialog} from "@angular/material/dialog";
 
 @Component({
     selector: 'app-repository-view-card',
@@ -32,6 +34,7 @@ export class RepositoryViewCardComponent implements OnInit, OnDestroy {
     private _destroyed$ = new Subject<void>();
 
     constructor(private _formBuilder: FormBuilder,
+                private _dialog: MatDialog,
                 private _authenticationService: AuthenticationService,
                 private _userService: UserService,
                 private _workspaceService: WorkspaceService) {
@@ -72,6 +75,10 @@ export class RepositoryViewCardComponent implements OnInit, OnDestroy {
 
     public onOpen() {
         this.open.emit(this.repository);
+    }
+
+    public onPublish() {
+        this._dialog.open(WorkspacesStartReviewDialogComponent, {});
     }
 
     public get statusIconClass(): string {

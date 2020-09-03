@@ -41,6 +41,10 @@ import {ExpansionPanelHeaderComponent} from "./component/expansion-panel/expansi
 import {ExpansionPanelContentComponent} from "./component/expansion-panel/expansion-panel-content/expansion-panel-content.component";
 import {FormSearchButtonComponent} from "./component/form-search-button/form-search-button.component";
 import { GitHubLinkButtonComponent } from './component/git-hub-link-button/git-hub-link-button.component';
+import {DialogComponent} from "./component/dialog/dialog.component";
+import {DialogActionsComponent} from "./component/dialog/dialog-actions/dialog-actions.component";
+import {DialogContentComponent} from "./component/dialog/dialog-content/dialog-content.component";
+import {PublishButtonComponent} from "./component/publish-button/publish-button.component";
 
 @NgModule({
     declarations: [
@@ -56,6 +60,7 @@ import { GitHubLinkButtonComponent } from './component/git-hub-link-button/git-h
         MoreActionItemButtonComponent,
         GeneratePasswordButtonComponent,
         GitHubLinkButtonComponent,
+        PublishButtonComponent,
 
         MainMessageComponent,
         ErrorMessageListComponent,
@@ -79,6 +84,9 @@ import { GitHubLinkButtonComponent } from './component/git-hub-link-button/git-h
         ExpansionPanelComponent,
         ExpansionPanelHeaderComponent,
         ExpansionPanelContentComponent,
+        DialogComponent,
+        DialogActionsComponent,
+        DialogContentComponent,
 
         WorkspaceIconPipe,
         WorkspaceIconCssPipe,
@@ -110,6 +118,7 @@ import { GitHubLinkButtonComponent } from './component/git-hub-link-button/git-h
         MoreActionItemButtonComponent,
         GeneratePasswordButtonComponent,
         GitHubLinkButtonComponent,
+        PublishButtonComponent,
 
         MainMessageComponent,
         ErrorMessageListComponent,
@@ -131,6 +140,9 @@ import { GitHubLinkButtonComponent } from './component/git-hub-link-button/git-h
         ExpansionPanelComponent,
         ExpansionPanelHeaderComponent,
         ExpansionPanelContentComponent,
+        DialogComponent,
+        DialogActionsComponent,
+        DialogContentComponent,
 
         WorkspaceIconPipe,
         WorkspaceIconCssPipe,
