@@ -1,4 +1,4 @@
-<div [ngSwitch]="repositoryType">
+<div [ngSwitch]="repositoryType" class="app-repository-add-step-info-content">
     <form [formGroup]="form" autocomplete="off">
         <ng-container *ngSwitchCase="RepositoryType.GITHUB">
             <p>

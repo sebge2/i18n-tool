@@ -17,10 +17,7 @@ export class RepositoryListComponent {
     }
 
     public onAdd() {
-        this.dialog.open(RepositoryAddWizardComponent, {
-            height: '500px',
-            width: '800px',
-        });
+        this.dialog.open(RepositoryAddWizardComponent);
     }
 
     public openOpen(repository: Repository) {
