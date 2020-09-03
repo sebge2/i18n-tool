@@ -186,6 +186,7 @@
         "WORKSPACES_NOT_READY": "<b><font class=\"status-warning\">no workspace</font></b> is initialized and ready to use",
         "DEFAULT_WORKSPACE_LABEL": "Default Workspace:",
         "STATUS_DEFAULT": "<b>{name}</b> with <b>{numberBundleKeys}</b> translation key(s)",
+        "STATUS_DEFAULT_EMPTY": "<b><font class=\"status-warning\">no default workspace</font></b>",
         "ACCESS_LABEL": "Your access:",
         "ACCESS_ALLOWED": "You, <b>{displayName}</b>, are <b><font class=\"status-success\">allowed</font></b> to synchronize and publish",
         "ACCESS_FORBIDDEN": "You, <b>{displayName}</b>, are <b><font class=\"status-warning\">not allowed</font></b> to synchronize and publish",

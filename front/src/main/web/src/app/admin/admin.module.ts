@@ -23,6 +23,7 @@ import { RepositoryDetailsBundleFileNodeComponent } from './component/repositori
 import { RepositoryDetailsBundleFileEntryNodeComponent } from './component/repositories/repository-details/repository-details-workspaces/repository-details-bundle-file-entry-node/repository-details-bundle-file-entry-node.component';
 import { RepositoryDetailsWorkspaceTreeNodeComponent } from './component/repositories/repository-details/repository-details-workspaces/repository-details-workspace-tree-node/repository-details-workspace-tree-node.component';
 import {SafePipeModule} from "safe-pipe";
+import {CoreTranslationModule} from "../core/translation/core-translation-module";
 
 const appRoutes: Routes = [
     {path: 'users', component: UsersComponent},
@@ -61,6 +62,7 @@ const appRoutes: Routes = [
         CommonModule,
         CoreSharedModule,
         CoreAuthModule,
+        CoreTranslationModule,
 
         RouterModule.forChild(appRoutes),
 

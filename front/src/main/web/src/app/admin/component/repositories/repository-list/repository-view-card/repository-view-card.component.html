@@ -37,7 +37,8 @@
                     {{'ADMIN.REPOSITORIES.VIEW_CARD.DEFAULT_WORKSPACE_LABEL' | translate}}
                 </td>
                 <td>
-                    <span [innerHTML]="'ADMIN.REPOSITORIES.VIEW_CARD.STATUS_DEFAULT' | translate: {name:defaultWorkspace?.branch, numberBundleKeys:defaultWorkspace?.numberBundleKeys}"></span>
+                    <span [innerHTML]="'ADMIN.REPOSITORIES.VIEW_CARD.STATUS_DEFAULT' | translate: {name:defaultWorkspace?.branch, numberBundleKeys:defaultWorkspace?.numberBundleKeys}" *ngIf="defaultWorkspace"></span>
+                    <span [innerHTML]="'ADMIN.REPOSITORIES.VIEW_CARD.STATUS_DEFAULT_EMPTY' | translate" *ngIf="!defaultWorkspace"></span>
                 </td>
             </tr>
 <!--            TODO-->
@@ -52,6 +53,7 @@
         </table>
     </app-card-content>
     <app-card-actions>
+        <app-form-workspaces-start-review-button></app-form-workspaces-start-review-button>
         <app-form-open-tab-button (open)="onOpen()"></app-form-open-tab-button>
     </app-card-actions>
 </app-card>
