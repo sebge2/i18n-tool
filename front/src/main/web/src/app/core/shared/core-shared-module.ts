@@ -45,6 +45,7 @@ import {DialogComponent} from "./component/dialog/dialog.component";
 import {DialogActionsComponent} from "./component/dialog/dialog-actions/dialog-actions.component";
 import {DialogContentComponent} from "./component/dialog/dialog-content/dialog-content.component";
 import {PublishButtonComponent} from "./component/publish-button/publish-button.component";
+import {FormSendButtonComponent} from "./component/form-send-button/form-send-button.component";
 
 @NgModule({
     declarations: [
@@ -54,6 +55,7 @@ import {PublishButtonComponent} from "./component/publish-button/publish-button.
         FormUploadButtonComponent,
         FormOpenTabButtonComponent,
         FormSearchButtonComponent,
+        FormSendButtonComponent,
         SyncButtonComponent,
         InitDownloadButtonComponent,
         MoreActionsButtonComponent,
@@ -112,6 +114,7 @@ import {PublishButtonComponent} from "./component/publish-button/publish-button.
         FormUploadButtonComponent,
         FormOpenTabButtonComponent,
         FormSearchButtonComponent,
+        FormSendButtonComponent,
         SyncButtonComponent,
         InitDownloadButtonComponent,
         MoreActionsButtonComponent,
