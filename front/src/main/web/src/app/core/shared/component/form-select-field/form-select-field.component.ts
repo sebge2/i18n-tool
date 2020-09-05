@@ -22,6 +22,7 @@ import * as _ from "lodash";
 @Component({
     selector: 'app-form-select-field',
     templateUrl: './form-select-field.component.html',
+    styleUrls: ['./form-select-field.component.css'],
     providers: [
         {
             provide: NG_VALUE_ACCESSOR,
