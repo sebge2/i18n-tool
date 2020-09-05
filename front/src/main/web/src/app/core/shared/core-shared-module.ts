@@ -40,12 +40,13 @@ import {ExpansionPanelComponent} from "./component/expansion-panel/expansion-pan
 import {ExpansionPanelHeaderComponent} from "./component/expansion-panel/expansion-panel-header/expansion-panel-header.component";
 import {ExpansionPanelContentComponent} from "./component/expansion-panel/expansion-panel-content/expansion-panel-content.component";
 import {FormSearchButtonComponent} from "./component/form-search-button/form-search-button.component";
-import { GitHubLinkButtonComponent } from './component/git-hub-link-button/git-hub-link-button.component';
+import {GitHubLinkButtonComponent} from './component/git-hub-link-button/git-hub-link-button.component';
 import {DialogComponent} from "./component/dialog/dialog.component";
 import {DialogActionsComponent} from "./component/dialog/dialog-actions/dialog-actions.component";
 import {DialogContentComponent} from "./component/dialog/dialog-content/dialog-content.component";
 import {PublishButtonComponent} from "./component/publish-button/publish-button.component";
 import {FormSendButtonComponent} from "./component/form-send-button/form-send-button.component";
+import {FormSelectFieldComponent} from "./component/form-select-field/form-select-field.component";
 
 @NgModule({
     declarations: [
@@ -63,6 +64,8 @@ import {FormSendButtonComponent} from "./component/form-send-button/form-send-bu
         GeneratePasswordButtonComponent,
         GitHubLinkButtonComponent,
         PublishButtonComponent,
+
+        FormSelectFieldComponent,
 
         MainMessageComponent,
         ErrorMessageListComponent,
@@ -122,6 +125,8 @@ import {FormSendButtonComponent} from "./component/form-send-button/form-send-bu
         GeneratePasswordButtonComponent,
         GitHubLinkButtonComponent,
         PublishButtonComponent,
+
+        FormSelectFieldComponent,
 
         MainMessageComponent,
         ErrorMessageListComponent,
