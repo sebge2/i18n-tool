@@ -5,6 +5,8 @@ import {Repository} from "../../../../translations/model/repository/repository.m
 import {Workspace} from "../../../../translations/model/workspace/workspace.model";
 import {WorkspaceService} from "../../../../translations/service/workspace.service";
 import {Subject} from "rxjs";
+import {takeUntil} from "rxjs/operators";
+import * as _ from "lodash";
 
 @Component({
     selector: 'app-workspaces-start-review-dialog',
@@ -31,13 +33,32 @@ export class WorkspacesStartReviewDialogComponent implements OnInit, OnDestroy {
 
     public ngOnInit(): void {
         this._workspaceService.getWorkspaces()
-            // TODO
-            .subscribe(workspaces => this.workspaces = workspaces);
+            .pipe(takeUntil(this._destroyed$))
+            .subscribe(availableWorkspaces => {
+                if (_.isEmpty(this.workspaces) && !_.isNil(this.data.repository)) {
+                    this.form.controls['workspaces'].setValue(
+                        _.filter(availableWorkspaces, workspace => _.isEqual(workspace.repositoryId, this.data.repository.id))
+                    );
+                } else {
+                    this.form.controls['workspaces'].setValue(
+                        _.filter(
+                            availableWorkspaces,
+                            availableWorkspace => _.some(this.workspacesToPublish, workspaceToPublish => _.isEqual(workspaceToPublish.id, availableWorkspace.id))
+                        )
+                    );
+                }
+
+                this.workspaces = availableWorkspaces;
+            });
     }
 
     public ngOnDestroy(): void {
         this._destroyed$.next();
         this._destroyed$.complete();
+    }
+
+    public get workspacesToPublish(): Workspace[] {
+        return this.form.controls['workspaces'].value;
     }
 
     public onPublish() {

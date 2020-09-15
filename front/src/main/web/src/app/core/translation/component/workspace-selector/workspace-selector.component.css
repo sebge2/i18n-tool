@@ -6,15 +6,8 @@
     width: 100%;
 }
 
-.app-workspace-selector-icon {
-    top: 1px;
-}
-
-.app-workspace-selector-icon, .app-workspace-selector-all-icon {
+.app-workspace-selector-all-icon {
     margin-right: 5px;
     position: relative;
-}
-
-.app-workspace-selector-all-icon {
     top: 2px;
 }

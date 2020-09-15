@@ -8,8 +8,7 @@
                 [selectable]="true"
                 [removable]="true"
                 (removed)="remove(workspace)">
-            <span [class]="workspace.repositoryType  | repositoryIcon" class="app-workspace-selector-icon"></span>
-            {{workspace.repositoryName}} {{workspace.branch}}
+            <app-workspace-label [workspace]="workspace"></app-workspace-label>
             <mat-icon matChipRemove>cancel</mat-icon>
         </mat-chip>
 
@@ -28,8 +27,7 @@
         </mat-option>
 
         <mat-option *ngFor="let workspace of filteredWorkspaces$ | async" [value]="workspace">
-            <span [class]="workspace?.repositoryType  | repositoryIcon" class="app-workspace-selector-icon"></span>
-            {{workspace.repositoryName}} {{workspace.branch}}
+            <app-workspace-label [workspace]="workspace"></app-workspace-label>
         </mat-option>
     </mat-autocomplete>
 </form>
