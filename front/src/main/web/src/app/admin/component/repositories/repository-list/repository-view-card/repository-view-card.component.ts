@@ -78,7 +78,7 @@ export class RepositoryViewCardComponent implements OnInit, OnDestroy {
     }
 
     public onPublish() {
-        this._dialog.open(WorkspacesStartReviewDialogComponent, {});
+        this._dialog.open(WorkspacesStartReviewDialogComponent, {data: {repository: this.repository}});
     }
 
     public get statusIconClass(): string {

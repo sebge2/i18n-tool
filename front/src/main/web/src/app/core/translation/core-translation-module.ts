@@ -5,6 +5,7 @@ import {CoreSharedModule} from "../shared/core-shared-module";
 import {CoreSharedLibModule} from "../shared/core-shared-lib.module";
 import {WorkspaceSelectorComponent} from "./component/workspace-selector/workspace-selector.component";
 import {WorkspacesStartReviewDialogComponent} from "./component/workspaces-start-review-dialog/workspaces-start-review-dialog.component";
+import {WorkspaceLabelComponent} from "./component/workspace-label/workspace-label.component";
 
 @NgModule({
     imports: [
@@ -15,12 +16,14 @@ import {WorkspacesStartReviewDialogComponent} from "./component/workspaces-start
     declarations: [
         TranslationLocaleSelectorComponent,
         WorkspaceSelectorComponent,
-        WorkspacesStartReviewDialogComponent
+        WorkspacesStartReviewDialogComponent,
+        WorkspaceLabelComponent
     ],
     exports: [
         TranslationLocaleSelectorComponent,
         WorkspaceSelectorComponent,
-        WorkspacesStartReviewDialogComponent
+        WorkspacesStartReviewDialogComponent,
+        WorkspaceLabelComponent
     ],
     entryComponents: [
         WorkspacesStartReviewDialogComponent

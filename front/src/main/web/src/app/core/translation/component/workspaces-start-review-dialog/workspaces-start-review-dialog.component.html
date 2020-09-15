@@ -4,9 +4,9 @@
             <mat-form-field appearance="standard" class="app-start-review-list">
                 <mat-label>{{'ADMIN.WORKSPACES.REVIEW.POPUP.WORKSPACES_FIELD_LABEL' | translate}}</mat-label>
 
-                <app-form-select-field formControlName="workspaces" [availableValues]="['test', 'test2', 'test3', 'test4', 'test5', 'test6', 'test7', 'test8']" [itemTemplate]="itemTemplate">
+                <app-form-select-field formControlName="workspaces" [availableValues]="workspaces" [itemTemplate]="itemTemplate">
                     <ng-template #itemTemplate let-value="value">
-                        sebge2/{{value}}
+                        <app-workspace-label [workspace]="value"></app-workspace-label>
                     </ng-template>
                 </app-form-select-field>
                 <mat-hint>{{'ADMIN.WORKSPACES.REVIEW.POPUP.WORKSPACES_FIELD_HINT' | translate}}</mat-hint>
