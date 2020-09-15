@@ -127,7 +127,11 @@
       "REFRESH_ACTION": "Refresh",
       "REVIEW": {
         "POPUP": {
-          "TITLE": "Publish Modifications"
+          "TITLE": "Publish Modifications",
+          "WORKSPACES_FIELD_LABEL": "Workspaces to publish",
+          "WORKSPACES_FIELD_HINT": "Modifications of the selected workspaces will be published.",
+          "COMMENT_FIELD_LABEL": "Free Comment",
+          "COMMENT_FIELD_HINT": "Free comment that will be used to describe modifications."
         }
       },
       "ERROR": {
