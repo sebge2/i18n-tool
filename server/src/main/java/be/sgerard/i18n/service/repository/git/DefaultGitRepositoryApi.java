@@ -7,9 +7,9 @@ import be.sgerard.i18n.service.repository.RepositoryException;
 import org.apache.commons.io.FileUtils;
 import org.eclipse.jgit.api.*;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.lib.PersonIdent;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
-import org.eclipse.jgit.transport.CredentialsProvider;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,16 +35,10 @@ public class DefaultGitRepositoryApi extends BaseGitRepositoryApi {
         return new DefaultGitRepositoryApi(configuration);
     }
 
-    private final CredentialsProvider credentialsProvider;
-    private final String defaultBranch;
-
     private Git git;
 
     public DefaultGitRepositoryApi(Configuration configuration) {
         super(configuration);
-
-        this.credentialsProvider = configuration.toCredentialsProvider().orElse(null);
-        this.defaultBranch = configuration.getDefaultBranch();
     }
 
     @Override
@@ -53,8 +47,8 @@ public class DefaultGitRepositoryApi extends BaseGitRepositoryApi {
             Git
                     .wrap(FileRepositoryBuilder.create(FileUtils.getTempDirectory()))
                     .lsRemote()
-                    .setCredentialsProvider(credentialsProvider)
-                    .setRemote(Objects.toString(remoteUri, null))
+                    .setCredentialsProvider(configuration.toCredentialsProvider().orElse(null))
+                    .setRemote(Objects.toString(configuration.getRemoteUri().orElse(null), null))
                     .call();
 
             return this;
@@ -65,19 +59,19 @@ public class DefaultGitRepositoryApi extends BaseGitRepositoryApi {
             if (errorMessage.contains("not authorized") || errorMessage.contains("authentication is required")) {
                 throw new ValidationException(
                         ValidationResult.builder()
-                                .messages(new ValidationMessage(INVALID_CREDENTIALS, remoteUri))
+                                .messages(new ValidationMessage(INVALID_CREDENTIALS, configuration.getRemoteUri().orElse(null)))
                                 .build()
                 );
             } else if (errorMessage.contains("not found")) {
                 throw new ValidationException(
                         ValidationResult.builder()
-                                .messages(new ValidationMessage(INVALID_URL, remoteUri))
+                                .messages(new ValidationMessage(INVALID_URL, configuration.getRemoteUri().orElse(null)))
                                 .build()
                 );
             } else {
                 throw new ValidationException(
                         ValidationResult.builder()
-                                .messages(new ValidationMessage(ERROR_ACCESSING, remoteUri))
+                                .messages(new ValidationMessage(ERROR_ACCESSING, configuration.getRemoteUri().orElse(null)))
                                 .build()
                 );
             }
@@ -143,13 +137,13 @@ public class DefaultGitRepositoryApi extends BaseGitRepositoryApi {
 
         try {
             openGit().fetch()
-                    .setCredentialsProvider(credentialsProvider)
+                    .setCredentialsProvider(configuration.toCredentialsProvider().orElse(null))
                     .setRemoveDeletedRefs(true)
                     .call();
 
             final PullResult result = openGit().pull()
                     .setRemote("origin")
-                    .setCredentialsProvider(credentialsProvider)
+                    .setCredentialsProvider(configuration.toCredentialsProvider().orElse(null))
                     .call();
 
             if (!result.isSuccessful()) {
@@ -181,6 +175,7 @@ public class DefaultGitRepositoryApi extends BaseGitRepositoryApi {
             openGit().add().addFilepattern(".").call();
 
             openGit().commit()
+                    .setAuthor(new PersonIdent(configuration.getDisplayName(), configuration.getEmail()))
                     .setMessage(message)
                     .call();
 
@@ -193,7 +188,7 @@ public class DefaultGitRepositoryApi extends BaseGitRepositoryApi {
     @Override
     public GitRepositoryApi push() throws RepositoryException {
         try {
-            openGit().push().setCredentialsProvider(credentialsProvider).call();
+            openGit().push().setCredentialsProvider(configuration.toCredentialsProvider().orElse(null)).call();
 
             clearModifiedFiles();
 
@@ -217,14 +212,14 @@ public class DefaultGitRepositoryApi extends BaseGitRepositoryApi {
     @Override
     protected void doInit() throws GitAPIException {
         Git.cloneRepository()
-                .setCredentialsProvider(credentialsProvider)
-                .setURI(Objects.toString(remoteUri, null))
-                .setDirectory(repositoryLocation)
-                .setBranchesToClone(singletonList(defaultBranch))
-                .setBranch(defaultBranch)
+                .setCredentialsProvider(configuration.toCredentialsProvider().orElse(null))
+                .setURI(Objects.toString(configuration.getRemoteUri().orElse(null), null))
+                .setDirectory(configuration.getRepositoryLocation())
+                .setBranchesToClone(singletonList(configuration.getDefaultBranch()))
+                .setBranch(configuration.getDefaultBranch())
                 .call();
 
-        checkout(defaultBranch);
+        checkout(configuration.getDefaultBranch());
     }
 
     @Override
@@ -271,7 +266,7 @@ public class DefaultGitRepositoryApi extends BaseGitRepositoryApi {
      */
     private Git openGit() throws IOException {
         if (git == null) {
-            git = Git.open(repositoryLocation);
+            git = Git.open(configuration.getRepositoryLocation());
         }
 
         return git;

@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
-import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -52,23 +51,21 @@ public abstract class BaseGitRepositoryApi implements GitRepositoryApi {
 
     private static final Logger logger = LoggerFactory.getLogger(BaseGitRepositoryApi.class);
 
-    protected final URI remoteUri;
-    protected final File repositoryLocation;
-    private final List<File> modifiedFiles = new ArrayList<>();
+    protected final Configuration configuration;
 
+    private final List<File> modifiedFiles = new ArrayList<>();
     private File tempDirectory;
     private boolean closed = false;
 
     public BaseGitRepositoryApi(Configuration configuration) {
-        this.remoteUri = configuration.getRemoteUri().orElse(null);
-        this.repositoryLocation = configuration.getRepositoryLocation();
+        this.configuration = configuration;
     }
 
     @Override
     public GitRepositoryApi init() throws RepositoryException {
         try {
-            if (repositoryLocation.exists()) {
-                FileUtils.cleanDirectory(repositoryLocation);
+            if (configuration.getRepositoryLocation().exists()) {
+                FileUtils.cleanDirectory(configuration.getRepositoryLocation());
             }
 
             doInit();
@@ -121,7 +118,7 @@ public abstract class BaseGitRepositoryApi implements GitRepositoryApi {
     public Stream<File> listAllFiles(File file) throws RepositoryException {
         try {
             return TranslationFileUtils.listFiles(getFQNFile(file))
-                    .map(subFile -> removeParentFile(repositoryLocation, subFile));
+                    .map(subFile -> removeParentFile(configuration.getRepositoryLocation(), subFile));
         } catch (Exception e) {
             throw RepositoryException.onFileListing(file, e);
         }
@@ -132,7 +129,7 @@ public abstract class BaseGitRepositoryApi implements GitRepositoryApi {
         try {
             return TranslationFileUtils.listFiles(getFQNFile(file))
                     .filter(File::isFile)
-                    .map(subFile -> removeParentFile(repositoryLocation, subFile));
+                    .map(subFile -> removeParentFile(configuration.getRepositoryLocation(), subFile));
         } catch (Exception e) {
             throw RepositoryException.onFileListing(file, e);
         }
@@ -143,7 +140,7 @@ public abstract class BaseGitRepositoryApi implements GitRepositoryApi {
         try {
             return TranslationFileUtils.listFiles(getFQNFile(file))
                     .filter(File::isDirectory)
-                    .map(subFile -> removeParentFile(repositoryLocation, subFile));
+                    .map(subFile -> removeParentFile(configuration.getRepositoryLocation(), subFile));
         } catch (Exception e) {
             throw RepositoryException.onFileListing(file, e);
         }
@@ -186,8 +183,8 @@ public abstract class BaseGitRepositoryApi implements GitRepositoryApi {
     @Override
     public GitRepositoryApi delete() throws RepositoryException {
         try {
-            if (repositoryLocation.exists()) {
-                FileUtils.deleteDirectory(repositoryLocation);
+            if (configuration.getRepositoryLocation().exists()) {
+                FileUtils.deleteDirectory(configuration.getRepositoryLocation());
             }
 
             if ((tempDirectory != null) && tempDirectory.exists()) {
@@ -214,7 +211,7 @@ public abstract class BaseGitRepositoryApi implements GitRepositoryApi {
 
                 checkNoModifiedFile();
             } finally {
-                if (repositoryLocation.exists()) {
+                if (configuration.getRepositoryLocation().exists()) {
                     try {
                         checkout(DEFAULT_BRANCH);
                     } catch (RepositoryException e) {
@@ -271,7 +268,7 @@ public abstract class BaseGitRepositoryApi implements GitRepositoryApi {
      * Returns the fully-qualified file based on the specified relative file.
      */
     protected File getFQNFile(File file) {
-        return new File(repositoryLocation, file.toString());
+        return new File(configuration.getRepositoryLocation(), file.toString());
     }
 
     /**

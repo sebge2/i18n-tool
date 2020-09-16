@@ -3,6 +3,9 @@ package be.sgerard.i18n.service.repository.git;
 import be.sgerard.i18n.service.ValidationException;
 import be.sgerard.i18n.service.repository.RepositoryApi;
 import be.sgerard.i18n.service.repository.RepositoryException;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.eclipse.jgit.transport.CredentialsProvider;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 
@@ -136,14 +139,45 @@ public interface GitRepositoryApi extends RepositoryApi {
     /**
      * Git configuration.
      */
+    @Getter
+    @Setter
+    @Accessors(chain = true)
     final class Configuration {
 
+        /**
+         * The remote URI of the repository.
+         */
         private final URI remoteUri;
+
+        /**
+         * The file location of the repository.
+         */
         private final File repositoryLocation;
 
+        /**
+         * The default branch.
+         */
         private String defaultBranch = DEFAULT_BRANCH;
+
+        /**
+         * The current username.
+         */
         private String username;
+
+        /**
+         * The password to use.
+         */
         private String password;
+
+        /**
+         * The display name of the current user.
+         */
+        private String displayName;
+
+        /**
+         * The current user email.
+         */
+        private String email;
 
         public Configuration(File repositoryLocation, URI remoteUri) {
             this.remoteUri = remoteUri;
@@ -155,62 +189,24 @@ public interface GitRepositoryApi extends RepositoryApi {
         }
 
         /**
-         * Returns the remote URI of the repository.
+         * @see #remoteUri
          */
         public Optional<URI> getRemoteUri() {
             return Optional.ofNullable(remoteUri);
         }
 
         /**
-         * Returns the file location of the repository.
-         */
-        public File getRepositoryLocation() {
-            return repositoryLocation;
-        }
-
-        /**
-         * Returns the default branch.
-         */
-        public String getDefaultBranch() {
-            return defaultBranch;
-        }
-
-        /**
-         * Sets the default branch.
-         */
-        public Configuration setDefaultBranch(String defaultBranch) {
-            this.defaultBranch = defaultBranch;
-            return this;
-        }
-
-        /**
-         * Returns the current username.
+         * @see #username
          */
         public Optional<String> getUsername() {
             return Optional.ofNullable(username);
         }
 
         /**
-         * Sets the current username.
-         */
-        public Configuration setUsername(String username) {
-            this.username = username;
-            return this;
-        }
-
-        /**
-         * Returns the password to use.
+         * @see #password
          */
         public Optional<String> getPassword() {
             return Optional.ofNullable(password);
-        }
-
-        /**
-         * Sets the password to use.
-         */
-        public Configuration setPassword(String password) {
-            this.password = password;
-            return this;
         }
 
         /**
