@@ -8,7 +8,9 @@ import be.sgerard.i18n.model.i18n.file.ScannedBundleFileLocation;
 import be.sgerard.i18n.model.i18n.persistence.TranslationLocaleEntity;
 import be.sgerard.i18n.service.i18n.TranslationRepositoryWriteApi;
 import be.sgerard.i18n.service.workspace.WorkspaceException;
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apache.commons.lang3.tuple.Pair;
@@ -20,6 +22,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
@@ -50,7 +53,7 @@ public class JsonBundleHandler implements BundleHandler {
 
     @Autowired
     public JsonBundleHandler() {
-        this(new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT));
+        this(initDefaultMapper());
     }
 
     @Override
@@ -122,6 +125,15 @@ public class JsonBundleHandler implements BundleHandler {
         return repositoryAPI
                 .openAsTemp(bundleFileEntry)
                 .flatMap(outputFile -> writeTranslations(translations, bundleFileEntry, outputFile));
+    }
+
+    /**
+     * Returns the {@link ObjectMapper object mapper} to use by default.
+     */
+    private static ObjectMapper initDefaultMapper() {
+        return new ObjectMapper()
+                .enable(SerializationFeature.INDENT_OUTPUT)
+                .setDefaultPrettyPrinter(new CustomPrettyPrinter());
     }
 
     /**
@@ -250,5 +262,28 @@ public class JsonBundleHandler implements BundleHandler {
         );
 
         return map;
+    }
+
+    /**
+     * {@link DefaultPrettyPrinter Pretty printer} that formats JSON in the same way as the default formatting of IntelliJ.
+     */
+    private static final class CustomPrettyPrinter extends DefaultPrettyPrinter {
+
+        public CustomPrettyPrinter() {
+        }
+
+        public CustomPrettyPrinter(CustomPrettyPrinter base) {
+            super(base);
+        }
+
+        @Override
+        public DefaultPrettyPrinter createInstance() {
+            return new CustomPrettyPrinter(this);
+        }
+
+        @Override
+        public void writeObjectFieldValueSeparator(JsonGenerator g) throws IOException {
+            g.writeRaw(": ");
+        }
     }
 }

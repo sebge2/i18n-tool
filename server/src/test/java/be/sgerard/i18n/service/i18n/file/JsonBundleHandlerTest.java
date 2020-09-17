@@ -1,17 +1,24 @@
 package be.sgerard.i18n.service.i18n.file;
 
-import be.sgerard.i18n.model.i18n.BundleType;
-import be.sgerard.i18n.model.i18n.file.ScannedBundleFile;
+import be.sgerard.i18n.model.i18n.file.ScannedBundleFileLocation;
+import be.sgerard.i18n.model.i18n.persistence.TranslationLocaleEntity;
+import be.sgerard.i18n.service.i18n.TranslationRepositoryWriteApi;
+import be.sgerard.i18n.service.repository.RepositoryException;
 import be.sgerard.i18n.service.repository.git.GitRepositoryApi;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Ignore;
 import org.junit.jupiter.api.Test;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Locale;
+import java.io.*;
+import java.nio.file.Files;
 import java.util.stream.Stream;
 
-import static java.util.Collections.singletonList;
+import static java.util.Collections.emptyList;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -72,4 +79,59 @@ public class JsonBundleHandlerTest {
 //        assertThat(actual).element(2).extracting(ScannedBundleFileKeyDto::getTranslations).isEqualTo(singletonMap(Locale.FRENCH, "another value"));
     }
 
+    @Test
+    public void updateTranslations() throws Exception {
+        final File tmpDir = Files.createTempDirectory("json-handler").toFile();
+
+        try {
+            final TestableTranslationRepositoryWriteApi api = new TestableTranslationRepositoryWriteApi();
+            final ScannedBundleFileLocation bundleFileLocation = new ScannedBundleFileLocation(tmpDir, "my-bundle");
+            final TranslationLocaleEntity locale = createEnglishLocale();
+
+            final Flux<Pair<String, String>> translations = Flux.just(
+                    Pair.of("first.second", "value"),
+                    Pair.of("first.third", "value 2"),
+                    Pair.of("fourth", "value 3")
+            );
+
+            final JsonBundleHandler handler = new JsonBundleHandler();
+
+            StepVerifier
+                    .create(handler.updateTranslations(bundleFileLocation, locale, translations, api))
+                    .verifyComplete();
+
+            final String actual = FileUtils.readFileToString(new File(tmpDir, "en.json"));
+
+            assertThat(actual).isEqualTo("{\n" +
+                    "  \"first\": {\n" +
+                    "    \"second\": \"value\",\n" +
+                    "    \"third\": \"value 2\"\n" +
+                    "  },\n" +
+                    "  \"fourth\": \"value 3\"\n" +
+                    "}");
+        } finally {
+            FileUtils.forceDelete(tmpDir);
+        }
+    }
+
+    private TranslationLocaleEntity createEnglishLocale() {
+        return new TranslationLocaleEntity("en", null, emptyList(), "English", "en");
+    }
+
+    private static final class TestableTranslationRepositoryWriteApi implements TranslationRepositoryWriteApi {
+
+        @Override
+        public Mono<File> openAsTemp(File file) throws RepositoryException {
+            return Mono.just(file);
+        }
+
+        @Override
+        public Mono<OutputStream> openOutputStream(File file) throws RepositoryException {
+            try {
+                return Mono.just(new FileOutputStream(file));
+            } catch (FileNotFoundException e) {
+                throw RepositoryException.onFileWriting(file, e);
+            }
+        }
+    }
 }
