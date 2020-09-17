@@ -38,6 +38,8 @@ public class GitTranslationRepositoryWriteApi implements TranslationRepositoryWr
 
     public GitTranslationRepositoryWriteApi(GitRepositoryApi api, String original, String target) {
         this.api = api
+                .resetHardHead()
+                .checkoutDefaultBranch()
                 .pull()
                 .checkout(original)
                 .pull();
@@ -50,11 +52,11 @@ public class GitTranslationRepositoryWriteApi implements TranslationRepositoryWr
 
     @Override
     public Mono<File> openAsTemp(File file) throws RepositoryException {
-        return Mono.just(api.openAsTemp(file));
+        return Mono.just(api.openAsTemp(file, true));
     }
 
     @Override
     public Mono<OutputStream> openOutputStream(File file) throws RepositoryException {
-        return Mono.just(api.openOutputStream(file));
+        return Mono.just(api.openOutputStream(file, true));
     }
 }

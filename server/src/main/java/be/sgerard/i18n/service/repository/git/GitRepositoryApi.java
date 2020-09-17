@@ -66,6 +66,11 @@ public interface GitRepositoryApi extends RepositoryApi {
     /**
      * Checkouts the specified branch.
      */
+    GitRepositoryApi checkoutDefaultBranch() throws RepositoryException;
+
+    /**
+     * Checkouts the specified branch.
+     */
     GitRepositoryApi checkout(String branch) throws RepositoryException;
 
     /**
@@ -101,12 +106,12 @@ public interface GitRepositoryApi extends RepositoryApi {
     /**
      * Creates a temporary of the specified file and returns it. Once the API will be closed, the temporary file will be dropped.
      */
-    File openAsTemp(File file) throws RepositoryException;
+    File openAsTemp(File file, boolean createIfNotExists) throws RepositoryException;
 
     /**
      * Creates an output stream to the specified file.
      */
-    OutputStream openOutputStream(File file) throws RepositoryException;
+    OutputStream openOutputStream(File file, boolean createIfNotExists) throws RepositoryException;
 
     /**
      * Reverts the specified file.
@@ -207,6 +212,20 @@ public interface GitRepositoryApi extends RepositoryApi {
          */
         public Optional<String> getPassword() {
             return Optional.ofNullable(password);
+        }
+
+        /**
+         * @see #displayName
+         */
+        public Optional<String> getDisplayName() {
+            return Optional.ofNullable(displayName);
+        }
+
+        /**
+         * @see #email
+         */
+        public Optional<String> getEmail() {
+            return Optional.ofNullable(email);
         }
 
         /**

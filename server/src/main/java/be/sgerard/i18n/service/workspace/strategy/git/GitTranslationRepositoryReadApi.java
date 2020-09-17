@@ -20,6 +20,8 @@ public class GitTranslationRepositoryReadApi implements TranslationRepositoryRea
 
     public GitTranslationRepositoryReadApi(GitRepositoryApi api, String branch) {
         this.api = api
+                .resetHardHead()
+                .checkoutDefaultBranch()
                 .pull()
                 .checkout(branch)
                 .pull();
@@ -47,6 +49,6 @@ public class GitTranslationRepositoryReadApi implements TranslationRepositoryRea
 
     @Override
     public Mono<File> openAsTemp(File file) throws RepositoryException {
-        return Mono.just(api.openAsTemp(file));
+        return Mono.just(api.openAsTemp(file, true));
     }
 }

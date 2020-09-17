@@ -51,8 +51,8 @@ public class GitRepositoryApiMock extends DefaultGitRepositoryApi {
                     .setDefaultBranch(originalConfiguration.getDefaultBranch())
                     .setUsername(originalConfiguration.getUsername().orElse(null))
                     .setPassword(originalConfiguration.getPassword().orElse(null))
-                    .setDisplayName(originalConfiguration.getDisplayName())
-                    .setEmail(originalConfiguration.getEmail());
+                    .setDisplayName(originalConfiguration.getDisplayName().orElse(null))
+                    .setEmail(originalConfiguration.getEmail().orElse(null));
         } else {
             return new Configuration(originalConfiguration.getRepositoryLocation());
         }

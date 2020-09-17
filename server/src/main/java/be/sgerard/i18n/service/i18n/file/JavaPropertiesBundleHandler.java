@@ -8,7 +8,6 @@ import be.sgerard.i18n.model.i18n.file.ScannedBundleFileLocation;
 import be.sgerard.i18n.model.i18n.persistence.TranslationLocaleEntity;
 import be.sgerard.i18n.service.i18n.TranslationRepositoryWriteApi;
 import be.sgerard.i18n.service.workspace.WorkspaceException;
-import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
@@ -167,19 +166,21 @@ public class JavaPropertiesBundleHandler implements BundleHandler {
      * Writes the specified translations in the specified file using the output-stream.
      */
     private Mono<Void> writeTranslations(Flux<Pair<String, String>> translations, File file, File outputFile) {
-        return Flux
-                .using(
-                        () -> new PropertiesConfiguration(outputFile),
-                        conf -> translations.doOnNext(translation -> conf.setProperty(translation.getKey(), translation.getValue())),
-                        conf -> {
-                            try {
-                                conf.save();
-                            } catch (ConfigurationException e) {
-                                throw new RuntimeException(e);
-                            }
+        return translations
+                .collectList()
+                .doOnNext(pairs -> {
+                    try {
+                        final PropertiesConfiguration conf = new PropertiesConfiguration(outputFile);
+
+                        for (Pair<String, String> pair : pairs) {
+                            conf.setProperty(pair.getKey(), pair.getValue());
                         }
-                )
-                .onErrorResume(e -> Mono.error(WorkspaceException.onFileWriting(file, e)))
+
+                        conf.save();
+                    } catch (Exception e) {
+                        throw WorkspaceException.onFileWriting(file, e);
+                    }
+                })
                 .then();
     }
 }

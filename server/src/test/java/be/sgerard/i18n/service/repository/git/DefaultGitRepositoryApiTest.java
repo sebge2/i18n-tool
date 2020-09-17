@@ -5,10 +5,7 @@ import be.sgerard.i18n.service.repository.RepositoryException;
 import be.sgerard.test.i18n.support.GitHubCredentialsTest;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,6 +37,11 @@ public class DefaultGitRepositoryApiTest {
 
         api = DefaultGitRepositoryApi.createAPI(configuration);
         api.init();
+    }
+
+    @AfterEach
+    public void rollback(){
+        api.resetHardHead();
     }
 
     @AfterAll
@@ -258,16 +260,37 @@ public class DefaultGitRepositoryApiTest {
 
     @Test
     public void openAsTemp() throws Exception {
-        final File actual = api.openAsTemp(new File("LICENSE"));
+        final File actual = api.openAsTemp(new File("LICENSE"), true);
 
         assertThat(FileUtils.readFileToString(actual)).contains("Apache License");
+    }
+
+    @Test
+    public void openAsTempNotExist() throws Exception {
+        final File actual = api.openAsTemp(new File("unknown"), true);
+
+        assertThat(FileUtils.readFileToString(actual)).contains("");
     }
 
     @Test
     public void openOutputStream() throws Exception {
         final File file = new File("LICENSE");
         try {
-            try (OutputStream actual = api.openOutputStream(file)) {
+            try (OutputStream actual = api.openOutputStream(file, true)) {
+                IOUtils.write("this is a test", actual);
+            }
+
+            assertThat(IOUtils.toString(api.openInputStream(file))).isEqualTo("this is a test");
+        } finally {
+            api.revert(file);
+        }
+    }
+
+    @Test
+    public void openOutputStreamNotExist() throws Exception {
+        final File file = new File("unknown");
+        try {
+            try (OutputStream actual = api.openOutputStream(file, true)) {
                 IOUtils.write("this is a test", actual);
             }
 

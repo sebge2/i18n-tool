@@ -99,8 +99,6 @@ public class DefaultGitRepositoryApi extends BaseGitRepositoryApi {
 
     @Override
     public GitRepositoryApi checkout(String branch) throws RepositoryException {
-        checkNoModifiedFile();
-
         if (listLocalBranches().contains(branch)) {
             try {
                 openGit()
@@ -133,8 +131,6 @@ public class DefaultGitRepositoryApi extends BaseGitRepositoryApi {
 
     @Override
     public GitRepositoryApi pull() throws RepositoryException {
-        checkNoModifiedFile();
-
         try {
             openGit().fetch()
                     .setCredentialsProvider(configuration.toCredentialsProvider().orElse(null))
@@ -164,8 +160,6 @@ public class DefaultGitRepositoryApi extends BaseGitRepositoryApi {
             return this;
         } catch (Exception e) {
             throw RepositoryException.onRevert(e);
-        } finally {
-            removeModifiedFile(file);
         }
     }
 
@@ -175,7 +169,11 @@ public class DefaultGitRepositoryApi extends BaseGitRepositoryApi {
             openGit().add().addFilepattern(".").call();
 
             openGit().commit()
-                    .setAuthor(new PersonIdent(configuration.getDisplayName(), configuration.getEmail()))
+                    .setAuthor(
+                            (configuration.getDisplayName().isPresent() && configuration.getEmail().isPresent())
+                                    ? new PersonIdent(configuration.getDisplayName().get(), configuration.getEmail().get())
+                                    : null
+                    )
                     .setMessage(message)
                     .call();
 
@@ -189,8 +187,6 @@ public class DefaultGitRepositoryApi extends BaseGitRepositoryApi {
     public GitRepositoryApi push() throws RepositoryException {
         try {
             openGit().push().setCredentialsProvider(configuration.toCredentialsProvider().orElse(null)).call();
-
-            clearModifiedFiles();
 
             return this;
         } catch (Exception e) {

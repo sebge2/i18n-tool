@@ -9,8 +9,6 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -53,7 +51,6 @@ public abstract class BaseGitRepositoryApi implements GitRepositoryApi {
 
     protected final Configuration configuration;
 
-    private final List<File> modifiedFiles = new ArrayList<>();
     private File tempDirectory;
     private boolean closed = false;
 
@@ -77,9 +74,12 @@ public abstract class BaseGitRepositoryApi implements GitRepositoryApi {
     }
 
     @Override
-    public GitRepositoryApi createBranch(String branch) throws RepositoryException {
-        checkNoModifiedFile();
+    public GitRepositoryApi checkoutDefaultBranch() throws RepositoryException {
+        return checkout(configuration.getDefaultBranch());
+    }
 
+    @Override
+    public GitRepositoryApi createBranch(String branch) throws RepositoryException {
         if (listRemoteBranches().contains(branch) || listLocalBranches().contains(branch)) {
             throw RepositoryException.onBranchAlreadyExist(branch);
         }
@@ -98,8 +98,6 @@ public abstract class BaseGitRepositoryApi implements GitRepositoryApi {
         if (Objects.equals(branch, DEFAULT_BRANCH)) {
             throw RepositoryException.onForbiddenBranchDeletion(branch);
         }
-
-        checkNoModifiedFile();
 
         if (Objects.equals(branch, getCurrentBranch())) {
             checkout(DEFAULT_BRANCH);
@@ -156,25 +154,34 @@ public abstract class BaseGitRepositoryApi implements GitRepositoryApi {
     }
 
     @Override
-    public OutputStream openOutputStream(File file) throws RepositoryException {
+    public OutputStream openOutputStream(File file, boolean createIfNotExists) throws RepositoryException {
         try {
-            addModifiedFile(file);
+            final File fqnFile = getFQNFile(file);
 
-            return new FileOutputStream(getFQNFile(file));
-        } catch (FileNotFoundException e) {
+            if (!fqnFile.exists() && createIfNotExists) {
+                Files.createFile(fqnFile.toPath());
+            }
+
+            return new FileOutputStream(fqnFile);
+        } catch (Exception e) {
             throw RepositoryException.onFileWriting(file, e);
         }
     }
 
     @Override
-    public File openAsTemp(File file) throws RepositoryException {
+    public File openAsTemp(File file, boolean createIfNotExists) throws RepositoryException {
         try {
-            final Path target = getFQNFile(file).toPath();
+            final File target = getFQNFile(file);
+
+            if (!target.exists() && createIfNotExists) {
+                Files.createFile(target.toPath());
+            }
+
             final Path link = new File(getOrCreateTemporaryDirectory(), file.toString()).toPath();
 
             Files.createDirectories(link.getParent());
 
-            return Files.createSymbolicLink(link, target).toFile();
+            return Files.createSymbolicLink(link, target.toPath()).toFile();
         } catch (IOException e) {
             throw RepositoryException.onFileWriting(file, e);
         }
@@ -185,10 +192,6 @@ public abstract class BaseGitRepositoryApi implements GitRepositoryApi {
         try {
             if (configuration.getRepositoryLocation().exists()) {
                 FileUtils.deleteDirectory(configuration.getRepositoryLocation());
-            }
-
-            if ((tempDirectory != null) && tempDirectory.exists()) {
-                FileUtils.deleteDirectory(tempDirectory);
             }
 
             return this;
@@ -208,8 +211,6 @@ public abstract class BaseGitRepositoryApi implements GitRepositoryApi {
                 } catch (IOException e) {
                     logger.warn("Cannot delete temporary directory [" + tempDirectory + "].");
                 }
-
-                checkNoModifiedFile();
             } finally {
                 if (configuration.getRepositoryLocation().exists()) {
                     try {
@@ -246,50 +247,10 @@ public abstract class BaseGitRepositoryApi implements GitRepositoryApi {
     protected abstract void doRemoveBranch(String branch) throws Exception;
 
     /**
-     * Checks that no file has been modified and not committed.
-     */
-    protected void checkNoModifiedFile() {
-        if (!modifiedFiles.isEmpty()) {
-            final ArrayList<File> files = new ArrayList<>(modifiedFiles);
-
-            for (File modifiedFile : files) {
-                try {
-                    revert(modifiedFile);
-                } catch (RepositoryException e) {
-                    logger.error("Error while reverting.", e);
-                }
-            }
-
-            throw new IllegalStateException("There are modified files that have not been committed: " + files + ".");
-        }
-    }
-
-    /**
      * Returns the fully-qualified file based on the specified relative file.
      */
     protected File getFQNFile(File file) {
         return new File(configuration.getRepositoryLocation(), file.toString());
-    }
-
-    /**
-     * Adds the specified file to the list of files that have been modified.
-     */
-    protected void addModifiedFile(File file) {
-        modifiedFiles.add(file);
-    }
-
-    /**
-     * Removes the specified file from the list of files that have been modified.
-     */
-    protected void removeModifiedFile(File file) {
-        modifiedFiles.remove(file);
-    }
-
-    /**
-     * Clears all the modified files.
-     */
-    protected void clearModifiedFiles() {
-        modifiedFiles.clear();
     }
 
     /**
