@@ -335,6 +335,7 @@ public class UserManagerImpl implements UserManager {
                                             .username(ADMIN_USER_NAME)
                                             .password(password)
                                             .roles(UserRole.ADMIN)
+                                            .displayName(ADMIN_USER_NAME)
                                             .build()
                             )
                             .map(user -> {

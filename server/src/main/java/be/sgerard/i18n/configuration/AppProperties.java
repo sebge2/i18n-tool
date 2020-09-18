@@ -197,8 +197,8 @@ public class AppProperties {
         private final AppProperties appProperties;
 
         private String directory = "repository";
-        private final BundleConfiguration javaProperties = new BundleConfiguration();
-        private final BundleConfiguration jsonIcu = new BundleConfiguration();
+        private final JavaPropertiesBundleConfiguration javaProperties = new JavaPropertiesBundleConfiguration();
+        private final JsonPropertiesBundleConfiguration jsonIcu = new JsonPropertiesBundleConfiguration();
 
         public Repository(AppProperties appProperties) {
             this.appProperties = appProperties;
@@ -230,7 +230,7 @@ public class AppProperties {
          * Returns the {@link BundleConfiguration configuration} like to Java properties.
          */
         @ConfigurationProperties(prefix = "java-properties")
-        public BundleConfiguration getJavaProperties() {
+        public JavaPropertiesBundleConfiguration getJavaProperties() {
             return javaProperties;
         }
 
@@ -238,7 +238,7 @@ public class AppProperties {
          * Returns the {@link BundleConfiguration configuration} like to JSON files.
          */
         @ConfigurationProperties(prefix = "json-icu")
-        public BundleConfiguration getJsonIcu() {
+        public JsonPropertiesBundleConfiguration getJsonIcu() {
             return jsonIcu;
         }
     }
@@ -249,7 +249,7 @@ public class AppProperties {
     @Getter
     @Setter
     @Accessors(chain = true)
-    public static class BundleConfiguration {
+    public static abstract class BundleConfiguration {
 
         /**
          * All the paths that are ignored when scanning bundles of this type.
@@ -267,6 +267,36 @@ public class AppProperties {
 
         public BundleConfiguration() {
         }
+    }
+
+    /**
+     * Default configuration for Java Properties translations bundles.
+     */
+    @Getter
+    @Setter
+    @Accessors(chain = true)
+    public static class JavaPropertiesBundleConfiguration {
+
+        /**
+         * Use UTF-8 encoding for Java file.
+         */
+        private boolean utf8Encoding = true;
+
+        /**
+         * The property separator.
+         */
+        private String separator = "=";
+
+    }
+
+    /**
+     * Default configuration for JSON Properties translations bundles.
+     */
+    @Getter
+    @Setter
+    @Accessors(chain = true)
+    public static class JsonPropertiesBundleConfiguration {
+
     }
 
     /**

@@ -1,5 +1,6 @@
 package be.sgerard.i18n.service.i18n.file;
 
+import be.sgerard.i18n.configuration.AppProperties;
 import be.sgerard.i18n.model.i18n.BundleType;
 import be.sgerard.i18n.model.i18n.file.BundleWalkingContext;
 import be.sgerard.i18n.model.i18n.file.ScannedBundleFile;
@@ -8,8 +9,16 @@ import be.sgerard.i18n.model.i18n.file.ScannedBundleFileLocation;
 import be.sgerard.i18n.model.i18n.persistence.TranslationLocaleEntity;
 import be.sgerard.i18n.service.i18n.TranslationRepositoryWriteApi;
 import be.sgerard.i18n.service.workspace.WorkspaceException;
-import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.commons.configuration2.PropertiesConfiguration;
+import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
+import org.apache.commons.configuration2.builder.fluent.Parameters;
+import org.apache.commons.configuration2.convert.ListDelimiterHandler;
+import org.apache.commons.configuration2.convert.ValueTransformer;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.text.translate.AggregateTranslator;
+import org.apache.commons.text.translate.EntityArrays;
+import org.apache.commons.text.translate.LookupTranslator;
+import org.apache.commons.text.translate.UnicodeUnescaper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -18,6 +27,10 @@ import reactor.core.publisher.Mono;
 
 import java.io.File;
 import java.io.InputStream;
+import java.io.Reader;
+import java.io.Writer;
+import java.nio.file.Files;
+import java.util.Map;
 import java.util.Optional;
 import java.util.PropertyResourceBundle;
 
@@ -38,7 +51,12 @@ public class JavaPropertiesBundleHandler implements BundleHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(JavaPropertiesBundleHandler.class);
 
-    public JavaPropertiesBundleHandler() {
+    private final CustomIOFactory ioFactory;
+    private final AppProperties appProperties;
+
+    public JavaPropertiesBundleHandler(AppProperties appProperties) {
+        this.appProperties = appProperties;
+        this.ioFactory = new CustomIOFactory();
     }
 
     @Override
@@ -170,17 +188,67 @@ public class JavaPropertiesBundleHandler implements BundleHandler {
                 .collectList()
                 .doOnNext(pairs -> {
                     try {
-                        final PropertiesConfiguration conf = new PropertiesConfiguration(outputFile);
-
-                        for (Pair<String, String> pair : pairs) {
-                            conf.setProperty(pair.getKey(), pair.getValue());
+                        if (!outputFile.exists()) {
+                            Files.createFile(outputFile.toPath());
                         }
 
-                        conf.save();
+                        final FileBasedConfigurationBuilder<PropertiesConfiguration> builder =
+                                new FileBasedConfigurationBuilder<>(PropertiesConfiguration.class)
+                                        .configure(new Parameters()
+                                                .properties()
+                                                .setFile(outputFile)
+                                                .setEncoding("UTF-8")
+                                                .setIOFactory(ioFactory)
+                                        );
+
+                        final PropertiesConfiguration config = builder.getConfiguration();
+                        config.getLayout().setGlobalSeparator(appProperties.getRepository().getJavaProperties().getSeparator());
+
+                        for (Pair<String, String> pair : pairs) {
+                            config.setProperty(pair.getKey(), pair.getValue());
+                        }
+
+                        builder.save();
                     } catch (Exception e) {
                         throw WorkspaceException.onFileWriting(file, e);
                     }
                 })
                 .then();
+    }
+
+    /**
+     * Configuration factory customizing the encoding and the separator.
+     */
+    private class CustomIOFactory implements PropertiesConfiguration.IOFactory {
+
+        private CustomIOFactory() {
+        }
+
+        @Override
+        public PropertiesConfiguration.PropertiesReader createPropertiesReader(Reader in) {
+            return new PropertiesConfiguration.PropertiesReader(in);
+        }
+
+        @Override
+        public PropertiesConfiguration.PropertiesWriter createPropertiesWriter(Writer out, ListDelimiterHandler handler) {
+            return (appProperties.getRepository().getJavaProperties().isUtf8Encoding())
+                    ? new PropertiesConfiguration.PropertiesWriter(out, handler, createUtf8Transformer())
+                    : new PropertiesConfiguration.PropertiesWriter(out, handler);
+        }
+
+        /**
+         * Creates a {@link ValueTransformer value transformer} when an UTF-8 file is used.
+         */
+        private ValueTransformer createUtf8Transformer() {
+            final Map<CharSequence, CharSequence> initialMap = Map.of("\\", "\\\\");
+
+            final AggregateTranslator aggregateTranslator = new AggregateTranslator(
+                    new LookupTranslator(initialMap),
+                    new LookupTranslator(EntityArrays.JAVA_CTRL_CHARS_ESCAPE),
+                    new UnicodeUnescaper()
+            );
+
+            return value -> aggregateTranslator.translate(String.valueOf(value));
+        }
     }
 }
