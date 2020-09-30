@@ -39,7 +39,7 @@ jobs:
       script:
         - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 #        TODO
-        - mvn clean install $MVN_OPTS
+        - mvn clean install $MVN_OPTS -DskipTests
         - docker tag $DOCKER_ORGANIZATION/$DOCKER_IMAGE:$DOCKER_IMAGE_VERSION $DOCKER_ORGANIZATION/$DOCKER_IMAGE:$DOCKER_IMAGE_TMP_VERSION
         - docker push $DOCKER_ORGANIZATION/$DOCKER_IMAGE:$DOCKER_IMAGE_TMP_VERSION
       after_failure:
