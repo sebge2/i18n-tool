@@ -39,7 +39,6 @@ public class UserLiveSessionManagerImpl implements UserLiveSessionManager {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public Flux<UserLiveSessionEntity> getCurrentLiveSessions() {
         return repository.findByLogoutTimeIsNull();
     }

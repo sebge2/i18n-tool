@@ -86,13 +86,11 @@ public class UserManagerImpl implements UserManager {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public Mono<UserEntity> findById(String id) {
         return userRepository.findById(id);
     }
 
     @Override
-    @Transactional(readOnly = true)
     public Flux<UserEntity> findAll() {
         return userRepository.findAll();
     }

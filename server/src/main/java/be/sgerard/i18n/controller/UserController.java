@@ -70,7 +70,6 @@ public class UserController {
     @GetMapping("/user")
     @Operation(summary = "Retrieves all users.")
     @PreAuthorize("hasRole('ADMIN')")
-    @Transactional(readOnly = true)
     public Flux<UserDto> findAll() {
         return userManager
                 .findAll()
@@ -83,7 +82,6 @@ public class UserController {
     @GetMapping(path = "/user/{id}")
     @Operation(summary = "Returns the user having the specified id.")
     @PreAuthorize("hasRole('ADMIN')")
-    @Transactional(readOnly = true)
     public Mono<UserDto> findById(@PathVariable String id) {
         return userManager
                 .findByIdOrDie(id)
@@ -95,7 +93,6 @@ public class UserController {
      */
     @GetMapping(path = "/user/current")
     @Operation(summary = "Returns the current user.")
-    @Transactional(readOnly = true)
     public Mono<UserDto> getCurrent() {
         return authenticationUserManager
                 .getCurrentUserOrDie()

@@ -11,8 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import static org.springframework.util.StringUtils.isEmpty;
-
 /**
  * Implementation of the {@link TranslationLocaleManager translation locale manager}.
  *
@@ -30,13 +28,11 @@ public class TranslationLocaleManagerImpl implements TranslationLocaleManager {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public Mono<TranslationLocaleEntity> findById(String id) {
         return repository.findById(id);
     }
 
     @Override
-    @Transactional(readOnly = true)
     public Flux<TranslationLocaleEntity> findAll() {
         return repository.findAll();
     }

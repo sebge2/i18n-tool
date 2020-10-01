@@ -5,7 +5,6 @@ import be.sgerard.i18n.service.user.UserManager;
 import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
 
 /**
@@ -23,7 +22,6 @@ public class InternalUserDetailsService implements ReactiveUserDetailsService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public Mono<UserDetails> findByUsername(String username) {
         return userManager
                 .finUserByNameOrDie(username)

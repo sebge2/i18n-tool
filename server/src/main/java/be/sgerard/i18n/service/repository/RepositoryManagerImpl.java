@@ -49,13 +49,11 @@ public class RepositoryManagerImpl implements RepositoryManager {
         this.validator = validator;
     }
 
-    @Transactional(readOnly = true)
     @Override
     public Mono<RepositoryEntity> findById(String id) throws ResourceNotFoundException {
         return repository.findById(id);
     }
 
-    @Transactional(readOnly = true)
     @Override
     public Flux<RepositoryEntity> findAll() {
         return repository.findAll();

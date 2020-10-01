@@ -14,7 +14,6 @@ import be.sgerard.i18n.service.ResourceNotFoundException;
 import be.sgerard.i18n.service.security.auth.AuthenticationUserManager;
 import be.sgerard.i18n.service.workspace.WorkspaceManager;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
@@ -45,7 +44,6 @@ public class TranslationSearchManagerImpl implements TranslationSearchManager {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public Mono<TranslationsPageDto> search(TranslationsSearchRequestDto searchRequest) {
         return mapRequest(searchRequest)
                 .flatMap(request ->

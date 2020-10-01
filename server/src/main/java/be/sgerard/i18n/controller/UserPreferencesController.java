@@ -29,7 +29,6 @@ public class UserPreferencesController {
      */
     @GetMapping(path = "/user/current/preferences")
     @Operation(summary = "Returns preferences for the current user.")
-    @Transactional(readOnly = true)
     public Mono<UserPreferencesDto> getCurrentUserPreferences() {
         return userPreferencesManager.get()
                 .map(pref -> UserPreferencesDto.builder(pref).build());

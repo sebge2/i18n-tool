@@ -51,14 +51,12 @@ public class AuthenticationUserManagerImpl implements AuthenticationUserManager 
     }
 
     @Override
-    @Transactional(readOnly = true)
     public Mono<AuthenticatedUser> getCurrentUser() {
         return ReactiveSecurityContextHolder.getContext()
                 .flatMap(securityContext -> Mono.justOrEmpty(getAuthenticatedUser(securityContext.getAuthentication())));
     }
 
     @Override
-    @Transactional(readOnly = true)
     public Flux<AuthenticatedUser> findAll() {
         return sessionRepository
                 .findAll()
@@ -66,14 +64,12 @@ public class AuthenticationUserManagerImpl implements AuthenticationUserManager 
     }
 
     @Override
-    @Transactional(readOnly = true)
     public Flux<AuthenticatedUser> findAll(String userId) {
         return findAll()
                 .filter(authenticatedUser -> Objects.equals(userId, authenticatedUser.getUserId()));
     }
 
     @Override
-    @Transactional
     public Mono<ExternalAuthenticatedUser> createUser(ExternalUserDetails userDetails) {
         return repositoryCredentialsManager
                 .loadAllCredentials(userDetails.getToken())
