@@ -10,6 +10,9 @@ spring:
     mongodb:
       uri: "mongodb://localhost:37436/test"
 
+logging:
+  config: classpath:logback-test.xml
+
 be:
   sgerard:
     i18n:

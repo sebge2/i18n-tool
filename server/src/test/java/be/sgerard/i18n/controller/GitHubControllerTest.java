@@ -10,10 +10,7 @@ import be.sgerard.test.i18n.support.WithJaneDoeAdminUser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.codec.digest.HmacAlgorithms;
 import org.apache.commons.codec.digest.HmacUtils;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -159,6 +156,7 @@ public class GitHubControllerTest extends AbstractControllerTest {
     @Test
     @CleanupDatabase
     @WithJaneDoeAdminUser
+    @Disabled
     public void noCredentialsNeeded() throws Exception {
         repository
                 .create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class)
