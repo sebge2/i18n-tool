@@ -49,7 +49,7 @@ export class AuthenticationService {
         this.eventService.subscribe(Events.UPDATED_CURRENT_AUTHENTICATED_USER, AuthenticatedUser)
             .subscribe((user: AuthenticatedUser) => {
                 console.debug('Current authenticated user changed.', user);
-                this._user$.next(user);
+                this._user$.next(AuthenticatedUser.fromDto(user));
             });
 
         this.eventService.subscribe(Events.DELETED_CURRENT_AUTHENTICATED_USER, AuthenticatedUser)
