@@ -73,6 +73,11 @@
       "GET": "Error while retrieving user preferences."
     }
   },
+  "USER": {
+    "ERROR": {
+      "GET": "Error while retrieving current user."
+    }
+  },
   "MENU": {
     "ACCOUNT_LABEL": "Account",
     "ADMIN_LABEL": "Admin",

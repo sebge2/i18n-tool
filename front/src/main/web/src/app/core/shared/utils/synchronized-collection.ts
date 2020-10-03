@@ -1,14 +1,14 @@
 import {BehaviorSubject, combineLatest, Observable, Subject} from "rxjs";
-import {filter, map, mergeMap, takeUntil} from "rxjs/operators";
+import {filter, map, mergeMap, startWith, takeUntil} from "rxjs/operators";
 
 export class SynchronizedCollection<I, O> {
 
     private readonly _collection$: BehaviorSubject<O[]> = new BehaviorSubject<O[]>([]);
 
-    private readonly _reloadCollection$ = new BehaviorSubject<void>(null);
-    private readonly _manualAdd$ = new BehaviorSubject<O>(null);
-    private readonly _manualUpdate$ = new BehaviorSubject<O>(null);
-    private readonly _manualDelete$ = new BehaviorSubject<O>(null);
+    private readonly _reloadCollection$ = new BehaviorSubject<void>(undefined);
+    private readonly _manualAdd$ = new BehaviorSubject<O>(undefined);
+    private readonly _manualUpdate$ = new BehaviorSubject<O>(undefined);
+    private readonly _manualDelete$ = new BehaviorSubject<O>(undefined);
     private readonly _destroyed$ = new Subject<void>();
 
     constructor(collectionProvider: (() => Observable<I[]>),
@@ -22,7 +22,7 @@ export class SynchronizedCollection<I, O> {
             .pipe(
                 takeUntil(this._destroyed$),
                 mergeMap(() => collectionProvider()),
-                map((values: I[]) => values.map(value => mapper(value)))
+                map((values: I[]) => values.map(value => this.map(value, mapper)))
             )
             .subscribe(
                 values => this._collection$.next(values),
@@ -33,11 +33,11 @@ export class SynchronizedCollection<I, O> {
             .pipe(takeUntil(this._destroyed$))
             .subscribe(() => this.reload());
 
-        combineLatest([this._manualAdd$, created.pipe(map(value => mapper(value)))])
+        combineLatest([this._manualAdd$, created.pipe(startWith(<O>undefined), map(value => this.map(value, mapper)))])
             .pipe(
                 takeUntil(this._destroyed$),
-                map(([manualAdd, streamAdd]) => manualAdd || streamAdd),
-                filter(element => !!element),
+                map(([manualAdd, streamAdd]) => SynchronizedCollection.keepDefinedValue(manualAdd, streamAdd)),
+                filter(element => (element !== undefined))
             )
             .subscribe((value: O) => {
                 const copy = this._collection$.getValue().slice();
@@ -52,11 +52,11 @@ export class SynchronizedCollection<I, O> {
                 this._collection$.next(copy);
             });
 
-        combineLatest([this._manualUpdate$, updated.pipe(map(value => mapper(value)))])
+        combineLatest([this._manualUpdate$, updated.pipe(startWith(<O>undefined), map(value => this.map(value, mapper)))])
             .pipe(
                 takeUntil(this._destroyed$),
-                map(([manualUpdate, streamUpdate]) => manualUpdate || streamUpdate),
-                filter(element => !!element)
+                map(([manualUpdate, streamUpdate]) => SynchronizedCollection.keepDefinedValue(manualUpdate, streamUpdate)),
+                filter(element => (element !== undefined))
             )
             .subscribe((value: O) => {
                 const copy = this._collection$.getValue().slice();
@@ -71,11 +71,11 @@ export class SynchronizedCollection<I, O> {
                 this._collection$.next(copy);
             });
 
-        combineLatest([this._manualDelete$, deleted.pipe(map(value => mapper(value)))])
+        combineLatest([this._manualDelete$, deleted.pipe(startWith(<O>undefined), map(value => this.map(value, mapper)))])
             .pipe(
                 takeUntil(this._destroyed$),
-                map(([manualDelete, streamDelete]) => manualDelete || streamDelete),
-                filter(element => !!element)
+                map(([manualDelete, streamDelete]) =>  SynchronizedCollection.keepDefinedValue(manualDelete, streamDelete)),
+                filter(element => (element !== undefined))
             )
             .subscribe((value: O) => {
                 const copy = this._collection$.getValue().slice();
@@ -112,5 +112,13 @@ export class SynchronizedCollection<I, O> {
 
     public delete(element: O) {
         this._manualDelete$.next(element);
+    }
+
+    private map<A>(value: A, mapper: (I) => O) {
+        return (value !== undefined) ? mapper(value) : undefined;
+    }
+
+    private static keepDefinedValue(firstValue, secondValue) {
+        return (firstValue !== undefined) ? firstValue : secondValue;
     }
 }

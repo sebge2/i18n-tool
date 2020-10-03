@@ -118,7 +118,7 @@ export class TranslationLocaleService {
         return this.apiService
             .delete1(translationLocale.id)
             .pipe(
-                map(dto => TranslationLocale.fromDto(dto)),
+                map(() => translationLocale),
                 tap(translationLocale => this._synchronizedLocales$.delete(translationLocale))
             );
     }

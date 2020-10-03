@@ -94,7 +94,7 @@ export class RepositoryService {
     public deleteRepository(repository: Repository): Observable<any> {
         return this.apiRepositoryService
             ._delete(repository.id)
-            .pipe(tap(repository => this._synchronizedRepositories.delete(repository)));
+            .pipe(tap(() => this._synchronizedRepositories.delete(repository)));
     }
 
     private static fromDto(dto: RepositoryDto): Repository {

@@ -1,9 +1,9 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpResponse} from "@angular/common/http";
-import {BehaviorSubject, Observable, Subject} from "rxjs";
-import { map, mergeMap, shareReplay, skip} from "rxjs/operators";
+import {Observable, of, throwError} from "rxjs";
+import {catchError, map, mergeMap} from "rxjs/operators";
 import {AuthenticationErrorType} from "../model/authentication-error-type.model";
-import {AuthenticationService as ApiAuthenticationService, Configuration} from "../../../api";
+import {AuthenticatedUserDto, AuthenticationService as ApiAuthenticationService, Configuration} from "../../../api";
 import {EventService} from "../../event/service/event.service";
 import {Events} from "../../event/model/events.model";
 import {AuthenticatedUser} from '../model/authenticated-user.model';
@@ -11,64 +11,66 @@ import {OAuthClient} from "../model/oauth-client.model";
 import {User} from "../model/user.model";
 import {UserService} from "./user.service";
 import {Router} from "@angular/router";
+import {SynchronizedObject} from "../../shared/utils/synchronized-object";
+import {NotificationService} from "../../notification/service/notification.service";
 
 @Injectable({
     providedIn: 'root'
 })
 export class AuthenticationService {
 
-    private readonly _user$: Subject<AuthenticatedUser> = new BehaviorSubject<AuthenticatedUser>(null);
-    private readonly _userObs = this._user$.pipe(skip(1), shareReplay(1));
+    private readonly _user$: SynchronizedObject<AuthenticatedUserDto, AuthenticatedUser>;
     private readonly _currentUser$: Observable<User>;
 
-    constructor(private httpClient: HttpClient,
-                private router: Router,
-                private eventService: EventService,
-                private userService: UserService,
-                private configuration: Configuration,
-                private authenticationService: ApiAuthenticationService) {
-        this.authenticationService
-            .getCurrentUser()
-            .pipe(map(userDto => AuthenticatedUser.fromDto(userDto)))
-            .toPromise()
-            .then(user => {
-                console.debug('There is an existing authenticated user, send next user.', user);
-
-                this._user$.next(user)
-            })
-            .catch((result: HttpResponse<any>) => {
-                if (result.status != 404) {
-                    console.error('Error while retrieving current user.', result);
-                } else {
-                    console.debug('There is no current user, send next user null.');
-                }
-
-                this._user$.next(null);
-            });
-
-        this.eventService.subscribe(Events.UPDATED_CURRENT_AUTHENTICATED_USER, AuthenticatedUser)
-            .subscribe((user: AuthenticatedUser) => {
-                console.debug('Current authenticated user changed.', user);
-                this._user$.next(AuthenticatedUser.fromDto(user));
-            });
-
-        this.eventService.subscribe(Events.DELETED_CURRENT_AUTHENTICATED_USER, AuthenticatedUser)
-            .subscribe(_ => {
-                console.debug('Current authenticated user removed.');
-                this._user$.next(null);
-
-                this.router.navigateByUrl('/login');
-            });
+    constructor(private _httpClient: HttpClient,
+                private _router: Router,
+                private _eventService: EventService,
+                private _userService: UserService,
+                private _configuration: Configuration,
+                private _authenticationService: ApiAuthenticationService,
+                private _notificationService: NotificationService) {
+        this._user$ = new SynchronizedObject<AuthenticatedUserDto, AuthenticatedUser>(
+            () => this._authenticationService
+                .getCurrentUser()
+                .pipe(catchError((error: HttpResponse<any>) => {
+                    if (error.status != 404) {
+                        return throwError(error);
+                    } else {
+                        return of(null);
+                    }
+                })),
+            this._eventService.subscribe(Events.UPDATED_CURRENT_AUTHENTICATED_USER, AuthenticatedUser),
+            this._eventService.subscribe(Events.DELETED_CURRENT_AUTHENTICATED_USER, AuthenticatedUser),
+            this._eventService.reconnected(),
+            dto => (dto != null) ? AuthenticatedUser.fromDto(dto) : null
+        );
 
         this.currentAuthenticatedUser()
-            .subscribe(currentUser => currentUser ? eventService.enabledEvents() : eventService.disableEvents());
+            .subscribe(
+                (currentUser: AuthenticatedUser) => {
+                    if (currentUser) {
+                        console.debug('Current authenticated user changed.', currentUser);
+
+                        _eventService.enabledEvents();
+                    } else {
+                        console.debug('No current authenticated user.');
+
+                        this._router.navigateByUrl('/login');
+                        _eventService.disableEvents();
+                    }
+                },
+                (error: any) => {
+                    console.error('Error while retrieving current authenticated user.', error);
+                    this._notificationService.displayErrorMessage('USER.ERROR.GET');
+                }
+            );
 
         this._currentUser$ = this.currentAuthenticatedUser()
-            .pipe(mergeMap(currentUser => currentUser ? this.userService.getCurrentUser() : null));
+            .pipe(mergeMap(currentUser => currentUser ? this._userService.getCurrentUser() : null));
     }
 
     public currentAuthenticatedUser(): Observable<AuthenticatedUser> {
-        return this._userObs;
+        return this._user$.element;
     }
 
     public currentUser(): Observable<User> {
@@ -76,21 +78,21 @@ export class AuthenticationService {
     }
 
     public getSupportedOauthClients(): Observable<OAuthClient[]> {
-        return this.authenticationService
+        return this._authenticationService
             .getAuthenticationClients()
             .pipe(map(clients => clients.map(client => OAuthClient[client.toUpperCase()])));
     }
 
     public authenticateWithUserPassword(username: string, password: string): Promise<AuthenticatedUser> {
-        this.configuration.username = username;
-        this.configuration.password = password;
+        this._configuration.username = username;
+        this._configuration.password = password;
 
-        return this.authenticationService
+        return this._authenticationService
             .getCurrentUser()
             .pipe(map(userDto => AuthenticatedUser.fromDto(userDto)))
             .toPromise()
             .then(authenticatedUser => {
-                this._user$.next(authenticatedUser);
+                this._user$.update(authenticatedUser);
 
                 return authenticatedUser;
             })
@@ -104,13 +106,13 @@ export class AuthenticationService {
     }
 
     public logout(): Promise<void> {
-        return this.httpClient
+        return this._httpClient
             .get('/auth/logout')
             .toPromise()
             .then((_) => {
                 console.debug('Logout succeeded, send next user.');
 
-                this._user$.next(null);
+                this._user$.delete(null);
             });
     }
 }
