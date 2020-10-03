@@ -1,7 +1,5 @@
 [link=https://travis-ci.org/sebge2/i18n-tool]
 image::https://img.shields.io/travis/sebge2/i18n-tool/master.svg?label=master[Build Status]
-[link=https://travis-ci.org/sebge2/i18n-tool]
-image::https://img.shields.io/travis/sebge2/i18n-tool/develop.svg?label=develop[Build Status]
 
 = I18n Tool
 Tool scanning translation bundles in a GitHub repository. A UI editor allows to find (missing) translations and fill them.

@@ -2,19 +2,23 @@ package be.sgerard.i18n;
 
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
+import de.flapdoodle.embed.mongo.Command;
 import de.flapdoodle.embed.mongo.MongodExecutable;
 import de.flapdoodle.embed.mongo.MongodStarter;
 import de.flapdoodle.embed.mongo.config.*;
 import de.flapdoodle.embed.mongo.distribution.Version;
+import de.flapdoodle.embed.process.config.io.ProcessOutput;
+import de.flapdoodle.embed.process.io.Slf4jLevel;
+import de.flapdoodle.embed.process.io.Slf4jStreamProcessor;
 import de.flapdoodle.embed.process.runtime.Network;
 import org.bson.Document;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.mongo.MongoClientFactory;
 import org.springframework.boot.autoconfigure.mongo.MongoProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
-import org.springframework.scheduling.annotation.Async;
 
 /**
  * @author Sebastien Gerard
@@ -34,7 +38,18 @@ public class MongoTestConfiguration {
 
     @Bean(initMethod = "start", destroyMethod = "stop")
     public MongodExecutable mongodExecutable(IMongodConfig mongodConfig) {
-        final MongodStarter starter = MongodStarter.getDefaultInstance();
+        final MongodStarter starter = MongodStarter.getInstance(
+                new RuntimeConfigBuilder()
+                        .defaults(Command.MongoD)
+                        .processOutput(
+                                new ProcessOutput(
+                                        new Slf4jStreamProcessor(LoggerFactory.getLogger(MongodExecutable.class), Slf4jLevel.DEBUG),
+                                        new Slf4jStreamProcessor(LoggerFactory.getLogger(MongodExecutable.class), Slf4jLevel.ERROR),
+                                        new Slf4jStreamProcessor(LoggerFactory.getLogger(MongodExecutable.class), Slf4jLevel.DEBUG)
+                                )
+                        )
+                        .build()
+        );
 
         new Thread(() -> {
             final MongoClient client = new MongoClient("localhost", serverPort);
