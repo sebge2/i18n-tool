@@ -156,7 +156,6 @@ public class GitHubControllerTest extends AbstractControllerTest {
     @Test
     @CleanupDatabase
     @WithJaneDoeAdminUser
-    @Disabled
     public void noCredentialsNeeded() throws Exception {
         repository
                 .create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class)

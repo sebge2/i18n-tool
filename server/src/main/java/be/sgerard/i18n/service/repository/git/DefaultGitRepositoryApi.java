@@ -10,6 +10,8 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.PersonIdent;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,6 +29,18 @@ import static java.util.stream.Collectors.toList;
  * @author Sebastien Gerard
  */
 public class DefaultGitRepositoryApi extends BaseGitRepositoryApi {
+
+    /**
+     * Number of attempts for removing the lock file.
+     */
+    private static final int NUMBER_ATTEMPT_REMOVE_LOCK = 50;
+
+    /**
+     * Interval in ms between attempts for removing the lock file.
+     */
+    private static final int INTERVAL_BETWEEN_ATTEMPTS_REMOVE_LOCK_IN_MS = 100;
+
+        private static final Logger logger = LoggerFactory.getLogger(DefaultGitRepositoryApi.class);
 
     /**
      * Creates a new {@link GitRepositoryApi API object} using the specified {@link Configuration configuration}.
@@ -197,7 +211,7 @@ public class DefaultGitRepositoryApi extends BaseGitRepositoryApi {
     @Override
     public GitRepositoryApi resetHardHead() throws RepositoryException {
         try {
-            FileUtils.deleteQuietly(new File(configuration.getRepositoryLocation(), ".git/index.lock"));
+            removeLockIfPresent();
 
             openGit().reset().setMode(ResetCommand.ResetType.HARD).setRef("HEAD").call();
 
@@ -270,4 +284,22 @@ public class DefaultGitRepositoryApi extends BaseGitRepositoryApi {
         return git;
     }
 
+    /**
+     * Removes the lock on the Git index file if it exists.
+     */
+    private void removeLockIfPresent() throws InterruptedException {
+        final File lockFile = new File(configuration.getRepositoryLocation(), ".git/index.lock");
+
+        for (int i = 1; i <= NUMBER_ATTEMPT_REMOVE_LOCK; i++) {
+            Thread.sleep(INTERVAL_BETWEEN_ATTEMPTS_REMOVE_LOCK_IN_MS);
+
+            if (!lockFile.exists()) {
+                return;
+            }
+        }
+
+        FileUtils.deleteQuietly(lockFile);
+
+        logger.warn(String.format("The lock file [%s] has been forced deleted.", lockFile));
+    }
 }

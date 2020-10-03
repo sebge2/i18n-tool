@@ -31,9 +31,9 @@ public class MongoTestConfiguration {
     public MongoTestConfiguration() {
         serverPort = 37436 /*Network.getFreeServerPort()*/;
 
-        System.out.println("-------------------------");
+        System.out.println("--------------------------------");
         System.out.println("Mongo will be available on " + serverPort);
-        System.out.println("-------------------------");
+        System.out.println("--------------------------------");
     }
 
     @Bean(initMethod = "start", destroyMethod = "stop")
