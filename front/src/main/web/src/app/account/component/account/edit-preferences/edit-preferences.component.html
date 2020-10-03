@@ -1,6 +1,7 @@
 <app-card [maxSizePx]="700">
     <app-card-content>
-        <form [formGroup]="form">
+        <form [formGroup]="form" (ngSubmit)="onSave()">
+            <button type="submit" style="display:none">hidden submit</button>
             <div fxLayout fxLayoutAlign="start start" fxLayoutGap="30px">
                 <div class="preferences-icon">
                     <mat-icon>settings</mat-icon>

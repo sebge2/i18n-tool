@@ -1,6 +1,7 @@
 <app-card [maxSizePx]="700">
     <app-card-content>
         <form [formGroup]="form" (ngSubmit)="onSave()" autocomplete="off">
+            <button type="submit" style="display:none">hidden submit</button>
             <div fxLayout fxLayoutAlign="start start" fxLayoutGap="30px">
                 <app-edit-profile-avatar class="profile-avatar" formControlName="avatar" [currentUser]="currentUser"></app-edit-profile-avatar>
                 <div>

@@ -3,6 +3,7 @@
           [maxSizePx]="270">
     <app-card-content>
         <form [formGroup]="form" (ngSubmit)="onSave()">
+            <button type="submit" style="display:none">hidden submit</button>
             <p>
                 <mat-form-field appearance="standard">
                     <mat-label>{{'ADMIN.LOCALES.DISPLAY_NAME' | translate}}</mat-label>
