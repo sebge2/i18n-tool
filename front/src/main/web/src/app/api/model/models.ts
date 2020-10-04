@@ -36,3 +36,4 @@ export * from './userLiveSessionDto';
 export * from './userPatchDto';
 export * from './userPreferencesDto';
 export * from './workspaceDto';
+export * from './workspacesPublishRequestDto';

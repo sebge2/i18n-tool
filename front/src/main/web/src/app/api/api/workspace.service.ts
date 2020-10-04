@@ -18,8 +18,8 @@ import { CustomHttpUrlEncodingCodec }                        from '../encoder';
 import { Observable }                                        from 'rxjs';
 
 import { BundleFileDto } from '../model/bundleFileDto';
-import { ErrorMessagesDto } from '../model/errorMessagesDto';
 import { WorkspaceDto } from '../model/workspaceDto';
+import { WorkspacesPublishRequestDto } from '../model/workspacesPublishRequestDto';
 
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
 import { Configuration }                                     from '../configuration';
@@ -158,17 +158,53 @@ export class WorkspaceService {
     /**
      * Returns registered workspaces.
      * 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public findAll3(observe?: 'body', reportProgress?: boolean): Observable<Array<WorkspaceDto>>;
+    public findAll3(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<WorkspaceDto>>>;
+    public findAll3(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<WorkspaceDto>>>;
+    public findAll3(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        let headers = this.defaultHeaders;
+
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            '*/*'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+        ];
+
+        return this.httpClient.request<Array<WorkspaceDto>>('get',`${this.basePath}/api/repository/workspace`,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Returns registered workspaces.
+     * 
      * @param id 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public findAll3(id: string, observe?: 'body', reportProgress?: boolean): Observable<Array<WorkspaceDto>>;
-    public findAll3(id: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<WorkspaceDto>>>;
-    public findAll3(id: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<WorkspaceDto>>>;
-    public findAll3(id: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public findAll4(id: string, observe?: 'body', reportProgress?: boolean): Observable<Array<WorkspaceDto>>;
+    public findAll4(id: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<WorkspaceDto>>>;
+    public findAll4(id: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<WorkspaceDto>>>;
+    public findAll4(id: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (id === null || id === undefined) {
-            throw new Error('Required parameter id was null or undefined when calling findAll3.');
+            throw new Error('Required parameter id was null or undefined when calling findAll4.');
         }
 
         let headers = this.defaultHeaders;
@@ -187,42 +223,6 @@ export class WorkspaceService {
         ];
 
         return this.httpClient.request<Array<WorkspaceDto>>('get',`${this.basePath}/api/repository/${encodeURIComponent(String(id))}/workspace`,
-            {
-                withCredentials: this.configuration.withCredentials,
-                headers: headers,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
-    }
-
-    /**
-     * Returns registered workspaces.
-     * 
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
-     */
-    public findAll4(observe?: 'body', reportProgress?: boolean): Observable<Array<WorkspaceDto>>;
-    public findAll4(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<WorkspaceDto>>>;
-    public findAll4(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<WorkspaceDto>>>;
-    public findAll4(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
-
-        let headers = this.defaultHeaders;
-
-        // to determine the Accept header
-        let httpHeaderAccepts: string[] = [
-            '*/*'
-        ];
-        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set('Accept', httpHeaderAcceptSelected);
-        }
-
-        // to determine the Content-Type header
-        const consumes: string[] = [
-        ];
-
-        return this.httpClient.request<Array<WorkspaceDto>>('get',`${this.basePath}/api/repository/workspace`,
             {
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
@@ -306,6 +306,61 @@ export class WorkspaceService {
 
         return this.httpClient.request<Array<BundleFileDto>>('get',`${this.basePath}/api/repository/workspace/${encodeURIComponent(String(id))}/bundle-file`,
             {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Initializes the specified workspace.
+     * 
+     * @param body 
+     * @param action 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public publish(body: WorkspacesPublishRequestDto, action?: string, observe?: 'body', reportProgress?: boolean): Observable<Array<WorkspaceDto>>;
+    public publish(body: WorkspacesPublishRequestDto, action?: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<WorkspaceDto>>>;
+    public publish(body: WorkspacesPublishRequestDto, action?: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<WorkspaceDto>>>;
+    public publish(body: WorkspacesPublishRequestDto, action?: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        if (body === null || body === undefined) {
+            throw new Error('Required parameter body was null or undefined when calling publish.');
+        }
+
+
+        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        if (action !== undefined && action !== null) {
+            queryParameters = queryParameters.set('action', <any>action);
+        }
+
+        let headers = this.defaultHeaders;
+
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            '*/*'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected != undefined) {
+            headers = headers.set('Content-Type', httpContentTypeSelected);
+        }
+
+        return this.httpClient.request<Array<WorkspaceDto>>('post',`${this.basePath}/api/repository/workspace/do`,
+            {
+                body: body,
+                params: queryParameters,
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
                 observe: observe,

@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {EventService} from "../../core/event/service/event.service";
 import {Workspace} from "../model/workspace/workspace.model";
-import {combineLatest, Observable, of} from "rxjs";
+import {Observable, of} from "rxjs";
 import {Events} from 'src/app/core/event/model/events.model';
 import {catchError, distinctUntilChanged, filter, map, mergeMap, tap} from "rxjs/operators";
 import {NotificationService} from "../../core/notification/service/notification.service";
@@ -9,7 +9,6 @@ import {WorkspaceDto, WorkspaceService as ApiWorkspaceService} from "../../api";
 import * as _ from "lodash";
 import {BundleFile} from "../model/workspace/bundle-file.model";
 import {RepositoryService} from "./repository.service";
-import {EnrichedWorkspace} from "../model/workspace/enriched-workspace.model";
 import {SynchronizedCollection} from "../../core/shared/utils/synchronized-collection";
 
 @Injectable({
@@ -109,6 +108,14 @@ export class WorkspaceService {
         return this.apiWorkspaceService
             .deleteWorkspace(workspace.id)
             .pipe(tap(workspace => this._synchronizedWorkspaces$.delete(workspace)));
+    }
+
+    public publishAll(workspaces: string[], comment: string): Observable<Workspace[]>{
+        return this.apiWorkspaceService
+            .publish({workspaces: workspaces, message: comment})
+            .pipe(
+                map(workspaces => _.map(workspaces, workspace => Workspace.fromDto(workspace))),
+            );
     }
 
     private cacheBundleFiles(workspaceId: string, bundleFiles: BundleFile[]) {
