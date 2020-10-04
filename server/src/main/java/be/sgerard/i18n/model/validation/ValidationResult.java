@@ -70,6 +70,13 @@ public class ValidationResult {
     }
 
     /**
+     * Merges both {@link ValidationResult validation results}.
+     */
+    public static ValidationResult merge(List<ValidationResult> validationResults){
+        return ValidationResult.builder().merge(validationResults).build();
+    }
+
+    /**
      * Empty succesful validation result.
      */
     public static final ValidationResult EMPTY = ValidationResult.builder().build();

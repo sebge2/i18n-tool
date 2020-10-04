@@ -1,6 +1,7 @@
 package be.sgerard.i18n.service.workspace;
 
 import be.sgerard.i18n.model.workspace.dto.WorkspaceDto;
+import be.sgerard.i18n.model.workspace.dto.WorkspacesPublishRequestDto;
 import be.sgerard.i18n.model.workspace.persistence.WorkspaceEntity;
 import be.sgerard.i18n.service.ResourceNotFoundException;
 import be.sgerard.i18n.service.repository.RepositoryException;
@@ -55,6 +56,12 @@ public interface WorkspaceManager {
     Mono<WorkspaceEntity> publish(String workspaceId, String message) throws ResourceNotFoundException, RepositoryException;
 
     /**
+     * Publishes all the modifications made on the specified workspaces. Based on the type of repository, a review may start afterwards.
+     * If it's not the case, a new fresh workspace will be created and returned.
+     */
+    Flux<WorkspaceEntity> publish(WorkspacesPublishRequestDto request);
+
+    /**
      * Terminates the review of the specified workspace. The workspace will be removed and a new fresh workspace will be created and returned.
      */
     Mono<WorkspaceEntity> finishReview(String workspaceId) throws ResourceNotFoundException, RepositoryException;
@@ -68,5 +75,4 @@ public interface WorkspaceManager {
      * Removes the {@link WorkspaceEntity workspace} having the specified id.
      */
     Mono<WorkspaceEntity> delete(String id);
-
 }

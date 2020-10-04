@@ -2,6 +2,7 @@ package be.sgerard.i18n.controller;
 
 import be.sgerard.i18n.model.workspace.dto.BundleFileDto;
 import be.sgerard.i18n.model.workspace.dto.WorkspaceDto;
+import be.sgerard.i18n.model.workspace.dto.WorkspacesPublishRequestDto;
 import be.sgerard.i18n.model.workspace.persistence.WorkspaceEntity;
 import be.sgerard.i18n.service.BadRequestException;
 import be.sgerard.i18n.service.workspace.WorkspaceDtoEnricher;
@@ -131,7 +132,6 @@ public class WorkspaceController {
             summary = "Publishes all modifications made on the specified workspace.",
             parameters = @Parameter(name = "action", in = ParameterIn.QUERY, schema = @Schema(allowableValues = {"INITIALIZE", "PUBLISH"}))
     )
-    @PreAuthorize("hasRole('ADMIN')")
     public Mono<WorkspaceDto> publish(@PathVariable String id,
                                       @Parameter(description = "Message required when publishing, it describe the changes.") @RequestParam(name = "message") String message) {
 
@@ -141,5 +141,21 @@ public class WorkspaceController {
 
         return workspaceManager.publish(id, message)
                 .flatMap(dtoEnricher::mapAndEnrich);
+    }
+
+    /**
+     * Publishes a list of workspaces.
+     */
+    @PostMapping(path = "/repository/workspace/do", params = "action=PUBLISH")
+    @Operation(
+            summary = "Initializes the specified workspace.",
+            parameters = @Parameter(name = "action", in = ParameterIn.QUERY, schema = @Schema(allowableValues = {"PUBLISH"}))
+    )
+    public Flux<WorkspaceEntity> publish(@RequestBody WorkspacesPublishRequestDto request) {
+        if (StringUtils.isEmpty(request.getMessage())) {
+            throw BadRequestException.missingReviewMessage();
+        }
+
+        return workspaceManager.publish(request);
     }
 }

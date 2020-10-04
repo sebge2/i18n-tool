@@ -2,7 +2,9 @@ package be.sgerard.i18n.service.workspace;
 
 import be.sgerard.i18n.model.repository.RepositoryStatus;
 import be.sgerard.i18n.model.repository.persistence.RepositoryEntity;
+import be.sgerard.i18n.model.validation.ValidationResult;
 import be.sgerard.i18n.model.workspace.WorkspaceStatus;
+import be.sgerard.i18n.model.workspace.dto.WorkspacesPublishRequestDto;
 import be.sgerard.i18n.model.workspace.persistence.WorkspaceEntity;
 import be.sgerard.i18n.repository.workspace.WorkspaceRepository;
 import be.sgerard.i18n.service.ResourceNotFoundException;
@@ -15,12 +17,15 @@ import be.sgerard.i18n.service.workspace.validation.WorkspaceValidator;
 import be.sgerard.i18n.support.ReactiveUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.Comparator;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * Implementation of the {@link WorkspaceManager workspace manager}.
@@ -116,35 +121,36 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
     @Override
     @Transactional
     public Mono<WorkspaceEntity> publish(String workspaceId, String message) throws ResourceNotFoundException, RepositoryException {
-        return findByIdOrDie(workspaceId)
+        return publish(WorkspacesPublishRequestDto.builder().workspace(workspaceId).message(message).build())
+                .next();
+    }
+
+    @Override
+    public Flux<WorkspaceEntity> publish(WorkspacesPublishRequestDto request) {
+        return Flux
+                .fromIterable(request.getWorkspaces())
+                .flatMap(this::findByIdOrDie)
                 .flatMap(workspace -> {
                     if (workspace.getStatus() == WorkspaceStatus.IN_REVIEW) {
-                        return Mono.just(workspace);
+                        return Mono.just(Pair.of(workspace, ValidationResult.EMPTY));
+                    } else {
+                        return validator
+                                .beforePublish(workspace)
+                                .map(validationResult -> Pair.of(workspace, validationResult));
                     }
+                })
+                .collectList()
+                .flatMapMany(validationResults -> {
+                    final ValidationResult mergedValidationResult = ValidationResult.merge(validationResults.stream().map(Pair::getSecond).collect(toList()));
 
-                    return validator
-                            .beforePublish(workspace)
-                            .map(validationResult -> {
-                                ValidationException.throwIfFailed(validationResult);
+                    ValidationException.throwIfFailed(mergedValidationResult);
 
-                                logger.info("Start publishing workspace [{}] alias [{}].", workspace.getBranch(), workspaceId);
-
-                                return workspace;
-                            })
-                            .flatMap(wk -> translationsStrategy.onPublish(wk, message))
-                            .flatMap(reviewStarted -> {
-                                if (workspace.getReview().isPresent()) {
-                                    workspace.setStatus(WorkspaceStatus.IN_REVIEW);
-
-                                    listener.onReview(workspace);
-
-                                    return update(workspace);
-                                } else {
-                                    return delete(workspace.getId())
-                                            .then(createWorkspaceIfNeeded(workspace));
-                                }
-                            });
-                });
+                    return Flux.fromStream(validationResults.stream().map(Pair::getFirst));
+                })
+                .flatMap(workspace -> (workspace.getStatus() == WorkspaceStatus.IN_REVIEW)
+                        ? Mono.just(workspace)
+                        : doPublish(workspace, request)
+                );
     }
 
     @Override
@@ -284,6 +290,30 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
                                 ? initialize(workspace.getId())
                                 : Mono.just(workspace)
                 );
+    }
+
+    /**
+     * Publishes the specified workspace.
+     */
+    private Mono<WorkspaceEntity> doPublish(WorkspaceEntity workspace, WorkspacesPublishRequestDto request) {
+        logger.info("Start publishing workspace [{}] alias [{}].", workspace.getBranch(), workspace.getId());
+
+        return translationsStrategy
+                .onPublish(workspace, request.getMessage())
+                .flatMap(wk -> {
+                    if (wk.getStatus() == WorkspaceStatus.IN_REVIEW) {
+                        return Mono.just(wk);
+                    } else if (wk.getReview().isPresent()) {
+                        wk.setStatus(WorkspaceStatus.IN_REVIEW);
+
+                        listener.onReview(wk);
+
+                        return update(wk);
+                    } else {
+                        return delete(wk.getId())
+                                .then(createWorkspaceIfNeeded(wk));
+                    }
+                });
     }
 
     /**
