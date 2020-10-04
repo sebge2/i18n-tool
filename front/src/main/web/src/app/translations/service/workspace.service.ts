@@ -29,7 +29,7 @@ export class WorkspaceService {
                 private notificationService: NotificationService) {
 
         this._synchronizedWorkspaces$ = new SynchronizedCollection<WorkspaceDto, Workspace>(
-            () => this.apiWorkspaceService.findAll4(),
+            () => this.apiWorkspaceService.findAll3(),
             this.eventService.subscribeDto(Events.ADDED_WORKSPACE),
             this.eventService.subscribeDto(Events.UPDATED_WORKSPACE),
             this.eventService.subscribeDto(Events.DELETED_WORKSPACE),
@@ -112,7 +112,7 @@ export class WorkspaceService {
 
     public publishAll(workspaces: string[], comment: string): Observable<Workspace[]>{
         return this.apiWorkspaceService
-            .publish({workspaces: workspaces, message: comment})
+            .publish({workspaces: workspaces, message: comment}, "PUBLISH")
             .pipe(
                 map(workspaces => _.map(workspaces, workspace => Workspace.fromDto(workspace))),
             );

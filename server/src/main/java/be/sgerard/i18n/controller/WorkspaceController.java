@@ -151,11 +151,13 @@ public class WorkspaceController {
             summary = "Initializes the specified workspace.",
             parameters = @Parameter(name = "action", in = ParameterIn.QUERY, schema = @Schema(allowableValues = {"PUBLISH"}))
     )
-    public Flux<WorkspaceEntity> publish(@RequestBody WorkspacesPublishRequestDto request) {
+    public Flux<WorkspaceDto> publish(@RequestBody WorkspacesPublishRequestDto request) {
         if (StringUtils.isEmpty(request.getMessage())) {
             throw BadRequestException.missingReviewMessage();
         }
 
-        return workspaceManager.publish(request);
+        return workspaceManager
+                .publish(request)
+                .flatMap(dtoEnricher::mapAndEnrich);
     }
 }
