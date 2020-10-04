@@ -1,43 +1,44 @@
 {
-  "SHARED" : {
-    "WORKSPACES_TITLE" : "Espaces de Travail",
-    "WORKSPACE_LABEL" : "Espace de travail :",
-    "CANCEL_ACTION" : "Annuler",
-    "LOCALES_LABEL" : "Langues :",
-    "REPOSITORY_TITLE" : "Répertoire"
+  "SHARED": {
+    "USERS_TITLE": "test",
+    "WORKSPACES_TITLE": "Espaces de Travail",
+    "WORKSPACE_LABEL": "Espace de travail :",
+    "CANCEL_ACTION": "Annuler",
+    "LOCALES_LABEL": "Langues :",
+    "REPOSITORY_TITLE": "Répertoire"
   },
-  "TRANSLATIONS" : {
-    "SEARCH_BAR" : {
-      "SEARCH_BUTTON" : "Chercher",
-      "CRITERION_ALL" : "Toutes",
-      "TITLE" : "Chercher {criterion, select, ALL{<b>toutes</b> les traductions} MISSING_TRANSLATIONS{les traductions <b>manquantes</b>} TRANSLATIONS_CURRENT_USER_UPDATED{les traductions que <b>j'ai modifiées</b>} UPDATED_TRANSLATIONS{les traductions que <b>quelqu'un a modifié</b>} other{}} {workspace, select, null{} other {sur la branche <b>{workspace}</b>}} {locales, select, true{pour <b>toutes</b> les langues} other{pour les langues {locales}}}",
-      "CRITERION_USER_UPDATED" : "J'ai mis à jour",
-      "CRITERION_UPDATED" : "Quelqu'un a mis à jour",
-      "CRITERION_MISSING" : "Manquantes"
+  "TRANSLATIONS": {
+    "SEARCH_BAR": {
+      "SEARCH_BUTTON": "Chercher",
+      "CRITERION_ALL": "Toutes",
+      "TITLE": "Chercher {criterion, select, ALL{<b>toutes</b> les traductions} MISSING_TRANSLATIONS{les traductions <b>manquantes</b>} TRANSLATIONS_CURRENT_USER_UPDATED{les traductions que <b>j'ai modifiées</b>} UPDATED_TRANSLATIONS{les traductions que <b>quelqu'un a modifié</b>} other{}} {workspace, select, null{} other {sur la branche <b>{workspace}</b>}} {locales, select, true{pour <b>toutes</b> les langues} other{pour les langues {locales}}}",
+      "CRITERION_USER_UPDATED": "J'ai mis à jour",
+      "CRITERION_UPDATED": "Quelqu'un a mis à jour",
+      "CRITERION_MISSING": "Manquantes"
     },
-    "PLEASE_WAIT" : "L'espace de travail s'initialize",
-    "START_REVIEW" : {
-      "START_ACTION" : "Démarrer",
-      "COMMENT" : "Commentaire",
-      "TITLE" : "Démarrer une révision"
+    "PLEASE_WAIT": "L'espace de travail s'initialize",
+    "START_REVIEW": {
+      "START_ACTION": "Démarrer",
+      "COMMENT": "Commentaire",
+      "TITLE": "Démarrer une révision"
     },
-    "INITIALIZING_ALT" : "Espace de travail s'initialize",
-    "TABLE" : {
-      "NO_RESULT" : "Il n'y  a pas de résultat, veuillez changer vos critères.",
-      "KEY_HEADER" : "Clé",
-      "UNSAVED" : "Vos changements ne sont pas sauvegardés"
+    "INITIALIZING_ALT": "Espace de travail s'initialize",
+    "TABLE": {
+      "NO_RESULT": "Il n'y  a pas de résultat, veuillez changer vos critères.",
+      "KEY_HEADER": "Clé",
+      "UNSAVED": "Vos changements ne sont pas sauvegardés"
     },
-    "START_REVIEW_BUTTON" : "Publier et demander une révision"
+    "START_REVIEW_BUTTON": "Publier et demander une révision"
   },
-  "ADMIN" : {
-    "WORKSPACES" : {
-      "CONFIRM_DELETION" : {
-        "ERASE_ACTION" : "Supprimer",
-        "EXPLAIN" : "Veuillez confirmer la <b>suppression</b> de l'espace de travail <b>{workspace}</b> (toutes les modifications seront perdues).",
-        "PLEASE" : "Veuillez saisir le nom de l'espace de travail afin de confirmer :",
-        "TITLE" : "Confirmer la suppression"
+  "ADMIN": {
+    "WORKSPACES": {
+      "CONFIRM_DELETION": {
+        "ERASE_ACTION": "Supprimer",
+        "EXPLAIN": "Veuillez confirmer la <b>suppression</b> de l'espace de travail <b>{workspace}</b> (toutes les modifications seront perdues).",
+        "PLEASE": "Veuillez saisir le nom de l'espace de travail afin de confirmer :",
+        "TITLE": "Confirmer la suppression"
       },
-      "REFRESH_ACTION" : "Rafraîchir"
+      "REFRESH_ACTION": "Rafraîchir"
     }
   }
 }
