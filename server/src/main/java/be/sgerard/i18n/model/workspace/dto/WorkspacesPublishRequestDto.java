@@ -7,9 +7,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.util.Collection;
+import java.util.List;
 
-import static java.util.Collections.singleton;
+import static java.util.Collections.singletonList;
 
 /**
  * Request asking the publication of workspaces.
@@ -27,7 +27,7 @@ public class WorkspacesPublishRequestDto {
     }
 
     @Schema(description = "List of workspaces ids to publish.", required = true)
-    private final Collection<String> workspaces;
+    private final List<String> workspaces;
 
     @Schema(description = "Message describing the publication.", required = true)
     private final String message;
@@ -40,7 +40,7 @@ public class WorkspacesPublishRequestDto {
     public static final class Builder {
 
         public Builder workspace(String workspaceId) {
-            return workspaces(singleton(workspaceId));
+            return workspaces(singletonList(workspaceId));
         }
     }
 }

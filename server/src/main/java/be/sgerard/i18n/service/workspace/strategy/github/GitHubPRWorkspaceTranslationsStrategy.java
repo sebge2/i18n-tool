@@ -63,7 +63,7 @@ public class GitHubPRWorkspaceTranslationsStrategy extends BaseGitWorkspaceTrans
                         GitRepositoryApi.class,
                         api ->
                                 Mono
-                                        .just(generatePullRequestBranchName(workspace, api))
+                                        .defer(() -> Mono.just(generatePullRequestBranchName(workspace, api)))
                                         .flatMap(prBranch ->
                                                 translationManager
                                                         .writeTranslations(workspace, new GitTranslationRepositoryWriteApi(api, workspace.getBranch(), prBranch))

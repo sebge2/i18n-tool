@@ -5,6 +5,7 @@ import be.sgerard.i18n.model.repository.RepositoryType;
 import be.sgerard.i18n.model.repository.dto.*;
 import be.sgerard.i18n.model.workspace.WorkspaceStatus;
 import be.sgerard.i18n.model.workspace.dto.WorkspaceDto;
+import be.sgerard.i18n.model.workspace.dto.WorkspacesPublishRequestDto;
 import be.sgerard.test.i18n.support.CleanupDatabase;
 import be.sgerard.test.i18n.support.WithJaneDoeAdminUser;
 import org.junit.jupiter.api.*;
@@ -16,6 +17,7 @@ import static be.sgerard.test.i18n.model.GitRepositoryCreationDtoTestUtils.i18nT
 import static be.sgerard.test.i18n.model.GitRepositoryCreationDtoTestUtils.i18nToolRepositoryCreationDto;
 import static be.sgerard.test.i18n.model.TranslationLocaleCreationDtoTestUtils.enLocaleCreationDto;
 import static be.sgerard.test.i18n.model.TranslationLocaleCreationDtoTestUtils.frLocaleCreationDto;
+import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.*;
 
 /**
@@ -420,6 +422,67 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
 //                            "validation.repository.name-not-unique=my updated value"
 //                    );
         }
+
+        @Test
+        @CleanupDatabase
+        @WithJaneDoeAdminUser
+        public void publishAll() {
+            repository
+                    .create(i18nToolRepositoryCreationDto())
+                    .hint("my-repo")
+                    .initialize();
+
+            final WorkspaceDto masterWorkspace = repository.forHint("my-repo").initialize().workspaces().workspaceForBranch("master").initialize().get();
+            final WorkspaceDto releaseWorkspace = repository.forHint("my-repo").initialize().workspaces().workspaceForBranch("release/2020.05").initialize().get();
+
+            webClient
+                    .post()
+                    .uri("/api/repository/workspace/do?action=PUBLISH")
+                    .bodyValue(
+                            WorkspacesPublishRequestDto.builder()
+                                    .workspaces(asList(masterWorkspace.getId(), releaseWorkspace.getId()))
+                                    .message("publish test")
+                                    .build()
+                    )
+                    .exchange()
+                    .expectStatus().isOk()
+                    .expectBody()
+                    .jsonPath("$").value(hasSize(2))
+                    .jsonPath("$[0].branch").isEqualTo("master")
+                    .jsonPath("$[0].status").isEqualTo(WorkspaceStatus.IN_REVIEW.name())
+                    .jsonPath("$[1].branch").isEqualTo("release/2020.05")
+                    .jsonPath("$[1].status").isEqualTo(WorkspaceStatus.IN_REVIEW.name());
+        }
+
+        @Test
+        @CleanupDatabase
+        @WithJaneDoeAdminUser
+        public void publishAllAlreadyPublished() {
+            repository
+                    .create(i18nToolRepositoryCreationDto())
+                    .hint("my-repo")
+                    .initialize();
+
+            final WorkspaceDto masterWorkspace = repository.forHint("my-repo").initialize().workspaces().workspaceForBranch("master").initialize().publish("test").get();
+
+            webClient
+                    .post()
+                    .uri("/api/repository/workspace/do?action=PUBLISH")
+                    .bodyValue(
+                            WorkspacesPublishRequestDto.builder()
+                                    .workspaces(asList(masterWorkspace.getId()))
+                                    .message("publish test")
+                                    .build()
+                    )
+                    .exchange()
+                    .expectStatus().isOk()
+                    .expectBody()
+                    .jsonPath("$").value(hasSize(1))
+                    .jsonPath("$[0].branch").isEqualTo("master")
+                    .jsonPath("$[0].status").isEqualTo(WorkspaceStatus.IN_REVIEW.name());
+        }
+
+        // TODO workspace NOT INITIALIZED
 
         @Test
         @CleanupDatabase
