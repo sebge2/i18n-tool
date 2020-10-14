@@ -12,7 +12,6 @@
     </root>
 
     <logger name="de.flapdoodle.embed.mongo.MongodExecutable" level="WARN">
-        <appender-ref ref="STDOUT" />
     </logger>
 
 </configuration>

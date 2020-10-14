@@ -308,9 +308,9 @@ public class AppProperties {
     public static class Lock {
 
         /**
-         * The maximum time to get the lock (in seconds) after a timeout exception will be thrown.
+         * The maximum time to get the lock (in milli-seconds) after a timeout exception will be thrown.
          */
-        private int timeoutInS = 120;
+        private int timeoutInMS = 120000;
 
         public Lock() {
         }

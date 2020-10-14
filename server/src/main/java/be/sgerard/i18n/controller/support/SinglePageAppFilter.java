@@ -1,5 +1,6 @@
 package be.sgerard.i18n.controller.support;
 
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
@@ -24,7 +25,8 @@ public class SinglePageAppFilter implements WebFilter {
     public static final List<String> NON_STATIC_PATHS = asList("/api", "/auth", "/ws", "/swagger-ui.html");
 
     @Override
-    public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
+    @NonNull
+    public Mono<Void> filter(@NonNull ServerWebExchange exchange, @NonNull WebFilterChain chain) {
         final String path = exchange.getRequest().getURI().getPath();
 
         if (path.contains(".")) {

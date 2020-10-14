@@ -83,90 +83,93 @@ public class RepositoryManagerImpl implements RepositoryManager {
     @Transactional
     @Override
     public Mono<RepositoryEntity> initialize(String id) throws ResourceNotFoundException, IllegalStateException {
-        return lockService.executeAndGetMono(() ->
-                findByIdOrDie(id)
-                        .flatMap(repository ->
-                                Mono.just(repository)
-                                        // TODO initializing
-                                        .filter(repo -> repo.getStatus() != RepositoryStatus.INITIALIZED)
-                                        .flatMap(handler::initializeRepository)
-                                        .doOnNext(repo -> repo.setStatus(RepositoryStatus.INITIALIZED))
-                                        .flatMap(this.repository::save)
-                                        .flatMap(rep ->
-                                                listener
-                                                        .onInitialize(rep)
-                                                        .thenReturn(rep)
-                                        )
-                                        .switchIfEmpty(Mono.just(repository))
-                                        .onErrorResume(error -> {
-                                            logger.error("Error while initializing repository.", error);
+        return lockService.executeAndGetMono(
+                id,
+                () ->
+                        findByIdOrDie(id)
+                                .flatMap(repository ->
+                                        Mono.just(repository)
+                                                // TODO initializing
+                                                .filter(repo -> repo.getStatus() != RepositoryStatus.INITIALIZED)
+                                                .flatMap(handler::initializeRepository)
+                                                .doOnNext(repo -> repo.setStatus(RepositoryStatus.INITIALIZED))
+                                                .flatMap(this.repository::save)
+                                                .flatMap(rep ->
+                                                        listener
+                                                                .onInitialize(rep)
+                                                                .thenReturn(rep)
+                                                )
+                                                .switchIfEmpty(Mono.just(repository))
+                                                .onErrorResume(error -> {
+                                                    logger.error("Error while initializing repository.", error);
 
-                                            repository.setStatus(RepositoryStatus.INITIALIZATION_ERROR);
+                                                    repository.setStatus(RepositoryStatus.INITIALIZATION_ERROR);
 
-                                            return this.repository
-                                                    .save(repository)
-                                                    .flatMap(rep ->
-                                                            listener
-                                                                    .onInitializationError(rep, error)
-                                                                    .thenReturn(rep)
-                                                    );
-                                        })
-                        )
-        );
+                                                    return this.repository
+                                                            .save(repository)
+                                                            .flatMap(rep ->
+                                                                    listener
+                                                                            .onInitializationError(rep, error)
+                                                                            .thenReturn(rep)
+                                                            );
+                                                })
+                                ));
     }
 
     @Transactional
     @Override
     public Mono<RepositoryEntity> update(RepositoryPatchDto patch) throws ResourceNotFoundException, RepositoryException {
-        return lockService.executeAndGetMono(() ->
-                findByIdOrDie(patch.getId())
-                        .flatMap(repo ->
-                                validator
-                                        .beforeUpdate(repo, patch)
-                                        .map(validationResult -> {
-                                            ValidationException.throwIfFailed(validationResult);
+        return lockService.executeAndGetMono(
+                patch.getId(),
+                () ->
+                        findByIdOrDie(patch.getId())
+                                .flatMap(repo ->
+                                        validator
+                                                .beforeUpdate(repo, patch)
+                                                .map(validationResult -> {
+                                                    ValidationException.throwIfFailed(validationResult);
 
-                                            return repo;
-                                        })
-                        )
-                        .flatMap(repo -> handler.updateRepository(repo, patch))
-                        .flatMap(repository::save)
-                        .flatMap(repo ->
-                                listener
-                                        .onUpdate(patch, repo)
-                                        .thenReturn(repo)
-                        )
-        );
+                                                    return repo;
+                                                })
+                                )
+                                .flatMap(repo -> handler.updateRepository(repo, patch))
+                                .flatMap(repository::save)
+                                .flatMap(repo ->
+                                        listener
+                                                .onUpdate(patch, repo)
+                                                .thenReturn(repo)
+                                ));
     }
 
     @Transactional
     @Override
     public Mono<RepositoryEntity> delete(String id) {
-        return lockService.executeAndGetMono(() ->
-                findById(id)
-                        .flatMap(repo ->
-                                validator
-                                        .beforeDelete(repo)
-                                        .map(validationResult -> {
-                                            ValidationException.throwIfFailed(validationResult);
+        return lockService.executeAndGetMono(
+                id,
+                () ->
+                        findById(id)
+                                .flatMap(repo ->
+                                        validator
+                                                .beforeDelete(repo)
+                                                .map(validationResult -> {
+                                                    ValidationException.throwIfFailed(validationResult);
 
-                                            return repo;
-                                        })
-                                        .flatMap(handler::deleteRepository)
-                                        .onErrorResume(error -> {
-                                            logger.error("Error while deleting repository.", error);
-                                            return Mono.just(repo);
-                                        })
-                                        .flatMap(rep ->
-                                                listener.onDelete(rep)
-                                                        .thenReturn(rep)
-                                        )
-                                        .flatMap(rep ->
-                                                repository.delete(rep)
-                                                        .thenReturn(rep)
-                                        )
-                        )
-        );
+                                                    return repo;
+                                                })
+                                                .flatMap(handler::deleteRepository)
+                                                .onErrorResume(error -> {
+                                                    logger.error("Error while deleting repository.", error);
+                                                    return Mono.just(repo);
+                                                })
+                                                .flatMap(rep ->
+                                                        listener.onDelete(rep)
+                                                                .thenReturn(rep)
+                                                )
+                                                .flatMap(rep ->
+                                                        repository.delete(rep)
+                                                                .thenReturn(rep)
+                                                )
+                                ));
     }
 
     @Override
@@ -175,18 +178,19 @@ public class RepositoryManagerImpl implements RepositoryManager {
                                                              Class<A> apiType,
                                                              RepositoryApi.ApiFunction<A, Mono<T>> apiConsumer) throws RepositoryException {
         try {
-            return lockService.executeAndGetMono(() ->
-                    findByIdOrDie(repositoryId)
-                            .flatMap(handler::createAPI)
-                            .flatMap(api ->
-                                    Mono
-                                            .just(api)
-                                            .map(apiType::cast)
-                                            .map(a -> wrapIntoProxy(apiType, a))
-                                            .flatMap(apiConsumer::apply)
-                                            .doAfterTerminate(api::close)
-                            )
-            );
+            return lockService.executeAndGetMono(
+                    repositoryId,
+                    () ->
+                            findByIdOrDie(repositoryId)
+                                    .flatMap(handler::createAPI)
+                                    .flatMap(api ->
+                                            Mono
+                                                    .just(api)
+                                                    .map(apiType::cast)
+                                                    .map(a -> wrapIntoProxy(apiType, a))
+                                                    .flatMap(apiConsumer::apply)
+                                                    .doAfterTerminate(api::close)
+                                    ));
         } catch (LockTimeoutException e) {
             throw RepositoryException.onLockTimeout(e);
         }
@@ -198,18 +202,19 @@ public class RepositoryManagerImpl implements RepositoryManager {
                                                              Class<A> apiType,
                                                              RepositoryApi.ApiFunction<A, Flux<T>> apiConsumer) throws RepositoryException {
         try {
-            return lockService.executeAndGetFlux(() ->
-                    findByIdOrDie(repositoryId)
-                            .flatMap(handler::createAPI)
-                            .flatMapMany(api ->
-                                    Mono
-                                            .just(api)
-                                            .map(apiType::cast)
-                                            .map(a -> wrapIntoProxy(apiType, a))
-                                            .flatMapMany(apiConsumer::apply)
-                                            .doAfterTerminate(api::close)
-                            )
-            );
+            return lockService.executeAndGetFlux(
+                    repositoryId,
+                    () ->
+                            findByIdOrDie(repositoryId)
+                                    .flatMap(handler::createAPI)
+                                    .flatMapMany(api ->
+                                            Mono
+                                                    .just(api)
+                                                    .map(apiType::cast)
+                                                    .map(a -> wrapIntoProxy(apiType, a))
+                                                    .flatMapMany(apiConsumer::apply)
+                                                    .doAfterTerminate(api::close)
+                                    ));
         } catch (LockTimeoutException e) {
             throw RepositoryException.onLockTimeout(e);
         }
