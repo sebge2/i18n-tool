@@ -128,8 +128,8 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
     public Flux<WorkspaceEntity> publish(WorkspacesPublishRequestDto request) {
         return Flux
                 .fromIterable(request.getWorkspaces())
-                .flatMap(this::findByIdOrDie)
-                .flatMap(workspace -> {
+                .flatMapSequential(this::findByIdOrDie)
+                .flatMapSequential(workspace -> {
                     if (workspace.getStatus() == WorkspaceStatus.IN_REVIEW) {
                         return Mono.just(Pair.of(workspace, ValidationResult.EMPTY));
                     } else {
@@ -146,9 +146,12 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
 
                     return Flux.fromStream(validationResults.stream().map(Pair::getFirst));
                 })
-                .flatMap(workspace -> (workspace.getStatus() == WorkspaceStatus.IN_REVIEW)
-                        ? Mono.just(workspace)
-                        : doPublish(workspace, request)
+                .flatMapSequential(
+                        workspace -> (workspace.getStatus() == WorkspaceStatus.IN_REVIEW)
+                                ? Mono.just(workspace)
+                                : doPublish(workspace, request),
+                        1,
+                        1
                 );
     }
 
