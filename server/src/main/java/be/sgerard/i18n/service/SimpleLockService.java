@@ -128,9 +128,10 @@ public class SimpleLockService implements LockService {
      * Executes the cleanup after that the specified task has been executed/failed.
      */
     private void doFinally(Task task) {
-        logger.trace("The task [{}] ended.", task);
-
         tasks.remove(task);
+
+        logger.trace("The task [{}] ended, there are {} pending tasks.", task, tasks.size());
+
         sink.next(task);
     }
 
