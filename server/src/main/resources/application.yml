@@ -21,6 +21,11 @@ management:
         include: health
       base-path: /
 
+
+server:
+  error:
+    path: '/error'
+
 be:
   sgerard:
     i18n:

@@ -35,7 +35,11 @@ public class WorkspaceRepositoryListener implements RepositoryListener<Repositor
     public Mono<Void> onDelete(RepositoryEntity repository) {
         return workspaceManager
                 .findAll(repository.getId())
-                .flatMap(workspace -> workspaceManager.delete(workspace.getId()))
+                .flatMap(
+                        workspace -> workspaceManager.delete(workspace.getId()),
+                        1,
+                        1
+                )
                 .then();
     }
 }

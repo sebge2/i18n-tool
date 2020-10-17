@@ -105,4 +105,12 @@ public class WorkspaceEntity {
     public <R extends AbstractReviewEntity> R getReviewOrDie(Class<R> reviewType) {
         return getReview(reviewType).orElseThrow(() -> new IllegalStateException("There is no associated review entity."));
     }
+
+    @Override
+    public String toString() {
+        return "WorkspaceEntity{" +
+                "repository='" + repository + '\'' +
+                ", branch='" + branch + '\'' +
+                '}';
+    }
 }

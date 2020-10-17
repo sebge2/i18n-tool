@@ -173,7 +173,7 @@ public class TranslationLocaleControllerTest extends AbstractControllerTest {
     @Test
     @CleanupDatabase
     @WithJaneDoeAdminUser
-    public void deleteForbiddenTranslationsAssociated() {
+    public void deleteTranslationsAssociated() {
         final TranslationLocaleDto translationLocale = locale.createLocale(frLocaleCreationDto()).get();
 
         this.repository

@@ -84,12 +84,16 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
                                         findAll(repositoryId).sort(Comparator.comparing(WorkspaceEntity::getBranch)),
                                         (branch, workspace) -> branch.compareTo(workspace.getBranch())
                                 )
-                                .flatMap(pair -> {
-                                    final String matchingBranch = pair.getLeft();
-                                    final WorkspaceEntity matchingWorkspace = pair.getRight();
+                                .flatMap(
+                                        pair -> {
+                                            final String matchingBranch = pair.getLeft();
+                                            final WorkspaceEntity matchingWorkspace = pair.getRight();
 
-                                    return synchronize(matchingBranch, matchingWorkspace, repositoryId);
-                                })
+                                            return synchronize(matchingBranch, matchingWorkspace, repositoryId);
+                                        },
+                                        1,
+                                        1
+                                )
                 );
     }
 
@@ -178,21 +182,19 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
     }
 
     @Override
-    @Transactional
     public Mono<WorkspaceEntity> delete(String workspaceId) throws RepositoryException {
         return findById(workspaceId)
                 .flatMap(translationsStrategy::onDelete)
-                .flatMap(workspace -> {
-                    logger.info("The workspace [{}] alias [{}] has been deleted.", workspace.getBranch(), workspaceId);
-
-                    return listener
-                            .onDelete(workspace)
-                            .thenReturn(workspace);
-                })
+                .flatMap(workspace ->
+                        listener
+                                .onDelete(workspace)
+                                .thenReturn(workspace)
+                )
                 .flatMap(workspace ->
                         repository.delete(workspace)
                                 .thenReturn(workspace)
-                );
+                )
+                .doOnNext(workspace -> logger.info("The workspace [{}] alias [{}] has been deleted.", workspace.getBranch(), workspaceId));
     }
 
     /**

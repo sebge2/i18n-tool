@@ -189,7 +189,8 @@ public class RepositoryManagerImpl implements RepositoryManager {
                                                     .map(apiType::cast)
                                                     .map(a -> wrapIntoProxy(apiType, a))
                                                     .flatMap(apiConsumer::apply)
-                                                    .doAfterTerminate(api::close)
+                                                    .doOnCancel(api::close)
+                                                    .doFinally(signalType -> api.close())
                                     ));
         } catch (LockTimeoutException e) {
             throw RepositoryException.onLockTimeout(e);

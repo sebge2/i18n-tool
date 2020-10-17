@@ -2,6 +2,7 @@ package be.sgerard.i18n.service;
 
 import be.sgerard.i18n.configuration.AppProperties;
 import be.sgerard.i18n.controller.support.RequestIdWebFilter;
+import lombok.ToString;
 import lombok.Value;
 import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
@@ -13,10 +14,7 @@ import reactor.core.publisher.FluxSink;
 import reactor.core.publisher.Mono;
 
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Supplier;
 
 
@@ -38,7 +36,7 @@ public class SimpleLockService implements LockService {
     public SimpleLockService(AppProperties appProperties) {
         this.timeoutInMS = appProperties.getLock().getTimeoutInMS();
         this.emitter = EmitterProcessor.create(false);
-        this.sink = emitter.sink();
+        this.sink = emitter.sink(FluxSink.OverflowStrategy.DROP);
     }
 
     @Override
@@ -49,7 +47,7 @@ public class SimpleLockService implements LockService {
                         acquireLockFor(task)
                                 .flatMap(Task::getMono)
                                 .map(mono -> (T) mono)
-                                .doOnNext(value -> logger.trace("The task produced the following value [{}].", value))
+                                .doOnNext(value -> logger.trace("Result of task [{}] is: [{}].", task, value))
                                 .doOnCancel(() -> doOnCancel(task))
                                 .doFinally(signalType -> doFinally(task))
                 );
@@ -63,7 +61,7 @@ public class SimpleLockService implements LockService {
                         acquireLockFor(task)
                                 .flatMapMany(Task::getFlux)
                                 .map(value -> (T) value)
-                                .doOnNext(value -> logger.trace("The task produced the following value [{}].", value))
+                                .doOnNext(value -> logger.trace("Result of task [{}] is: [{}].", task, value))
                                 .doOnCancel(() -> doOnCancel(task))
                                 .doFinally(signalType -> doFinally(task))
                 );
@@ -95,7 +93,7 @@ public class SimpleLockService implements LockService {
         return emitter
                 .flatMap(updatedTask -> checkCanBeStarted(task))
                 .timeout(Duration.ofMillis(timeoutInMS), Mono.defer(() -> Mono.error(new LockTimeoutException(timeoutInMS))))
-                .doOnNext(updatedTask -> logger.trace("Task about to be executed [{}].", task))
+                .doOnNext(updatedTask -> logger.trace("Start of task [{}].", task))
                 .next();
     }
 
@@ -118,7 +116,7 @@ public class SimpleLockService implements LockService {
      * Executes the cleanup after that the specified task has been canceled.
      */
     private void doOnCancel(Task task) {
-        logger.trace("The task [{}] has been canceled.", task);
+        logger.trace("Cancel of task [{}] there are {} pending tasks.", task, tasks.size());
 
         tasks.remove(task);
         sink.next(task);
@@ -130,7 +128,7 @@ public class SimpleLockService implements LockService {
     private void doFinally(Task task) {
         tasks.remove(task);
 
-        logger.trace("The task [{}] ended, there are {} pending tasks.", task, tasks.size());
+        logger.trace("End of task [{}], there are {} pending tasks.", task, tasks.size());
 
         sink.next(task);
     }
@@ -142,8 +140,13 @@ public class SimpleLockService implements LockService {
     @SuppressWarnings("RedundantModifiersValueLombok")
     private static class Task {
 
+        private final String id = UUID.randomUUID().toString();
+
         private String repository;
+
+        @ToString.Exclude
         private Supplier<? extends Publisher<Object>> supplier;
+
         private String currentRequestId;
 
         public Mono<Object> getMono() {
