@@ -119,7 +119,6 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
     }
 
     @Override
-    @Transactional
     public Mono<WorkspaceEntity> publish(String workspaceId, String message) throws ResourceNotFoundException, RepositoryException {
         return publish(WorkspacesPublishRequestDto.builder().workspace(workspaceId).message(message).build())
                 .next();
@@ -296,10 +295,9 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
      * Publishes the specified workspace.
      */
     private Mono<WorkspaceEntity> doPublish(WorkspaceEntity workspace, WorkspacesPublishRequestDto request) {
-        logger.info("Start publishing workspace [{}] alias [{}].", workspace.getBranch(), workspace.getId());
-
         return translationsStrategy
                 .onPublish(workspace, request.getMessage())
+                .doOnNext(wk -> logger.info("Start publishing workspace [{}] alias [{}].", wk.getBranch(), wk.getId()))
                 .flatMap(wk -> {
                     if (wk.getStatus() == WorkspaceStatus.IN_REVIEW) {
                         return Mono.just(wk);
