@@ -53,9 +53,7 @@
       "UPDATE": "Error while updating translations."
     },
     "TABLE": {
-      "NO_RESULT": "Sorry, no translation found :(",
-      "NO_PREVIOUS_TRANSLATION": "There is no previous translation.",
-      "NO_FURTHER_TRANSLATION": "There is no further translation.",
+      "NO_RESULT": "There are no result, please modify your criteria.",
       "KEY_COLUMN": "Key",
       "UNSAVED_CHANGES": "Your changes are not saved yet"
     }
@@ -95,7 +93,7 @@
       "LANGUAGE": "Language Code",
       "LANGUAGE_EXAMPLE": "Example: en, fr.",
       "REGION": "Region",
-      "REGION_EXAMPLE": "Example: US, GB.",
+      "REGION_EXAMPLE": "Examples: US, GB.",
       "VARIANTS": "Variants (space separated)",
       "VARIANTS_EXAMPLE": "Example: de-CH-1996.",
       "ICON": "Icon",
