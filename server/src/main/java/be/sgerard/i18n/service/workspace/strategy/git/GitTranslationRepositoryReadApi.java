@@ -20,9 +20,8 @@ public class GitTranslationRepositoryReadApi implements TranslationRepositoryRea
 
     public GitTranslationRepositoryReadApi(GitRepositoryApi api, String branch) {
         this.api = api
+                .fetch()
                 .resetHardHead()
-                .checkoutDefaultBranch()
-                .pull()
                 .checkout(branch)
                 .pull();
     }

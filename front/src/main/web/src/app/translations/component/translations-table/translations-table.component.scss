@@ -1,20 +1,22 @@
-.app-translations-scroller-viewport {
-    height: 1000%;
-    width: 100%;
-}
-
 .app-translations-container {
     display: grid;
     grid-auto-rows: 60px;
-    grid-gap: 20px;
     width: 100%;
 }
 
-.app-scroller-cell {
-    height: 20px;
+.app-translations-cell {
+    margin-left: 20px;
+    margin-bottom: 20px;
 }
 
 .app-translations-header {
+    position: sticky;
+    position: -webkit-sticky; /* For macOS/iOS Safari */
+    top : 0;
+    background: #fafafa;
+    z-index: 9;
+    margin-left: 0;
+    height: 50px;
 }
 
 .app-translations-header-icon {
@@ -23,15 +25,19 @@
 }
 
 .app-translations-workspace-row {
-    padding-top: 17px;
+    margin-left: 0;
 }
 
 .app-translations-bundle-file-row {
-    padding-top: 12px;
+    margin-left: 0;
+}
+
+.app-translations-translation-row {
 }
 
 .app-translations-bundle-key-column {
     margin: auto auto auto 0;
+    padding-top: 2px;
 }
 
 .app-translations-bundle-key-column .app-translations-bundle-key-column-inner {
@@ -52,10 +58,9 @@
     right: 30px;
 }
 
-.app-translations-unsaved-icon {
-    color: orange;
-    font-size: larger;
-    margin-right: 10px;
+.app-translations-table-no-result {
+    font-size: xx-large;
+    opacity: 0.6;
 }
 
 

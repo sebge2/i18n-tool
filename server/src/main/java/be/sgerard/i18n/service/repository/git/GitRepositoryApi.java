@@ -49,6 +49,11 @@ public interface GitRepositoryApi extends RepositoryApi {
     GitRepositoryApi pull() throws RepositoryException;
 
     /**
+     * Fetches changes from the remote repository branch to the local repository branch.
+     */
+    GitRepositoryApi fetch() throws RepositoryException;
+
+    /**
      * Returns the current Git branch.
      */
     String getCurrentBranch() throws RepositoryException;

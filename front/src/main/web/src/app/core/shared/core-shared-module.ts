@@ -50,6 +50,7 @@ import {FormSelectFieldComponent} from "./component/form-select-field/form-selec
 import {FormDeleteButtonConfirmationComponent} from "./component/form-delete-button/form-delete-button-confirmation/form-delete-button-confirmation.component";
 import {CountdownComponent} from "./component/countdown/countdown.component";
 import {BackwardButtonComponent} from "./component/backward-button/backward-button.component";
+import {ForwardButtonComponent} from "./component/forward-button/forward-button.component";
 
 @NgModule({
     declarations: [
@@ -69,6 +70,7 @@ import {BackwardButtonComponent} from "./component/backward-button/backward-butt
         GitHubLinkButtonComponent,
         PublishButtonComponent,
         BackwardButtonComponent,
+        ForwardButtonComponent,
 
         FormSelectFieldComponent,
 
@@ -134,6 +136,7 @@ import {BackwardButtonComponent} from "./component/backward-button/backward-butt
         GitHubLinkButtonComponent,
         PublishButtonComponent,
         BackwardButtonComponent,
+        ForwardButtonComponent,
 
         FormSelectFieldComponent,
 

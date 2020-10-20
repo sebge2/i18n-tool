@@ -30,6 +30,7 @@ export * from './translationValueRestrictionDto';
 export * from './translationsPageDto';
 export * from './translationsPageRowDto';
 export * from './translationsPageTranslationDto';
+export * from './translationsSearchPageSpecDto';
 export * from './translationsSearchRequestDto';
 export * from './userDto';
 export * from './userLiveSessionDto';

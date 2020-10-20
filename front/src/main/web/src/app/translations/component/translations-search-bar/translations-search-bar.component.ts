@@ -10,7 +10,10 @@ import {TranslationLocaleIconPipe} from "../../../core/shared/pipe/translation-l
 import * as _ from "lodash";
 import {WorkspaceService} from "../../service/workspace.service";
 import {RepositoryIconPipe} from "../../../core/shared/pipe/repository-icon.pipe";
-import {Workspace} from '../../model/workspace/workspace.model';
+import {getDefaultWorkspaces, Workspace} from '../../model/workspace/workspace.model';
+import {ActivatedRoute, Params, Router} from "@angular/router";
+import {getRouteParamEnum, getRouterParamsCollection, updateRouteParams} from 'src/app/core/shared/utils/router-utils';
+import {filterOutUnavailableElements, mapAll} from 'src/app/core/shared/utils/collection-utils';
 
 @Component({
     selector: 'app-translations-search-bar',
@@ -33,11 +36,13 @@ export class TranslationsSearchBarComponent implements OnInit, OnDestroy {
                 private _localeIconPipe: TranslationLocaleIconPipe,
                 private _repositoryIconPipe: RepositoryIconPipe,
                 private _workspaceService: WorkspaceService,
-                private _formBuilder: FormBuilder) {
+                private _formBuilder: FormBuilder,
+                private _route: ActivatedRoute,
+                private _router: Router) {
         this.form = _formBuilder.group({
             workspaces: [[], Validators.required],
             locales: [[], Validators.required],
-            criterion: [TranslationsSearchCriterion.MISSING_TRANSLATIONS, Validators.required]
+            criterion: [null, Validators.required]
         });
 
         this._searchForAllLocales = combineLatest([this.form.controls['locales'].valueChanges, this._localeService.getAvailableLocales()])
@@ -48,26 +53,12 @@ export class TranslationsSearchBarComponent implements OnInit, OnDestroy {
     }
 
     public ngOnInit() {
-        this._localeService.getDefaultLocales()
+        combineLatest([this._route.queryParams, this._localeService.getAvailableLocales(), this._localeService.getDefaultLocales(), this._workspaceService.getWorkspaces()])
             .pipe(takeUntil(this._destroyed$))
-            .subscribe(defaultLocales => this.form.controls['locales'].setValue(defaultLocales));
-
-        this._workspaceService.getWorkspaces()
-            .pipe(takeUntil(this._destroyed$))
-            .subscribe(availableWorkspaces => {
-                if (this.workspaces.length > 0) {
-                    this.form.controls['workspaces'].setValue(
-                        this.workspaces
-                            .filter(workspace =>
-                                _.some(availableWorkspaces, availableWorkspace => _.eq(availableWorkspace.id, workspace.id))
-                            )
-                    );
-                } else {
-                    this.form.controls['workspaces'].setValue(
-                        availableWorkspaces
-                            .filter(availableWorkspace => !!availableWorkspace.defaultWorkspace)
-                    );
-                }
+            .subscribe(([routeParams, availableLocales, defaultLocales, availableWorkspaces]) => {
+                this.updateLocales(availableLocales, routeParams, defaultLocales);
+                this.updateWorkspaces(availableWorkspaces, routeParams);
+                this.updateCriterion(routeParams);
             });
     }
 
@@ -123,11 +114,45 @@ export class TranslationsSearchBarComponent implements OnInit, OnDestroy {
     }
 
     public onSearch() {
-        const searchRequest = new TranslationsSearchRequest();
-        searchRequest.criterion = this.criterion;
-        searchRequest.workspaces = this.workspaces;
-        searchRequest.locales = this.locales;
+        const queryParams: [string, string[]][] = [
+            ['workspace', mapAll(this.workspaces, 'id')],
+            ['locale', mapAll(this.locales, 'id')],
+            ['criterion', [_.toString(this.criterion)]]
+        ];
 
-        this.onSearchChange.emit(searchRequest);
+        updateRouteParams(queryParams, this._route, this._router)
+            .finally(() => this.onSearchChange.emit(new TranslationsSearchRequest(this.workspaces, this.locales, this.criterion)));
+    }
+
+    private updateLocales(availableLocales: TranslationLocale[], routeParams: Params, defaultLocales: TranslationLocale[]) {
+        if (_.some(this.locales)) {
+            this.form.controls['locales'].setValue(
+                filterOutUnavailableElements(availableLocales, this.locales, 'id')
+            );
+        } else {
+            this.form.controls['locales'].setValue(
+                getRouterParamsCollection('locale', routeParams, availableLocales, defaultLocales, 'id')
+            );
+        }
+    }
+
+    private updateWorkspaces(availableWorkspaces: Workspace[], routeParams: Params) {
+        if (_.some(this.workspaces)) {
+            this.form.controls['workspaces'].setValue(
+                filterOutUnavailableElements(availableWorkspaces, this.workspaces, 'id')
+            );
+        } else {
+            this.form.controls['workspaces'].setValue(
+                getRouterParamsCollection('workspace', routeParams, availableWorkspaces, getDefaultWorkspaces(availableWorkspaces), 'id')
+            );
+        }
+    }
+
+    private updateCriterion(routeParams: Params) {
+        if (_.isNil(this.criterion)) {
+            this.form.controls['criterion'].setValue(
+                getRouteParamEnum('criterion', TranslationsSearchCriterion, TranslationsSearchCriterion.MISSING_TRANSLATIONS, routeParams)
+            );
+        }
     }
 }

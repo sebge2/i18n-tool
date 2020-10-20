@@ -15,14 +15,16 @@ export class TranslationService {
                 private _notificationService: NotificationService) {
     }
 
-    public searchTranslations(searchRequest: TranslationsSearchRequest, maxKeys: number = 500, lastPageKey?: string): Observable<TranslationsPage> {
+    public searchTranslations(searchRequest: TranslationsSearchRequest, maxKeys: number = 500): Observable<TranslationsPage> {
         return this._translationService
             .searchTranslations({
                     workspaces: searchRequest.workspaces.map(workspace => workspace.id),
                     locales: searchRequest.locales.map(locale => locale.id),
                     criterion: searchRequest.criterion,
                     maxKeys: maxKeys,
-                    lastPageKey: lastPageKey
+                    pageSpec: searchRequest.pageSpec
+                        ? { keyOtherPage: searchRequest.pageSpec.keyOtherPage, nextPage: searchRequest.pageSpec.nextPage}
+                        : null
                 },
                 'search'
             )

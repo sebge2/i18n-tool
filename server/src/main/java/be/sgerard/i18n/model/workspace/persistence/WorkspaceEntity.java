@@ -12,6 +12,7 @@ import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotNull;
+import java.time.Instant;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Optional;
@@ -61,6 +62,12 @@ public class WorkspaceEntity {
     private Collection<BundleFileEntity> files = new HashSet<>();
 
     /**
+     * The time when the workspace was synchronized with the repository for the last time. Only available
+     * if the workspace is {@link WorkspaceStatus#INITIALIZED initialized}.
+     */
+    private Instant lastSynchronization;
+
+    /**
      * Information about the current {@link AbstractReviewEntity review}.
      */
     private AbstractReviewEntity review;
@@ -83,6 +90,13 @@ public class WorkspaceEntity {
      */
     public void addFile(BundleFileEntity file) {
         this.files.add(file);
+    }
+
+    /**
+     * @see #lastSynchronization
+     */
+    public Optional<Instant> getLastSynchronization() {
+        return Optional.ofNullable(lastSynchronization);
     }
 
     /**

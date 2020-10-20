@@ -24,6 +24,10 @@ export interface TranslationsPageDto {
      */
     locales: Array<string>;
     /**
+     * The first element of the current page
+     */
+    firstPageKey?: string;
+    /**
      * The last element of the current page
      */
     lastPageKey?: string;

@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.Instant;
 import java.util.Optional;
 
 /**
@@ -58,6 +59,9 @@ public class WorkspaceDto {
 
     @Schema(description = "Indicates whether there are some modifications associated to this workspace.", required = true)
     private final boolean dirty;
+
+    @Schema(description = "The time when the workspace was synchronized with the repository for the last time.")
+    private final Instant lastSynchronization;
 
     @Schema(description = "Information about the current review in progress.")
     private final ReviewDto review;

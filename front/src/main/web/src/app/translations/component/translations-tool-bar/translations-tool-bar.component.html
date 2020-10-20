@@ -1,0 +1,17 @@
+<div class="app-translations-toolbar">
+    <div class="app-translations-toolbar-left">
+        <app-backward-button (click)="onPreviousPage()"></app-backward-button>
+    </div>
+    <div class="app-translations-toolbar-action">
+        <!--search-->
+    </div>
+    <div class="app-translations-toolbar-action app-translations-toolbar-unsaved">
+        <ng-container *ngIf="state.unsavedChanges | async">
+            <span class="app-icon-exclamation-solid app-translations-unsaved-icon"></span>
+            <b>{{'TRANSLATIONS.TABLE.UNSAVED_CHANGES' | translate}}</b>
+        </ng-container>
+    </div>
+    <div class="app-translations-toolbar-right">
+        <app-forward-button (click)="onNextPage()"></app-forward-button>
+    </div>
+</div>

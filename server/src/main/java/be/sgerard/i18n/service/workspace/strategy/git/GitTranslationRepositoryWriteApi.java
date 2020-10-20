@@ -38,9 +38,8 @@ public class GitTranslationRepositoryWriteApi implements TranslationRepositoryWr
 
     public GitTranslationRepositoryWriteApi(GitRepositoryApi api, String original, String target) {
         this.api = api
+                .fetch()
                 .resetHardHead()
-                .checkoutDefaultBranch()
-                .pull()
                 .checkout(original)
                 .pull();
 

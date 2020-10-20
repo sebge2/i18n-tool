@@ -112,7 +112,7 @@ public class TranslationSearchManagerImpl implements TranslationSearchManager {
                                 .keyPattern(searchRequest.getKeyPattern().orElse(null))
                                 .valueRestriction(searchRequest.getValueRestriction().orElse(null))
                                 .maxKeys(searchRequest.getMaxKeys())
-                                .lastPageKey(searchRequest.getLastPageKey().orElse(null))
+                                .pageSpec(searchRequest.getPageSpec().orElse(null))
                                 .currentUser(currentUser.getUserId())
                                 .maxKeys(searchRequest.getMaxKeys())
                                 .build()
@@ -154,6 +154,7 @@ public class TranslationSearchManagerImpl implements TranslationSearchManager {
         return TranslationsPageDto.builder()
                 .rows(createRows(bundleKeys, request))
                 .locales(request.getLocales())
+                .firstPageKey(!bundleKeys.isEmpty() ? bundleKeys.get(0).getSortingKey() : null)
                 .lastPageKey(!bundleKeys.isEmpty() ? bundleKeys.get(bundleKeys.size() - 1).getSortingKey() : null)
                 .build();
     }

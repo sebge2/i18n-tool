@@ -45,11 +45,15 @@ public class BundleKeyTranslationEntity {
     }
 
     public BundleKeyTranslationEntity(String locale,
-                                      long index,
-                                      String originalValue) {
+                                      String originalValue,
+                                      long index) {
         this.locale = locale;
         this.index = index;
         this.originalValue = originalValue;
+    }
+
+    public BundleKeyTranslationEntity(String locale) {
+        this(locale, null, Integer.MAX_VALUE);
     }
 
     /**

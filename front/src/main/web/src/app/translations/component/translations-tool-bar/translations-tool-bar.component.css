@@ -1,0 +1,40 @@
+.app-translations-toolbar {
+    display: grid;
+    grid-template-columns: 80px auto auto 80px;
+    width: 100%;
+}
+
+.app-translations-toolbar-left {
+    padding-left: 50px;
+    padding-bottom: 10px;
+}
+
+.app-translations-toolbar-right {
+    padding-right: 50px;
+    padding-bottom: 10px;
+}
+
+.app-translations-toolbar-action {
+    text-align: center;
+}
+
+.app-translations-unsaved-icon {
+    color: orange;
+    font-size: larger;
+    margin-right: 10px;
+}
+
+@-webkit-keyframes fadeInOut {
+    0%,100% { opacity: 0; }
+    50% { opacity: 1; }
+}
+
+@keyframes fadeInOut {
+    0%,100% { opacity: 0; }
+    50% { opacity: 1; }
+}
+
+.app-translations-toolbar-unsaved {
+    -webkit-animation: fadeInOut 5s linear infinite alternate;
+    animation:  fadeInOut 5s linear infinite alternate;
+}
