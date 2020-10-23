@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.time.Instant;
 import java.util.Comparator;
 
 import static java.util.stream.Collectors.toList;
@@ -116,7 +117,10 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
                                 return workspace;
                             })
                             .flatMap(translationsStrategy::onInitialize)
-                            .doOnNext(wk -> wk.setStatus(WorkspaceStatus.INITIALIZED))
+                            .doOnNext(wk -> {
+                                wk.setStatus(WorkspaceStatus.INITIALIZED);
+                                wk.setLastSynchronization(Instant.now());
+                            })
                             .flatMap(this::update)
                             .flatMap(wk -> listener.onInitialize(wk).thenReturn(wk));
                 });
@@ -307,11 +311,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
                     if (wk.getStatus() == WorkspaceStatus.IN_REVIEW) {
                         return Mono.just(wk);
                     } else if (wk.getReview().isPresent()) {
-                        wk.setStatus(WorkspaceStatus.IN_REVIEW);
-
-                        listener.onReview(wk);
-
-                        return update(wk);
+                        return doOnReviewStarted(wk);
                     } else {
                         return delete(wk.getId())
                                 .then(createWorkspaceIfNeeded(wk));
@@ -334,5 +334,18 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
                 })
                 .flatMap(wk -> delete(wk.getId()))
                 .then(createWorkspaceIfNeeded(workspace));
+    }
+
+    /**
+     * Performs callback when the strategy decided that the specified workspace must be reviewed.
+     */
+    private Mono<WorkspaceEntity> doOnReviewStarted(WorkspaceEntity workspace) {
+        workspace.setStatus(WorkspaceStatus.IN_REVIEW);
+
+        logger.info("A review started on the workspace [{}] alias [{}] and then creates a new one.", workspace.getBranch(), workspace.getId());
+
+        return listener
+                .onReview(workspace)
+                .then(Mono.defer(() -> update(workspace)));
     }
 }

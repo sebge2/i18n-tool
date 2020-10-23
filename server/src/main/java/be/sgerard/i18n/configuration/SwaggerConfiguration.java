@@ -1,11 +1,16 @@
 package be.sgerard.i18n.configuration;
 
+import be.sgerard.i18n.model.i18n.dto.TranslationsUpdateEventDto;
+import io.swagger.v3.core.converter.AnnotatedType;
+import io.swagger.v3.core.converter.ModelConverters;
+import io.swagger.v3.core.converter.ResolvedSchema;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+import org.springdoc.core.customizers.OpenApiCustomiser;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.server.RouterFunction;
@@ -45,6 +50,15 @@ public class SwaggerConfiguration {
     public RouterFunction<ServerResponse> apiRouterFunction() {
         return route(GET("/api"), req ->
                 ServerResponse.temporaryRedirect(URI.create("swagger-ui.html")).build());
+    }
+
+    @Bean
+    public OpenApiCustomiser schemaCustomiser() {
+        final ResolvedSchema resolvedSchema = ModelConverters.getInstance()
+                .resolveAsResolvedSchema(new AnnotatedType(TranslationsUpdateEventDto.class));
+
+        return openApi -> openApi
+                .schema(resolvedSchema.schema.getName(), resolvedSchema.schema);
     }
 
 }

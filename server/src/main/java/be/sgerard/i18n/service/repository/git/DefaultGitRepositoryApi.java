@@ -7,6 +7,7 @@ import be.sgerard.i18n.service.repository.RepositoryException;
 import org.apache.commons.io.FileUtils;
 import org.eclipse.jgit.api.*;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.lib.BranchConfig;
 import org.eclipse.jgit.lib.PersonIdent;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
@@ -40,7 +41,7 @@ public class DefaultGitRepositoryApi extends BaseGitRepositoryApi {
      */
     private static final int INTERVAL_BETWEEN_ATTEMPTS_REMOVE_LOCK_IN_MS = 100;
 
-        private static final Logger logger = LoggerFactory.getLogger(DefaultGitRepositoryApi.class);
+    private static final Logger logger = LoggerFactory.getLogger(DefaultGitRepositoryApi.class);
 
     /**
      * Creates a new {@link GitRepositoryApi API object} using the specified {@link Configuration configuration}.
@@ -146,19 +147,35 @@ public class DefaultGitRepositoryApi extends BaseGitRepositoryApi {
     @Override
     public GitRepositoryApi pull() throws RepositoryException {
         try {
+            final Git git = openGit();
+
+            handleRebase(git);
+
+            final PullResult result = git.pull()
+                    .setRemote("origin")
+                    .setCredentialsProvider(configuration.toCredentialsProvider().orElse(null))
+                    .setRebase(BranchConfig.BranchRebaseMode.REBASE)
+                    .call();
+
+            if (!result.getRebaseResult().getStatus().isSuccessful()) {
+                handleRebase(git);
+            } else if (!result.isSuccessful()) {
+                throw RepositoryException.onUpdate(null);
+            }
+
+            return this;
+        } catch (Exception e) {
+            throw RepositoryException.onUpdate(e);
+        }
+    }
+
+    @Override
+    public GitRepositoryApi fetch() throws RepositoryException {
+        try {
             openGit().fetch()
                     .setCredentialsProvider(configuration.toCredentialsProvider().orElse(null))
                     .setRemoveDeletedRefs(true)
                     .call();
-
-            final PullResult result = openGit().pull()
-                    .setRemote("origin")
-                    .setCredentialsProvider(configuration.toCredentialsProvider().orElse(null))
-                    .call();
-
-            if (!result.isSuccessful()) {
-                throw RepositoryException.onUpdate(null);
-            }
 
             return this;
         } catch (Exception e) {
@@ -301,5 +318,30 @@ public class DefaultGitRepositoryApi extends BaseGitRepositoryApi {
         FileUtils.deleteQuietly(lockFile);
 
         logger.warn(String.format("The lock file [%s] has been forced deleted.", lockFile));
+    }
+
+    /**
+     * Handles a rebase in progress. All files from the remote origin will be used.
+     */
+    private void handleRebase(Git git) throws Exception {
+        if (!git.getRepository().getRepositoryState().isRebasing()) {
+            return;
+        }
+
+        if (!git.status().call().getConflicting().isEmpty()) {
+            git.checkout()
+                    .setStage(CheckoutCommand.Stage.THEIRS)
+                    .setForce(true)
+                    .addPath(".")
+                    .call();
+
+            git.add().addFilepattern(".").call();
+        }
+
+        final RebaseResult rebaseResult = git.rebase().setOperation(RebaseCommand.Operation.CONTINUE).call();
+
+        if (rebaseResult.getStatus() == RebaseResult.Status.STOPPED) {
+            handleRebase(git);
+        }
     }
 }

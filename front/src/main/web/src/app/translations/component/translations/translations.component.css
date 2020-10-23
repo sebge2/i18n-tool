@@ -1,13 +1,30 @@
+.container {
+    height: 100%;
+    display: grid;
+    grid-template-rows: 48px 1fr auto;
+    grid-gap: 16px;
+}
+
+main {
+    z-index: 0;
+    overflow-y: auto;
+}
+
+footer {
+    margin-left: -30px;
+    margin-right: -30px;
+    margin-bottom: -10px;
+}
+
+header {
+    z-index: 10;
+}
+
 app-translations-search-bar {
-    position: absolute;
-    z-index: 1;
     width: calc(100% - 60px);
-    top: 20px;
+    background: white;
 }
 
 app-translations-table {
-    height: calc(100vh - 110px);
     width: 100%;
-    position: absolute;
-    top: 110px;
 }

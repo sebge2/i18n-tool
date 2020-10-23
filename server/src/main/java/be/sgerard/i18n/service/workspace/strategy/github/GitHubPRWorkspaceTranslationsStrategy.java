@@ -9,6 +9,7 @@ import be.sgerard.i18n.model.workspace.persistence.GitHubReviewEntity;
 import be.sgerard.i18n.model.workspace.persistence.WorkspaceEntity;
 import be.sgerard.i18n.service.client.GitHubClient;
 import be.sgerard.i18n.service.i18n.TranslationManager;
+import be.sgerard.i18n.service.repository.RepositoryException;
 import be.sgerard.i18n.service.repository.RepositoryManager;
 import be.sgerard.i18n.service.repository.git.GitRepositoryApi;
 import be.sgerard.i18n.service.workspace.strategy.WorkspaceTranslationsStrategy;
@@ -89,9 +90,13 @@ public class GitHubPRWorkspaceTranslationsStrategy extends BaseGitWorkspaceTrans
                                     .getReview(GitHubReviewEntity.class);
 
                             if (gitHubReview.isPresent()) {
-                                api.removeBranch(gitHubReview.get().getPullRequestBranch());
+                                try {
+                                    api.removeBranch(gitHubReview.get().getPullRequestBranch());
 
-                                logger.info("The branch {} has been removed.", gitHubReview.get().getPullRequestBranch());
+                                    logger.info("The branch {} has been removed.", gitHubReview.get().getPullRequestBranch());
+                                } catch (RepositoryException e) {
+                                    logger.error(String.format("Error while removing the branch %s.", gitHubReview.get().getPullRequestBranch()), e);
+                                }
                             } else {
                                 logger.info("There is no review associated to the workspace {} skip this step.", workspace.getId());
                             }

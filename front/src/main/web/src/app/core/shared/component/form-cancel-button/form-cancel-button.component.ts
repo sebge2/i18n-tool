@@ -5,7 +5,7 @@ import {FormGroup} from "@angular/forms";
     selector: 'app-form-cancel-button',
     templateUrl: './form-cancel-button.component.html',
 })
-export class FormCancelButtonComponent implements OnInit {
+export class FormCancelButtonComponent {
 
     @Input() public form: FormGroup;
     @Input() public disabled: boolean;
@@ -13,9 +13,6 @@ export class FormCancelButtonComponent implements OnInit {
     @Output() public reset = new EventEmitter<void>();
 
     constructor() {
-    }
-
-    ngOnInit() {
     }
 
     public onReset() {

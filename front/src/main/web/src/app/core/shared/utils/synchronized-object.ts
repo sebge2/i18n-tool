@@ -1,5 +1,5 @@
-import {BehaviorSubject, combineLatest, Observable, Subject} from "rxjs";
-import {filter, map, mergeMap, shareReplay, skip, startWith, takeUntil} from "rxjs/operators";
+import {BehaviorSubject, merge, Observable, Subject} from "rxjs";
+import {filter, map, mergeMap, shareReplay, skip, takeUntil} from "rxjs/operators";
 
 export class SynchronizedObject<I, O> {
 
@@ -7,8 +7,8 @@ export class SynchronizedObject<I, O> {
     private readonly _elementObs$ = this._element$.pipe(skip(1), shareReplay(1));
 
     private readonly _reloadElement$ = new BehaviorSubject<void>(undefined);
-    private readonly _manualUpdate$ = new BehaviorSubject<O>(undefined);
-    private readonly _manualDelete$ = new BehaviorSubject<O>(undefined);
+    private readonly _manualUpdate$ = new Subject<O>();
+    private readonly _manualDelete$ = new Subject<O>();
     private readonly _destroyed$ = new Subject<void>();
 
     constructor(elementProvider: (() => Observable<I>),
@@ -31,18 +31,16 @@ export class SynchronizedObject<I, O> {
             .pipe(takeUntil(this._destroyed$))
             .subscribe(() => this.reload());
 
-        combineLatest([this._manualUpdate$, updated.pipe(startWith(<O>undefined), map(value => this.map(value, mapper)))])
+        merge(this._manualUpdate$, updated.pipe(map(value => this.map(value, mapper))))
             .pipe(
                 takeUntil(this._destroyed$),
-                map(([manualUpdate, streamUpdate]) => SynchronizedObject.keepDefinedValue(manualUpdate, streamUpdate)),
                 filter(element => element !== undefined)
             )
             .subscribe((element: O) => this._element$.next(element));
 
-        combineLatest([this._manualDelete$, deleted.pipe(startWith(<I>undefined), map(value => this.map(value, mapper)))])
+        merge([this._manualDelete$, deleted.pipe(map(value => this.map(value, mapper)))])
             .pipe(
                 takeUntil(this._destroyed$),
-                map(([manualDelete, streamDelete]) =>  SynchronizedObject.keepDefinedValue(manualDelete, streamDelete)),
                 filter(element => (element !== undefined))
             )
             .subscribe((_) => this._element$.next(null));
@@ -71,9 +69,5 @@ export class SynchronizedObject<I, O> {
 
     private map<A>(value: A, mapper: (I) => O) {
         return (value !== undefined) ? mapper(value) : undefined;
-    }
-
-    private static keepDefinedValue(firstValue, secondValue) {
-        return (firstValue !== undefined) ? firstValue : secondValue;
     }
 }

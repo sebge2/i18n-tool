@@ -3,6 +3,7 @@ package be.sgerard.i18n.model.i18n;
 import be.sgerard.i18n.model.i18n.dto.TranslationKeyPatternDto;
 import be.sgerard.i18n.model.i18n.dto.TranslationSearchCriterion;
 import be.sgerard.i18n.model.i18n.dto.TranslationValueRestrictionDto;
+import be.sgerard.i18n.model.i18n.dto.TranslationsSearchPageSpecDto;
 import be.sgerard.i18n.model.i18n.persistence.BundleFileEntity;
 import be.sgerard.i18n.model.i18n.persistence.TranslationLocaleEntity;
 import be.sgerard.i18n.model.workspace.persistence.WorkspaceEntity;
@@ -70,9 +71,9 @@ public class TranslationsSearchRequest {
     private final Integer maxKeys;
 
     /**
-     * The last element of the previous page (used to identify the following page).
+     * Specification of the page to search for.
      */
-    private final String lastPageKey;
+    private final TranslationsSearchPageSpecDto pageSpec;
 
     /**
      * @see #keyPattern
@@ -96,10 +97,10 @@ public class TranslationsSearchRequest {
     }
 
     /**
-     * @see #lastPageKey
+     * @see #pageSpec
      */
-    public Optional<String> getLastPageKey() {
-        return Optional.ofNullable(lastPageKey);
+    public Optional<TranslationsSearchPageSpecDto> getPageSpec() {
+        return Optional.ofNullable(pageSpec);
     }
 
     /**

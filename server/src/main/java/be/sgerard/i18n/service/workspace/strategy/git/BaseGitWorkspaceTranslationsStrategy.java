@@ -42,7 +42,8 @@ public abstract class BaseGitWorkspaceTranslationsStrategy implements WorkspaceT
                         GitRepositoryApi.class,
                         api -> Flux.fromStream(
                                 api
-                                        .pull()
+                                        .resetHardHead()
+                                        .fetch()
                                         .listRemoteBranches()
                                         .stream()
                                         .filter(branch -> isAllowedBranch(repository, branch))

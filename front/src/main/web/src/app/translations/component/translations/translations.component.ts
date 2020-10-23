@@ -1,5 +1,7 @@
 import {Component} from '@angular/core';
 import {TranslationsSearchRequest} from "../../model/search/translations-search-request.model";
+import {TranslationsPage} from "../../model/search/translations-page.model";
+import {TranslationsTableState} from "../../model/search/translation-search-state.model";
 
 @Component({
     selector: 'app-translations',
@@ -8,14 +10,23 @@ import {TranslationsSearchRequest} from "../../model/search/translations-search-
 })
 export class TranslationsComponent {
 
-    public searchRequest: TranslationsSearchRequest;
     public expanded: boolean = true;
+    public readonly tableState = new TranslationsTableState();
+
+    public page: TranslationsPage;
 
     constructor() {
     }
 
     public onSearch(searchRequest: TranslationsSearchRequest) {
-        this.searchRequest = searchRequest;
         this.expanded = false;
+        setTimeout(
+            () => this.tableState.updateSearchRequest(searchRequest),
+            300
+        )
+    }
+
+    public onPage(page: TranslationsPage) {
+        this.page = page;
     }
 }

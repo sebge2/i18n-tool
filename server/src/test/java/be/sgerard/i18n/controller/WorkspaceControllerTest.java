@@ -373,6 +373,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                     .jsonPath("$.branch").isEqualTo("master")
                     .jsonPath("$.status").isEqualTo(WorkspaceStatus.INITIALIZED.name())
                     .jsonPath("$.repositoryId").isNotEmpty()
+                    .jsonPath("$.lastSynchronization").isNotEmpty()
                     .jsonPath("$.files", hasSize(4));
 
             translations
@@ -408,10 +409,10 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                     .jsonPath("$.branch").isEqualTo("master")
                     .jsonPath("$.status").isEqualTo(WorkspaceStatus.IN_REVIEW.name());
 
-            final String currentPRBranch = repository.forHint("my-repo").gitHub()
+            /*final String currentPRBranch =*/ repository.forHint("my-repo").gitHub()
                     .assertHasPullRequest(masterWorkspace.getRepositoryName(), "master")
-                    .get()
-                    .getCurrentBranch();
+                    /*.get()
+                    .getCurrentBranch()*/;
 
 // TODO
 //            gitRepo
@@ -470,7 +471,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                     .uri("/api/repository/workspace/do?action=PUBLISH")
                     .bodyValue(
                             WorkspacesPublishRequestDto.builder()
-                                    .workspaces(asList(masterWorkspace.getId()))
+                                    .workspace(masterWorkspace.getId())
                                     .message("publish test")
                                     .build()
                     )
@@ -605,6 +606,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                     .jsonPath("$.branch").isEqualTo("master")
                     .jsonPath("$.status").isEqualTo(WorkspaceStatus.INITIALIZED.name())
                     .jsonPath("$.repositoryId").isNotEmpty()
+                    .jsonPath("$.lastSynchronization").isNotEmpty()
                     .jsonPath("$.files", hasSize(4));
 
             translations

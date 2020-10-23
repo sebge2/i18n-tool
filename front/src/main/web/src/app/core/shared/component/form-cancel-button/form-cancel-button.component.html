@@ -1,7 +1,7 @@
 <button mat-icon-button
         class="app-button"
         color="warn"
-        [disabled]="!form.dirty || cancelInProgress || disabled"
+        [disabled]="(form && !form.dirty) || cancelInProgress || disabled"
         (click)="onReset()">
     <mat-icon *ngIf="cancelInProgress">
         <mat-spinner color="warn" diameter="20"></mat-spinner>

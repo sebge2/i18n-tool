@@ -3,6 +3,11 @@ import {WorkspaceDto} from "../../../api";
 import {RepositoryStatus} from "../repository/repository-status.model";
 import {RepositoryType} from "../repository/repository-type.model";
 import {WorkspaceReview} from "./workspace-review.model";
+import {fromWorkspaceReviewDto} from './workspace-utils';
+
+export function getDefaultWorkspaces(workspaces: Workspace[]): Workspace[] {
+    return workspaces.filter(availableWorkspace => !!availableWorkspace.defaultWorkspace)
+}
 
 export class Workspace {
 
@@ -15,10 +20,11 @@ export class Workspace {
             dto.repositoryId,
             dto.repositoryName,
             RepositoryStatus[dto.repositoryStatus],
+            dto.lastSynchronization,
             RepositoryType[dto.repositoryType],
             dto.numberBundleKeys,
             dto.dirty,
-            WorkspaceReview.fromDto(dto.review)
+            fromWorkspaceReviewDto(dto.review)
         );
     }
 
@@ -29,6 +35,7 @@ export class Workspace {
                 public repositoryId: string,
                 public repositoryName: string,
                 public repositoryStatus: RepositoryStatus,
+                public lastSynchronization: Date,
                 public repositoryType: RepositoryType,
                 public numberBundleKeys: number,
                 public dirty: boolean,

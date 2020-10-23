@@ -2,12 +2,13 @@
     "icon-backward-solid": "\\f101",
     "icon-check-double-solid": "\\f102",
     "icon-exclamation-solid": "\\f103",
-    "icon-git": "\\f104",
-    "icon-github": "\\f105",
-    "icon-google": "\\f106",
-    "icon-java-file": "\\f107",
-    "icon-json-file": "\\f108",
-    "icon-key-solid": "\\f109",
-    "icon-paper-plane-solid": "\\f10a",
-    "icon-window-close-regular": "\\f10b"
+    "icon-forward-solid": "\\f104",
+    "icon-git": "\\f105",
+    "icon-github": "\\f106",
+    "icon-google": "\\f107",
+    "icon-java-file": "\\f108",
+    "icon-json-file": "\\f109",
+    "icon-key-solid": "\\f10a",
+    "icon-paper-plane-solid": "\\f10b",
+    "icon-window-close-regular": "\\f10c"
 }

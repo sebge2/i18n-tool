@@ -11,6 +11,7 @@
  */
 import { TranslationKeyPatternDto } from './translationKeyPatternDto';
 import { TranslationValueRestrictionDto } from './translationValueRestrictionDto';
+import { TranslationsSearchPageSpecDto } from './translationsSearchPageSpecDto';
 
 /**
  * Request asking the listing of paginated translations.
@@ -38,10 +39,7 @@ export interface TranslationsSearchRequestDto {
      * The maximum number of keys for the next page.
      */
     maxKeys?: number;
-    /**
-     * The last element of the previous page, used to get the next page.
-     */
-    lastPageKey?: string;
+    pageSpec?: TranslationsSearchPageSpecDto;
 }
 export namespace TranslationsSearchRequestDto {
     export type CriterionDtoEnum = 'ALL' | 'MISSING_TRANSLATIONS' | 'TRANSLATIONS_CURRENT_USER_UPDATED' | 'UPDATED_TRANSLATIONS';
