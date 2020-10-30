@@ -55,6 +55,10 @@ export interface WorkspaceDto {
      * Indicates whether there are some modifications associated to this workspace.
      */
     dirty: boolean;
+    /**
+     * The time when the workspace was synchronized with the repository for the last time.
+     */
+    lastSynchronization?: Date;
     review?: WorkspaceGitHubReviewDto;
 }
 export namespace WorkspaceDto {

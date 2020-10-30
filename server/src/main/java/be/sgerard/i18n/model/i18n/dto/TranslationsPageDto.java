@@ -32,9 +32,15 @@ public class TranslationsPageDto {
     private final List<String> locales;
 
     /**
-     * @see TranslationsSearchRequestDto#getLastPageKey()
+     * @see TranslationsSearchRequestDto#getPageSpec()
      */
-    @Schema(description = "The last element of the current page", required = false)
+    @Schema(description = "The first element of the current page")
+    private final String firstPageKey;
+
+    /**
+     * @see TranslationsSearchRequestDto#getPageSpec()
+     */
+    @Schema(description = "The last element of the current page")
     private final String lastPageKey;
 
     /**
@@ -42,6 +48,13 @@ public class TranslationsPageDto {
      */
     public Optional<String> getLastPageKey() {
         return Optional.ofNullable(lastPageKey);
+    }
+
+    /**
+     * @see #firstPageKey
+     */
+    public Optional<String> getFirstPageKey() {
+        return Optional.ofNullable(firstPageKey);
     }
 
     /**

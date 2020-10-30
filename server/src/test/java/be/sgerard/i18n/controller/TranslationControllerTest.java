@@ -261,7 +261,7 @@ public class TranslationControllerTest extends AbstractControllerTest {
     @Test
     @CleanupDatabase
     @WithJaneDoeAdminUser
-    public void searchTranslationsPagination() {
+    public void searchTranslationsPaginationNextPage() {
         final TranslationsPageDto workspaceTranslations = translations
                 .forRepositoryHint("my-repo")
                 .forWorkspaceName("master").translations().get();
@@ -270,7 +270,9 @@ public class TranslationControllerTest extends AbstractControllerTest {
 
         final TranslationsPageRowDto firstRow = workspaceTranslations.getRows().get(0);
         final TranslationsPageRowDto secondRow = workspaceTranslations.getRows().get(1);
-        final String expectedLastFistKey = firstRow.getWorkspace() + firstRow.getBundleFile() + firstRow.getBundleKey();
+        final TranslationsPageRowDto thirdRow = workspaceTranslations.getRows().get(2);
+        final String expectedFirstPageFistKey = firstRow.getWorkspace() + firstRow.getBundleFile() + firstRow.getBundleKey();
+        final String expectedFirstPageLastKey = secondRow.getWorkspace() + secondRow.getBundleFile() + secondRow.getBundleKey();
 
         webClient
                 .post()
@@ -280,14 +282,15 @@ public class TranslationControllerTest extends AbstractControllerTest {
                         TranslationsSearchRequestDto.builder()
                                 .workspace(firstRow.getWorkspace())
                                 .locales(locales)
-                                .maxKeys(1)
+                                .maxKeys(2)
                                 .build()
                 )
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
-                .jsonPath("$.lastPageKey").isEqualTo(expectedLastFistKey)
-                .jsonPath("$.rows").value(hasSize(1))
+                .jsonPath("$.firstPageKey").isEqualTo(expectedFirstPageFistKey)
+                .jsonPath("$.lastPageKey").isEqualTo(expectedFirstPageLastKey)
+                .jsonPath("$.rows").value(hasSize(2))
                 .jsonPath("$.locales").isEqualTo(locales)
                 .jsonPath("$.rows[0].bundleKey").isEqualTo(firstRow.getBundleKey())
                 .jsonPath("$.rows[0].workspace").isEqualTo(firstRow.getWorkspace())
@@ -302,7 +305,12 @@ public class TranslationControllerTest extends AbstractControllerTest {
                         TranslationsSearchRequestDto.builder()
                                 .locales(locales)
                                 .workspace(firstRow.getWorkspace())
-                                .lastPageKey(expectedLastFistKey)
+                                .pageSpec(
+                                        TranslationsSearchPageSpecDto.builder()
+                                                .nextPage(true)
+                                                .keyOtherPage(expectedFirstPageLastKey)
+                                                .build()
+                                )
                                 .maxKeys(1)
                                 .build()
                 )
@@ -312,10 +320,57 @@ public class TranslationControllerTest extends AbstractControllerTest {
                 .jsonPath("$.lastPageKey").isNotEmpty()
                 .jsonPath("$.rows").value(hasSize(1))
                 .jsonPath("$.locales").isEqualTo(locales)
-                .jsonPath("$.rows[0].bundleKey").isEqualTo(secondRow.getBundleKey())
-                .jsonPath("$.rows[0].workspace").isEqualTo(secondRow.getWorkspace())
-                .jsonPath("$.rows[0].bundleFile").isEqualTo(secondRow.getBundleFile())
+                .jsonPath("$.rows[0].bundleKey").isEqualTo(thirdRow.getBundleKey())
+                .jsonPath("$.rows[0].workspace").isEqualTo(thirdRow.getWorkspace())
+                .jsonPath("$.rows[0].bundleFile").isEqualTo(thirdRow.getBundleFile())
                 .jsonPath("$.rows[0].translations").value(hasSize(2));
+    }
+
+    @Test
+    @CleanupDatabase
+    @WithJaneDoeAdminUser
+    public void searchTranslationsPaginationPreviousPage() {
+        final TranslationsPageDto workspaceTranslations = translations
+                .forRepositoryHint("my-repo")
+                .forWorkspaceName("master").translations().get();
+
+        final List<String> locales = this.locale.getSortedLocales().stream().map(TranslationLocaleDto::getId).collect(toList());
+
+        final TranslationsPageRowDto firstRow = workspaceTranslations.getRows().get(0);
+        final TranslationsPageRowDto secondRow = workspaceTranslations.getRows().get(1);
+        final TranslationsPageRowDto thirdRow = workspaceTranslations.getRows().get(2);
+        final String expectedFirstPageFistKey = firstRow.getWorkspace() + firstRow.getBundleFile() + firstRow.getBundleKey();
+        final String expectedFirstPageLastKey = secondRow.getWorkspace() + secondRow.getBundleFile() + secondRow.getBundleKey();
+        final String expectedSecondPageLastKey = thirdRow.getWorkspace() + thirdRow.getBundleFile() + thirdRow.getBundleKey();
+
+       webClient
+                .post()
+                .uri("/api/translation/do?action=search")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(
+                        TranslationsSearchRequestDto.builder()
+                                .locales(locales)
+                                .workspace(firstRow.getWorkspace())
+                                .pageSpec(
+                                        TranslationsSearchPageSpecDto.builder()
+                                                .nextPage(false)
+                                                .keyOtherPage(expectedSecondPageLastKey)
+                                                .build()
+                                )
+                                .maxKeys(2)
+                                .build()
+                )
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+               .jsonPath("$.firstPageKey").isEqualTo(expectedFirstPageFistKey)
+               .jsonPath("$.lastPageKey").isEqualTo(expectedFirstPageLastKey)
+               .jsonPath("$.rows").value(hasSize(2))
+               .jsonPath("$.locales").isEqualTo(locales)
+               .jsonPath("$.rows[0].bundleKey").isEqualTo(firstRow.getBundleKey())
+               .jsonPath("$.rows[0].workspace").isEqualTo(firstRow.getWorkspace())
+               .jsonPath("$.rows[0].bundleFile").isEqualTo(firstRow.getBundleFile())
+               .jsonPath("$.rows[0].translations").value(hasSize(2));
     }
 
     @Test

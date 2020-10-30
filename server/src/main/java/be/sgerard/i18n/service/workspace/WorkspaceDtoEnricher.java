@@ -64,6 +64,7 @@ public class WorkspaceDtoEnricher {
                             .numberBundleKeys(workspace.getFiles().stream().map(BundleFileEntity::getNumberKeys).reduce(0L, Long::sum))
                             .dirty(dirty)
                             .review(workspace.getReview().map(this::mapReview).orElse(null))
+                            .lastSynchronization(workspace.getLastSynchronization().orElse(null))
                             .build();
                 });
     }

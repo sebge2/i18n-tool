@@ -1,6 +1,19 @@
-<app-translations-search-bar
-        (onSearchChange)="onSearch($event)"
-        [(expanded)]="expanded">
-</app-translations-search-bar>
+<div class="container">
+    <header>
+        <app-translations-search-bar
+                (onSearchChange)="onSearch($event)"
+                [(expanded)]="expanded">
+        </app-translations-search-bar>
+    </header>
 
-<app-translations-table [searchRequest]="searchRequest"></app-translations-table>
+    <main>
+        <app-translations-table [state]="tableState"
+                                *ngIf="!!(tableState.searchRequest | async)"></app-translations-table>
+    </main>
+
+    <footer>
+        <app-translations-tool-bar [state]="tableState"
+                                   *ngIf="!!(this.tableState.searchRequest | async)">
+        </app-translations-tool-bar>
+    </footer>
+</div>

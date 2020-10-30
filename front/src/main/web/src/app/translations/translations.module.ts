@@ -11,6 +11,7 @@ import {CoreAuthModule} from "../core/auth/core-auth.module";
 import {CoreTranslationModule} from "../core/translation/core-translation-module";
 import {TranslationsWorkspaceRowComponent} from './component/translations-table/translations-workspace-row/translations-workspace-row.component';
 import {TranslationsBundleFileRowComponent} from './component/translations-table/translations-bundle-file-row/translations-bundle-file-row.component';
+import { TranslationsToolBarComponent } from './component/translations-tool-bar/translations-tool-bar.component';
 
 const appRoutes: Routes = [
     {
@@ -26,7 +27,8 @@ const appRoutes: Routes = [
         TranslationsTableComponent,
         TranslationEditingCellComponent,
         TranslationsWorkspaceRowComponent,
-        TranslationsBundleFileRowComponent
+        TranslationsBundleFileRowComponent,
+        TranslationsToolBarComponent
     ],
     imports: [
         CommonModule,

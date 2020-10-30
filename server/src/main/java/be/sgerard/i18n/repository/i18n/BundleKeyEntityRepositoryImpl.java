@@ -4,6 +4,7 @@ import be.sgerard.i18n.model.i18n.TranslationsSearchRequest;
 import be.sgerard.i18n.model.i18n.dto.TranslationKeyPatternDto;
 import be.sgerard.i18n.model.i18n.dto.TranslationSearchCriterion;
 import be.sgerard.i18n.model.i18n.dto.TranslationValueRestrictionDto;
+import be.sgerard.i18n.model.i18n.dto.TranslationsSearchPageSpecDto;
 import be.sgerard.i18n.model.i18n.persistence.BundleKeyEntity;
 import be.sgerard.i18n.model.i18n.persistence.BundleKeyTranslationEntity;
 import be.sgerard.i18n.model.i18n.persistence.BundleKeyTranslationModificationEntity;
@@ -17,6 +18,7 @@ import reactor.core.publisher.Flux;
 
 import java.lang.reflect.Constructor;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
@@ -52,7 +54,14 @@ public class BundleKeyEntityRepositoryImpl implements BundleKeyEntityRepositoryC
 
     @Override
     public Flux<BundleKeyEntity> search(TranslationsSearchRequest request) {
-        return search(createQuery(request));
+        Flux<BundleKeyEntity> entities = search(createQuery(request));
+
+        if (!request.getPageSpec().map(TranslationsSearchPageSpecDto::isNextPage).orElse(true)) {
+            entities = entities
+                    .sort(Comparator.comparing(BundleKeyEntity::getSortingKey));
+        }
+
+        return entities;
     }
 
     @Override
@@ -74,27 +83,32 @@ public class BundleKeyEntityRepositoryImpl implements BundleKeyEntityRepositoryC
             query.addCriteria(Criteria.where(FIELD_BUNDLE_FILE).in(request.getBundleFiles()));
         }
 
-        if (request.getKeyPattern().isPresent()) {
-            query.addCriteria(createKeyPatternCriteria(request.getKeyPattern().get()));
-        }
+        request.getKeyPattern()
+                .ifPresent(keyPattern -> query.addCriteria(createKeyPatternCriteria(keyPattern)));
 
-        if (request.getValueRestriction().isPresent()) {
-            query.addCriteria(createValueCriteria(request.getValueRestriction().get(), request.getLocales()));
-        }
+        request.getValueRestriction()
+                .ifPresent(valueRestriction -> query.addCriteria(createValueCriteria(valueRestriction, request.getLocales())));
 
         final Criteria[] translationsCriteria = createCriteria(request.getCriterion(), request.getLocales(), request.getCurrentUser());
         if (translationsCriteria.length > 0) {
             query.addCriteria(new Criteria().orOperator(translationsCriteria));
         }
 
-        if (request.getLastPageKey().isPresent()) {
-            query.addCriteria(Criteria.where(FIELD_SORTING_KEY).gt(request.getLastPageKey().get()));
-        }
-
         request.getMaxKeys().ifPresent(query::limit);
 
-        return query
-                .with(Sort.by(FIELD_SORTING_KEY));
+        request.getPageSpec().ifPresent(pageSpec -> {
+            if (pageSpec.isNextPage()) {
+                query.addCriteria(Criteria.where(FIELD_SORTING_KEY).gt(pageSpec.getKeyOtherPage()));
+            } else {
+                query.addCriteria(Criteria.where(FIELD_SORTING_KEY).lt(pageSpec.getKeyOtherPage()));
+            }
+        });
+
+        final Sort sort = request.getPageSpec().map(TranslationsSearchPageSpecDto::isNextPage).orElse(true)
+                ? Sort.by(FIELD_SORTING_KEY).ascending()
+                : Sort.by(FIELD_SORTING_KEY).descending();
+
+        return query.with(sort);
     }
 
     /**

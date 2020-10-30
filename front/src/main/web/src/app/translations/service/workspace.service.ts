@@ -1,9 +1,18 @@
 import {Injectable} from '@angular/core';
 import {EventService} from "../../core/event/service/event.service";
 import {Workspace} from "../model/workspace/workspace.model";
-import {Observable, of} from "rxjs";
+import {Observable} from "rxjs";
 import {Events} from 'src/app/core/event/model/events.model';
-import {catchError, distinctUntilChanged, filter, map, mergeMap, tap} from "rxjs/operators";
+import {
+    catchError,
+    distinctUntilChanged,
+    distinctUntilKeyChanged,
+    filter,
+    map,
+    mergeMap,
+    shareReplay,
+    tap
+} from "rxjs/operators";
 import {NotificationService} from "../../core/notification/service/notification.service";
 import {WorkspaceDto, WorkspaceService as ApiWorkspaceService} from "../../api";
 import * as _ from "lodash";
@@ -16,12 +25,9 @@ import {SynchronizedCollection} from "../../core/shared/utils/synchronized-colle
 })
 export class WorkspaceService {
 
-    private static readonly MAX_CACHED_BUNDLE_FILES = 100;
-
     private readonly _synchronizedWorkspaces$: SynchronizedCollection<WorkspaceDto, Workspace>;
     private readonly _workspaces$: Observable<Workspace[]>;
-
-    private _cachedWorkspaceBundleFiles = new Map<string, BundleFile[]>();
+    private readonly _cachedWorkspaceBundleFiles = new Map<string, Observable<BundleFile[]>>();
 
     constructor(private apiWorkspaceService: ApiWorkspaceService,
                 private repositoryService: RepositoryService,
@@ -45,9 +51,6 @@ export class WorkspaceService {
                 this.notificationService.displayErrorMessage('ADMIN.WORKSPACES.ERROR.GET_ALL');
                 return [];
             }));
-
-        this.getWorkspaces()
-            .subscribe(() => this._cachedWorkspaceBundleFiles.clear());
     }
 
     public getWorkspaces(): Observable<Workspace[]> {
@@ -69,16 +72,20 @@ export class WorkspaceService {
     }
 
     public getWorkspaceBundleFiles(workspaceId: string): Observable<BundleFile[]> {
-        if (this._cachedWorkspaceBundleFiles.has(workspaceId)) {
-            return of(this._cachedWorkspaceBundleFiles.get(workspaceId));
+        if (!this._cachedWorkspaceBundleFiles.has(workspaceId)) {
+            this._cachedWorkspaceBundleFiles.set(
+                workspaceId,
+                this.getWorkspace(workspaceId)
+                    .pipe(
+                        distinctUntilKeyChanged('lastSynchronization'),
+                        mergeMap(_ => this.apiWorkspaceService.findWorkspaceBundleFiles(workspaceId)),
+                        map(bundleFiles => bundleFiles.map(bundleFileDto => BundleFile.fromDto(bundleFileDto))),
+                        shareReplay(1)
+                    )
+            );
         }
 
-        return this.getWorkspace(workspaceId)
-            .pipe(
-                mergeMap(_ => this.apiWorkspaceService.findWorkspaceBundleFiles(workspaceId)),
-                map(bundleFiles => bundleFiles.map(bundleFileDto => BundleFile.fromDto(bundleFileDto))),
-                tap(bundleFiles => this.cacheBundleFiles(workspaceId, bundleFiles))
-            );
+        return this._cachedWorkspaceBundleFiles.get(workspaceId);
     }
 
     public getWorkspaceBundleFile(workspaceId: string, bundleFiledId: string): Observable<BundleFile> {
@@ -110,23 +117,12 @@ export class WorkspaceService {
             .pipe(tap(workspace => this._synchronizedWorkspaces$.delete(workspace)));
     }
 
-    public publishAll(workspaces: string[], comment: string): Observable<Workspace[]>{
+    public publishAll(workspaces: string[], comment: string): Observable<Workspace[]> {
         return this.apiWorkspaceService
             .publish({workspaces: workspaces, message: comment}, "PUBLISH")
             .pipe(
                 map(workspaces => _.map(workspaces, workspace => Workspace.fromDto(workspace))),
             );
-    }
-
-    private cacheBundleFiles(workspaceId: string, bundleFiles: BundleFile[]) {
-        let numberCachedElements = 0;
-        this._cachedWorkspaceBundleFiles.forEach((cachedWorkspace, cachedFiles) => numberCachedElements += cachedFiles.length);
-
-        if (numberCachedElements >= WorkspaceService.MAX_CACHED_BUNDLE_FILES) {
-            this._cachedWorkspaceBundleFiles.clear();
-        }
-
-        this._cachedWorkspaceBundleFiles.set(workspaceId, bundleFiles);
     }
 }
 

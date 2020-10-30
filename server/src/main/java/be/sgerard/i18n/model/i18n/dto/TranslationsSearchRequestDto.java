@@ -1,8 +1,5 @@
 package be.sgerard.i18n.model.i18n.dto;
 
-import be.sgerard.i18n.model.i18n.persistence.BundleFileEntity;
-import be.sgerard.i18n.model.i18n.persistence.TranslationLocaleEntity;
-import be.sgerard.i18n.model.workspace.persistence.WorkspaceEntity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
@@ -40,56 +37,32 @@ public class TranslationsSearchRequestDto {
         return new Builder();
     }
 
-    /**
-     * The {@link WorkspaceEntity#getId() ids} of workspaces to search inside.
-     */
     @Schema(description = "Search translations only in those workspaces", required = true)
     @Singular
     private final List<String> workspaces;
 
-    /**
-     * The {@link TranslationLocaleEntity#getId() ids} of locales of translations to look for.
-     */
     @Schema(description = "Search translations only in those translations locale ids.")
     @Singular
     private final List<String> locales;
 
-    /**
-     * {@link BundleFileEntity Bundle files} of translations to look for.
-     */
     @Schema(description = "Search translations only in those bundle file ids.")
     @Singular
     private final List<String> bundleFiles;
 
-    /**
-     * The {@link TranslationSearchCriterion criterion} that translations must have.
-     */
     @Schema(description = "Specify the criterion that translations must have.")
     private final TranslationSearchCriterion criterion;
 
-    /**
-     * The {@link TranslationKeyPatternDto pattern} to use of keys to retrieve.
-     */
     @Schema(description = "The pattern to use of keys to retrieve.")
     private final TranslationKeyPatternDto keyPattern;
 
-    /**
-     * The {@link TranslationValueRestrictionDto restriction} to apply on translation values.
-     */
     @Schema(description = "The restriction to apply on translation values.")
     private final TranslationValueRestrictionDto valueRestriction;
 
-    /**
-     * The maximum number of keys for the next page.
-     */
     @Schema(description = "The maximum number of keys for the next page.")
     private final int maxKeys;
 
-    /**
-     * The last element of the previous page (used to identify the following page).
-     */
-    @Schema(description = "The last element of the previous page, used to get the next page.")
-    private final String lastPageKey;
+    @Schema(description = "Specification of the page to search for.")
+    private final TranslationsSearchPageSpecDto pageSpec;
 
     /**
      * @see #keyPattern
@@ -106,10 +79,10 @@ public class TranslationsSearchRequestDto {
     }
 
     /**
-     * @see #lastPageKey
+     * @see #pageSpec
      */
-    public Optional<String> getLastPageKey() {
-        return Optional.ofNullable(lastPageKey);
+    public Optional<TranslationsSearchPageSpecDto> getPageSpec() {
+        return Optional.ofNullable(pageSpec);
     }
 
     /**

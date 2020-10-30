@@ -53,7 +53,9 @@
       "UPDATE": "Error while updating translations."
     },
     "TABLE": {
-      "NO_RESULT": "There are no result, please modify your criteria.",
+      "NO_RESULT": "Sorry, no translation found :(",
+      "NO_PREVIOUS_TRANSLATION": "There is no previous translation.",
+      "NO_FURTHER_TRANSLATION": "There is no further translation.",
       "KEY_COLUMN": "Key",
       "UNSAVED_CHANGES": "Your changes are not saved yet"
     }

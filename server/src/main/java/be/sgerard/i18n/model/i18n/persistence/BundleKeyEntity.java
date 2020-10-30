@@ -120,7 +120,7 @@ public class BundleKeyEntity {
     public BundleKeyTranslationEntity getTranslationOrCreate(String translationLocale) {
         return getTranslation(translationLocale)
                 .orElseGet(() -> {
-                    final BundleKeyTranslationEntity translation = new BundleKeyTranslationEntity(translationLocale, -1, null);
+                    final BundleKeyTranslationEntity translation = new BundleKeyTranslationEntity(translationLocale);
 
                     translations.put(translationLocale, translation);
 
@@ -132,7 +132,7 @@ public class BundleKeyEntity {
      * Adds a new translation to this bundle.
      */
     public BundleKeyEntity addTranslation(String locale, long index, String originalValue) {
-        return addTranslation(new BundleKeyTranslationEntity(locale, index, originalValue));
+        return addTranslation(new BundleKeyTranslationEntity(locale, originalValue, index));
     }
 
     /**
