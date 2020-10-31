@@ -1,7 +1,7 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {TranslationService} from "../../service/translation.service";
 import {FormArray, FormBuilder, FormGroup} from "@angular/forms";
-import {from, merge, Observable, Subject} from "rxjs";
+import {from, Observable, Subject} from "rxjs";
 import {NotificationService} from "../../../core/notification/service/notification.service";
 import {WorkspaceService} from "../../service/workspace.service";
 import {BundleFile} from "../../model/workspace/bundle-file.model";
@@ -11,8 +11,10 @@ import {TranslationsPage} from "../../model/search/translations-page.model";
 import {TranslationsPageRow} from "../../model/search/translations-page-row.model";
 import {auditTime, map, mergeMap, takeUntil, tap} from "rxjs/operators";
 import {TranslationUpdateDto} from "../../../api";
-import {TranslationsTableState} from "../../model/search/translation-search-state.model";
-import {TranslationsSearchRequest} from "../../model/search/translations-search-request.model";
+import {
+    EnrichedTranslationsSearchRequest,
+    TranslationsTableState
+} from "../../model/search/translation-search-state.model";
 
 class DirtyTranslationForm {
 
@@ -83,23 +85,18 @@ export class TranslationsTableComponent implements OnInit, OnDestroy {
                     .finally(() => this.state.notifySaving(false))
             });
 
-        this.form
-            .valueChanges
+        this.form.valueChanges
             .pipe(
                 takeUntil(this._destroyed$),
                 map(() => this.form.dirty),
             )
             .subscribe(dirty => this.state.notifyUnsavedChanges(dirty));
 
-        merge(
-            this.state.searchRequest.pipe(map(request => ({request: request, origin: 'NEW'}))),
-            this.state.previousPageRequest().pipe(map(request => ({request: request, origin: 'PREVIOUS'}))),
-            this.state.nextPageRequest().pipe(map(request => ({request: request, origin: 'NEXT'}))),
-        )
+        this.state.searchRequest
             .pipe(
                 takeUntil(this._destroyed$),
                 tap(() => this.state.notifyLoading(true)),
-                mergeMap((enrichedRequest: { request: TranslationsSearchRequest, origin: 'NEW' | 'NEXT' | 'PREVIOUS' }) =>
+                mergeMap((enrichedRequest: EnrichedTranslationsSearchRequest) =>
                     from(
                         this._translationService.searchTranslations(enrichedRequest.request, TranslationsTableComponent.PAGE_SIZE)
                             .toPromise()
@@ -141,7 +138,7 @@ export class TranslationsTableComponent implements OnInit, OnDestroy {
     }
 
     public get spreadRowClass(): string {
-        return `app-scroller-spread-row-${this.state.searchRequestSync.locales.length}`;
+        return `app-scroller-spread-row-${this.state.newSearchRequestSync.locales.length}`;
     }
 
     public get rows(): FormGroup[] {
@@ -241,7 +238,7 @@ export class TranslationsTableComponent implements OnInit, OnDestroy {
             bundleKeyId: this._formBuilder.control(pageRow.bundleKeyId),
             bundleKey: this._formBuilder.control(pageRow.bundleKey),
             translations: this._formBuilder.array(
-                _.range(0, this.state.searchRequestSync.locales.length).map(i => this.createBundleKeyCell(pageRow, i))
+                _.range(0, this.state.newSearchRequestSync.locales.length).map(i => this.createBundleKeyCell(pageRow, i))
             )
         });
     }
@@ -272,7 +269,7 @@ export class TranslationsTableComponent implements OnInit, OnDestroy {
                         .map((translationForm: FormGroup) =>
                             new DirtyTranslationForm(
                                 this.getBundleKeyId(rowForm),
-                                this.state.searchRequestSync.locales[translationForms.indexOf(translationForm)].id,
+                                this.state.newSearchRequestSync.locales[translationForms.indexOf(translationForm)].id,
                                 this.getTranslationValue(translationForm),
                                 translationForm
                             )

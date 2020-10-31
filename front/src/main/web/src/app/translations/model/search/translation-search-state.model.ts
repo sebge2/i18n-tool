@@ -1,35 +1,52 @@
-import {BehaviorSubject, Observable, Subject} from "rxjs";
+import {BehaviorSubject, merge, Observable, Subject} from "rxjs";
 import {TranslationsSearchRequest} from "./translations-search-request.model";
-import {shareReplay, skip} from "rxjs/operators";
+import {map, shareReplay, skip} from "rxjs/operators";
 import {TranslationsPage} from "./translations-page.model";
+
+export interface EnrichedTranslationsSearchRequest {
+    request: TranslationsSearchRequest,
+    origin: 'NEW' | 'NEXT' | 'PREVIOUS'
+}
 
 export class TranslationsTableState {
 
-    private readonly _searchRequest$ = new BehaviorSubject<TranslationsSearchRequest>(null);
-    private readonly _searchRequestObs$ = this._searchRequest$.pipe(skip(1), shareReplay(1));
+    private readonly _newSearchRequest$ = new BehaviorSubject<TranslationsSearchRequest>(null);
+    private readonly _newSearchRequestObs$ = this._newSearchRequest$.pipe(skip(1), shareReplay(1));
+    private readonly _previousPage$ = new Subject<TranslationsSearchRequest>();
+    private readonly _nextPage$ = new Subject<TranslationsSearchRequest>();
+    private readonly _searchRequest$: Observable<EnrichedTranslationsSearchRequest>;
 
     private readonly _unsavedChanges$ = new BehaviorSubject<boolean>(false);
     private readonly _loading$ = new BehaviorSubject<boolean>(false);
     private readonly _saving$ = new BehaviorSubject<boolean>(false);
-    private readonly _previousPage$ = new Subject<TranslationsSearchRequest>();
-    private readonly _nextPage$ = new Subject<TranslationsSearchRequest>();
 
     private readonly _page$ = new BehaviorSubject<TranslationsPage>(null);
     private readonly _pageObs$ = this._page$.pipe(skip(1), shareReplay(1));
 
     constructor() {
+        this._searchRequest$ = merge(
+            this.newSearchRequest.pipe(map(request => <EnrichedTranslationsSearchRequest> ({request: request, origin: 'NEW'}))),
+            this.previousPageRequest().pipe(map(request => <EnrichedTranslationsSearchRequest> ({request: request, origin: 'PREVIOUS'}))),
+            this.nextPageRequest().pipe(map(request => <EnrichedTranslationsSearchRequest> ({request: request, origin: 'NEXT'}))),
+        )
+            .pipe(shareReplay(1));
     }
 
-    public get searchRequest(): Observable<TranslationsSearchRequest> {
-        return this._searchRequestObs$;
+    public get searchRequest(): Observable<EnrichedTranslationsSearchRequest>{
+        return this._searchRequest$
     }
 
-    public get searchRequestSync(): TranslationsSearchRequest | undefined {
-        return this._searchRequest$.getValue();
+    public get newSearchRequest(): Observable<TranslationsSearchRequest> {
+        return this._newSearchRequestObs$;
     }
 
-    public updateSearchRequest(request: TranslationsSearchRequest): TranslationsTableState {
-        this._searchRequest$.next(request);
+    // TODO should be based on the other one
+    public get newSearchRequestSync(): TranslationsSearchRequest | undefined {
+        return this._newSearchRequest$.getValue();
+    }
+
+    public notifyNewSearchRequest(request: TranslationsSearchRequest): TranslationsTableState {
+        this._newSearchRequest$.next(request);
         return this;
     }
 
@@ -70,8 +87,8 @@ export class TranslationsTableState {
     }
 
     public goOnPreviousPage() {
-        if (this.searchRequestSync) {
-            this._previousPage$.next(this.searchRequestSync.goToPreviousPage(this.pageSync.firstPageKey));
+        if (this.newSearchRequestSync) {
+            this._previousPage$.next(this.newSearchRequestSync.goToPreviousPage(this.pageSync.firstPageKey));
         }
     }
 
@@ -80,8 +97,8 @@ export class TranslationsTableState {
     }
 
     public goOnNextPage() {
-        if (this.searchRequestSync) {
-            this._nextPage$.next(this.searchRequestSync.goToNextPage(this.pageSync.lastPageKey));
+        if (this.newSearchRequestSync) {
+            this._nextPage$.next(this.newSearchRequestSync.goToNextPage(this.pageSync.lastPageKey));
         }
     }
 
