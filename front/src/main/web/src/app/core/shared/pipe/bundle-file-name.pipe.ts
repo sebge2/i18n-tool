@@ -9,10 +9,10 @@ export class BundleFileNamePipe implements PipeTransform {
     transform(bundleFile: BundleFile): unknown {
         switch (bundleFile.type) {
             case BundleType.JSON_ICU:
-                return `${this.node.bundleFile.location}`;
+                return `${bundleFile.location}`;
             case BundleType.JAVA_PROPERTIES:
             default:
-                return `${this.node.bundleFile.location}/${this.node.bundleFile.name}`;
+                return `${bundleFile.location}/${bundleFile.name}`;
         }
     }
 
