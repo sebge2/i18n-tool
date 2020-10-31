@@ -6,7 +6,11 @@ import {BundleFile, BundleType} from "../../../translations/model/workspace/bund
 })
 export class BundleFileNamePipe implements PipeTransform {
 
-    transform(bundleFile: BundleFile): unknown {
+    transform(bundleFile: BundleFile): string {
+        if (!bundleFile) {
+            return '';
+        }
+
         switch (bundleFile.type) {
             case BundleType.JSON_ICU:
                 return `${bundleFile.location}`;
