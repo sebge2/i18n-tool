@@ -24,7 +24,7 @@ import {BundleFile} from "../../../../translations/model/workspace/bundle-file.m
 import {BehaviorSubject, Observable, of, Subject} from "rxjs";
 import {FocusMonitor} from "@angular/cdk/a11y";
 import {WorkspaceService} from "../../../../translations/service/workspace.service";
-import {delay, map, mergeMap, takeUntil, tap} from "rxjs/operators";
+import {map, mergeMap, takeUntil, tap} from "rxjs/operators";
 import {coerceBooleanProperty} from "@angular/cdk/coercion";
 import * as _ from "lodash";
 import {Workspace} from "../../../../translations/model/workspace/workspace.model";
@@ -99,9 +99,7 @@ export class WorkspaceBundleFileSelectorComponent implements OnInit, OnDestroy, 
 
                         return this._workspaceService
                             .getWorkspaceBundleFiles(workspace.id)
-                            .pipe(
-                                delay(5000),
-                                tap(() => this.loading = false, () => this.loading = false))
+                            .pipe(tap(() => this.loading = false, () => this.loading = false))
                     } else {
                         return of(null);
                     }
