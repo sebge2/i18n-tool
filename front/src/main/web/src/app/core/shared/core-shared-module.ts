@@ -51,6 +51,8 @@ import {FormDeleteButtonConfirmationComponent} from "./component/form-delete-but
 import {CountdownComponent} from "./component/countdown/countdown.component";
 import {BackwardButtonComponent} from "./component/backward-button/backward-button.component";
 import {ForwardButtonComponent} from "./component/forward-button/forward-button.component";
+import {BundleFileIconPipe} from "./pipe/bundle-file-icon.pipe";
+import {BundleFileNamePipe} from "./pipe/bundle-file-name.pipe";
 
 @NgModule({
     declarations: [
@@ -107,6 +109,8 @@ import {ForwardButtonComponent} from "./component/forward-button/forward-button.
         ToolLocaleIconPipe,
         TranslationLocaleIconPipe,
         RepositoryIconPipe,
+        BundleFileIconPipe,
+        BundleFileNamePipe,
 
         DragDropDirective,
     ],
@@ -171,6 +175,8 @@ import {ForwardButtonComponent} from "./component/forward-button/forward-button.
         ToolLocaleIconPipe,
         TranslationLocaleIconPipe,
         RepositoryIconPipe,
+        BundleFileIconPipe,
+        BundleFileNamePipe,
 
         DragDropDirective,
     ],
