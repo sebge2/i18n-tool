@@ -41,6 +41,7 @@ export class TranslationsSearchBarComponent implements OnInit, OnDestroy {
                 private _router: Router) {
         this.form = _formBuilder.group({
             workspaces: [[], Validators.required],
+            bundleFile: [null],
             locales: [[], Validators.required],
             criterion: [null, Validators.required]
         });

@@ -15,6 +15,14 @@
                 </p>
                 <p>
                     <mat-form-field appearance="standard">
+                        <mat-label>{{'TRANSLATIONS.SEARCH_BAR.BUNDLE_FILE_LABEL' | translate}}</mat-label>
+                        <app-workspace-bundle-file-selector [formControlName]="'bundleFile'" [workspace]="(workspaces.length == 1) ? workspaces[0] : null">
+                        </app-workspace-bundle-file-selector>
+                        <mat-hint>{{'TRANSLATIONS.SEARCH_BAR.BUNDLE_FILE_HINT' | translate}}</mat-hint>
+                    </mat-form-field>
+                </p>
+                <p>
+                    <mat-form-field appearance="standard">
                         <mat-label>{{'TRANSLATIONS.SEARCH_BAR.LOCALES_LABEL' | translate}}</mat-label>
                         <app-translation-locale-selector [formControlName]="'locales'"></app-translation-locale-selector>
                         <mat-hint>{{'TRANSLATIONS.SEARCH_BAR.LOCALES_HINT' | translate}}</mat-hint>
