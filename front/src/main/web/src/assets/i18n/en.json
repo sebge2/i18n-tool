@@ -97,7 +97,7 @@
       "LANGUAGE": "Language Code",
       "LANGUAGE_EXAMPLE": "Example: en, fr.",
       "REGION": "Region",
-      "REGION_EXAMPLE": "Example: US, GB.",
+      "REGION_EXAMPLE": "Examples: US, GB.",
       "VARIANTS": "Variants (space separated)",
       "VARIANTS_EXAMPLE": "Example: de-CH-1996.",
       "ICON": "Icon",
