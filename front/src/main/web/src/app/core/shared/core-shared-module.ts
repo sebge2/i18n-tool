@@ -53,6 +53,7 @@ import {BackwardButtonComponent} from "./component/backward-button/backward-butt
 import {ForwardButtonComponent} from "./component/forward-button/forward-button.component";
 import {BundleFileIconPipe} from "./pipe/bundle-file-icon.pipe";
 import {BundleFileNamePipe} from "./pipe/bundle-file-name.pipe";
+import {VisualizeButtonComponent} from "./component/visualize-button/visualize-button.component";
 
 @NgModule({
     declarations: [
@@ -73,6 +74,7 @@ import {BundleFileNamePipe} from "./pipe/bundle-file-name.pipe";
         PublishButtonComponent,
         BackwardButtonComponent,
         ForwardButtonComponent,
+        VisualizeButtonComponent,
 
         FormSelectFieldComponent,
 
@@ -141,6 +143,7 @@ import {BundleFileNamePipe} from "./pipe/bundle-file-name.pipe";
         PublishButtonComponent,
         BackwardButtonComponent,
         ForwardButtonComponent,
+        VisualizeButtonComponent,
 
         FormSelectFieldComponent,
 

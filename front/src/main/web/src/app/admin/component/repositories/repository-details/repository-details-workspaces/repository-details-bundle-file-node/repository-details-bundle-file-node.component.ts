@@ -6,6 +6,7 @@ import {
 } from "../../../../../../core/shared/component/git-hub-link-button/git-hub-link-button.component";
 import {RepositoryType} from "../../../../../../translations/model/repository/repository-type.model";
 import {GitHubRepository} from "../../../../../../translations/model/repository/github-repository.model";
+import {Router} from "@angular/router";
 
 @Component({
     selector: 'app-repository-details-bundle-file-node',
@@ -16,7 +17,7 @@ export class RepositoryDetailsBundleFileNodeComponent {
 
     @Input() public node: WorkspaceBundleTreeNode;
 
-    constructor() {
+    constructor(private _router: Router) {
     }
 
     public get bundleLink(): GitHubLink {
@@ -32,5 +33,13 @@ export class RepositoryDetailsBundleFileNodeComponent {
         } else {
             return null;
         }
+    }
+
+    public onSearchTranslations(): Promise<any> {
+        return this._router
+            .navigate(
+                ['/translations'],
+                {queryParams: {workspace: this.node.workspace.id, bundleFile: this.node.bundleFile.id}}
+            );
     }
 }
