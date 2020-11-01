@@ -12,17 +12,35 @@ export function getRouterParams(paramName: string, params: Params): any[] {
     }
 }
 
-export function getRouterParamsCollection<T extends { [key: string]: any }, K extends keyof T>(paramName: string,
-                                                                                               params: Params,
-                                                                                               availableValues: T[],
-                                                                                               defaultValues: T[],
-                                                                                               key: K): T[] {
+export function getRouteParamsCollection<T extends { [key: string]: any }, K extends keyof T>(paramName: string,
+                                                                                              params: Params,
+                                                                                              availableValues: T[],
+                                                                                              defaultValues: T[],
+                                                                                              key: K): T[] {
     const routeParams = getRouterParams(paramName, params);
 
     if (_.some(routeParams)) {
         return filterOutUnavailableElementsByKey(availableValues, routeParams, key);
     } else {
         return defaultValues;
+    }
+}
+
+export function getRouteParamObject<T extends { [key: string]: any }, K extends keyof T>(paramName: string,
+                                                                                         params: Params,
+                                                                                         availableValues: T[],
+                                                                                         defaultValue: T,
+                                                                                         key: K): T | undefined {
+    const routeParams = getRouterParams(paramName, params);
+
+    if (_.some(routeParams)) {
+        const filteredElements = filterOutUnavailableElementsByKey(availableValues, routeParams, key);
+
+        return _.some(filteredElements)
+            ? filteredElements[0]
+            : null;
+    } else {
+        return defaultValue;
     }
 }
 

@@ -108,6 +108,11 @@ export class WorkspaceBundleFileSelectorComponent implements OnInit, OnDestroy, 
 
         this.bundleFilesEmpty = this.bundleFiles
             .pipe(map(bundleFiles => !bundleFiles || !bundleFiles.length))
+
+        this.parts.controls['bundleFile']
+            .valueChanges
+            .pipe(takeUntil(this._destroyed$))
+            .subscribe(_ => this.onChange(this.value))
     }
 
     public ngOnInit() {
@@ -198,7 +203,7 @@ export class WorkspaceBundleFileSelectorComponent implements OnInit, OnDestroy, 
     }
 
     public get empty() {
-        return _.isEmpty(this.parts.controls['bundleFile']);
+        return _.isEmpty(this.parts.controls['bundleFile'].value);
     }
 
     @HostBinding('class.floating')
@@ -216,8 +221,8 @@ export class WorkspaceBundleFileSelectorComponent implements OnInit, OnDestroy, 
         }
     }
 
-    public writeValue(values: BundleFile | null): void {
-        this.parts.controls['bundleFile'].setValue(values);
+    public writeValue(value: BundleFile | null): void {
+        this.parts.controls['bundleFile'].setValue(value);
     }
 
     public registerOnChange(fn: any): void {

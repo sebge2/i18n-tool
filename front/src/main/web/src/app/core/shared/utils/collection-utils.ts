@@ -22,3 +22,9 @@ export function mapAll<KV, T extends { [key: string]: any }, K extends keyof T>(
         ? null
         : collection.map(element => <KV>(_.get(element, key)));
 }
+
+export function mapToSingleton<KV, T extends { [key: string]: any }, K extends keyof T>(object: T, key: K): KV[] {
+    return _.isNil(object)
+        ? []
+        : [<KV>(_.get(object, key))];
+}

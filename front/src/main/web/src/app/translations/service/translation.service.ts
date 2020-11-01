@@ -5,6 +5,8 @@ import {TranslationService as ApiTranslationService, TranslationUpdateDto} from 
 import {Observable} from "rxjs";
 import {TranslationsPage} from "../model/search/translations-page.model";
 import {map} from "rxjs/operators";
+import * as _ from "lodash";
+import {mapToSingleton} from "../../core/shared/utils/collection-utils";
 
 @Injectable({
     providedIn: 'root'
@@ -19,11 +21,12 @@ export class TranslationService {
         return this._translationService
             .searchTranslations({
                     workspaces: searchRequest.workspaces.map(workspace => workspace.id),
+                    bundleFiles: mapToSingleton(searchRequest.bundleFile, 'id'),
                     locales: searchRequest.locales.map(locale => locale.id),
                     criterion: searchRequest.criterion,
                     maxKeys: maxKeys,
                     pageSpec: searchRequest.pageSpec
-                        ? { keyOtherPage: searchRequest.pageSpec.keyOtherPage, nextPage: searchRequest.pageSpec.nextPage}
+                        ? {keyOtherPage: searchRequest.pageSpec.keyOtherPage, nextPage: searchRequest.pageSpec.nextPage}
                         : null
                 },
                 'search'
