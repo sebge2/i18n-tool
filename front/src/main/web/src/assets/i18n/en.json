@@ -35,7 +35,9 @@
   "TRANSLATIONS": {
     "SEARCH_BAR": {
       "WORKSPACES_LABEL": "Workspaces",
-      "WORKSPACES_HINT": "Workspaces to look into.",
+      "WORKSPACES_HINT": "Workspaces to search into.",
+      "BUNDLE_FILE_LABEL": "Bundle file",
+      "BUNDLE_FILE_HINT": "The bundle file to search into (only available if a single workspace is selected).",
       "LOCALES_LABEL": "Locales",
       "LOCALES_HINT": "Locales to display.",
       "CRITERION_LABEL": "Criterion",
@@ -95,7 +97,7 @@
       "LANGUAGE": "Language Code",
       "LANGUAGE_EXAMPLE": "Example: en, fr.",
       "REGION": "Region",
-      "REGION_EXAMPLE": "Example: US, GB.",
+      "REGION_EXAMPLE": "Examples: US, GB.",
       "VARIANTS": "Variants (space separated)",
       "VARIANTS_EXAMPLE": "Example: de-CH-1996.",
       "ICON": "Icon",

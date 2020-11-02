@@ -21,7 +21,7 @@ export class TranslationsComponent {
     public onSearch(searchRequest: TranslationsSearchRequest) {
         this.expanded = false;
         setTimeout(
-            () => this.tableState.updateSearchRequest(searchRequest),
+            () => this.tableState.notifyNewSearchRequest(searchRequest),
             300
         )
     }

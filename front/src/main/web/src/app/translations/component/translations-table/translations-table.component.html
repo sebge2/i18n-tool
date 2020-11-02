@@ -4,12 +4,12 @@
     </div>
 
     <div class="app-translations-container"
-         [ngStyle]="{'grid-template-columns': '230px repeat(' + (state.searchRequestSync.locales.length) + ', 1fr)'}"
+         [ngStyle]="{'grid-template-columns': '230px repeat(' + (state.newSearchRequestSync.locales.length) + ', 1fr)'}"
          *ngIf="state.pageSync.hasRows">
         <div class="app-translations-header app-translations-cell">
             <h3><span class="app-icon-key-solid app-translations-header-icon"></span> {{'TRANSLATIONS.TABLE.KEY_COLUMN' | translate}}</h3>
         </div>
-        <div *ngFor="let locale of state.searchRequestSync.locales" class="app-translations-header app-translations-cell">
+        <div *ngFor="let locale of state.newSearchRequestSync.locales" class="app-translations-header app-translations-cell">
             <h3><span [class]="locale | translationLocaleIcon" class="app-translations-header-icon"></span> {{locale.displayName}}</h3>
         </div>
         <ng-container *ngFor="let rowForm of rows; let rowIndex = index">

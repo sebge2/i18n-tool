@@ -1,6 +1,7 @@
 import {TranslationsSearchCriterion} from "./translations-search-criterion.model";
 import {TranslationLocale} from "../translation-locale.model";
 import {Workspace} from "../workspace/workspace.model";
+import {BundleFile} from "../workspace/bundle-file.model";
 
 export class TranslationsSearchPageSpec {
 
@@ -12,6 +13,7 @@ export class TranslationsSearchPageSpec {
 export class TranslationsSearchRequest {
 
     constructor(public workspaces: Workspace[] = [],
+                public bundleFile: BundleFile | undefined,
                 public locales: TranslationLocale[] = [],
                 public criterion: TranslationsSearchCriterion = TranslationsSearchCriterion.ALL,
                 public pageSpec?: TranslationsSearchPageSpec) {
@@ -20,6 +22,7 @@ export class TranslationsSearchRequest {
     public goToPreviousPage(firstKeyOfPage: string): TranslationsSearchRequest {
         return new TranslationsSearchRequest(
             this.workspaces,
+            this.bundleFile,
             this.locales,
             this.criterion,
             new TranslationsSearchPageSpec(
@@ -32,6 +35,7 @@ export class TranslationsSearchRequest {
     public goToNextPage(lastKeyOfPage: string): TranslationsSearchRequest {
         return new TranslationsSearchRequest(
             this.workspaces,
+            this.bundleFile,
             this.locales,
             this.criterion,
             new TranslationsSearchPageSpec(
