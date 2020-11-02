@@ -121,6 +121,10 @@ export class WorkspaceBundleFileSelectorComponent implements OnInit, OnDestroy, 
         if (this.ngControl != null) {
             this.ngControl.valueAccessor = this;
         }
+
+        if (!this.workspace) {
+            this.forceDisabled = true;
+        }
     }
 
     public ngAfterViewInit(): void {
