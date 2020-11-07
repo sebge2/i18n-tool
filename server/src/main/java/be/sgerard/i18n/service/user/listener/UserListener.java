@@ -33,7 +33,7 @@ public interface UserListener {
     /**
      * Performs an action after the creation of the specified user.
      */
-    default Mono<Void> onCreate(UserEntity user) {
+    default Mono<Void> afterCreate(UserEntity user) {
         return Mono.empty();
     }
 
@@ -68,7 +68,7 @@ public interface UserListener {
     /**
      * Performs an action after the update of the specified user.
      */
-    default Mono<Void> onUpdate(UserEntity user) {
+    default Mono<Void> afterUpdate(UserEntity user) {
         return Mono.empty();
     }
 
@@ -82,7 +82,7 @@ public interface UserListener {
     /**
      * Performs an action after the deletion of the specified user.
      */
-    default Mono<Void> onDelete(UserEntity user) {
+    default Mono<Void> afterDelete(UserEntity user) {
         return Mono.empty();
     }
 }

@@ -24,12 +24,12 @@ public class AuthenticationUserListener implements UserListener {
     }
 
     @Override
-    public Mono<Void> onUpdate(UserEntity user) {
+    public Mono<Void> afterUpdate(UserEntity user) {
         return authenticationUserManager.updateAll(user.getId(), user.getRoles());
     }
 
     @Override
-    public Mono<Void> onDelete(UserEntity user) {
+    public Mono<Void> afterDelete(UserEntity user) {
         return authenticationUserManager.deleteAll(user.getId());
     }
 }
