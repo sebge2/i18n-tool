@@ -13,14 +13,14 @@ public interface AuthenticatedUserListener {
     /**
      * Performs an action after the update of the specified authenticated user.
      */
-    default Mono<Void> onUpdate(AuthenticatedUser authenticatedUser) {
+    default Mono<Void> afterUpdate(AuthenticatedUser authenticatedUser) {
         return Mono.empty();
     }
 
     /**
-     * Performs an action before the deletion of the specified authenticated user.
+     * Performs an action after the deletion of the specified authenticated user.
      */
-    default Mono<Void> onDelete(AuthenticatedUser authenticatedUser) {
+    default Mono<Void> afterDelete(AuthenticatedUser authenticatedUser) {
         return Mono.empty();
     }
 }
