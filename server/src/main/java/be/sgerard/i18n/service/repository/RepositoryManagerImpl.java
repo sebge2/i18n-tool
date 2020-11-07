@@ -74,7 +74,7 @@ public class RepositoryManagerImpl implements RepositoryManager {
                                 })
                                 .flatMap(repository::save)
                                 .flatMap(repo ->
-                                        listener.onCreate(repo)
+                                        listener.afterCreate(repo)
                                                 .thenReturn(repo)
                                 )
                 );
@@ -96,7 +96,7 @@ public class RepositoryManagerImpl implements RepositoryManager {
                                                 .flatMap(this.repository::save)
                                                 .flatMap(rep ->
                                                         listener
-                                                                .onInitialize(rep)
+                                                                .afterInitialize(rep)
                                                                 .thenReturn(rep)
                                                 )
                                                 .switchIfEmpty(Mono.just(repository))
@@ -136,7 +136,7 @@ public class RepositoryManagerImpl implements RepositoryManager {
                                 .flatMap(repository::save)
                                 .flatMap(repo ->
                                         listener
-                                                .onUpdate(patch, repo)
+                                                .afterUpdate(patch, repo)
                                                 .thenReturn(repo)
                                 ));
     }
@@ -162,7 +162,7 @@ public class RepositoryManagerImpl implements RepositoryManager {
                                                     return Mono.just(repo);
                                                 })
                                                 .flatMap(rep ->
-                                                        listener.onDelete(rep)
+                                                        listener.beforeDelete(rep)
                                                                 .thenReturn(rep)
                                                 )
                                                 .flatMap(rep ->

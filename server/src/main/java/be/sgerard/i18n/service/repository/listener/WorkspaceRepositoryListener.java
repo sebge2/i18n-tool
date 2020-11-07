@@ -25,14 +25,14 @@ public class WorkspaceRepositoryListener implements RepositoryListener<Repositor
     }
 
     @Override
-    public Mono<Void> onInitialize(RepositoryEntity repository) {
+    public Mono<Void> afterInitialize(RepositoryEntity repository) {
         return workspaceManager
                 .synchronize(repository.getId())
                 .then();
     }
 
     @Override
-    public Mono<Void> onDelete(RepositoryEntity repository) {
+    public Mono<Void> beforeDelete(RepositoryEntity repository) {
         return workspaceManager
                 .findAll(repository.getId())
                 .flatMap(
