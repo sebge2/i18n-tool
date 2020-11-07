@@ -8,6 +8,7 @@ import be.sgerard.i18n.service.i18n.TranslationManager;
 import be.sgerard.i18n.service.repository.RepositoryException;
 import be.sgerard.i18n.service.repository.RepositoryManager;
 import be.sgerard.i18n.service.repository.git.GitRepositoryApi;
+import be.sgerard.i18n.service.workspace.WorkspaceException;
 import be.sgerard.i18n.service.workspace.strategy.WorkspaceTranslationsStrategy;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -58,15 +59,12 @@ public abstract class BaseGitWorkspaceTranslationsStrategy implements WorkspaceT
 
     @Override
     public Mono<WorkspaceEntity> onInitialize(WorkspaceEntity workspace) {
-        return repositoryManager
-                .applyGetMono(
-                        workspace.getRepository(),
-                        GitRepositoryApi.class,
-                        api ->
-                                translationManager
-                                        .readTranslations(workspace, new GitTranslationRepositoryReadApi(api, workspace.getBranch()))
-                                        .then(Mono.just(workspace))
-                );
+        return readTranslations(workspace);
+    }
+
+    @Override
+    public Mono<WorkspaceEntity> onSynchronize(WorkspaceEntity workspace) throws WorkspaceException, RepositoryException {
+        return readTranslations(workspace);
     }
 
     /**
@@ -79,5 +77,20 @@ public abstract class BaseGitWorkspaceTranslationsStrategy implements WorkspaceT
      */
     private boolean isAllowedBranch(RepositoryEntity repository, String branch) {
         return ((BaseGitRepositoryEntity) repository).getAllowedBranches().matcher(branch).matches();
+    }
+
+    /**
+     * Reads all translations from the repository and creates translation entities.
+     */
+    private Mono<WorkspaceEntity> readTranslations(WorkspaceEntity workspace) {
+        return repositoryManager
+                .applyGetMono(
+                        workspace.getRepository(),
+                        GitRepositoryApi.class,
+                        api ->
+                                translationManager
+                                        .readTranslations(workspace, new GitTranslationRepositoryReadApi(api, workspace.getBranch()))
+                                        .then(Mono.just(workspace))
+                );
     }
 }
