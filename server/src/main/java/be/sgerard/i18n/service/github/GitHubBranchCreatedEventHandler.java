@@ -37,7 +37,7 @@ public class GitHubBranchCreatedEventHandler implements GitHubWebHookEventHandle
         }
 
         return workspaceManager
-                .synchronize(repository.getId())
+                .synchronizeAll(repository.getId())
                 .filter(workspace -> Objects.equals(workspace.getBranch(), event.getRef()))
                 .last()
                 .onErrorResume(NoSuchElementException.class, e -> Mono.empty());

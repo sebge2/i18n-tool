@@ -27,7 +27,7 @@ public class WorkspaceRepositoryListener implements RepositoryListener<Repositor
     @Override
     public Mono<Void> afterInitialize(RepositoryEntity repository) {
         return workspaceManager
-                .synchronize(repository.getId())
+                .synchronizeAll(repository.getId())
                 .then();
     }
 

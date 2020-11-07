@@ -103,7 +103,7 @@ public class WorkspaceController {
     )
     @PreAuthorize("hasRole('ADMIN')")
     public Flux<WorkspaceDto> synchronizeRepository(@PathVariable String repositoryId) {
-        return workspaceManager.synchronize(repositoryId)
+        return workspaceManager.synchronizeAll(repositoryId)
                 .flatMapSequential(dtoEnricher::mapAndEnrich);
     }
 
