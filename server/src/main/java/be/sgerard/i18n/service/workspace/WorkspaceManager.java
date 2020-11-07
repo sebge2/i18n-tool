@@ -56,12 +56,6 @@ public interface WorkspaceManager {
     Mono<WorkspaceEntity> synchronize(String workspaceId) throws ResourceNotFoundException, RepositoryException;
 
     /**
-     * Publishes all the modifications made on the specified workspace. Based on the type of repository, a review may start afterwards.
-     * If it's not the case, a new fresh workspace will be created and returned.
-     */
-    Mono<WorkspaceEntity> publish(String workspaceId, String message) throws ResourceNotFoundException, RepositoryException;
-
-    /**
      * Publishes all the modifications made on the specified workspaces. Based on the type of repository, a review may start afterwards.
      * If it's not the case, a new fresh workspace will be created and returned.
      */

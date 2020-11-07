@@ -139,7 +139,9 @@ public class WorkspaceController {
             throw BadRequestException.missingReviewMessage();
         }
 
-        return workspaceManager.publish(id, message)
+        return workspaceManager
+                .publish(WorkspacesPublishRequestDto.builder().workspace(id).message(message).build())
+                .next()
                 .flatMap(dtoEnricher::mapAndEnrich);
     }
 
