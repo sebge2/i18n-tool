@@ -20,6 +20,7 @@ import be.sgerard.i18n.service.i18n.file.BundleWalker;
 import be.sgerard.i18n.service.i18n.file.TranslationFileUtils;
 import be.sgerard.i18n.service.i18n.listener.TranslationsListener;
 import be.sgerard.i18n.service.repository.RepositoryManager;
+import be.sgerard.i18n.support.ReactiveUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +32,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.nio.file.Path;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -193,9 +195,18 @@ public class TranslationManagerImpl implements TranslationManager {
         logger.info("A bundle file has been found located in [{}] named [{}] with {} file(s).",
                 bundleFile.getLocationDirectory(), bundleFile.getName(), bundleFile.getFiles().size());
 
-        return loadBundleFileKeys(workspaceEntity, bundleFile, handler, context)
-                .flatMap(bundleKeys -> save(workspaceEntity, bundleFile, bundleKeys));
+        return ReactiveUtils
+                .combine(
+                        loadBundleFileKeys(workspaceEntity, bundleFile, handler, context),
+                        Flux.<BundleKeyEntity>empty(),
+                        (fromFile, fromDb) -> fromFile.getKey().compareTo(fromDb.getKey())
+                )
+                .map(matching -> matching.getLeft()) // TODO
+                .flatMap(translationRepository::save)
+                .collectList()
+                .map(bundleKeys -> updateBundleFileStats(workspaceEntity, bundleFile, bundleKeys));
     }
+
 
     /**
      * Finds the {@link BundleKeyEntity bundle key} having the specified id.
@@ -274,12 +285,13 @@ public class TranslationManagerImpl implements TranslationManager {
     }
 
     /**
-     * Loads all {@link BundleKeyEntity bundle keys} from the specified {@link ScannedBundleFile bundle file}.
+     * Loads all {@link BundleKeyEntity bundle keys} from the specified {@link ScannedBundleFile bundle file} and sorts
+     * them by key.
      */
-    private Mono<BundleWalkingKeys> loadBundleFileKeys(WorkspaceEntity workspaceEntity,
-                                                       ScannedBundleFile bundleFile,
-                                                       BundleHandler handler,
-                                                       BundleWalkingContext context) {
+    private Flux<BundleKeyEntity> loadBundleFileKeys(WorkspaceEntity workspaceEntity,
+                                                     ScannedBundleFile bundleFile,
+                                                     BundleHandler handler,
+                                                     BundleWalkingContext context) {
         final BundleFileEntity bundleFileEntity = workspaceEntity.getOrCreateBundleFile(bundleFile);
 
         final BundleWalkingKeys bundleKeys = new BundleWalkingKeys();
@@ -297,27 +309,27 @@ public class TranslationManagerImpl implements TranslationManager {
                                                 .addTranslation(locale.getId(), indexedTranslation.getT1(), indexedTranslation.getT2().getValue())
                                 )
                 )
-                .then(Mono.just(bundleKeys));
+                .thenMany(
+                        Mono
+                                .just(bundleKeys)
+                                .flatMapMany(BundleWalkingKeys::stream)
+                                .sort(Comparator.comparing(BundleKeyEntity::getKey))
+                );
     }
 
     /**
-     * Saves all {@link BundleKeyEntity bundle keys} and returns the associated {@link BundleFileEntity bundle file}.
+     * Updates statistics of the specified {@link BundleFileEntity bundle file} based on what has been loaded.
      */
-    private Mono<BundleFileEntity> save(WorkspaceEntity workspaceEntity,
-                                        ScannedBundleFile bundleFile,
-                                        BundleWalkingKeys bundleKeys) {
-        return bundleKeys
-                .stream()
-                .flatMap(translationRepository::save)
-                .then(Mono.defer(() -> {
-                    final BundleFileEntity bundleFileEntity = workspaceEntity.getOrCreateBundleFile(bundleFile);
+    private BundleFileEntity updateBundleFileStats(WorkspaceEntity workspaceEntity,
+                                                   ScannedBundleFile bundleFile,
+                                                   List<BundleKeyEntity> bundleKeys) {
+        final BundleFileEntity bundleFileEntity = workspaceEntity.getOrCreateBundleFile(bundleFile);
 
-                    bundleFileEntity.setNumberKeys(bundleKeys.getNumberKeys());
+        bundleFileEntity.setNumberKeys(bundleKeys.size());
 
-                    logger.info("The bundle file located in [{}] named [{}] with {} file(s) contains {} translation(s).",
-                            bundleFile.getLocationDirectory(), bundleFile.getName(), bundleFile.getFiles().size(), bundleFileEntity.getNumberKeys());
+        logger.info("The bundle file located in [{}] named [{}] with {} file(s) contains {} translation(s).",
+                bundleFile.getLocationDirectory(), bundleFile.getName(), bundleFile.getFiles().size(), bundleFileEntity.getNumberKeys());
 
-                    return Mono.just(bundleFileEntity);
-                }));
+        return bundleFileEntity;
     }
 }
