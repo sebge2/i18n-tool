@@ -80,6 +80,7 @@ public class TranslationManagerImpl implements TranslationManager {
     @Override
     @Transactional
     public Flux<BundleFileEntity> readTranslations(WorkspaceEntity workspace, TranslationRepositoryReadApi api) {
+        // TODO remove existing if present
         return createWalkingContext(workspace, api)
                 .flatMapMany(context -> walker.walk((bundleFile, handler) -> onBundleFound(workspace, bundleFile, handler, context), context));
     }

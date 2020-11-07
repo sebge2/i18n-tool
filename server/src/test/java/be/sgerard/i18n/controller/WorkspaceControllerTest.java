@@ -308,7 +308,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                         .jsonPath("$.[2].branch").isEqualTo("release/2020.06")
                         .jsonPath("$.[2].status").isEqualTo("NOT_INITIALIZED")
                         .jsonPath("$.[3].branch").isEqualTo("release/2020.08")
-                        .jsonPath("$.[3].status").isEqualTo("NOT_INITIALIZED");
+                        .jsonPath("$.[3].status").isEqualTo("INITIALIZED");
             } finally {
                 gitRepo.getRepo(creationDto).deleteBranches("release/2020.08");
             }

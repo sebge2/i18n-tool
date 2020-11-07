@@ -25,14 +25,23 @@ public interface WorkspaceListener {
     /**
      * Performs an action after the initialization of the specified workspace.
      */
-    default Mono<Void> onInitialize(WorkspaceEntity workspace) {
+    default Mono<Void> afterInitialize(WorkspaceEntity workspace) {
         return Mono.empty();
     }
 
     /**
-     * Performs an action when the specified workspace starts to be in review.
+     * Performs an action when the specified workspace starts to be reviewed. Called before
+     * {@link #afterUpdate(WorkspaceEntity) after-update}.
      */
     default Mono<Void> beforeReview(WorkspaceEntity workspace) {
+        return Mono.empty();
+    }
+
+    /**
+     * Performs an action when the specified workspace is no more in review. Called before
+     * {@link #afterUpdate(WorkspaceEntity) after-update}.
+     */
+    default Mono<Void> afterReview(WorkspaceEntity workspace) {
         return Mono.empty();
     }
 
@@ -49,5 +58,5 @@ public interface WorkspaceListener {
      */
     default Mono<Void> beforeDelete(WorkspaceEntity workspace) {
         return Mono.empty();
-    }
+    }  // TODO delete branch
 }

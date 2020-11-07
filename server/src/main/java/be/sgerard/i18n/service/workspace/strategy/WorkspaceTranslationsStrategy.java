@@ -43,6 +43,11 @@ public interface WorkspaceTranslationsStrategy {
     Mono<WorkspaceEntity> onInitialize(WorkspaceEntity workspace) throws WorkspaceException, RepositoryException;
 
     /**
+     * Synchronizes the specified {@link WorkspaceEntity workspace} after that translations are up-to-date with the repository.
+     */
+    Mono<WorkspaceEntity> onSynchronize(WorkspaceEntity workspace) throws WorkspaceException, RepositoryException;
+
+    /**
      * Publishes all modified translations of the specified {@link WorkspaceEntity workspace}. The workspace
      * {@link WorkspaceEntity#getStatus() status} will be {@link WorkspaceStatus#IN_REVIEW in review}
      * if a review started. Otherwise, the status won't change. The strategy has also the responsibility to fill
