@@ -126,16 +126,23 @@ public class WorkspaceEntity {
     }
 
     /**
-     * Returns, or creates the {@link BundleFileEntity bundle file} for the newly scanned {@link ScannedBundleFile bundle file}.
+     * Returns the {@link BundleFileEntity bundle file} for the newly scanned {@link ScannedBundleFile bundle file}.
      */
-    public BundleFileEntity getOrCreateBundleFile(ScannedBundleFile bundleFile) {
+    public Optional<BundleFileEntity> getBundleFile(ScannedBundleFile bundleFile) {
         return getFiles().stream()
                 .filter(file ->
                         Objects.equals(bundleFile.getType(), file.getType())
                                 && Objects.equals(bundleFile.getName(), file.getName())
                                 && Objects.equals(bundleFile.getLocationDirectory().toString(), file.getLocation())
                 )
-                .findFirst()
+                .findFirst();
+    }
+
+    /**
+     * Returns, or creates the {@link BundleFileEntity bundle file} for the newly scanned {@link ScannedBundleFile bundle file}.
+     */
+    public BundleFileEntity getOrCreateBundleFile(ScannedBundleFile bundleFile) {
+        return getBundleFile(bundleFile)
                 .orElseGet(() -> {
                     final BundleFileEntity bundleFileEntity = new BundleFileEntity(bundleFile);
 
