@@ -18,7 +18,7 @@ public interface WorkspaceListener {
     /**
      * Performs an action after the creation of the specified workspace.
      */
-    default Mono<Void> onCreate(WorkspaceEntity workspace) {
+    default Mono<Void> afterCreate(WorkspaceEntity workspace) {
         return Mono.empty();
     }
 
@@ -32,22 +32,22 @@ public interface WorkspaceListener {
     /**
      * Performs an action when the specified workspace starts to be in review.
      */
-    default Mono<Void> onReview(WorkspaceEntity workspace) {
+    default Mono<Void> beforeReview(WorkspaceEntity workspace) {
         return Mono.empty();
     }
 
     /**
      * Performs an action when the specified workspace has been updated. Called before
-     * {@link #onInitialize(WorkspaceEntity) on-initialize} and {@link #onReview(WorkspaceEntity) on-review}.
+     * {@link #afterInitialize(WorkspaceEntity) on-initialize} and {@link #beforeReview(WorkspaceEntity) on-review}.
      */
-    default Mono<Void> onUpdate(WorkspaceEntity workspace) {
+    default Mono<Void> afterUpdate(WorkspaceEntity workspace) {
         return Mono.empty();
     }
 
     /**
      * Performs an action before the deletion of the specified workspace.
      */
-    default Mono<Void> onDelete(WorkspaceEntity workspace) {
+    default Mono<Void> beforeDelete(WorkspaceEntity workspace) {
         return Mono.empty();
     }
 }

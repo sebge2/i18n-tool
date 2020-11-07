@@ -122,7 +122,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
                                 wk.setLastSynchronization(Instant.now());
                             })
                             .flatMap(this::update)
-                            .flatMap(wk -> listener.onInitialize(wk).thenReturn(wk));
+                            .flatMap(wk -> listener.afterInitialize(wk).thenReturn(wk));
                 });
     }
 
@@ -191,7 +191,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
                 .flatMap(translationsStrategy::onDelete)
                 .flatMap(workspace ->
                         listener
-                                .onDelete(workspace)
+                                .beforeDelete(workspace)
                                 .thenReturn(workspace)
                 )
                 .flatMap(workspace ->
@@ -292,7 +292,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
                 .just(new WorkspaceEntity(repository.getId(), branch))
                 .flatMap(this.repository::save)
                 .doOnNext(workspace -> logger.info("The workspace [{}] alias [{}] has been created.", workspace.getBranch(), workspace.getId()))
-                .flatMap(workspace -> listener.onCreate(workspace).thenReturn(workspace))
+                .flatMap(workspace -> listener.afterCreate(workspace).thenReturn(workspace))
                 .flatMap(workspace ->
                         translationsStrategy.initializeOnCreate(workspace, repository)
                                 ? initialize(workspace.getId())
@@ -345,7 +345,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
         logger.info("A review started on the workspace [{}] alias [{}] and then creates a new one.", workspace.getBranch(), workspace.getId());
 
         return listener
-                .onReview(workspace)
+                .beforeReview(workspace)
                 .then(Mono.defer(() -> update(workspace)));
     }
 }

@@ -31,47 +31,47 @@ public class CompositeWorkspaceListener implements WorkspaceListener {
     }
 
     @Override
-    public Mono<Void> onCreate(WorkspaceEntity workspace) {
+    public Mono<Void> afterCreate(WorkspaceEntity workspace) {
         return Flux
                 .fromIterable(listeners)
                 .filter(listener -> listener.support(workspace))
-                .flatMap(listener -> listener.onCreate(workspace))
+                .flatMap(listener -> listener.afterCreate(workspace))
                 .then();
     }
 
     @Override
-    public Mono<Void> onInitialize(WorkspaceEntity workspace) {
+    public Mono<Void> afterInitialize(WorkspaceEntity workspace) {
         return Flux
                 .fromIterable(listeners)
                 .filter(listener -> listener.support(workspace))
-                .flatMap(listener -> listener.onInitialize(workspace))
+                .flatMap(listener -> listener.afterInitialize(workspace))
                 .then();
     }
 
     @Override
-    public Mono<Void> onReview(WorkspaceEntity workspace) {
+    public Mono<Void> beforeReview(WorkspaceEntity workspace) {
         return Flux
                 .fromIterable(listeners)
                 .filter(listener -> listener.support(workspace))
-                .flatMap(listener -> listener.onReview(workspace))
+                .flatMap(listener -> listener.beforeReview(workspace))
                 .then();
     }
 
     @Override
-    public Mono<Void> onUpdate(WorkspaceEntity workspace) {
+    public Mono<Void> afterUpdate(WorkspaceEntity workspace) {
         return Flux
                 .fromIterable(listeners)
                 .filter(listener -> listener.support(workspace))
-                .flatMap(listener -> listener.onUpdate(workspace))
+                .flatMap(listener -> listener.afterUpdate(workspace))
                 .then();
     }
 
     @Override
-    public Mono<Void> onDelete(WorkspaceEntity workspace) {
+    public Mono<Void> beforeDelete(WorkspaceEntity workspace) {
         return Flux
                 .fromIterable(listeners)
                 .filter(listener -> listener.support(workspace))
-                .flatMap(listener -> listener.onDelete(workspace))
+                .flatMap(listener -> listener.beforeDelete(workspace))
                 .then();
     }
 }
