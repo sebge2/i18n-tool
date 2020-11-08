@@ -58,7 +58,9 @@
       "ICON_EXAMPLE": "Exemple : flag-icon-fr.",
       "VARIANTS_EXAMPLE": "Exemples : de-CH-1996.",
       "ERROR": {
-        "DELETE": "Erreur lors de la suppression de la langue."
+        "DELETE": "Erreur lors de la suppression de la langue.",
+        "SAVE": "Error lors de la sauvegarde de la langue.",
+        "UPDATE": "Error lors de la mise à jour de la langue."
       },
       "REGION_EXAMPLE": "Exemples : US, GB.",
       "ICON": "Icone",
@@ -70,7 +72,8 @@
         "STEPS": {
           "CREATION": "Création",
           "CONFIGURATION": "Configuration",
-          "SELECTION": "Sélection"
+          "SELECTION": "Sélection",
+          "INITIALIZATION": "Initialisation"
         },
         "STEP_INFO": {
           "GIT": {
@@ -78,16 +81,32 @@
             "NAME": "Nom"
           },
           "GITHUB": {
-            "REPOSITORY": "Nom"
+            "REPOSITORY": "Nom",
+            "USER_NAME": "Nom d'utilisateur"
           }
         },
         "STEP_TYPE": {
           "GIT": "Se connecter à Git",
           "GITHUB": "Se connecter à GitHub"
+        },
+        "STEP_CREATION": {
+          "CREATED": "Votre répertoire {name} a été créé!"
+        },
+        "STEP_INITIALIZATION": {
+          "INITIALIZED": "Votre répertoire {name} a été initialisé !"
         }
       },
       "VIEW_CARD": {
         "STATUS_LABEL": "Status :"
+      },
+      "CONFIG_CARD": {
+        "CARD_TITLE": "Configuration",
+        "LOCATION_LABEL": "Localisation",
+        "NAME_LABEL": "Nom"
+      },
+      "ERROR": {
+        "DELETE": "Error lors de la suppression du répertoire.",
+        "INITIALIZE": "Error lors de l'initialisation du répertoire."
       }
     },
     "USERS": {
