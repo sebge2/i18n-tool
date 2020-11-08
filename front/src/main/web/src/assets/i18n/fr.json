@@ -62,13 +62,28 @@
       },
       "REGION_EXAMPLE": "Exemples : US, GB.",
       "ICON": "Icone",
-      "LANGUAGE_EXAMPLE": "Exemple : en, fr."
+      "LANGUAGE_EXAMPLE": "Exemple : en, fr.",
+      "DISPLAY_NAME": "Nom affiché"
     },
     "REPOSITORIES": {
       "ADD_WIZARD": {
         "STEPS": {
           "CREATION": "Création",
-          "CONFIGURATION": "Configuration"
+          "CONFIGURATION": "Configuration",
+          "SELECTION": "Sélection"
+        },
+        "STEP_INFO": {
+          "GIT": {
+            "LOCATION": "Localisation",
+            "NAME": "Nom"
+          },
+          "GITHUB": {
+            "REPOSITORY": "Nom"
+          }
+        },
+        "STEP_TYPE": {
+          "GIT": "Se connecter à Git",
+          "GITHUB": "Se connecter à GitHub"
         }
       },
       "VIEW_CARD": {
