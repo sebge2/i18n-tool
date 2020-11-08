@@ -142,13 +142,15 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
                                                     }
                                                 })
                                 )
-                );
-    }
+                )
+                .flatMap(workspace -> {
+                    workspace.setLastSynchronization(Instant.now());
 
-    @Override
-    public Mono<WorkspaceEntity> publish(String workspaceId, String message) throws ResourceNotFoundException, RepositoryException {
-        return publish(WorkspacesPublishRequestDto.builder().workspace(workspaceId).message(message).build())
-                .next();
+                    return listener
+                            .afterSynchronization(workspace)
+                            .then(Mono.defer(() -> update(workspace)));
+                })
+                ;
     }
 
     @Override
@@ -195,9 +197,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
                 .then(
                         repository
                                 .save(workspace)
-                                .flatMap(w ->
-                                        listener.afterUpdate(w).thenReturn(w)
-                                )
+                                .flatMap(wk -> listener.afterUpdate(wk).thenReturn(wk))
                 );
     }
 
@@ -268,7 +268,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
 
                         return delete(matchingWorkspace.getId()).then(Mono.empty());
                     } else {
-                        logger.info("Synchronize, the branch for the workspace [{}] alias [{}] is still there, don't touch.",
+                        logger.info("Synchronize, the branch for the workspace [{}] alias [{}] is still there, update it.",
                                 matchingWorkspace.getBranch(), matchingWorkspace.getId());
 
                         return synchronize(matchingWorkspace.getId());

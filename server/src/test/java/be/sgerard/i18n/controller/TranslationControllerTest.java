@@ -406,7 +406,8 @@ public class TranslationControllerTest extends AbstractControllerTest {
                 .forRepositoryHint("my-repo")
                 .forWorkspaceName("master")
                 .translations()
-                .findBundlePageRowOrDie("validation.repository.name-not-unique")
+                .findBundleKeyOrDie("validation.repository.name-not-unique")
+                .get()
                 .getId();
 
         final String localeId = locale.findRegisteredLocale(Locale.ENGLISH).getId();
@@ -446,7 +447,8 @@ public class TranslationControllerTest extends AbstractControllerTest {
                 .forRepositoryHint("my-repo")
                 .forWorkspaceName("master")
                 .translations()
-                .findBundlePageRowOrDie("validation.repository.name-not-unique")
+                .findBundleKeyOrDie("validation.repository.name-not-unique")
+                .get()
                 .getId();
 
         final String englishLocaleId = locale.findRegisteredLocale(Locale.ENGLISH).getId();
