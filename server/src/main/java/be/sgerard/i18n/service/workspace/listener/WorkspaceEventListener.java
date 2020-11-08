@@ -60,4 +60,9 @@ public class WorkspaceEventListener implements WorkspaceListener {
         return dtoEnricher.mapAndEnrich(workspace)
                 .flatMap(workspaceDto -> eventService.broadcastEvent(UPDATED_WORKSPACE, workspaceDto));
     }
+
+    @Override
+    public Mono<Void> afterSynchronization(WorkspaceEntity workspace) {
+        return Mono.empty(); // TODO
+    }
 }

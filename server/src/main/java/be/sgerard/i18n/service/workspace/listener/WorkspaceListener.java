@@ -54,6 +54,13 @@ public interface WorkspaceListener {
     }
 
     /**
+     * Performs an action after the synchronization of the specified workspace.
+     */
+    default Mono<Void> afterSynchronization(WorkspaceEntity workspace)  {
+        return Mono.empty();
+    }
+
+    /**
      * Performs an action before the deletion of the specified workspace.
      */
     default Mono<Void> beforeDelete(WorkspaceEntity workspace) {

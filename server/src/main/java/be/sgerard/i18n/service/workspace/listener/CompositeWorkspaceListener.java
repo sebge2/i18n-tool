@@ -76,6 +76,15 @@ public class CompositeWorkspaceListener implements WorkspaceListener {
     }
 
     @Override
+    public Mono<Void> afterSynchronization(WorkspaceEntity workspace) {
+        return Flux
+                .fromIterable(listeners)
+                .filter(listener -> listener.support(workspace))
+                .flatMap(listener -> listener.afterSynchronization(workspace))
+                .then();
+    }
+
+    @Override
     public Mono<Void> beforeDelete(WorkspaceEntity workspace) {
         return Flux
                 .fromIterable(listeners)
