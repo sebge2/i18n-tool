@@ -1,6 +1,7 @@
 package be.sgerard.test.i18n.helper;
 
 import be.sgerard.i18n.model.repository.dto.GitHubRepositoryCreationDto;
+import be.sgerard.i18n.model.repository.dto.GitHubRepositoryDto;
 import be.sgerard.i18n.model.repository.dto.GitRepositoryCreationDto;
 import be.sgerard.i18n.service.repository.git.GitRepositoryApi;
 import be.sgerard.i18n.service.repository.git.GitRepositoryApiProvider;
@@ -57,9 +58,12 @@ public class GitRepositoryMockTestHelper implements GitRepositoryApiProvider {
     public GitRepositoryMock getRepo(GitHubRepositoryCreationDto creationDto) {
         return findRepoByUriOrDie(createGitHubUrl(creationDto.getUsername(), creationDto.getRepository()));
     }
-
     public GitRepositoryMock getRepo(GitRepositoryCreationDto creationDto) {
         return findRepoByUriOrDie(URI.create(creationDto.getLocation()));
+    }
+
+    public GitRepositoryMock getRepo(GitHubRepositoryDto repository) {
+        return findRepoByUriOrDie(createGitHubUrl(repository.getUsername(), repository.getRepository()));
     }
 
     private Optional<GitRepositoryMock> findRepoByUri(URI remoteUri) {

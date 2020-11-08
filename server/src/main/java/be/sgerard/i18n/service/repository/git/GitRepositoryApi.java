@@ -143,6 +143,11 @@ public interface GitRepositoryApi extends RepositoryApi {
      */
     GitRepositoryApi delete() throws RepositoryException;
 
+    /**
+     * Merges the specified branch into the current.
+     */
+    GitRepositoryApi merge(String branch) throws RepositoryException;
+
     @Override
     void close();
 

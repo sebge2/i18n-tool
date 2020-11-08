@@ -239,6 +239,31 @@ public class DefaultGitRepositoryApi extends BaseGitRepositoryApi {
     }
 
     @Override
+    public GitRepositoryApi merge(String branch) throws RepositoryException {
+        try {
+            final Git git = openGit();
+
+            resetHardHead();
+
+            final MergeResult result = git
+                    .merge()
+                    .setFastForward(MergeCommand.FastForwardMode.FF)
+                    .include(git.getRepository().resolve(branch))
+                    .call();
+
+            if (!result.getMergeStatus().isSuccessful()) {
+                throw RepositoryException.onBranchMerging(branch, null);
+            }
+
+            return this;
+        } catch (RepositoryException e) {
+            throw e;
+        } catch (Exception e) {
+            throw RepositoryException.onBranchMerging(branch, e);
+        }
+    }
+
+    @Override
     protected void doInit() throws GitAPIException {
         Git.cloneRepository()
                 .setCredentialsProvider(configuration.toCredentialsProvider().orElse(null))

@@ -17,9 +17,11 @@ import java.util.Optional;
 public class GitHubRepositoryMockTestHelper {
 
     private final GitHubClientMock gitHubClient;
+    private final GitRepositoryMockTestHelper gitRepositoryHelper;
 
-    public GitHubRepositoryMockTestHelper(GitHubClientMock gitHubClient) {
+    public GitHubRepositoryMockTestHelper(GitHubClientMock gitHubClient, GitRepositoryMockTestHelper gitRepositoryHelper) {
         this.gitHubClient = gitHubClient;
+        this.gitRepositoryHelper = gitRepositoryHelper;
     }
 
     StepRepository forRepository(GitHubRepositoryDto repositoryDto) {
@@ -37,7 +39,7 @@ public class GitHubRepositoryMockTestHelper {
         public Optional<StepPullRequest> findPullRequestForBranch(String targetBranch) {
             return gitHubClient
                     .findAllNonBlocking().stream()
-                    .filter(request -> Objects.equals(repositoryDto.getId(), request.getRepositoryName()))
+                    .filter(request -> Objects.equals(repositoryDto.getName(), request.getRepositoryName()))
                     .filter(request -> Objects.equals(targetBranch, request.getTargetBranch()))
                     .findFirst()
                     .map(request -> new StepPullRequest(repositoryDto, request, gitHubClient));
@@ -60,11 +62,13 @@ public class GitHubRepositoryMockTestHelper {
         private final GitHubPullRequestDto pullRequest;
         private final GitHubRepositoryDto repositoryDto;
         private final GitHubClientMock gitHubClient;
+        private final GitRepositoryMock repositoryMock;
 
         public StepPullRequest(GitHubRepositoryDto repositoryDto, GitHubPullRequestDto pullRequest, GitHubClientMock gitHubClient) {
             this.pullRequest = pullRequest;
             this.repositoryDto = repositoryDto;
             this.gitHubClient = gitHubClient;
+            this.repositoryMock = gitRepositoryHelper.getRepo(repositoryDto);
         }
 
         public StepRepository and() {
@@ -78,6 +82,8 @@ public class GitHubRepositoryMockTestHelper {
         @SuppressWarnings("UnusedReturnValue")
         public StepPullRequest close() {
             gitHubClient.updatePullRequestStatus(repositoryDto.getId(), pullRequest.getTargetBranch(), GitHubPullRequestStatus.CLOSED);
+
+            repositoryMock.mergeTo(pullRequest.getCurrentBranch(), pullRequest.getTargetBranch());
 
             return this;
         }

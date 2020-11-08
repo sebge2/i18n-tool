@@ -167,6 +167,16 @@ public class GitRepositoryMock {
         return this;
     }
 
+    public GitRepositoryMock mergeTo(String currentBranch, String targetBranch) {
+        try (GitRepositoryApi api = createApi()) {
+            api
+                    .checkout(targetBranch)
+                    .merge(currentBranch);
+        }
+
+        return this;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
