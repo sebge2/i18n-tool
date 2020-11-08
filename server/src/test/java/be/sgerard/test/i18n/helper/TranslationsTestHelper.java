@@ -226,8 +226,6 @@ public class TranslationsTestHelper {
                     .exchange()
                     .expectStatus().isOk();
 
-            System.out.println(row.getBundleKeyId() + " " + translationLocale.getId());
-
             return this;
         }
     }
