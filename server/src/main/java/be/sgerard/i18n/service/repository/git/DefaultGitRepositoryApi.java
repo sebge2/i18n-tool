@@ -145,6 +145,22 @@ public class DefaultGitRepositoryApi extends BaseGitRepositoryApi {
     }
 
     @Override
+    public GitRepositoryApi removeFile(File file) throws RepositoryException {
+        try {
+            final Git git = openGit();
+
+            String fileName = file.toString();
+            fileName = fileName.startsWith("/") ? fileName.substring(1) : fileName;
+
+            git.rm().addFilepattern(fileName).call();
+
+            return this;
+        } catch (Exception e) {
+            throw RepositoryException.onFileDeletion(file, e);
+        }
+    }
+
+    @Override
     public GitRepositoryApi pull() throws RepositoryException {
         try {
             final Git git = openGit();

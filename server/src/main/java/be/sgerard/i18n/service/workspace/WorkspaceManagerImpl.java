@@ -149,8 +149,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
                     return listener
                             .afterSynchronization(workspace)
                             .then(Mono.defer(() -> update(workspace)));
-                })
-                ;
+                });
     }
 
     @Override

@@ -521,6 +521,44 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
         @Test
         @CleanupDatabase
         @WithJaneDoeAdminUser
+        public void synchronizeInitializedDeletedBundleFile() {
+            final GitHubRepositoryCreationDto creationDto = i18nToolRepositoryCreationDto();
+
+            try {
+                gitRepo.getRepo(creationDto).createBranches("release/2020.08");
+
+                final String workspace = repository.create(creationDto, GitHubRepositoryDto.class).hint("repo")
+                        .initialize()
+                        .workspaces()
+                        .workspaceForBranch("release/2020.08")
+                        .initialize().get().getId();
+
+                // once initialized, the remote content is updated, a bundle file is removed
+                gitRepo.getRepo(creationDto)
+                        .branch("release/2020.08")
+                        .file("/server/src/main/resources/i18n/validation_en.properties").remove().and()
+                        .file("/server/src/main/resources/i18n/validation_fr.properties").remove();
+
+                webClient
+                        .post()
+                        .uri("/api/repository/workspace/{id}/do?action=SYNCHRONIZE", workspace)
+                        .exchange()
+                        .expectStatus().isOk()
+                        .expectBody();
+
+                translations
+                        .forRepositoryHint("repo")
+                        .forWorkspaceName("release/2020.08")
+                        .translations()
+                        .unexpect("validation.repository.name-not-unique");
+            } finally {
+                gitRepo.getRepo(creationDto).deleteBranches("release/2020.08");
+            }
+        }
+
+        @Test
+        @CleanupDatabase
+        @WithJaneDoeAdminUser
         public void initialize() {
             final WorkspaceDto masterWorkspace = repository
                     .create(i18nToolRepositoryCreationDto())

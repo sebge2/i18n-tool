@@ -18,10 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -350,6 +347,18 @@ public class GitRepositoryMock {
                 } catch (IOException e) {
                     throw new IllegalStateException("Error while writing file.", e);
                 }
+            }
+
+            return this;
+        }
+
+        public StepBranchFile remove() {
+            try (GitRepositoryApi api = createApi()) {
+
+                api
+                        .checkout(branch)
+                        .removeFile(file)
+                        .commitAll("remove file in test");
             }
 
             return this;

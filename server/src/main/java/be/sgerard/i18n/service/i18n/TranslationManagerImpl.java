@@ -79,9 +79,13 @@ public class TranslationManagerImpl implements TranslationManager {
 
     @Override
     public Flux<BundleFileEntity> readTranslations(WorkspaceEntity workspace, TranslationRepositoryReadApi api) {
-        // TODO what to do with bundle files that do not exist any more
         return createWalkingContext(workspace, api)
-                .flatMapMany(context -> walker.walk((bundleFile, handler) -> onBundleFound(workspace, bundleFile, handler, context), context));
+                .flatMapMany(context -> walker.walk((bundleFile, handler) -> onBundleFound(workspace, bundleFile, handler, context), context))
+                .collectList()
+                .flatMapMany(bundleFiles ->
+                        removeOldBundleFiles(bundleFiles, workspace)
+                                .thenMany(Flux.fromIterable(bundleFiles))
+                );
     }
 
     @Override
@@ -317,6 +321,31 @@ public class TranslationManagerImpl implements TranslationManager {
                                 .just(bundleKeys)
                                 .flatMapMany(BundleWalkingKeys::stream)
                                 .sort(Comparator.comparing(BundleKeyEntity::getKey))
+                );
+    }
+
+    /**
+     * Removes {@link BundleFileEntity bundle files} that are present in the specified {@link WorkspaceEntity workspace},
+     * but not in the specified list and returns them.
+     * <p>
+     * All the translations associated to those files are removed.
+     */
+    private Flux<BundleFileEntity> removeOldBundleFiles(List<BundleFileEntity> bundleFiles, WorkspaceEntity workspace) {
+        final Collection<BundleFileEntity> removedFiles = new ArrayList<>(workspace.getFiles());
+        removedFiles.removeAll(bundleFiles);
+
+        workspace.getFiles().retainAll(bundleFiles);
+
+        return Flux
+                .fromIterable(removedFiles)
+                .doOnNext(removedBundleFile -> {
+                    logger.info("The bundle file located in [{}] named [{}] with {} file(s) is no more present remotely, remove it.",
+                            removedBundleFile.getLocation(), removedBundleFile.getName(), removedBundleFile.getFiles().size());
+                })
+                .flatMap(removedBundleFile ->
+                        translationRepository
+                                .deleteByBundleFile(removedBundleFile.getId())
+                                .thenReturn(removedBundleFile)
                 );
     }
 

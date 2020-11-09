@@ -124,6 +124,11 @@ public interface GitRepositoryApi extends RepositoryApi {
     GitRepositoryApi revert(File file) throws RepositoryException;
 
     /**
+     * Removes the specified file.
+     */
+    GitRepositoryApi removeFile(File file) throws RepositoryException;
+
+    /**
      * Commits all the current changes using the specified message.
      */
     GitRepositoryApi commitAll(String message) throws RepositoryException;
