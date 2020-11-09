@@ -101,9 +101,8 @@ public class WorkspaceController {
             summary = "Executes an action on workspaces of a particular repository.",
             parameters = @Parameter(name = "action", in = ParameterIn.QUERY, schema = @Schema(allowableValues = {"SYNCHRONIZE"}))
     )
-    @PreAuthorize("hasRole('ADMIN')")
     public Flux<WorkspaceDto> synchronizeRepository(@PathVariable String repositoryId) {
-        return workspaceManager.synchronize(repositoryId)
+        return workspaceManager.synchronizeAll(repositoryId)
                 .flatMapSequential(dtoEnricher::mapAndEnrich);
     }
 
@@ -114,11 +113,24 @@ public class WorkspaceController {
     @Operation(
             hidden = true,
             summary = "Initializes the specified workspace.",
-            parameters = @Parameter(name = "action", in = ParameterIn.QUERY, schema = @Schema(allowableValues = {"INITIALIZE", "PUBLISH"}))
+            parameters = @Parameter(name = "action", in = ParameterIn.QUERY, schema = @Schema(allowableValues = {"INITIALIZE", "PUBLISH", "SYNCHRONIZE"}))
     )
-    @PreAuthorize("hasRole('ADMIN')")
     public Mono<WorkspaceDto> initialize(@PathVariable String id) {
         return workspaceManager.initialize(id)
+                .flatMap(dtoEnricher::mapAndEnrich);
+    }
+
+    /**
+     * Synchronizes the {@link WorkspaceDto workspace} having the specified id and returns it.
+     */
+    @PostMapping(path = "/repository/workspace/{id}/do", params = "action=SYNCHRONIZE")
+    @Operation(
+            hidden = true,
+            summary = "Synchronizes the specified workspace.",
+            parameters = @Parameter(name = "action", in = ParameterIn.QUERY, schema = @Schema(allowableValues = {"INITIALIZE", "PUBLISH", "SYNCHRONIZE"}))
+    )
+    public Mono<WorkspaceDto> synchronize(@PathVariable String id) {
+        return workspaceManager.synchronize(id)
                 .flatMap(dtoEnricher::mapAndEnrich);
     }
 
@@ -130,7 +142,7 @@ public class WorkspaceController {
     @Operation(
             operationId = "executeAction",
             summary = "Publishes all modifications made on the specified workspace.",
-            parameters = @Parameter(name = "action", in = ParameterIn.QUERY, schema = @Schema(allowableValues = {"INITIALIZE", "PUBLISH"}))
+            parameters = @Parameter(name = "action", in = ParameterIn.QUERY, schema = @Schema(allowableValues = {"INITIALIZE", "PUBLISH", "SYNCHRONIZE"}))
     )
     public Mono<WorkspaceDto> publish(@PathVariable String id,
                                       @Parameter(description = "Message required when publishing, it describe the changes.") @RequestParam(name = "message") String message) {
@@ -139,7 +151,9 @@ public class WorkspaceController {
             throw BadRequestException.missingReviewMessage();
         }
 
-        return workspaceManager.publish(id, message)
+        return workspaceManager
+                .publish(WorkspacesPublishRequestDto.builder().workspace(id).message(message).build())
+                .next()
                 .flatMap(dtoEnricher::mapAndEnrich);
     }
 

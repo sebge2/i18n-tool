@@ -67,17 +67,13 @@ public class TranslationsTestHelper {
             return new StepWorkspacesTranslationsPage(workspace, loadTranslations(workspace));
         }
 
-        public void updateTranslation(String bundleKey, Locale locale, String updatedValue) {
-            final String bundleKeyId = translations().findBundlePageRowOrDie(bundleKey).getId();
-            final String localeId = localeTestHelper.findRegisteredLocale(locale).getId();
+        public StepWorkspace updateTranslation(String bundleKey, Locale locale, String updatedValue) {
+            translations()
+                    .findBundleKeyOrDie(bundleKey)
+                    .findTranslationOrDie(locale)
+                    .updateTranslation(updatedValue);
 
-            webClient
-                    .put()
-                    .uri("/api/translation/bundle-key/{bundleKeyId}/locale/{localeId}", bundleKeyId, localeId)
-                    .contentType(MediaType.TEXT_PLAIN)
-                    .bodyValue(updatedValue)
-                    .exchange()
-                    .expectStatus().isOk();
+            return this;
         }
 
         private TranslationsPageDto loadTranslations(WorkspaceDto workspace) {
@@ -116,38 +112,27 @@ public class TranslationsTestHelper {
             return new StepWorkspace(workspace);
         }
 
-        public Optional<TranslationsPageRowDto> findBunglePageRow(String bundleKey) {
+        public Optional<StepTranslationsPageRow> findBundleKey(String bundleKey) {
             return page.getRows().stream()
                     .filter(row -> Objects.equals(row.getBundleKey(), bundleKey))
-                    .findFirst();
+                    .findFirst()
+                    .map(row -> new StepTranslationsPageRow(workspace, page, row));
         }
 
-        public TranslationsPageRowDto findBundlePageRowOrDie(String bundleKey) {
-            return findBunglePageRow(bundleKey)
+        public StepTranslationsPageRow findBundleKeyOrDie(String bundleKey) {
+            return findBundleKey(bundleKey)
                     .orElseThrow(() -> new AssertionFailedError("There is no bundle with key [" + bundleKey + "]."));
         }
 
-        public Optional<TranslationsPageTranslationDto> findTranslation(String key, Locale locale) {
-            final TranslationLocaleDto translationLocaleDto = localeTestHelper.findRegisteredLocale(locale);
-
-            return findBunglePageRow(key)
-                    .map(row -> row.getTranslations().get(page.getLocales().indexOf(translationLocaleDto.getId())));
-        }
-
-        public TranslationsPageTranslationDto findTranslationOrDie(String key, Locale locale) {
-            return findTranslation(key, locale)
-                    .orElseThrow(() -> new AssertionFailedError("There is no translation with key [" + key + "] in locale [" + locale + "]."));
-        }
-
-        public StepWorkspacesTranslationsPage expectTranslation(String key, Locale locale, String expected) {
-            final Optional<String> actual = findTranslation(key, locale)
-                    .flatMap(translation -> translation.getUpdatedValue().or(translation::getOriginalValue));
-
-            assertThat(actual).contains(expected);
+        public StepWorkspacesTranslationsPage expectTranslation(String bundleKey, Locale locale, String expected) {
+            findBundleKeyOrDie(bundleKey)
+                    .findTranslationOrDie(locale)
+                    .expectValue(expected);
 
             return this;
         }
 
+        @SuppressWarnings("UnusedReturnValue")
         public StepWorkspacesTranslationsPage expectNoModification() {
             final List<String> updatedTranslations = page.getRows().stream()
                     .flatMap(row -> row.getTranslations().stream())
@@ -157,6 +142,98 @@ public class TranslationsTestHelper {
                     .collect(toList());
 
             assertThat(updatedTranslations).isEmpty();
+
+            return this;
+        }
+
+        @SuppressWarnings("UnusedReturnValue")
+        public StepWorkspacesTranslationsPage unexpect(String bundleKey) {
+            if(findBundleKey(bundleKey).isPresent()){
+                throw new AssertionFailedError("The bundle key [" + bundleKey + "] is not expected");
+            }
+
+            return this;
+        }
+    }
+
+    public class StepTranslationsPageRow {
+
+        private final WorkspaceDto workspace;
+        private final TranslationsPageDto page;
+        private final TranslationsPageRowDto row;
+
+        public StepTranslationsPageRow(WorkspaceDto workspace, TranslationsPageDto page, TranslationsPageRowDto row) {
+            this.workspace = workspace;
+            this.page = page;
+            this.row = row;
+        }
+
+        public TranslationsPageRowDto get() {
+            return this.row;
+        }
+
+        public StepWorkspacesTranslationsPage and() {
+            return new StepWorkspacesTranslationsPage(workspace, page);
+        }
+
+        public Optional<StepTranslationsPageTranslation> findTranslation(Locale locale) {
+            final TranslationLocaleDto translationLocaleDto = localeTestHelper.findRegisteredLocale(locale);
+
+            return Optional
+                    .ofNullable(row.getTranslations().get(page.getLocales().indexOf(translationLocaleDto.getId())))
+                    .map(translation -> new StepTranslationsPageTranslation(workspace, page, row, translation, translationLocaleDto));
+        }
+
+        public StepTranslationsPageTranslation findTranslationOrDie(Locale locale) {
+            return findTranslation(locale)
+                    .orElseThrow(() -> new AssertionFailedError("There is no translation for locale [" + locale + "]."));
+        }
+    }
+
+    public class StepTranslationsPageTranslation {
+
+        private final WorkspaceDto workspace;
+        private final TranslationsPageDto page;
+        private final TranslationsPageRowDto row;
+        private final TranslationsPageTranslationDto translation;
+        private final TranslationLocaleDto translationLocale;
+
+        public StepTranslationsPageTranslation(WorkspaceDto workspace,
+                                               TranslationsPageDto page,
+                                               TranslationsPageRowDto row,
+                                               TranslationsPageTranslationDto translation,
+                                               TranslationLocaleDto translationLocale) {
+            this.workspace = workspace;
+            this.page = page;
+            this.row = row;
+            this.translation = translation;
+            this.translationLocale = translationLocale;
+        }
+
+        public TranslationsPageTranslationDto get() {
+            return this.translation;
+        }
+
+        public StepTranslationsPageRow and() {
+            return new StepTranslationsPageRow(workspace, page, row);
+        }
+
+        @SuppressWarnings("UnusedReturnValue")
+        public StepTranslationsPageTranslation expectValue(String expected) {
+            assertThat(translation.getUpdatedValue().or(translation::getOriginalValue)).contains(expected);
+
+            return this;
+        }
+
+        @SuppressWarnings("UnusedReturnValue")
+        public StepTranslationsPageTranslation updateTranslation(String updatedValue) {
+            webClient
+                    .put()
+                    .uri("/api/translation/bundle-key/{bundleKeyId}/locale/{localeId}", row.getBundleKeyId(), translationLocale.getId())
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .bodyValue(updatedValue)
+                    .exchange()
+                    .expectStatus().isOk();
 
             return this;
         }

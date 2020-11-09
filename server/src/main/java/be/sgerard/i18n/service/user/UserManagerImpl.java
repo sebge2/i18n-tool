@@ -116,7 +116,7 @@ public class UserManagerImpl implements UserManager {
                 })
                 .flatMap(user ->
                         listener
-                                .onCreate(user)
+                                .afterCreate(user)
                                 .thenReturn(user)
                 );
     }
@@ -156,7 +156,7 @@ public class UserManagerImpl implements UserManager {
                 })
                 .flatMap(user ->
                         listener
-                                .onCreate(user)
+                                .afterCreate(user)
                                 .thenReturn(user)
                 );
     }
@@ -168,7 +168,7 @@ public class UserManagerImpl implements UserManager {
                 .save(user)
                 .flatMap(u ->
                         listener
-                                .onUpdate(u)
+                                .afterUpdate(u)
                                 .thenReturn(u)
                 );
     }
@@ -293,7 +293,7 @@ public class UserManagerImpl implements UserManager {
                                 )
                                 .flatMap(rep ->
                                         listener
-                                                .onDelete(rep)
+                                                .afterDelete(rep)
                                                 .thenReturn(rep)
                                 )
                 );

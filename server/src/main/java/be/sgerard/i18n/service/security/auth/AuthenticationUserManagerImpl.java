@@ -178,7 +178,7 @@ public class AuthenticationUserManagerImpl implements AuthenticationUserManager 
 //                .flatMap(sessionRepository::save) TODO
                 .then(
                         listener
-                                .onUpdate(authenticatedUser)
+                                .afterUpdate(authenticatedUser)
                                 .thenReturn(authenticatedUser)
                 );
     }
@@ -190,7 +190,7 @@ public class AuthenticationUserManagerImpl implements AuthenticationUserManager 
         return findSession(authenticatedUser)
                 .flatMap(webSession -> sessionRepository.deleteById(webSession.getId()))
                 .then(
-                        listener.onDelete(authenticatedUser)
+                        listener.afterDelete(authenticatedUser)
                                 .thenReturn(authenticatedUser)
                 );
     }

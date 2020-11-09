@@ -6,6 +6,7 @@ import be.sgerard.i18n.model.i18n.TranslationsSearchRequest;
 import be.sgerard.i18n.model.i18n.dto.TranslationSearchCriterion;
 import be.sgerard.i18n.model.i18n.dto.TranslationUpdateDto;
 import be.sgerard.i18n.model.i18n.file.BundleWalkingContext;
+import be.sgerard.i18n.model.i18n.file.BundleWalkingKeys;
 import be.sgerard.i18n.model.i18n.file.ScannedBundleFile;
 import be.sgerard.i18n.model.i18n.file.ScannedBundleFileEntry;
 import be.sgerard.i18n.model.i18n.persistence.*;
@@ -19,6 +20,7 @@ import be.sgerard.i18n.service.i18n.file.BundleWalker;
 import be.sgerard.i18n.service.i18n.file.TranslationFileUtils;
 import be.sgerard.i18n.service.i18n.listener.TranslationsListener;
 import be.sgerard.i18n.service.repository.RepositoryManager;
+import be.sgerard.i18n.support.ReactiveUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,15 +28,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -61,6 +59,7 @@ public class TranslationManagerImpl implements TranslationManager {
     private final TranslationsListener listener;
     private final BundleWalker walker;
     private final List<BundleHandler> handlers;
+    private final TranslationsSyncStrategy syncStrategy;
 
     public TranslationManagerImpl(BundleKeyEntityRepository translationRepository,
                                   TranslationLocaleManager localeManager,
@@ -75,17 +74,21 @@ public class TranslationManagerImpl implements TranslationManager {
         this.listener = listener;
         this.walker = new BundleWalker(handlers);
         this.handlers = handlers;
+        this.syncStrategy = new DefaultTranslationsSyncStrategy(translationRepository);
     }
 
     @Override
-    @Transactional
     public Flux<BundleFileEntity> readTranslations(WorkspaceEntity workspace, TranslationRepositoryReadApi api) {
         return createWalkingContext(workspace, api)
-                .flatMapMany(context -> walker.walk((bundleFile, handler) -> onBundleFound(workspace, bundleFile, handler, context), context));
+                .flatMapMany(context -> walker.walk((bundleFile, handler) -> onBundleFound(workspace, bundleFile, handler, context), context))
+                .collectList()
+                .flatMapMany(bundleFiles ->
+                        removeOldBundleFiles(bundleFiles, workspace)
+                                .thenMany(Flux.fromIterable(bundleFiles))
+                );
     }
 
     @Override
-    @Transactional
     public Flux<BundleFileEntity> writeTranslations(WorkspaceEntity workspace, TranslationRepositoryWriteApi api) {
         return Flux
                 .fromIterable(workspace.getFiles())
@@ -106,7 +109,6 @@ public class TranslationManagerImpl implements TranslationManager {
     }
 
     @Override
-    @Transactional
     public Mono<BundleKeyTranslationEntity> updateTranslation(TranslationUpdateDto translationUpdate) throws ResourceNotFoundException {
         return updateTranslations(singletonList(translationUpdate))
                 .map(updatedTranslations -> {
@@ -119,7 +121,6 @@ public class TranslationManagerImpl implements TranslationManager {
     }
 
     @Override
-    @Transactional
     public Mono<List<BundleKeyTranslationEntity>> updateTranslations(List<TranslationUpdateDto> translations) throws ResourceNotFoundException {
         return listener
                 .beforeUpdate(translations)
@@ -190,45 +191,24 @@ public class TranslationManagerImpl implements TranslationManager {
     /**
      * Callback that registers all translations found on the specified {@link ScannedBundleFile bundle file}.
      */
-    private Mono<BundleFileEntity> onBundleFound(WorkspaceEntity workspaceEntity,
+    private Mono<BundleFileEntity> onBundleFound(WorkspaceEntity workspace,
                                                  ScannedBundleFile bundleFile,
                                                  BundleHandler handler,
                                                  BundleWalkingContext context) {
         logger.info("A bundle file has been found located in [{}] named [{}] with {} file(s).",
                 bundleFile.getLocationDirectory(), bundleFile.getName(), bundleFile.getFiles().size());
 
-        final BundleFileEntity bundleFileEntity = new BundleFileEntity(bundleFile);
-        workspaceEntity.addFile(bundleFileEntity);
-
-        final BundleKeys bundleKeys = new BundleKeys();
-
-        return Flux
-                .fromIterable(bundleFile.getFiles())
-                .map(ScannedBundleFileEntry::getLocale)
-                .flatMap(locale ->
-                        handler
-                                .scanTranslations(bundleFileEntity.toLocation(), locale, context)
-                                .index()
-                                .map(indexedTranslation ->
-                                        bundleKeys
-                                                .getOrCreate(workspaceEntity, bundleFileEntity, indexedTranslation.getT2().getKey())
-                                                .addTranslation(locale.getId(), indexedTranslation.getT1(), indexedTranslation.getT2().getValue())
-                                )
+        return ReactiveUtils
+                .combine(
+                        loadLocalTranslations(workspace, bundleFile),
+                        loadRemoteTranslations(workspace, bundleFile, handler, context),
+                        (fromFile, fromDb) -> fromFile.getKey().compareTo(fromDb.getKey())
                 )
-                .then(
-                        bundleKeys
-                                .stream()
-                                .flatMap(translationRepository::save)
-                                .then(Mono.defer(() -> {
-                                    bundleFileEntity.setNumberKeys(bundleKeys.bundleKeys.size());
-
-                                    logger.info("The bundle file located in [{}] named [{}] with {} file(s) contains {} translation(s).",
-                                            bundleFile.getLocationDirectory(), bundleFile.getName(), bundleFile.getFiles().size(), bundleFileEntity.getNumberKeys());
-
-                                    return Mono.just(bundleFileEntity);
-                                }))
-                );
+                .flatMap(syncStrategy::synchronizeLocalAndRemote)
+                .collectList()
+                .map(bundleKeys -> updateBundleFileStats(workspace, bundleFile, bundleKeys));
     }
+
 
     /**
      * Finds the {@link BundleKeyEntity bundle key} having the specified id.
@@ -262,22 +242,7 @@ public class TranslationManagerImpl implements TranslationManager {
         final String newUpdatedValue = update.getTranslation().map(TranslationFileUtils::mapToNullIfEmpty).orElse(null);
         final BundleKeyTranslationEntity translation = bundleKey.getTranslationOrCreate(localeId);
 
-        final String currentUpdatedValue =
-                translation.getModification().flatMap(BundleKeyTranslationModificationEntity::getUpdatedValue).orElse(null);
-
-        final String originalValue = translation.getOriginalValue().orElse(null);
-
-        if (newUpdatedValue != null) {
-            if (Objects.equals(newUpdatedValue, originalValue)) {
-                translation.setModification(null);
-            } else if (!Objects.equals(currentUpdatedValue, newUpdatedValue)) {
-                translation.setModification(new BundleKeyTranslationModificationEntity(newUpdatedValue, currentUser));
-            } else {
-                // nothing to do, the update match the previous update
-            }
-        } else {
-            translation.setModification(null);
-        }
+        translation.setModification(new BundleKeyTranslationModificationEntity(newUpdatedValue, currentUser));
 
         return bundleKey;
     }
@@ -307,35 +272,96 @@ public class TranslationManagerImpl implements TranslationManager {
     }
 
     /**
-     * Collection of {@link BundleKeyEntity bundle keys}.
+     * Loads all {@link BundleKeyEntity bundle keys} defined in the local database and sorts them by key.
      */
-    private static final class BundleKeys {
+    private Flux<BundleKeyEntity> loadLocalTranslations(WorkspaceEntity workspace,
+                                                        ScannedBundleFile bundleFile) {
+        final Optional<BundleFileEntity> bundleFileEntity = workspace.getBundleFile(bundleFile);
 
-        private final Map<String, BundleKeyEntity> bundleKeys = new HashMap<>();
-
-        public BundleKeys() {
+        if (bundleFileEntity.isEmpty()) {
+            return Flux.empty();
         }
 
-        /**
-         * Returns or creates if it does not exist, the {@link BundleKeyEntity bundle key} associated to the specified key.
-         */
-        public BundleKeyEntity getOrCreate(WorkspaceEntity workspace, BundleFileEntity bundleFile, String key) {
-            BundleKeyEntity bundleKey = bundleKeys.get(key);
+        return translationRepository
+                .search(
+                        TranslationsSearchRequest.builder()
+                                .workspace(workspace.getId())
+                                .bundleFile(bundleFileEntity.get().getId())
+                                .build()
+                )
+                .sort(Comparator.comparing(BundleKeyEntity::getKey));
+    }
 
-            if (bundleKey == null) {
-                bundleKey = new BundleKeyEntity(workspace.getId(), bundleFile.getId(), key);
+    /**
+     * Loads all {@link BundleKeyEntity bundle keys} from the specified {@link ScannedBundleFile bundle file} and sorts them by key.
+     */
+    private Flux<BundleKeyEntity> loadRemoteTranslations(WorkspaceEntity workspace,
+                                                         ScannedBundleFile bundleFile,
+                                                         BundleHandler handler,
+                                                         BundleWalkingContext context) {
+        final BundleFileEntity bundleFileEntity = workspace.getOrCreateBundleFile(bundleFile);
 
-                bundleKeys.put(key, bundleKey);
-            }
+        final BundleWalkingKeys bundleKeys = new BundleWalkingKeys();
 
-            return bundleKey;
-        }
+        return Flux
+                .fromIterable(bundleFile.getFiles())
+                .map(ScannedBundleFileEntry::getLocale)
+                .flatMap(locale ->
+                        handler
+                                .scanTranslations(bundleFileEntity.toLocation(), locale, context)
+                                .index()
+                                .map(indexedTranslation ->
+                                        bundleKeys
+                                                .getOrCreate(workspace, bundleFileEntity, indexedTranslation.getT2().getKey())
+                                                .addTranslation(locale.getId(), indexedTranslation.getT1(), indexedTranslation.getT2().getValue())
+                                )
+                )
+                .thenMany(
+                        Mono
+                                .just(bundleKeys)
+                                .flatMapMany(BundleWalkingKeys::stream)
+                                .sort(Comparator.comparing(BundleKeyEntity::getKey))
+                );
+    }
 
-        /**
-         * Streams all {@link BundleKeyEntity bundle keys}.
-         */
-        public Flux<BundleKeyEntity> stream() {
-            return Flux.fromIterable(bundleKeys.values());
-        }
+    /**
+     * Removes {@link BundleFileEntity bundle files} that are present in the specified {@link WorkspaceEntity workspace},
+     * but not in the specified list and returns them.
+     * <p>
+     * All the translations associated to those files are removed.
+     */
+    private Flux<BundleFileEntity> removeOldBundleFiles(List<BundleFileEntity> bundleFiles, WorkspaceEntity workspace) {
+        final Collection<BundleFileEntity> removedFiles = new ArrayList<>(workspace.getFiles());
+        removedFiles.removeAll(bundleFiles);
+
+        workspace.getFiles().retainAll(bundleFiles);
+
+        return Flux
+                .fromIterable(removedFiles)
+                .doOnNext(removedBundleFile -> {
+                    logger.info("The bundle file located in [{}] named [{}] with {} file(s) is no more present remotely, remove it.",
+                            removedBundleFile.getLocation(), removedBundleFile.getName(), removedBundleFile.getFiles().size());
+                })
+                .flatMap(removedBundleFile ->
+                        translationRepository
+                                .deleteByBundleFile(removedBundleFile.getId())
+                                .thenReturn(removedBundleFile)
+                );
+    }
+
+    /**
+     * Updates statistics of the specified {@link BundleFileEntity bundle file} based on what has been loaded.
+     */
+    private BundleFileEntity updateBundleFileStats(WorkspaceEntity workspaceEntity,
+                                                   ScannedBundleFile bundleFile,
+                                                   List<BundleKeyEntity> bundleKeys) {
+        final BundleFileEntity bundleFileEntity = workspaceEntity.getOrCreateBundleFile(bundleFile);
+
+        bundleFileEntity.setNumberKeys(bundleKeys.size());
+
+        logger.info("The bundle file located in [{}] named [{}] with {} file(s) contains {} translation(s).",
+                bundleFile.getLocationDirectory(), bundleFile.getName(), bundleFile.getFiles().size(), bundleFileEntity.getNumberKeys());
+
+        return bundleFileEntity;
     }
 }

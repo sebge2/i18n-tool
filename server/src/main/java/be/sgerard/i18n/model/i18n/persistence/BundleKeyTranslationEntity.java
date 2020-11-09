@@ -5,6 +5,7 @@ import lombok.Setter;
 import org.springframework.data.annotation.PersistenceConstructor;
 
 import javax.validation.constraints.NotNull;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -64,10 +65,50 @@ public class BundleKeyTranslationEntity {
     }
 
     /**
-     * Returns {@link BundleKeyTranslationModificationEntity modification} applied to this translation.
+     * @see #originalValue
+     */
+    public BundleKeyTranslationEntity setOriginalValue(String originalValue) {
+        final String currentUpdatedValue = this.getModification().flatMap(BundleKeyTranslationModificationEntity::getUpdatedValue).orElse(null);
+
+        if (Objects.equals(originalValue, currentUpdatedValue)) {
+            this.originalValue = originalValue;
+            this.modification = null;
+        } else {
+            this.originalValue = originalValue;
+        }
+
+        return this;
+    }
+
+    /**
+     * @see #modification
      */
     public Optional<BundleKeyTranslationModificationEntity> getModification() {
         return Optional.ofNullable(modification);
+    }
+
+    /**
+     * @see #modification
+     */
+    public BundleKeyTranslationEntity setModification(BundleKeyTranslationModificationEntity modification) {
+        final String currentUpdatedValue = this.getModification().flatMap(BundleKeyTranslationModificationEntity::getUpdatedValue).orElse(null);
+        final String newUpdatedValue = modification.getUpdatedValue().orElse(null);
+
+        if (newUpdatedValue != null) {
+            if (Objects.equals(newUpdatedValue, originalValue)) {
+                this.modification = null;
+            } else {
+                if (!Objects.equals(currentUpdatedValue, newUpdatedValue)) {
+                    this.modification = modification;
+                } else {
+                    // nothing to do, the update match the previous update
+                }
+            }
+        } else {
+            this.modification = null;
+        }
+
+        return this;
     }
 
     /**

@@ -145,6 +145,22 @@ public class DefaultGitRepositoryApi extends BaseGitRepositoryApi {
     }
 
     @Override
+    public GitRepositoryApi removeFile(File file) throws RepositoryException {
+        try {
+            final Git git = openGit();
+
+            String fileName = file.toString();
+            fileName = fileName.startsWith("/") ? fileName.substring(1) : fileName;
+
+            git.rm().addFilepattern(fileName).call();
+
+            return this;
+        } catch (Exception e) {
+            throw RepositoryException.onFileDeletion(file, e);
+        }
+    }
+
+    @Override
     public GitRepositoryApi pull() throws RepositoryException {
         try {
             final Git git = openGit();
@@ -235,6 +251,31 @@ public class DefaultGitRepositoryApi extends BaseGitRepositoryApi {
             return this;
         } catch (Exception e) {
             throw RepositoryException.onRevert(e);
+        }
+    }
+
+    @Override
+    public GitRepositoryApi merge(String branch) throws RepositoryException {
+        try {
+            final Git git = openGit();
+
+            resetHardHead();
+
+            final MergeResult result = git
+                    .merge()
+                    .setFastForward(MergeCommand.FastForwardMode.FF)
+                    .include(git.getRepository().resolve(branch))
+                    .call();
+
+            if (!result.getMergeStatus().isSuccessful()) {
+                throw RepositoryException.onBranchMerging(branch, null);
+            }
+
+            return this;
+        } catch (RepositoryException e) {
+            throw e;
+        } catch (Exception e) {
+            throw RepositoryException.onBranchMerging(branch, e);
         }
     }
 

@@ -75,6 +75,14 @@ public class RepositoryException extends RuntimeException implements LocalizedMe
         return new RepositoryException("Error while writing [" + file + "].", "RepositoryException.file-writing.message", cause, file);
     }
 
+    public static RepositoryException onBranchMerging(String branch, Throwable cause) {
+        return new RepositoryException("Error while merging [" + branch + "].", "RepositoryException.branch-merging.message", cause, branch);
+    }
+
+    public static RepositoryException onFileDeletion(File file, Throwable cause) {
+        return new RepositoryException("Error while deleting file [" + file + "].", "RepositoryException.file-deletion.message", cause, file);
+    }
+
     private final String messageKey;
     private final Object[] parameters;
 

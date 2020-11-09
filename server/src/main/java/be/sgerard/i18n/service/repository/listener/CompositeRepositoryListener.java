@@ -33,20 +33,20 @@ public class CompositeRepositoryListener implements RepositoryListener<Repositor
     }
 
     @Override
-    public Mono<Void> onCreate(RepositoryEntity repository) {
+    public Mono<Void> afterCreate(RepositoryEntity repository) {
         return Flux
                 .fromIterable(listeners)
                 .filter(listener -> listener.support(repository))
-                .flatMap(listener -> listener.onCreate(repository))
+                .flatMap(listener -> listener.afterCreate(repository))
                 .then();
     }
 
     @Override
-    public Mono<Void> onInitialize(RepositoryEntity repository) {
+    public Mono<Void> afterInitialize(RepositoryEntity repository) {
         return Flux
                 .fromIterable(listeners)
                 .filter(listener -> listener.support(repository))
-                .flatMap(listener -> listener.onInitialize(repository))
+                .flatMap(listener -> listener.afterInitialize(repository))
                 .then();
     }
 
@@ -60,20 +60,20 @@ public class CompositeRepositoryListener implements RepositoryListener<Repositor
     }
 
     @Override
-    public Mono<Void> onUpdate(RepositoryPatchDto patch, RepositoryEntity repository) {
+    public Mono<Void> afterUpdate(RepositoryPatchDto patch, RepositoryEntity repository) {
         return Flux
                 .fromIterable(listeners)
                 .filter(listener -> listener.support(repository))
-                .flatMap(listener -> listener.onUpdate(patch, repository))
+                .flatMap(listener -> listener.afterUpdate(patch, repository))
                 .then();
     }
 
     @Override
-    public Mono<Void> onDelete(RepositoryEntity repository) {
+    public Mono<Void> beforeDelete(RepositoryEntity repository) {
         return Flux
                 .fromIterable(listeners)
                 .filter(listener -> listener.support(repository))
-                .flatMap(listener -> listener.onDelete(repository))
+                .flatMap(listener -> listener.beforeDelete(repository))
                 .then();
     }
 }

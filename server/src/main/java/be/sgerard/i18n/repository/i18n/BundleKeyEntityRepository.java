@@ -71,4 +71,9 @@ public interface BundleKeyEntityRepository extends ReactiveMongoRepository<Bundl
      * Removes all translations of a workspace.
      */
     Mono<Void> deleteByWorkspace(String workspaceId);
+
+    /**
+     * Removes all translations of a bundle file.
+     */
+    Mono<Void> deleteByBundleFile(String bundleFileId);
 }

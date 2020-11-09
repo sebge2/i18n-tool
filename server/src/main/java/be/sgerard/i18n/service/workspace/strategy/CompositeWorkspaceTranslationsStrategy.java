@@ -4,6 +4,7 @@ import be.sgerard.i18n.model.repository.persistence.RepositoryEntity;
 import be.sgerard.i18n.model.workspace.persistence.WorkspaceEntity;
 import be.sgerard.i18n.service.repository.RepositoryException;
 import be.sgerard.i18n.service.repository.RepositoryManager;
+import be.sgerard.i18n.service.workspace.WorkspaceException;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
@@ -71,6 +72,20 @@ public class CompositeWorkspaceTranslationsStrategy implements WorkspaceTranslat
                                 .findFirst()
                                 .orElseThrow(() -> new UnsupportedOperationException("Unsupported workspace [" + workspace + "]. Please make sure that all strategies have been registered."))
                                 .onInitialize(workspace)
+                )
+                .switchIfEmpty(Mono.just(workspace));
+    }
+
+    @Override
+    public Mono<WorkspaceEntity> onSynchronize(WorkspaceEntity workspace) throws WorkspaceException, RepositoryException {
+        return repositoryManager
+                .findByIdOrDie(workspace.getRepository())
+                .flatMap(repository ->
+                        strategies.stream()
+                                .filter(strategy -> strategy.support(repository))
+                                .findFirst()
+                                .orElseThrow(() -> new UnsupportedOperationException("Unsupported workspace [" + workspace + "]. Please make sure that all strategies have been registered."))
+                                .onSynchronize(workspace)
                 )
                 .switchIfEmpty(Mono.just(workspace));
     }

@@ -31,12 +31,12 @@ public class RepositoryEventListener implements RepositoryListener<RepositoryEnt
     }
 
     @Override
-    public Mono<Void> onCreate(RepositoryEntity repository) {
+    public Mono<Void> afterCreate(RepositoryEntity repository) {
         return this.eventService.broadcastEvent(ADDED_REPOSITORY, dtoMapper.mapToDto(repository));
     }
 
     @Override
-    public Mono<Void> onInitialize(RepositoryEntity repository) {
+    public Mono<Void> afterInitialize(RepositoryEntity repository) {
         return this.eventService.broadcastEvent(UPDATED_REPOSITORY, dtoMapper.mapToDto(repository));
     }
 
@@ -46,12 +46,12 @@ public class RepositoryEventListener implements RepositoryListener<RepositoryEnt
     }
 
     @Override
-    public Mono<Void> onUpdate(RepositoryPatchDto patch, RepositoryEntity repository) {
+    public Mono<Void> afterUpdate(RepositoryPatchDto patch, RepositoryEntity repository) {
         return this.eventService.broadcastEvent(UPDATED_REPOSITORY, dtoMapper.mapToDto(repository));
     }
 
     @Override
-    public Mono<Void> onDelete(RepositoryEntity repository) {
+    public Mono<Void> beforeDelete(RepositoryEntity repository) {
         return this.eventService.broadcastEvent(DELETED_REPOSITORY, dtoMapper.mapToDto(repository));
     }
 }

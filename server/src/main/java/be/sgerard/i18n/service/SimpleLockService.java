@@ -101,7 +101,7 @@ public class SimpleLockService implements LockService {
      * Checks whether the specified task can be started, otherwise returns empty.
      */
     private Mono<Task> checkCanBeStarted(Task task) {
-        for (Task taskInQueue : tasks) {
+        for (Task taskInQueue : tasks.toArray(new Task[0])) {
             if (Objects.equals(taskInQueue, task) || task.hasSameRequestId(taskInQueue)) {
                 return Mono.just(task);
             } else if (Objects.equals(taskInQueue.getRepository(), task.getRepository())) {

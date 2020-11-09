@@ -22,7 +22,7 @@ public class LiveSessionUserListener implements UserListener {
     }
 
     @Override
-    public Mono<Void> onDelete(UserEntity user) {
+    public Mono<Void> afterDelete(UserEntity user) {
         return liveSessionManager.deleteAll(user);
     }
 

@@ -343,7 +343,7 @@ public class TranslationControllerTest extends AbstractControllerTest {
         final String expectedFirstPageLastKey = secondRow.getWorkspace() + secondRow.getBundleFile() + secondRow.getBundleKey();
         final String expectedSecondPageLastKey = thirdRow.getWorkspace() + thirdRow.getBundleFile() + thirdRow.getBundleKey();
 
-       webClient
+        webClient
                 .post()
                 .uri("/api/translation/do?action=search")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -363,14 +363,14 @@ public class TranslationControllerTest extends AbstractControllerTest {
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
-               .jsonPath("$.firstPageKey").isEqualTo(expectedFirstPageFistKey)
-               .jsonPath("$.lastPageKey").isEqualTo(expectedFirstPageLastKey)
-               .jsonPath("$.rows").value(hasSize(2))
-               .jsonPath("$.locales").isEqualTo(locales)
-               .jsonPath("$.rows[0].bundleKey").isEqualTo(firstRow.getBundleKey())
-               .jsonPath("$.rows[0].workspace").isEqualTo(firstRow.getWorkspace())
-               .jsonPath("$.rows[0].bundleFile").isEqualTo(firstRow.getBundleFile())
-               .jsonPath("$.rows[0].translations").value(hasSize(2));
+                .jsonPath("$.firstPageKey").isEqualTo(expectedFirstPageFistKey)
+                .jsonPath("$.lastPageKey").isEqualTo(expectedFirstPageLastKey)
+                .jsonPath("$.rows").value(hasSize(2))
+                .jsonPath("$.locales").isEqualTo(locales)
+                .jsonPath("$.rows[0].bundleKey").isEqualTo(firstRow.getBundleKey())
+                .jsonPath("$.rows[0].workspace").isEqualTo(firstRow.getWorkspace())
+                .jsonPath("$.rows[0].bundleFile").isEqualTo(firstRow.getBundleFile())
+                .jsonPath("$.rows[0].translations").value(hasSize(2));
     }
 
     @Test
@@ -406,7 +406,8 @@ public class TranslationControllerTest extends AbstractControllerTest {
                 .forRepositoryHint("my-repo")
                 .forWorkspaceName("master")
                 .translations()
-                .findBundlePageRowOrDie("validation.repository.name-not-unique")
+                .findBundleKeyOrDie("validation.repository.name-not-unique")
+                .get()
                 .getId();
 
         final String localeId = locale.findRegisteredLocale(Locale.ENGLISH).getId();
@@ -446,7 +447,8 @@ public class TranslationControllerTest extends AbstractControllerTest {
                 .forRepositoryHint("my-repo")
                 .forWorkspaceName("master")
                 .translations()
-                .findBundlePageRowOrDie("validation.repository.name-not-unique")
+                .findBundleKeyOrDie("validation.repository.name-not-unique")
+                .get()
                 .getId();
 
         final String englishLocaleId = locale.findRegisteredLocale(Locale.ENGLISH).getId();

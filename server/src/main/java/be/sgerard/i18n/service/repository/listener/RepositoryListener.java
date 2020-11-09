@@ -20,14 +20,14 @@ public interface RepositoryListener<R extends RepositoryEntity> {
     /**
      * Performs an action after the creation of the specified repository.
      */
-    default Mono<Void> onCreate(R repository) {
+    default Mono<Void> afterCreate(R repository) {
         return Mono.empty();
     }
 
     /**
      * Performs an action after the initialization of the specified repository.
      */
-    default Mono<Void> onInitialize(R repository) {
+    default Mono<Void> afterInitialize(R repository) {
         return Mono.empty();
     }
 
@@ -41,14 +41,14 @@ public interface RepositoryListener<R extends RepositoryEntity> {
     /**
      * Performs an action after the patch of the specified repository.
      */
-    default Mono<Void> onUpdate(RepositoryPatchDto patch, R repository) {
+    default Mono<Void> afterUpdate(RepositoryPatchDto patch, R repository) {
         return Mono.empty();
     }
 
     /**
-     * Performs an action after the deletion of the specified repository.
+     * Performs an action before the deletion of the specified repository.
      */
-    default Mono<Void> onDelete(R repository) {
+    default Mono<Void> beforeDelete(R repository) {
         return Mono.empty();
     }
 

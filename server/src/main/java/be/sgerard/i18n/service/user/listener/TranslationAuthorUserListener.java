@@ -22,7 +22,7 @@ public class TranslationAuthorUserListener implements UserListener {
     }
 
     @Override
-    public Mono<Void> onDelete(UserEntity user) {
+    public Mono<Void> afterDelete(UserEntity user) {
         return translationRepository
                 .search(
                         TranslationsSearchRequest.builder()
