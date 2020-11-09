@@ -79,6 +79,13 @@ public class MongoTestConfiguration {
     }
 
     @Bean
+    public MongoClientOptions mongoOptions() {
+        return MongoClientOptions.builder()
+                .socketTimeout(60000)
+                .build();
+    }
+
+    @Bean
     public MongoClient mongo(ObjectProvider<MongoClientOptions> options, Environment environment) {
         final MongoProperties mongoProperties = new MongoProperties();
         mongoProperties.setPort(serverPort);
