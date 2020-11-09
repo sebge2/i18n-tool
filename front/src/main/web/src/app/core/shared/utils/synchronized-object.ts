@@ -1,5 +1,5 @@
 import {BehaviorSubject, merge, Observable, Subject} from "rxjs";
-import {filter, map, mergeMap, shareReplay, skip, takeUntil} from "rxjs/operators";
+import {map, mergeMap, shareReplay, skip, takeUntil} from "rxjs/operators";
 
 export class SynchronizedObject<I, O> {
 
@@ -32,17 +32,11 @@ export class SynchronizedObject<I, O> {
             .subscribe(() => this.reload());
 
         merge(this._manualUpdate$, updated.pipe(map(value => this.map(value, mapper))))
-            .pipe(
-                takeUntil(this._destroyed$),
-                filter(element => element !== undefined)
-            )
+            .pipe(takeUntil(this._destroyed$))
             .subscribe((element: O) => this._element$.next(element));
 
-        merge([this._manualDelete$, deleted.pipe(map(value => this.map(value, mapper)))])
-            .pipe(
-                takeUntil(this._destroyed$),
-                filter(element => (element !== undefined))
-            )
+        merge(this._manualDelete$, deleted.pipe(map(value => this.map(value, mapper))))
+            .pipe(takeUntil(this._destroyed$))
             .subscribe((_) => this._element$.next(null));
     }
 
@@ -63,8 +57,8 @@ export class SynchronizedObject<I, O> {
         this._manualUpdate$.next(element);
     }
 
-    public delete(element: O) {
-        this._manualDelete$.next(element);
+    public delete() {
+        this._manualDelete$.next(null);
     }
 
     private map<A>(value: A, mapper: (I) => O) {
