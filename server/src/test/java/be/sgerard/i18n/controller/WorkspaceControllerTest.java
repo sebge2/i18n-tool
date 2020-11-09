@@ -439,6 +439,50 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
         @Test
         @CleanupDatabase
         @WithJaneDoeAdminUser
+        public void synchronizeInitializedLocalUpdatePreserved() {
+            final GitHubRepositoryCreationDto creationDto = i18nToolRepositoryCreationDto();
+
+            try {
+                gitRepo.getRepo(creationDto).createBranches("release/2020.08");
+
+                final String workspace = repository.create(creationDto, GitHubRepositoryDto.class).hint("repo")
+                        .initialize()
+                        .workspaces()
+                        .workspaceForBranch("release/2020.08")
+                        .initialize().get().getId();
+
+                // once initialized, the remote content is updated, an existing translation is updated
+                gitRepo.getRepo(creationDto)
+                        .branch("release/2020.08")
+                        .file("/server/src/main/resources/i18n/validation_en.properties")
+                        .writeContent("validation.repository.name-not-unique=my updated value remote");
+
+                // once initialized, the local content is updated, an existing translation is updated
+                translations
+                        .forRepositoryHint("repo")
+                        .forWorkspaceName("release/2020.08")
+                        .updateTranslation("validation.repository.name-not-unique", Locale.ENGLISH, "my updated value local");
+
+                webClient
+                        .post()
+                        .uri("/api/repository/workspace/{id}/do?action=SYNCHRONIZE", workspace)
+                        .exchange()
+                        .expectStatus().isOk()
+                        .expectBody();
+
+                translations
+                        .forRepositoryHint("repo")
+                        .forWorkspaceName("release/2020.08")
+                        .translations()
+                        .expectTranslation("validation.repository.name-not-unique", Locale.ENGLISH, "my updated value local");
+            } finally {
+                gitRepo.getRepo(creationDto).deleteBranches("release/2020.08");
+            }
+        }
+
+        @Test
+        @CleanupDatabase
+        @WithJaneDoeAdminUser
         public void synchronizeInitializedDeletedTranslations() {
             final GitHubRepositoryCreationDto creationDto = i18nToolRepositoryCreationDto();
 
@@ -532,18 +576,16 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                     .jsonPath("$.branch").isEqualTo("master")
                     .jsonPath("$.status").isEqualTo(WorkspaceStatus.IN_REVIEW.name());
 
-            /*final String currentPRBranch =*/ /*.get()
-                    .getCurrentBranch()*/
-            repository.forHint("my-repo").gitHub().findPullRequestForBranchOrDie("master");
+            final String pullRequestBranch = repository.forHint("my-repo").gitHub()
+                    .findPullRequestForBranchOrDie("master")
+                    .get().getCurrentBranch();
 
-// TODO
-//            gitRepo
-//                    .getRepo(i18nToolLocalRepositoryCreationDto())
-//                    .assertFileContent(
-//                            currentPRBranch,
-//                            new File("/server/src/main/resources/i18n/validation_en.properties"),
-//                            "validation.repository.name-not-unique=my updated value"
-//                    );
+            gitRepo
+                    .getRepo(i18nToolLocalRepositoryCreationDto())
+                    .branch(pullRequestBranch)
+                    .file("/server/src/main/resources/i18n/validation_en.properties")
+//                    .assertContains("validation.repository.name-not-unique=my updated value") TODO fix this
+            ;
         }
 
         @Test
