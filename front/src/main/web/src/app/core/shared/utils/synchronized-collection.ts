@@ -1,5 +1,5 @@
 import {BehaviorSubject, merge, Observable, Subject} from "rxjs";
-import {filter, map, mergeMap, takeUntil} from "rxjs/operators";
+import {map, mergeMap, takeUntil} from "rxjs/operators";
 
 export class SynchronizedCollection<I, O> {
 
@@ -34,10 +34,7 @@ export class SynchronizedCollection<I, O> {
             .subscribe(() => this.reload());
 
         merge(this._manualAdd$, created.pipe(map(value => this.map(value, mapper))))
-            .pipe(
-                takeUntil(this._destroyed$),
-                filter(element => (element !== undefined))
-            )
+            .pipe(takeUntil(this._destroyed$))
             .subscribe((value: O) => {
                 const copy = this._collection$.getValue().slice();
 
@@ -52,11 +49,7 @@ export class SynchronizedCollection<I, O> {
             });
 
         merge(this._manualUpdate$, updated.pipe(map(value => this.map(value, mapper))))
-            .pipe(
-                takeUntil(this._destroyed$),
-                // map(([manualUpdate, streamUpdate]) => SynchronizedCollection.keepDefinedValue(manualUpdate, streamUpdate)),
-                filter(element => (element !== undefined))
-            )
+            .pipe(takeUntil(this._destroyed$))
             .subscribe((value: O) => {
                 const copy = this._collection$.getValue().slice();
 
@@ -71,11 +64,7 @@ export class SynchronizedCollection<I, O> {
             });
 
         merge(this._manualDelete$, deleted.pipe(map(value => this.map(value, mapper))))
-            .pipe(
-                takeUntil(this._destroyed$),
-                // map(([manualDelete, streamDelete]) =>  SynchronizedCollection.keepDefinedValue(manualDelete, streamDelete)),
-                filter(element => (element !== undefined))
-            )
+            .pipe(takeUntil(this._destroyed$))
             .subscribe((value: O) => {
                 const copy = this._collection$.getValue().slice();
 

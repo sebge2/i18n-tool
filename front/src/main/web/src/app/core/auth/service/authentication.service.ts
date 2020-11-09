@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpResponse} from "@angular/common/http";
 import {Observable, of, throwError} from "rxjs";
-import {catchError, map, mergeMap} from "rxjs/operators";
+import {catchError, map, mergeMap, tap} from "rxjs/operators";
 import {AuthenticationErrorType} from "../model/authentication-error-type.model";
 import {AuthenticatedUserDto, AuthenticationService as ApiAuthenticationService, Configuration} from "../../../api";
 import {EventService} from "../../event/service/event.service";
@@ -112,7 +112,7 @@ export class AuthenticationService {
             .then((_) => {
                 console.debug('Logout succeeded, send next user.');
 
-                this._user$.delete(null);
+                this._user$.delete();
             });
     }
 }
