@@ -151,20 +151,8 @@ public class GitRepositoryMock {
         }
     }
 
-    public GitRepositoryMock assertFileContent(String branch, File file, String expectedString) {
-        try (GitRepositoryApi api = createApi()) {
-            api.resetHardHead(); // TODO why files are un-staged?
-
-            try {
-                api.checkout(branch);
-
-                assertThat(IOUtils.toString(api.openInputStream(file))).contains(expectedString);
-            } catch (IOException e) {
-                throw new IllegalStateException("Error while reading file.", e);
-            }
-        }
-
-        return this;
+    public StepBranch branch(String branch) {
+        return new StepBranch(branch);
     }
 
     public GitRepositoryMock mergeTo(String currentBranch, String targetBranch) {
@@ -299,6 +287,72 @@ public class GitRepositoryMock {
 
         public GitRepositoryMock build() throws Exception {
             return new GitRepositoryMock(this);
+        }
+    }
+
+    public final class StepBranch {
+
+        private final String branch;
+
+        public StepBranch(String branch) {
+            this.branch = branch;
+        }
+
+        public StepBranchFile file(File file) {
+            return new StepBranchFile(branch, file);
+        }
+
+        public StepBranchFile file(String file) {
+            return file(new File(file));
+        }
+    }
+
+    public final class StepBranchFile {
+
+        private final String branch;
+        private final File file;
+
+        public StepBranchFile(String branch, File file) {
+            this.branch = branch;
+            this.file = file;
+        }
+
+        public StepBranch and() {
+            return new StepBranch(branch);
+        }
+
+        public StepBranchFile assertContains(String expectedString) {
+            try (GitRepositoryApi api = createApi()) {
+                api.resetHardHead(); // TODO why files are un-staged?
+
+                try {
+                    api.checkout(branch);
+
+                    assertThat(IOUtils.toString(api.openInputStream(file))).contains(expectedString);
+                } catch (IOException e) {
+                    throw new IllegalStateException("Error while reading file.", e);
+                }
+            }
+
+            return this;
+        }
+
+        public StepBranchFile writeContent(String content) {
+            try (GitRepositoryApi api = createApi()) {
+                api.resetHardHead(); // TODO why files are un-staged?
+
+                try {
+                    api.checkout(branch);
+
+                    IOUtils.write(content, api.openOutputStream(file, true));
+
+                    api.commitAll("update file in test");
+                } catch (IOException e) {
+                    throw new IllegalStateException("Error while writing file.", e);
+                }
+            }
+
+            return this;
         }
     }
 }

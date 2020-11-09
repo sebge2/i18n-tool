@@ -145,6 +145,15 @@ public class TranslationsTestHelper {
 
             return this;
         }
+
+        @SuppressWarnings("UnusedReturnValue")
+        public StepWorkspacesTranslationsPage unexpect(String bundleKey) {
+            if(findBundleKey(bundleKey).isPresent()){
+                throw new AssertionFailedError("The bundle key [" + bundleKey + "] is not expected");
+            }
+
+            return this;
+        }
     }
 
     public class StepTranslationsPageRow {
