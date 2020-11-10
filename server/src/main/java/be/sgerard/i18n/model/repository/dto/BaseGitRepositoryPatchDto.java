@@ -15,7 +15,6 @@ public abstract class BaseGitRepositoryPatchDto extends RepositoryPatchDto {
     @Schema(description = "The name of the default branch used to find translations")
     private final String defaultBranch;
 
-
     @Schema(description = "Regex specifying branches that can be scanned by this tool.")
     private final String allowedBranches;
 

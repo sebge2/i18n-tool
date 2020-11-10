@@ -1,6 +1,6 @@
 package be.sgerard.i18n.model.security.user.dto;
 
-import be.sgerard.i18n.model.security.auth.RepositoryCredentials;
+import be.sgerard.i18n.model.security.repository.RepositoryCredentials;
 import be.sgerard.i18n.service.security.UserRole;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;

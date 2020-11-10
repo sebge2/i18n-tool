@@ -1,6 +1,6 @@
 package be.sgerard.i18n.service.repository.git;
 
-import be.sgerard.i18n.service.ValidationException;
+import be.sgerard.i18n.model.validation.ValidationResult;
 import be.sgerard.i18n.service.repository.RepositoryException;
 import be.sgerard.test.i18n.support.GitHubCredentialsTest;
 import org.apache.commons.io.FileUtils;
@@ -11,7 +11,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URI;
 import java.nio.file.Files;
 import java.util.List;
 
@@ -31,14 +30,14 @@ public class DefaultGitRepositoryApiTest {
 
     @BeforeAll
     public static void setup() throws IOException {
-        configuration = new DefaultGitRepositoryApi.Configuration(generateTemporaryFile(), URI.create(REPO_LOCATION));
+        configuration = new DefaultGitRepositoryApi.Configuration(generateTemporaryFile(), REPO_LOCATION);
 
         api = DefaultGitRepositoryApi.createAPI(configuration);
         api.init();
     }
 
     @AfterEach
-    public void rollback(){
+    public void rollback() {
         api.resetHardHead();
     }
 
@@ -54,10 +53,12 @@ public class DefaultGitRepositoryApiTest {
         final File repositoryLocation = generateTemporaryFile();
 
         try {
-            final GitRepositoryApi.Configuration configuration = new DefaultGitRepositoryApi.Configuration(repositoryLocation, URI.create(REPO_LOCATION));
+            final GitRepositoryApi.Configuration configuration = new DefaultGitRepositoryApi.Configuration(repositoryLocation, REPO_LOCATION);
 
             try (GitRepositoryApi api = DefaultGitRepositoryApi.createAPI(configuration)) {
-                api.validateInfo();
+                final ValidationResult validationResult = api.validateInfo();
+
+                assertThat(validationResult.isSuccessful()).isTrue();
             }
         } finally {
             FileUtils.deleteDirectory(repositoryLocation);
@@ -69,10 +70,12 @@ public class DefaultGitRepositoryApiTest {
         final File repositoryLocation = generateTemporaryFile();
 
         try {
-            final GitRepositoryApi.Configuration configuration = new DefaultGitRepositoryApi.Configuration(repositoryLocation, URI.create("https://github.com/sebge2/unknown.git"));
+            final GitRepositoryApi.Configuration configuration = new DefaultGitRepositoryApi.Configuration(repositoryLocation, "https://github.com/sebge2/unknown.git");
 
             try (GitRepositoryApi api = DefaultGitRepositoryApi.createAPI(configuration)) {
-                Assertions.assertThrows(ValidationException.class, api::validateInfo);
+                final ValidationResult validationResult = api.validateInfo();
+
+                assertThat(validationResult.isSuccessful()).isFalse();
             }
         } finally {
             FileUtils.deleteDirectory(repositoryLocation);
@@ -84,12 +87,14 @@ public class DefaultGitRepositoryApiTest {
         final File repositoryLocation = generateTemporaryFile();
 
         try {
-            final GitRepositoryApi.Configuration configuration = new DefaultGitRepositoryApi.Configuration(repositoryLocation, URI.create("https://github.com/sebge2/unknown.git"))
+            final GitRepositoryApi.Configuration configuration = new DefaultGitRepositoryApi.Configuration(repositoryLocation, "https://github.com/sebge2/unknown.git")
                     .setUsername("sebge2")
                     .setPassword("password");
 
             try (GitRepositoryApi api = DefaultGitRepositoryApi.createAPI(configuration)) {
-                Assertions.assertThrows(ValidationException.class, api::validateInfo);
+                final ValidationResult validationResult = api.validateInfo();
+
+                assertThat(validationResult.isSuccessful()).isFalse();
             }
         } finally {
             FileUtils.deleteDirectory(repositoryLocation);

@@ -3,8 +3,7 @@ package be.sgerard.i18n.service.repository.git;
 import be.sgerard.i18n.model.repository.dto.BaseGitRepositoryPatchDto;
 import be.sgerard.i18n.model.repository.dto.RepositoryCreationDto;
 import be.sgerard.i18n.model.repository.persistence.BaseGitRepositoryEntity;
-import be.sgerard.i18n.service.repository.RepositoryApi;
-import be.sgerard.i18n.service.repository.RepositoryException;
+import be.sgerard.i18n.model.security.repository.RepositoryCredentials;
 import be.sgerard.i18n.service.repository.RepositoryHandler;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
@@ -17,7 +16,8 @@ import java.util.regex.Pattern;
  * @author Sebastien Gerard
  */
 @Component
-public abstract class BaseGitRepositoryHandler<E extends BaseGitRepositoryEntity, C extends RepositoryCreationDto, P extends BaseGitRepositoryPatchDto> implements RepositoryHandler<E, C, P> {
+public abstract class BaseGitRepositoryHandler<E extends BaseGitRepositoryEntity, C extends RepositoryCreationDto, P extends BaseGitRepositoryPatchDto, D extends RepositoryCredentials>
+        implements RepositoryHandler<E, C, P, D> {
 
     private final GitRepositoryApiProvider apiProvider;
 
@@ -25,21 +25,17 @@ public abstract class BaseGitRepositoryHandler<E extends BaseGitRepositoryEntity
         this.apiProvider = apiProvider;
     }
 
-    /**
-     * Initializes the {@link DefaultGitRepositoryApi.Configuration configuration} to use to access Git.
-     */
-    protected abstract Mono<DefaultGitRepositoryApi.Configuration> createConfiguration(E repository);
-
     @Override
-    public Mono<E> initializeRepository(E repository) {
+    public Mono<E> initializeRepository(E repository, D credentials) {
         try {
-            return initApiFromEntity(repository)
+            return initApi(repository, credentials)
+                    .map(GitRepositoryApi.class::cast)
                     .flatMap(api ->
                             Mono
                                     .just(api)
                                     .map(GitRepositoryApi::init)
                                     .thenReturn(repository)
-                                    .doAfterTerminate(api::close)
+                                    .doFinally(signalType -> api.close())
                     );
         } catch (Exception e) {
             return Mono.error(e);
@@ -47,38 +43,16 @@ public abstract class BaseGitRepositoryHandler<E extends BaseGitRepositoryEntity
     }
 
     @Override
-    public Mono<E> deleteRepository(E repository) throws RepositoryException {
+    public Mono<E> deleteRepository(E repository, D credentials) {
         try {
-            return initApiFromEntity(repository)
+            return initApi(repository, credentials)
+                    .map(GitRepositoryApi.class::cast)
                     .flatMap(api ->
                             Mono
                                     .just(api)
                                     .map(GitRepositoryApi::delete)
                                     .thenReturn(repository)
-                                    .doAfterTerminate(api::close)
-                    );
-        } catch (Exception e) {
-            return Mono.error(e);
-        }
-    }
-
-    @Override
-    public Mono<RepositoryApi> createAPI(E repository) throws RepositoryException {
-        return initApiFromEntity(repository).map(a -> a);
-    }
-
-    /**
-     * Validates the specified repository.
-     */
-    protected Mono<E> validateRepository(E repository) {
-        try {
-            return initApiFromEntity(repository)
-                    .flatMap(api ->
-                            Mono
-                                    .just(api)
-                                    .map(GitRepositoryApi::validateInfo)
-                                    .thenReturn(repository)
-                                    .doAfterTerminate(api::close)
+                                    .doFinally(signalType -> api.close())
                     );
         } catch (Exception e) {
             return Mono.error(e);
@@ -94,9 +68,9 @@ public abstract class BaseGitRepositoryHandler<E extends BaseGitRepositoryEntity
     }
 
     /**
-     * Returns the {@link GitRepositoryApi Git API} to use for the specified repository.
+     * Returns the {@link GitRepositoryApi Git API} to use for the specified configuration.
      */
-    protected Mono<GitRepositoryApi> initApiFromEntity(E repository) {
-        return createConfiguration(repository).map(apiProvider::createApi);
+    protected Mono<GitRepositoryApi> initApi(GitRepositoryApi.Configuration configuration) {
+        return Mono.just(apiProvider.initApi(configuration));
     }
 }

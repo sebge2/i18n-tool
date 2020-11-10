@@ -70,4 +70,18 @@ public class InternalUserDetails implements UserDetails {
     public Collection<UserRole> getRoles() {
         return internalUser.getRoles();
     }
+
+    /**
+     * Returns the name to be displayed to the end-user (ideally composed of the first name, last name).
+     */
+    public String getDisplayName() {
+        return internalUser.getDisplayName();
+    }
+
+    /**
+     * Returns the user's email.
+     */
+    public String getEmail() {
+        return internalUser.getEmail();
+    }
 }

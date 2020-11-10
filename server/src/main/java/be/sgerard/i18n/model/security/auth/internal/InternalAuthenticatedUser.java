@@ -1,15 +1,13 @@
 package be.sgerard.i18n.model.security.auth.internal;
 
 import be.sgerard.i18n.model.security.auth.AuthenticatedUser;
-import be.sgerard.i18n.model.security.auth.RepositoryCredentials;
 import be.sgerard.i18n.service.security.UserRole;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.util.*;
 
 import static be.sgerard.i18n.service.security.UserRole.mapToAuthorities;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
+import static java.util.Collections.unmodifiableMap;
 
 /**
  * {@link AuthenticatedUser Authenticated internal user}.
@@ -23,19 +21,25 @@ public class InternalAuthenticatedUser implements AuthenticatedUser {
     private final String id;
     private final String userId;
     private final Set<UserRole> roles;
+    private final String displayName;
+    private final String email;
     private final Collection<GrantedAuthority> additionalAuthorities;
-    private final Map<String, RepositoryCredentials> repositoryCredentials;
+    private final Map<String, Object> context;
 
     public InternalAuthenticatedUser(String id,
                                      String userId,
                                      Collection<UserRole> roles,
+                                     String displayName,
+                                     String email,
                                      Collection<GrantedAuthority> additionalAuthorities,
-                                     Collection<RepositoryCredentials> repositoryCredentials) {
+                                     Map<String, Object> context) {
         this.id = id;
         this.userId = userId;
         this.roles = Set.copyOf(roles);
+        this.displayName = displayName;
+        this.email = email;
         this.additionalAuthorities = additionalAuthorities;
-        this.repositoryCredentials = repositoryCredentials.stream().collect(toMap(RepositoryCredentials::getRepository, auth -> auth));
+        this.context = new HashMap<>(context);
     }
 
     @Override
@@ -59,6 +63,16 @@ public class InternalAuthenticatedUser implements AuthenticatedUser {
     }
 
     @Override
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    @Override
+    public String getEmail() {
+        return email;
+    }
+
+    @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return mapToAuthorities(roles, additionalAuthorities);
     }
@@ -69,45 +83,39 @@ public class InternalAuthenticatedUser implements AuthenticatedUser {
                 id,
                 userId,
                 sessionRoles,
+                displayName,
+                email,
                 additionalAuthorities,
-                repositoryCredentials.values()
+                context
         );
     }
 
     @Override
-    public AuthenticatedUser updateRepositoryCredentials(RepositoryCredentials repositoryCredentials) {
-        final Set<RepositoryCredentials> repositoriesCredentials = new HashSet<>(this.repositoryCredentials.values());
-        repositoriesCredentials.add(repositoryCredentials);
+    public Map<String, Object> getContext() {
+        return unmodifiableMap(context);
+    }
+
+    @Override
+    public <V> Optional<V> getContextValue(String key, Class<V> valueType) {
+        return Optional
+                .ofNullable(context.get(key))
+                .map(valueType::cast);
+    }
+
+    @Override
+    public AuthenticatedUser updateContext(String key, Object value) {
+        final Map<String, Object> updatedContext = new HashMap<>(context);
+        updatedContext.put(key, value);
 
         return new InternalAuthenticatedUser(
                 id,
                 userId,
                 roles,
+                displayName,
+                email,
                 additionalAuthorities,
-                repositoriesCredentials
+                updatedContext
         );
-    }
-
-    @Override
-    public AuthenticatedUser removeRepositoryCredentials(String repositoryId) {
-        return new InternalAuthenticatedUser(
-                id,
-                userId,
-                roles,
-                additionalAuthorities,
-                repositoryCredentials.values().stream().filter(cred -> !Objects.equals(repositoryId, cred.getRepository())).collect(toList())
-        );
-    }
-
-    @Override
-    public <A extends RepositoryCredentials> Optional<A> getCredentials(String repository, Class<A> expectedType) {
-        return Optional.ofNullable(repositoryCredentials.get(repository))
-                .map(expectedType::cast);
-    }
-
-    @Override
-    public Collection<RepositoryCredentials> getRepositoryCredentials() {
-        return repositoryCredentials.values();
     }
 
     @Override

@@ -1,4 +1,4 @@
-package be.sgerard.i18n.service.repository.validation;
+package be.sgerard.i18n.service.repository.git.validation;
 
 import be.sgerard.i18n.model.repository.dto.BaseGitRepositoryPatchDto;
 import be.sgerard.i18n.model.repository.dto.RepositoryPatchDto;
@@ -6,6 +6,7 @@ import be.sgerard.i18n.model.repository.persistence.BaseGitRepositoryEntity;
 import be.sgerard.i18n.model.repository.persistence.RepositoryEntity;
 import be.sgerard.i18n.model.validation.ValidationMessage;
 import be.sgerard.i18n.model.validation.ValidationResult;
+import be.sgerard.i18n.service.repository.validation.RepositoryValidator;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
@@ -13,12 +14,12 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 /**
- * {@link RepositoryValidator Validator} checking that Git repositories are valid.
+ * {@link RepositoryValidator Validator} checking that Git repositories are valid regarding their branch configuration.
  *
  * @author Sebastien Gerard
  */
 @Component
-public class GitRepositoryValidator implements RepositoryValidator<RepositoryEntity> {
+public class GitBranchRepositoryValidator implements RepositoryValidator<RepositoryEntity> {
 
     /**
      * Validation message key specifying that the pattern of allowed branches is invalid.
@@ -30,7 +31,7 @@ public class GitRepositoryValidator implements RepositoryValidator<RepositoryEnt
      */
     public static final String DEFAULT_BRANCH_NOT_ALLOWED = "validation.repository.default-branch-not-allowed";
 
-    public GitRepositoryValidator() {
+    public GitBranchRepositoryValidator() {
     }
 
     @Override

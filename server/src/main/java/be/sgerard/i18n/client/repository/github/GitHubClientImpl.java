@@ -45,7 +45,7 @@ public class GitHubClientImpl implements GitHubClient {
     }
 
     @Override
-    public Mono<GitHubPullRequestDto> createRequest(GitHubRepositoryId repositoryId, GitHubPullRequestCreationInfo creationInfo, String token) {
+    public Mono<GitHubPullRequestDto> createPullRequest(GitHubRepositoryId repositoryId, GitHubPullRequestCreationInfo creationInfo, String token) {
         return initializeClient(token)
                 .post()
                 .uri("/repos/{owner}/{repo}/pulls", repositoryId.getUsername(), repositoryId.getRepositoryName())
@@ -56,7 +56,7 @@ public class GitHubClientImpl implements GitHubClient {
     }
 
     @Override
-    public Flux<GitHubPullRequestDto> findAll(GitHubRepositoryId repositoryId, String token) {
+    public Flux<GitHubPullRequestDto> findAllPullRequests(GitHubRepositoryId repositoryId, String token) {
         return initializeClient(token)
                 .get()
                 .uri("/repos/{owner}/{repo}/pulls", repositoryId.getUsername(), repositoryId.getRepositoryName())
@@ -66,7 +66,7 @@ public class GitHubClientImpl implements GitHubClient {
     }
 
     @Override
-    public Mono<GitHubPullRequestDto> findByNumber(GitHubRepositoryId repositoryId, int requestNumber, String token) {
+    public Mono<GitHubPullRequestDto> findPullRequestByNumber(GitHubRepositoryId repositoryId, int requestNumber, String token) {
         return initializeClient(token)
                 .get()
                 .uri("/repos/{owner}/{repo}/pulls/{number}", repositoryId.getUsername(), repositoryId.getRepositoryName(), requestNumber)
@@ -76,17 +76,7 @@ public class GitHubClientImpl implements GitHubClient {
     }
 
     @Override
-    public Mono<String> getCurrentUserLogin(String token) {
-        return initializeClient(token)
-                .get()
-                .uri("/user")
-                .retrieve()
-                .bodyToMono(GitHubUserDto.class)
-                .map(GitHubUserDto::getLogin);
-    }
-
-    @Override
-    public Mono<Boolean> isRepoMember(GitHubRepositoryId repositoryId, String token) {
+    public Mono<Boolean> isRepositoryMember(GitHubRepositoryId repositoryId, String token) {
         return this
                 .getCurrentUserLogin(token)
                 .flatMap(currentUser ->
@@ -116,6 +106,18 @@ public class GitHubClientImpl implements GitHubClient {
                 .filter(ExchangeFilterFunctions.basicAuthentication(token, ""))
                 .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
                 .build();
+    }
+
+    /**
+     * Returns the login of the current user.
+     */
+    private Mono<String> getCurrentUserLogin(String token) {
+        return initializeClient(token)
+                .get()
+                .uri("/user")
+                .retrieve()
+                .bodyToMono(GitHubUserDto.class)
+                .map(GitHubUserDto::getLogin);
     }
 
 }

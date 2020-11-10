@@ -1,5 +1,6 @@
 package be.sgerard.i18n.service.repository.git;
 
+import be.sgerard.i18n.model.validation.ValidationResult;
 import be.sgerard.i18n.service.i18n.file.TranslationFileUtils;
 import be.sgerard.i18n.service.repository.RepositoryException;
 import org.apache.commons.io.FileUtils;
@@ -14,6 +15,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import static be.sgerard.i18n.service.i18n.file.TranslationFileUtils.removeParentFile;
+import static be.sgerard.i18n.support.FileUtils.createTempDirectory;
 
 /**
  * Base implementation of the {@link GitRepositoryApi Git API}.
@@ -70,6 +72,19 @@ public abstract class BaseGitRepositoryApi implements GitRepositoryApi {
             return this;
         } catch (Exception e) {
             throw RepositoryException.onOpen(e);
+        }
+    }
+
+    @Override
+    public ValidationResult validateInfo() throws RepositoryException {
+        try {
+            if (configuration.getRepositoryLocation().exists()) {
+                FileUtils.cleanDirectory(configuration.getRepositoryLocation());
+            }
+
+            return doValidateInfo();
+        } catch (Exception e) {
+            throw RepositoryException.onValidate(e);
         }
     }
 
@@ -237,6 +252,11 @@ public abstract class BaseGitRepositoryApi implements GitRepositoryApi {
     protected abstract void doInit() throws Exception;
 
     /**
+     * Validates the configuration, the local directory is created.
+     */
+    protected abstract ValidationResult doValidateInfo();
+
+    /**
      * Creates the specified branch, all checks have been performed.
      */
     protected abstract void doCreateBranch(String branch) throws Exception;
@@ -258,11 +278,7 @@ public abstract class BaseGitRepositoryApi implements GitRepositoryApi {
      */
     private File getOrCreateTemporaryDirectory() {
         if (tempDirectory == null) {
-            try {
-                this.tempDirectory = Files.createTempDirectory("repo-api-").toFile();
-            } catch (IOException e) {
-                throw new RuntimeException("Cannot create temporary directory.", e);
-            }
+            this.tempDirectory = createTempDirectory("repo-api-");
         }
 
         return this.tempDirectory;

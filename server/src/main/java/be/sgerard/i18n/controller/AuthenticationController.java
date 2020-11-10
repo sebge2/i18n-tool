@@ -2,6 +2,7 @@ package be.sgerard.i18n.controller;
 
 import be.sgerard.i18n.model.security.user.dto.AuthenticatedUserDto;
 import be.sgerard.i18n.service.ResourceNotFoundException;
+import be.sgerard.i18n.service.security.auth.AuthenticatedUserDtoMapper;
 import be.sgerard.i18n.service.security.auth.AuthenticationUserManager;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -31,11 +32,14 @@ import static java.util.stream.Collectors.toList;
 public class AuthenticationController {
 
     private final AuthenticationUserManager authenticationUserManager;
+    private final AuthenticatedUserDtoMapper userDtoMapper;
     private final Iterable<ClientRegistration> registrationRepository;
 
     public AuthenticationController(AuthenticationUserManager authenticationUserManager,
+                                    AuthenticatedUserDtoMapper userDtoMapper,
                                     @Autowired(required = false) InMemoryReactiveClientRegistrationRepository registrationRepository) {
         this.authenticationUserManager = authenticationUserManager;
+        this.userDtoMapper = userDtoMapper;
         this.registrationRepository = (registrationRepository != null) ? registrationRepository : emptyList();
     }
 
@@ -48,7 +52,7 @@ public class AuthenticationController {
         return authenticationUserManager
                 .getCurrentUser()
                 .switchIfEmpty(Mono.error(ResourceNotFoundException.userNotFoundException("current")))
-                .map(user -> AuthenticatedUserDto.builder(user).build());
+                .flatMap(userDtoMapper::map);
     }
 
     /**

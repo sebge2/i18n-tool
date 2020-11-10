@@ -1,4 +1,4 @@
-package be.sgerard.i18n.model.security.auth;
+package be.sgerard.i18n.model.security.repository;
 
 import be.sgerard.i18n.service.security.UserRole;
 
@@ -15,20 +15,24 @@ import static java.util.Collections.singletonList;
 public class GitHubRepositoryTokenCredentials implements RepositoryCredentials {
 
     private final String repository;
-    private final Set<UserRole> sessionRoles;
     private final String userToken;
-    private final String repositoryAccessKey;
+    private final String repositoryAccessToken;
+    private final String userDisplayName;
+    private final String userEmail;
+    private final Set<UserRole> sessionRoles;
 
-    public GitHubRepositoryTokenCredentials(String repository, String userToken, String repositoryAccessKey) {
+    public GitHubRepositoryTokenCredentials(String repository,
+                                            String userToken,
+                                            String repositoryAccessToken,
+                                            String userDisplayName,
+                                            String userEmail) {
         this.repository = repository;
-        this.sessionRoles = new HashSet<>(singletonList(UserRole.MEMBER_OF_REPOSITORY));
-
-        if ((userToken == null) && (repositoryAccessKey == null)) {
-            throw new IllegalArgumentException("No token has been defined.");
-        }
-
         this.userToken = userToken;
-        this.repositoryAccessKey = repositoryAccessKey;
+        this.repositoryAccessToken = repositoryAccessToken;
+        this.userDisplayName = userDisplayName;
+        this.userEmail = userEmail;
+
+        this.sessionRoles = new HashSet<>(singletonList(UserRole.MEMBER_OF_REPOSITORY));
     }
 
     @Override
@@ -51,18 +55,31 @@ public class GitHubRepositoryTokenCredentials implements RepositoryCredentials {
     /**
      * Returns the access key associated to the repository itself.
      */
-    public Optional<String> getRepositoryAccessKey() {
-        return Optional.ofNullable(repositoryAccessKey);
+    public Optional<String> getRepositoryAccessToken() {
+        return Optional.ofNullable(repositoryAccessToken);
     }
 
     /**
      * Returns the token to use to interact with the repository.
      */
-    public String getToken() {
+    public Optional<String> getToken() {
         return this
                 .getUserToken()
-                .or(this::getRepositoryAccessKey)
-                .orElseThrow(() -> new IllegalStateException("No token defined."));
+                .or(this::getRepositoryAccessToken);
+    }
+
+    /**
+     * Returns the name to display for the associated user.
+     */
+    public Optional<String> getUserDisplayName() {
+        return Optional.ofNullable(userDisplayName);
+    }
+
+    /**
+     * Returns the email of the associated user.
+     */
+    public Optional<String> getUserEmail() {
+        return Optional.ofNullable(userEmail);
     }
 
     @Override

@@ -4,6 +4,7 @@ import be.sgerard.i18n.model.repository.RepositoryStatus;
 import be.sgerard.i18n.model.repository.dto.RepositoryCreationDto;
 import be.sgerard.i18n.model.repository.dto.RepositoryPatchDto;
 import be.sgerard.i18n.model.repository.persistence.RepositoryEntity;
+import be.sgerard.i18n.model.security.repository.RepositoryCredentials;
 import be.sgerard.i18n.repository.repository.RepositoryEntityRepository;
 import be.sgerard.i18n.service.LockService;
 import be.sgerard.i18n.service.LockTimeoutException;
@@ -11,6 +12,7 @@ import be.sgerard.i18n.service.ResourceNotFoundException;
 import be.sgerard.i18n.service.ValidationException;
 import be.sgerard.i18n.service.repository.listener.RepositoryListener;
 import be.sgerard.i18n.service.repository.validation.RepositoryValidator;
+import be.sgerard.i18n.service.security.repository.RepositoryCredentialsManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cglib.proxy.Proxy;
@@ -32,19 +34,22 @@ public class RepositoryManagerImpl implements RepositoryManager {
     private static final Logger logger = LoggerFactory.getLogger(RepositoryManagerImpl.class);
 
     private final RepositoryEntityRepository repository;
-    private final RepositoryHandler<RepositoryEntity, RepositoryCreationDto, RepositoryPatchDto> handler;
+    private final RepositoryHandler<RepositoryEntity, RepositoryCreationDto, RepositoryPatchDto, RepositoryCredentials> handler;
     private final LockService lockService;
+    private final RepositoryCredentialsManager credentialsManager;
     private final RepositoryListener<RepositoryEntity> listener;
     private final RepositoryValidator<RepositoryEntity> validator;
 
     public RepositoryManagerImpl(RepositoryEntityRepository repository,
-                                 RepositoryHandler<RepositoryEntity, RepositoryCreationDto, RepositoryPatchDto> handler,
+                                 RepositoryHandler<RepositoryEntity, RepositoryCreationDto, RepositoryPatchDto, RepositoryCredentials> handler,
                                  LockService lockService,
-                                 RepositoryListener<RepositoryEntity> listener, 
+                                 RepositoryCredentialsManager credentialsManager,
+                                 RepositoryListener<RepositoryEntity> listener,
                                  RepositoryValidator<RepositoryEntity> validator) {
         this.repository = repository;
         this.handler = handler;
         this.lockService = lockService;
+        this.credentialsManager = credentialsManager;
         this.listener = listener;
         this.validator = validator;
     }
@@ -73,10 +78,7 @@ public class RepositoryManagerImpl implements RepositoryManager {
                                     return rep;
                                 })
                                 .flatMap(repository::save)
-                                .flatMap(repo ->
-                                        listener.afterCreate(repo)
-                                                .thenReturn(repo)
-                                )
+                                .flatMap(repo -> listener.afterCreate(repo).thenReturn(repo))
                 );
     }
 
@@ -91,15 +93,10 @@ public class RepositoryManagerImpl implements RepositoryManager {
                                         Mono.just(repository)
                                                 // TODO initializing
                                                 .filter(repo -> repo.getStatus() != RepositoryStatus.INITIALIZED)
-                                                .flatMap(handler::initializeRepository)
+                                                .flatMap(this::initializeRepository)
                                                 .doOnNext(repo -> repo.setStatus(RepositoryStatus.INITIALIZED))
                                                 .flatMap(this.repository::save)
-                                                .flatMap(rep ->
-                                                        listener
-                                                                .afterInitialize(rep)
-                                                                .thenReturn(rep)
-                                                )
-                                                .switchIfEmpty(Mono.just(repository))
+                                                .flatMap(rep -> listener.afterInitialize(rep).thenReturn(rep))
                                                 .onErrorResume(error -> {
                                                     logger.error("Error while initializing repository.", error);
 
@@ -107,12 +104,9 @@ public class RepositoryManagerImpl implements RepositoryManager {
 
                                                     return this.repository
                                                             .save(repository)
-                                                            .flatMap(rep ->
-                                                                    listener
-                                                                            .onInitializationError(rep, error)
-                                                                            .thenReturn(rep)
-                                                            );
+                                                            .flatMap(rep -> listener.onInitializationError(rep, error).thenReturn(rep));
                                                 })
+                                                .switchIfEmpty(Mono.just(repository))
                                 ));
     }
 
@@ -132,13 +126,9 @@ public class RepositoryManagerImpl implements RepositoryManager {
                                                     return repo;
                                                 })
                                 )
-                                .flatMap(repo -> handler.updateRepository(repo, patch))
+                                .flatMap(repo -> updateRepository(repo, patch))
                                 .flatMap(repository::save)
-                                .flatMap(repo ->
-                                        listener
-                                                .afterUpdate(patch, repo)
-                                                .thenReturn(repo)
-                                ));
+                                .flatMap(repo -> listener.afterUpdate(patch, repo).thenReturn(repo)));
     }
 
     @Transactional
@@ -156,19 +146,13 @@ public class RepositoryManagerImpl implements RepositoryManager {
 
                                                     return repo;
                                                 })
-                                                .flatMap(handler::deleteRepository)
+                                                .flatMap(this::deleteRepository)
                                                 .onErrorResume(error -> {
                                                     logger.error("Error while deleting repository.", error);
                                                     return Mono.just(repo);
                                                 })
-                                                .flatMap(rep ->
-                                                        listener.beforeDelete(rep)
-                                                                .thenReturn(rep)
-                                                )
-                                                .flatMap(rep ->
-                                                        repository.delete(rep)
-                                                                .thenReturn(rep)
-                                                )
+                                                .flatMap(rep -> listener.beforeDelete(rep).thenReturn(rep))
+                                                .flatMap(rep -> repository.delete(rep).thenReturn(rep))
                                 ));
     }
 
@@ -182,14 +166,13 @@ public class RepositoryManagerImpl implements RepositoryManager {
                     repositoryId,
                     () ->
                             findByIdOrDie(repositoryId)
-                                    .flatMap(handler::createAPI)
+                                    .flatMap(this::initApi)
                                     .flatMap(api ->
                                             Mono
                                                     .just(api)
                                                     .map(apiType::cast)
                                                     .map(a -> wrapIntoProxy(apiType, a))
                                                     .flatMap(apiConsumer::apply)
-                                                    .doOnCancel(api::close)
                                                     .doFinally(signalType -> api.close())
                                     ));
         } catch (LockTimeoutException e) {
@@ -207,14 +190,14 @@ public class RepositoryManagerImpl implements RepositoryManager {
                     repositoryId,
                     () ->
                             findByIdOrDie(repositoryId)
-                                    .flatMap(handler::createAPI)
+                                    .flatMap(this::initApi)
                                     .flatMapMany(api ->
                                             Mono
                                                     .just(api)
                                                     .map(apiType::cast)
                                                     .map(a -> wrapIntoProxy(apiType, a))
                                                     .flatMapMany(apiConsumer::apply)
-                                                    .doAfterTerminate(api::close)
+                                                    .doFinally(signalType -> api.close())
                                     ));
         } catch (LockTimeoutException e) {
             throw RepositoryException.onLockTimeout(e);
@@ -249,4 +232,41 @@ public class RepositoryManagerImpl implements RepositoryManager {
                 }
         );
     }
+
+    /**
+     * Initializes the specified {@link RepositoryEntity repository} using the {@link RepositoryHandler handler}.
+     */
+    private Mono<RepositoryEntity> initializeRepository(RepositoryEntity repository) {
+        return credentialsManager
+                .loadUserCredentialsOrDie(repository)
+                .flatMap(credentials -> handler.initializeRepository(repository, credentials));
+    }
+
+    /**
+     * Updates the specified {@link RepositoryEntity repository} using the {@link RepositoryHandler handler}.
+     */
+    private Mono<RepositoryEntity> updateRepository(RepositoryEntity repository, RepositoryPatchDto patch) {
+        return credentialsManager
+                .loadUserCredentialsOrDie(repository)
+                .flatMap(credentials -> handler.updateRepository(repository, patch, credentials));
+    }
+
+    /**
+     * Initializes the {@link RepositoryApi API} for the specified {@link RepositoryEntity repository}.
+     */
+    private Mono<RepositoryApi> initApi(RepositoryEntity repository) {
+        return credentialsManager
+                .loadUserCredentials(repository)
+                .flatMap(credentials -> handler.initApi(repository, credentials));
+    }
+
+    /**
+     * Deletes the specified {@link RepositoryEntity repository} using the {@link RepositoryHandler handler}.
+     */
+    private Mono<RepositoryEntity> deleteRepository(RepositoryEntity repository) {
+        return credentialsManager
+                .loadUserCredentialsOrDie(repository)
+                .flatMap(credentials -> handler.deleteRepository(repository, credentials));
+    }
+
 }
