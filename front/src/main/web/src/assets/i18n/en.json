@@ -248,6 +248,13 @@
           "SECRET_COPIED": "The secret has been copied to your clipboard.",
           "UNKNOWN_ERROR": "A technical error happened, please verify the Web Hook configuration and try again.",
           "ERROR_TITLE": "The following errors happened when updating the Web Hook:"
+        },
+        "ACCESS_KEY_POPUP": {
+          "TITLE": "Manage Access Key",
+          "KEY": "Access Key",
+          "KEY_HINT": "The access key used to access your GitHub repository (pull, push, create pull requests, ...).",
+          "UNKNOWN_ERROR": "A technical error happened, please verify the Access Key configuration and try again.",
+          "ERROR_TITLE": "The following errors happened when updating the Access Key:"
         }
       },
       "DETAILS_CARD": {
