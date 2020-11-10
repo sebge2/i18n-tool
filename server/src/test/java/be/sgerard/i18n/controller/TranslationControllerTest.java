@@ -9,7 +9,8 @@ import org.springframework.http.MediaType;
 import java.util.List;
 import java.util.Locale;
 
-import static be.sgerard.test.i18n.model.GitRepositoryCreationDtoTestUtils.i18nToolRepositoryCreationDto;
+import static be.sgerard.test.i18n.model.GitRepositoryPatchDtoTestUtils.I18N_TOOL_REPO_ACCESS_TOKEN;
+import static be.sgerard.test.i18n.model.GitRepositoryCreationDtoTestUtils.i18nToolGitHubRepositoryCreationDto;
 import static be.sgerard.test.i18n.model.TranslationLocaleCreationDtoTestUtils.enLocaleCreationDto;
 import static be.sgerard.test.i18n.model.TranslationLocaleCreationDtoTestUtils.frLocaleCreationDto;
 import static java.util.Arrays.asList;
@@ -23,17 +24,18 @@ import static org.hamcrest.Matchers.hasSize;
 public class TranslationControllerTest extends AbstractControllerTest {
 
     @BeforeAll
-    public void setupRepo() throws Exception {
-        gitRepo
-                .createMockFor(i18nToolRepositoryCreationDto())
-                .allowAnonymousRead()
+    public void setupRepo() {
+        remoteRepository
+                .gitHub()
+                .create(i18nToolGitHubRepositoryCreationDto(), "myGitHubRepo")
+                .accessToken(I18N_TOOL_REPO_ACCESS_TOKEN)
                 .onCurrentGitProject()
-                .create();
+                .start();
     }
 
     @AfterAll
     public void destroy() {
-        gitRepo.destroyAll();
+        remoteRepository.stopAll();
     }
 
     @BeforeEach
@@ -43,7 +45,7 @@ public class TranslationControllerTest extends AbstractControllerTest {
                 .createLocale(enLocaleCreationDto());
 
         repository
-                .create(i18nToolRepositoryCreationDto())
+                .create(i18nToolGitHubRepositoryCreationDto())
                 .hint("my-repo")
                 .initialize()
                 .workspaces()

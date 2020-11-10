@@ -6,6 +6,9 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.data.annotation.PersistenceConstructor;
 
+import javax.validation.constraints.NotNull;
+import java.util.Optional;
+
 
 /**
  * Git {@link GitRepositoryEntity repository}.
@@ -16,6 +19,18 @@ import org.springframework.data.annotation.PersistenceConstructor;
 @Setter
 @Accessors(chain = true)
 public class GitRepositoryEntity extends BaseGitRepositoryEntity {
+
+    /**
+     * Username to use to connect to the Git repository.
+     */
+    @NotNull
+    private String username;
+
+    /**
+     * Password to connect to the Git repository.
+     */
+    @NotNull
+    private String password;
 
     @PersistenceConstructor
     GitRepositoryEntity() {
@@ -31,5 +46,19 @@ public class GitRepositoryEntity extends BaseGitRepositoryEntity {
     @Override
     public RepositoryType getType() {
         return RepositoryType.GIT;
+    }
+
+    /**
+     * @see #username
+     */
+    public Optional<String> getUsername() {
+        return Optional.ofNullable(username);
+    }
+
+    /**
+     * @see #password
+     */
+    public Optional<String> getPassword() {
+        return Optional.ofNullable(password);
     }
 }

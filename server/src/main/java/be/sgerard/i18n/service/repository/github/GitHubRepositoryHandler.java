@@ -5,20 +5,18 @@ import be.sgerard.i18n.model.repository.RepositoryType;
 import be.sgerard.i18n.model.repository.dto.GitHubRepositoryCreationDto;
 import be.sgerard.i18n.model.repository.dto.GitHubRepositoryPatchDto;
 import be.sgerard.i18n.model.repository.persistence.GitHubRepositoryEntity;
-import be.sgerard.i18n.model.security.auth.AuthenticatedUser;
-import be.sgerard.i18n.model.security.auth.GitHubRepositoryTokenCredentials;
+import be.sgerard.i18n.model.security.repository.GitHubRepositoryTokenCredentials;
+import be.sgerard.i18n.service.repository.RepositoryApi;
 import be.sgerard.i18n.service.repository.RepositoryException;
 import be.sgerard.i18n.service.repository.git.BaseGitRepositoryHandler;
 import be.sgerard.i18n.service.repository.git.DefaultGitRepositoryApi;
+import be.sgerard.i18n.service.repository.git.GitRepositoryApi;
 import be.sgerard.i18n.service.repository.git.GitRepositoryApiProvider;
-import be.sgerard.i18n.service.security.auth.AuthenticationUserManager;
-import be.sgerard.i18n.service.user.UserManager;
 import be.sgerard.i18n.support.StringUtils;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 import java.io.File;
-import java.net.URI;
 
 /**
  * {@link BaseGitRepositoryHandler Repository handler} for GitHub.
@@ -26,20 +24,14 @@ import java.net.URI;
  * @author Sebastien Gerard
  */
 @Component
-public class GitHubRepositoryHandler extends BaseGitRepositoryHandler<GitHubRepositoryEntity, GitHubRepositoryCreationDto, GitHubRepositoryPatchDto> {
+public class GitHubRepositoryHandler extends
+        BaseGitRepositoryHandler<GitHubRepositoryEntity, GitHubRepositoryCreationDto, GitHubRepositoryPatchDto, GitHubRepositoryTokenCredentials> {
 
-    private final AuthenticationUserManager authenticationUserManager;
-    private final UserManager userManager;
     private final AppProperties appProperties;
 
-    public GitHubRepositoryHandler(GitRepositoryApiProvider apiProvider,
-                                   AuthenticationUserManager authenticationUserManager,
-                                   UserManager userManager,
-                                   AppProperties appProperties) {
+    public GitHubRepositoryHandler(GitRepositoryApiProvider apiProvider, AppProperties appProperties) {
         super(apiProvider);
 
-        this.authenticationUserManager = authenticationUserManager;
-        this.userManager = userManager;
         this.appProperties = appProperties;
     }
 
@@ -50,43 +42,47 @@ public class GitHubRepositoryHandler extends BaseGitRepositoryHandler<GitHubRepo
 
     @Override
     public Mono<GitHubRepositoryEntity> createRepository(GitHubRepositoryCreationDto creationDto) {
-        return validateRepository(
+        return Mono.just(
                 new GitHubRepositoryEntity(creationDto.getUsername(), creationDto.getRepository())
                         .setAccessKey(creationDto.getAccessKey().filter(StringUtils::isNotEmptyString).orElse(null))
         );
     }
 
     @Override
-    public Mono<GitHubRepositoryEntity> updateRepository(GitHubRepositoryEntity repository, GitHubRepositoryPatchDto patchDto) throws RepositoryException {
+    public Mono<GitHubRepositoryEntity> updateRepository(GitHubRepositoryEntity repository,
+                                                         GitHubRepositoryPatchDto patchDto,
+                                                         GitHubRepositoryTokenCredentials credentials) throws RepositoryException {
         updateFromPatch(patchDto, repository);
 
-        repository.setAccessKey(patchDto.getAccessKey().or(repository::getAccessKey).filter(StringUtils::isNotEmptyString).orElse(null));
-        repository.setWebHookSecret(patchDto.getWebHookSecret().or(repository::getWebHookSecret).filter(StringUtils::isNotEmptyString).orElse(null));
+        repository.setAccessKey(patchDto.getUpdateAccessKey(repository).orElse(null));
+        repository.setWebHookSecret(patchDto.getUpdateWebHookSecret(repository).orElse(null));
 
         return Mono.just(repository);
     }
 
     @Override
-    protected Mono<DefaultGitRepositoryApi.Configuration> createConfiguration(GitHubRepositoryEntity repository) {
-        return authenticationUserManager
-                .getCurrentUser()
-                .flatMap(currentAuthUser ->
-                        userManager
-                                .findByIdOrDie(currentAuthUser.getUserId())
-                                .map(currentUser ->
-                                        new DefaultGitRepositoryApi.Configuration(getLocalFile(repository), getRemoteUri(repository))
-                                                .setUsername(getUsername(repository, currentAuthUser))
-                                                .setPassword(null)
-                                                .setDisplayName(currentUser.getDisplayName())
-                                                .setEmail(currentUser.getEmail())
-                                                .setDefaultBranch(repository.getDefaultBranch())
-                                )
-                )
-                .switchIfEmpty(Mono.just(
-                        new DefaultGitRepositoryApi.Configuration(getLocalFile(repository), getRemoteUri(repository))
-                                .setUsername(repository.getAccessKey().orElse(null))
+    public Mono<RepositoryApi> initApi(GitHubRepositoryEntity repository,
+                                       GitHubRepositoryTokenCredentials credentials) throws RepositoryException {
+        return createConfiguration(repository, credentials)
+                .flatMap(this::initApi)
+                .map(a -> a);
+    }
+
+    /**
+     * Initializes the {@link DefaultGitRepositoryApi.Configuration configuration} to use to access Git.
+     */
+    private Mono<GitRepositoryApi.Configuration> createConfiguration(GitHubRepositoryEntity repository,
+                                                                     GitHubRepositoryTokenCredentials credentials) {
+        return Mono
+                .just(credentials)
+                .map(cred ->
+                        new DefaultGitRepositoryApi.Configuration(getLocalFile(repository), repository.getLocation())
                                 .setDefaultBranch(repository.getDefaultBranch())
-                ));
+                                .setUsername(cred.getToken().orElse(null))
+                                .setPassword("")
+                                .setDisplayName(cred.getUserDisplayName().orElse(null))
+                                .setEmail(cred.getUserEmail().orElse(null))
+                );
     }
 
     /**
@@ -95,23 +91,4 @@ public class GitHubRepositoryHandler extends BaseGitRepositoryHandler<GitHubRepo
     private File getLocalFile(GitHubRepositoryEntity repository) {
         return appProperties.getRepository().getDirectoryBaseDir(repository.getId());
     }
-
-    /**
-     * Returns the remote repository URI.
-     */
-    private URI getRemoteUri(GitHubRepositoryEntity repository) {
-        return URI.create(repository.getLocation());
-    }
-
-    /**
-     * Returns the username used to access the repository.
-     */
-    private String getUsername(GitHubRepositoryEntity repository, AuthenticatedUser currentAuthUser) {
-        return currentAuthUser
-                .getCredentials(repository.getId(), GitHubRepositoryTokenCredentials.class)
-                .map(GitHubRepositoryTokenCredentials::getToken)
-                .or(repository::getAccessKey)
-                .orElse(null);
-    }
-
 }

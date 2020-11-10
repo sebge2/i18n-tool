@@ -4,12 +4,14 @@ import be.sgerard.i18n.model.repository.RepositoryStatus;
 import be.sgerard.i18n.model.repository.dto.*;
 import be.sgerard.test.i18n.support.CleanupDatabase;
 import be.sgerard.test.i18n.support.WithJaneDoeAdminUser;
+import be.sgerard.test.i18n.support.auth.external.github.WithGarrickKleinAdminUser;
 import org.junit.jupiter.api.*;
 import org.springframework.http.MediaType;
 
 import static be.sgerard.test.i18n.model.GitRepositoryCreationDtoTestUtils.*;
-import static org.hamcrest.Matchers.greaterThanOrEqualTo;
-import static org.hamcrest.Matchers.hasSize;
+import static be.sgerard.test.i18n.model.GitRepositoryPatchDtoTestUtils.*;
+import static be.sgerard.test.i18n.model.UserDtoTestUtils.GARRICK_KLEIN_TOKEN;
+import static org.hamcrest.Matchers.*;
 
 /**
  * @author Sebastien Gerard
@@ -18,34 +20,35 @@ import static org.hamcrest.Matchers.hasSize;
 public class RepositoryControllerTest extends AbstractControllerTest {
 
     @BeforeAll
-    public void setupRepo() throws Exception {
-        gitRepo
-                .createMockFor(i18nToolRepositoryCreationDto())
-                .allowAnonymousRead()
+    public void setupRepo() {
+        remoteRepository
+                .gitHub()
+                .create(i18nToolGitHubRepositoryCreationDto(), "myGitHubRepo")
+                .accessToken(I18N_TOOL_REPO_ACCESS_TOKEN)
+                .accessToken("another-valid-access-token")
+                .accessToken(GARRICK_KLEIN_TOKEN)
                 .onCurrentGitProject()
-                .create();
-        gitRepo
-                .createMockFor(i18nToolLocalRepositoryCreationDto())
-                .allowAnonymousRead()
+                .start();
+
+        remoteRepository
+                .git()
+                .create(i18nToolGitRepositoryCreationDto(), "myGitRepo")
+                .addUser(I18N_TOOL_REPO_USER, I18N_TOOL_REPO_USER_PASSWORD)
+                .addUser("another-valid-user", "another-password")
                 .onCurrentGitProject()
-                .create();
-        gitRepo
-                .createMockFor(privateI18nToolRepositoryCreationDto())
-                .userKey("ABCD")
-                .onCurrentGitProject()
-                .create();
+                .start();
     }
 
     @AfterAll
     public void destroy() {
-        gitRepo.destroyAll();
+        remoteRepository.stopAll();
     }
 
     @Test
     @CleanupDatabase
     @WithJaneDoeAdminUser
     public void findAll() {
-        final GitRepositoryDto repository = this.repository.create(i18nToolLocalRepositoryCreationDto(), GitRepositoryDto.class).get();
+        final GitRepositoryDto repository = this.repository.create(i18nToolGitRepositoryCreationDto(), GitRepositoryDto.class).get();
 
         webClient.get()
                 .uri("/api/repository/")
@@ -62,7 +65,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
     @CleanupDatabase
     @WithJaneDoeAdminUser
     public void findById() {
-        final GitRepositoryDto repository = this.repository.create(i18nToolLocalRepositoryCreationDto(), GitRepositoryDto.class).get();
+        final GitRepositoryDto repository = this.repository.create(i18nToolGitRepositoryCreationDto(), GitRepositoryDto.class).get();
 
         webClient.get()
                 .uri("/api/repository/{id}", repository.getId())
@@ -78,7 +81,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
     @CleanupDatabase
     @WithJaneDoeAdminUser
     public void findByIdNotFound() {
-        repository.create(i18nToolLocalRepositoryCreationDto(), GitRepositoryDto.class);
+        repository.create(i18nToolGitRepositoryCreationDto(), GitRepositoryDto.class);
 
         webClient.get()
                 .uri("/api/repository/{id}", "unknown")
@@ -94,7 +97,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
         @CleanupDatabase
         @WithJaneDoeAdminUser
         public void create() {
-            final GitHubRepositoryCreationDto creationDto = i18nToolRepositoryCreationDto();
+            final GitHubRepositoryCreationDto creationDto = i18nToolGitHubRepositoryCreationDto();
 
             webClient.post()
                     .uri("/api/repository/")
@@ -132,7 +135,8 @@ public class RepositoryControllerTest extends AbstractControllerTest {
         @CleanupDatabase
         @WithJaneDoeAdminUser
         public void createInvalidAccessKeyCredentials() {
-            final GitHubRepositoryCreationDto creationDto = new GitHubRepositoryCreationDto("sebge2", "private-i18n-tool", "ZEF");
+            final GitHubRepositoryCreationDto creationDto =
+                    new GitHubRepositoryCreationDto(i18nToolGitHubRepositoryCreationDto().getUsername(), i18nToolGitHubRepositoryCreationDto().getRepository(), "ZEF");
 
             webClient.post()
                     .uri("/api/repository/")
@@ -141,14 +145,14 @@ public class RepositoryControllerTest extends AbstractControllerTest {
                     .exchange()
                     .expectStatus().isBadRequest()
                     .expectBody()
-                    .jsonPath("$.messages[0]").isEqualTo("Please verify your credentials for accessing the Git repository [https://github.com/sebge2/private-i18n-tool.git].");
+                    .jsonPath("$.messages[0]").isEqualTo("Please verify your credentials for accessing the Git repository [https://github.com/sebge2/i18n-tool.git].");
         }
 
         @Test
         @CleanupDatabase
         @WithJaneDoeAdminUser
         public void createNoAccessKeyCredentials() {
-            final GitHubRepositoryCreationDto creationDto = new GitHubRepositoryCreationDto("sebge2", "private-i18n-tool", null);
+            final GitHubRepositoryCreationDto creationDto = i18nToolGitHubRepositoryCreationNoAccessTokenDto();
 
             webClient.post()
                     .uri("/api/repository/")
@@ -157,14 +161,14 @@ public class RepositoryControllerTest extends AbstractControllerTest {
                     .exchange()
                     .expectStatus().isBadRequest()
                     .expectBody()
-                    .jsonPath("$.messages[0]").isEqualTo("Please verify your credentials for accessing the Git repository [https://github.com/sebge2/private-i18n-tool.git].");
+                    .jsonPath("$.messages[0]").isEqualTo("Please verify your credentials for accessing the Git repository [https://github.com/sebge2/i18n-tool.git].");
         }
 
         @Test
         @CleanupDatabase
-        @WithJaneDoeAdminUser
-        public void createValidAccessKeyCredentials() {
-            final GitHubRepositoryCreationDto creationDto = privateI18nToolRepositoryCreationDto();
+        @WithGarrickKleinAdminUser
+        public void createValidAccessCurrentUserHasCredentials() {
+            final GitHubRepositoryCreationDto creationDto = i18nToolGitHubRepositoryCreationNoAccessTokenDto();
 
             webClient.post()
                     .uri("/api/repository/")
@@ -176,9 +180,26 @@ public class RepositoryControllerTest extends AbstractControllerTest {
 
         @Test
         @CleanupDatabase
+        @WithGarrickKleinAdminUser
+        public void createValidAccessCurrentUserHasCredentialsButInvalidToken() {
+            final GitHubRepositoryCreationDto creationDto =
+                    new GitHubRepositoryCreationDto(i18nToolGitHubRepositoryCreationDto().getUsername(), i18nToolGitHubRepositoryCreationDto().getRepository(), "ZEF");
+
+            webClient.post()
+                    .uri("/api/repository/")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(creationDto)
+                    .exchange()
+                    .expectStatus().isBadRequest()
+                    .expectBody()
+                    .jsonPath("$.messages[0]").isEqualTo("Please verify your credentials for accessing the Git repository [https://github.com/sebge2/i18n-tool.git].");
+        }
+
+        @Test
+        @CleanupDatabase
         @WithJaneDoeAdminUser
         public void createSameName() {
-            final GitHubRepositoryCreationDto creationDto = i18nToolRepositoryCreationDto();
+            final GitHubRepositoryCreationDto creationDto = i18nToolGitHubRepositoryCreationDto();
 
             webClient.post()
                     .uri("/api/repository/")
@@ -201,7 +222,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
         @CleanupDatabase
         @WithJaneDoeAdminUser
         public void initialize() {
-            final GitHubRepositoryDto repository = this.repository.create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class).get();
+            final GitHubRepositoryDto repository = this.repository.create(i18nToolGitHubRepositoryCreationDto(), GitHubRepositoryDto.class).get();
 
             webClient.post()
                     .uri("/api/repository/{id}/do?action=INITIALIZE", repository.getId())
@@ -215,7 +236,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
         @CleanupDatabase
         @WithJaneDoeAdminUser
         public void initializeTwice() {
-            final GitHubRepositoryDto repository = this.repository.create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class).get();
+            final GitHubRepositoryDto repository = this.repository.create(i18nToolGitHubRepositoryCreationDto(), GitHubRepositoryDto.class).get();
 
             webClient.post()
                     .uri("/api/repository/{id}/do?action=INITIALIZE", repository.getId())
@@ -236,12 +257,12 @@ public class RepositoryControllerTest extends AbstractControllerTest {
         @CleanupDatabase
         @WithJaneDoeAdminUser
         public void updateWebHookAndAccessKey() {
-            final GitHubRepositoryDto repository = this.repository.create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class).get();
+            final GitHubRepositoryDto repository = this.repository.create(i18nToolGitHubRepositoryCreationDto(), GitHubRepositoryDto.class).get();
 
             final GitHubRepositoryPatchDto patchDto = GitHubRepositoryPatchDto.gitHubBuilder()
                     .id(repository.getId())
                     .webHookSecret("a secret")
-                    .accessKey("an access key")
+                    .accessKey("another-valid-access-token")
                     .build();
 
             webClient
@@ -257,7 +278,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
         @CleanupDatabase
         @WithJaneDoeAdminUser
         public void updateAllowedBranch() {
-            final GitHubRepositoryDto repository = this.repository.create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class).get();
+            final GitHubRepositoryDto repository = this.repository.create(i18nToolGitHubRepositoryCreationDto(), GitHubRepositoryDto.class).get();
 
             final GitHubRepositoryPatchDto patchDto = GitHubRepositoryPatchDto.gitHubBuilder()
                     .id(repository.getId())
@@ -277,7 +298,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
         @CleanupDatabase
         @WithJaneDoeAdminUser
         public void updateAllowedBranchDefaultBranchNotMatching() {
-            final GitHubRepositoryDto repository = this.repository.create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class).get();
+            final GitHubRepositoryDto repository = this.repository.create(i18nToolGitHubRepositoryCreationDto(), GitHubRepositoryDto.class).get();
 
             final GitHubRepositoryPatchDto patchDto = GitHubRepositoryPatchDto.gitHubBuilder()
                     .id(repository.getId())
@@ -299,7 +320,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
         @CleanupDatabase
         @WithJaneDoeAdminUser
         public void updateAllowedBranchPatternInvalid() {
-            final GitHubRepositoryDto repository = this.repository.create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class).get();
+            final GitHubRepositoryDto repository = this.repository.create(i18nToolGitHubRepositoryCreationDto(), GitHubRepositoryDto.class).get();
 
             final GitHubRepositoryPatchDto patchDto = GitHubRepositoryPatchDto.gitHubBuilder()
                     .id(repository.getId())
@@ -321,7 +342,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
         @CleanupDatabase
         @WithJaneDoeAdminUser
         public void updateDefaultBranch() {
-            final GitHubRepositoryDto repository = this.repository.create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class).get();
+            final GitHubRepositoryDto repository = this.repository.create(i18nToolGitHubRepositoryCreationDto(), GitHubRepositoryDto.class).get();
 
             final GitHubRepositoryPatchDto patchDto = GitHubRepositoryPatchDto.gitHubBuilder()
                     .id(repository.getId())
@@ -341,7 +362,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
         @CleanupDatabase
         @WithJaneDoeAdminUser
         public void updateDefaultBranchNotMatching() {
-            final GitHubRepositoryDto repository = this.repository.create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class).get();
+            final GitHubRepositoryDto repository = this.repository.create(i18nToolGitHubRepositoryCreationDto(), GitHubRepositoryDto.class).get();
 
             final GitHubRepositoryPatchDto patchDto = GitHubRepositoryPatchDto.gitHubBuilder()
                     .id(repository.getId())
@@ -363,11 +384,11 @@ public class RepositoryControllerTest extends AbstractControllerTest {
         @CleanupDatabase
         @WithJaneDoeAdminUser
         public void updateAccessKey() {
-            final GitHubRepositoryDto repository = this.repository.create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class).get();
+            final GitHubRepositoryDto repository = this.repository.create(i18nToolGitHubRepositoryCreationDto(), GitHubRepositoryDto.class).get();
 
             final GitHubRepositoryPatchDto patchDto = GitHubRepositoryPatchDto.gitHubBuilder()
                     .id(repository.getId())
-                    .accessKey("abzec")
+                    .accessKey("another-valid-access-token")
                     .build();
 
             webClient
@@ -382,8 +403,31 @@ public class RepositoryControllerTest extends AbstractControllerTest {
         @Test
         @CleanupDatabase
         @WithJaneDoeAdminUser
+        public void updateAccessKeyInvalid() {
+            final GitHubRepositoryDto repository = this.repository.create(i18nToolGitHubRepositoryCreationDto(), GitHubRepositoryDto.class).get();
+
+            final GitHubRepositoryPatchDto patchDto = GitHubRepositoryPatchDto.gitHubBuilder()
+                    .id(repository.getId())
+                    .accessKey("abzec")
+                    .build();
+
+            webClient
+                    .patch()
+                    .uri("/api/repository/{id}", repository.getId())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(patchDto)
+                    .exchange()
+                    .expectStatus().isBadRequest()
+                    .expectBody()
+                    .jsonPath("$.messages[0]")
+                    .isEqualTo("Please verify your credentials for accessing the Git repository [https://github.com/sebge2/i18n-tool.git].");
+        }
+
+        @Test
+        @CleanupDatabase
+        @WithJaneDoeAdminUser
         public void updateWebHookSecret() {
-            final GitHubRepositoryDto repository = this.repository.create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class).get();
+            final GitHubRepositoryDto repository = this.repository.create(i18nToolGitHubRepositoryCreationDto(), GitHubRepositoryDto.class).get();
 
             final GitHubRepositoryPatchDto patchDto = GitHubRepositoryPatchDto.gitHubBuilder()
                     .id(repository.getId())
@@ -403,7 +447,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
         @CleanupDatabase
         @WithJaneDoeAdminUser
         public void deleteRepository() {
-            final GitHubRepositoryDto repository = this.repository.create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class).get();
+            final GitHubRepositoryDto repository = this.repository.create(i18nToolGitHubRepositoryCreationDto(), GitHubRepositoryDto.class).get();
 
             webClient.delete()
                     .uri("/api/repository/{id}", repository.getId())
@@ -425,7 +469,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
         @CleanupDatabase
         @WithJaneDoeAdminUser
         public void create() {
-            final GitRepositoryCreationDto creationDto = i18nToolLocalRepositoryCreationDto();
+            final GitRepositoryCreationDto creationDto = i18nToolGitRepositoryCreationDto();
 
             webClient.post()
                     .uri("/api/repository/")
@@ -444,8 +488,65 @@ public class RepositoryControllerTest extends AbstractControllerTest {
         @Test
         @CleanupDatabase
         @WithJaneDoeAdminUser
+        public void createInvalidUserCredentials() {
+            final GitRepositoryCreationDto creationDto =
+                    new GitRepositoryCreationDto(i18nToolGitRepositoryCreationNoUserDto().getLocation(),
+                            i18nToolGitRepositoryCreationNoUserDto().getName(), "a", "b");
+
+            webClient.post()
+                    .uri("/api/repository/")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(creationDto)
+                    .exchange()
+                    .expectStatus().isBadRequest()
+                    .expectBody()
+                    .jsonPath("$.messages[0]").value(containsString("Please verify your credentials for accessing the Git repository ["));
+        }
+
+        @Test
+        @CleanupDatabase
+        @WithJaneDoeAdminUser
+        public void createNoUserCredentials() {
+            final GitRepositoryCreationDto creationDto = i18nToolGitRepositoryCreationNoUserDto();
+
+            webClient.post()
+                    .uri("/api/repository/")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(creationDto)
+                    .exchange()
+                    .expectStatus().isBadRequest()
+                    .expectBody()
+                    .jsonPath("$.messages[0]").value(containsString("Please verify your credentials for accessing the Git repository ["));
+        }
+
+        @Test
+        @CleanupDatabase
+        @WithJaneDoeAdminUser
+        public void createSameName() {
+            final GitRepositoryCreationDto creationDto = i18nToolGitRepositoryCreationDto();
+
+            webClient.post()
+                    .uri("/api/repository/")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(creationDto)
+                    .exchange()
+                    .expectStatus().isCreated();
+
+            webClient.post()
+                    .uri("/api/repository/")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(creationDto)
+                    .exchange()
+                    .expectStatus().isBadRequest()
+                    .expectBody()
+                    .jsonPath("$.messages[0]").isEqualTo("Another repository is already named [i18n-tool]. Names must be unique.");
+        }
+
+        @Test
+        @CleanupDatabase
+        @WithJaneDoeAdminUser
         public void initialize() {
-            final GitRepositoryDto repository = this.repository.create(i18nToolLocalRepositoryCreationDto(), GitRepositoryDto.class).get();
+            final GitRepositoryDto repository = this.repository.create(i18nToolGitRepositoryCreationDto(), GitRepositoryDto.class).get();
 
             webClient.post()
                     .uri("/api/repository/{id}/do?action=INITIALIZE", repository.getId())
@@ -459,7 +560,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
         @CleanupDatabase
         @WithJaneDoeAdminUser
         public void updateAllowedBranch() {
-            final GitRepositoryDto repository = this.repository.create(i18nToolLocalRepositoryCreationDto(), GitRepositoryDto.class).get();
+            final GitRepositoryDto repository = this.repository.create(i18nToolGitRepositoryCreationDto(), GitRepositoryDto.class).get();
 
             final GitRepositoryPatchDto patchDto = GitRepositoryPatchDto.gitBuilder()
                     .id(repository.getId())
@@ -479,7 +580,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
         @CleanupDatabase
         @WithJaneDoeAdminUser
         public void updateName() {
-            final GitRepositoryDto repository = this.repository.create(i18nToolLocalRepositoryCreationDto(), GitRepositoryDto.class).get();
+            final GitRepositoryDto repository = this.repository.create(i18nToolGitRepositoryCreationDto(), GitRepositoryDto.class).get();
 
             final GitRepositoryPatchDto patchDto = GitRepositoryPatchDto.gitBuilder()
                     .id(repository.getId())
@@ -501,7 +602,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
         @CleanupDatabase
         @WithJaneDoeAdminUser
         public void updateAllowedBranchDefaultBranchNotMatching() {
-            final GitRepositoryDto repository = this.repository.create(i18nToolLocalRepositoryCreationDto(), GitRepositoryDto.class).get();
+            final GitRepositoryDto repository = this.repository.create(i18nToolGitRepositoryCreationDto(), GitRepositoryDto.class).get();
 
             final GitRepositoryPatchDto patchDto = GitRepositoryPatchDto.gitBuilder()
                     .id(repository.getId())
@@ -523,7 +624,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
         @CleanupDatabase
         @WithJaneDoeAdminUser
         public void updateAllowedBranchPatternInvalid() {
-            final GitRepositoryDto repository = this.repository.create(i18nToolLocalRepositoryCreationDto(), GitRepositoryDto.class).get();
+            final GitRepositoryDto repository = this.repository.create(i18nToolGitRepositoryCreationDto(), GitRepositoryDto.class).get();
 
             final GitRepositoryPatchDto patchDto = GitRepositoryPatchDto.gitBuilder()
                     .id(repository.getId())
@@ -545,7 +646,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
         @CleanupDatabase
         @WithJaneDoeAdminUser
         public void updateDefaultBranch() {
-            final GitRepositoryDto repository = this.repository.create(i18nToolLocalRepositoryCreationDto(), GitRepositoryDto.class).get();
+            final GitRepositoryDto repository = this.repository.create(i18nToolGitRepositoryCreationDto(), GitRepositoryDto.class).get();
 
             final GitRepositoryPatchDto patchDto = GitRepositoryPatchDto.gitBuilder()
                     .id(repository.getId())
@@ -565,7 +666,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
         @CleanupDatabase
         @WithJaneDoeAdminUser
         public void updateDefaultBranchNotMatching() {
-            final GitRepositoryDto repository = this.repository.create(i18nToolLocalRepositoryCreationDto(), GitRepositoryDto.class).get();
+            final GitRepositoryDto repository = this.repository.create(i18nToolGitRepositoryCreationDto(), GitRepositoryDto.class).get();
 
             final GitRepositoryPatchDto patchDto = GitRepositoryPatchDto.gitBuilder()
                     .id(repository.getId())
@@ -586,8 +687,52 @@ public class RepositoryControllerTest extends AbstractControllerTest {
         @Test
         @CleanupDatabase
         @WithJaneDoeAdminUser
+        public void updateUserPassword() {
+            final GitRepositoryDto repository = this.repository.create(i18nToolGitRepositoryCreationDto(), GitRepositoryDto.class).get();
+
+            final GitRepositoryPatchDto patchDto = GitRepositoryPatchDto.gitBuilder()
+                    .id(repository.getId())
+                    .username("another-valid-user")
+                    .password("another-password")
+                    .build();
+
+            webClient
+                    .patch()
+                    .uri("/api/repository/{id}", repository.getId())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(patchDto)
+                    .exchange()
+                    .expectStatus().isOk();
+        }
+
+        @Test
+        @CleanupDatabase
+        @WithJaneDoeAdminUser
+        public void updateUserPasswordInvalid() {
+            final GitRepositoryDto repository = this.repository.create(i18nToolGitRepositoryCreationDto(), GitRepositoryDto.class).get();
+
+            final GitRepositoryPatchDto patchDto = GitRepositoryPatchDto.gitBuilder()
+                    .id(repository.getId())
+                    .username("an-invalid-user")
+                    .password("another-password")
+                    .build();
+
+            webClient
+                    .patch()
+                    .uri("/api/repository/{id}", repository.getId())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(patchDto)
+                    .exchange()
+                    .expectStatus().isBadRequest()
+                    .expectBody()
+                    .jsonPath("$.messages[0]").value(containsString("Please verify your credentials for accessing the Git repository ["));
+        }
+
+        @Test
+        @CleanupDatabase
+        @WithJaneDoeAdminUser
         public void deleteRepository() {
-            final GitRepositoryDto repository = this.repository.create(i18nToolLocalRepositoryCreationDto(), GitRepositoryDto.class).get();
+            final GitRepositoryDto repository = this.repository.create(i18nToolGitRepositoryCreationDto(), GitRepositoryDto.class).get();
 
             webClient.delete()
                     .uri("/api/repository/{id}", repository.getId())

@@ -4,7 +4,7 @@ import be.sgerard.i18n.model.repository.RepositoryType;
 import be.sgerard.i18n.model.repository.dto.RepositoryCreationDto;
 import be.sgerard.i18n.model.repository.dto.RepositoryPatchDto;
 import be.sgerard.i18n.model.repository.persistence.RepositoryEntity;
-import be.sgerard.i18n.service.ValidationException;
+import be.sgerard.i18n.model.security.repository.RepositoryCredentials;
 import reactor.core.publisher.Mono;
 
 /**
@@ -12,7 +12,7 @@ import reactor.core.publisher.Mono;
  *
  * @author Sebastien Gerard
  */
-public interface RepositoryHandler<E extends RepositoryEntity, C extends RepositoryCreationDto, P extends RepositoryPatchDto> {
+public interface RepositoryHandler<E extends RepositoryEntity, C extends RepositoryCreationDto, P extends RepositoryPatchDto, D extends RepositoryCredentials> {
 
     /**
      * Checks whether the specified {@link RepositoryType type} is supported.
@@ -22,25 +22,25 @@ public interface RepositoryHandler<E extends RepositoryEntity, C extends Reposit
     /**
      * Creates the {@link RepositoryEntity entity} for the specified {@link RepositoryCreationDto DTO}.
      */
-    Mono<E> createRepository(C creationDto) throws ValidationException;
+    Mono<E> createRepository(C creationDto);
 
     /**
      * Initializes the specified repository.
      */
-    Mono<E> initializeRepository(E repository) throws RepositoryException;
+    Mono<E> initializeRepository(E repository, D credentials) throws RepositoryException;
 
     /**
      * Update the specified repository based on the specified {@link RepositoryPatchDto patch}.
      */
-    Mono<E> updateRepository(E repository, P patchDto) throws RepositoryException;
+    Mono<E> updateRepository(E repository, P patchDto, D credentials) throws RepositoryException;
 
     /**
      * Deletes the specified repository.
      */
-    Mono<E> deleteRepository(E repository) throws RepositoryException;
+    Mono<E> deleteRepository(E repository, D credentials) throws RepositoryException;
 
     /**
-     * Creates the API to use for accessing the specified repository.
+     * Initializes the API to use for accessing in runtime the specified repository.
      */
-    Mono<RepositoryApi> createAPI(E repository) throws RepositoryException;
+    Mono<RepositoryApi> initApi(E repository, D credentials) throws RepositoryException;
 }

@@ -1,8 +1,8 @@
 package be.sgerard.i18n.service.security.repository;
 
-import be.sgerard.i18n.model.security.auth.RepositoryCredentials;
-import be.sgerard.i18n.model.security.auth.external.ExternalUserToken;
-import reactor.core.publisher.Flux;
+import be.sgerard.i18n.model.repository.persistence.RepositoryEntity;
+import be.sgerard.i18n.model.security.auth.AuthenticatedUser;
+import be.sgerard.i18n.model.security.repository.RepositoryCredentials;
 import reactor.core.publisher.Mono;
 
 /**
@@ -13,22 +13,25 @@ import reactor.core.publisher.Mono;
 public interface RepositoryCredentialsManager {
 
     /**
-     * Loads {@link RepositoryCredentials credentials} when there is no token.
+     * Loads {@link RepositoryCredentials credentials} when there is no token for accessing the specified {@link RepositoryEntity repository}.
      */
-    Flux<RepositoryCredentials> loadAllCredentials();
+    Mono<RepositoryCredentials> loadStaticCredentials(RepositoryEntity repository);
 
     /**
-     * Loads {@link RepositoryCredentials credentials} when there is no token for accessing the specified repository.
+     * Loads {@link RepositoryCredentials credentials} of the current authenticated user for accessing the specified {@link RepositoryEntity repository}.
+     * If there is no current user, the mono fails. This method helps to ensure that there is an authenticated user.
      */
-    Mono<RepositoryCredentials> loadCredentials(String repositoryId);
+    Mono<RepositoryCredentials> loadUserCredentialsOrDie(RepositoryEntity repository);
 
     /**
-     * Loads {@link RepositoryCredentials credentials} with the specified {@link ExternalUserToken token}.
+     * Loads {@link RepositoryCredentials credentials} of the current authenticated user for accessing the specified {@link RepositoryEntity repository}.
+     * If there is no current user, {@link #loadStaticCredentials(RepositoryEntity) static credentials are returned}.
      */
-    Flux<RepositoryCredentials> loadAllCredentials(ExternalUserToken externalToken);
+    Mono<RepositoryCredentials> loadUserCredentials(RepositoryEntity repository);
 
     /**
-     * Loads {@link RepositoryCredentials credentials} with the specified {@link ExternalUserToken token} for accessing the specified repository.
+     * Loads {@link RepositoryCredentials credentials} of the specified authenticated user for accessing the specified {@link RepositoryEntity repository}.
      */
-    Mono<RepositoryCredentials> loadCredentials(String repositoryId, ExternalUserToken externalToken);
+    Mono<RepositoryCredentials> loadUserCredentials(RepositoryEntity repository, AuthenticatedUser authenticatedUser);
+
 }

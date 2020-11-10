@@ -24,9 +24,8 @@ import java.util.Collection;
 import static be.sgerard.test.i18n.model.GitHubBranchCreatedEventDtoTestUtils.i18nToolRelease20205BranchCreatedEvent;
 import static be.sgerard.test.i18n.model.GitHubBranchDeletedEventDtoTestUtils.i18nToolRelease20204BranchDeletedEvent;
 import static be.sgerard.test.i18n.model.GitHubBranchPullRequestEventDtoTestUtils.i18nToolRelease20206PullRequestEvent;
-import static be.sgerard.test.i18n.model.GitHubRepositoryPatchDtoTestUtils.WEB_HOOK_SECRET;
-import static be.sgerard.test.i18n.model.GitHubRepositoryPatchDtoTestUtils.i18nToolRepositoryPatchDto;
-import static be.sgerard.test.i18n.model.GitRepositoryCreationDtoTestUtils.i18nToolRepositoryCreationDto;
+import static be.sgerard.test.i18n.model.GitRepositoryPatchDtoTestUtils.*;
+import static be.sgerard.test.i18n.model.GitRepositoryCreationDtoTestUtils.i18nToolGitHubRepositoryCreationDto;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -39,18 +38,20 @@ public class GitHubControllerTest extends AbstractControllerTest {
     private ObjectMapper objectMapper;
 
     @BeforeAll
-    public void setupRepo() throws Exception {
-        gitRepo
-                .createMockFor(i18nToolRepositoryCreationDto())
-                .allowAnonymousRead()
+    public void setupRepo() {
+        remoteRepository
+                .gitHub()
+                .create(i18nToolGitHubRepositoryCreationDto(), "myGitHubRepo")
+                .accessToken(I18N_TOOL_REPO_ACCESS_TOKEN)
                 .onCurrentGitProject()
-                .create()
+                .start()
+                .manageRemoteBranches()
                 .createBranches("develop", "release/2020.6", "release/2020.4");
     }
 
     @AfterAll
     public void destroy() {
-        gitRepo.destroyAll();
+        remoteRepository.stopAll();
     }
 
     @Test
@@ -58,21 +59,23 @@ public class GitHubControllerTest extends AbstractControllerTest {
     @WithJaneDoeAdminUser
     public void deletedBranchEvent() throws Exception {
         repository
-                .create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class)
+                .create(i18nToolGitHubRepositoryCreationDto(), GitHubRepositoryDto.class)
                 .hint("my-repo")
-                .update(i18nToolRepositoryPatchDto())
+                .update(i18nToolGitHubRepositoryPatchDto())
                 .initialize()
                 .workspaces();
 
-        gitRepo
-                .getRepo(i18nToolRepositoryCreationDto())
+        remoteRepository
+                .gitHub()
+                .forHint("myGitHubRepo")
+                .manageRemoteBranches()
                 .deleteBranches("release/2020.4");
 
         assertThat(getWorkspacesForRepo())
                 .extracting(WorkspaceDto::getBranch)
                 .contains("release/2020.4");
 
-        postRequest(i18nToolRelease20204BranchDeletedEvent(), GitHubEventType.BRANCH_DELETED, WEB_HOOK_SECRET)
+        postRequest(i18nToolRelease20204BranchDeletedEvent(), GitHubEventType.BRANCH_DELETED, I18N_TOOL_REPO_WEB_HOOK_SECRET)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
@@ -90,17 +93,19 @@ public class GitHubControllerTest extends AbstractControllerTest {
     @WithJaneDoeAdminUser
     public void createdBranchEvent() throws Exception {
         repository
-                .create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class)
+                .create(i18nToolGitHubRepositoryCreationDto(), GitHubRepositoryDto.class)
                 .hint("my-repo")
-                .update(i18nToolRepositoryPatchDto())
+                .update(i18nToolGitHubRepositoryPatchDto())
                 .initialize()
                 .workspaces();
 
-        gitRepo
-                .getRepo(i18nToolRepositoryCreationDto())
+        remoteRepository
+                .gitHub()
+                .forHint("myGitHubRepo")
+                .manageRemoteBranches()
                 .createBranches("release/2020.5");
 
-        postRequest(i18nToolRelease20205BranchCreatedEvent(), GitHubEventType.BRANCH_CREATED, WEB_HOOK_SECRET)
+        postRequest(i18nToolRelease20205BranchCreatedEvent(), GitHubEventType.BRANCH_CREATED, I18N_TOOL_REPO_WEB_HOOK_SECRET)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
@@ -118,16 +123,16 @@ public class GitHubControllerTest extends AbstractControllerTest {
     @WithJaneDoeAdminUser
     public void pullRequestEvent() throws Exception {
         repository
-                .create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class)
+                .create(i18nToolGitHubRepositoryCreationDto(), GitHubRepositoryDto.class)
                 .hint("my-repo")
-                .update(i18nToolRepositoryPatchDto())
+                .update(i18nToolGitHubRepositoryPatchDto())
                 .initialize()
                 .workspaces()
                 .workspaceForBranch("release/2020.6")
                 .initialize()
                 .publish("test");
 
-        postRequest(i18nToolRelease20206PullRequestEvent(), GitHubEventType.PULL_REQUEST, WEB_HOOK_SECRET)
+        postRequest(i18nToolRelease20206PullRequestEvent(), GitHubEventType.PULL_REQUEST, I18N_TOOL_REPO_WEB_HOOK_SECRET)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
@@ -145,11 +150,11 @@ public class GitHubControllerTest extends AbstractControllerTest {
     @WithJaneDoeAdminUser
     public void wrongCredentials() throws Exception {
         repository
-                .create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class)
-                .update(i18nToolRepositoryPatchDto())
+                .create(i18nToolGitHubRepositoryCreationDto(), GitHubRepositoryDto.class)
+                .update(i18nToolGitHubRepositoryPatchDto())
                 .initialize();
 
-        postRequest(i18nToolRelease20204BranchDeletedEvent(), GitHubEventType.BRANCH_DELETED, WEB_HOOK_SECRET + "wrong")
+        postRequest(i18nToolRelease20204BranchDeletedEvent(), GitHubEventType.BRANCH_DELETED, I18N_TOOL_REPO_WEB_HOOK_SECRET + "wrong")
                 .exchange()
                 .expectStatus().isUnauthorized()
                 .expectBody()
@@ -161,10 +166,10 @@ public class GitHubControllerTest extends AbstractControllerTest {
     @WithJaneDoeAdminUser
     public void noCredentialsNeeded() throws Exception {
         repository
-                .create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class)
+                .create(i18nToolGitHubRepositoryCreationDto(), GitHubRepositoryDto.class)
                 .initialize();
 
-        postRequest(i18nToolRelease20204BranchDeletedEvent(), GitHubEventType.BRANCH_DELETED, WEB_HOOK_SECRET + "wrong")
+        postRequest(i18nToolRelease20204BranchDeletedEvent(), GitHubEventType.BRANCH_DELETED, I18N_TOOL_REPO_WEB_HOOK_SECRET + "wrong")
                 .exchange()
                 .expectStatus().isOk();
     }

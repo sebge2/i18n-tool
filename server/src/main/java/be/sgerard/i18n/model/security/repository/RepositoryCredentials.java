@@ -1,6 +1,7 @@
-package be.sgerard.i18n.model.security.auth;
+package be.sgerard.i18n.model.security.repository;
 
 import be.sgerard.i18n.model.repository.persistence.RepositoryEntity;
+import be.sgerard.i18n.model.security.auth.AuthenticatedUser;
 import be.sgerard.i18n.service.security.UserRole;
 
 import java.io.Serializable;

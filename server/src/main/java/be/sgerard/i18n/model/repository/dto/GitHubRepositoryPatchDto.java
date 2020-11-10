@@ -1,6 +1,8 @@
 package be.sgerard.i18n.model.repository.dto;
 
 import be.sgerard.i18n.model.repository.RepositoryType;
+import be.sgerard.i18n.model.repository.persistence.GitHubRepositoryEntity;
+import be.sgerard.i18n.support.StringUtils;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
@@ -47,10 +49,24 @@ public class GitHubRepositoryPatchDto extends BaseGitRepositoryPatchDto {
     }
 
     /**
+     * Returns the access key to use after patching the specified repository.
+     */
+    public Optional<String> getUpdateAccessKey(GitHubRepositoryEntity repository) {
+        return getAccessKey().or(repository::getAccessKey).filter(StringUtils::isNotEmptyString);
+    }
+
+    /**
      * Returns the secret shared when GitHub access this app via a web-hook.
      */
     public Optional<String> getWebHookSecret() {
         return Optional.ofNullable(webHookSecret);
+    }
+
+    /**
+     * Returns the web-hook secret to use after patching the specified repository.
+     */
+    public Optional<String> getUpdateWebHookSecret(GitHubRepositoryEntity repository) {
+        return getWebHookSecret().or(repository::getWebHookSecret).filter(StringUtils::isNotEmptyString);
     }
 
     /**

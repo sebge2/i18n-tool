@@ -59,6 +59,20 @@ public class ExternalUserDetails implements OAuth2User {
     }
 
     /**
+     * Returns the name to be displayed to the end-user (ideally composed of the first name, last name).
+     */
+    public String getDisplayName() {
+        return externalUser.getDisplayName();
+    }
+
+    /**
+     * Returns the user's email.
+     */
+    public String getEmail() {
+        return externalUser.getEmail();
+    }
+
+    /**
      * Returns the current authentication {@link ExternalUserToken token}.
      */
     public ExternalUserToken getToken() {

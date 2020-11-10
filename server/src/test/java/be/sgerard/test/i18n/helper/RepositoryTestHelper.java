@@ -1,7 +1,6 @@
 package be.sgerard.test.i18n.helper;
 
 import be.sgerard.i18n.model.repository.RepositoryStatus;
-import be.sgerard.i18n.model.repository.dto.GitHubRepositoryDto;
 import be.sgerard.i18n.model.repository.dto.RepositoryCreationDto;
 import be.sgerard.i18n.model.repository.dto.RepositoryDto;
 import be.sgerard.i18n.model.repository.dto.RepositoryPatchDto;
@@ -11,7 +10,11 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.BodyInserters;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import static java.util.stream.Collectors.toList;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Sebastien Gerard
@@ -21,15 +24,12 @@ public class RepositoryTestHelper {
 
     private final WebTestClient webClient;
     private final WorkspaceTestHelper workspaceTestHelper;
-    private final GitHubRepositoryMockTestHelper gitHubTestHelper;
 
     private final Map<String, RepositoryDto> hints = new HashMap<>();
 
-    public RepositoryTestHelper(WebTestClient webClient, WorkspaceTestHelper workspaceTestHelper,
-                                GitHubRepositoryMockTestHelper gitHubTestHelper) {
+    public RepositoryTestHelper(WebTestClient webClient, WorkspaceTestHelper workspaceTestHelper) {
         this.webClient = webClient;
         this.workspaceTestHelper = workspaceTestHelper;
-        this.gitHubTestHelper = gitHubTestHelper;
     }
 
     public StepCreatedRepository<RepositoryDto> create(RepositoryCreationDto creationDto) {
@@ -80,6 +80,8 @@ public class RepositoryTestHelper {
                     .returnResult()
                     .getResponseBody();
 
+            assertThat(updatedRepository).isNotNull();
+
             return new StepInitializedRepository<>(updatedRepository);
         }
 
@@ -98,6 +100,16 @@ public class RepositoryTestHelper {
             return new StepCreatedRepository<>(updatedRepository);
         }
 
+        @SuppressWarnings("UnusedReturnValue")
+        public RepositoryTestHelper delete() {
+            webClient.delete()
+                    .uri("/api/repository/{id}", this.repository.getId())
+                    .exchange()
+                    .expectStatus().isNoContent();
+
+            return RepositoryTestHelper.this;
+        }
+
         @SuppressWarnings("unused")
         public RepositoryTestHelper and() {
             return RepositoryTestHelper.this;
@@ -110,10 +122,6 @@ public class RepositoryTestHelper {
         public StepCreatedRepository<R> hint(String hint) {
             hints.put(hint, repository);
             return this;
-        }
-
-        public GitHubRepositoryMockTestHelper.StepRepository gitHub() {
-            return gitHubTestHelper.forRepository((GitHubRepositoryDto) repository);
         }
     }
 
