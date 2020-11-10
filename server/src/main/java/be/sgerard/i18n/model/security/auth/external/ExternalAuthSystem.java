@@ -1,6 +1,4 @@
-package be.sgerard.i18n.model.security.user;
-
-import be.sgerard.i18n.model.security.auth.external.RawExternalUser;
+package be.sgerard.i18n.model.security.auth.external;
 
 import java.util.Objects;
 import java.util.stream.Stream;
@@ -31,7 +29,7 @@ public enum ExternalAuthSystem {
     /**
      * Maps from the system name.
      */
-    public static ExternalAuthSystem fromName(String name){
+    public static ExternalAuthSystem fromName(String name) {
         return Stream
                 .of(ExternalAuthSystem.values())
                 .filter(client -> Objects.equals(client.getName(), name))

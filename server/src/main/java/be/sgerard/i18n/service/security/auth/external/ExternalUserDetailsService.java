@@ -1,9 +1,9 @@
 package be.sgerard.i18n.service.security.auth.external;
 
+import be.sgerard.i18n.model.security.auth.external.ExternalAuthSystem;
 import be.sgerard.i18n.model.security.auth.external.ExternalAuthenticatedUser;
 import be.sgerard.i18n.model.security.auth.external.ExternalUserDetails;
 import be.sgerard.i18n.model.security.auth.external.RawExternalUser;
-import be.sgerard.i18n.model.security.user.ExternalAuthSystem;
 import be.sgerard.i18n.service.security.auth.AuthenticationUserManager;
 import be.sgerard.i18n.service.user.UserManager;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;

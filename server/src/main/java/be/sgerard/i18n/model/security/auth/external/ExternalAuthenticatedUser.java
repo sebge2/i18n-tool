@@ -29,14 +29,14 @@ public final class ExternalAuthenticatedUser extends DefaultOAuth2User implement
 
     private final String id;
     private final String userId;
-    private final String token;
+    private final ExternalUserToken token;
     private final Set<UserRole> roles;
     private final Collection<GrantedAuthority> additionalAuthorities;
     private final Map<String, RepositoryCredentials> repositoryCredentials;
 
     public ExternalAuthenticatedUser(String id,
                                      String userId,
-                                     String token,
+                                     ExternalUserToken token,
                                      Collection<UserRole> roles,
                                      Collection<GrantedAuthority> additionalAuthorities,
                                      Collection<RepositoryCredentials> repositoryCredentials) {
@@ -116,9 +116,9 @@ public final class ExternalAuthenticatedUser extends DefaultOAuth2User implement
     }
 
     /**
-     * Returns the token associated to this authentication.
+     * Returns the {@link ExternalUserToken token} associated to this authentication.
      */
-    public String getToken() {
+    public ExternalUserToken getToken() {
         return token;
     }
 

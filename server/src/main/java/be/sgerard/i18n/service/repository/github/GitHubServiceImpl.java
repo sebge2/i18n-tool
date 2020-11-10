@@ -4,7 +4,7 @@ import be.sgerard.i18n.client.repository.github.GitHubClient;
 import be.sgerard.i18n.model.repository.github.GitHubPullRequestCreationInfo;
 import be.sgerard.i18n.model.repository.github.dto.GitHubPullRequestDto;
 import be.sgerard.i18n.model.repository.persistence.GitHubRepositoryEntity;
-import be.sgerard.i18n.model.security.auth.RepositoryTokenCredentials;
+import be.sgerard.i18n.model.security.auth.GitHubRepositoryTokenCredentials;
 import be.sgerard.i18n.service.repository.RepositoryException;
 import be.sgerard.i18n.service.repository.RepositoryManager;
 import be.sgerard.i18n.service.security.auth.AuthenticationUserManager;
@@ -98,8 +98,8 @@ public class GitHubServiceImpl implements GitHubService {
                 .getCurrentUserOrDie()
                 .map(authenticatedUser ->
                         authenticatedUser
-                                .getCredentials(repository.getId(), RepositoryTokenCredentials.class)
-                                .map(RepositoryTokenCredentials::getToken)
+                                .getCredentials(repository.getId(), GitHubRepositoryTokenCredentials.class)
+                                .map(GitHubRepositoryTokenCredentials::getToken)
                                 .orElse(null)
                 );
     }

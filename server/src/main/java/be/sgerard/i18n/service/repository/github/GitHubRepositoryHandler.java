@@ -6,7 +6,7 @@ import be.sgerard.i18n.model.repository.dto.GitHubRepositoryCreationDto;
 import be.sgerard.i18n.model.repository.dto.GitHubRepositoryPatchDto;
 import be.sgerard.i18n.model.repository.persistence.GitHubRepositoryEntity;
 import be.sgerard.i18n.model.security.auth.AuthenticatedUser;
-import be.sgerard.i18n.model.security.auth.RepositoryTokenCredentials;
+import be.sgerard.i18n.model.security.auth.GitHubRepositoryTokenCredentials;
 import be.sgerard.i18n.service.repository.RepositoryException;
 import be.sgerard.i18n.service.repository.git.BaseGitRepositoryHandler;
 import be.sgerard.i18n.service.repository.git.DefaultGitRepositoryApi;
@@ -108,8 +108,8 @@ public class GitHubRepositoryHandler extends BaseGitRepositoryHandler<GitHubRepo
      */
     private String getUsername(GitHubRepositoryEntity repository, AuthenticatedUser currentAuthUser) {
         return currentAuthUser
-                .getCredentials(repository.getId(), RepositoryTokenCredentials.class)
-                .map(RepositoryTokenCredentials::getToken)
+                .getCredentials(repository.getId(), GitHubRepositoryTokenCredentials.class)
+                .map(GitHubRepositoryTokenCredentials::getToken)
                 .or(repository::getAccessKey)
                 .orElse(null);
     }

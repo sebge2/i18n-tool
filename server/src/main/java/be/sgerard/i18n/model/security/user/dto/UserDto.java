@@ -1,6 +1,6 @@
 package be.sgerard.i18n.model.security.user.dto;
 
-import be.sgerard.i18n.model.security.user.ExternalAuthSystem;
+import be.sgerard.i18n.model.security.auth.external.ExternalAuthSystem;
 import be.sgerard.i18n.model.security.user.persistence.ExternalUserEntity;
 import be.sgerard.i18n.model.security.user.persistence.UserEntity;
 import be.sgerard.i18n.service.security.UserRole;

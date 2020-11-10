@@ -59,9 +59,9 @@ public class ExternalUserDetails implements OAuth2User {
     }
 
     /**
-     * Returns the current authentication token.
+     * Returns the current authentication {@link ExternalUserToken token}.
      */
-    public String getToken() {
-        return token;
+    public ExternalUserToken getToken() {
+        return new ExternalUserToken(externalUser.getExternalAuthSystem(), token);
     }
 }
