@@ -153,7 +153,7 @@ export class TranslationsTableComponent implements OnInit, OnDestroy {
         return row.controls['workspace'].value;
     }
 
-    public getWorkspace(rowForm: FormGroup): Observable<Workspace> {
+    public getWorkspace(rowForm: FormGroup): Observable<Workspace | undefined> {
         return this._workspaceService.getWorkspace(this.getWorkspaceId(rowForm));
     }
 
@@ -161,7 +161,7 @@ export class TranslationsTableComponent implements OnInit, OnDestroy {
         return row.controls['bundleFile'].value;
     }
 
-    public getBundleFile(rowForm: FormGroup): Observable<BundleFile> {
+    public getBundleFile(rowForm: FormGroup): Observable<BundleFile | undefined> {
         const workspace = this.getWorkspaceId(rowForm);
         const bundleFile = this.getBundleFileId(rowForm);
 

@@ -1,13 +1,12 @@
 import {Injectable} from '@angular/core';
 import {EventService} from "../../core/event/service/event.service";
 import {Workspace} from "../model/workspace/workspace.model";
-import {Observable} from "rxjs";
+import {Observable, of} from "rxjs";
 import {Events} from 'src/app/core/event/model/events.model';
 import {
     catchError,
     distinctUntilChanged,
     distinctUntilKeyChanged,
-    filter,
     map,
     mergeMap,
     shareReplay,
@@ -62,24 +61,27 @@ export class WorkspaceService {
             .pipe(map(workspaces => workspaces.filter(workspace => _.isEqual(workspace.repositoryId, repositoryId))));
     }
 
-    public getWorkspace(workspaceId: string): Observable<Workspace> {
+    public getWorkspace(workspaceId: string): Observable<Workspace | undefined> {
         return this.getWorkspaces()
             .pipe(
                 map(workspaces => _.find(workspaces, workspace => _.isEqual(workspace.id, workspaceId))),
-                filter(workspace => !!workspace),
                 distinctUntilChanged()
             );
     }
 
-    public getWorkspaceBundleFiles(workspaceId: string): Observable<BundleFile[]> {
+    public getWorkspaceBundleFiles(workspaceId: string): Observable<BundleFile[] | undefined> {
         if (!this._cachedWorkspaceBundleFiles.has(workspaceId)) {
             this._cachedWorkspaceBundleFiles.set(
                 workspaceId,
                 this.getWorkspace(workspaceId)
                     .pipe(
                         distinctUntilKeyChanged('lastSynchronization'),
-                        mergeMap(_ => this.apiWorkspaceService.findWorkspaceBundleFiles(workspaceId)),
-                        map(bundleFiles => bundleFiles.map(bundleFileDto => BundleFile.fromDto(bundleFileDto))),
+                        mergeMap(workspace =>
+                            workspace
+                                ? this.apiWorkspaceService.findWorkspaceBundleFiles(workspaceId)
+                                : of(undefined)
+                        ),
+                        map(bundleFiles => _.map(bundleFiles, bundleFileDto => BundleFile.fromDto(bundleFileDto))),
                         shareReplay(1)
                     )
             );
@@ -88,9 +90,9 @@ export class WorkspaceService {
         return this._cachedWorkspaceBundleFiles.get(workspaceId);
     }
 
-    public getWorkspaceBundleFile(workspaceId: string, bundleFiledId: string): Observable<BundleFile> {
+    public getWorkspaceBundleFile(workspaceId: string, bundleFiledId: string): Observable<BundleFile | undefined> {
         return this.getWorkspaceBundleFiles(workspaceId)
-            .pipe(map(bundleFiles => bundleFiles.find(bundleFile => _.eq(bundleFile.id, bundleFiledId))));
+            .pipe(map(bundleFiles => _.find(bundleFiles, bundleFile => _.eq(bundleFile.id, bundleFiledId))));
     }
 
     public initialize(workspaceId: string): Observable<Workspace> {

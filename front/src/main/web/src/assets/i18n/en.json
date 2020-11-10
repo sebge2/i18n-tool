@@ -240,6 +240,14 @@
         "ACTION_UPDATE_WEB_HOOK_SECRET": "Update Web Hook Secret",
         "DELETE": {
           "CONFIRMATION_MESSAGE": "Please confirm the deletion of the repository <b>{repository}</b>.<br/><br/>The local repository and its configuration will be removed. All modifications that are not published will be lost."
+        },
+        "WEB_HOOK_POPUP": {
+          "TITLE": "Manage Web Hook Secret",
+          "SECRET": "Secret",
+          "SECRET_HINT": "Secret to use to secure the WebHook endpoint. Afterwards, this secret must be used on GitHub side.",
+          "SECRET_COPIED": "The secret has been copied to your clipboard.",
+          "UNKNOWN_ERROR": "A technical error happened, please verify the Web Hook configuration and try again.",
+          "ERROR_TITLE": "The following errors happened when updating the Web Hook:"
         }
       },
       "DETAILS_CARD": {

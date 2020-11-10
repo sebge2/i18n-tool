@@ -24,6 +24,8 @@ import { RepositoryDetailsBundleFileEntryNodeComponent } from './component/repos
 import { RepositoryDetailsWorkspaceTreeNodeComponent } from './component/repositories/repository-details/repository-details-workspaces/repository-details-workspace-tree-node/repository-details-workspace-tree-node.component';
 import {SafePipeModule} from "safe-pipe";
 import {CoreTranslationModule} from "../core/translation/core-translation-module";
+import { RepositoryGithubWebHookDialogComponent } from './component/repositories/repository-details/repository-details-config/repository-github-web-hook-dialog/repository-github-web-hook-dialog.component';
+import { RepositoryGithubAccessKeyDialogComponent } from './component/repositories/repository-details/repository-details-config/repository-github-access-key-dialog/repository-github-access-key-dialog.component';
 
 const appRoutes: Routes = [
     {path: 'users', component: UsersComponent},
@@ -53,10 +55,14 @@ const appRoutes: Routes = [
         RepositoryDetailsWorkspaceNodeComponent,
         RepositoryDetailsBundleFileNodeComponent,
         RepositoryDetailsBundleFileEntryNodeComponent,
-        RepositoryDetailsWorkspaceTreeNodeComponent
+        RepositoryDetailsWorkspaceTreeNodeComponent,
+        RepositoryGithubWebHookDialogComponent,
+        RepositoryGithubAccessKeyDialogComponent,
     ],
     entryComponents: [
-        RepositoryAddWizardComponent
+        RepositoryAddWizardComponent,
+        RepositoryGithubWebHookDialogComponent,
+        RepositoryGithubAccessKeyDialogComponent,
     ],
     imports: [
         CommonModule,
