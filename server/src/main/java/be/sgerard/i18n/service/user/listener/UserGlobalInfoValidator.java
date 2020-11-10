@@ -1,6 +1,6 @@
 package be.sgerard.i18n.service.user.listener;
 
-import be.sgerard.i18n.model.security.user.ExternalAuthSystem;
+import be.sgerard.i18n.model.security.auth.external.ExternalAuthSystem;
 import be.sgerard.i18n.model.security.user.ExternalUser;
 import be.sgerard.i18n.model.security.user.dto.CurrentUserPasswordUpdateDto;
 import be.sgerard.i18n.model.security.user.dto.CurrentUserPatchDto;

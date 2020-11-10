@@ -1,6 +1,7 @@
 package be.sgerard.i18n.service.security.repository;
 
 import be.sgerard.i18n.model.security.auth.RepositoryCredentials;
+import be.sgerard.i18n.model.security.auth.external.ExternalUserToken;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -22,12 +23,12 @@ public interface RepositoryCredentialsManager {
     Mono<RepositoryCredentials> loadCredentials(String repositoryId);
 
     /**
-     * Loads {@link RepositoryCredentials credentials} with the specified token.
+     * Loads {@link RepositoryCredentials credentials} with the specified {@link ExternalUserToken token}.
      */
-    Flux<RepositoryCredentials> loadAllCredentials(String token);
+    Flux<RepositoryCredentials> loadAllCredentials(ExternalUserToken externalToken);
 
     /**
-     * Loads {@link RepositoryCredentials credentials} with the specified token for accessing the specified repository.
+     * Loads {@link RepositoryCredentials credentials} with the specified {@link ExternalUserToken token} for accessing the specified repository.
      */
-    Mono<RepositoryCredentials> loadCredentials(String repositoryId, String token);
+    Mono<RepositoryCredentials> loadCredentials(String repositoryId, ExternalUserToken externalToken);
 }

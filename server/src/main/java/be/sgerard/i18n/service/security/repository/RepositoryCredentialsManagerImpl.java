@@ -1,6 +1,7 @@
 package be.sgerard.i18n.service.security.repository;
 
 import be.sgerard.i18n.model.security.auth.RepositoryCredentials;
+import be.sgerard.i18n.model.security.auth.external.ExternalUserToken;
 import be.sgerard.i18n.service.repository.RepositoryManager;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -53,7 +54,7 @@ public class RepositoryCredentialsManagerImpl implements RepositoryCredentialsMa
     }
 
     @Override
-    public Flux<RepositoryCredentials> loadAllCredentials(String token) {
+    public Flux<RepositoryCredentials> loadAllCredentials(ExternalUserToken externalToken) {
         return repositoryManager
                 .findAll()
                 .flatMap(repository ->
@@ -61,12 +62,12 @@ public class RepositoryCredentialsManagerImpl implements RepositoryCredentialsMa
                                 .filter(handler -> handler.support(repository))
                                 .findFirst()
                                 .orElseThrow(() -> new UnsupportedOperationException("Unsupported external user and repository " + repository.getType() + "."))
-                                .loadCredentials(token, repository)
+                                .loadCredentials(externalToken, repository)
                 );
     }
 
     @Override
-    public Mono<RepositoryCredentials> loadCredentials(String repositoryId, String token) {
+    public Mono<RepositoryCredentials> loadCredentials(String repositoryId, ExternalUserToken token) {
         return repositoryManager
                 .findById(repositoryId)
                 .flatMap(repository ->

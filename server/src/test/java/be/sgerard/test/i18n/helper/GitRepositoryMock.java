@@ -17,9 +17,12 @@ import org.eclipse.jgit.treewalk.TreeWalk;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.nio.file.Files;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
+import static be.sgerard.i18n.support.FileUtils.createTempDirectory;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -45,13 +48,13 @@ public class GitRepositoryMock {
     private final Set<User> users;
     private final Set<UserKey> userKeys;
 
-    private GitRepositoryMock(Builder builder) throws Exception {
+    private GitRepositoryMock(Builder builder) {
         mockedRemoteUri = builder.remoteUri;
         originalGitProject = builder.originalGitProject;
         allowAnonymousRead = builder.allowAnonymousRead;
         users = builder.users;
         userKeys = builder.userKeys;
-        location = Files.createTempDirectory("mocked-git-repo").toFile();
+        location = createTempDirectory("mocked-git-repo");
     }
 
     public URI getMockedRemoteUri() {

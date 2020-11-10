@@ -2,6 +2,7 @@ package be.sgerard.i18n.service.security.repository;
 
 import be.sgerard.i18n.model.repository.persistence.RepositoryEntity;
 import be.sgerard.i18n.model.security.auth.RepositoryCredentials;
+import be.sgerard.i18n.model.security.auth.external.ExternalUserToken;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
@@ -29,7 +30,7 @@ public class DefaultRepositoryCredentialsHandler implements RepositoryCredential
     }
 
     @Override
-    public Mono<RepositoryCredentials> loadCredentials(String token, RepositoryEntity repository) {
+    public Mono<RepositoryCredentials> loadCredentials(ExternalUserToken externalToken, RepositoryEntity repository) {
         return Mono.empty();
     }
 }
