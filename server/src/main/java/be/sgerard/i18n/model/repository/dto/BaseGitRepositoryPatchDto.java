@@ -12,11 +12,11 @@ import java.util.Optional;
 @Schema(name = "BaseGitRepositoryPatch", description = "Request asking the update of a Git repository")
 public abstract class BaseGitRepositoryPatchDto extends RepositoryPatchDto {
 
-    @Schema(description = "The name of the default branch used to find translations", required = true)
+    @Schema(description = "The name of the default branch used to find translations")
     private final String defaultBranch;
 
 
-    @Schema(description = "Regex specifying branches that can be scanned by this tool.", required = true)
+    @Schema(description = "Regex specifying branches that can be scanned by this tool.")
     private final String allowedBranches;
 
     protected BaseGitRepositoryPatchDto(BaseBuilder<?, ?> builder) {

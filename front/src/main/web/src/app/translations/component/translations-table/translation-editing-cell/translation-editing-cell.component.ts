@@ -24,7 +24,7 @@ export class TranslationEditingCellComponent implements OnInit, OnDestroy {
             .getWorkspace(this.pageRow.workspace)
             .pipe(
                 takeUntil(this._destroyed$),
-                map(workspace => !workspace.isInReview())
+                map(workspace => workspace && !workspace.isInReview())
             )
             .subscribe(enabled => enabled ? this.form.enable() : this.form.disable());
     }

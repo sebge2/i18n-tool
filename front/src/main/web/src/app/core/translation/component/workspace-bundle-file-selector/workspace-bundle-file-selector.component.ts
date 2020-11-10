@@ -99,7 +99,10 @@ export class WorkspaceBundleFileSelectorComponent implements OnInit, OnDestroy, 
 
                         return this._workspaceService
                             .getWorkspaceBundleFiles(workspace.id)
-                            .pipe(tap(() => this.loading = false, () => this.loading = false))
+                            .pipe(
+                                map(bundleFiles => bundleFiles || []),
+                                tap(() => this.loading = false, () => this.loading = false)
+                            )
                     } else {
                         return of(null);
                     }

@@ -55,11 +55,10 @@ export class RepositoryService {
         return this._repositories$;
     }
 
-    public getRepository(repositoryId: string): Observable<Repository> {
+    public getRepository(repositoryId: string): Observable<Repository | undefined> {
         return this.getRepositories()
             .pipe(
                 map(repositories => _.find(repositories, repository => _.isEqual(repository.id, repositoryId))),
-                filter(repository => !!repository),
                 distinctUntilChanged()
             );
     }
