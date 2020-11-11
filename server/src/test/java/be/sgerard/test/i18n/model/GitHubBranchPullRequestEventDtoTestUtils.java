@@ -1,8 +1,8 @@
 package be.sgerard.test.i18n.model;
 
-import be.sgerard.i18n.model.github.GitHubPullRequestStatus;
-import be.sgerard.i18n.service.github.external.BaseGitHubWebHookEventDto;
-import be.sgerard.i18n.service.github.external.GitHubPullRequestEventDto;
+import be.sgerard.i18n.model.repository.github.external.BaseGitHubWebHookEventDto;
+import be.sgerard.i18n.model.repository.github.external.GitHubPullRequestEventDto;
+import be.sgerard.i18n.model.repository.github.external.GitHubPullRequestStatus;
 
 /**
  * @author Sebastien Gerard

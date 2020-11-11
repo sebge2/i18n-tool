@@ -1,8 +1,8 @@
 package be.sgerard.test.i18n.helper;
 
-import be.sgerard.i18n.model.github.GitHubPullRequestDto;
-import be.sgerard.i18n.model.github.GitHubPullRequestStatus;
 import be.sgerard.i18n.model.repository.dto.GitHubRepositoryDto;
+import be.sgerard.i18n.model.repository.github.dto.GitHubPullRequestDto;
+import be.sgerard.i18n.model.repository.github.external.GitHubPullRequestStatus;
 import be.sgerard.test.i18n.mock.GitHubClientMock;
 import junit.framework.AssertionFailedError;
 import org.springframework.stereotype.Component;

@@ -1,16 +1,19 @@
 package be.sgerard.i18n.controller;
 
 import be.sgerard.i18n.model.repository.dto.GitHubRepositoryDto;
+import be.sgerard.i18n.model.repository.github.external.GitHubEventType;
 import be.sgerard.i18n.model.workspace.WorkspaceStatus;
 import be.sgerard.i18n.model.workspace.dto.WorkspaceDto;
-import be.sgerard.i18n.service.github.GitHubWebHookService;
-import be.sgerard.i18n.service.github.external.GitHubEventType;
+import be.sgerard.i18n.service.repository.github.webhook.GitHubWebHookService;
 import be.sgerard.test.i18n.support.CleanupDatabase;
 import be.sgerard.test.i18n.support.WithJaneDoeAdminUser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.codec.digest.HmacAlgorithms;
 import org.apache.commons.codec.digest.HmacUtils;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;

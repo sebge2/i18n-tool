@@ -1,7 +1,7 @@
 package be.sgerard.test.i18n.model;
 
-import be.sgerard.i18n.service.github.external.BaseGitHubWebHookEventDto;
-import be.sgerard.i18n.service.github.external.GitHubBranchDeletedEventDto;
+import be.sgerard.i18n.model.repository.github.external.BaseGitHubWebHookEventDto;
+import be.sgerard.i18n.model.repository.github.external.GitHubBranchDeletedEventDto;
 
 /**
  * @author Sebastien Gerard

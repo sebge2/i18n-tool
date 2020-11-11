@@ -1,6 +1,7 @@
 package be.sgerard.i18n.model.repository.persistence;
 
 import be.sgerard.i18n.model.repository.RepositoryType;
+import be.sgerard.i18n.model.repository.github.GitHubRepositoryId;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -74,5 +75,12 @@ public class GitHubRepositoryEntity extends BaseGitRepositoryEntity {
      */
     public Optional<String> getWebHookSecret() {
         return Optional.ofNullable(webHookSecret);
+    }
+
+    /**
+     * Returns the {@link GitHubRepositoryId id} of this repository.
+     */
+    public GitHubRepositoryId getCompositeId(){
+        return new GitHubRepositoryId(getUsername(), getRepository());
     }
 }
