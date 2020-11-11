@@ -23,6 +23,8 @@ public interface RepositoryCredentialsHandler {
 
     /**
      * Loads the {@link RepositoryCredentials credentails} to access the specified repository with the specified token.
+     * <p>
+     * Be careful, credentials can be empty.
      */
     Mono<RepositoryCredentials> loadCredentials(String token, RepositoryEntity repository);
 

@@ -1,12 +1,11 @@
 package be.sgerard.i18n.service.security.repository;
 
+import be.sgerard.i18n.client.repository.github.GitHubClient;
 import be.sgerard.i18n.model.repository.RepositoryType;
 import be.sgerard.i18n.model.repository.persistence.GitHubRepositoryEntity;
 import be.sgerard.i18n.model.repository.persistence.RepositoryEntity;
 import be.sgerard.i18n.model.security.auth.RepositoryCredentials;
 import be.sgerard.i18n.model.security.auth.RepositoryTokenCredentials;
-import com.jcabi.github.Coordinates;
-import com.jcabi.github.RtGithub;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.Order;
@@ -27,7 +26,10 @@ public class GitHubRepositoryCredentialsHandler implements RepositoryCredentials
 
     private static final Logger logger = LoggerFactory.getLogger(GitHubRepositoryCredentialsHandler.class);
 
-    public GitHubRepositoryCredentialsHandler() {
+    private final GitHubClient gitHubClient;
+
+    public GitHubRepositoryCredentialsHandler(GitHubClient gitHubClient) {
+        this.gitHubClient = gitHubClient;
     }
 
     @Override
@@ -50,23 +52,25 @@ public class GitHubRepositoryCredentialsHandler implements RepositoryCredentials
     public Mono<RepositoryCredentials> loadCredentials(String token, RepositoryEntity repository) {
         final GitHubRepositoryEntity gitHubRepository = (GitHubRepositoryEntity) repository;
 
-        return isRepoMember(token, gitHubRepository)
-                ? Mono.just(new RepositoryTokenCredentials(repository.getId(), token))
-                : Mono.justOrEmpty(gitHubRepository.getAccessKey().map(accessKey -> new RepositoryTokenCredentials(repository.getId(), accessKey)));
+        return this
+                .isRepoMember(token, gitHubRepository)
+                .flatMap(repoMember -> {
+                            if (repoMember) {
+                                logger.debug("The user is not a member GitHub repository [" + repository.getName() + "].");
+
+                                return Mono.just(new RepositoryTokenCredentials(repository.getId(), token));
+                            } else {
+                                return Mono.justOrEmpty(gitHubRepository.getAccessKey()
+                                        .map(accessKey -> new RepositoryTokenCredentials(repository.getId(), accessKey)));
+                            }
+                        }
+                );
     }
 
     /**
      * Checks whether the specified token can access the specified repository.
      */
-    private boolean isRepoMember(String tokenValue, GitHubRepositoryEntity repository) {
-        final RtGithub github = new RtGithub(tokenValue);
-
-        // TODO check that it's a collaborator
-        try {
-            return github.repos().get(new Coordinates.Simple(repository.getUsername(), repository.getRepository())).branches().iterate().iterator().hasNext();
-        } catch (AssertionError e) {
-            logger.debug("The user cannot access the GitHub repository [" + repository.getName() + "].", e);
-            return false;
-        }
+    private Mono<Boolean> isRepoMember(String tokenValue, GitHubRepositoryEntity repository) {
+        return gitHubClient.isRepoMember(repository.getCompositeId(), tokenValue);
     }
 }

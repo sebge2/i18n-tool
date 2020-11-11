@@ -177,11 +177,18 @@ public class AppProperties {
         }
 
         /**
+         * Returns whether there is a restriction on the GitHub organization.
+         */
+        public boolean isOrganizationRestricted(){
+            return !restrictedOrganizations.isEmpty();
+        }
+
+        /**
          * Returns whether the specified organization is authorized.
          */
         public boolean isOrganizationAuthorized(Collection<String> organizations) {
             final Set<String> organizationsLowerCases = organizations.stream().map(String::toLowerCase).collect(toSet());
-            return restrictedOrganizations.isEmpty()
+            return !isOrganizationRestricted()
                     || restrictedOrganizations.stream().map(String::toLowerCase).anyMatch(organizationsLowerCases::contains);
         }
     }

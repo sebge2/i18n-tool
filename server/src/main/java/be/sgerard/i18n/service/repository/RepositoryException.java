@@ -83,6 +83,10 @@ public class RepositoryException extends RuntimeException implements LocalizedMe
         return new RepositoryException("Error while deleting file [" + file + "].", "RepositoryException.file-deletion.message", cause, file);
     }
 
+    public static RepositoryException onAccessGitHub(Throwable cause) {
+        return new RepositoryException("Error while accessing GitHub.", "RepositoryException.git-hub-access.message", cause);
+    }
+
     private final String messageKey;
     private final Object[] parameters;
 

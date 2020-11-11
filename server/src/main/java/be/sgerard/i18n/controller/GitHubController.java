@@ -1,6 +1,6 @@
 package be.sgerard.i18n.controller;
 
-import be.sgerard.i18n.service.github.GitHubWebHookService;
+import be.sgerard.i18n.service.repository.github.webhook.GitHubWebHookService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.RequestEntity;

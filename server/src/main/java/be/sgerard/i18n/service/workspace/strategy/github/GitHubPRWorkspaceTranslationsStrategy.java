@@ -1,17 +1,17 @@
 package be.sgerard.i18n.service.workspace.strategy.github;
 
-import be.sgerard.i18n.model.github.GitHubPullRequestDto;
-import be.sgerard.i18n.model.github.GitHubPullRequestStatus;
+import be.sgerard.i18n.model.repository.github.dto.GitHubPullRequestDto;
+import be.sgerard.i18n.model.repository.github.external.GitHubPullRequestStatus;
 import be.sgerard.i18n.model.repository.persistence.BaseGitRepositoryEntity;
 import be.sgerard.i18n.model.repository.persistence.GitHubRepositoryEntity;
 import be.sgerard.i18n.model.repository.persistence.RepositoryEntity;
 import be.sgerard.i18n.model.workspace.persistence.GitHubReviewEntity;
 import be.sgerard.i18n.model.workspace.persistence.WorkspaceEntity;
-import be.sgerard.i18n.service.client.GitHubClient;
 import be.sgerard.i18n.service.i18n.TranslationManager;
 import be.sgerard.i18n.service.repository.RepositoryException;
 import be.sgerard.i18n.service.repository.RepositoryManager;
 import be.sgerard.i18n.service.repository.git.GitRepositoryApi;
+import be.sgerard.i18n.service.repository.github.GitHubService;
 import be.sgerard.i18n.service.workspace.strategy.WorkspaceTranslationsStrategy;
 import be.sgerard.i18n.service.workspace.strategy.git.BaseGitWorkspaceTranslationsStrategy;
 import be.sgerard.i18n.service.workspace.strategy.git.GitTranslationRepositoryWriteApi;
@@ -38,18 +38,18 @@ public class GitHubPRWorkspaceTranslationsStrategy extends BaseGitWorkspaceTrans
 
     private static final Logger logger = LoggerFactory.getLogger(GitHubPRWorkspaceTranslationsStrategy.class);
 
-    private final GitHubClient gitHubClient;
+    private final GitHubService gitHubService;
 
     public GitHubPRWorkspaceTranslationsStrategy(RepositoryManager repositoryManager,
                                                  TranslationManager translationManager,
-                                                 GitHubClient gitHubClient) {
+                                                 GitHubService gitHubService) {
         super(repositoryManager, translationManager);
-        this.gitHubClient = gitHubClient;
+        this.gitHubService = gitHubService;
     }
 
     @Override
     public Mono<Boolean> isReviewFinished(WorkspaceEntity workspace, RepositoryEntity repository) {
-        return gitHubClient
+        return gitHubService
                 .findByNumber(workspace.getRepository(), workspace.getReviewOrDie(GitHubReviewEntity.class).getPullRequestNumber())
                 .map(GitHubPullRequestDto::getStatus)
                 .map(GitHubPullRequestStatus::isFinished)
@@ -71,7 +71,7 @@ public class GitHubPRWorkspaceTranslationsStrategy extends BaseGitWorkspaceTrans
                                                         .then()
                                                         .doOnSuccess(v -> api.commitAll(message).push())
                                                         .then(Mono.defer(() ->
-                                                                gitHubClient
+                                                                gitHubService
                                                                         .createRequest(workspace.getRepository(), message, prBranch, workspace.getBranch())
                                                                         .map(pr -> workspace.setReview(new GitHubReviewEntity(prBranch, pr.getNumber()))))
                                                         )
