@@ -22,6 +22,8 @@ public class BundleKeyTranslationModificationEntity {
 
     /**
      * The {@link be.sgerard.i18n.model.security.user.persistence.UserEntity user} that edited this translation.
+     *
+     * The editor may not exist anymore (if the user has been deleted in the mean time).
      */
     private String lastEditor;
 
