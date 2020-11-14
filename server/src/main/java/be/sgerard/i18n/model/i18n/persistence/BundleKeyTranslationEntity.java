@@ -1,5 +1,6 @@
 package be.sgerard.i18n.model.i18n.persistence;
 
+import be.sgerard.i18n.support.StringUtils;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.PersistenceConstructor;
@@ -50,7 +51,8 @@ public class BundleKeyTranslationEntity {
                                       long index) {
         this.locale = locale;
         this.index = index;
-        this.originalValue = originalValue;
+
+        this.setOriginalValue(originalValue);
     }
 
     public BundleKeyTranslationEntity(String locale) {
@@ -68,13 +70,14 @@ public class BundleKeyTranslationEntity {
      * @see #originalValue
      */
     public BundleKeyTranslationEntity setOriginalValue(String originalValue) {
+        final String modifiedOriginalValue = Optional.ofNullable(originalValue).filter(StringUtils::isNotEmptyString).orElse(null);
         final String currentUpdatedValue = this.getModification().flatMap(BundleKeyTranslationModificationEntity::getUpdatedValue).orElse(null);
 
-        if (Objects.equals(originalValue, currentUpdatedValue)) {
-            this.originalValue = originalValue;
+        if (Objects.equals(modifiedOriginalValue, currentUpdatedValue)) {
+            this.originalValue = modifiedOriginalValue;
             this.modification = null;
         } else {
-            this.originalValue = originalValue;
+            this.originalValue = modifiedOriginalValue;
         }
 
         return this;

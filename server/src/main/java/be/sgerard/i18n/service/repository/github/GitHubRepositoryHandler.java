@@ -52,7 +52,7 @@ public class GitHubRepositoryHandler extends BaseGitRepositoryHandler<GitHubRepo
     public Mono<GitHubRepositoryEntity> createRepository(GitHubRepositoryCreationDto creationDto) {
         return validateRepository(
                 new GitHubRepositoryEntity(creationDto.getUsername(), creationDto.getRepository())
-                        .setAccessKey(creationDto.getAccessKey().filter(StringUtils::isEmptyString).orElse(null))
+                        .setAccessKey(creationDto.getAccessKey().filter(StringUtils::isNotEmptyString).orElse(null))
         );
     }
 
@@ -60,8 +60,8 @@ public class GitHubRepositoryHandler extends BaseGitRepositoryHandler<GitHubRepo
     public Mono<GitHubRepositoryEntity> updateRepository(GitHubRepositoryEntity repository, GitHubRepositoryPatchDto patchDto) throws RepositoryException {
         updateFromPatch(patchDto, repository);
 
-        repository.setAccessKey(patchDto.getAccessKey().or(repository::getAccessKey).filter(StringUtils::isEmptyString).orElse(null));
-        repository.setWebHookSecret(patchDto.getWebHookSecret().or(repository::getWebHookSecret).filter(StringUtils::isEmptyString).orElse(null));
+        repository.setAccessKey(patchDto.getAccessKey().or(repository::getAccessKey).filter(StringUtils::isNotEmptyString).orElse(null));
+        repository.setWebHookSecret(patchDto.getWebHookSecret().or(repository::getWebHookSecret).filter(StringUtils::isNotEmptyString).orElse(null));
 
         return Mono.just(repository);
     }

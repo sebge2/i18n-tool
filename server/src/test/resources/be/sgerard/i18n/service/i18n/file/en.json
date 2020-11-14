@@ -7,5 +7,8 @@
     "sub-level": {
       "first": "another value"
     }
+  },
+  "other-value": {
+    "empty-value": ""
   }
 }

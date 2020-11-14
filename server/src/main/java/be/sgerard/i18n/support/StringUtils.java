@@ -15,7 +15,7 @@ public final class StringUtils {
     /**
      * Returns whether the specified string contains useful characters.
      */
-    public static boolean isEmptyString(String value) {
+    public static boolean isNotEmptyString(String value) {
         return !isEmpty(value) && !isEmpty(value.trim());
     }
 }
