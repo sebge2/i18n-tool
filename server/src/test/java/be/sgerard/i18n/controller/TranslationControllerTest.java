@@ -77,6 +77,30 @@ public class TranslationControllerTest extends AbstractControllerTest {
     @Test
     @CleanupDatabase
     @WithJaneDoeAdminUser
+    public void searchTranslationsEmptyValueIsMissing() {
+        final String key = "other-value.empty-value";
+        webClient
+                .post()
+                .uri("/api/translation/do?action=search")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(
+                        TranslationsSearchRequestDto.builder()
+                                .keyPattern(new TranslationKeyPatternDto(TranslationKeyPatternDto.KeyPatternStrategy.EQUAL, key))
+                                .build()
+                )
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.rows").value(hasSize(1))
+                .jsonPath("$.rows[0].bundleKey").isEqualTo(key)
+                .jsonPath("$.rows[0].translations").value(hasSize(2))
+                .jsonPath("$.rows[0].translations[0].originalValue").isEmpty()
+                .jsonPath("$.rows[0].translations[1].originalValue").isEmpty();
+    }
+
+    @Test
+    @CleanupDatabase
+    @WithJaneDoeAdminUser
     public void searchTranslationsFromTranslationValueOriginalValue() {
         final String key = "validation.repository.name-not-unique";
         webClient
