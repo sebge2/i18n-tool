@@ -1,5 +1,6 @@
 package be.sgerard.i18n.model.workspace.persistence;
 
+import be.sgerard.i18n.model.i18n.file.ScannedBundleFile;
 import be.sgerard.i18n.model.i18n.persistence.BundleFileEntity;
 import be.sgerard.i18n.model.repository.persistence.RepositoryEntity;
 import be.sgerard.i18n.model.workspace.WorkspaceStatus;
@@ -13,10 +14,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotNull;
 import java.time.Instant;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * A workspace represents the edition of translations related to a particular branch of a repository. This
@@ -93,6 +91,13 @@ public class WorkspaceEntity {
     }
 
     /**
+     * @see #files
+     */
+    public void removeFile(BundleFileEntity file) {
+        this.files.remove(file);
+    }
+
+    /**
      * @see #lastSynchronization
      */
     public Optional<Instant> getLastSynchronization() {
@@ -118,6 +123,33 @@ public class WorkspaceEntity {
      */
     public <R extends AbstractReviewEntity> R getReviewOrDie(Class<R> reviewType) {
         return getReview(reviewType).orElseThrow(() -> new IllegalStateException("There is no associated review entity."));
+    }
+
+    /**
+     * Returns the {@link BundleFileEntity bundle file} for the newly scanned {@link ScannedBundleFile bundle file}.
+     */
+    public Optional<BundleFileEntity> getBundleFile(ScannedBundleFile bundleFile) {
+        return getFiles().stream()
+                .filter(file ->
+                        Objects.equals(bundleFile.getType(), file.getType())
+                                && Objects.equals(bundleFile.getName(), file.getName())
+                                && Objects.equals(bundleFile.getLocationDirectory().toString(), file.getLocation())
+                )
+                .findFirst();
+    }
+
+    /**
+     * Returns, or creates the {@link BundleFileEntity bundle file} for the newly scanned {@link ScannedBundleFile bundle file}.
+     */
+    public BundleFileEntity getOrCreateBundleFile(ScannedBundleFile bundleFile) {
+        return getBundleFile(bundleFile)
+                .orElseGet(() -> {
+                    final BundleFileEntity bundleFileEntity = new BundleFileEntity(bundleFile);
+
+                    addFile(bundleFileEntity);
+
+                    return bundleFileEntity;
+                });
     }
 
     @Override

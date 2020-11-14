@@ -1,5 +1,6 @@
 package be.sgerard.i18n.model.security.user;
 
+import be.sgerard.i18n.model.security.auth.external.ExternalAuthSystem;
 import lombok.Builder;
 import lombok.Getter;
 

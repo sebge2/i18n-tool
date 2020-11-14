@@ -26,18 +26,18 @@ public class CompositeAuthenticatedUserListener implements AuthenticatedUserList
     }
 
     @Override
-    public Mono<Void> onUpdate(AuthenticatedUser authenticatedUser) {
+    public Mono<Void> afterUpdate(AuthenticatedUser authenticatedUser) {
         return Flux
                 .fromIterable(listeners)
-                .flatMap(listener -> listener.onUpdate(authenticatedUser))
+                .flatMap(listener -> listener.afterUpdate(authenticatedUser))
                 .then();
     }
 
     @Override
-    public Mono<Void> onDelete(AuthenticatedUser authenticatedUser) {
+    public Mono<Void> afterDelete(AuthenticatedUser authenticatedUser) {
         return Flux
                 .fromIterable(listeners)
-                .flatMap(listener -> listener.onDelete(authenticatedUser))
+                .flatMap(listener -> listener.afterDelete(authenticatedUser))
                 .then();
     }
 }

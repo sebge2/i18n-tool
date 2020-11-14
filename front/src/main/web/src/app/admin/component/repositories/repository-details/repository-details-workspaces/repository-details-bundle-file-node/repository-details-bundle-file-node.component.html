@@ -1,8 +1,9 @@
 <app-row-actions>
     <app-row-actions-element>
-        <span [ngClass]="fileTypeClass" class="app-file-icon"></span> {{name}}
+        <span [ngClass]="node.bundleFile | bundleFileIcon" class="app-file-icon"></span> {{node.bundleFile | bundleFileName}}
     </app-row-actions-element>
     <app-row-actions-item>
+        <app-visualize-button (click)="onSearchTranslations()"></app-visualize-button>
         <app-git-hub-link-button [link]="bundleLink" *ngIf="bundleLink"></app-git-hub-link-button>
     </app-row-actions-item>
 </app-row-actions>

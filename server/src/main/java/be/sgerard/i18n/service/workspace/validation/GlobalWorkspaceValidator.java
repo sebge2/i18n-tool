@@ -20,6 +20,8 @@ public class GlobalWorkspaceValidator implements WorkspaceValidator {
         return true;
     }
 
+    // TODO
+
     @Override
     public Mono<ValidationResult> beforeFinishReview(WorkspaceEntity workspace) {
         if (workspace.getStatus() != WorkspaceStatus.IN_REVIEW) {

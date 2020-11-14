@@ -1,6 +1,6 @@
 package be.sgerard.i18n.model.security.user.persistence;
 
-import be.sgerard.i18n.model.security.user.ExternalAuthSystem;
+import be.sgerard.i18n.model.security.auth.external.ExternalAuthSystem;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;

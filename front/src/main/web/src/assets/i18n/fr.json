@@ -1,33 +1,33 @@
 {
-  "SHARED" : {
-    "WORKSPACES_TITLE" : "Espaces de Travail",
-    "WORKSPACE_LABEL" : "Espace de travail :",
-    "CANCEL_ACTION" : "Annuler",
-    "LOCALES_LABEL" : "Langues :",
-    "REPOSITORY_TITLE" : "Répertoire"
+  "SHARED": {
+    "WORKSPACES_TITLE": "Espaces de Travail",
+    "WORKSPACE_LABEL": "Espace de travail :",
+    "CANCEL_ACTION": "Annuler",
+    "LOCALES_LABEL": "Langues :",
+    "REPOSITORY_TITLE": "Répertoire"
   },
-  "TRANSLATIONS" : {
-    "SEARCH_BAR" : {
-      "SEARCH_BUTTON" : "Chercher",
-      "CRITERION_ALL" : "Toutes",
-      "TITLE" : "Chercher {criterion, select, ALL{<b>toutes</b> les traductions} MISSING_TRANSLATIONS{les traductions <b>manquantes</b>} TRANSLATIONS_CURRENT_USER_UPDATED{les traductions que <b>j'ai modifiées</b>} UPDATED_TRANSLATIONS{les traductions que <b>quelqu'un a modifié</b>} other{}} {workspace, select, null{} other {sur la branche <b>{workspace}</b>}} {locales, select, true{pour <b>toutes</b> les langues} other{pour les langues {locales}}}",
-      "CRITERION_USER_UPDATED" : "J'ai mis à jour",
-      "CRITERION_UPDATED" : "Quelqu'un a mis à jour",
-      "CRITERION_MISSING" : "Manquantes"
+  "TRANSLATIONS": {
+    "SEARCH_BAR": {
+      "SEARCH_BUTTON": "Chercher",
+      "CRITERION_ALL": "Toutes",
+      "TITLE": "Chercher {criterion, select, ALL{<b>toutes</b> les traductions} MISSING_TRANSLATIONS{les traductions <b>manquantes</b>} TRANSLATIONS_CURRENT_USER_UPDATED{les traductions que <b>j'ai modifiées</b>} UPDATED_TRANSLATIONS{les traductions que <b>quelqu'un a modifié</b>} other{}} {workspace, select, null{} other {sur la branche <b>{workspace}</b>}} {locales, select, true{pour <b>toutes</b> les langues} other{pour les langues {locales}}}",
+      "CRITERION_USER_UPDATED": "J'ai mis à jour",
+      "CRITERION_UPDATED": "Quelqu'un a mis à jour",
+      "CRITERION_MISSING": "Manquantes"
     },
-    "PLEASE_WAIT" : "L'espace de travail s'initialize",
-    "START_REVIEW" : {
-      "START_ACTION" : "Démarrer",
-      "COMMENT" : "Commentaire",
-      "TITLE" : "Démarrer une révision"
+    "PLEASE_WAIT": "L'espace de travail s'initialize",
+    "START_REVIEW": {
+      "START_ACTION": "Démarrer",
+      "COMMENT": "Commentaire",
+      "TITLE": "Démarrer une révision"
     },
-    "INITIALIZING_ALT" : "Espace de travail s'initialize",
-    "TABLE" : {
-      "NO_RESULT" : "Il n'y  a pas de résultat, veuillez changer vos critères.",
-      "KEY_HEADER" : "Clé",
-      "UNSAVED" : "Vos changements ne sont pas sauvegardés"
+    "INITIALIZING_ALT": "Espace de travail s'initialize",
+    "TABLE": {
+      "NO_RESULT": "Il n'y  a pas de résultat, veuillez changer vos critères.",
+      "KEY_HEADER": "Clé",
+      "UNSAVED": "Vos changements ne sont pas sauvegardés"
     },
-    "START_REVIEW_BUTTON" : "Publier et demander une révision"
+    "START_REVIEW_BUTTON": "Publier et demander une révision"
   },
   "PREFERENCES": {
     "TITLE": "Mes Préférences",
@@ -42,15 +42,103 @@
     "ADMIN_LABEL": "Admin",
     "TRANSLATIONS_LABEL": "Traductions"
   },
-  "ADMIN" : {
-    "WORKSPACES" : {
-      "CONFIRM_DELETION" : {
-        "ERASE_ACTION" : "Supprimer",
-        "EXPLAIN" : "Veuillez confirmer la <b>suppression</b> de l'espace de travail <b>{workspace}</b> (toutes les modifications seront perdues).",
-        "PLEASE" : "Veuillez saisir le nom de l'espace de travail afin de confirmer :",
-        "TITLE" : "Confirmer la suppression"
+  "ADMIN": {
+    "WORKSPACES": {
+      "CONFIRM_DELETION": {
+        "ERASE_ACTION": "Supprimer",
+        "EXPLAIN": "Veuillez confirmer la <b>suppression</b> de l'espace de travail <b>{workspace}</b> (toutes les modifications seront perdues).",
+        "PLEASE": "Veuillez saisir le nom de l'espace de travail afin de confirmer :",
+        "TITLE": "Confirmer la suppression"
       },
-      "REFRESH_ACTION" : "Rafraîchir"
+      "REFRESH_ACTION": "Rafraîchir"
+    },
+    "LOCALES": {
+      "DISPLAY_NAME_EXAMPLE": "Exemple : English.",
+      "REGION": "Région",
+      "ICON_EXAMPLE": "Exemple : flag-icon-fr.",
+      "VARIANTS_EXAMPLE": "Exemples : de-CH-1996.",
+      "ERROR": {
+        "DELETE": "Erreur lors de la suppression de la langue.",
+        "SAVE": "Error lors de la sauvegarde de la langue.",
+        "UPDATE": "Error lors de la mise à jour de la langue."
+      },
+      "REGION_EXAMPLE": "Exemples : US, GB.",
+      "ICON": "Icone",
+      "LANGUAGE_EXAMPLE": "Exemple : en, fr.",
+      "DISPLAY_NAME": "Nom affiché"
+    },
+    "REPOSITORIES": {
+      "ADD_WIZARD": {
+        "STEPS": {
+          "CREATION": "Création",
+          "CONFIGURATION": "Configuration",
+          "SELECTION": "Sélection",
+          "INITIALIZATION": "Initialisation"
+        },
+        "STEP_INFO": {
+          "GIT": {
+            "LOCATION": "Localisation",
+            "NAME": "Nom"
+          },
+          "GITHUB": {
+            "REPOSITORY": "Nom",
+            "USER_NAME": "Nom d'utilisateur"
+          }
+        },
+        "STEP_TYPE": {
+          "GIT": "Se connecter à Git",
+          "GITHUB": "Se connecter à GitHub"
+        },
+        "STEP_CREATION": {
+          "CREATED": "Votre répertoire {name} a été créé!"
+        },
+        "STEP_INITIALIZATION": {
+          "INITIALIZED": "Votre répertoire {name} a été initialisé !"
+        }
+      },
+      "VIEW_CARD": {
+        "STATUS_LABEL": "Status :"
+      },
+      "CONFIG_CARD": {
+        "CARD_TITLE": "Configuration",
+        "LOCATION_LABEL": "Localisation",
+        "NAME_LABEL": "Nom"
+      },
+      "ERROR": {
+        "DELETE": "Error lors de la suppression du répertoire.",
+        "INITIALIZE": "Error lors de l'initialisation du répertoire."
+      }
+    },
+    "USERS": {
+      "PASSWORD_HINT": "Au moins 6 caractères",
+      "ROLES": {
+        "NO_PRIVILEGE": "Aucun privilège",
+        "ADMIN_PRIVILEGE": "Administrateur"
+      },
+      "EMAIL_EXAMPLE": "Exemple: john.doe@acme.com",
+      "ADMIN_ROLE": "Privilèges",
+      "EMAIL": "Email"
+    }
+  },
+  "ACCOUNT": {
+    "SECURITY": {
+      "CURRENT_PASSWORD_HINT": "Veuillez saisir votre mot de passe actuel.",
+      "NEW_PASSWORD": "Nouveau mot de passe",
+      "CONFIRMED_PASSWORD": "Veuillez confirmer",
+      "LABEL": "Sécurité",
+      "NEW_PASSWORD_HINT": "Au moins 6 caractères.",
+      "CURRENT_PASSWORD": "Mot de passe actuel",
+      "CONFIRMED_PASSWORD_HINT": "Veuillez confirmer votre  nouveau mot de passe."
+    },
+    "ERROR": {
+      "SAVE_PASSWORD": "Erreur lors de la sauvegarde du mot de passe.",
+      "SAVE_PROFILE": "Erreur lors de la sauvegarde du profil."
+    },
+    "PROFILE": {
+      "LABEL": "Profil"
+    },
+    "PREFERENCES": {
+      "LABEL": "Préférences"
     }
   }
 }

@@ -24,7 +24,7 @@ public class EventAuthenticatedUserListener implements AuthenticatedUserListener
     }
 
     @Override
-    public Mono<Void> onUpdate(AuthenticatedUser authenticatedUser) {
+    public Mono<Void> afterUpdate(AuthenticatedUser authenticatedUser) {
         final AuthenticatedUserDto dto = AuthenticatedUserDto.builder(authenticatedUser).build();
 
         return Mono
@@ -36,7 +36,7 @@ public class EventAuthenticatedUserListener implements AuthenticatedUserListener
     }
 
     @Override
-    public Mono<Void> onDelete(AuthenticatedUser authenticatedUser) {
+    public Mono<Void> afterDelete(AuthenticatedUser authenticatedUser) {
         final AuthenticatedUserDto dto = AuthenticatedUserDto.builder(authenticatedUser).build();
 
         return Mono

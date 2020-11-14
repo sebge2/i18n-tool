@@ -1,10 +1,12 @@
 package be.sgerard.i18n.model.i18n.persistence;
 
+import be.sgerard.i18n.support.StringUtils;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.PersistenceConstructor;
 
 import javax.validation.constraints.NotNull;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -49,7 +51,8 @@ public class BundleKeyTranslationEntity {
                                       long index) {
         this.locale = locale;
         this.index = index;
-        this.originalValue = originalValue;
+
+        this.setOriginalValue(originalValue);
     }
 
     public BundleKeyTranslationEntity(String locale) {
@@ -64,10 +67,51 @@ public class BundleKeyTranslationEntity {
     }
 
     /**
-     * Returns {@link BundleKeyTranslationModificationEntity modification} applied to this translation.
+     * @see #originalValue
+     */
+    public BundleKeyTranslationEntity setOriginalValue(String originalValue) {
+        final String modifiedOriginalValue = Optional.ofNullable(originalValue).filter(StringUtils::isNotEmptyString).orElse(null);
+        final String currentUpdatedValue = this.getModification().flatMap(BundleKeyTranslationModificationEntity::getUpdatedValue).orElse(null);
+
+        if (Objects.equals(modifiedOriginalValue, currentUpdatedValue)) {
+            this.originalValue = modifiedOriginalValue;
+            this.modification = null;
+        } else {
+            this.originalValue = modifiedOriginalValue;
+        }
+
+        return this;
+    }
+
+    /**
+     * @see #modification
      */
     public Optional<BundleKeyTranslationModificationEntity> getModification() {
         return Optional.ofNullable(modification);
+    }
+
+    /**
+     * @see #modification
+     */
+    public BundleKeyTranslationEntity setModification(BundleKeyTranslationModificationEntity modification) {
+        final String currentUpdatedValue = this.getModification().flatMap(BundleKeyTranslationModificationEntity::getUpdatedValue).orElse(null);
+        final String newUpdatedValue = modification.getUpdatedValue().orElse(null);
+
+        if (newUpdatedValue != null) {
+            if (Objects.equals(newUpdatedValue, originalValue)) {
+                this.modification = null;
+            } else {
+                if (!Objects.equals(currentUpdatedValue, newUpdatedValue)) {
+                    this.modification = modification;
+                } else {
+                    // nothing to do, the update match the previous update
+                }
+            }
+        } else {
+            this.modification = null;
+        }
+
+        return this;
     }
 
     /**

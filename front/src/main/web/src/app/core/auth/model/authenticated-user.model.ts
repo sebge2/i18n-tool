@@ -7,8 +7,8 @@ export class AuthenticatedUser {
 
     public static fromDto(authenticatedUser: AuthenticatedUserDto) {
         return new AuthenticatedUser(
-            authenticatedUser.sessionRoles.map(sessionRole => UserRole[sessionRole]),
-            authenticatedUser.repositoryRoles.map(repositoryRoles => RepositoryRoles.fromDto(repositoryRoles))
+            _.map(authenticatedUser.sessionRoles, sessionRole => UserRole[sessionRole]),
+            _.map(authenticatedUser.repositoryRoles, repositoryRoles => RepositoryRoles.fromDto(repositoryRoles))
         );
     }
 

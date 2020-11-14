@@ -1,6 +1,5 @@
 package be.sgerard.i18n.model.security.auth.external;
 
-import be.sgerard.i18n.model.security.user.ExternalAuthSystem;
 import lombok.Getter;
 
 import java.util.HashMap;

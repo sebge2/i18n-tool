@@ -6,7 +6,7 @@ import be.sgerard.i18n.model.repository.dto.GitRepositoryCreationDto;
 import be.sgerard.i18n.model.repository.dto.GitRepositoryPatchDto;
 import be.sgerard.i18n.model.repository.persistence.GitRepositoryEntity;
 import be.sgerard.i18n.model.security.auth.AuthenticatedUser;
-import be.sgerard.i18n.model.security.auth.RepositoryTokenCredentials;
+import be.sgerard.i18n.model.security.auth.GitHubRepositoryTokenCredentials;
 import be.sgerard.i18n.service.repository.RepositoryException;
 import be.sgerard.i18n.service.security.auth.AuthenticationUserManager;
 import be.sgerard.i18n.service.user.UserManager;
@@ -99,8 +99,8 @@ public class GitRepositoryHandler extends BaseGitRepositoryHandler<GitRepository
      */
     private String getUsername(GitRepositoryEntity repository, AuthenticatedUser currentAuthUser) {
         return currentAuthUser
-                .getCredentials(repository.getId(), RepositoryTokenCredentials.class)
-                .map(RepositoryTokenCredentials::getToken)
+                .getCredentials(repository.getId(), GitHubRepositoryTokenCredentials.class)
+                .map(GitHubRepositoryTokenCredentials::getToken)
                 .orElse(null);
     }
 }

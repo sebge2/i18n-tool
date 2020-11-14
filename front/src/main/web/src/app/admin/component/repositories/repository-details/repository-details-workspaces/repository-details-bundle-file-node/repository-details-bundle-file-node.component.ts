@@ -1,12 +1,12 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input} from '@angular/core';
 import {WorkspaceBundleTreeNode} from "../repository-details-workspaces.component";
-import {BundleType} from "../../../../../../translations/model/workspace/bundle-file.model";
 import {
     GitHubFileLink,
     GitHubLink
 } from "../../../../../../core/shared/component/git-hub-link-button/git-hub-link-button.component";
 import {RepositoryType} from "../../../../../../translations/model/repository/repository-type.model";
 import {GitHubRepository} from "../../../../../../translations/model/repository/github-repository.model";
+import {Router} from "@angular/router";
 
 @Component({
     selector: 'app-repository-details-bundle-file-node',
@@ -17,32 +17,11 @@ export class RepositoryDetailsBundleFileNodeComponent {
 
     @Input() public node: WorkspaceBundleTreeNode;
 
-    constructor() {
+    constructor(private _router: Router) {
     }
 
-    public get fileTypeClass(): string {
-        switch (this.node.bundleFile.type) {
-            case BundleType.JAVA_PROPERTIES:
-                return 'app-icon-java-file';
-            case BundleType.JSON_ICU:
-                return 'app-icon-json-file';
-            default:
-                return '';
-        }
-    }
-
-    public get name(): string {
-        switch (this.node.bundleFile.type) {
-            case BundleType.JSON_ICU:
-                return `${this.node.bundleFile.location}`;
-            case BundleType.JAVA_PROPERTIES:
-            default:
-                return `${this.node.bundleFile.location}/${this.node.bundleFile.name}`;
-        }
-    }
-
-    public get bundleLink(): GitHubLink{
-        if(this.node && this.node.repository.type === RepositoryType.GITHUB){
+    public get bundleLink(): GitHubLink {
+        if (this.node && this.node.repository.type === RepositoryType.GITHUB) {
             const repository = <GitHubRepository>this.node.repository;
 
             return new GitHubFileLink(
@@ -54,5 +33,13 @@ export class RepositoryDetailsBundleFileNodeComponent {
         } else {
             return null;
         }
+    }
+
+    public onSearchTranslations(): Promise<any> {
+        return this._router
+            .navigate(
+                ['/translations'],
+                {queryParams: {workspace: this.node.workspace.id, bundleFile: this.node.bundleFile.id}}
+            );
     }
 }

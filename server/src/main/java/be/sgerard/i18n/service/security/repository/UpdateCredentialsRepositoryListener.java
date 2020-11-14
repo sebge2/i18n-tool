@@ -28,12 +28,12 @@ public class UpdateCredentialsRepositoryListener implements RepositoryListener<R
     }
 
     @Override
-    public Mono<Void> onCreate(RepositoryEntity repository) {
+    public Mono<Void> afterCreate(RepositoryEntity repository) {
         return authenticationUserManager.updateAllRepositoryCredentials(repository.getId());
     }
 
     @Override
-    public Mono<Void> onUpdate(RepositoryPatchDto patch, RepositoryEntity repository) {
+    public Mono<Void> afterUpdate(RepositoryPatchDto patch, RepositoryEntity repository) {
         if (patch instanceof GitHubRepositoryPatchDto && ((GitHubRepositoryPatchDto) patch).getAccessKey().isPresent()) {
             return authenticationUserManager.updateAllRepositoryCredentials(repository.getId());
         }
@@ -42,7 +42,7 @@ public class UpdateCredentialsRepositoryListener implements RepositoryListener<R
     }
 
     @Override
-    public Mono<Void> onDelete(RepositoryEntity repository) {
+    public Mono<Void> beforeDelete(RepositoryEntity repository) {
         return authenticationUserManager.deleteAllRepositoryCredentials(repository.getId());
     }
 }

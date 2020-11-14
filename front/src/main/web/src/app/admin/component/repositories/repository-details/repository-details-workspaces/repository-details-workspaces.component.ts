@@ -15,6 +15,7 @@ import {map} from "rxjs/operators";
 import {BundleFile} from "../../../../../translations/model/workspace/bundle-file.model";
 import {BundleFileEntry} from "../../../../../translations/model/workspace/bundle-file-entry.model";
 import {RepositoryDetailsWorkspaceTreeNodeComponent} from './repository-details-workspace-tree-node/repository-details-workspace-tree-node.component';
+import * as _ from "lodash";
 
 export class WorkspaceTreeNode implements TreeObject {
 
@@ -69,7 +70,9 @@ export class WorkspaceTreeObjectDataSource implements TreeObjectDataSource {
 
             return this.workspaceService
                 .getWorkspaceBundleFiles(workspaceNode.workspace.id)
-                .pipe(map(bundleFiles => bundleFiles.map(bundleFile => new WorkspaceBundleTreeNode(bundleFile, workspaceNode.workspace, this.repository))));
+                .pipe(map(bundleFiles =>
+                    _.map(bundleFiles || [], bundleFile => new WorkspaceBundleTreeNode(bundleFile, workspaceNode.workspace, this.repository))
+                ));
         } else if (level == 3) {
             const bundleTreeNode: WorkspaceBundleTreeNode = <WorkspaceBundleTreeNode>parent;
 

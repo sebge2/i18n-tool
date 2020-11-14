@@ -1,10 +1,10 @@
 package be.sgerard.test.i18n.mock;
 
-import be.sgerard.i18n.model.github.GitHubPullRequestDto;
-import be.sgerard.i18n.model.github.GitHubPullRequestStatus;
+import be.sgerard.i18n.model.repository.github.dto.GitHubPullRequestDto;
+import be.sgerard.i18n.model.repository.github.external.GitHubPullRequestStatus;
 import be.sgerard.i18n.model.repository.persistence.GitHubRepositoryEntity;
-import be.sgerard.i18n.service.client.GitHubClient;
 import be.sgerard.i18n.service.repository.RepositoryManager;
+import be.sgerard.i18n.service.repository.github.GitHubService;
 import be.sgerard.i18n.service.workspace.WorkspaceException;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
@@ -24,7 +24,7 @@ import static java.util.stream.Collectors.toList;
  */
 @Service
 @Primary
-public class GitHubClientMock implements GitHubClient {
+public class GitHubClientMock implements GitHubService {
 
     private final Set<PullRequest> pullRequests = new HashSet<>();
 

@@ -18,11 +18,11 @@ export interface GitHubRepositoryPatchRequestDto extends RepositoryPatchRequestD
     /**
      * The name of the default branch used to find translations
      */
-    defaultBranch: string;
+    defaultBranch?: string;
     /**
      * Regex specifying branches that can be scanned by this tool.
      */
-    allowedBranches: string;
+    allowedBranches?: string;
     /**
      * Access key to use to access this repository (empty means no access key)
      */

@@ -1,15 +1,14 @@
 package be.sgerard.test.i18n.helper;
 
-import be.sgerard.i18n.model.github.GitHubPullRequestDto;
-import be.sgerard.i18n.model.github.GitHubPullRequestStatus;
 import be.sgerard.i18n.model.repository.dto.GitHubRepositoryDto;
+import be.sgerard.i18n.model.repository.github.dto.GitHubPullRequestDto;
+import be.sgerard.i18n.model.repository.github.external.GitHubPullRequestStatus;
 import be.sgerard.test.i18n.mock.GitHubClientMock;
+import junit.framework.AssertionFailedError;
 import org.springframework.stereotype.Component;
 
 import java.util.Objects;
 import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Sebastien Gerard
@@ -18,9 +17,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class GitHubRepositoryMockTestHelper {
 
     private final GitHubClientMock gitHubClient;
+    private final GitRepositoryMockTestHelper gitRepositoryHelper;
 
-    public GitHubRepositoryMockTestHelper(GitHubClientMock gitHubClient) {
+    public GitHubRepositoryMockTestHelper(GitHubClientMock gitHubClient, GitRepositoryMockTestHelper gitRepositoryHelper) {
         this.gitHubClient = gitHubClient;
+        this.gitRepositoryHelper = gitRepositoryHelper;
     }
 
     StepRepository forRepository(GitHubRepositoryDto repositoryDto) {
@@ -35,24 +36,21 @@ public class GitHubRepositoryMockTestHelper {
             this.repositoryDto = repositoryDto;
         }
 
-        public StepPullRequest assertHasPullRequest(String repository, String targetBranch) {
-            final Optional<GitHubPullRequestDto> actual = gitHubClient
+        public Optional<StepPullRequest> findPullRequestForBranch(String targetBranch) {
+            return gitHubClient
                     .findAllNonBlocking().stream()
-                    .filter(request -> Objects.equals(repository, request.getRepositoryName()))
+                    .filter(request -> Objects.equals(repositoryDto.getName(), request.getRepositoryName()))
                     .filter(request -> Objects.equals(targetBranch, request.getTargetBranch()))
-                    .findFirst();
-
-            assertThat(actual).isNotEmpty();
-
-            return new StepPullRequest(actual.get(), repositoryDto);
+                    .findFirst()
+                    .map(request -> new StepPullRequest(repositoryDto, request, gitHubClient));
         }
 
-        public StepRepository updatePullRequestStatus(String targetBranch, GitHubPullRequestStatus status) {
-            gitHubClient.updatePullRequestStatus(repositoryDto.getId(), targetBranch, status);
-
-            return this;
+        public StepPullRequest findPullRequestForBranchOrDie(String branch) {
+            return findPullRequestForBranch(branch)
+                    .orElseThrow(() -> new AssertionFailedError("There is no pull request for branch [" + branch + "]."));
         }
 
+        @SuppressWarnings("UnusedReturnValue")
         public StepRepository resetPullRequests() {
             gitHubClient.resetPullRequests();
             return this;
@@ -63,10 +61,14 @@ public class GitHubRepositoryMockTestHelper {
 
         private final GitHubPullRequestDto pullRequest;
         private final GitHubRepositoryDto repositoryDto;
+        private final GitHubClientMock gitHubClient;
+        private final GitRepositoryMock repositoryMock;
 
-        public StepPullRequest(GitHubPullRequestDto pullRequest, GitHubRepositoryDto repositoryDto) {
+        public StepPullRequest(GitHubRepositoryDto repositoryDto, GitHubPullRequestDto pullRequest, GitHubClientMock gitHubClient) {
             this.pullRequest = pullRequest;
             this.repositoryDto = repositoryDto;
+            this.gitHubClient = gitHubClient;
+            this.repositoryMock = gitRepositoryHelper.getRepo(repositoryDto);
         }
 
         public StepRepository and() {
@@ -75,6 +77,15 @@ public class GitHubRepositoryMockTestHelper {
 
         public GitHubPullRequestDto get() {
             return pullRequest;
+        }
+
+        @SuppressWarnings("UnusedReturnValue")
+        public StepPullRequest close() {
+            gitHubClient.updatePullRequestStatus(repositoryDto.getId(), pullRequest.getTargetBranch(), GitHubPullRequestStatus.CLOSED);
+
+            repositoryMock.mergeTo(pullRequest.getCurrentBranch(), pullRequest.getTargetBranch());
+
+            return this;
         }
     }
 }

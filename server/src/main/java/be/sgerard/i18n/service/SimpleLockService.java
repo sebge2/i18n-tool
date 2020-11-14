@@ -48,7 +48,6 @@ public class SimpleLockService implements LockService {
                                 .flatMap(Task::getMono)
                                 .map(mono -> (T) mono)
                                 .doOnNext(value -> logger.trace("Result of task [{}] is: [{}].", task, value))
-                                .doOnCancel(() -> doOnCancel(task))
                                 .doFinally(signalType -> doFinally(task))
                 );
     }
@@ -62,7 +61,6 @@ public class SimpleLockService implements LockService {
                                 .flatMapMany(Task::getFlux)
                                 .map(value -> (T) value)
                                 .doOnNext(value -> logger.trace("Result of task [{}] is: [{}].", task, value))
-                                .doOnCancel(() -> doOnCancel(task))
                                 .doFinally(signalType -> doFinally(task))
                 );
     }
@@ -101,7 +99,7 @@ public class SimpleLockService implements LockService {
      * Checks whether the specified task can be started, otherwise returns empty.
      */
     private Mono<Task> checkCanBeStarted(Task task) {
-        for (Task taskInQueue : tasks) {
+        for (Task taskInQueue : tasks.toArray(new Task[0])) {
             if (Objects.equals(taskInQueue, task) || task.hasSameRequestId(taskInQueue)) {
                 return Mono.just(task);
             } else if (Objects.equals(taskInQueue.getRepository(), task.getRepository())) {
@@ -110,16 +108,6 @@ public class SimpleLockService implements LockService {
         }
 
         return Mono.empty();
-    }
-
-    /**
-     * Executes the cleanup after that the specified task has been canceled.
-     */
-    private void doOnCancel(Task task) {
-        logger.trace("Cancel of task [{}] there are {} pending tasks.", task, tasks.size());
-
-        tasks.remove(task);
-        sink.next(task);
     }
 
     /**

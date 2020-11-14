@@ -11,7 +11,7 @@
     <groupId>be.sgerard.tools</groupId>
     <artifactId>i18n-tool-parent</artifactId>
     <packaging>pom</packaging>
-    <version>0.0.3</version>
+    <version>0.0.4</version>
     <name>i18n-tool-parent</name>
     <description>Parent pom for the internationalization tool.</description>
 
@@ -21,7 +21,6 @@
         <docker.image.name>i18n-tool</docker.image.name>
         <docker.image.version>${project.version}</docker.image.version>
 
-        <jcabi-github.version>0.41</jcabi-github.version>
         <jgit.version>4.6.0.201612231935-r</jgit.version>
         <docker-plugin.version>1.4.1</docker-plugin.version>
         <swagger.version>1.4.8</swagger.version>
@@ -41,12 +40,12 @@
             <dependency>
                 <groupId>be.sgerard.tools</groupId>
                 <artifactId>i18n-tool-server</artifactId>
-                <version>0.0.3</version>
+                <version>0.0.4</version>
             </dependency>
             <dependency>
                 <groupId>be.sgerard.tools</groupId>
                 <artifactId>i18n-tool-front</artifactId>
-                <version>0.0.3</version>
+                <version>0.0.4</version>
             </dependency>
 
             <dependency>
@@ -71,11 +70,6 @@
             </dependency>
 
             <dependency>
-                <groupId>com.jcabi</groupId>
-                <artifactId>jcabi-github</artifactId>
-                <version>${jcabi-github.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.eclipse.jgit</groupId>
                 <artifactId>org.eclipse.jgit</artifactId>
                 <version>${jgit.version}</version>
@@ -96,6 +90,11 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-configuration2</artifactId>
                 <version>2.7</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>2.4</version>
             </dependency>
             <dependency>
                 <groupId>commons-beanutils</groupId>

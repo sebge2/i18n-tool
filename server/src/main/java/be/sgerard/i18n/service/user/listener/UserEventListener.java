@@ -23,12 +23,12 @@ public class UserEventListener implements UserListener {
     }
 
     @Override
-    public Mono<Void> onCreate(UserEntity user) {
+    public Mono<Void> afterCreate(UserEntity user) {
         return eventService.sendEventToUsers(UserRole.ADMIN, EventType.ADDED_USER, UserDto.builder(user).build());
     }
 
     @Override
-    public Mono<Void> onUpdate(UserEntity user) {
+    public Mono<Void> afterUpdate(UserEntity user) {
         final UserDto updatedUserDto = UserDto.builder(user).build();
         return Mono
                 .zip(
@@ -39,7 +39,7 @@ public class UserEventListener implements UserListener {
     }
 
     @Override
-    public Mono<Void> onDelete(UserEntity user) {
+    public Mono<Void> afterDelete(UserEntity user) {
         return eventService
                 .sendEventToUsers(UserRole.ADMIN, EventType.DELETED_USER, UserDto.builder(user).build())
                 .then();

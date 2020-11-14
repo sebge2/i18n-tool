@@ -17,6 +17,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import reactor.core.publisher.Flux;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -38,6 +39,8 @@ public class BundleKeyEntityRepositoryImpl implements BundleKeyEntityRepositoryC
     private final Constructor<BundleKeyEntity> bundleKeyConstructor;
     private final Constructor<BundleKeyTranslationEntity> translationConstructor;
     private final Constructor<BundleKeyTranslationModificationEntity> modificationEntityConstructor;
+    private final Field translationOriginalValueField;
+    private final Field translationModificationField;
 
     public BundleKeyEntityRepositoryImpl(ReactiveMongoTemplate template) throws Exception {
         this.template = template;
@@ -47,6 +50,12 @@ public class BundleKeyEntityRepositoryImpl implements BundleKeyEntityRepositoryC
 
         this.translationConstructor = BundleKeyTranslationEntity.class.getDeclaredConstructor();
         this.translationConstructor.setAccessible(true);
+
+        this.translationOriginalValueField = BundleKeyTranslationEntity.class.getDeclaredField("originalValue");
+        this.translationOriginalValueField.setAccessible(true);
+
+        this.translationModificationField = BundleKeyTranslationEntity.class.getDeclaredField("modification");
+        this.translationModificationField.setAccessible(true);
 
         this.modificationEntityConstructor = BundleKeyTranslationModificationEntity.class.getDeclaredConstructor();
         this.modificationEntityConstructor.setAccessible(true);
@@ -205,13 +214,12 @@ public class BundleKeyEntityRepositoryImpl implements BundleKeyEntityRepositoryC
                             try {
                                 final BundleKeyEntity bundleKey = bundleKeyConstructor.newInstance();
 
-                                final BundleKeyTranslationEntity bundleKeyTranslation = translationConstructor.newInstance();
-                                bundleKeyTranslation.setOriginalValue(valueRestriction.getTranslation());
-
                                 final BundleKeyTranslationModificationEntity modification = modificationEntityConstructor.newInstance();
                                 modification.setUpdatedValue(valueRestriction.getTranslation());
 
-                                bundleKeyTranslation.setModification(modification);
+                                final BundleKeyTranslationEntity bundleKeyTranslation = translationConstructor.newInstance();
+                                translationOriginalValueField.set(bundleKeyTranslation, valueRestriction.getTranslation());
+                                translationModificationField.set(bundleKeyTranslation, modification);
 
                                 bundleKey.setTranslations(singletonMap(locale, bundleKeyTranslation));
                                 final ExampleMatcher value = ExampleMatcher.matchingAny()

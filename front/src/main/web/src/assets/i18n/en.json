@@ -35,7 +35,9 @@
   "TRANSLATIONS": {
     "SEARCH_BAR": {
       "WORKSPACES_LABEL": "Workspaces",
-      "WORKSPACES_HINT": "Workspaces to look into.",
+      "WORKSPACES_HINT": "Workspaces to search into.",
+      "BUNDLE_FILE_LABEL": "Bundle file",
+      "BUNDLE_FILE_HINT": "The bundle file to search into (only available if a single workspace is selected).",
       "LOCALES_LABEL": "Locales",
       "LOCALES_HINT": "Locales to display.",
       "CRITERION_LABEL": "Criterion",
@@ -95,7 +97,7 @@
       "LANGUAGE": "Language Code",
       "LANGUAGE_EXAMPLE": "Example: en, fr.",
       "REGION": "Region",
-      "REGION_EXAMPLE": "Example: US, GB.",
+      "REGION_EXAMPLE": "Examples: US, GB.",
       "VARIANTS": "Variants (space separated)",
       "VARIANTS_EXAMPLE": "Example: de-CH-1996.",
       "ICON": "Icon",
@@ -238,6 +240,21 @@
         "ACTION_UPDATE_WEB_HOOK_SECRET": "Update Web Hook Secret",
         "DELETE": {
           "CONFIRMATION_MESSAGE": "Please confirm the deletion of the repository <b>{repository}</b>.<br/><br/>The local repository and its configuration will be removed. All modifications that are not published will be lost."
+        },
+        "WEB_HOOK_POPUP": {
+          "TITLE": "Manage Web Hook Secret",
+          "SECRET": "Secret",
+          "SECRET_HINT": "Secret to use to secure the WebHook endpoint. Afterwards, this secret must be used on GitHub side.",
+          "SECRET_COPIED": "The secret has been copied to your clipboard.",
+          "UNKNOWN_ERROR": "A technical error happened, please verify the Web Hook configuration and try again.",
+          "ERROR_TITLE": "The following errors happened when updating the Web Hook:"
+        },
+        "ACCESS_KEY_POPUP": {
+          "TITLE": "Manage Access Key",
+          "KEY": "Access Key",
+          "KEY_HINT": "The access key used to access your GitHub repository (pull, push, create pull requests, ...).",
+          "UNKNOWN_ERROR": "A technical error happened, please verify the Access Key configuration and try again.",
+          "ERROR_TITLE": "The following errors happened when updating the Access Key:"
         }
       },
       "DETAILS_CARD": {

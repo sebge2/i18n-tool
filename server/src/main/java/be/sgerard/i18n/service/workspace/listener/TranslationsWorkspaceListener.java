@@ -31,7 +31,7 @@ public class TranslationsWorkspaceListener implements WorkspaceListener {
     }
 
     @Override
-    public Mono<Void> onDelete(WorkspaceEntity workspace) {
+    public Mono<Void> beforeDelete(WorkspaceEntity workspace) {
         logger.info("Delete all translations of the workspace [{}] alias [{}] that has been deleted.", workspace.getId(), workspace.getBranch());
 
         return translationRepository.deleteByWorkspace(workspace.getId());

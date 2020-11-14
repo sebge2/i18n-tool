@@ -12,6 +12,9 @@ import {
     GitRepositoryPatchRequestDto,
     RepositoryPatchRequestDto
 } from "../../../../../api";
+import {MatDialog} from "@angular/material/dialog";
+import {RepositoryGithubWebHookDialogComponent} from "./repository-github-web-hook-dialog/repository-github-web-hook-dialog.component";
+import {RepositoryGithubAccessKeyDialogComponent} from "./repository-github-access-key-dialog/repository-github-access-key-dialog.component";
 
 @Component({
     selector: 'app-repository-details-config',
@@ -29,10 +32,11 @@ export class RepositoryDetailsConfigComponent {
 
     private _repository: Repository;
 
-    constructor(private formBuilder: FormBuilder,
-                private repositoryService: RepositoryService,
-                private notificationService: NotificationService) {
-        this.form = this.formBuilder.group({});
+    constructor(private _formBuilder: FormBuilder,
+                private _repositoryService: RepositoryService,
+                private _notificationService: NotificationService,
+                private _dialog: MatDialog) {
+        this.form = this._formBuilder.group({});
     }
 
     @Input()
@@ -45,16 +49,16 @@ export class RepositoryDetailsConfigComponent {
 
         switch (this.repository.type) {
             case "GIT":
-                this.form.registerControl('name', this.formBuilder.control('', [Validators.required]));
-                this.form.registerControl('location', this.formBuilder.control('', [Validators.required]));
-                this.form.registerControl('defaultBranch', this.formBuilder.control('', [Validators.required]));
-                this.form.registerControl('allowedBranches', this.formBuilder.control('', [Validators.required]));
+                this.form.registerControl('name', this._formBuilder.control('', [Validators.required]));
+                this.form.registerControl('location', this._formBuilder.control('', [Validators.required]));
+                this.form.registerControl('defaultBranch', this._formBuilder.control('', [Validators.required]));
+                this.form.registerControl('allowedBranches', this._formBuilder.control('', [Validators.required]));
 
                 break;
             case "GITHUB":
-                this.form.registerControl('name', this.formBuilder.control('', [Validators.required]));
-                this.form.registerControl('defaultBranch', this.formBuilder.control('', [Validators.required]));
-                this.form.registerControl('allowedBranches', this.formBuilder.control('', [Validators.required]));
+                this.form.registerControl('name', this._formBuilder.control('', [Validators.required]));
+                this.form.registerControl('defaultBranch', this._formBuilder.control('', [Validators.required]));
+                this.form.registerControl('allowedBranches', this._formBuilder.control('', [Validators.required]));
 
                 break;
             default:
@@ -81,30 +85,30 @@ export class RepositoryDetailsConfigComponent {
     public onSave() {
         this.saveInProgress = true;
 
-        this.repositoryService
+        this._repositoryService
             .updateRepository(this.repository.id, this.createPatch())
             .toPromise()
             .then(repository => this.repository = repository)
-            .catch(error => this.notificationService.displayErrorMessage('ADMIN.REPOSITORIES.ERROR.UPDATE', error))
+            .catch(error => this._notificationService.displayErrorMessage('ADMIN.REPOSITORIES.ERROR.UPDATE', error))
             .finally(() => this.saveInProgress = false);
     }
 
     public onDelete() {
         this.deleteInProgress = true;
 
-        this.repositoryService
+        this._repositoryService
             .deleteRepository(this.repository)
             .toPromise()
-            .catch(error => this.notificationService.displayErrorMessage('ADMIN.REPOSITORIES.ERROR.DELETE', error))
+            .catch(error => this._notificationService.displayErrorMessage('ADMIN.REPOSITORIES.ERROR.DELETE', error))
             .finally(() => this.deleteInProgress = false);
     }
 
     public onUpdateWebHookSecret() {
-// TODO
+        this._dialog.open(RepositoryGithubWebHookDialogComponent, {data: {repository: this.repository}});
     }
 
     public onUpdateAccessKey() {
-// TODO
+        this._dialog.open(RepositoryGithubAccessKeyDialogComponent, {data: {repository: this.repository}});
     }
 
     private resetForm() {

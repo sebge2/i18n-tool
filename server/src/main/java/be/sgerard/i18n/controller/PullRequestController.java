@@ -1,8 +1,8 @@
 package be.sgerard.i18n.controller;
 
-import be.sgerard.i18n.model.github.GitHubPullRequestDto;
-import be.sgerard.i18n.model.github.GitHubPullRequestStatus;
-import be.sgerard.i18n.service.client.GitHubClient;
+import be.sgerard.i18n.model.repository.github.dto.GitHubPullRequestDto;
+import be.sgerard.i18n.model.repository.github.external.GitHubPullRequestStatus;
+import be.sgerard.i18n.service.repository.github.GitHubService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,10 +22,10 @@ import reactor.core.publisher.Mono;
 @Tag(name = "PullRequest", description = "Controller GitHub pull requests.")
 public class PullRequestController {
 
-    private final GitHubClient pullRequestManager;
+    private final GitHubService gitHubService;
 
-    public PullRequestController(GitHubClient pullRequestManager) {
-        this.pullRequestManager = pullRequestManager;
+    public PullRequestController(GitHubService gitHubService) {
+        this.gitHubService = gitHubService;
     }
 
     /**
@@ -34,7 +34,7 @@ public class PullRequestController {
     @GetMapping("/github-pull-request")
     @Operation(summary = "List all pull requests.")
     public Flux<GitHubPullRequestDto> listRequests() {
-        return pullRequestManager.findAll();
+        return gitHubService.findAll();
     }
 
     /**
@@ -43,7 +43,7 @@ public class PullRequestController {
     @GetMapping("/repository/{repositoryId}/github-pull-request")
     @Operation(summary = "List all pull requests of a repository.")
     public Flux<GitHubPullRequestDto> listRequests(@PathVariable String repositoryId) {
-        return pullRequestManager.findAll(repositoryId);
+        return gitHubService.findAll(repositoryId);
     }
 
     /**
@@ -53,7 +53,7 @@ public class PullRequestController {
     @Operation(summary = "Returns the status of the specified pull request.")
     public Mono<GitHubPullRequestStatus> getStatus(@PathVariable String repositoryId,
                                                    @PathVariable int number) {
-        return pullRequestManager
+        return gitHubService
                 .findByNumber(repositoryId, number)
                 .map(GitHubPullRequestDto::getStatus);
     }

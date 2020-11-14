@@ -19,7 +19,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -57,26 +56,22 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public Flux<WorkspaceEntity> findAll() {
         return repository.findAll();
     }
 
     @Override
-    @Transactional(readOnly = true)
     public Flux<WorkspaceEntity> findAll(String repositoryId) {
         return repository.findByRepository(repositoryId);
     }
 
     @Override
-    @Transactional(readOnly = true)
     public Mono<WorkspaceEntity> findById(String id) {
         return repository.findById(id);
     }
 
     @Override
-    @Transactional
-    public Flux<WorkspaceEntity> synchronize(String repositoryId) throws RepositoryException {
+    public Flux<WorkspaceEntity> synchronizeAll(String repositoryId) throws RepositoryException {
         return repositoryManager
                 .applyGetFlux(repositoryId, api ->
                         ReactiveUtils
@@ -99,7 +94,6 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
     }
 
     @Override
-    @Transactional
     public Mono<WorkspaceEntity> initialize(String workspaceId) throws RepositoryException {
         return findByIdOrDie(workspaceId)
                 .flatMap(workspace -> {
@@ -122,14 +116,38 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
                                 wk.setLastSynchronization(Instant.now());
                             })
                             .flatMap(this::update)
-                            .flatMap(wk -> listener.onInitialize(wk).thenReturn(wk));
+                            .flatMap(wk ->
+                                    listener.afterInitialize(wk).thenReturn(wk)
+                            );
                 });
     }
 
     @Override
-    public Mono<WorkspaceEntity> publish(String workspaceId, String message) throws ResourceNotFoundException, RepositoryException {
-        return publish(WorkspacesPublishRequestDto.builder().workspace(workspaceId).message(message).build())
-                .next();
+    public Mono<WorkspaceEntity> synchronize(String workspaceId) throws ResourceNotFoundException, RepositoryException {
+        return findByIdOrDie(workspaceId)
+                .flatMap(workspace ->
+                        repositoryManager
+                                .findByIdOrDie(workspace.getRepository())
+                                .flatMap(repository ->
+                                        translationsStrategy
+                                                .listBranches(repository)
+                                                .hasElement(workspace.getBranch())
+                                                .flatMap(exist -> {
+                                                    if (exist) {
+                                                        return translationsStrategy.onSynchronize(workspace);
+                                                    } else {
+                                                        return delete(workspaceId);
+                                                    }
+                                                })
+                                )
+                )
+                .flatMap(workspace -> {
+                    workspace.setLastSynchronization(Instant.now());
+
+                    return listener
+                            .afterSynchronization(workspace)
+                            .then(Mono.defer(() -> update(workspace)));
+                });
     }
 
     @Override
@@ -164,24 +182,19 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
     }
 
     @Override
-    @Transactional
     public Mono<WorkspaceEntity> finishReview(String workspaceId) throws ResourceNotFoundException, RepositoryException {
         return findByIdOrDie(workspaceId)
                 .flatMap(this::doFinishReview);
     }
 
     @Override
-    @Transactional
     public Mono<WorkspaceEntity> update(WorkspaceEntity workspace) throws ResourceNotFoundException, RepositoryException {
         return validator
                 .beforeUpdate(workspace)
                 .then(
                         repository
                                 .save(workspace)
-                                .flatMap(w ->
-                                        listener.onUpdate(w)
-                                                .thenReturn(w)
-                                )
+                                .flatMap(wk -> listener.afterUpdate(wk).thenReturn(wk))
                 );
     }
 
@@ -190,13 +203,10 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
         return findById(workspaceId)
                 .flatMap(translationsStrategy::onDelete)
                 .flatMap(workspace ->
-                        listener
-                                .onDelete(workspace)
-                                .thenReturn(workspace)
+                        listener.beforeDelete(workspace).thenReturn(workspace)
                 )
                 .flatMap(workspace ->
-                        repository.delete(workspace)
-                                .thenReturn(workspace)
+                        repository.delete(workspace).thenReturn(workspace)
                 )
                 .doOnNext(workspace -> logger.info("The workspace [{}] alias [{}] has been deleted.", workspace.getBranch(), workspaceId));
     }
@@ -249,15 +259,25 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
                                 );
                     }
                 case INITIALIZED:
-                case NOT_INITIALIZED:
                     if (matchingBranch == null) {
-                        logger.info("Synchronize, there is no branch anymore for the workspace [{}] alias [{}], let's delete it.",
+                        logger.info("Synchronize, there is no branch anymore for the initialized workspace [{}] alias [{}], let's delete it.",
                                 matchingWorkspace.getBranch(), matchingWorkspace.getId());
 
-                        return delete(matchingWorkspace.getId())
-                                .then(Mono.empty());
+                        return delete(matchingWorkspace.getId()).then(Mono.empty());
                     } else {
-                        logger.info("Synchronize, the branch for the workspace [{}] alias [{}] is still there, don't touch.",
+                        logger.info("Synchronize, the branch for the workspace [{}] alias [{}] is still there, update it.",
+                                matchingWorkspace.getBranch(), matchingWorkspace.getId());
+
+                        return synchronize(matchingWorkspace.getId());
+                    }
+                case NOT_INITIALIZED:
+                    if (matchingBranch == null) {
+                        logger.info("Synchronize, there is no branch anymore for the non-initialized workspace [{}] alias [{}], let's delete it.",
+                                matchingWorkspace.getBranch(), matchingWorkspace.getId());
+
+                        return delete(matchingWorkspace.getId()).then(Mono.empty());
+                    } else {
+                        logger.info("Synchronize, the branch for the workspace [{}] alias [{}] is still there, the workspace is not initialized, don't touch.",
                                 matchingWorkspace.getBranch(), matchingWorkspace.getId());
 
                         return Mono.just(matchingWorkspace);
@@ -269,22 +289,6 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
     }
 
     /**
-     * Recreates a new {@link WorkspaceEntity workspace} based on the same branch as the specified workspace.
-     * This new workspace is created only if the branch still exists.
-     */
-    private Mono<WorkspaceEntity> createWorkspaceIfNeeded(WorkspaceEntity workspace) {
-        return repositoryManager
-                .findByIdOrDie(workspace.getRepository())
-                .flatMap(repository ->
-                        translationsStrategy
-                                .listBranches(repository)
-                                .hasElement(workspace.getBranch())
-                                .filter(present -> present)
-                                .flatMap(present -> createWorkspace(repository, workspace.getBranch()))
-                );
-    }
-
-    /**
      * Creates a new {@link WorkspaceEntity workspace} based on the specified branch.
      */
     private Mono<WorkspaceEntity> createWorkspace(RepositoryEntity repository, String branch) {
@@ -292,7 +296,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
                 .just(new WorkspaceEntity(repository.getId(), branch))
                 .flatMap(this.repository::save)
                 .doOnNext(workspace -> logger.info("The workspace [{}] alias [{}] has been created.", workspace.getBranch(), workspace.getId()))
-                .flatMap(workspace -> listener.onCreate(workspace).thenReturn(workspace))
+                .flatMap(workspace -> listener.afterCreate(workspace).thenReturn(workspace))
                 .flatMap(workspace ->
                         translationsStrategy.initializeOnCreate(workspace, repository)
                                 ? initialize(workspace.getId())
@@ -313,8 +317,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
                     } else if (wk.getReview().isPresent()) {
                         return doOnReviewStarted(wk);
                     } else {
-                        return delete(wk.getId())
-                                .then(createWorkspaceIfNeeded(wk));
+                        return synchronize(wk.getId());
                     }
                 });
     }
@@ -328,12 +331,18 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
                 .map(validationResult -> {
                     ValidationException.throwIfFailed(validationResult);
 
-                    logger.info("The review is now finished, deleting the workspace [{}] alias [{}] and then creates a new one.", workspace.getBranch(), workspace.getId());
+                    logger.info("The review is now finished on the workspace [{}] alias [{}].", workspace.getBranch(), workspace.getId());
 
                     return workspace;
                 })
-                .flatMap(wk -> delete(wk.getId()))
-                .then(createWorkspaceIfNeeded(workspace));
+                .flatMap(wk -> {
+                    wk.setStatus(WorkspaceStatus.INITIALIZED);
+
+                    return listener
+                            .afterReview(workspace)
+                            .then(Mono.defer(() -> update(workspace)));
+                })
+                .flatMap(wk -> synchronize(wk.getId()));
     }
 
     /**
@@ -345,7 +354,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
         logger.info("A review started on the workspace [{}] alias [{}] and then creates a new one.", workspace.getBranch(), workspace.getId());
 
         return listener
-                .onReview(workspace)
+                .beforeReview(workspace)
                 .then(Mono.defer(() -> update(workspace)));
     }
 }
