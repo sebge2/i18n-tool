@@ -204,9 +204,14 @@ public class TranslationManagerImpl implements TranslationManager {
                         loadRemoteTranslations(workspace, bundleFile, handler, context),
                         (fromFile, fromDb) -> fromFile.getKey().compareTo(fromDb.getKey())
                 )
-                .flatMap(syncStrategy::synchronizeLocalAndRemote)
                 .collectList()
-                .map(bundleKeys -> updateBundleFileStats(workspace, bundleFile, bundleKeys));
+                .flatMap(bundleKeyPairs ->
+                        Flux
+                                .fromIterable(bundleKeyPairs)
+                                .flatMap(syncStrategy::synchronizeLocalAndRemote)
+                                .collectList()
+                                .map(bundleKeys -> updateBundleFileStats(workspace, bundleFile, bundleKeys))
+                );
     }
 
 
