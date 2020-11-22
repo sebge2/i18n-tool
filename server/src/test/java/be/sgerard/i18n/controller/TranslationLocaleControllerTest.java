@@ -3,15 +3,15 @@ package be.sgerard.i18n.controller;
 import be.sgerard.i18n.model.i18n.dto.TranslationLocaleCreationDto;
 import be.sgerard.i18n.model.i18n.dto.TranslationLocaleDto;
 import be.sgerard.test.i18n.support.CleanupDatabase;
-import be.sgerard.test.i18n.support.WithJaneDoeAdminUser;
-import be.sgerard.test.i18n.support.WithJohnDoeSimpleUser;
+import be.sgerard.test.i18n.support.auth.internal.WithJaneDoeAdminUser;
+import be.sgerard.test.i18n.support.auth.internal.WithJohnDoeSimpleUser;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.http.MediaType;
 
-import static be.sgerard.test.i18n.model.GitRepositoryPatchDtoTestUtils.I18N_TOOL_REPO_ACCESS_TOKEN;
+import static be.sgerard.test.i18n.model.RepositoryEntityTestUtils.I18N_TOOL_GITHUB_ACCESS_TOKEN;
 import static be.sgerard.test.i18n.model.GitRepositoryCreationDtoTestUtils.i18nToolGitHubRepositoryCreationDto;
 import static be.sgerard.test.i18n.model.TranslationLocaleCreationDtoTestUtils.frBeWallonLocaleCreationDto;
 import static be.sgerard.test.i18n.model.TranslationLocaleCreationDtoTestUtils.frLocaleCreationDto;
@@ -28,7 +28,7 @@ public class TranslationLocaleControllerTest extends AbstractControllerTest {
         remoteRepository
                 .gitHub()
                 .create(i18nToolGitHubRepositoryCreationDto(), "myGitHubRepo")
-                .accessToken(I18N_TOOL_REPO_ACCESS_TOKEN)
+                .accessToken(I18N_TOOL_GITHUB_ACCESS_TOKEN)
                 .onCurrentGitProject()
                 .start();
     }

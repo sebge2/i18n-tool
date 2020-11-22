@@ -2,9 +2,9 @@ package be.sgerard.test.i18n.support.auth.external.github;
 
 import be.sgerard.i18n.model.security.auth.external.ExternalAuthSystem;
 import be.sgerard.i18n.model.security.auth.external.ExternalUserDetails;
-import be.sgerard.i18n.model.security.user.ExternalUser;
-import be.sgerard.i18n.model.security.user.dto.UserPatchDto;
-import be.sgerard.i18n.model.security.user.persistence.ExternalUserEntity;
+import be.sgerard.i18n.model.user.ExternalUser;
+import be.sgerard.i18n.model.user.dto.UserPatchDto;
+import be.sgerard.i18n.model.user.persistence.ExternalUserEntity;
 import be.sgerard.i18n.service.security.UserRole;
 import be.sgerard.i18n.service.security.auth.AuthenticationUserManager;
 import be.sgerard.i18n.service.security.auth.AuthenticationUtils;

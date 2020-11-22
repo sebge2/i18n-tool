@@ -6,7 +6,7 @@ import be.sgerard.i18n.model.workspace.WorkspaceStatus;
 import be.sgerard.i18n.model.workspace.dto.WorkspaceDto;
 import be.sgerard.i18n.service.repository.github.webhook.GitHubWebHookService;
 import be.sgerard.test.i18n.support.CleanupDatabase;
-import be.sgerard.test.i18n.support.WithJaneDoeAdminUser;
+import be.sgerard.test.i18n.support.auth.internal.WithJaneDoeAdminUser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.codec.digest.HmacAlgorithms;
 import org.apache.commons.codec.digest.HmacUtils;
@@ -26,6 +26,7 @@ import static be.sgerard.test.i18n.model.GitHubBranchDeletedEventDtoTestUtils.i1
 import static be.sgerard.test.i18n.model.GitHubBranchPullRequestEventDtoTestUtils.i18nToolRelease20206PullRequestEvent;
 import static be.sgerard.test.i18n.model.GitRepositoryPatchDtoTestUtils.*;
 import static be.sgerard.test.i18n.model.GitRepositoryCreationDtoTestUtils.i18nToolGitHubRepositoryCreationDto;
+import static be.sgerard.test.i18n.model.RepositoryEntityTestUtils.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -42,7 +43,7 @@ public class GitHubControllerTest extends AbstractControllerTest {
         remoteRepository
                 .gitHub()
                 .create(i18nToolGitHubRepositoryCreationDto(), "myGitHubRepo")
-                .accessToken(I18N_TOOL_REPO_ACCESS_TOKEN)
+                .accessToken(I18N_TOOL_GITHUB_ACCESS_TOKEN)
                 .onCurrentGitProject()
                 .start()
                 .manageRemoteBranches()
@@ -75,7 +76,7 @@ public class GitHubControllerTest extends AbstractControllerTest {
                 .extracting(WorkspaceDto::getBranch)
                 .contains("release/2020.4");
 
-        postRequest(i18nToolRelease20204BranchDeletedEvent(), GitHubEventType.BRANCH_DELETED, I18N_TOOL_REPO_WEB_HOOK_SECRET)
+        postRequest(i18nToolRelease20204BranchDeletedEvent(), GitHubEventType.BRANCH_DELETED, I18N_TOOL_GITHUB_WEB_HOOK_SECRET)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
@@ -105,7 +106,7 @@ public class GitHubControllerTest extends AbstractControllerTest {
                 .manageRemoteBranches()
                 .createBranches("release/2020.5");
 
-        postRequest(i18nToolRelease20205BranchCreatedEvent(), GitHubEventType.BRANCH_CREATED, I18N_TOOL_REPO_WEB_HOOK_SECRET)
+        postRequest(i18nToolRelease20205BranchCreatedEvent(), GitHubEventType.BRANCH_CREATED, I18N_TOOL_GITHUB_WEB_HOOK_SECRET)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
@@ -132,7 +133,7 @@ public class GitHubControllerTest extends AbstractControllerTest {
                 .initialize()
                 .publish("test");
 
-        postRequest(i18nToolRelease20206PullRequestEvent(), GitHubEventType.PULL_REQUEST, I18N_TOOL_REPO_WEB_HOOK_SECRET)
+        postRequest(i18nToolRelease20206PullRequestEvent(), GitHubEventType.PULL_REQUEST, I18N_TOOL_GITHUB_WEB_HOOK_SECRET)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
@@ -154,7 +155,7 @@ public class GitHubControllerTest extends AbstractControllerTest {
                 .update(i18nToolGitHubRepositoryPatchDto())
                 .initialize();
 
-        postRequest(i18nToolRelease20204BranchDeletedEvent(), GitHubEventType.BRANCH_DELETED, I18N_TOOL_REPO_WEB_HOOK_SECRET + "wrong")
+        postRequest(i18nToolRelease20204BranchDeletedEvent(), GitHubEventType.BRANCH_DELETED, I18N_TOOL_GITHUB_WEB_HOOK_SECRET + "wrong")
                 .exchange()
                 .expectStatus().isUnauthorized()
                 .expectBody()
@@ -169,7 +170,7 @@ public class GitHubControllerTest extends AbstractControllerTest {
                 .create(i18nToolGitHubRepositoryCreationDto(), GitHubRepositoryDto.class)
                 .initialize();
 
-        postRequest(i18nToolRelease20204BranchDeletedEvent(), GitHubEventType.BRANCH_DELETED, I18N_TOOL_REPO_WEB_HOOK_SECRET + "wrong")
+        postRequest(i18nToolRelease20204BranchDeletedEvent(), GitHubEventType.BRANCH_DELETED, I18N_TOOL_GITHUB_WEB_HOOK_SECRET + "wrong")
                 .exchange()
                 .expectStatus().isOk();
     }

@@ -18,15 +18,23 @@ export interface GitRepositoryPatchRequestDto extends RepositoryPatchRequestDto 
     /**
      * The name of the default branch used to find translations
      */
-    defaultBranch: string;
+    defaultBranch?: string;
     /**
      * Regex specifying branches that can be scanned by this tool.
      */
-    allowedBranches: string;
+    allowedBranches?: string;
     /**
      * The unique name of this repository.
      */
-    name: string;
+    name?: string;
+    /**
+     * Username to use to connect to the Git repository (empty means that it will be removed)
+     */
+    username?: string;
+    /**
+     * Password to connect to the Git repository (empty means that it will be removed)
+     */
+    password?: string;
 }
 export namespace GitRepositoryPatchRequestDto {
 }

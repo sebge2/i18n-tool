@@ -1,6 +1,9 @@
 package be.sgerard.test.i18n.model;
 
 import be.sgerard.i18n.model.i18n.dto.TranslationLocaleCreationDto;
+import be.sgerard.i18n.model.locale.persistence.TranslationLocaleEntity;
+
+import static be.sgerard.test.i18n.model.TranslationLocaleEntityTestUtils.*;
 
 /**
  * @author Sebastien Gerard
@@ -11,33 +14,27 @@ public final class TranslationLocaleCreationDtoTestUtils {
     }
 
     public static TranslationLocaleCreationDto.Builder enLocaleCreationDto() {
-        return TranslationLocaleCreationDto.builder()
-                .language("en")
-                .displayName("English")
-                .icon("flag-icon-gb");
+        return initBuilder(enLocale());
     }
 
     public static TranslationLocaleCreationDto.Builder enGbLocaleCreationDto() {
-        return TranslationLocaleCreationDto.builder()
-                .language("en")
-                .region("GB")
-                .displayName("English (GB)")
-                .icon("flag-icon-gb");
+        return initBuilder(enGbLocale());
     }
 
     public static TranslationLocaleCreationDto.Builder frLocaleCreationDto() {
-        return TranslationLocaleCreationDto.builder()
-                .language("fr")
-                .displayName("Français")
-                .icon("flag-icon-fr");
+        return initBuilder(frLocale());
     }
 
     public static TranslationLocaleCreationDto.Builder frBeWallonLocaleCreationDto() {
+        return initBuilder(frBeWallonLocale());
+    }
+
+    private static TranslationLocaleCreationDto.Builder initBuilder(TranslationLocaleEntity locale) {
         return TranslationLocaleCreationDto.builder()
-                .language("fr")
-                .region("BE")
-                .variant("wallon")
-                .displayName("Français (Wallon)")
-                .icon("flag-icon-fr");
+                .language(locale.getLanguage())
+                .region(locale.getRegion().orElse(null))
+                .variant(String.join(",", locale.getVariants()))
+                .displayName(locale.getDisplayName().orElse(null))
+                .icon(locale.getIcon());
     }
 }

@@ -1,13 +1,14 @@
 package be.sgerard.i18n.model.event;
 
-import be.sgerard.i18n.model.repository.dto.RepositoryDto;
-import be.sgerard.i18n.model.security.session.dto.UserLiveSessionDto;
-import be.sgerard.i18n.model.security.user.dto.AuthenticatedUserDto;
-import be.sgerard.i18n.model.security.user.dto.UserDto;
-import be.sgerard.i18n.model.security.user.dto.UserPreferencesDto;
-import be.sgerard.i18n.model.workspace.dto.WorkspaceDto;
 import be.sgerard.i18n.model.i18n.dto.TranslationLocaleDto;
 import be.sgerard.i18n.model.i18n.dto.TranslationsUpdateEventDto;
+import be.sgerard.i18n.model.repository.dto.RepositoryDto;
+import be.sgerard.i18n.model.security.auth.dto.AuthenticatedUserDto;
+import be.sgerard.i18n.model.security.session.dto.UserLiveSessionDto;
+import be.sgerard.i18n.model.user.dto.UserDto;
+import be.sgerard.i18n.model.user.dto.UserPreferencesDto;
+import be.sgerard.i18n.model.workspace.dto.WorkspaceDto;
+import be.sgerard.i18n.model.snapshot.dto.SnapshotDto;
 
 /**
  * All possible kind of events.
@@ -119,5 +120,15 @@ public enum EventType {
     /**
      * @see UserPreferencesDto
      */
-    UPDATED_USER_PREFERENCES;
+    UPDATED_USER_PREFERENCES,
+
+    /**
+     * @see SnapshotDto
+     */
+    ADDED_SNAPSHOT,
+
+    /**
+     * @see SnapshotDto
+     */
+    DELETED_SNAPSHOT,
 }

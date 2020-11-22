@@ -270,17 +270,11 @@ public class DefaultGitRepositoryApi extends BaseGitRepositoryApi {
         } catch (GitAPIException e) {
             final String errorMessage = e.getMessage().toLowerCase();
             if (errorMessage.contains("not authorized") || errorMessage.contains("authentication is required")) {
-                return ValidationResult.builder()
-                        .messages(new ValidationMessage(INVALID_CREDENTIALS, configuration.getRemoteUri()))
-                        .build();
+                return ValidationResult.singleMessage(new ValidationMessage(INVALID_CREDENTIALS, configuration.getRemoteUri()));
             } else if (errorMessage.contains("not found")) {
-                return ValidationResult.builder()
-                        .messages(new ValidationMessage(INVALID_URL, configuration.getRemoteUri()))
-                        .build();
+                return ValidationResult.singleMessage(new ValidationMessage(INVALID_URL, configuration.getRemoteUri()));
             } else {
-                return ValidationResult.builder()
-                        .messages(new ValidationMessage(ERROR_ACCESSING, configuration.getRemoteUri()))
-                        .build();
+                return ValidationResult.singleMessage(new ValidationMessage(ERROR_ACCESSING, configuration.getRemoteUri()));
             }
         }
     }

@@ -113,7 +113,7 @@ public class SimpleGitProviderMock implements GitProviderMock {
         public SimpleRemoteGitRepositoryMock start() {
             final SimpleRemoteGitRepositoryMock mock = new SimpleRemoteGitRepositoryMock(
                     locationUri,
-                    (repositoryLocation != null) ? repositoryLocation : FileUtils.createTempDirectory("git-remote-repository-mock"),
+                    (repositoryLocation != null) ? repositoryLocation : FileUtils.createTempDirectory("git-remote-repository-mock-"),
                     userCredentials
             );
 

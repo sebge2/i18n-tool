@@ -8,6 +8,7 @@ import be.sgerard.i18n.service.UnauthorizedRequestException;
 import be.sgerard.i18n.service.ValidationException;
 import be.sgerard.i18n.service.error.ErrorMessagesProvider;
 import be.sgerard.i18n.service.repository.RepositoryException;
+import be.sgerard.i18n.service.snapshot.SnapshotException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.codec.DecodingException;
@@ -109,6 +110,21 @@ public class ControllerAdvice {
         logger.error(String.format("Repository exception with id %s, message %s.", errorMessages.getId(), exception.getMessage()), exception);
 
         return new ResponseEntity<>(errorMessages, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    /**
+     * Handles the {@link SnapshotException snapshot exception}.
+     */
+    @ExceptionHandler(value = SnapshotException.class)
+    @ResponseStatus
+    public ResponseEntity<ErrorMessages> handle(SnapshotException exception) {
+        final ErrorMessages errorMessages = messagesProvider.map(exception);
+
+        if (logger.isDebugEnabled()) {
+            logger.debug(String.format("Snapshot exception with id %s, message %s.", errorMessages.getId(), exception.getMessage()), exception);
+        }
+
+        return new ResponseEntity<>(errorMessages, HttpStatus.BAD_REQUEST);
     }
 
 //    /**

@@ -1,7 +1,7 @@
 package be.sgerard.i18n.service.user.listener;
 
 import be.sgerard.i18n.model.security.auth.AuthenticatedUser;
-import be.sgerard.i18n.model.security.user.persistence.UserEntity;
+import be.sgerard.i18n.model.user.persistence.UserEntity;
 import be.sgerard.i18n.service.security.UserRole;
 import be.sgerard.i18n.service.security.auth.AuthenticationUserManager;
 import org.springframework.stereotype.Component;

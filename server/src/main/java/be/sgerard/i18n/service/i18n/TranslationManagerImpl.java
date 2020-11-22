@@ -9,8 +9,12 @@ import be.sgerard.i18n.model.i18n.file.BundleWalkingContext;
 import be.sgerard.i18n.model.i18n.file.BundleWalkingKeys;
 import be.sgerard.i18n.model.i18n.file.ScannedBundleFile;
 import be.sgerard.i18n.model.i18n.file.ScannedBundleFileEntry;
-import be.sgerard.i18n.model.i18n.persistence.*;
-import be.sgerard.i18n.model.security.user.dto.AuthenticatedUserDto;
+import be.sgerard.i18n.model.i18n.persistence.BundleFileEntity;
+import be.sgerard.i18n.model.i18n.persistence.BundleKeyEntity;
+import be.sgerard.i18n.model.i18n.persistence.BundleKeyTranslationEntity;
+import be.sgerard.i18n.model.i18n.persistence.BundleKeyTranslationModificationEntity;
+import be.sgerard.i18n.model.locale.persistence.TranslationLocaleEntity;
+import be.sgerard.i18n.model.security.auth.dto.AuthenticatedUserDto;
 import be.sgerard.i18n.model.workspace.persistence.WorkspaceEntity;
 import be.sgerard.i18n.repository.i18n.BundleKeyEntityRepository;
 import be.sgerard.i18n.service.ResourceNotFoundException;
@@ -19,6 +23,7 @@ import be.sgerard.i18n.service.i18n.file.BundleHandler;
 import be.sgerard.i18n.service.i18n.file.BundleWalker;
 import be.sgerard.i18n.service.i18n.file.TranslationFileUtils;
 import be.sgerard.i18n.service.i18n.listener.TranslationsListener;
+import be.sgerard.i18n.service.locale.TranslationLocaleManager;
 import be.sgerard.i18n.service.repository.RepositoryManager;
 import be.sgerard.i18n.support.ReactiveUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -34,7 +39,6 @@ import reactor.core.publisher.Mono;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Predicate;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static be.sgerard.i18n.repository.i18n.BundleKeyEntityRepository.*;
@@ -121,26 +125,26 @@ public class TranslationManagerImpl implements TranslationManager {
     }
 
     @Override
-    public Mono<List<BundleKeyTranslationEntity>> updateTranslations(List<TranslationUpdateDto> translations) throws ResourceNotFoundException {
+    public Mono<List<BundleKeyTranslationEntity>> updateTranslations(List<TranslationUpdateDto> updates) throws ResourceNotFoundException {
         return listener
-                .beforeUpdate(translations)
+                .beforeUpdate(updates)
                 .doOnNext(ValidationException::throwIfFailed)
                 .flatMap(validationResult -> authenticationManager.getCurrentUser().map(AuthenticatedUserDto::getUserId))
                 .flatMapMany(currentUser ->
                         Flux
-                                .fromIterable(translations)
-                                .flatMap(update ->
-                                        findBundleKeyOrDie(update.getBundleKeyId())
-                                                .map(bundleKey -> updateTranslation(bundleKey, update, currentUser)) // TODO do a better association between 2 lists
+                                .fromIterable(updates)
+                                .groupBy(TranslationUpdateDto::getBundleKeyId)
+                                .flatMap(updatesByBundleKey ->
+                                        updatesByBundleKey
+                                                .collectList()
+                                                .flatMapMany(updatesForBundleKey ->
+                                                        updateBundleKey(currentUser, updatesByBundleKey.key(), updatesForBundleKey)
+                                                )
                                 )
-                                .flatMap(translationRepository::save)
                 )
                 .collectList()
-                .flatMap(bundleKeys ->
-                        listener
-                                .afterUpdate(bundleKeys, translations)
-                                .thenReturn(extractTranslationEntities(bundleKeys, translations))
-                );
+                .flatMap(translations -> listener.afterUpdate(translations).thenReturn(translations))
+                .map(translations -> translations.stream().map(Pair::getKey).collect(toList()));
     }
 
     /**
@@ -240,25 +244,31 @@ public class TranslationManagerImpl implements TranslationManager {
     }
 
     /**
+     * Updates translations of the specified {@link BundleKeyEntity bundle key}.
+     */
+    private Flux<Pair<BundleKeyTranslationEntity, BundleKeyEntity>> updateBundleKey(String currentUser, String key, List<TranslationUpdateDto> updates) {
+        return findBundleKeyOrDie(key)
+                .doOnNext(bundleKey ->
+                        updates.forEach(update -> updateTranslation(bundleKey, update, currentUser))
+                )
+                .flatMap(translationRepository::save)
+                .flatMapMany(bundleKey ->
+                        Flux
+                                .fromIterable(updates)
+                                .map(update -> bundleKey.getTranslationOrCreate(update.getLocaleId()))
+                                .map(translation -> Pair.of(translation, bundleKey))
+                );
+    }
+
+    /**
      * Updates the translation of the specified {@link BundleKeyEntity bundle key} using the new updated value.
      */
-    private BundleKeyEntity updateTranslation(BundleKeyEntity bundleKey, TranslationUpdateDto update, String currentUser) {
+    private void updateTranslation(BundleKeyEntity bundleKey, TranslationUpdateDto update, String currentUser) {
         final String localeId = update.getLocaleId();
         final String newUpdatedValue = update.getTranslation().map(TranslationFileUtils::mapToNullIfEmpty).orElse(null);
         final BundleKeyTranslationEntity translation = bundleKey.getTranslationOrCreate(localeId);
 
         translation.setModification(new BundleKeyTranslationModificationEntity(newUpdatedValue, currentUser));
-
-        return bundleKey;
-    }
-
-    /**
-     * Extracts {@link BundleKeyTranslationEntity translations} that have been updated from the {@link BundleKeyEntity bundle keys}.
-     */
-    private List<BundleKeyTranslationEntity> extractTranslationEntities(List<BundleKeyEntity> bundleKeys, List<TranslationUpdateDto> translations) {
-        return IntStream.range(0, translations.size())
-                .mapToObj(i -> bundleKeys.get(i).getTranslationOrCreate(translations.get(i).getLocaleId()))
-                .collect(toList());
     }
 
     /**
@@ -343,10 +353,10 @@ public class TranslationManagerImpl implements TranslationManager {
 
         return Flux
                 .fromIterable(removedFiles)
-                .doOnNext(removedBundleFile -> {
-                    logger.info("The bundle file located in [{}] named [{}] with {} file(s) is no more present remotely, remove it.",
-                            removedBundleFile.getLocation(), removedBundleFile.getName(), removedBundleFile.getFiles().size());
-                })
+                .doOnNext(removedBundleFile ->
+                        logger.info("The bundle file located in [{}] named [{}] with {} file(s) is no more present remotely, remove it.",
+                                removedBundleFile.getLocation(), removedBundleFile.getName(), removedBundleFile.getFiles().size())
+                )
                 .flatMap(removedBundleFile ->
                         translationRepository
                                 .deleteByBundleFile(removedBundleFile.getId())

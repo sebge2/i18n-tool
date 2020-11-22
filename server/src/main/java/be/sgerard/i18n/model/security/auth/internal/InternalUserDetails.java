@@ -1,6 +1,6 @@
 package be.sgerard.i18n.model.security.auth.internal;
 
-import be.sgerard.i18n.model.security.user.persistence.InternalUserEntity;
+import be.sgerard.i18n.model.user.persistence.InternalUserEntity;
 import be.sgerard.i18n.service.security.UserRole;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

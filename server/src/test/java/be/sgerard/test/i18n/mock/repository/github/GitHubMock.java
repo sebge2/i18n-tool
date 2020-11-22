@@ -129,7 +129,7 @@ public class GitHubMock implements GitProviderMock {
         public RemoteGitHubRepositoryMock start() {
             final RemoteGitHubRepositoryMock mock = new RemoteGitHubRepositoryMock(
                     repositoryId,
-                    (repositoryLocation != null) ? repositoryLocation : FileUtils.createTempDirectory("git-hub-remote-repository-mock"),
+                    (repositoryLocation != null) ? repositoryLocation : FileUtils.createTempDirectory("git-hub-remote-repository-mock-"),
                     accessTokens
             );
 

@@ -5,7 +5,7 @@ import be.sgerard.i18n.model.i18n.dto.TranslationSearchCriterion;
 import be.sgerard.i18n.model.i18n.dto.TranslationValueRestrictionDto;
 import be.sgerard.i18n.model.i18n.dto.TranslationsSearchPageSpecDto;
 import be.sgerard.i18n.model.i18n.persistence.BundleFileEntity;
-import be.sgerard.i18n.model.i18n.persistence.TranslationLocaleEntity;
+import be.sgerard.i18n.model.locale.persistence.TranslationLocaleEntity;
 import be.sgerard.i18n.model.workspace.persistence.WorkspaceEntity;
 import lombok.Builder;
 import lombok.Getter;

@@ -6,7 +6,6 @@ import * as _ from "lodash";
 @Component({
     selector: 'app-form-delete-button',
     templateUrl: './form-delete-button.component.html',
-    styleUrls: ['./form-delete-button.component.css']
 })
 export class FormDeleteButtonComponent {
 

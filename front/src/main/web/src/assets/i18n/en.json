@@ -17,6 +17,9 @@
       },
       "DELETE": {
         "DELETE_CONFIRMATION_POPUP_TITLE": "Delete Confirmation"
+      },
+      "RESTORE": {
+        "RESTORE_CONFIRMATION_POPUP_TITLE": "Restore Confirmation"
       }
     },
     "FIELDS": {
@@ -88,7 +91,8 @@
     "LOCALES_LABEL": "Languages",
     "REPOSITORIES_LABEL": "Repositories",
     "USERS_LABEL": "Users",
-    "TRANSLATIONS_LABEL": "Translations"
+    "TRANSLATIONS_LABEL": "Translations",
+    "SNAPSHOT_LABEL": "Snapshots"
   },
   "ADMIN": {
     "LOCALES": {
@@ -275,6 +279,38 @@
         "UPDATE": "Error while updating the repository",
         "DELETE": "Error while deleting the repository.",
         "INITIALIZE": "Error while initializing the repository."
+      }
+    },
+    "SNAPSHOTS": {
+      "TABLE": {
+        "CREATED_ON": "Created On",
+        "COMMENT": "Comment",
+        "CREATED_BY": "Created By",
+        "ACTION": "Action",
+        "RESTORE_CONFIRMATION_MESSAGE": "Please confirm the restoration of the snapshot <b>{snapshot}</b>.<br /><br />All current data will be erased. Data from the snapshot will be restored.",
+        "DELETE_CONFIRMATION_MESSAGE": "Please confirm the deletion of the snapshot <b>{snapshot}</b>."
+      },
+      "CREATION_CARD": {
+        "TITLE": "Create a new Snapshot",
+        "COMMENT": "Comment",
+        "COMMENT_HINT": "Free comment describing the snapshot.",
+        "PASSWORD": "Encryption Password",
+        "PASSWORD_HINT": "Password used to encrypt the ZIP file containing the snapshot."
+      },
+      "IMPORT_CARD": {
+        "TITLE": "Import a Snapshot",
+        "FILE": "File",
+        "FILE_HINT": "Snapshot ZIP file",
+        "PASSWORD": "Encryption Password",
+        "PASSWORD_HINT": "Password used to encrypt the ZIP file containing the snapshot."
+      },
+      "ERROR": {
+        "GET_ALL": "Error while retrieving snapshots.",
+        "DOWNLOAD": "Error while downloading the snapshot file.",
+        "RESTORE": "Error while restoring the snapshot.",
+        "DELETE": "Error while deleting the snapshot.",
+        "CREATE": "Error while creating a new snapshot.",
+        "IMPORT": "Error while importing a snapshot."
       }
     }
   },

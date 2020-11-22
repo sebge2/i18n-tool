@@ -3,6 +3,7 @@ package be.sgerard.i18n.model.i18n.persistence;
 import be.sgerard.i18n.model.i18n.BundleType;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.util.AntPathMatcher;
 
@@ -17,6 +18,7 @@ import java.util.List;
  */
 @Getter
 @Setter
+@Accessors(chain = true)
 public class BundleConfigurationEntity {
 
     private static final AntPathMatcher PATH_MATCHER = new AntPathMatcher();

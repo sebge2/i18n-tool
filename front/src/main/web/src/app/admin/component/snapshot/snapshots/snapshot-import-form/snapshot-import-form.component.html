@@ -1,0 +1,33 @@
+<app-card [title]="'ADMIN.SNAPSHOTS.IMPORT_CARD.TITLE' | translate">
+    <app-card-content>
+        <form [formGroup]="form">
+            <mat-form-field class="app-snapshot-import-file" appearance="standard">
+                <mat-label *ngIf="!fileSelected">{{'ADMIN.SNAPSHOTS.IMPORT_CARD.FILE' | translate}}</mat-label>
+                <mat-label *ngIf="fileSelected">{{fileName}}</mat-label>
+
+                <input matInput disabled>
+
+                <button mat-icon-button matSuffix (click)="fileInput.click()">
+                    <mat-icon>attach_file</mat-icon>
+                </button>
+
+                <mat-hint>{{'ADMIN.SNAPSHOTS.IMPORT_CARD.FILE_HINT' | translate}}</mat-hint>
+
+                <input hidden #fileInput type="file" (change)="onFileChange($event.target.files)">
+            </mat-form-field>
+
+            <mat-form-field appearance="standard" class="app-snapshot-import-password">
+                <mat-label>{{'ADMIN.SNAPSHOTS.IMPORT_CARD.PASSWORD' | translate}}</mat-label>
+                <input matInput formControlName="encryptionPassword" type="password">
+                <mat-hint>{{'ADMIN.SNAPSHOTS.IMPORT_CARD.PASSWORD_HINT' | translate}}</mat-hint>
+            </mat-form-field>
+        </form>
+    </app-card-content>
+    <app-card-actions>
+        <app-form-add-button [form]="form"
+                             [addInProgress]="importInProgress"
+                             [disabled]="importInProgress"
+                             [addIcon]="'get_app'"
+                             (add)="onImport()"></app-form-add-button>
+    </app-card-actions>
+</app-card>

@@ -1,7 +1,7 @@
 package be.sgerard.i18n.repository.security;
 
 import be.sgerard.i18n.model.security.session.persistence.UserLiveSessionEntity;
-import be.sgerard.i18n.model.security.user.persistence.UserEntity;
+import be.sgerard.i18n.model.user.persistence.UserEntity;
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 import reactor.core.publisher.Flux;
 

@@ -6,14 +6,14 @@ import be.sgerard.i18n.model.workspace.WorkspaceStatus;
 import be.sgerard.i18n.model.workspace.dto.WorkspaceDto;
 import be.sgerard.i18n.model.workspace.dto.WorkspacesPublishRequestDto;
 import be.sgerard.test.i18n.support.CleanupDatabase;
-import be.sgerard.test.i18n.support.WithJaneDoeAdminUser;
+import be.sgerard.test.i18n.support.auth.internal.WithJaneDoeAdminUser;
 import org.junit.jupiter.api.*;
 
 import java.util.Locale;
 
 import static be.sgerard.test.i18n.model.GitRepositoryCreationDtoTestUtils.i18nToolGitRepositoryCreationDto;
 import static be.sgerard.test.i18n.model.GitRepositoryCreationDtoTestUtils.i18nToolGitHubRepositoryCreationDto;
-import static be.sgerard.test.i18n.model.GitRepositoryPatchDtoTestUtils.*;
+import static be.sgerard.test.i18n.model.RepositoryEntityTestUtils.*;
 import static be.sgerard.test.i18n.model.TranslationLocaleCreationDtoTestUtils.enLocaleCreationDto;
 import static be.sgerard.test.i18n.model.TranslationLocaleCreationDtoTestUtils.frLocaleCreationDto;
 import static java.util.Arrays.asList;
@@ -30,7 +30,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
         remoteRepository
                 .gitHub()
                 .create(i18nToolGitHubRepositoryCreationDto(), "myGitHubRepo")
-                .accessToken(I18N_TOOL_REPO_ACCESS_TOKEN)
+                .accessToken(I18N_TOOL_GITHUB_ACCESS_TOKEN)
                 .onCurrentGitProject()
                 .start()
                 .manageRemoteBranches()
@@ -39,7 +39,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
         remoteRepository
                 .git()
                 .create(i18nToolGitRepositoryCreationDto(), "myGitRepo")
-                .addUser(I18N_TOOL_REPO_USER, I18N_TOOL_REPO_USER_PASSWORD)
+                .addUser(I18N_TOOL_GIT_REPO_USER, I18N_TOOL_GIT_REPO_USER_PASSWORD)
                 .onCurrentGitProject()
                 .start()
                 .manageRemoteBranches()

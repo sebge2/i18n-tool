@@ -1,6 +1,6 @@
 package be.sgerard.i18n.service.user.listener;
 
-import be.sgerard.i18n.model.security.user.persistence.UserEntity;
+import be.sgerard.i18n.model.user.persistence.UserEntity;
 import reactor.core.publisher.Mono;
 
 /**

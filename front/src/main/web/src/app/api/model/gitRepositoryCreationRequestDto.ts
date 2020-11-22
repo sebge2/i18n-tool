@@ -23,7 +23,14 @@ export interface GitRepositoryCreationRequestDto extends RepositoryCreationReque
      * Name of this repository
      */
     name: string;
-    locationAsURI?: string;
+    /**
+     * Username to use to connect to the Git repository
+     */
+    username?: string;
+    /**
+     * Password to connect to the Git repository
+     */
+    password?: string;
 }
 export namespace GitRepositoryCreationRequestDto {
 }

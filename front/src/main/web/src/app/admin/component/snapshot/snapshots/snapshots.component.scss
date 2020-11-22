@@ -1,0 +1,60 @@
+@import "../../../../front/src/main/web/src/css/variables";
+
+table {
+  min-width: 600px;
+  width: 70%;
+  margin: auto;
+  min-height: 150px;
+}
+
+.mat-row:hover {
+  background-color: mat-color($color-hover);
+
+  app-restore-button, app-download-button, app-form-delete-button {
+    visibility: visible;
+  }
+}
+
+app-restore-button, app-download-button, app-form-delete-button {
+  visibility: hidden;
+}
+
+.mat-cell {
+  padding: 10px 10px 10px 0;
+}
+
+.mat-column-createdOn {
+  width: 300px !important;
+}
+
+.mat-column-createdBy {
+  width: 200px !important;
+}
+
+.mat-column-action * {
+  margin: 5px;
+}
+
+.mat-column-action {
+  width: 140px !important;
+  padding: 0 !important;
+}
+
+:host ::ng-deep mat-card {
+  height: 80%;
+}
+
+// TODO
+.app-snapshot-header {
+  min-width: 600px;
+  width: 70%;
+  margin: auto auto 20px;
+
+  display: grid;
+  grid-gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+.app-snapshot-header * {
+  height: 100%;
+}

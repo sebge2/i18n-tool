@@ -4,6 +4,7 @@ import be.sgerard.i18n.model.i18n.dto.TranslationUpdateDto;
 import be.sgerard.i18n.model.i18n.persistence.BundleKeyEntity;
 import be.sgerard.i18n.model.i18n.persistence.BundleKeyTranslationEntity;
 import be.sgerard.i18n.model.validation.ValidationResult;
+import org.apache.commons.lang3.tuple.Pair;
 import reactor.core.publisher.Mono;
 
 import java.util.Collection;
@@ -26,7 +27,7 @@ public interface TranslationsListener {
     /**
      * Performs an action when the specified {@link BundleKeyTranslationEntity translation} have been updated.
      */
-    default Mono<Void> afterUpdate(List<BundleKeyEntity> bundleKeys, List<TranslationUpdateDto> updates) {
+    default Mono<Void> afterUpdate(List<Pair<BundleKeyTranslationEntity, BundleKeyEntity>> updates) {
         return Mono.empty();
     }
 }

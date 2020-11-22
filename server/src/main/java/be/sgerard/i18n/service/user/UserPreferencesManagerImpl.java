@@ -1,15 +1,15 @@
 package be.sgerard.i18n.service.user;
 
-import be.sgerard.i18n.model.i18n.persistence.TranslationLocaleEntity;
+import be.sgerard.i18n.model.locale.persistence.TranslationLocaleEntity;
 import be.sgerard.i18n.model.security.auth.AuthenticatedUser;
-import be.sgerard.i18n.model.security.user.dto.UserPreferencesDto;
-import be.sgerard.i18n.model.security.user.persistence.UserEntity;
-import be.sgerard.i18n.model.security.user.persistence.UserPreferencesEntity;
+import be.sgerard.i18n.model.user.dto.UserPreferencesDto;
+import be.sgerard.i18n.model.user.persistence.UserEntity;
+import be.sgerard.i18n.model.user.persistence.UserPreferencesEntity;
 import be.sgerard.i18n.model.validation.ValidationMessage;
 import be.sgerard.i18n.model.validation.ValidationResult;
 import be.sgerard.i18n.service.ResourceNotFoundException;
 import be.sgerard.i18n.service.ValidationException;
-import be.sgerard.i18n.service.i18n.TranslationLocaleManager;
+import be.sgerard.i18n.service.locale.TranslationLocaleManager;
 import be.sgerard.i18n.service.security.auth.AuthenticationUserManager;
 import be.sgerard.i18n.service.user.listener.UserPreferencesListener;
 import org.springframework.stereotype.Service;
@@ -96,7 +96,7 @@ public class UserPreferencesManagerImpl implements UserPreferencesManager {
                         translationLocaleManager
                                 .findById(id)
                                 .switchIfEmpty(Mono.error(
-                                        new ValidationException(ValidationResult.builder().messages(new ValidationMessage(MISSING_VALIDATION_LOCALE, id)).build())
+                                        new ValidationException(ValidationResult.singleMessage(new ValidationMessage(MISSING_VALIDATION_LOCALE, id)))
                                 ))
                 )
                 .collectList();

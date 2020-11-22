@@ -1,7 +1,7 @@
 package be.sgerard.i18n.service.i18n.file;
 
 import be.sgerard.i18n.model.i18n.file.ScannedBundleFileLocation;
-import be.sgerard.i18n.model.i18n.persistence.TranslationLocaleEntity;
+import be.sgerard.i18n.model.locale.persistence.TranslationLocaleEntity;
 import be.sgerard.i18n.service.i18n.TranslationRepositoryWriteApi;
 import be.sgerard.i18n.service.repository.RepositoryException;
 import be.sgerard.i18n.service.repository.git.GitRepositoryApi;

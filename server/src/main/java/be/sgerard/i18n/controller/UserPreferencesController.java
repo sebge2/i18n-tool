@@ -1,6 +1,6 @@
 package be.sgerard.i18n.controller;
 
-import be.sgerard.i18n.model.security.user.dto.UserPreferencesDto;
+import be.sgerard.i18n.model.user.dto.UserPreferencesDto;
 import be.sgerard.i18n.service.user.UserPreferencesManager;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

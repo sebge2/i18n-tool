@@ -1,8 +1,8 @@
 package be.sgerard.i18n.controller;
 
-import be.sgerard.i18n.model.security.user.dto.*;
-import be.sgerard.i18n.model.security.user.persistence.ExternalUserEntity;
-import be.sgerard.i18n.model.security.user.persistence.InternalUserEntity;
+import be.sgerard.i18n.model.user.dto.*;
+import be.sgerard.i18n.model.user.persistence.ExternalUserEntity;
+import be.sgerard.i18n.model.user.persistence.InternalUserEntity;
 import be.sgerard.i18n.service.security.auth.AuthenticationUserManager;
 import be.sgerard.i18n.service.user.UserManager;
 import be.sgerard.i18n.service.user.UserManagerImpl;
@@ -197,7 +197,7 @@ public class UserController {
 
                                 final DefaultDataBuffer buffer;
                                 if (internalUserEntity.hasAvatar()) {
-                                    buffer = new DefaultDataBufferFactory().wrap(internalUserEntity.getAvatar());
+                                    buffer = new DefaultDataBufferFactory().wrap(internalUserEntity.getAvatar().orElse(new byte[0]));
                                 } else {
                                     buffer = new DefaultDataBufferFactory().wrap(defaultUserAvatar);
                                 }

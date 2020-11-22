@@ -1,8 +1,10 @@
 package be.sgerard.i18n.model.i18n.persistence;
 
 import be.sgerard.i18n.model.i18n.file.ScannedBundleFileEntry;
+import be.sgerard.i18n.model.locale.persistence.TranslationLocaleEntity;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
 
@@ -17,6 +19,7 @@ import java.util.UUID;
  */
 @Getter
 @Setter
+@Accessors(chain = true)
 public class BundleFileEntryEntity {
 
     /**
@@ -41,10 +44,14 @@ public class BundleFileEntryEntity {
     BundleFileEntryEntity() {
     }
 
-    public BundleFileEntryEntity(ScannedBundleFileEntry entry) {
+    public BundleFileEntryEntity(String locale, String file) {
         this.id = UUID.randomUUID().toString();
-        this.locale = entry.getLocale().getId();
-        this.file = entry.getFile().toString();
+        this.locale = locale;
+        this.file = file;
+    }
+
+    public BundleFileEntryEntity(ScannedBundleFileEntry entry) {
+        this(entry.getLocale().getId(), entry.getFile().toString());
     }
 
     /**

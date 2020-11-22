@@ -26,15 +26,19 @@ public class ResourceNotFoundException extends RuntimeException implements Local
     }
 
     public static ResourceNotFoundException bundleFileNotFoundException(String reference) {
-        return new ResourceNotFoundException("ResourceNotFoundException.bundle-file.message", "translation", reference);
+        return new ResourceNotFoundException("ResourceNotFoundException.bundle-file.message", "bundle-file", reference);
     }
 
     public static ResourceNotFoundException userLiveSessionNotFoundException(String reference) {
-        return new ResourceNotFoundException("ResourceNotFoundException.user-live-session.message", "translation", reference);
+        return new ResourceNotFoundException("ResourceNotFoundException.user-live-session.message", "user live session", reference);
     }
 
     public static ResourceNotFoundException authenticatedUserNotFoundException(String reference) {
-        return new ResourceNotFoundException("ResourceNotFoundException.authenticated-user.message", "translation", reference);
+        return new ResourceNotFoundException("ResourceNotFoundException.authenticated-user.message", "authenticated user", reference);
+    }
+
+    public static ResourceNotFoundException snapshotNotFoundException(String reference) {
+        return new ResourceNotFoundException("ResourceNotFoundException.snapshot-user.message", "snapshot", reference);
     }
 
     private final String messageKey;
