@@ -27,7 +27,8 @@
               "src/css/variables.scss",
               "src/css/styles.scss",
               "src/css/buttons.scss",
-              "src/css/colors.scss"
+              "src/css/colors.scss",
+              "src/css/material-angular.scss"
             ],
             "scripts": []
           },
@@ -90,7 +91,8 @@
               "src/css/variables.scss",
               "src/css/styles.scss",
               "src/css/buttons.scss",
-              "src/css/colors.scss"
+              "src/css/colors.scss",
+              "src/css/material-angular.scss"
             ],
             "scripts": [],
             "assets": [

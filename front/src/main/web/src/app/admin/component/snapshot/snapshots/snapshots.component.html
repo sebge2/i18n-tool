@@ -1,3 +1,7 @@
+<div class="app-snapshot-loader" *ngIf="restoreInProgress">
+    <mat-spinner [diameter]="60"></mat-spinner>
+</div>
+
 <div class="app-snapshot-header">
     <app-snapshot-creation-form></app-snapshot-creation-form>
     <app-snapshot-import-form></app-snapshot-import-form>

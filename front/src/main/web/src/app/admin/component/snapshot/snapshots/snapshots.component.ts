@@ -6,6 +6,7 @@ import {SnapshotService} from "../../../service/snapshot.service";
 import {takeUntil} from "rxjs/operators";
 import {NotificationService} from "../../../../core/notification/service/notification.service";
 import * as _ from "lodash";
+import {AuthenticationService} from "../../../../core/auth/service/authentication.service";
 
 @Component({
     selector: 'app-snapshots',
@@ -23,14 +24,15 @@ export class SnapshotsComponent implements OnInit, OnDestroy {
     private _destroyed$ = new Subject<void>();
 
     constructor(private _snapshotService: SnapshotService,
-                private _notificationService: NotificationService) {
+                private _notificationService: NotificationService,
+                private _authenticationService: AuthenticationService) {
     }
 
     ngOnInit(): void {
         this._snapshotService
             .getSnapshots()
             .pipe(takeUntil(this._destroyed$))
-            .subscribe(snapshots => this.dataSource.data = _.orderBy(snapshots, ['createdOn'],['desc']));
+            .subscribe(snapshots => this.dataSource.data = _.orderBy(snapshots, ['createdOn'], ['desc']));
     }
 
     public ngOnDestroy(): void {
@@ -48,6 +50,7 @@ export class SnapshotsComponent implements OnInit, OnDestroy {
         this._snapshotService
             .restore(snapshot)
             .toPromise()
+            .then(() => this._authenticationService.logout())
             .catch(error => {
                 console.error('Error while restoring the snapshot.', error);
                 this._notificationService.displayErrorMessage('ADMIN.SNAPSHOTS.ERROR.RESTORE', error);
