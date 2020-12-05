@@ -1,6 +1,6 @@
 package be.sgerard.i18n.model.security.session.persistence;
 
-import be.sgerard.i18n.model.security.user.persistence.UserEntity;
+import be.sgerard.i18n.model.user.persistence.UserEntity;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;

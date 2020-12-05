@@ -29,7 +29,7 @@ import {CardHeaderActionsComponent} from "./component/card/card-header-actions/c
 import {MoreActionItemButtonComponent} from "./component/more-actions-button/more-action-item-button/more-action-item-button.component";
 import {MoreActionsButtonComponent} from "./component/more-actions-button/more-actions-button.component";
 import {SyncButtonComponent} from "./component/sync-button/sync-button.component";
-import {InitDownloadButtonComponent} from "./component/init-download-button/init-download-button.component";
+import {DownloadButtonComponent} from "./component/download-button/download-button.component";
 import {TreeComponent} from "./component/tree/tree.component";
 import {TreeNodeTemplateComponent} from "./component/tree/tree-node-template/tree-node-template.component";
 import {GeneratePasswordButtonComponent} from "./component/generate-password-button/generate-password-button.component";
@@ -41,6 +41,8 @@ import {ExpansionPanelHeaderComponent} from "./component/expansion-panel/expansi
 import {ExpansionPanelContentComponent} from "./component/expansion-panel/expansion-panel-content/expansion-panel-content.component";
 import {FormSearchButtonComponent} from "./component/form-search-button/form-search-button.component";
 import {GitHubLinkButtonComponent} from './component/git-hub-link-button/git-hub-link-button.component';
+import { RestoreButtonComponent } from './component/restore-button/restore-button.component';
+import { RestoreButtonConfirmationComponent } from './component/restore-button/restore-button-confirmation/restore-button-confirmation.component';
 import {DialogComponent} from "./component/dialog/dialog.component";
 import {DialogActionsComponent} from "./component/dialog/dialog-actions/dialog-actions.component";
 import {DialogContentComponent} from "./component/dialog/dialog-content/dialog-content.component";
@@ -54,6 +56,7 @@ import {ForwardButtonComponent} from "./component/forward-button/forward-button.
 import {BundleFileIconPipe} from "./pipe/bundle-file-icon.pipe";
 import {BundleFileNamePipe} from "./pipe/bundle-file-name.pipe";
 import {VisualizeButtonComponent} from "./component/visualize-button/visualize-button.component";
+import {FormAddButtonComponent} from "./component/form-add-button/form-add-button.component";
 
 @NgModule({
     declarations: [
@@ -65,8 +68,9 @@ import {VisualizeButtonComponent} from "./component/visualize-button/visualize-b
         FormOpenTabButtonComponent,
         FormSearchButtonComponent,
         FormSendButtonComponent,
+        FormAddButtonComponent,
         SyncButtonComponent,
-        InitDownloadButtonComponent,
+        DownloadButtonComponent,
         MoreActionsButtonComponent,
         MoreActionItemButtonComponent,
         GeneratePasswordButtonComponent,
@@ -75,6 +79,8 @@ import {VisualizeButtonComponent} from "./component/visualize-button/visualize-b
         BackwardButtonComponent,
         ForwardButtonComponent,
         VisualizeButtonComponent,
+        RestoreButtonComponent,
+        RestoreButtonConfirmationComponent,
 
         FormSelectFieldComponent,
 
@@ -134,8 +140,9 @@ import {VisualizeButtonComponent} from "./component/visualize-button/visualize-b
         FormOpenTabButtonComponent,
         FormSearchButtonComponent,
         FormSendButtonComponent,
+        FormAddButtonComponent,
         SyncButtonComponent,
-        InitDownloadButtonComponent,
+        DownloadButtonComponent,
         MoreActionsButtonComponent,
         MoreActionItemButtonComponent,
         GeneratePasswordButtonComponent,
@@ -144,6 +151,8 @@ import {VisualizeButtonComponent} from "./component/visualize-button/visualize-b
         BackwardButtonComponent,
         ForwardButtonComponent,
         VisualizeButtonComponent,
+        RestoreButtonComponent,
+        RestoreButtonConfirmationComponent,
 
         FormSelectFieldComponent,
 
@@ -192,6 +201,7 @@ import {VisualizeButtonComponent} from "./component/visualize-button/visualize-b
     ],
     entryComponents: [
         FormDeleteButtonConfirmationComponent,
+        RestoreButtonConfirmationComponent,
     ]
 })
 export class CoreSharedModule {

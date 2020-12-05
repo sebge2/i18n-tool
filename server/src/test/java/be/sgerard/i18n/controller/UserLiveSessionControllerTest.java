@@ -2,7 +2,7 @@ package be.sgerard.i18n.controller;
 
 import be.sgerard.i18n.service.security.session.UserLiveSessionManager;
 import be.sgerard.test.i18n.support.CleanupDatabase;
-import be.sgerard.test.i18n.support.WithJohnDoeSimpleUser;
+import be.sgerard.test.i18n.support.auth.internal.WithJohnDoeSimpleUser;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import reactor.test.StepVerifier;

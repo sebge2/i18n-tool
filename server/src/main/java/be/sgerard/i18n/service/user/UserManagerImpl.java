@@ -1,14 +1,14 @@
 package be.sgerard.i18n.service.user;
 
 import be.sgerard.i18n.configuration.AppProperties;
-import be.sgerard.i18n.model.security.user.ExternalUser;
-import be.sgerard.i18n.model.security.user.dto.CurrentUserPasswordUpdateDto;
-import be.sgerard.i18n.model.security.user.dto.CurrentUserPatchDto;
-import be.sgerard.i18n.model.security.user.dto.InternalUserCreationDto;
-import be.sgerard.i18n.model.security.user.dto.UserPatchDto;
-import be.sgerard.i18n.model.security.user.persistence.ExternalUserEntity;
-import be.sgerard.i18n.model.security.user.persistence.InternalUserEntity;
-import be.sgerard.i18n.model.security.user.persistence.UserEntity;
+import be.sgerard.i18n.model.user.ExternalUser;
+import be.sgerard.i18n.model.user.dto.CurrentUserPasswordUpdateDto;
+import be.sgerard.i18n.model.user.dto.CurrentUserPatchDto;
+import be.sgerard.i18n.model.user.dto.InternalUserCreationDto;
+import be.sgerard.i18n.model.user.dto.UserPatchDto;
+import be.sgerard.i18n.model.user.persistence.ExternalUserEntity;
+import be.sgerard.i18n.model.user.persistence.InternalUserEntity;
+import be.sgerard.i18n.model.user.persistence.UserEntity;
 import be.sgerard.i18n.model.validation.ValidationMessage;
 import be.sgerard.i18n.model.validation.ValidationResult;
 import be.sgerard.i18n.repository.user.ExternalUserRepository;
@@ -17,6 +17,7 @@ import be.sgerard.i18n.repository.user.UserRepository;
 import be.sgerard.i18n.service.ValidationException;
 import be.sgerard.i18n.service.security.UserRole;
 import be.sgerard.i18n.service.user.listener.UserListener;
+import be.sgerard.i18n.service.user.validator.UserValidator;
 import net.coobird.thumbnailator.Thumbnails;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -69,6 +70,7 @@ public class UserManagerImpl implements UserManager {
     private final ExternalUserRepository externalUserRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserListener listener;
+    private final UserValidator validator;
     private final AppProperties appProperties;
 
     public UserManagerImpl(UserRepository userRepository,
@@ -76,12 +78,14 @@ public class UserManagerImpl implements UserManager {
                            ExternalUserRepository externalUserRepository,
                            PasswordEncoder passwordEncoder,
                            UserListener listener,
+                           UserValidator validator,
                            AppProperties appProperties) {
         this.userRepository = userRepository;
         this.internalUserRepository = internalUserRepository;
         this.externalUserRepository = externalUserRepository;
         this.passwordEncoder = passwordEncoder;
         this.listener = listener;
+        this.validator = validator;
         this.appProperties = appProperties;
     }
 
@@ -98,27 +102,28 @@ public class UserManagerImpl implements UserManager {
     @Override
     @Transactional
     public Mono<InternalUserEntity> createUser(InternalUserCreationDto info) {
-        return listener
-                .beforePersist(info)
-                .flatMap(validationResult -> {
-                    ValidationException.throwIfFailed(validationResult);
-
-                    final InternalUserEntity user = new InternalUserEntity(info.getUsername(), info.getDisplayName());
-
-                    user.setPassword(passwordEncoder.encode(info.getPassword()));
-
-                    final Set<UserRole> roles = new HashSet<>(info.getRoles());
-                    roles.add(UserRole.MEMBER_OF_ORGANIZATION);
-                    user.setRoles(roles);
-                    user.setEmail(info.getEmail());
-
-                    return internalUserRepository.save(user);
-                })
+        return this
+                .initializeUser(info)
                 .flatMap(user ->
-                        listener
-                                .afterCreate(user)
-                                .thenReturn(user)
-                );
+                        validator
+                                .beforePersist(user, info)
+                                .map(validationResult -> {
+                                    ValidationException.throwIfFailed(validationResult);
+
+                                    return user;
+                                })
+                )
+                .flatMap(externalUserEntity ->
+                        validator
+                                .beforePersist(externalUserEntity)
+                                .map(validationResult -> {
+                                    ValidationException.throwIfFailed(validationResult);
+
+                                    return externalUserEntity;
+                                })
+                )
+                .flatMap(internalUserRepository::save)
+                .flatMap(user -> listener.afterCreate(user).thenReturn(user));
     }
 
     @Override
@@ -130,35 +135,34 @@ public class UserManagerImpl implements UserManager {
 
         return externalUserRepository
                 .findByExternalId(externalUser.getExternalId())
-                .switchIfEmpty(Mono.defer(() -> {
-                    final ExternalUserEntity userEntity = new ExternalUserEntity(externalUser.getExternalId(), externalUser.getAuthSystem());
-
+                .switchIfEmpty(Mono.defer(() -> Mono.just(new ExternalUserEntity(externalUser.getExternalId(), externalUser.getAuthSystem()))))
+                .doOnNext(userEntity -> {
                     userEntity.setRoles(singleton(UserRole.MEMBER_OF_ORGANIZATION));
-
-                    return Mono.just(userEntity);
-                }))
+                    userEntity.setUsername(externalUser.getUsername());
+                    userEntity.setDisplayName(externalUser.getDisplayName());
+                    userEntity.setAvatarUrl(externalUser.getAvatarUrl());
+                    userEntity.setEmail(externalUser.getEmail());
+                })
                 .flatMap(externalUserEntity ->
-                        listener
-                                .beforePersist(externalUser)
+                        validator
+                                .beforePersist(externalUserEntity, externalUser)
                                 .map(validationResult -> {
                                     ValidationException.throwIfFailed(validationResult);
 
                                     return externalUserEntity;
                                 })
                 )
-                .flatMap(externalUserEntity -> {
-                    externalUserEntity.setUsername(externalUser.getUsername());
-                    externalUserEntity.setDisplayName(externalUser.getDisplayName());
-                    externalUserEntity.setAvatarUrl(externalUser.getAvatarUrl());
-                    externalUserEntity.setEmail(externalUser.getEmail());
+                .flatMap(externalUserEntity ->
+                        validator
+                                .beforePersist(externalUserEntity)
+                                .map(validationResult -> {
+                                    ValidationException.throwIfFailed(validationResult);
 
-                    return externalUserRepository.save(externalUserEntity);
-                })
-                .flatMap(user ->
-                        listener
-                                .afterCreate(user)
-                                .thenReturn(user)
-                );
+                                    return externalUserEntity;
+                                })
+                )
+                .flatMap(externalUserRepository::save)
+                .flatMap(user -> listener.afterCreate(user).thenReturn(user));
     }
 
     @Override
@@ -166,11 +170,7 @@ public class UserManagerImpl implements UserManager {
     public Mono<UserEntity> update(UserEntity user) {
         return userRepository
                 .save(user)
-                .flatMap(u ->
-                        listener
-                                .afterUpdate(u)
-                                .thenReturn(u)
-                );
+                .flatMap(u -> listener.afterUpdate(u).thenReturn(u));
     }
 
     @Override
@@ -178,7 +178,7 @@ public class UserManagerImpl implements UserManager {
     public Mono<UserEntity> update(String id, UserPatchDto patch) {
         return findById(id)
                 .flatMap(user ->
-                        listener
+                        validator
                                 .beforeUpdate(user, patch)
                                 .map(validationResult -> {
                                     ValidationException.throwIfFailed(validationResult);
@@ -204,7 +204,7 @@ public class UserManagerImpl implements UserManager {
     public Mono<UserEntity> updateCurrent(String currentUserId, CurrentUserPatchDto patch) {
         return findByIdOrDie(currentUserId)
                 .flatMap(user ->
-                        listener
+                        validator
                                 .beforeUpdate(user, patch)
                                 .map(validationResult -> {
                                     ValidationException.throwIfFailed(validationResult);
@@ -227,7 +227,7 @@ public class UserManagerImpl implements UserManager {
     public Mono<UserEntity> updateUserAvatar(String currentUserId, InputStream avatarStream, String contentType) {
         return findByIdOrDie(currentUserId)
                 .flatMap(user ->
-                        listener
+                        validator
                                 .beforeUpdateAvatar(user)
                                 .map(validationResult -> {
                                     ValidationException.throwIfFailed(validationResult);
@@ -253,7 +253,7 @@ public class UserManagerImpl implements UserManager {
     public Mono<UserEntity> updateCurrentPassword(String currentUserId, CurrentUserPasswordUpdateDto update) {
         return findByIdOrDie(currentUserId)
                 .flatMap(user ->
-                        listener
+                        validator
                                 .beforeUpdatePassword(user, update)
                                 .map(validationResult -> {
                                     ValidationException.throwIfFailed(validationResult);
@@ -280,7 +280,7 @@ public class UserManagerImpl implements UserManager {
     public Mono<UserEntity> delete(String id) {
         return findById(id)
                 .flatMap(user ->
-                        listener
+                        validator
                                 .beforeDelete(user)
                                 .map(validationResult -> {
                                     ValidationException.throwIfFailed(validationResult);
@@ -309,13 +309,8 @@ public class UserManagerImpl implements UserManager {
     @Order(100)
     public Mono<InternalUserEntity> initializeDefaultAdmin() {
         return internalUserRepository
-                .findAll()
-                .hasElements()
-                .flatMap(hasUsers -> {
-                    if (hasUsers) {
-                        return Mono.empty();
-                    }
-
+                .findByUsername(ADMIN_USER_NAME)
+                .switchIfEmpty(Mono.defer(() -> {
                     final String password = appProperties.getSecurity().getDefaultAdminPassword()
                             .orElseGet(() -> {
                                 final String generatedPassword = UUID.randomUUID().toString();
@@ -346,7 +341,23 @@ public class UserManagerImpl implements UserManager {
                                 return user;
                             })
                             .flatMap(internalUserRepository::save);
-                });
+                }));
+    }
+
+    /**
+     * Initializes the {@link InternalUserEntity user} based on the initial {@link InternalUserCreationDto creation info}.
+     */
+    private Mono<InternalUserEntity> initializeUser(InternalUserCreationDto info) {
+        final InternalUserEntity user = new InternalUserEntity(info.getUsername(), info.getDisplayName());
+
+        user.setPassword(passwordEncoder.encode(info.getPassword()));
+
+        final Set<UserRole> roles = new HashSet<>(info.getRoles());
+        roles.add(UserRole.MEMBER_OF_ORGANIZATION);
+        user.setRoles(roles);
+        user.setEmail(info.getEmail());
+
+        return Mono.just(user);
     }
 
     /**
@@ -355,9 +366,7 @@ public class UserManagerImpl implements UserManager {
     private void checkPassword(String currentPassword, String providedPassword) {
         if (!passwordEncoder.matches(providedPassword, currentPassword)) {
             throw new ValidationException(
-                    ValidationResult.builder()
-                            .messages(new ValidationMessage(VALIDATION_USER_PASSWORD_NOT_MATCH))
-                            .build()
+                    ValidationResult.singleMessage(new ValidationMessage(VALIDATION_USER_PASSWORD_NOT_MATCH))
             );
         }
     }

@@ -5,7 +5,7 @@ import {FormGroup} from "@angular/forms";
     selector: 'app-form-save-button',
     templateUrl: './form-save-button.component.html',
 })
-export class FormSaveButtonComponent implements OnInit {
+export class FormSaveButtonComponent {
 
     @Input() public form: FormGroup;
     @Input() public disabled: boolean;
@@ -13,9 +13,6 @@ export class FormSaveButtonComponent implements OnInit {
     @Output() public save = new EventEmitter<void>();
 
     constructor() {
-    }
-
-    ngOnInit() {
     }
 
     public onSave() {

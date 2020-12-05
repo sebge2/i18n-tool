@@ -2,9 +2,9 @@ package be.sgerard.i18n.controller;
 
 import be.sgerard.i18n.model.ToolLocale;
 import be.sgerard.i18n.model.i18n.dto.TranslationLocaleDto;
-import be.sgerard.i18n.model.security.user.dto.UserPreferencesDto;
+import be.sgerard.i18n.model.user.dto.UserPreferencesDto;
 import be.sgerard.test.i18n.support.CleanupDatabase;
-import be.sgerard.test.i18n.support.WithJaneDoeAdminUser;
+import be.sgerard.test.i18n.support.auth.internal.WithJaneDoeAdminUser;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 
@@ -59,7 +59,7 @@ public class UserPreferencesControllerTest extends AbstractControllerTest {
                     .jsonPath("$.toolLocale").isEqualTo(ToolLocale.FRENCH.name())
                     .jsonPath("$.preferredLocales[0]").isEqualTo(frenchLocale.getId());
         } finally {
-            user.resetUserPreferences();
+            user.currentUser().resetPreferences();
         }
     }
 
@@ -83,7 +83,7 @@ public class UserPreferencesControllerTest extends AbstractControllerTest {
                     .expectBody()
                     .jsonPath("$.messages[0]").isEqualTo("The locale [unknown] cannot be found.");
         } finally {
-            user.resetUserPreferences();
+            user.currentUser().resetPreferences();
         }
     }
 
@@ -108,7 +108,7 @@ public class UserPreferencesControllerTest extends AbstractControllerTest {
                     .expectBody()
                     .jsonPath("$.preferredLocales[0]").isEqualTo(frenchLocale.getId());
 
-            locale.deleteLocale(frenchLocale);
+            locale.findRegisteredLocale(frenchLocale.toLocale()).delete();
 
             webClient
                     .get()
@@ -118,7 +118,7 @@ public class UserPreferencesControllerTest extends AbstractControllerTest {
                     .expectBody()
                     .jsonPath("$.preferredLocales").value(hasSize(0));
         } finally {
-            user.resetUserPreferences();
+            user.currentUser().resetPreferences();
         }
     }
 }

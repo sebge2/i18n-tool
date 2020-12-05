@@ -30,6 +30,16 @@ public class CompositeWorkspaceValidator implements WorkspaceValidator {
     }
 
     @Override
+    public Mono<ValidationResult> beforePersist(WorkspaceEntity workspace) {
+        return Flux
+                .fromIterable(listeners)
+                .filter(listener -> listener.support(workspace))
+                .flatMap(listener -> listener.beforePersist(workspace))
+                .reduce(ValidationResult::merge)
+                .switchIfEmpty(Mono.just(ValidationResult.EMPTY));
+    }
+
+    @Override
     public Mono<ValidationResult> beforeInitialize(WorkspaceEntity workspace) {
         return Flux
                 .fromIterable(listeners)

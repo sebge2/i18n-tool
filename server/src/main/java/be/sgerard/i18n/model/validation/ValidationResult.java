@@ -21,6 +21,12 @@ import static java.util.stream.Collectors.toList;
  */
 public class ValidationResult {
 
+    public static ValidationResult singleMessage(ValidationMessage message) {
+        return ValidationResult.builder()
+                .messages(message)
+                .build();
+    }
+
     public static Builder builder() {
         return new Builder();
     }
@@ -65,14 +71,14 @@ public class ValidationResult {
     /**
      * Merges both {@link ValidationResult validation results}.
      */
-    public static ValidationResult merge(ValidationResult... validationResults){
+    public static ValidationResult merge(ValidationResult... validationResults) {
         return ValidationResult.builder().merge(validationResults).build();
     }
 
     /**
      * Merges both {@link ValidationResult validation results}.
      */
-    public static ValidationResult merge(List<ValidationResult> validationResults){
+    public static ValidationResult merge(List<ValidationResult> validationResults) {
         return ValidationResult.builder().merge(validationResults).build();
     }
 

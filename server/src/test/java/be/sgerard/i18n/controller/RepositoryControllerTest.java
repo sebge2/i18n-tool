@@ -3,14 +3,14 @@ package be.sgerard.i18n.controller;
 import be.sgerard.i18n.model.repository.RepositoryStatus;
 import be.sgerard.i18n.model.repository.dto.*;
 import be.sgerard.test.i18n.support.CleanupDatabase;
-import be.sgerard.test.i18n.support.WithJaneDoeAdminUser;
+import be.sgerard.test.i18n.support.auth.internal.WithJaneDoeAdminUser;
 import be.sgerard.test.i18n.support.auth.external.github.WithGarrickKleinAdminUser;
 import org.junit.jupiter.api.*;
 import org.springframework.http.MediaType;
 
 import static be.sgerard.test.i18n.model.GitRepositoryCreationDtoTestUtils.*;
-import static be.sgerard.test.i18n.model.GitRepositoryPatchDtoTestUtils.*;
-import static be.sgerard.test.i18n.model.UserDtoTestUtils.GARRICK_KLEIN_TOKEN;
+import static be.sgerard.test.i18n.model.RepositoryEntityTestUtils.*;
+import static be.sgerard.test.i18n.model.UserEntityTestUtils.GARRICK_KLEIN_TOKEN;
 import static org.hamcrest.Matchers.*;
 
 /**
@@ -24,7 +24,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
         remoteRepository
                 .gitHub()
                 .create(i18nToolGitHubRepositoryCreationDto(), "myGitHubRepo")
-                .accessToken(I18N_TOOL_REPO_ACCESS_TOKEN)
+                .accessToken(I18N_TOOL_GITHUB_ACCESS_TOKEN)
                 .accessToken("another-valid-access-token")
                 .accessToken(GARRICK_KLEIN_TOKEN)
                 .onCurrentGitProject()
@@ -33,7 +33,7 @@ public class RepositoryControllerTest extends AbstractControllerTest {
         remoteRepository
                 .git()
                 .create(i18nToolGitRepositoryCreationDto(), "myGitRepo")
-                .addUser(I18N_TOOL_REPO_USER, I18N_TOOL_REPO_USER_PASSWORD)
+                .addUser(I18N_TOOL_GIT_REPO_USER, I18N_TOOL_GIT_REPO_USER_PASSWORD)
                 .addUser("another-valid-user", "another-password")
                 .onCurrentGitProject()
                 .start();

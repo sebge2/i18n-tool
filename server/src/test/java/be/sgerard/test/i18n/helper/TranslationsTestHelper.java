@@ -177,7 +177,7 @@ public class TranslationsTestHelper {
         }
 
         public Optional<StepTranslationsPageTranslation> findTranslation(Locale locale) {
-            final TranslationLocaleDto translationLocaleDto = localeTestHelper.findRegisteredLocale(locale);
+            final TranslationLocaleDto translationLocaleDto = localeTestHelper.findRegisteredLocale(locale).get();
 
             return Optional
                     .ofNullable(row.getTranslations().get(page.getLocales().indexOf(translationLocaleDto.getId())))

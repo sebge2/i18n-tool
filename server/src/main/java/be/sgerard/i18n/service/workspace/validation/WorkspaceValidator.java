@@ -17,6 +17,13 @@ public interface WorkspaceValidator {
     boolean support(WorkspaceEntity workspace);
 
     /**
+     * Validates before the workspace is persisted.
+     */
+    default Mono<ValidationResult> beforePersist(WorkspaceEntity workspace) {
+        return Mono.just(ValidationResult.EMPTY);
+    }
+
+    /**
      * Validates before the workspace is initialized.
      */
     default Mono<ValidationResult> beforeInitialize(WorkspaceEntity workspace) {

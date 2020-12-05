@@ -6,7 +6,7 @@ import be.sgerard.i18n.model.i18n.file.BundleWalkingContext;
 import be.sgerard.i18n.model.i18n.file.ScannedBundleFile;
 import be.sgerard.i18n.model.i18n.file.ScannedBundleFileEntry;
 import be.sgerard.i18n.model.i18n.file.ScannedBundleFileLocation;
-import be.sgerard.i18n.model.i18n.persistence.TranslationLocaleEntity;
+import be.sgerard.i18n.model.locale.persistence.TranslationLocaleEntity;
 import be.sgerard.i18n.service.i18n.TranslationRepositoryWriteApi;
 import be.sgerard.i18n.service.workspace.WorkspaceException;
 import org.apache.commons.configuration2.PropertiesConfiguration;

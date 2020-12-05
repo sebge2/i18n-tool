@@ -1,6 +1,6 @@
 package be.sgerard.i18n.controller;
 
-import be.sgerard.i18n.model.security.user.dto.AuthenticatedUserDto;
+import be.sgerard.i18n.model.security.auth.dto.AuthenticatedUserDto;
 import be.sgerard.i18n.service.ResourceNotFoundException;
 import be.sgerard.i18n.service.security.auth.AuthenticatedUserDtoMapper;
 import be.sgerard.i18n.service.security.auth.AuthenticationUserManager;

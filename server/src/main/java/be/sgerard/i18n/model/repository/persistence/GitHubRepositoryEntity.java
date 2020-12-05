@@ -48,7 +48,7 @@ public class GitHubRepositoryEntity extends BaseGitRepositoryEntity {
     }
 
     public GitHubRepositoryEntity(String username, String repository) {
-        super(username + "/" + repository);
+        super(new GitHubRepositoryId(username, repository).toFullName());
 
         this.username = username;
         this.repository = repository;

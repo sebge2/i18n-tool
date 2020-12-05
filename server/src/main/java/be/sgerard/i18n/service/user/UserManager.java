@@ -1,13 +1,13 @@
 package be.sgerard.i18n.service.user;
 
-import be.sgerard.i18n.model.security.user.ExternalUser;
-import be.sgerard.i18n.model.security.user.dto.CurrentUserPasswordUpdateDto;
-import be.sgerard.i18n.model.security.user.dto.CurrentUserPatchDto;
-import be.sgerard.i18n.model.security.user.dto.InternalUserCreationDto;
-import be.sgerard.i18n.model.security.user.dto.UserPatchDto;
-import be.sgerard.i18n.model.security.user.persistence.ExternalUserEntity;
-import be.sgerard.i18n.model.security.user.persistence.InternalUserEntity;
-import be.sgerard.i18n.model.security.user.persistence.UserEntity;
+import be.sgerard.i18n.model.user.ExternalUser;
+import be.sgerard.i18n.model.user.dto.CurrentUserPasswordUpdateDto;
+import be.sgerard.i18n.model.user.dto.CurrentUserPatchDto;
+import be.sgerard.i18n.model.user.dto.InternalUserCreationDto;
+import be.sgerard.i18n.model.user.dto.UserPatchDto;
+import be.sgerard.i18n.model.user.persistence.ExternalUserEntity;
+import be.sgerard.i18n.model.user.persistence.InternalUserEntity;
+import be.sgerard.i18n.model.user.persistence.UserEntity;
 import be.sgerard.i18n.service.ResourceNotFoundException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;

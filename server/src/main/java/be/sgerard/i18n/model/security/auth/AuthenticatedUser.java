@@ -1,6 +1,7 @@
 package be.sgerard.i18n.model.security.auth;
 
-import be.sgerard.i18n.model.security.user.dto.UserDto;
+import be.sgerard.i18n.model.user.dto.UserDto;
+import be.sgerard.i18n.model.user.persistence.UserEntity;
 import be.sgerard.i18n.service.security.UserRole;
 import org.springframework.security.core.AuthenticatedPrincipal;
 import org.springframework.security.core.GrantedAuthority;
@@ -31,7 +32,7 @@ public interface AuthenticatedUser extends AuthenticatedPrincipal, Serializable 
     String getId();
 
     /**
-     * Returns the id of the associated {@link be.sgerard.i18n.model.security.user.persistence.UserEntity user}.
+     * Returns the id of the associated {@link UserEntity user}.
      */
     String getUserId();
 

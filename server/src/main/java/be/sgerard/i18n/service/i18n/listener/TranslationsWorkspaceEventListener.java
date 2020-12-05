@@ -1,10 +1,11 @@
 package be.sgerard.i18n.service.i18n.listener;
 
-import be.sgerard.i18n.model.i18n.dto.TranslationUpdateDto;
 import be.sgerard.i18n.model.i18n.persistence.BundleKeyEntity;
+import be.sgerard.i18n.model.i18n.persistence.BundleKeyTranslationEntity;
 import be.sgerard.i18n.service.event.EventService;
 import be.sgerard.i18n.service.workspace.WorkspaceDtoEnricher;
 import be.sgerard.i18n.service.workspace.WorkspaceManager;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -35,9 +36,12 @@ public class TranslationsWorkspaceEventListener implements TranslationsListener 
     }
 
     @Override
-    public Mono<Void> afterUpdate(List<BundleKeyEntity> bundleKeys, List<TranslationUpdateDto> updates) {
+    public Mono<Void> afterUpdate(List<Pair<BundleKeyTranslationEntity, BundleKeyEntity>> updates) {
         return Flux
-                .fromStream(bundleKeys.stream().map(BundleKeyEntity::getWorkspace).distinct())
+                .fromIterable(updates)
+                .map(Pair::getRight)
+                .map(BundleKeyEntity::getWorkspace)
+                .distinct()
                 .flatMap(workspaceManager::findByIdOrDie)
                 .flatMap(workspaceDtoEnricher::mapAndEnrich)
                 .flatMap(workspaceDto -> eventService.broadcastEvent(UPDATED_WORKSPACE, workspaceDto))

@@ -22,10 +22,10 @@
                 <div class="app-centered-container">
                     <div class="app-centered-container-child">
                         <div class="app-centered-container-item">
-                            <app-init-download-button (init)="onInitialize()"
-                                                      [initInProgress]="initInProgress"
-                                                      [buttonClass]="'xlarge'">
-                            </app-init-download-button>
+                            <app-download-button (download)="onInitialize()"
+                                                 [initInProgress]="initInProgress"
+                                                 [buttonClass]="'xlarge'">
+                            </app-download-button>
                         </div>
                         <div class="app-centered-container-item" *ngIf="!initInProgress">
                             {{'ADMIN.REPOSITORIES.DETAILS_CARD.PLEASE_INITIALIZE' | translate }}

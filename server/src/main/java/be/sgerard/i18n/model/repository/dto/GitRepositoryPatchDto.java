@@ -23,7 +23,7 @@ public class GitRepositoryPatchDto extends BaseGitRepositoryPatchDto {
         return new Builder();
     }
 
-    @Schema(description = "The unique name of this repository.", required = true)
+    @Schema(description = "The unique name of this repository.")
     private final String name;
 
     @Schema(description = "Username to use to connect to the Git repository (empty means that it will be removed)")

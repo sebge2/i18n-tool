@@ -54,6 +54,7 @@ public class GitRepositoryCreationDto extends RepositoryCreationDto {
     /**
      * @see #location
      */
+    @Schema(hidden = true)
     public URI getLocationAsURI() {
         return URI.create(getLocation());
     }

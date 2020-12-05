@@ -1,7 +1,7 @@
 package be.sgerard.i18n.service.user;
 
-import be.sgerard.i18n.model.security.user.dto.UserPreferencesDto;
-import be.sgerard.i18n.model.security.user.persistence.UserPreferencesEntity;
+import be.sgerard.i18n.model.user.dto.UserPreferencesDto;
+import be.sgerard.i18n.model.user.persistence.UserPreferencesEntity;
 import be.sgerard.i18n.service.ResourceNotFoundException;
 import reactor.core.publisher.Mono;
 

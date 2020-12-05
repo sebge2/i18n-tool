@@ -15,7 +15,7 @@ import {
 } from "../../api";
 import {NotificationService} from "../../core/notification/service/notification.service";
 import {Events} from "../../core/event/model/events.model";
-import {catchError, distinctUntilChanged, filter, map, tap} from "rxjs/operators";
+import {catchError, distinctUntilChanged, map, tap} from "rxjs/operators";
 import {GitRepository} from "../model/repository/git-repository.model";
 import {GitHubRepository} from "../model/repository/github-repository.model";
 import * as _ from "lodash";

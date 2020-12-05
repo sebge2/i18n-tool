@@ -45,6 +45,9 @@ public abstract class AbstractIntegrationTest {
     protected TranslationsTestHelper translations;
 
     @Autowired
+    protected SnapshotTestHelper snapshot;
+
+    @Autowired
     protected WebTestClient webClient;
 
     @Autowired

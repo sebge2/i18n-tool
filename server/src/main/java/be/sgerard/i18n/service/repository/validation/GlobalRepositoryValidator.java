@@ -48,9 +48,7 @@ public class GlobalRepositoryValidator implements RepositoryValidator<Repository
                 .collectList()
                 .map(conflicts -> {
                     if (!conflicts.isEmpty()) {
-                        return ValidationResult.builder()
-                                .messages(new ValidationMessage(NAME_NOT_UNIQUE, repositoryEntity.getName()))
-                                .build();
+                        return ValidationResult.singleMessage(new ValidationMessage(NAME_NOT_UNIQUE, repositoryEntity.getName()));
                     } else {
                         return ValidationResult.EMPTY;
                     }
@@ -62,9 +60,6 @@ public class GlobalRepositoryValidator implements RepositoryValidator<Repository
         return Mono
                 .just(repository)
                 .filter(repo -> (repo.getStatus() != RepositoryStatus.NOT_INITIALIZED) && (repo.getStatus() != RepositoryStatus.INITIALIZED))
-                .map(rep -> ValidationResult.builder()
-                        .messages(new ValidationMessage(READ_ONLY))
-                        .build()
-                );
+                .map(rep -> ValidationResult.singleMessage(new ValidationMessage(READ_ONLY)));
     }
 }

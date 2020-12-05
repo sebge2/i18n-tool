@@ -1,13 +1,14 @@
 package be.sgerard.i18n.controller;
 
-import be.sgerard.i18n.model.security.user.dto.CurrentUserPasswordUpdateDto;
-import be.sgerard.i18n.model.security.user.dto.CurrentUserPatchDto;
-import be.sgerard.i18n.model.security.user.dto.UserDto;
-import be.sgerard.i18n.model.security.user.dto.UserPatchDto;
+import be.sgerard.i18n.model.user.dto.CurrentUserPasswordUpdateDto;
+import be.sgerard.i18n.model.user.dto.CurrentUserPatchDto;
+import be.sgerard.i18n.model.user.dto.UserDto;
+import be.sgerard.i18n.model.user.dto.UserPatchDto;
 import be.sgerard.i18n.service.security.UserRole;
+import be.sgerard.test.i18n.model.UserEntityTestUtils;
 import be.sgerard.test.i18n.support.CleanupDatabase;
-import be.sgerard.test.i18n.support.WithJaneDoeAdminUser;
-import be.sgerard.test.i18n.support.WithJohnDoeSimpleUser;
+import be.sgerard.test.i18n.support.auth.internal.WithJaneDoeAdminUser;
+import be.sgerard.test.i18n.support.auth.internal.WithJohnDoeSimpleUser;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -15,7 +16,8 @@ import org.springframework.http.MediaType;
 import java.io.IOException;
 
 import static be.sgerard.i18n.service.user.UserManagerImpl.ADMIN_AVATAR;
-import static be.sgerard.test.i18n.model.UserDtoTestUtils.*;
+import static be.sgerard.test.i18n.model.UserDtoTestUtils.userJohnDoeCreation;
+import static be.sgerard.test.i18n.model.UserEntityTestUtils.JANE_DOE_USERNAME;
 import static org.hamcrest.Matchers.*;
 
 /**
@@ -27,7 +29,7 @@ public class UserControllerTest extends AbstractControllerTest {
     @CleanupDatabase
     @WithJaneDoeAdminUser
     public void findAllUsers() {
-        final UserDto johnDoe = user.createUser(userJohnDoeCreation().build());
+        final UserDto johnDoe = user.createUser(userJohnDoeCreation().build()).get();
 
         webClient
                 .get()
@@ -44,7 +46,7 @@ public class UserControllerTest extends AbstractControllerTest {
     @CleanupDatabase
     @WithJaneDoeAdminUser
     public void getUserById() {
-        final UserDto johnDoe = user.createUser(userJohnDoeCreation().build());
+        final UserDto johnDoe = user.createUser(userJohnDoeCreation().build()).get();
 
         webClient
                 .get()
@@ -70,8 +72,8 @@ public class UserControllerTest extends AbstractControllerTest {
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.id").isNotEmpty()
-                .jsonPath("$.username").isEqualTo(JOHN_DOE_USERNAME)
-                .jsonPath("$.email").isEqualTo(JOHN_DOE_EMAIL)
+                .jsonPath("$.username").isEqualTo(UserEntityTestUtils.JOHN_DOE_USERNAME)
+                .jsonPath("$.email").isEqualTo(UserEntityTestUtils.JOHN_DOE_EMAIL)
                 .jsonPath("$.roles").value(containsInAnyOrder(UserRole.MEMBER_OF_ORGANIZATION.name()))
                 .jsonPath("$.type").isEqualTo(UserDto.Type.INTERNAL.name());
     }
@@ -80,7 +82,7 @@ public class UserControllerTest extends AbstractControllerTest {
     @CleanupDatabase
     @WithJaneDoeAdminUser
     public void createSameUserName() {
-        user.createUser(userJohnDoeCreation().build());
+        user.createUser(userJohnDoeCreation().build()).get();
 
         webClient
                 .post()
@@ -97,7 +99,7 @@ public class UserControllerTest extends AbstractControllerTest {
     @CleanupDatabase
     @WithJaneDoeAdminUser
     public void updateUser() {
-        final UserDto johnDoe = user.createUser(userJohnDoeCreation().build());
+        final UserDto johnDoe = user.createUser(userJohnDoeCreation().build()).get();
 
         webClient
                 .patch()
@@ -124,7 +126,7 @@ public class UserControllerTest extends AbstractControllerTest {
     @CleanupDatabase
     @WithJaneDoeAdminUser
     public void updateUserUsernameExists() {
-        final UserDto johnDoe = user.createUser(userJohnDoeCreation().build());
+        final UserDto johnDoe = user.createUser(userJohnDoeCreation().build()).get();
 
         webClient
                 .patch()
@@ -145,7 +147,7 @@ public class UserControllerTest extends AbstractControllerTest {
     @CleanupDatabase
     @WithJaneDoeAdminUser
     public void updateUserRoleNotAssignable() {
-        final UserDto johnDoe = user.createUser(userJohnDoeCreation().build());
+        final UserDto johnDoe = user.createUser(userJohnDoeCreation().build()).get();
 
         webClient
                 .patch()
@@ -196,7 +198,7 @@ public class UserControllerTest extends AbstractControllerTest {
                 .uri("/api/user/current/password")
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(
-                        new CurrentUserPasswordUpdateDto(JOHN_DOE_PASSWORD, "123")
+                        new CurrentUserPasswordUpdateDto(UserEntityTestUtils.JOHN_DOE_PASSWORD, "123")
                 )
                 .exchange()
                 .expectStatus().isOk();
@@ -236,7 +238,7 @@ public class UserControllerTest extends AbstractControllerTest {
     @CleanupDatabase
     @WithJaneDoeAdminUser
     public void getUserAvatar() {
-        final UserDto johnDoe = user.createUser(userJohnDoeCreation().build());
+        final UserDto johnDoe = user.createUser(userJohnDoeCreation().build()).get();
 
         webClient
                 .get()
@@ -251,7 +253,7 @@ public class UserControllerTest extends AbstractControllerTest {
     @CleanupDatabase
     @WithJaneDoeAdminUser
     public void deleteUser() {
-        final UserDto johnDoe = user.createUser(userJohnDoeCreation().build());
+        final UserDto johnDoe = user.createUser(userJohnDoeCreation().build()).get();
 
         webClient
                 .delete()
@@ -270,7 +272,7 @@ public class UserControllerTest extends AbstractControllerTest {
     @CleanupDatabase
     @WithJohnDoeSimpleUser
     public void deleteUserNotAllowed() {
-        final String currentUserId = user.getCurrentUser().getId();
+        final String currentUserId = user.currentUser().get().getId();
 
         webClient
                 .delete()

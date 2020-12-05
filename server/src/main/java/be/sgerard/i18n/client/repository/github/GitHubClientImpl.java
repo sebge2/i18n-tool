@@ -77,7 +77,7 @@ public class GitHubClientImpl implements GitHubClient {
 
     @Override
     public Mono<Boolean> isRepositoryMember(GitHubRepositoryId repositoryId, String token) {
-        return this
+                return this
                 .getCurrentUserLogin(token)
                 .flatMap(currentUser ->
                         initializeClient(token)
@@ -89,6 +89,8 @@ public class GitHubClientImpl implements GitHubClient {
                 )
                 .onErrorResume(cause -> {
                     if (cause instanceof WebClientResponseException.NotFound) {
+                        return Mono.just(false);
+                    } else if (cause instanceof WebClientResponseException.Unauthorized) {
                         return Mono.just(false);
                     }
 

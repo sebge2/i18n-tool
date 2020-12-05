@@ -33,7 +33,7 @@ public class RemoteGitRepositoryMock {
 
     public RemoteGitRepositoryMock(File originalGitProject) {
         this.originalGitProject = originalGitProject;
-        this.location = createTempDirectory("mocked-git-repo");
+        this.location = createTempDirectory("mocked-git-repo-");
     }
 
     /**

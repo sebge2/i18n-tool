@@ -1,8 +1,8 @@
 package be.sgerard.i18n.service.security.auth;
 
 import be.sgerard.i18n.model.security.auth.AuthenticatedUser;
-import be.sgerard.i18n.model.security.user.dto.AuthenticatedUserDto;
-import be.sgerard.i18n.model.security.user.dto.RepositoryRolesDto;
+import be.sgerard.i18n.model.security.auth.dto.AuthenticatedUserDto;
+import be.sgerard.i18n.model.user.dto.RepositoryRolesDto;
 import be.sgerard.i18n.service.repository.RepositoryManager;
 import be.sgerard.i18n.service.security.repository.RepositoryCredentialsManager;
 import org.springframework.stereotype.Component;
