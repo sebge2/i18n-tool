@@ -62,6 +62,7 @@ public class TranslationLocaleSnapshotHandlerTest extends AbstractIntegrationTes
     }
 
     @Test
+    @CleanupDatabase
     public void exportCleanImport() {
         assertNumberLocales(2);
 
