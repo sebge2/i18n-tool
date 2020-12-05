@@ -52,7 +52,7 @@ public class UserSnapshotHandler extends BaseSnapshotHandler<UserEntity, UserSna
 
     @Override
     public int getImportPriority() {
-        return 10;
+        return 20;
     }
 
     @Override

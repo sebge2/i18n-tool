@@ -37,7 +37,7 @@ public class BundleKeyEntitySnapshotHandler extends BaseSnapshotHandler<BundleKe
 
     @Override
     public int getImportPriority() {
-        return 40;
+        return 50;
     }
 
     @Override

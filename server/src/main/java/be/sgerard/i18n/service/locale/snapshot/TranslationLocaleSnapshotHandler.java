@@ -36,7 +36,7 @@ public class TranslationLocaleSnapshotHandler extends BaseSnapshotHandler<Transl
 
     @Override
     public int getImportPriority() {
-        return 0;
+        return 10;
     }
 
     @Override

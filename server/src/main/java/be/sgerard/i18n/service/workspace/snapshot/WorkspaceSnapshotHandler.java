@@ -54,7 +54,7 @@ public class WorkspaceSnapshotHandler extends BaseSnapshotHandler<WorkspaceEntit
 
     @Override
     public int getImportPriority() {
-        return 30;
+        return 40;
     }
 
     @Override

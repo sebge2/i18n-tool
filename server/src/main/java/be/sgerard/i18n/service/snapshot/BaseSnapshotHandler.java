@@ -5,6 +5,8 @@ import be.sgerard.i18n.model.validation.ValidationResult;
 import be.sgerard.i18n.service.ValidationException;
 import be.sgerard.i18n.support.ReactiveUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -22,6 +24,8 @@ public abstract class BaseSnapshotHandler<E, D> implements SnapshotHandler {
      * Validation message specifying that the DTO cannot be parsed.
      */
     public static final String ERROR_PARSING = "validation.snapshot.error-parsing";
+
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private final String inputFileName;
     private final Class<D> dtoType;
@@ -58,11 +62,14 @@ public abstract class BaseSnapshotHandler<E, D> implements SnapshotHandler {
 
     @Override
     public Mono<Void> clearAll() {
+        logger.info("Clear data before restoring file {} from snapshot.", inputFileName);
+
         return repository
                 .findAll()
                 .flatMap(this::beforeDelete)
                 .flatMap(repository::delete)
-                .then();
+                .then()
+                .doFinally(signalType -> logger.info("Data has been cleared before restoring the file {}.", inputFileName));
     }
 
     @Override
@@ -73,6 +80,8 @@ public abstract class BaseSnapshotHandler<E, D> implements SnapshotHandler {
             return Mono.empty();
         }
 
+        logger.info("Restoring file {} from snapshot.", inputFileName);
+
         return ReactiveUtils
                 .streamObjectFromJsonFile(
                         this::mapFromDto,
@@ -82,11 +91,14 @@ public abstract class BaseSnapshotHandler<E, D> implements SnapshotHandler {
                 )
                 .flatMap(this::beforeSave)
                 .flatMap(this::save)
-                .then();
+                .then()
+                .doFinally(signalType -> logger.info("The file {} from snapshot has been restored.", inputFileName));
     }
 
     @Override
     public Mono<Void> exportAll(File exportLocation) {
+        logger.info("Exporting data to snapshot file {}.", inputFileName);
+
         return ReactiveUtils
                 .streamObjectToJsonFile(
                         this::findAll,
@@ -94,7 +106,8 @@ public abstract class BaseSnapshotHandler<E, D> implements SnapshotHandler {
                         objectMapper,
                         new File(exportLocation, inputFileName)
                 )
-                .then();
+                .then()
+                .doFinally(signalType -> logger.info("The file {} from snapshot has been exported.", inputFileName));
     }
 
     /**

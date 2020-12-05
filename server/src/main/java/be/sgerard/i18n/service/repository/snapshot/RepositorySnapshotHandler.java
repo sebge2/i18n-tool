@@ -53,7 +53,7 @@ public class RepositorySnapshotHandler extends BaseSnapshotHandler<RepositoryEnt
 
     @Override
     public int getImportPriority() {
-        return 20;
+        return 30;
     }
 
     @Override

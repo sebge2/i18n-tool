@@ -188,7 +188,7 @@ public class SnapshotManagerImpl implements SnapshotManager {
     private Mono<SnapshotEntity> clearAll(SnapshotEntity snapshot) {
         return Flux.fromIterable(handlers)
                 .sort(Comparator.comparingInt(SnapshotHandler::getImportPriority).reversed())
-                .flatMap(SnapshotHandler::clearAll)
+                .flatMap(SnapshotHandler::clearAll, 1, 1)
                 .then(Mono.just(snapshot));
     }
 
@@ -198,7 +198,7 @@ public class SnapshotManagerImpl implements SnapshotManager {
     private Mono<SnapshotEntity> exportAll(SnapshotEntity snapshot, File tempDirectory) {
         return Flux.fromIterable(handlers)
                 .sort(Comparator.comparingInt(SnapshotHandler::getImportPriority))
-                .flatMap(handler -> handler.exportAll(tempDirectory))
+                .flatMap(handler -> handler.exportAll(tempDirectory), 1, 1)
                 .then(Mono.just(snapshot));
     }
 
@@ -209,13 +209,15 @@ public class SnapshotManagerImpl implements SnapshotManager {
         return Flux.fromIterable(handlers)
                 .sort(Comparator.comparingInt(SnapshotHandler::getImportPriority))
                 .flatMap(handler ->
-                        handler
-                                .validate(importLocation)
-                                .map(validationResult -> {
-                                    ValidationException.throwIfFailed(validationResult);
+                                handler
+                                        .validate(importLocation)
+                                        .map(validationResult -> {
+                                            ValidationException.throwIfFailed(validationResult);
 
-                                    return handler;
-                                })
+                                            return handler;
+                                        }),
+                        1,
+                        1
                 )
                 .flatMap(handler -> handler.restoreAll(importLocation))
                 .then(Mono.just(snapshot));
