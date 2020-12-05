@@ -1,6 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { DownloadButtonComponent } from './download-download-button.component';
+import { DownloadButtonComponent } from './download-button.component';
 
 describe('InitDownloadButtonComponent', () => {
   let component: DownloadButtonComponent;
