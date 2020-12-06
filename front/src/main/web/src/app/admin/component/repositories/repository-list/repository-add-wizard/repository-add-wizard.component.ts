@@ -10,6 +10,7 @@ import {
 import {Subject} from "rxjs";
 import {takeUntil} from "rxjs/operators";
 import {Repository} from "../../../../../translations/model/repository/repository.model";
+import {getStringValue} from "../../../../../core/shared/utils/form-utils";
 
 @Component({
     selector: 'app-repository-add-wizard',
@@ -53,7 +54,9 @@ export class RepositoryAddWizardComponent implements OnInit, OnDestroy {
 
                 this.formBuilder.group({
                     location: this.formBuilder.control('', [Validators.required]),
-                    name: this.formBuilder.control('', [Validators.required])
+                    name: this.formBuilder.control('', [Validators.required]),
+                    username: this.formBuilder.control(null, []),
+                    password: this.formBuilder.control(null, [])
                 }), // step repo config git
 
                 this.formBuilder.group({
@@ -128,7 +131,7 @@ export class RepositoryAddWizardComponent implements OnInit, OnDestroy {
             this.repositoryType = this.stepTypeForm.controls['type'].value;
         } else if (stepChangeEvent.nextStepIndex == RepositoryAddWizardComponent.STEP_CREATION) {
             this.creationRequest = this.createRequest();
-        }else if (stepChangeEvent.nextStepIndex == RepositoryAddWizardComponent.STEP_INITIALIZATION) {
+        } else if (stepChangeEvent.nextStepIndex == RepositoryAddWizardComponent.STEP_INITIALIZATION) {
             this.createdRepository = this.stepCreationForm.controls['repository'].value;
         }
     }
@@ -140,14 +143,16 @@ export class RepositoryAddWizardComponent implements OnInit, OnDestroy {
             return <GitRepositoryCreationRequestDto>{
                 type: "GIT",
                 location: this.stepConfigForm.controls['location'].value,
-                name: this.stepConfigForm.controls['name'].value
+                name: this.stepConfigForm.controls['name'].value,
+                username: getStringValue(this.stepConfigForm.controls['username']),
+                password: getStringValue(this.stepConfigForm.controls['password'])
             };
         } else if (this.repositoryType == RepositoryType.GITHUB) {
             return <GitHubRepositoryCreationRequestDto>{
                 type: "GITHUB",
                 username: this.stepConfigForm.controls['username'].value,
                 repository: this.stepConfigForm.controls['repository'].value,
-                accessKey: this.stepConfigForm.controls['accessKey'].value,
+                accessKey: getStringValue(this.stepConfigForm.controls['accessKey']),
             };
         } else {
             throw Error(`Unsupported repository type ${this.repositoryType}.`);

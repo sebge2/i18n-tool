@@ -24,11 +24,6 @@ public class GlobalRepositoryValidator implements RepositoryValidator<Repository
      */
     public static final String NAME_NOT_UNIQUE = "validation.repository.name-not-unique";
 
-    /**
-     * Validation message key specifying that the repository cannot be edited.
-     */
-    public static final String READ_ONLY = "validation.repository.read-only";
-
     private final RepositoryManager repositoryManager;
 
     public GlobalRepositoryValidator(RepositoryManager repositoryManager) {
@@ -53,13 +48,5 @@ public class GlobalRepositoryValidator implements RepositoryValidator<Repository
                         return ValidationResult.EMPTY;
                     }
                 });
-    }
-
-    @Override
-    public Mono<ValidationResult> beforeUpdate(RepositoryEntity repository, RepositoryPatchDto patch) {
-        return Mono
-                .just(repository)
-                .filter(repo -> (repo.getStatus() != RepositoryStatus.NOT_INITIALIZED) && (repo.getStatus() != RepositoryStatus.INITIALIZED))
-                .map(rep -> ValidationResult.singleMessage(new ValidationMessage(READ_ONLY)));
     }
 }

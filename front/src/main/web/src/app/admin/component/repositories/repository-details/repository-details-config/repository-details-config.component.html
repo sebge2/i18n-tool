@@ -3,15 +3,22 @@
     <app-card-header-actions>
         <app-more-actions-button>
             <app-more-action-item-button *ngIf="repository.type === RepositoryType.GITHUB">
-                <button mat-menu-item (click)="onUpdateAccessKey()">
+                <button mat-menu-item (click)="onUpdateGitHubAccessKey()">
                     <mat-icon>vpn_key</mat-icon>
-                    <span>{{'ADMIN.REPOSITORIES.CONFIG_CARD.ACTION_UPDATE_ACCESS_KEY' | translate}}</span>
+                    <span>{{'ADMIN.REPOSITORIES.CONFIG_CARD.ACTION_UPDATE_GITHUB_ACCESS_KEY' | translate}}</span>
                 </button>
             </app-more-action-item-button>
             <app-more-action-item-button *ngIf="repository.type === RepositoryType.GITHUB">
-                <button mat-menu-item (click)="onUpdateWebHookSecret()">
+                <button mat-menu-item (click)="onUpdateGitHubWebHookSecret()">
                     <mat-icon>security</mat-icon>
-                    <span>{{'ADMIN.REPOSITORIES.CONFIG_CARD.ACTION_UPDATE_WEB_HOOK_SECRET' | translate}}</span>
+                    <span>{{'ADMIN.REPOSITORIES.CONFIG_CARD.ACTION_UPDATE_GITHUB_WEB_HOOK_SECRET' | translate}}</span>
+                </button>
+            </app-more-action-item-button>
+
+            <app-more-action-item-button *ngIf="repository.type === RepositoryType.GIT">
+                <button mat-menu-item (click)="onUpdateGitCredentials()">
+                    <mat-icon>security</mat-icon>
+                    <span>{{'ADMIN.REPOSITORIES.CONFIG_CARD.ACTION_UPDATE_GIT_CREDENTIALS' | translate}}</span>
                 </button>
             </app-more-action-item-button>
         </app-more-actions-button>

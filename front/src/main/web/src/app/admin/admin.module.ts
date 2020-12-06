@@ -29,6 +29,7 @@ import { RepositoryGithubAccessKeyDialogComponent } from './component/repositori
 import { SnapshotsComponent } from './component/snapshot/snapshots/snapshots.component';
 import { SnapshotCreationFormComponent } from './component/snapshot/snapshots/snapshot-creation-form/snapshot-creation-form.component';
 import { SnapshotImportFormComponent } from './component/snapshot/snapshots/snapshot-import-form/snapshot-import-form.component';
+import { RepositoryGitCredentialsDialogComponent } from './component/repositories/repository-details/repository-details-config/repository-git-credentials-dialog/repository-git-credentials-dialog.component';
 
 const appRoutes: Routes = [
     {path: 'users', component: UsersComponent},
@@ -62,6 +63,7 @@ const appRoutes: Routes = [
         RepositoryDetailsWorkspaceTreeNodeComponent,
         RepositoryGithubWebHookDialogComponent,
         RepositoryGithubAccessKeyDialogComponent,
+        RepositoryGitCredentialsDialogComponent,
         SnapshotsComponent,
         SnapshotCreationFormComponent,
         SnapshotImportFormComponent,
@@ -70,6 +72,7 @@ const appRoutes: Routes = [
         RepositoryAddWizardComponent,
         RepositoryGithubWebHookDialogComponent,
         RepositoryGithubAccessKeyDialogComponent,
+        RepositoryGitCredentialsDialogComponent,
     ],
     imports: [
         CommonModule,

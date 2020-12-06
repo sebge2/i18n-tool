@@ -15,6 +15,7 @@ import {
 import {MatDialog} from "@angular/material/dialog";
 import {RepositoryGithubWebHookDialogComponent} from "./repository-github-web-hook-dialog/repository-github-web-hook-dialog.component";
 import {RepositoryGithubAccessKeyDialogComponent} from "./repository-github-access-key-dialog/repository-github-access-key-dialog.component";
+import {RepositoryGitCredentialsDialogComponent} from "./repository-git-credentials-dialog/repository-git-credentials-dialog.component";
 
 @Component({
     selector: 'app-repository-details-config',
@@ -103,12 +104,16 @@ export class RepositoryDetailsConfigComponent {
             .finally(() => this.deleteInProgress = false);
     }
 
-    public onUpdateWebHookSecret() {
+    public onUpdateGitHubWebHookSecret() {
         this._dialog.open(RepositoryGithubWebHookDialogComponent, {data: {repository: this.repository}});
     }
 
-    public onUpdateAccessKey() {
+    public onUpdateGitHubAccessKey() {
         this._dialog.open(RepositoryGithubAccessKeyDialogComponent, {data: {repository: this.repository}});
+    }
+
+    public onUpdateGitCredentials(){
+        this._dialog.open(RepositoryGitCredentialsDialogComponent, {data: {repository: this.repository}});
     }
 
     private resetForm() {

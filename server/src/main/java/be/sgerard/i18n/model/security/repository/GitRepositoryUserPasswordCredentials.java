@@ -76,6 +76,13 @@ public class GitRepositoryUserPasswordCredentials implements RepositoryCredentia
         return Optional.ofNullable(userEmail);
     }
 
+    /**
+     * Returns whether credentials are present.
+     */
+    public boolean hasCredentials(){
+        return getUsername().isPresent() || getPassword().isPresent();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
