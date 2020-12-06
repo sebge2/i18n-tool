@@ -6,6 +6,7 @@ import be.sgerard.i18n.model.repository.dto.RepositoryPatchDto;
 import be.sgerard.i18n.model.repository.persistence.GitRepositoryEntity;
 import be.sgerard.i18n.model.repository.persistence.RepositoryEntity;
 import be.sgerard.i18n.model.security.repository.GitRepositoryUserPasswordCredentials;
+import be.sgerard.i18n.model.validation.ValidationMessage;
 import be.sgerard.i18n.model.validation.ValidationResult;
 import be.sgerard.i18n.service.repository.git.GitRepositoryApi;
 import be.sgerard.i18n.service.repository.git.GitRepositoryHandler;
@@ -23,6 +24,11 @@ import reactor.core.publisher.Mono;
  */
 @Component
 public class GitApiAccessValidator implements RepositoryValidator<GitRepositoryEntity> {
+
+    /**
+     * Validation message key specifying that Git credentials are invalid.
+     */
+    public static final String INVALID_CREDENTIALS = "validation.git.invalid-credentials";
 
     private final GitRepositoryHandler handler;
     private final GitRepositoryCredentialsHandler credentialsHandler;
@@ -59,7 +65,13 @@ public class GitApiAccessValidator implements RepositoryValidator<GitRepositoryE
 
         if (gitPatch.getUsername().filter(StringUtils::isNotEmptyString).isPresent() || gitPatch.getPassword().filter(StringUtils::isNotEmptyString).isPresent()) {
             return credentialsHandler.loadStaticCredentials(original, gitPatch)
-                    .flatMap(credentials -> validateApiAccess(original, credentials));
+                    .flatMap(credentials -> {
+                        if (!credentials.hasCredentials()) {
+                            return Mono.just(createInvalidCredentialsResult(original));
+                        }
+
+                        return validateApiAccess(original, credentials);
+                    });
         }
 
         return Mono.just(ValidationResult.EMPTY);
@@ -75,7 +87,13 @@ public class GitApiAccessValidator implements RepositoryValidator<GitRepositoryE
 
         return credentialsHandler
                 .loadStaticCredentials(repository)
-                .flatMap(credentials -> validateApiAccess(repository, credentials));
+                .flatMap(credentials -> {
+                    if (!credentials.hasCredentials()) {
+                        return Mono.just(createInvalidCredentialsResult(repository));
+                    }
+
+                    return validateApiAccess(repository, credentials);
+                });
     }
 
     /**
@@ -101,5 +119,12 @@ public class GitApiAccessValidator implements RepositoryValidator<GitRepositoryE
                                 .map(GitRepositoryApi::validateInfo)
                                 .doFinally(signalType -> api.close())
                 );
+    }
+
+    /**
+     * Creates a {@link ValidationResult validation result} saying  that credentials are invalid for the specified repository.
+     */
+    private ValidationResult createInvalidCredentialsResult(GitRepositoryEntity repository) {
+        return ValidationResult.singleMessage(new ValidationMessage(INVALID_CREDENTIALS, repository.getLocation()));
     }
 }

@@ -69,6 +69,13 @@ public class GitHubRepositoryTokenCredentials implements RepositoryCredentials {
     }
 
     /**
+     * Returns whether credentials are present.
+     */
+    public boolean hasCredentials(){
+        return getToken().isPresent();
+    }
+
+    /**
      * Returns the name to display for the associated user.
      */
     public Optional<String> getUserDisplayName() {

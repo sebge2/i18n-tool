@@ -39,6 +39,20 @@
                     <mat-hint>{{'ADMIN.REPOSITORIES.ADD_WIZARD.STEP_INFO.GIT.NAME_HINT' | translate}}</mat-hint>
                 </mat-form-field>
             </p>
+            <p>
+                <mat-form-field appearance="standard">
+                    <mat-label>{{'ADMIN.REPOSITORIES.ADD_WIZARD.STEP_INFO.GIT.USER_NAME' | translate}}</mat-label>
+                    <input matInput formControlName="username" autocomplete="off">
+                    <mat-hint>{{'ADMIN.REPOSITORIES.ADD_WIZARD.STEP_INFO.GIT.USER_NAME_HINT' | translate}}</mat-hint>
+                </mat-form-field>
+            </p>
+            <p>
+                <mat-form-field appearance="standard">
+                    <mat-label>{{'ADMIN.REPOSITORIES.ADD_WIZARD.STEP_INFO.GIT.USER_PASSWORD' | translate}}</mat-label>
+                    <input matInput formControlName="password" type="password" autocomplete="off">
+                    <mat-hint>{{'ADMIN.REPOSITORIES.ADD_WIZARD.STEP_INFO.GIT.USER_PASSWORD_HINT' | translate}}</mat-hint>
+                </mat-form-field>
+            </p>
         </ng-container>
     </form>
 </div>

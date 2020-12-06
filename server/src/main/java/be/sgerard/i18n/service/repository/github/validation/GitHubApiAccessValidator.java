@@ -6,6 +6,7 @@ import be.sgerard.i18n.model.repository.dto.RepositoryPatchDto;
 import be.sgerard.i18n.model.repository.persistence.GitHubRepositoryEntity;
 import be.sgerard.i18n.model.repository.persistence.RepositoryEntity;
 import be.sgerard.i18n.model.security.repository.GitHubRepositoryTokenCredentials;
+import be.sgerard.i18n.model.validation.ValidationMessage;
 import be.sgerard.i18n.model.validation.ValidationResult;
 import be.sgerard.i18n.service.repository.git.GitRepositoryApi;
 import be.sgerard.i18n.service.repository.github.GitHubRepositoryHandler;
@@ -17,12 +18,17 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 /**
- * {@link RepositoryValidator Validator} checking that the GitHub API works properly.
+ * {@link RepositoryValidator Validator} checking that the GitHub API works properly based on the specified configuration.
  *
  * @author Sebastien Gerard
  */
 @Component
 public class GitHubApiAccessValidator implements RepositoryValidator<GitHubRepositoryEntity> {
+
+    /**
+     * Validation message key specifying that Git credentials are invalid.
+     */
+    public static final String INVALID_CREDENTIALS = "validation.git.invalid-credentials";
 
     private final GitHubRepositoryHandler handler;
     private final GitHubRepositoryCredentialsHandler credentialsHandler;
@@ -44,7 +50,7 @@ public class GitHubApiAccessValidator implements RepositoryValidator<GitHubRepos
     @Override
     public Mono<ValidationResult> beforePersist(GitHubRepositoryEntity repository) {
         return validateApiAccessCurrentUser(repository)
-                .flatMap(validationResult -> { // this avoid twice the same message if the URL is not correct
+                .flatMap(validationResult -> {
                     if (validationResult.isSuccessful()) {
                         return validateApiAccessStatic(repository);
                     } else {
@@ -58,8 +64,15 @@ public class GitHubApiAccessValidator implements RepositoryValidator<GitHubRepos
         final GitHubRepositoryPatchDto gitPatch = (GitHubRepositoryPatchDto) patch;
 
         if (gitPatch.getAccessKey().filter(StringUtils::isNotEmptyString).isPresent()) {
-            return credentialsHandler.loadStaticCredentials(original, gitPatch)
-                    .flatMap(credentials -> validateApiAccess(original, credentials));
+            return credentialsHandler
+                    .loadStaticCredentials(original, gitPatch)
+                    .flatMap(credentials -> {
+                        if (!credentials.hasCredentials()) {
+                            return Mono.just(createInvalidCredentialsResult(original));
+                        }
+
+                        return validateApiAccess(original, credentials);
+                    });
         }
 
         return Mono.just(ValidationResult.EMPTY);
@@ -75,7 +88,13 @@ public class GitHubApiAccessValidator implements RepositoryValidator<GitHubRepos
 
         return credentialsHandler
                 .loadStaticCredentials(repository)
-                .flatMap(credentials -> validateApiAccess(repository, credentials));
+                .flatMap(credentials -> {
+                    if (!credentials.hasCredentials()) {
+                        return Mono.just(createInvalidCredentialsResult(repository));
+                    }
+
+                    return validateApiAccess(repository, credentials);
+                });
     }
 
     /**
@@ -102,5 +121,12 @@ public class GitHubApiAccessValidator implements RepositoryValidator<GitHubRepos
                                 .doFinally(signalType -> api.close())
                 )
                 .switchIfEmpty(Mono.just(ValidationResult.EMPTY));
+    }
+
+    /**
+     * Creates a {@link ValidationResult validation result} saying  that credentials are invalid for the specified repository.
+     */
+    private ValidationResult createInvalidCredentialsResult(GitHubRepositoryEntity repository) {
+        return ValidationResult.singleMessage(new ValidationMessage(INVALID_CREDENTIALS, repository.getLocation()));
     }
 }

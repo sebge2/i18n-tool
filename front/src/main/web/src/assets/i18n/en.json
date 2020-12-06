@@ -191,7 +191,11 @@
             "LOCATION": "Location",
             "LOCATION_HINT": "Git URL (ex: https://example.com/gitproject.git).",
             "NAME": "Name",
-            "NAME_HINT": "Repository name displayed in this tool."
+            "NAME_HINT": "Repository name displayed in this tool.",
+            "USER_NAME": "Username",
+            "USER_NAME_HINT": "Username to use to access (read/write) the repository (optional)",
+            "USER_PASSWORD": "Password",
+            "USER_PASSWORD_HINT": "User's password (optional)"
           }
         },
         "STEP_CREATION": {
@@ -240,12 +244,13 @@
         "ALLOWED_BRANCHES_HINT": "Regex specifying which branches will be scanned.",
         "LOCATION_LABEL": "Location",
         "LOCATION_HINT": "Git URL of your repository.",
-        "ACTION_UPDATE_ACCESS_KEY": "Update Access Key",
-        "ACTION_UPDATE_WEB_HOOK_SECRET": "Update Web Hook Secret",
+        "ACTION_UPDATE_GITHUB_ACCESS_KEY": "Update Access Key",
+        "ACTION_UPDATE_GITHUB_WEB_HOOK_SECRET": "Update Web Hook Secret",
+        "ACTION_UPDATE_GIT_CREDENTIALS": "Update Credentials",
         "DELETE": {
           "CONFIRMATION_MESSAGE": "Please confirm the deletion of the repository <b>{repository}</b>.<br/><br/>The local repository and its configuration will be removed. All modifications that are not published will be lost."
         },
-        "WEB_HOOK_POPUP": {
+        "GITHUB_WEB_HOOK_POPUP": {
           "TITLE": "Manage Web Hook Secret",
           "SECRET": "Secret",
           "SECRET_HINT": "Secret to use to secure the WebHook endpoint. Afterwards, this secret must be used on GitHub side.",
@@ -253,12 +258,21 @@
           "UNKNOWN_ERROR": "A technical error happened, please verify the Web Hook configuration and try again.",
           "ERROR_TITLE": "The following errors happened when updating the Web Hook:"
         },
-        "ACCESS_KEY_POPUP": {
+        "GITHUB_ACCESS_KEY_POPUP": {
           "TITLE": "Manage Access Key",
           "KEY": "Access Key",
           "KEY_HINT": "The access key used to access your GitHub repository (pull, push, create pull requests, ...).",
           "UNKNOWN_ERROR": "A technical error happened, please verify the Access Key configuration and try again.",
           "ERROR_TITLE": "The following errors happened when updating the Access Key:"
+        },
+        "GIT_CREDENTIALS_POPUP": {
+          "TITLE": "Manage Credentials",
+          "USERNAME": "Username",
+          "USERNAME_HINT": "Username to use to access (read/write) the repository (optional)",
+          "PASSWORD": "Password",
+          "PASSWORD_HINT": "User's password (optional)",
+          "UNKNOWN_ERROR": "A technical error happened, please verify credentials and try again.",
+          "ERROR_TITLE": "The following errors happened when updating credentials:"
         }
       },
       "DETAILS_CARD": {
