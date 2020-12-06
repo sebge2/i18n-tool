@@ -8,9 +8,9 @@
 
         <app-form-delete-button (delete)="onDelete()" [deleteInProgress]="deleteInProgress"></app-form-delete-button>
 
-        <app-init-download-button (init)="onInitialize()"
-                                  [initInProgress]="initializationInProgress"
-                                  *ngIf="initializationAllowed">
-        </app-init-download-button>
+        <app-download-button (download)="onInitialize()"
+                             [initInProgress]="initializationInProgress"
+                             *ngIf="initializationAllowed">
+        </app-download-button>
     </app-row-actions-item>
 </app-row-actions>

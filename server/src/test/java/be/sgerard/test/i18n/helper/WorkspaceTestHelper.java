@@ -48,7 +48,7 @@ public class WorkspaceTestHelper {
                     .getResponseBody();
         }
 
-        public RepositoryDto getRepo() {
+        public R getRepo() {
             return repository;
         }
 
@@ -88,8 +88,8 @@ public class WorkspaceTestHelper {
 
     public class StepNotInitializedWorkspace<R extends RepositoryDto> {
 
-        private final R repository;
-        private final WorkspaceDto workspace;
+        protected final R repository;
+        protected final WorkspaceDto workspace;
 
         public StepNotInitializedWorkspace(R repository, WorkspaceDto workspace) {
             this.repository = repository;
@@ -118,23 +118,15 @@ public class WorkspaceTestHelper {
         }
     }
 
-    public class StepInitializedWorkspace<R extends RepositoryDto> {
-
-        private final R repository;
-        private final WorkspaceDto workspace;
+    public class StepInitializedWorkspace<R extends RepositoryDto> extends StepNotInitializedWorkspace<R> {
 
         public StepInitializedWorkspace(R repository, WorkspaceDto workspace) {
-            this.repository = repository;
-            this.workspace = workspace;
+            super(repository, workspace);
         }
 
         @SuppressWarnings("unused")
         public StepInitializedRepository<R> and() {
             return new StepInitializedRepository<>(repository);
-        }
-
-        public WorkspaceDto get() {
-            return workspace;
         }
 
         public StepPublishedWorkspace<R> publish(String message) {
@@ -150,23 +142,10 @@ public class WorkspaceTestHelper {
         }
     }
 
-    public class StepPublishedWorkspace<R extends RepositoryDto> {
-
-        private final R repository;
-        private final WorkspaceDto workspace;
+    public class StepPublishedWorkspace<R extends RepositoryDto> extends StepInitializedWorkspace<R> {
 
         public StepPublishedWorkspace(R repository, WorkspaceDto workspace) {
-            this.repository = repository;
-            this.workspace = workspace;
-        }
-
-        @SuppressWarnings("unused")
-        public StepInitializedRepository<R> and() {
-            return new StepInitializedRepository<>(repository);
-        }
-
-        public WorkspaceDto get() {
-            return workspace;
+            super(repository, workspace);
         }
     }
 }

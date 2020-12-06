@@ -1,7 +1,7 @@
 package be.sgerard.i18n.model.i18n.file;
 
 import be.sgerard.i18n.model.i18n.BundleType;
-import be.sgerard.i18n.model.i18n.persistence.TranslationLocaleEntity;
+import be.sgerard.i18n.model.locale.persistence.TranslationLocaleEntity;
 import be.sgerard.i18n.service.i18n.TranslationRepositoryReadApi;
 
 import java.nio.file.Path;

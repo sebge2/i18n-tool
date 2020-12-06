@@ -1,5 +1,6 @@
 package be.sgerard.i18n.model.i18n.persistence;
 
+import be.sgerard.i18n.model.locale.persistence.TranslationLocaleEntity;
 import be.sgerard.i18n.support.StringUtils;
 import lombok.Getter;
 import lombok.Setter;
@@ -94,6 +95,11 @@ public class BundleKeyTranslationEntity {
      * @see #modification
      */
     public BundleKeyTranslationEntity setModification(BundleKeyTranslationModificationEntity modification) {
+        if (modification == null) {
+            this.modification = null;
+            return this;
+        }
+
         final String currentUpdatedValue = this.getModification().flatMap(BundleKeyTranslationModificationEntity::getUpdatedValue).orElse(null);
         final String newUpdatedValue = modification.getUpdatedValue().orElse(null);
 

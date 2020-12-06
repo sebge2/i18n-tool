@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
-import static be.sgerard.i18n.model.i18n.persistence.TranslationLocaleEntity.toUserString;
+import static be.sgerard.i18n.model.locale.persistence.TranslationLocaleEntity.toUserString;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -43,12 +43,14 @@ public class TranslationLocaleTestHelper {
                 .getResponseBody();
     }
 
-    public TranslationLocaleDto findRegisteredLocale(Locale locale) {
-        return getLocales()
+    public StepLocale findRegisteredLocale(Locale locale) {
+        return new StepLocale(
+                getLocales()
                 .stream()
                 .filter(existingLocale -> Objects.equals(existingLocale.toLocale(), locale))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Cannot find locale [" + locale + "]."));
+                .orElseThrow(() -> new IllegalArgumentException("Cannot find locale [" + locale + "]."))
+        );
     }
 
     public StepCreatedLocale createLocale(TranslationLocaleCreationDto creationDto) {
@@ -69,15 +71,6 @@ public class TranslationLocaleTestHelper {
         return createLocale(creationDto.build());
     }
 
-    public TranslationLocaleTestHelper deleteLocale(TranslationLocaleDto locale) {
-        webClient.delete()
-                .uri("/api/translation/locale/{id}", locale.getId())
-                .exchange()
-                .expectStatus().isNoContent();
-
-        return this;
-    }
-
     public final class StepCreatedLocale {
 
         private final TranslationLocaleDto locale;
@@ -92,6 +85,32 @@ public class TranslationLocaleTestHelper {
 
         public TranslationLocaleDto get() {
             return locale;
+        }
+    }
+
+    public final class StepLocale {
+
+        private final TranslationLocaleDto locale;
+
+        public StepLocale(TranslationLocaleDto locale) {
+            this.locale = locale;
+        }
+
+        public TranslationLocaleTestHelper and() {
+            return TranslationLocaleTestHelper.this;
+        }
+
+        public TranslationLocaleDto get() {
+            return locale;
+        }
+
+        public TranslationLocaleTestHelper delete() {
+            webClient.delete()
+                    .uri("/api/translation/locale/{id}", locale.getId())
+                    .exchange()
+                    .expectStatus().isNoContent();
+
+            return TranslationLocaleTestHelper.this;
         }
     }
 }

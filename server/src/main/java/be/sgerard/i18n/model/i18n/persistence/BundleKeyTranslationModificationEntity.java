@@ -1,5 +1,6 @@
 package be.sgerard.i18n.model.i18n.persistence;
 
+import be.sgerard.i18n.model.user.persistence.UserEntity;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.PersistenceConstructor;
@@ -21,8 +22,8 @@ public class BundleKeyTranslationModificationEntity {
     private String updatedValue;
 
     /**
-     * The {@link be.sgerard.i18n.model.security.user.persistence.UserEntity user} that edited this translation.
-     *
+     * The {@link UserEntity user} that edited this translation.
+     * <p>
      * The editor may not exist anymore (if the user has been deleted in the mean time).
      */
     private String lastEditor;

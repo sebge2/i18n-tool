@@ -26,11 +26,16 @@ import {SafePipeModule} from "safe-pipe";
 import {CoreTranslationModule} from "../core/translation/core-translation-module";
 import { RepositoryGithubWebHookDialogComponent } from './component/repositories/repository-details/repository-details-config/repository-github-web-hook-dialog/repository-github-web-hook-dialog.component';
 import { RepositoryGithubAccessKeyDialogComponent } from './component/repositories/repository-details/repository-details-config/repository-github-access-key-dialog/repository-github-access-key-dialog.component';
+import { SnapshotsComponent } from './component/snapshot/snapshots/snapshots.component';
+import { SnapshotCreationFormComponent } from './component/snapshot/snapshots/snapshot-creation-form/snapshot-creation-form.component';
+import { SnapshotImportFormComponent } from './component/snapshot/snapshots/snapshot-import-form/snapshot-import-form.component';
+import { RepositoryGitCredentialsDialogComponent } from './component/repositories/repository-details/repository-details-config/repository-git-credentials-dialog/repository-git-credentials-dialog.component';
 
 const appRoutes: Routes = [
     {path: 'users', component: UsersComponent},
     {path: 'repositories', component: RepositoriesComponent},
-    {path: 'locales', component: LocalesComponent}
+    {path: 'locales', component: LocalesComponent},
+    {path: 'snapshots', component: SnapshotsComponent},
 ];
 
 @NgModule({
@@ -58,11 +63,16 @@ const appRoutes: Routes = [
         RepositoryDetailsWorkspaceTreeNodeComponent,
         RepositoryGithubWebHookDialogComponent,
         RepositoryGithubAccessKeyDialogComponent,
+        RepositoryGitCredentialsDialogComponent,
+        SnapshotsComponent,
+        SnapshotCreationFormComponent,
+        SnapshotImportFormComponent,
     ],
     entryComponents: [
         RepositoryAddWizardComponent,
         RepositoryGithubWebHookDialogComponent,
         RepositoryGithubAccessKeyDialogComponent,
+        RepositoryGitCredentialsDialogComponent,
     ],
     imports: [
         CommonModule,

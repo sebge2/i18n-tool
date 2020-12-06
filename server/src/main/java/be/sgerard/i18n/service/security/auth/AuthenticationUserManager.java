@@ -5,13 +5,10 @@ import be.sgerard.i18n.model.security.auth.external.ExternalAuthenticatedUser;
 import be.sgerard.i18n.model.security.auth.external.ExternalUserDetails;
 import be.sgerard.i18n.model.security.auth.internal.InternalAuthenticatedUser;
 import be.sgerard.i18n.model.security.auth.internal.InternalUserDetails;
-import be.sgerard.i18n.model.security.user.persistence.UserEntity;
-import be.sgerard.i18n.service.security.UserRole;
+import be.sgerard.i18n.model.user.persistence.UserEntity;
 import org.springframework.security.access.AccessDeniedException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.util.Collection;
 
 /**
  * Manager of {@link AuthenticatedUser authenticated users}.
@@ -54,25 +51,9 @@ public interface AuthenticationUserManager {
     Mono<InternalAuthenticatedUser> createUser(InternalUserDetails userDetails);
 
     /**
-     * Updates roles of all the {@link AuthenticatedUser users} linked to the specified {@link UserEntity user}.
-     *
-     * @see UserEntity#getId()
+     * Updates the specified {@link AuthenticatedUser authenticated user}: sessions are updated + an event is emitted.
      */
-    Mono<Void> updateAll(String userId, Collection<UserRole> roles);
-
-    /**
-     * Updates repository credentials of all the {@link AuthenticatedUser users}.
-     *
-     * @see AuthenticatedUser#getRepositoryCredentials()
-     */
-    Mono<Void> updateAllRepositoryCredentials(String repositoryId);
-
-    /**
-     * Deletes repository credentials of all the {@link AuthenticatedUser users}.
-     *
-     * @see AuthenticatedUser#getRepositoryCredentials()
-     */
-    Mono<Void> deleteAllRepositoryCredentials(String repositoryId);
+    Mono<AuthenticatedUser> update(AuthenticatedUser authenticatedUser);
 
     /**
      * Deletes all the {@link AuthenticatedUser authenticated users} associated to the specified {@link UserEntity user}.

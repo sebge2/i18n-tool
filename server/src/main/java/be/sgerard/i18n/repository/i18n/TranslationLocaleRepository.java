@@ -1,6 +1,6 @@
 package be.sgerard.i18n.repository.i18n;
 
-import be.sgerard.i18n.model.i18n.persistence.TranslationLocaleEntity;
+import be.sgerard.i18n.model.locale.persistence.TranslationLocaleEntity;
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 
 /**

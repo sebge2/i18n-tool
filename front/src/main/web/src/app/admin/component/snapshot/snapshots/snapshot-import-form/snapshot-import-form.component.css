@@ -1,0 +1,9 @@
+.app-snapshot-import-file {
+    width: calc(60% - 10px);
+    margin: 5px;
+}
+
+.app-snapshot-import-password {
+    width: calc(40% - 10px);
+    margin: 5px;
+}

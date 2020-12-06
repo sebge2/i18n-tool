@@ -1,0 +1,23 @@
+<app-card [title]="'ADMIN.SNAPSHOTS.CREATION_CARD.TITLE' | translate">
+    <app-card-content>
+        <form [formGroup]="form" (ngSubmit)="onCreate()">
+            <mat-form-field appearance="standard" class="app-snapshot-creation-comment">
+                <mat-label>{{'ADMIN.SNAPSHOTS.CREATION_CARD.COMMENT' | translate}}</mat-label>
+                <input matInput formControlName="comment" type="text">
+                <mat-hint>{{'ADMIN.SNAPSHOTS.CREATION_CARD.COMMENT_HINT' | translate}}</mat-hint>
+            </mat-form-field>
+
+            <mat-form-field appearance="standard" class="app-snapshot-creation-password">
+                <mat-label>{{'ADMIN.SNAPSHOTS.CREATION_CARD.PASSWORD' | translate}}</mat-label>
+                <input matInput formControlName="encryptionPassword" type="password">
+                <mat-hint>{{'ADMIN.SNAPSHOTS.CREATION_CARD.PASSWORD_HINT' | translate}}</mat-hint>
+            </mat-form-field>
+        </form>
+    </app-card-content>
+    <app-card-actions>
+        <app-form-add-button [form]="form"
+                             [addInProgress]="creationInProgress"
+                             [disabled]="creationInProgress"
+                             (add)="onCreate()"></app-form-add-button>
+    </app-card-actions>
+</app-card>

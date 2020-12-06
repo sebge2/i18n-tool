@@ -1,8 +1,8 @@
 package be.sgerard.i18n.service.security.repository;
 
 import be.sgerard.i18n.model.repository.persistence.RepositoryEntity;
-import be.sgerard.i18n.model.security.auth.RepositoryCredentials;
-import be.sgerard.i18n.model.security.auth.external.ExternalUserToken;
+import be.sgerard.i18n.model.security.repository.CurrentUser;
+import be.sgerard.i18n.model.security.repository.RepositoryCredentials;
 import reactor.core.publisher.Mono;
 
 /**
@@ -10,7 +10,7 @@ import reactor.core.publisher.Mono;
  *
  * @author Sebastien Gerard
  */
-public interface RepositoryCredentialsHandler {
+public interface RepositoryCredentialsHandler<C extends RepositoryCredentials, R extends RepositoryEntity> {
 
     /**
      * Returns whether the handler supports the specified {@link RepositoryEntity repository}.
@@ -18,15 +18,13 @@ public interface RepositoryCredentialsHandler {
     boolean support(RepositoryEntity repository);
 
     /**
-     * Loads the {@link RepositoryCredentials credentails} to access the specified repository when there is no token.
+     * Loads the {@link RepositoryCredentials credentails} to access the specified repository when there is no current {@link CurrentUser user}.
      */
-    Mono<RepositoryCredentials> loadCredentials(RepositoryEntity repository);
+    Mono<C> loadStaticCredentials(R repository);
 
     /**
-     * Loads the {@link RepositoryCredentials credentails} to access the specified repository with the specified {@link ExternalUserToken token}.
-     * <p>
-     * Be careful, credentials can be empty.
+     * Loads the {@link RepositoryCredentials credentails} to access the specified repository for the current {@link CurrentUser user}.
      */
-    Mono<RepositoryCredentials> loadCredentials(ExternalUserToken externalToken, RepositoryEntity repository);
+    Mono<C> loadUserCredentials(R repository, CurrentUser currentUser);
 
 }

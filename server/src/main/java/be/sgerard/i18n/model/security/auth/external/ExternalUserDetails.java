@@ -1,6 +1,6 @@
 package be.sgerard.i18n.model.security.auth.external;
 
-import be.sgerard.i18n.model.security.user.persistence.ExternalUserEntity;
+import be.sgerard.i18n.model.user.persistence.ExternalUserEntity;
 import be.sgerard.i18n.service.security.UserRole;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -56,6 +56,20 @@ public class ExternalUserDetails implements OAuth2User {
      */
     public Collection<UserRole> getRoles() {
         return externalUser.getRoles();
+    }
+
+    /**
+     * Returns the name to be displayed to the end-user (ideally composed of the first name, last name).
+     */
+    public String getDisplayName() {
+        return externalUser.getDisplayName();
+    }
+
+    /**
+     * Returns the user's email.
+     */
+    public String getEmail() {
+        return externalUser.getEmail();
     }
 
     /**

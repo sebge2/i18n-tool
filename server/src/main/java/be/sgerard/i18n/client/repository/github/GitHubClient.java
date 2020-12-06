@@ -26,25 +26,20 @@ public interface GitHubClient {
     /**
      * Creates a new {@link GitHubPullRequestDto pull request}.
      */
-    Mono<GitHubPullRequestDto> createRequest(GitHubRepositoryId repositoryId, GitHubPullRequestCreationInfo creationInfo, String token);
+    Mono<GitHubPullRequestDto> createPullRequest(GitHubRepositoryId repositoryId, GitHubPullRequestCreationInfo creationInfo, String token);
 
     /**
      * Finds all the {@link GitHubPullRequestDto pull-requests} of the specified repository.
      */
-    Flux<GitHubPullRequestDto> findAll(GitHubRepositoryId repositoryId, String token);
+    Flux<GitHubPullRequestDto> findAllPullRequests(GitHubRepositoryId repositoryId, String token);
 
     /**
      * Finds the pull-request having the specified {@link GitHubPullRequestDto#getNumber() number}.
      */
-    Mono<GitHubPullRequestDto> findByNumber(GitHubRepositoryId repositoryId, int requestNumber, String token);
-
-    /**
-     * Returns the login of the current user.
-     */
-    Mono<String> getCurrentUserLogin(String token);
+    Mono<GitHubPullRequestDto> findPullRequestByNumber(GitHubRepositoryId repositoryId, int requestNumber, String token);
 
     /**
      * Checks if the current user is a member (that has read-write access) of the specified repository.
      */
-    Mono<Boolean> isRepoMember(GitHubRepositoryId repositoryId, String token);
+    Mono<Boolean> isRepositoryMember(GitHubRepositoryId repositoryId, String token);
 }

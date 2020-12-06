@@ -2,6 +2,7 @@ package be.sgerard.i18n;
 
 import be.sgerard.test.i18n.DatabaseTestHelper;
 import be.sgerard.test.i18n.helper.*;
+import be.sgerard.test.i18n.helper.repository.RemoteRepositoryTestHelper;
 import be.sgerard.test.i18n.support.DatabaseCleanupTestExecutionListener;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,16 +36,16 @@ public abstract class AbstractIntegrationTest {
     protected RepositoryTestHelper repository;
 
     @Autowired
+    protected RemoteRepositoryTestHelper remoteRepository;
+
+    @Autowired
     protected WorkspaceTestHelper workspace;
 
     @Autowired
-    protected GitRepositoryMockTestHelper gitRepo;
-
-    @Autowired
-    protected GitHubRepositoryMockTestHelper gitHub;
-
-    @Autowired
     protected TranslationsTestHelper translations;
+
+    @Autowired
+    protected SnapshotTestHelper snapshot;
 
     @Autowired
     protected WebTestClient webClient;

@@ -1,9 +1,9 @@
 package be.sgerard.i18n.service.user.listener;
 
 import be.sgerard.i18n.model.event.EventType;
-import be.sgerard.i18n.model.security.user.dto.UserDto;
-import be.sgerard.i18n.model.security.user.dto.UserPreferencesDto;
-import be.sgerard.i18n.model.security.user.persistence.UserEntity;
+import be.sgerard.i18n.model.user.dto.UserDto;
+import be.sgerard.i18n.model.user.dto.UserPreferencesDto;
+import be.sgerard.i18n.model.user.persistence.UserEntity;
 import be.sgerard.i18n.service.event.EventService;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;

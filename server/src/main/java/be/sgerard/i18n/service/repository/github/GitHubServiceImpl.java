@@ -4,10 +4,10 @@ import be.sgerard.i18n.client.repository.github.GitHubClient;
 import be.sgerard.i18n.model.repository.github.GitHubPullRequestCreationInfo;
 import be.sgerard.i18n.model.repository.github.dto.GitHubPullRequestDto;
 import be.sgerard.i18n.model.repository.persistence.GitHubRepositoryEntity;
-import be.sgerard.i18n.model.security.auth.GitHubRepositoryTokenCredentials;
+import be.sgerard.i18n.model.security.repository.GitHubRepositoryTokenCredentials;
 import be.sgerard.i18n.service.repository.RepositoryException;
 import be.sgerard.i18n.service.repository.RepositoryManager;
-import be.sgerard.i18n.service.security.auth.AuthenticationUserManager;
+import be.sgerard.i18n.service.security.repository.RepositoryCredentialsManager;
 import be.sgerard.i18n.service.workspace.WorkspaceException;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -22,15 +22,15 @@ import reactor.core.publisher.Mono;
 public class GitHubServiceImpl implements GitHubService {
 
     private final RepositoryManager repositoryManager;
+    private final RepositoryCredentialsManager credentialsManager;
     private final GitHubClient gitHubClient;
-    private final AuthenticationUserManager authenticationUserManager;
 
     public GitHubServiceImpl(RepositoryManager repositoryManager,
-                             GitHubClient gitHubClient,
-                             AuthenticationUserManager authenticationUserManager) {
+                             RepositoryCredentialsManager credentialsManager,
+                             GitHubClient gitHubClient) {
         this.repositoryManager = repositoryManager;
+        this.credentialsManager = credentialsManager;
         this.gitHubClient = gitHubClient;
-        this.authenticationUserManager = authenticationUserManager;
     }
 
     @Override
@@ -40,12 +40,13 @@ public class GitHubServiceImpl implements GitHubService {
                 .flatMap(repository ->
                         getToken(repository)
                                 .flatMap(token ->
-                                        gitHubClient.createRequest(
-                                                repository.getCompositeId(),
+                                        gitHubClient.createPullRequest(
+                                                repository.getGlobalId(),
                                                 new GitHubPullRequestCreationInfo(message, currentBranch, targetBranch),
                                                 token
                                         )
                                 )
+                                .switchIfEmpty(Mono.error(RepositoryException.onAccessGitHub(null)))
                                 .onErrorResume(error -> Mono.error(WorkspaceException.onStartingReview(error)))
                 );
     }
@@ -73,7 +74,7 @@ public class GitHubServiceImpl implements GitHubService {
                 .flatMap(repository ->
                         getToken(repository)
                                 .flatMap(token ->
-                                        gitHubClient.findByNumber(repository.getCompositeId(), requestNumber, token)
+                                        gitHubClient.findPullRequestByNumber(repository.getGlobalId(), requestNumber, token)
                                 )
                 )
                 .onErrorResume(error -> Mono.error(WorkspaceException.onFetchingReviewInformation(error)));
@@ -85,7 +86,7 @@ public class GitHubServiceImpl implements GitHubService {
     private Flux<GitHubPullRequestDto> findAll(GitHubRepositoryEntity repository) {
         return getToken(repository)
                 .flatMapMany(token ->
-                        gitHubClient.findAll(repository.getCompositeId(), token)
+                        gitHubClient.findAllPullRequests(repository.getGlobalId(), token)
                 )
                 .onErrorResume(error -> Mono.error(RepositoryException.onAccessGitHub(error)));
     }
@@ -94,13 +95,9 @@ public class GitHubServiceImpl implements GitHubService {
      * Returns the token to use to access GitHub (can be empty).
      */
     private Mono<String> getToken(GitHubRepositoryEntity repository) {
-        return authenticationUserManager
-                .getCurrentUserOrDie()
-                .map(authenticatedUser ->
-                        authenticatedUser
-                                .getCredentials(repository.getId(), GitHubRepositoryTokenCredentials.class)
-                                .map(GitHubRepositoryTokenCredentials::getToken)
-                                .orElse(null)
-                );
+        return credentialsManager
+                .loadUserCredentials(repository)
+                .map(GitHubRepositoryTokenCredentials.class::cast)
+                .flatMap(credentials -> Mono.justOrEmpty(credentials.getToken()));
     }
 }

@@ -3,7 +3,7 @@ package be.sgerard.i18n.service.event;
 import be.sgerard.i18n.model.event.EventDto;
 import be.sgerard.i18n.model.event.EventType;
 import be.sgerard.i18n.model.security.auth.AuthenticatedUser;
-import be.sgerard.i18n.model.security.user.dto.UserDto;
+import be.sgerard.i18n.model.user.dto.UserDto;
 import be.sgerard.i18n.service.security.UserRole;
 import be.sgerard.i18n.service.security.auth.AuthenticationUserManager;
 import be.sgerard.i18n.service.security.session.UserLiveSessionManager;
@@ -115,7 +115,7 @@ public class ServerSentEventService implements EventService {
         /**
          * Returns whether the current event is visible by the specified user.
          */
-        public boolean isVisible(AuthenticatedUser authenticatedUser){
+        public boolean isVisible(AuthenticatedUser authenticatedUser) {
             return eventFilter.test(authenticatedUser);
         }
     }

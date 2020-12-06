@@ -2,6 +2,7 @@ package be.sgerard.i18n.service.security.auth;
 
 import be.sgerard.i18n.model.security.auth.AuthenticatedUser;
 import be.sgerard.i18n.model.security.auth.external.ExternalAuthenticatedUser;
+import be.sgerard.i18n.model.security.auth.external.ExternalUserDetails;
 import be.sgerard.i18n.model.security.auth.internal.InternalAuthenticatedUser;
 import be.sgerard.i18n.model.security.auth.internal.InternalUserDetails;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -30,6 +31,14 @@ public final class AuthenticationUtils {
     public static UsernamePasswordAuthenticationToken createAuthentication(InternalUserDetails userDetails,
                                                                            AuthenticatedUser authenticatedUser) {
         return new UsernamePasswordAuthenticationToken(authenticatedUser, userDetails.getPassword(), userDetails.getAuthorities());
+    }
+
+    /**
+     * Creates the authentication for the specified external user.
+     */
+    public static OAuth2AuthenticationToken createAuthentication(ExternalUserDetails userDetails,
+                                                                 ExternalAuthenticatedUser authenticatedUser) {
+        return new OAuth2AuthenticationToken(authenticatedUser, userDetails.getAuthorities(), authenticatedUser.getToken().getExternalSystem().getName());
     }
 
     /**

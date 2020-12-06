@@ -1,9 +1,11 @@
 package be.sgerard.i18n.model.i18n.persistence;
 
+import be.sgerard.i18n.model.locale.persistence.TranslationLocaleEntity;
 import be.sgerard.i18n.model.workspace.persistence.WorkspaceEntity;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.Singular;
+import lombok.experimental.Accessors;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -23,6 +25,7 @@ import java.util.UUID;
 @Document("bundle_key")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class BundleKeyEntity {
 
     /**

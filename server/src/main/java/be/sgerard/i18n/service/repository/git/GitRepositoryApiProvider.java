@@ -10,6 +10,6 @@ public interface GitRepositoryApiProvider {
     /**
      * Returns the API for the specified configuration.
      */
-    GitRepositoryApi createApi(GitRepositoryApi.Configuration configuration);
+    GitRepositoryApi initApi(GitRepositoryApi.Configuration configuration);
 
 }

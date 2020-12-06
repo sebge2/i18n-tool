@@ -6,7 +6,9 @@ export enum FileExtension {
 
     JPEG = 'jpeg',
 
-    PNG = 'png'
+    PNG = 'png',
+
+    ZIP = 'zip',
 
 }
 
@@ -16,6 +18,7 @@ export let FILE_CONTENT_TYPES = new Map([
     [FileExtension.JPG, 'image/jpeg'],
     [FileExtension.JPEG, 'image/jpeg'],
     [FileExtension.PNG, 'image/png'],
+    [FileExtension.ZIP, 'application/zip'],
 ]);
 
 export function createImportedFile(file: File, allowedFileExtensions: FileExtension[]): ImportedFile {

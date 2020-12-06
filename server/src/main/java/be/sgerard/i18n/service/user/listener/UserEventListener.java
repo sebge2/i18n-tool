@@ -1,8 +1,8 @@
 package be.sgerard.i18n.service.user.listener;
 
 import be.sgerard.i18n.model.event.EventType;
-import be.sgerard.i18n.model.security.user.dto.UserDto;
-import be.sgerard.i18n.model.security.user.persistence.UserEntity;
+import be.sgerard.i18n.model.user.dto.UserDto;
+import be.sgerard.i18n.model.user.persistence.UserEntity;
 import be.sgerard.i18n.service.event.EventService;
 import be.sgerard.i18n.service.security.UserRole;
 import org.springframework.stereotype.Component;

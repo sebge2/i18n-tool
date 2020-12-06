@@ -1,7 +1,6 @@
 package be.sgerard.test.i18n.helper;
 
 import be.sgerard.i18n.model.repository.RepositoryStatus;
-import be.sgerard.i18n.model.repository.dto.GitHubRepositoryDto;
 import be.sgerard.i18n.model.repository.dto.RepositoryCreationDto;
 import be.sgerard.i18n.model.repository.dto.RepositoryDto;
 import be.sgerard.i18n.model.repository.dto.RepositoryPatchDto;
@@ -13,6 +12,8 @@ import org.springframework.web.reactive.function.BodyInserters;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 /**
  * @author Sebastien Gerard
  */
@@ -21,15 +22,12 @@ public class RepositoryTestHelper {
 
     private final WebTestClient webClient;
     private final WorkspaceTestHelper workspaceTestHelper;
-    private final GitHubRepositoryMockTestHelper gitHubTestHelper;
 
-    private final Map<String, RepositoryDto> hints = new HashMap<>();
+    private final Map<String, String> hints = new HashMap<>();
 
-    public RepositoryTestHelper(WebTestClient webClient, WorkspaceTestHelper workspaceTestHelper,
-                                GitHubRepositoryMockTestHelper gitHubTestHelper) {
+    public RepositoryTestHelper(WebTestClient webClient, WorkspaceTestHelper workspaceTestHelper) {
         this.webClient = webClient;
         this.workspaceTestHelper = workspaceTestHelper;
-        this.gitHubTestHelper = gitHubTestHelper;
     }
 
     public StepCreatedRepository<RepositoryDto> create(RepositoryCreationDto creationDto) {
@@ -55,7 +53,15 @@ public class RepositoryTestHelper {
             throw new IllegalArgumentException("No repository created for hint [" + hint + "]");
         }
 
-        return new StepCreatedRepository<>(expectedResult.cast(hints.get(hint)));
+        final R repository = webClient.get()
+                .uri("/api/repository/{id}", hints.get(hint))
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(expectedResult)
+                .returnResult()
+                .getResponseBody();
+
+        return new StepCreatedRepository<>(repository);
     }
 
     public StepCreatedRepository<RepositoryDto> forHint(String hint) {
@@ -64,10 +70,19 @@ public class RepositoryTestHelper {
 
     public class StepCreatedRepository<R extends RepositoryDto> {
 
-        private final R repository;
+        protected final R repository;
 
         public StepCreatedRepository(R repository) {
             this.repository = repository;
+        }
+
+        @SuppressWarnings("unused")
+        public RepositoryTestHelper and() {
+            return RepositoryTestHelper.this;
+        }
+
+        public R get() {
+            return repository;
         }
 
         @SuppressWarnings("unchecked")
@@ -79,6 +94,8 @@ public class RepositoryTestHelper {
                     .expectBody((Class<R>) this.repository.getClass())
                     .returnResult()
                     .getResponseBody();
+
+            assertThat(updatedRepository).isNotNull();
 
             return new StepInitializedRepository<>(updatedRepository);
         }
@@ -98,48 +115,42 @@ public class RepositoryTestHelper {
             return new StepCreatedRepository<>(updatedRepository);
         }
 
-        @SuppressWarnings("unused")
-        public RepositoryTestHelper and() {
-            return RepositoryTestHelper.this;
-        }
+        @SuppressWarnings("UnusedReturnValue")
+        public RepositoryTestHelper delete() {
+            webClient.delete()
+                    .uri("/api/repository/{id}", this.repository.getId())
+                    .exchange()
+                    .expectStatus().isNoContent();
 
-        public R get() {
-            return repository;
+            return RepositoryTestHelper.this;
         }
 
         public StepCreatedRepository<R> hint(String hint) {
-            hints.put(hint, repository);
+            hints.put(hint, repository.getId());
             return this;
         }
 
-        public GitHubRepositoryMockTestHelper.StepRepository gitHub() {
-            return gitHubTestHelper.forRepository((GitHubRepositoryDto) repository);
+        public <B extends RepositoryDto> StepCreatedRepository<B> cast(Class<B> dtoType) {
+            return new StepCreatedRepository<>(dtoType.cast(repository));
         }
     }
 
-    public class StepInitializedRepository<R extends RepositoryDto> {
-
-        private final R repository;
+    public class StepInitializedRepository<R extends RepositoryDto> extends StepCreatedRepository<R> {
 
         public StepInitializedRepository(R repository) {
+            super(repository);
+
             if (RepositoryStatus.INITIALIZED != repository.getStatus()) {
                 throw new IllegalArgumentException("The repository must be initialized, but it is [" + repository.getStatus() + "].");
             }
-
-            this.repository = repository;
-        }
-
-        @SuppressWarnings("unused")
-        public RepositoryTestHelper and() {
-            return RepositoryTestHelper.this;
-        }
-
-        public R get() {
-            return repository;
         }
 
         public WorkspaceTestHelper.StepInitializedRepository<R> workspaces() {
             return workspaceTestHelper.with(repository);
+        }
+
+        public <B extends RepositoryDto> StepInitializedRepository<B> cast(Class<B> dtoType) {
+            return new StepInitializedRepository<>(dtoType.cast(repository));
         }
     }
 }

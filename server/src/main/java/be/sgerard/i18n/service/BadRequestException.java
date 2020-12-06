@@ -30,6 +30,14 @@ public class BadRequestException extends RuntimeException implements LocalizedMe
         return new BadRequestException("There is no message specify. A message is needed when starting a review.", "BadRequestException.start-review-no-message.message", null);
     }
 
+    public static BadRequestException missingFilePart() {
+        return new BadRequestException("There is no file part in your multi-form-data request.", "BadRequestException.no-file-part.message", null);
+    }
+
+    public static BadRequestException unexpectedFormPart() {
+        return new BadRequestException("The multi-form-data has not the expected fields. Please check your request.", "BadRequestException.wrong-multi-form-data.message", null);
+    }
+
     private final String messageKey;
     private final Object[] parameters;
 

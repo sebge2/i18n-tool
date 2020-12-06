@@ -2,7 +2,6 @@ package be.sgerard.i18n.service.repository.git;
 
 import be.sgerard.i18n.model.validation.ValidationMessage;
 import be.sgerard.i18n.model.validation.ValidationResult;
-import be.sgerard.i18n.service.ValidationException;
 import be.sgerard.i18n.service.repository.RepositoryException;
 import org.apache.commons.io.FileUtils;
 import org.eclipse.jgit.api.*;
@@ -54,43 +53,6 @@ public class DefaultGitRepositoryApi extends BaseGitRepositoryApi {
 
     public DefaultGitRepositoryApi(Configuration configuration) {
         super(configuration);
-    }
-
-    @Override
-    public GitRepositoryApi validateInfo() throws RepositoryException, ValidationException {
-        try {
-            Git
-                    .wrap(FileRepositoryBuilder.create(FileUtils.getTempDirectory()))
-                    .lsRemote()
-                    .setCredentialsProvider(configuration.toCredentialsProvider().orElse(null))
-                    .setRemote(Objects.toString(configuration.getRemoteUri().orElse(null), null))
-                    .call();
-
-            return this;
-        } catch (IOException e) {
-            throw RepositoryException.onOpen(e);
-        } catch (GitAPIException e) {
-            final String errorMessage = e.getMessage().toLowerCase();
-            if (errorMessage.contains("not authorized") || errorMessage.contains("authentication is required")) {
-                throw new ValidationException(
-                        ValidationResult.builder()
-                                .messages(new ValidationMessage(INVALID_CREDENTIALS, configuration.getRemoteUri().orElse(null)))
-                                .build()
-                );
-            } else if (errorMessage.contains("not found")) {
-                throw new ValidationException(
-                        ValidationResult.builder()
-                                .messages(new ValidationMessage(INVALID_URL, configuration.getRemoteUri().orElse(null)))
-                                .build()
-                );
-            } else {
-                throw new ValidationException(
-                        ValidationResult.builder()
-                                .messages(new ValidationMessage(ERROR_ACCESSING, configuration.getRemoteUri().orElse(null)))
-                                .build()
-                );
-            }
-        }
     }
 
     @Override
@@ -283,13 +245,38 @@ public class DefaultGitRepositoryApi extends BaseGitRepositoryApi {
     protected void doInit() throws GitAPIException {
         Git.cloneRepository()
                 .setCredentialsProvider(configuration.toCredentialsProvider().orElse(null))
-                .setURI(Objects.toString(configuration.getRemoteUri().orElse(null), null))
+                .setURI(Objects.toString(configuration.getRemoteUri(), null))
                 .setDirectory(configuration.getRepositoryLocation())
                 .setBranchesToClone(singletonList(configuration.getDefaultBranch()))
                 .setBranch(configuration.getDefaultBranch())
                 .call();
 
         checkout(configuration.getDefaultBranch());
+    }
+
+    @Override
+    protected ValidationResult doValidateInfo() {
+        try {
+            Git
+                    .wrap(FileRepositoryBuilder.create(configuration.getRepositoryLocation()))
+                    .lsRemote()
+                    .setCredentialsProvider(configuration.toCredentialsProvider().orElse(null))
+                    .setRemote(Objects.toString(configuration.getRemoteUri(), null))
+                    .call();
+
+            return ValidationResult.EMPTY;
+        } catch (IOException e) {
+            throw RepositoryException.onOpen(e);
+        } catch (GitAPIException e) {
+            final String errorMessage = e.getMessage().toLowerCase();
+            if (errorMessage.contains("not authorized") || errorMessage.contains("authentication is required")) {
+                return ValidationResult.singleMessage(new ValidationMessage(INVALID_CREDENTIALS, configuration.getRemoteUri()));
+            } else if (errorMessage.contains("not found")) {
+                return ValidationResult.singleMessage(new ValidationMessage(INVALID_URL, configuration.getRemoteUri()));
+            } else {
+                return ValidationResult.singleMessage(new ValidationMessage(ERROR_ACCESSING, configuration.getRemoteUri()));
+            }
+        }
     }
 
     @Override

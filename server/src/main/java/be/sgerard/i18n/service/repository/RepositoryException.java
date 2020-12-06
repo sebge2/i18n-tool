@@ -15,6 +15,10 @@ public class RepositoryException extends RuntimeException implements LocalizedMe
         return new RepositoryException("Error while opening the repository.", "RepositoryException.open.message", cause);
     }
 
+    public static RepositoryException onValidate(Throwable cause) {
+        return new RepositoryException("Error while validating the repository.", "RepositoryException.validate.message", cause);
+    }
+
     public static RepositoryException onUpdate(Throwable cause) {
         return new RepositoryException("Error while updating the local repository.", "RepositoryException.update.message", cause);
     }

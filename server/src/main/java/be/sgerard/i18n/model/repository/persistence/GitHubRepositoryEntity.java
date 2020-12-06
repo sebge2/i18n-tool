@@ -10,8 +10,6 @@ import org.springframework.data.annotation.PersistenceConstructor;
 import javax.validation.constraints.NotNull;
 import java.util.Optional;
 
-import static be.sgerard.i18n.support.GitHubUtils.createGitHubUrl;
-
 /**
  * Github {@link GitRepositoryEntity repository}.
  *
@@ -50,12 +48,12 @@ public class GitHubRepositoryEntity extends BaseGitRepositoryEntity {
     }
 
     public GitHubRepositoryEntity(String username, String repository) {
-        super(username + "/" + repository);
+        super(new GitHubRepositoryId(username, repository).toFullName());
 
         this.username = username;
         this.repository = repository;
 
-        setLocation(createGitHubUrl(username, repository).toString());
+        setLocation(getGlobalId().toURI().toString());
     }
 
     @Override
@@ -78,9 +76,9 @@ public class GitHubRepositoryEntity extends BaseGitRepositoryEntity {
     }
 
     /**
-     * Returns the {@link GitHubRepositoryId id} of this repository.
+     * Returns the {@link GitHubRepositoryId id} of this repository among all GitHub repositories.
      */
-    public GitHubRepositoryId getCompositeId(){
+    public GitHubRepositoryId getGlobalId(){
         return new GitHubRepositoryId(getUsername(), getRepository());
     }
 }

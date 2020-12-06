@@ -1,6 +1,7 @@
 package be.sgerard.i18n.model.security.auth;
 
-import be.sgerard.i18n.model.security.user.dto.UserDto;
+import be.sgerard.i18n.model.user.dto.UserDto;
+import be.sgerard.i18n.model.user.persistence.UserEntity;
 import be.sgerard.i18n.service.security.UserRole;
 import org.springframework.security.core.AuthenticatedPrincipal;
 import org.springframework.security.core.GrantedAuthority;
@@ -9,6 +10,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -30,7 +32,7 @@ public interface AuthenticatedUser extends AuthenticatedPrincipal, Serializable 
     String getId();
 
     /**
-     * Returns the id of the associated {@link be.sgerard.i18n.model.security.user.persistence.UserEntity user}.
+     * Returns the id of the associated {@link UserEntity user}.
      */
     String getUserId();
 
@@ -50,27 +52,42 @@ public interface AuthenticatedUser extends AuthenticatedPrincipal, Serializable 
     Collection<? extends GrantedAuthority> getAuthorities();
 
     /**
-     * Returns the {@link RepositoryCredentials credentials} to use for the specified repository.
+     * Returns the name to be displayed to the end-user (ideally composed of the first name, last name).
      */
-    <A extends RepositoryCredentials> Optional<A> getCredentials(String repository, Class<A> expectedType);
+    String getDisplayName();
 
     /**
-     * Returns all the available {@link RepositoryCredentials credentials}.
+     * Returns the user's email.
      */
-    Collection<RepositoryCredentials> getRepositoryCredentials();
+    String getEmail();
+
+    /**
+     * Returns the context associated to this user.
+     */
+    Map<String, Object> getContext();
+
+    /**
+     * Returns the value in the context associated to this user.
+     */
+    <V> Optional<V> getContextValue(String key, Class<V> valueType);
+
+    /**
+     * Updates the current context (if the key exists, it's overridden). The context will be persisted
+     * and easily accessible during call processing.
+     */
+    AuthenticatedUser updateContext(String key, Object value);
+
+    /**
+     * Bulk update of the user's context.
+     */
+    default AuthenticatedUser updateContext(Map<String, Object> context) {
+        context.forEach(this::updateContext);
+        return this;
+    }
 
     /**
      * Updates {@link #getRoles() roles}.
      */
     AuthenticatedUser updateRoles(List<UserRole> sessionRoles);
 
-    /**
-     * Updates credentials of a repository.
-     */
-    AuthenticatedUser updateRepositoryCredentials(RepositoryCredentials repositoryCredentials);
-
-    /**
-     * Removes credentials of a repository.
-     */
-    AuthenticatedUser removeRepositoryCredentials(String repositoryId);
 }

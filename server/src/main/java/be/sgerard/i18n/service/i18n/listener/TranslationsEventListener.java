@@ -1,17 +1,17 @@
 package be.sgerard.i18n.service.i18n.listener;
 
 import be.sgerard.i18n.model.i18n.dto.TranslationDto;
-import be.sgerard.i18n.model.i18n.dto.TranslationUpdateDto;
 import be.sgerard.i18n.model.i18n.dto.TranslationsUpdateEventDto;
 import be.sgerard.i18n.model.i18n.persistence.BundleKeyEntity;
+import be.sgerard.i18n.model.i18n.persistence.BundleKeyTranslationEntity;
 import be.sgerard.i18n.service.event.EventService;
 import be.sgerard.i18n.service.security.auth.AuthenticationUserManager;
 import be.sgerard.i18n.service.user.UserManager;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
-import java.util.stream.IntStream;
 
 import static be.sgerard.i18n.model.event.EventType.UPDATED_TRANSLATIONS;
 import static java.util.stream.Collectors.toList;
@@ -37,7 +37,7 @@ public class TranslationsEventListener implements TranslationsListener {
     }
 
     @Override
-    public Mono<Void> afterUpdate(List<BundleKeyEntity> bundleKeys, List<TranslationUpdateDto> updates) {
+    public Mono<Void> afterUpdate(List<Pair<BundleKeyTranslationEntity, BundleKeyEntity>> updates) {
         return authenticationManager
                 .getCurrentUserOrDie()
                 .flatMap(authenticatedUser -> userManager.findByIdOrDie(authenticatedUser.getUserId()))
@@ -48,8 +48,8 @@ public class TranslationsEventListener implements TranslationsListener {
                                         .userId(currentUser.getId())
                                         .userDisplayName(currentUser.getDisplayName())
                                         .translations(
-                                                IntStream.range(0, updates.size())
-                                                        .mapToObj(i -> bundleKeys.get(i).getTranslationOrCreate(updates.get(i).getLocaleId()))
+                                                updates.stream()
+                                                        .map(Pair::getLeft)
                                                         .map(translation -> TranslationDto.builder(translation).build())
                                                         .collect(toList())
                                         )

@@ -3,7 +3,7 @@ package be.sgerard.i18n.controller;
 import be.sgerard.i18n.model.i18n.dto.TranslationLocaleCreationDto;
 import be.sgerard.i18n.model.i18n.dto.TranslationLocaleDto;
 import be.sgerard.i18n.service.BadRequestException;
-import be.sgerard.i18n.service.i18n.TranslationLocaleManager;
+import be.sgerard.i18n.service.locale.TranslationLocaleManager;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;

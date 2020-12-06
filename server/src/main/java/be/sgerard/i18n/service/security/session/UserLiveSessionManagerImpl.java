@@ -1,7 +1,7 @@
 package be.sgerard.i18n.service.security.session;
 
 import be.sgerard.i18n.model.security.session.persistence.UserLiveSessionEntity;
-import be.sgerard.i18n.model.security.user.persistence.UserEntity;
+import be.sgerard.i18n.model.user.persistence.UserEntity;
 import be.sgerard.i18n.repository.security.UserLiveSessionRepository;
 import be.sgerard.i18n.service.ResourceNotFoundException;
 import be.sgerard.i18n.service.security.auth.AuthenticationUserManager;

@@ -3,7 +3,7 @@ package be.sgerard.i18n.service.security.auth.external;
 import be.sgerard.i18n.configuration.AppProperties;
 import be.sgerard.i18n.model.security.auth.external.ExternalAuthSystem;
 import be.sgerard.i18n.model.security.auth.external.RawExternalUser;
-import be.sgerard.i18n.model.security.user.ExternalUser;
+import be.sgerard.i18n.model.user.ExternalUser;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 

@@ -1,7 +1,6 @@
 package be.sgerard.i18n.model.security.auth.external;
 
 import be.sgerard.i18n.model.security.auth.AuthenticatedUser;
-import be.sgerard.i18n.model.security.auth.RepositoryCredentials;
 import be.sgerard.i18n.service.security.UserRole;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
@@ -10,8 +9,7 @@ import java.util.*;
 
 import static be.sgerard.i18n.service.security.UserRole.mapToAuthorities;
 import static java.util.Collections.singletonMap;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
+import static java.util.Collections.unmodifiableMap;
 
 /**
  * {@link AuthenticatedUser Authenticated external user}.
@@ -31,23 +29,29 @@ public final class ExternalAuthenticatedUser extends DefaultOAuth2User implement
     private final String userId;
     private final ExternalUserToken token;
     private final Set<UserRole> roles;
+    private final String displayName;
+    private final String email;
     private final Collection<GrantedAuthority> additionalAuthorities;
-    private final Map<String, RepositoryCredentials> repositoryCredentials;
+    private final Map<String, Object> context;
 
     public ExternalAuthenticatedUser(String id,
                                      String userId,
                                      ExternalUserToken token,
                                      Collection<UserRole> roles,
+                                     String displayName,
+                                     String email,
                                      Collection<GrantedAuthority> additionalAuthorities,
-                                     Collection<RepositoryCredentials> repositoryCredentials) {
+                                     Map<String, Object> context) {
         super(mapToAuthorities(roles, additionalAuthorities), singletonMap(NAME_ATTRIBUTE, userId), NAME_ATTRIBUTE);
 
         this.id = id;
         this.userId = userId;
         this.token = token;
         this.roles = Set.copyOf(roles);
+        this.displayName = displayName;
+        this.email = email;
         this.additionalAuthorities = additionalAuthorities;
-        this.repositoryCredentials = repositoryCredentials.stream().collect(toMap(RepositoryCredentials::getRepository, auth -> auth));
+        this.context = new HashMap<>(context);
     }
 
     @Override
@@ -66,14 +70,13 @@ public final class ExternalAuthenticatedUser extends DefaultOAuth2User implement
     }
 
     @Override
-    public <A extends RepositoryCredentials> Optional<A> getCredentials(String repository, Class<A> expectedType) {
-        return Optional.ofNullable(repositoryCredentials.get(repository))
-                .map(expectedType::cast);
+    public String getDisplayName() {
+        return displayName;
     }
 
     @Override
-    public Collection<RepositoryCredentials> getRepositoryCredentials() {
-        return repositoryCredentials.values();
+    public String getEmail() {
+        return email;
     }
 
     @Override
@@ -83,35 +86,39 @@ public final class ExternalAuthenticatedUser extends DefaultOAuth2User implement
                 userId,
                 token,
                 sessionRoles,
+                displayName,
+                email,
                 additionalAuthorities,
-                repositoryCredentials.values()
+                context
         );
     }
 
     @Override
-    public AuthenticatedUser updateRepositoryCredentials(RepositoryCredentials repositoryCredentials) {
-        final Set<RepositoryCredentials> repositoriesCredentials = new HashSet<>(this.repositoryCredentials.values());
-        repositoriesCredentials.add(repositoryCredentials);
+    public Map<String, Object> getContext() {
+        return unmodifiableMap(context);
+    }
+
+    @Override
+    public <V> Optional<V> getContextValue(String key, Class<V> valueType) {
+        return Optional
+                .ofNullable(context.get(key))
+                .map(valueType::cast);
+    }
+
+    @Override
+    public AuthenticatedUser updateContext(String key, Object value) {
+        final Map<String, Object> updatedContext = new HashMap<>(context);
+        updatedContext.put(key, value);
 
         return new ExternalAuthenticatedUser(
                 id,
                 userId,
                 token,
                 roles,
+                displayName,
+                email,
                 additionalAuthorities,
-                repositoriesCredentials
-        );
-    }
-
-    @Override
-    public AuthenticatedUser removeRepositoryCredentials(String repositoryId) {
-        return new ExternalAuthenticatedUser(
-                id,
-                userId,
-                token,
-                roles,
-                additionalAuthorities,
-                repositoryCredentials.values().stream().filter(cred -> !Objects.equals(repositoryId, cred.getRepository())).collect(toList())
+                updatedContext
         );
     }
 

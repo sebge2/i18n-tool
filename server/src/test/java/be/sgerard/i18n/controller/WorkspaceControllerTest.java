@@ -6,13 +6,14 @@ import be.sgerard.i18n.model.workspace.WorkspaceStatus;
 import be.sgerard.i18n.model.workspace.dto.WorkspaceDto;
 import be.sgerard.i18n.model.workspace.dto.WorkspacesPublishRequestDto;
 import be.sgerard.test.i18n.support.CleanupDatabase;
-import be.sgerard.test.i18n.support.WithJaneDoeAdminUser;
+import be.sgerard.test.i18n.support.auth.internal.WithJaneDoeAdminUser;
 import org.junit.jupiter.api.*;
 
 import java.util.Locale;
 
-import static be.sgerard.test.i18n.model.GitRepositoryCreationDtoTestUtils.i18nToolLocalRepositoryCreationDto;
-import static be.sgerard.test.i18n.model.GitRepositoryCreationDtoTestUtils.i18nToolRepositoryCreationDto;
+import static be.sgerard.test.i18n.model.GitRepositoryCreationDtoTestUtils.i18nToolGitRepositoryCreationDto;
+import static be.sgerard.test.i18n.model.GitRepositoryCreationDtoTestUtils.i18nToolGitHubRepositoryCreationDto;
+import static be.sgerard.test.i18n.model.RepositoryEntityTestUtils.*;
 import static be.sgerard.test.i18n.model.TranslationLocaleCreationDtoTestUtils.enLocaleCreationDto;
 import static be.sgerard.test.i18n.model.TranslationLocaleCreationDtoTestUtils.frLocaleCreationDto;
 import static java.util.Arrays.asList;
@@ -25,19 +26,23 @@ import static org.hamcrest.Matchers.*;
 public class WorkspaceControllerTest extends AbstractControllerTest {
 
     @BeforeAll
-    public void setupRepo() throws Exception {
-        gitRepo
-                .createMockFor(i18nToolRepositoryCreationDto())
-                .allowAnonymousRead()
+    public void setupRepo() {
+        remoteRepository
+                .gitHub()
+                .create(i18nToolGitHubRepositoryCreationDto(), "myGitHubRepo")
+                .accessToken(I18N_TOOL_GITHUB_ACCESS_TOKEN)
                 .onCurrentGitProject()
-                .create()
+                .start()
+                .manageRemoteBranches()
                 .createBranches("release/2020.05", "release/2020.06");
 
-        gitRepo
-                .createMockFor(i18nToolLocalRepositoryCreationDto())
-                .allowAnonymousRead()
+        remoteRepository
+                .git()
+                .create(i18nToolGitRepositoryCreationDto(), "myGitRepo")
+                .addUser(I18N_TOOL_GIT_REPO_USER, I18N_TOOL_GIT_REPO_USER_PASSWORD)
                 .onCurrentGitProject()
-                .create()
+                .start()
+                .manageRemoteBranches()
                 .createBranches("release/2020.05", "release/2020.06");
     }
 
@@ -50,7 +55,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
 
     @AfterAll
     public void destroy() {
-        gitRepo.destroyAll();
+        remoteRepository.stopAll();
     }
 
     @Test
@@ -58,7 +63,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
     @WithJaneDoeAdminUser
     public void findAll() {
         this.repository
-                .create(i18nToolLocalRepositoryCreationDto())
+                .create(i18nToolGitRepositoryCreationDto())
                 .initialize()
                 .workspaces();
 
@@ -76,7 +81,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
     @WithJaneDoeAdminUser
     public void findAllOfRepository() {
         final RepositoryDto repository = this.repository
-                .create(i18nToolLocalRepositoryCreationDto())
+                .create(i18nToolGitRepositoryCreationDto())
                 .initialize()
                 .workspaces()
                 .getRepo();
@@ -95,7 +100,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
     @WithJaneDoeAdminUser
     public void findById() {
         final WorkspaceDto masterWorkspace = repository
-                .create(i18nToolRepositoryCreationDto())
+                .create(i18nToolGitHubRepositoryCreationDto())
                 .hint("repo")
                 .initialize()
                 .workspaces()
@@ -121,7 +126,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
     @WithJaneDoeAdminUser
     public void findWorkspaceBundleFiles() {
         final WorkspaceDto masterWorkspace = repository
-                .create(i18nToolRepositoryCreationDto())
+                .create(i18nToolGitHubRepositoryCreationDto())
                 .hint("repo")
                 .initialize()
                 .workspaces()
@@ -150,10 +155,10 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
         @CleanupDatabase
         @WithJaneDoeAdminUser
         public void synchronizeBranchAdded() {
-            final GitHubRepositoryCreationDto creationDto = i18nToolRepositoryCreationDto();
+            final GitHubRepositoryCreationDto creationDto = i18nToolGitHubRepositoryCreationDto();
             final GitHubRepositoryDto repository = this.repository.create(creationDto, GitHubRepositoryDto.class).initialize().get();
 
-            gitRepo.getRepo(creationDto).createBranches("release/2020.08");
+            remoteRepository.gitHub().forHint("myGitHubRepo").manageRemoteBranches().createBranches("release/2020.08");
 
             try {
                 webClient
@@ -172,7 +177,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                         .jsonPath("$.[3].branch").isEqualTo("release/2020.08")
                         .jsonPath("$.[3].status").isEqualTo("NOT_INITIALIZED");
             } finally {
-                gitRepo.getRepo(creationDto).deleteBranches("release/2020.08");
+                remoteRepository.gitHub().forHint("myGitHubRepo").manageRemoteBranches().deleteBranches("release/2020.08");
             }
         }
 
@@ -180,11 +185,11 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
         @CleanupDatabase
         @WithJaneDoeAdminUser
         public void synchronizeBranchRemoved() {
-            final GitHubRepositoryCreationDto creationDto = i18nToolRepositoryCreationDto();
+            final GitHubRepositoryCreationDto creationDto = i18nToolGitHubRepositoryCreationDto();
             final GitHubRepositoryDto repository = this.repository.create(creationDto, GitHubRepositoryDto.class).initialize().get();
 
             try {
-                gitRepo.getRepo(creationDto).deleteBranches("release/2020.06");
+                remoteRepository.gitHub().forHint("myGitHubRepo").manageRemoteBranches().deleteBranches("release/2020.06");
 
                 webClient
                         .post()
@@ -198,7 +203,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                         .jsonPath("$.[1].branch").isEqualTo("release/2020.05")
                         .jsonPath("$.[1].status").isEqualTo("NOT_INITIALIZED");
             } finally {
-                gitRepo.getRepo(creationDto).createBranches("release/2020.06");
+                remoteRepository.gitHub().forHint("myGitHubRepo").manageRemoteBranches().createBranches("release/2020.06");
             }
         }
 
@@ -206,10 +211,10 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
         @CleanupDatabase
         @WithJaneDoeAdminUser
         public void synchronizeInReviewBranchDeleted() {
-            final GitHubRepositoryCreationDto creationDto = i18nToolRepositoryCreationDto();
+            final GitHubRepositoryCreationDto creationDto = i18nToolGitHubRepositoryCreationDto();
 
             try {
-                gitRepo.getRepo(creationDto).createBranches("release/2020.08");
+                remoteRepository.gitHub().forHint("myGitHubRepo").manageRemoteBranches().createBranches("release/2020.08");
 
                 this.repository.create(creationDto, GitHubRepositoryDto.class).hint("repo")
                         .initialize()
@@ -218,7 +223,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                         .initialize()
                         .publish("test");
 
-                gitRepo.getRepo(creationDto).deleteBranches("release/2020.08");
+                remoteRepository.gitHub().forHint("myGitHubRepo").manageRemoteBranches().deleteBranches("release/2020.08");
 
                 webClient
                         .post()
@@ -234,7 +239,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                         .jsonPath("$.[2].branch").isEqualTo("release/2020.06")
                         .jsonPath("$.[2].status").isEqualTo("NOT_INITIALIZED");
             } finally {
-                gitRepo.getRepo(creationDto).deleteBranches("release/2020.08");
+                remoteRepository.gitHub().forHint("myGitHubRepo").manageRemoteBranches().deleteBranches("release/2020.08");
             }
         }
 
@@ -242,10 +247,10 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
         @CleanupDatabase
         @WithJaneDoeAdminUser
         public void synchronizeInReviewStillInReview() {
-            final GitHubRepositoryCreationDto creationDto = i18nToolRepositoryCreationDto();
+            final GitHubRepositoryCreationDto creationDto = i18nToolGitHubRepositoryCreationDto();
 
             try {
-                gitRepo.getRepo(creationDto).createBranches("release/2020.08");
+                remoteRepository.gitHub().forHint("myGitHubRepo").manageRemoteBranches().createBranches("release/2020.08");
 
                 this.repository.create(creationDto, GitHubRepositoryDto.class).hint("repo")
                         .initialize()
@@ -270,7 +275,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                         .jsonPath("$.[3].branch").isEqualTo("release/2020.08")
                         .jsonPath("$.[3].status").isEqualTo("IN_REVIEW");
             } finally {
-                gitRepo.getRepo(creationDto).deleteBranches("release/2020.08");
+                remoteRepository.gitHub().forHint("myGitHubRepo").manageRemoteBranches().deleteBranches("release/2020.08");
             }
         }
 
@@ -278,10 +283,10 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
         @CleanupDatabase
         @WithJaneDoeAdminUser
         public void synchronizeInReviewReviewFinished() {
-            final GitHubRepositoryCreationDto creationDto = i18nToolRepositoryCreationDto();
+            final GitHubRepositoryCreationDto creationDto = i18nToolGitHubRepositoryCreationDto();
 
             try {
-                gitRepo.getRepo(creationDto).createBranches("release/2020.08");
+                remoteRepository.gitHub().forHint("myGitHubRepo").manageRemoteBranches().createBranches("release/2020.08");
 
                 repository.create(creationDto, GitHubRepositoryDto.class).hint("repo")
                         .initialize()
@@ -296,7 +301,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                 repository.forHint("repo").initialize().workspaces()
                         .workspaceForBranch("release/2020.08").initialize().publish("test");
 
-                repository.forHint("repo").gitHub().findPullRequestForBranchOrDie("release/2020.08").close();
+                remoteRepository.gitHub().forHint("myGitHubRepo").managePullRequests().forTargetBranchOrDie("release/2020.08").close();
 
                 webClient
                         .post()
@@ -319,7 +324,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                         .translations()
                         .expectNoModification(); // the modification has been published
             } finally {
-                gitRepo.getRepo(creationDto).deleteBranches("release/2020.08");
+                remoteRepository.gitHub().forHint("myGitHubRepo").manageRemoteBranches().deleteBranches("release/2020.08");
             }
         }
 
@@ -327,10 +332,10 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
         @CleanupDatabase
         @WithJaneDoeAdminUser
         public void synchronizeInReviewReviewFinishedBranchDeleted() {
-            final GitHubRepositoryCreationDto creationDto = i18nToolRepositoryCreationDto();
+            final GitHubRepositoryCreationDto creationDto = i18nToolGitHubRepositoryCreationDto();
 
             try {
-                gitRepo.getRepo(creationDto).createBranches("release/2020.08");
+                remoteRepository.gitHub().forHint("myGitHubRepo").manageRemoteBranches().createBranches("release/2020.08");
 
                 repository.create(creationDto, GitHubRepositoryDto.class).hint("repo")
                         .initialize()
@@ -339,8 +344,9 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                         .initialize()
                         .publish("test");
 
-                repository.forHint("repo").gitHub().findPullRequestForBranchOrDie("release/2020.08").close();
-                gitRepo.getRepo(creationDto).deleteBranches("release/2020.08");
+                remoteRepository.gitHub().forHint("myGitHubRepo")
+                        .managePullRequests().forTargetBranchOrDie("release/2020.08").close().and().and()
+                        .manageRemoteBranches().deleteBranches("release/2020.08");
 
                 webClient
                         .post()
@@ -356,7 +362,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                         .jsonPath("$.[2].branch").isEqualTo("release/2020.06")
                         .jsonPath("$.[2].status").isEqualTo("NOT_INITIALIZED");
             } finally {
-                gitRepo.getRepo(creationDto).deleteBranches("release/2020.08");
+                remoteRepository.gitHub().forHint("myGitHubRepo").manageRemoteBranches().deleteBranches("release/2020.08");
             }
         }
 
@@ -364,10 +370,10 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
         @CleanupDatabase
         @WithJaneDoeAdminUser
         public void synchronizeInitializedNewTranslations() {
-            final GitHubRepositoryCreationDto creationDto = i18nToolRepositoryCreationDto();
+            final GitHubRepositoryCreationDto creationDto = i18nToolGitHubRepositoryCreationDto();
 
             try {
-                gitRepo.getRepo(creationDto).createBranches("release/2020.08");
+                remoteRepository.gitHub().forHint("myGitHubRepo").manageRemoteBranches().createBranches("release/2020.08");
 
                 final String workspace = repository.create(creationDto, GitHubRepositoryDto.class).hint("repo")
                         .initialize()
@@ -376,7 +382,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                         .initialize().get().getId();
 
                 // once initialized, the remote content is updated, new translation added
-                gitRepo.getRepo(creationDto)
+                remoteRepository.gitHub().forHint("myGitHubRepo").manageRemoteBranches()
                         .branch("release/2020.08")
                         .file("/server/src/main/resources/i18n/validation_en.properties")
                         .writeContent("key-test.synchronizeInitializedNewTranslations=a key written during a test");
@@ -394,7 +400,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                         .translations()
                         .expectTranslation("key-test.synchronizeInitializedNewTranslations", Locale.ENGLISH, "a key written during a test");
             } finally {
-                gitRepo.getRepo(creationDto).deleteBranches("release/2020.08");
+                remoteRepository.gitHub().forHint("myGitHubRepo").manageRemoteBranches().deleteBranches("release/2020.08");
             }
         }
 
@@ -402,10 +408,10 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
         @CleanupDatabase
         @WithJaneDoeAdminUser
         public void synchronizeInitializedUpdatedTranslations() {
-            final GitHubRepositoryCreationDto creationDto = i18nToolRepositoryCreationDto();
+            final GitHubRepositoryCreationDto creationDto = i18nToolGitHubRepositoryCreationDto();
 
             try {
-                gitRepo.getRepo(creationDto).createBranches("release/2020.08");
+                remoteRepository.gitHub().forHint("myGitHubRepo").manageRemoteBranches().createBranches("release/2020.08");
 
                 final String workspace = repository.create(creationDto, GitHubRepositoryDto.class).hint("repo")
                         .initialize()
@@ -414,7 +420,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                         .initialize().get().getId();
 
                 // once initialized, the remote content is updated, an existing translation is updated
-                gitRepo.getRepo(creationDto)
+                remoteRepository.gitHub().forHint("myGitHubRepo").manageRemoteBranches()
                         .branch("release/2020.08")
                         .file("/server/src/main/resources/i18n/validation_en.properties")
                         .writeContent("validation.repository.name-not-unique=my updated value");
@@ -432,7 +438,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                         .translations()
                         .expectTranslation("validation.repository.name-not-unique", Locale.ENGLISH, "my updated value");
             } finally {
-                gitRepo.getRepo(creationDto).deleteBranches("release/2020.08");
+                remoteRepository.gitHub().forHint("myGitHubRepo").manageRemoteBranches().deleteBranches("release/2020.08");
             }
         }
 
@@ -440,10 +446,10 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
         @CleanupDatabase
         @WithJaneDoeAdminUser
         public void synchronizeInitializedLocalUpdatePreserved() {
-            final GitHubRepositoryCreationDto creationDto = i18nToolRepositoryCreationDto();
+            final GitHubRepositoryCreationDto creationDto = i18nToolGitHubRepositoryCreationDto();
 
             try {
-                gitRepo.getRepo(creationDto).createBranches("release/2020.08");
+                remoteRepository.gitHub().forHint("myGitHubRepo").manageRemoteBranches().createBranches("release/2020.08");
 
                 final String workspace = repository.create(creationDto, GitHubRepositoryDto.class).hint("repo")
                         .initialize()
@@ -452,7 +458,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                         .initialize().get().getId();
 
                 // once initialized, the remote content is updated, an existing translation is updated
-                gitRepo.getRepo(creationDto)
+                remoteRepository.gitHub().forHint("myGitHubRepo").manageRemoteBranches()
                         .branch("release/2020.08")
                         .file("/server/src/main/resources/i18n/validation_en.properties")
                         .writeContent("validation.repository.name-not-unique=my updated value remote");
@@ -476,7 +482,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                         .translations()
                         .expectTranslation("validation.repository.name-not-unique", Locale.ENGLISH, "my updated value local");
             } finally {
-                gitRepo.getRepo(creationDto).deleteBranches("release/2020.08");
+                remoteRepository.gitHub().forHint("myGitHubRepo").manageRemoteBranches().deleteBranches("release/2020.08");
             }
         }
 
@@ -484,10 +490,10 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
         @CleanupDatabase
         @WithJaneDoeAdminUser
         public void synchronizeInitializedDeletedTranslations() {
-            final GitHubRepositoryCreationDto creationDto = i18nToolRepositoryCreationDto();
+            final GitHubRepositoryCreationDto creationDto = i18nToolGitHubRepositoryCreationDto();
 
             try {
-                gitRepo.getRepo(creationDto).createBranches("release/2020.08");
+                remoteRepository.gitHub().forHint("myGitHubRepo").manageRemoteBranches().createBranches("release/2020.08");
 
                 final String workspace = repository.create(creationDto, GitHubRepositoryDto.class).hint("repo")
                         .initialize()
@@ -496,7 +502,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                         .initialize().get().getId();
 
                 // once initialized, the remote content is updated, an existing translation is updated
-                gitRepo.getRepo(creationDto)
+                remoteRepository.gitHub().forHint("myGitHubRepo").manageRemoteBranches()
                         .branch("release/2020.08")
                         .file("/server/src/main/resources/i18n/validation_en.properties").writeContent("").and()
                         .file("/server/src/main/resources/i18n/validation_fr.properties").writeContent("");
@@ -514,7 +520,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                         .translations()
                         .unexpect("validation.repository.name-not-unique");
             } finally {
-                gitRepo.getRepo(creationDto).deleteBranches("release/2020.08");
+                remoteRepository.gitHub().forHint("myGitHubRepo").manageRemoteBranches().deleteBranches("release/2020.08");
             }
         }
 
@@ -522,10 +528,10 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
         @CleanupDatabase
         @WithJaneDoeAdminUser
         public void synchronizeInitializedDeletedBundleFile() {
-            final GitHubRepositoryCreationDto creationDto = i18nToolRepositoryCreationDto();
+            final GitHubRepositoryCreationDto creationDto = i18nToolGitHubRepositoryCreationDto();
 
             try {
-                gitRepo.getRepo(creationDto).createBranches("release/2020.08");
+                remoteRepository.gitHub().forHint("myGitHubRepo").manageRemoteBranches().createBranches("release/2020.08");
 
                 final String workspace = repository.create(creationDto, GitHubRepositoryDto.class).hint("repo")
                         .initialize()
@@ -534,7 +540,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                         .initialize().get().getId();
 
                 // once initialized, the remote content is updated, a bundle file is removed
-                gitRepo.getRepo(creationDto)
+                remoteRepository.gitHub().forHint("myGitHubRepo").manageRemoteBranches()
                         .branch("release/2020.08")
                         .file("/server/src/main/resources/i18n/validation_en.properties").remove().and()
                         .file("/server/src/main/resources/i18n/validation_fr.properties").remove();
@@ -552,7 +558,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                         .translations()
                         .unexpect("validation.repository.name-not-unique");
             } finally {
-                gitRepo.getRepo(creationDto).deleteBranches("release/2020.08");
+                remoteRepository.gitHub().forHint("myGitHubRepo").manageRemoteBranches().deleteBranches("release/2020.08");
             }
         }
 
@@ -561,7 +567,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
         @WithJaneDoeAdminUser
         public void initialize() {
             final WorkspaceDto masterWorkspace = repository
-                    .create(i18nToolRepositoryCreationDto())
+                    .create(i18nToolGitHubRepositoryCreationDto())
                     .hint("my-repo")
                     .initialize()
                     .workspaces()
@@ -595,7 +601,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
         @WithJaneDoeAdminUser
         public void publish() {
             final WorkspaceDto masterWorkspace = repository
-                    .create(i18nToolRepositoryCreationDto())
+                    .create(i18nToolGitHubRepositoryCreationDto())
                     .hint("my-repo")
                     .initialize()
                     .workspaces()
@@ -603,7 +609,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                     .initialize()
                     .get();
 
-            repository.forHint("my-repo").gitHub().resetPullRequests();
+            remoteRepository.gitHub().forHint("myGitHubRepo").managePullRequests().closeAll();
 
             webClient
                     .post()
@@ -614,12 +620,11 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                     .jsonPath("$.branch").isEqualTo("master")
                     .jsonPath("$.status").isEqualTo(WorkspaceStatus.IN_REVIEW.name());
 
-            final String pullRequestBranch = repository.forHint("my-repo").gitHub()
-                    .findPullRequestForBranchOrDie("master")
+            final String pullRequestBranch = remoteRepository.gitHub().forHint("myGitHubRepo").managePullRequests()
+                    .forTargetBranchOrDie("master")
                     .get().getCurrentBranch();
 
-            gitRepo
-                    .getRepo(i18nToolLocalRepositoryCreationDto())
+            remoteRepository.gitHub().forHint("myGitHubRepo").manageRemoteBranches()
                     .branch(pullRequestBranch)
                     .file("/server/src/main/resources/i18n/validation_en.properties")
 //                    .assertContains("validation.repository.name-not-unique=my updated value") TODO fix this
@@ -631,7 +636,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
         @WithJaneDoeAdminUser
         public void publishAll() {
             repository
-                    .create(i18nToolRepositoryCreationDto())
+                    .create(i18nToolGitHubRepositoryCreationDto())
                     .hint("my-repo")
                     .initialize();
 
@@ -662,7 +667,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
         @WithJaneDoeAdminUser
         public void publishAllAlreadyPublished() {
             repository
-                    .create(i18nToolRepositoryCreationDto())
+                    .create(i18nToolGitHubRepositoryCreationDto())
                     .hint("my-repo")
                     .initialize();
 
@@ -692,7 +697,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
         @WithJaneDoeAdminUser
         public void deleteInitialized() {
             final WorkspaceDto masterWorkspace = repository
-                    .create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class)
+                    .create(i18nToolGitHubRepositoryCreationDto(), GitHubRepositoryDto.class)
                     .initialize()
                     .workspaces()
                     .workspaceForBranch("master")
@@ -711,7 +716,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
         @WithJaneDoeAdminUser
         public void deletePublished() {
             final WorkspaceDto masterWorkspace = repository
-                    .create(i18nToolRepositoryCreationDto(), GitHubRepositoryDto.class)
+                    .create(i18nToolGitHubRepositoryCreationDto(), GitHubRepositoryDto.class)
                     .initialize()
                     .workspaces()
                     .workspaceForBranch("master")
@@ -735,10 +740,10 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
         @CleanupDatabase
         @WithJaneDoeAdminUser
         public void synchronizeBranchAdded() {
-            final GitRepositoryCreationDto creationDto = i18nToolLocalRepositoryCreationDto();
+            final GitRepositoryCreationDto creationDto = i18nToolGitRepositoryCreationDto();
             final GitRepositoryDto repository = this.repository.create(creationDto, GitRepositoryDto.class).initialize().get();
 
-            gitRepo.getRepo(creationDto).createBranches("release/2020.08");
+            remoteRepository.git().forHint("myGitRepo").manageRemoteBranches().createBranches("release/2020.08");
 
             try {
                 webClient
@@ -757,7 +762,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                         .jsonPath("$.[3].branch").isEqualTo("release/2020.08")
                         .jsonPath("$.[3].status").isEqualTo("NOT_INITIALIZED");
             } finally {
-                gitRepo.getRepo(creationDto).deleteBranches("release/2020.08");
+                remoteRepository.git().forHint("myGitRepo").manageRemoteBranches().deleteBranches("release/2020.08");
             }
         }
 
@@ -765,11 +770,11 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
         @CleanupDatabase
         @WithJaneDoeAdminUser
         public void synchronizeBranchRemoved() {
-            final GitRepositoryCreationDto creationDto = i18nToolLocalRepositoryCreationDto();
+            final GitRepositoryCreationDto creationDto = i18nToolGitRepositoryCreationDto();
             final GitRepositoryDto repository = this.repository.create(creationDto, GitRepositoryDto.class).initialize().get();
 
             try {
-                gitRepo.getRepo(creationDto).deleteBranches("release/2020.06");
+                remoteRepository.git().forHint("myGitRepo").manageRemoteBranches().deleteBranches("release/2020.06");
 
                 webClient
                         .post()
@@ -783,7 +788,203 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                         .jsonPath("$.[1].branch").isEqualTo("release/2020.05")
                         .jsonPath("$.[1].status").isEqualTo("NOT_INITIALIZED");
             } finally {
-                gitRepo.getRepo(creationDto).createBranches("release/2020.06");
+                remoteRepository.git().forHint("myGitRepo").manageRemoteBranches().createBranches("release/2020.06");
+            }
+        }
+
+        @Test
+        @CleanupDatabase
+        @WithJaneDoeAdminUser
+        public void synchronizeInitializedNewTranslations() {
+            final GitRepositoryCreationDto creationDto = i18nToolGitRepositoryCreationDto();
+
+            try {
+                remoteRepository.git().forHint("myGitRepo").manageRemoteBranches().createBranches("release/2020.08");
+
+                final String workspace = repository.create(creationDto, GitRepositoryDto.class).hint("repo")
+                        .initialize()
+                        .workspaces()
+                        .workspaceForBranch("release/2020.08")
+                        .initialize().get().getId();
+
+                // once initialized, the remote content is updated, new translation added
+                remoteRepository.git().forHint("myGitRepo").manageRemoteBranches()
+                        .branch("release/2020.08")
+                        .file("/server/src/main/resources/i18n/validation_en.properties")
+                        .writeContent("key-test.synchronizeInitializedNewTranslations=a key written during a test");
+
+                webClient
+                        .post()
+                        .uri("/api/repository/workspace/{id}/do?action=SYNCHRONIZE", workspace)
+                        .exchange()
+                        .expectStatus().isOk()
+                        .expectBody();
+
+                translations
+                        .forRepositoryHint("repo")
+                        .forWorkspaceName("release/2020.08")
+                        .translations()
+                        .expectTranslation("key-test.synchronizeInitializedNewTranslations", Locale.ENGLISH, "a key written during a test");
+            } finally {
+                remoteRepository.git().forHint("myGitRepo").manageRemoteBranches().deleteBranches("release/2020.08");
+            }
+        }
+
+        @Test
+        @CleanupDatabase
+        @WithJaneDoeAdminUser
+        public void synchronizeInitializedUpdatedTranslations() {
+            final GitRepositoryCreationDto creationDto = i18nToolGitRepositoryCreationDto();
+
+            try {
+                remoteRepository.git().forHint("myGitRepo").manageRemoteBranches().createBranches("release/2020.08");
+
+                final String workspace = repository.create(creationDto, GitRepositoryDto.class).hint("repo")
+                        .initialize()
+                        .workspaces()
+                        .workspaceForBranch("release/2020.08")
+                        .initialize().get().getId();
+
+                // once initialized, the remote content is updated, an existing translation is updated
+                remoteRepository.git().forHint("myGitRepo").manageRemoteBranches()
+                        .branch("release/2020.08")
+                        .file("/server/src/main/resources/i18n/validation_en.properties")
+                        .writeContent("validation.repository.name-not-unique=my updated value");
+
+                webClient
+                        .post()
+                        .uri("/api/repository/workspace/{id}/do?action=SYNCHRONIZE", workspace)
+                        .exchange()
+                        .expectStatus().isOk()
+                        .expectBody();
+
+                translations
+                        .forRepositoryHint("repo")
+                        .forWorkspaceName("release/2020.08")
+                        .translations()
+                        .expectTranslation("validation.repository.name-not-unique", Locale.ENGLISH, "my updated value");
+            } finally {
+                remoteRepository.git().forHint("myGitRepo").manageRemoteBranches().deleteBranches("release/2020.08");
+            }
+        }
+
+        @Test
+        @CleanupDatabase
+        @WithJaneDoeAdminUser
+        public void synchronizeInitializedLocalUpdatePreserved() {
+            final GitRepositoryCreationDto creationDto = i18nToolGitRepositoryCreationDto();
+
+            try {
+                remoteRepository.git().forHint("myGitRepo").manageRemoteBranches().createBranches("release/2020.08");
+
+                final String workspace = repository.create(creationDto, GitRepositoryDto.class).hint("repo")
+                        .initialize()
+                        .workspaces()
+                        .workspaceForBranch("release/2020.08")
+                        .initialize().get().getId();
+
+                // once initialized, the remote content is updated, an existing translation is updated
+                remoteRepository.git().forHint("myGitRepo").manageRemoteBranches()
+                        .branch("release/2020.08")
+                        .file("/server/src/main/resources/i18n/validation_en.properties")
+                        .writeContent("validation.repository.name-not-unique=my updated value remote");
+
+                // once initialized, the local content is updated, an existing translation is updated
+                translations
+                        .forRepositoryHint("repo")
+                        .forWorkspaceName("release/2020.08")
+                        .updateTranslation("validation.repository.name-not-unique", Locale.ENGLISH, "my updated value local");
+
+                webClient
+                        .post()
+                        .uri("/api/repository/workspace/{id}/do?action=SYNCHRONIZE", workspace)
+                        .exchange()
+                        .expectStatus().isOk()
+                        .expectBody();
+
+                translations
+                        .forRepositoryHint("repo")
+                        .forWorkspaceName("release/2020.08")
+                        .translations()
+                        .expectTranslation("validation.repository.name-not-unique", Locale.ENGLISH, "my updated value local");
+            } finally {
+                remoteRepository.git().forHint("myGitRepo").manageRemoteBranches().deleteBranches("release/2020.08");
+            }
+        }
+
+        @Test
+        @CleanupDatabase
+        @WithJaneDoeAdminUser
+        public void synchronizeInitializedDeletedTranslations() {
+            final GitRepositoryCreationDto creationDto = i18nToolGitRepositoryCreationDto();
+
+            try {
+                remoteRepository.git().forHint("myGitRepo").manageRemoteBranches().createBranches("release/2020.08");
+
+                final String workspace = repository.create(creationDto, GitRepositoryDto.class).hint("repo")
+                        .initialize()
+                        .workspaces()
+                        .workspaceForBranch("release/2020.08")
+                        .initialize().get().getId();
+
+                // once initialized, the remote content is updated, an existing translation is updated
+                remoteRepository.git().forHint("myGitRepo").manageRemoteBranches()
+                        .branch("release/2020.08")
+                        .file("/server/src/main/resources/i18n/validation_en.properties").writeContent("").and()
+                        .file("/server/src/main/resources/i18n/validation_fr.properties").writeContent("");
+
+                webClient
+                        .post()
+                        .uri("/api/repository/workspace/{id}/do?action=SYNCHRONIZE", workspace)
+                        .exchange()
+                        .expectStatus().isOk()
+                        .expectBody();
+
+                translations
+                        .forRepositoryHint("repo")
+                        .forWorkspaceName("release/2020.08")
+                        .translations()
+                        .unexpect("validation.repository.name-not-unique");
+            } finally {
+                remoteRepository.git().forHint("myGitRepo").manageRemoteBranches().deleteBranches("release/2020.08");
+            }
+        }
+
+        @Test
+        @CleanupDatabase
+        @WithJaneDoeAdminUser
+        public void synchronizeInitializedDeletedBundleFile() {
+            final GitRepositoryCreationDto creationDto = i18nToolGitRepositoryCreationDto();
+
+            try {
+                remoteRepository.git().forHint("myGitRepo").manageRemoteBranches().createBranches("release/2020.08");
+
+                final String workspace = repository.create(creationDto, GitRepositoryDto.class).hint("repo")
+                        .initialize()
+                        .workspaces()
+                        .workspaceForBranch("release/2020.08")
+                        .initialize().get().getId();
+
+                // once initialized, the remote content is updated, a bundle file is removed
+                remoteRepository.git().forHint("myGitRepo").manageRemoteBranches()
+                        .branch("release/2020.08")
+                        .file("/server/src/main/resources/i18n/validation_en.properties").remove().and()
+                        .file("/server/src/main/resources/i18n/validation_fr.properties").remove();
+
+                webClient
+                        .post()
+                        .uri("/api/repository/workspace/{id}/do?action=SYNCHRONIZE", workspace)
+                        .exchange()
+                        .expectStatus().isOk()
+                        .expectBody();
+
+                translations
+                        .forRepositoryHint("repo")
+                        .forWorkspaceName("release/2020.08")
+                        .translations()
+                        .unexpect("validation.repository.name-not-unique");
+            } finally {
+                remoteRepository.git().forHint("myGitRepo").manageRemoteBranches().deleteBranches("release/2020.08");
             }
         }
 
@@ -792,7 +993,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
         @WithJaneDoeAdminUser
         public void initialize() {
             final WorkspaceDto masterWorkspace = repository
-                    .create(i18nToolLocalRepositoryCreationDto(), GitRepositoryDto.class)
+                    .create(i18nToolGitRepositoryCreationDto(), GitRepositoryDto.class)
                     .hint("my-repo")
                     .initialize()
                     .workspaces()
@@ -825,7 +1026,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
         @WithJaneDoeAdminUser
         public void publish() {
             final WorkspaceDto masterWorkspace = repository
-                    .create(i18nToolLocalRepositoryCreationDto(), GitRepositoryDto.class)
+                    .create(i18nToolGitRepositoryCreationDto(), GitRepositoryDto.class)
                     .hint("my-repo")
                     .initialize()
                     .workspaces()
@@ -846,8 +1047,8 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                     .jsonPath("$.branch").isEqualTo("master")
                     .jsonPath("$.status").isEqualTo(WorkspaceStatus.INITIALIZED.name());
 
-            gitRepo
-                    .getRepo(i18nToolLocalRepositoryCreationDto())
+            remoteRepository.git().forHint("myGitRepo")
+                    .manageRemoteBranches()
                     .branch("master")
                     .file("/server/src/main/resources/i18n/validation_en.properties")
                     .assertContains("validation.repository.name-not-unique=my updated value");
@@ -856,9 +1057,40 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
         @Test
         @CleanupDatabase
         @WithJaneDoeAdminUser
+        public void publishAll() {
+            repository
+                    .create(i18nToolGitRepositoryCreationDto())
+                    .hint("my-repo")
+                    .initialize();
+
+            final WorkspaceDto masterWorkspace = repository.forHint("my-repo").initialize().workspaces().workspaceForBranch("master").initialize().get();
+            final WorkspaceDto releaseWorkspace = repository.forHint("my-repo").initialize().workspaces().workspaceForBranch("release/2020.05").initialize().get();
+
+            webClient
+                    .post()
+                    .uri("/api/repository/workspace/do?action=PUBLISH")
+                    .bodyValue(
+                            WorkspacesPublishRequestDto.builder()
+                                    .workspaces(asList(masterWorkspace.getId(), releaseWorkspace.getId()))
+                                    .message("publish test")
+                                    .build()
+                    )
+                    .exchange()
+                    .expectStatus().isOk()
+                    .expectBody()
+                    .jsonPath("$").value(hasSize(2))
+                    .jsonPath("$[0].branch").isEqualTo("master")
+                    .jsonPath("$[0].status").isEqualTo(WorkspaceStatus.INITIALIZED.name())
+                    .jsonPath("$[1].branch").isEqualTo("release/2020.05")
+                    .jsonPath("$[1].status").isEqualTo(WorkspaceStatus.INITIALIZED.name());
+        }
+
+        @Test
+        @CleanupDatabase
+        @WithJaneDoeAdminUser
         public void deleteInitialized() {
             final WorkspaceDto masterWorkspace = repository
-                    .create(i18nToolLocalRepositoryCreationDto())
+                    .create(i18nToolGitRepositoryCreationDto())
                     .initialize()
                     .workspaces()
                     .workspaceForBranch("master")
@@ -877,7 +1109,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
         @WithJaneDoeAdminUser
         public void deletePublished() {
             final WorkspaceDto masterWorkspace = repository
-                    .create(i18nToolLocalRepositoryCreationDto())
+                    .create(i18nToolGitRepositoryCreationDto())
                     .initialize()
                     .workspaces()
                     .workspaceForBranch("master")

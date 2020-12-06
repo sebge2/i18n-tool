@@ -1,6 +1,6 @@
 package be.sgerard.i18n.service.repository.git;
 
-import be.sgerard.i18n.service.ValidationException;
+import be.sgerard.i18n.model.validation.ValidationResult;
 import be.sgerard.i18n.service.repository.RepositoryApi;
 import be.sgerard.i18n.service.repository.RepositoryException;
 import lombok.Getter;
@@ -41,7 +41,7 @@ public interface GitRepositoryApi extends RepositoryApi {
     /**
      * Validates that the URI and credentials are valid.
      */
-    GitRepositoryApi validateInfo() throws RepositoryException, ValidationException;
+    ValidationResult validateInfo() throws RepositoryException;
 
     /**
      * Pulls changes from the remote repository branch to the local repository branch.
@@ -204,15 +204,8 @@ public interface GitRepositoryApi extends RepositoryApi {
             this.repositoryLocation = repositoryLocation;
         }
 
-        public Configuration(File repositoryLocation) {
-            this(repositoryLocation, null);
-        }
-
-        /**
-         * @see #remoteUri
-         */
-        public Optional<URI> getRemoteUri() {
-            return Optional.ofNullable(remoteUri);
+        public Configuration(File repositoryLocation, String remoteUri) {
+           this(repositoryLocation, URI.create(remoteUri));
         }
 
         /**

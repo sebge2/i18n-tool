@@ -1,6 +1,6 @@
 package be.sgerard.i18n.model.security.auth.internal;
 
-import be.sgerard.i18n.model.security.user.persistence.InternalUserEntity;
+import be.sgerard.i18n.model.user.persistence.InternalUserEntity;
 import be.sgerard.i18n.service.security.UserRole;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -69,5 +69,19 @@ public class InternalUserDetails implements UserDetails {
      */
     public Collection<UserRole> getRoles() {
         return internalUser.getRoles();
+    }
+
+    /**
+     * Returns the name to be displayed to the end-user (ideally composed of the first name, last name).
+     */
+    public String getDisplayName() {
+        return internalUser.getDisplayName();
+    }
+
+    /**
+     * Returns the user's email.
+     */
+    public String getEmail() {
+        return internalUser.getEmail();
     }
 }

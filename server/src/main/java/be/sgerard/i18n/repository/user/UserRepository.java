@@ -1,6 +1,6 @@
 package be.sgerard.i18n.repository.user;
 
-import be.sgerard.i18n.model.security.user.persistence.UserEntity;
+import be.sgerard.i18n.model.user.persistence.UserEntity;
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 
 /**

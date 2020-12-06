@@ -1,0 +1,26 @@
+<app-dialog [title]="'SHARED.BUTTONS.RESTORE.RESTORE_CONFIRMATION_POPUP_TITLE' | translate">
+    <app-dialog-content>
+        <div class="app-form-delete-grid">
+            <div class="app-form-delete-countdown">
+                <app-countdown (elapsed)="onElapsed()" [size]="95" [color]="'red'" *ngIf="disabled"></app-countdown>
+            </div>
+            <div [innerHTML]="config.confirmationMessage" class="app-form-delete-msg"></div>
+        </div>
+    </app-dialog-content>
+    <app-dialog-actions>
+        <button mat-icon-button
+                cdkFocusInitial
+                class="app-button"
+                (click)="onCancel()">
+            <mat-icon [fontIcon]="'app-icon-window-close-regular'"></mat-icon>
+        </button>
+
+        <button mat-icon-button
+                color="primary"
+                class="app-button"
+                [disabled]="disabled"
+                (click)="onConfirm()">
+            <mat-icon [fontIcon]="'app-icon-box-open-solid'"></mat-icon>
+        </button>
+    </app-dialog-actions>
+</app-dialog>

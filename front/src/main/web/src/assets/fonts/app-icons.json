@@ -1,14 +1,15 @@
 {
     "icon-backward-solid": "\\f101",
-    "icon-check-double-solid": "\\f102",
-    "icon-exclamation-solid": "\\f103",
-    "icon-forward-solid": "\\f104",
-    "icon-git": "\\f105",
-    "icon-github": "\\f106",
-    "icon-google": "\\f107",
-    "icon-java-file": "\\f108",
-    "icon-json-file": "\\f109",
-    "icon-key-solid": "\\f10a",
-    "icon-paper-plane-solid": "\\f10b",
-    "icon-window-close-regular": "\\f10c"
+    "icon-box-open-solid": "\\f102",
+    "icon-check-double-solid": "\\f103",
+    "icon-exclamation-solid": "\\f104",
+    "icon-forward-solid": "\\f105",
+    "icon-git": "\\f106",
+    "icon-github": "\\f107",
+    "icon-google": "\\f108",
+    "icon-java-file": "\\f109",
+    "icon-json-file": "\\f10a",
+    "icon-key-solid": "\\f10b",
+    "icon-paper-plane-solid": "\\f10c",
+    "icon-window-close-regular": "\\f10d"
 }
