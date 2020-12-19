@@ -13,24 +13,18 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferUtils;
 import org.springframework.core.io.buffer.DefaultDataBuffer;
 import org.springframework.core.io.buffer.DefaultDataBufferFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.MimeType;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.server.RequestPredicates;
-import org.springframework.web.reactive.function.server.RouterFunction;
-import org.springframework.web.reactive.function.server.RouterFunctions;
-import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -107,7 +101,6 @@ public class UserController {
     @Operation(summary = "Creates a new internal user.")
     @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.CREATED)
-    @Transactional
     public Mono<UserDto> createUser(@RequestBody InternalUserCreationDto creationDto) {
         return userManager
                 .createUser(creationDto)
@@ -120,7 +113,6 @@ public class UserController {
     @PatchMapping(path = "/user/{id}")
     @Operation(summary = "Updates the user having the specified id.")
     @PreAuthorize("hasRole('ADMIN')")
-    @Transactional
     public Mono<UserDto> updateUser(@PathVariable String id,
                                     @RequestBody UserPatchDto patch) {
         return userManager
@@ -133,7 +125,6 @@ public class UserController {
      */
     @PatchMapping(path = "/user/current")
     @Operation(summary = "Updates the current authenticated user.")
-    @Transactional
     public Mono<UserDto> updateCurrentUser(@RequestBody CurrentUserPatchDto patch) {
         return authenticationUserManager
                 .getCurrentUserOrDie()
@@ -146,7 +137,6 @@ public class UserController {
      */
     @PutMapping(path = "/user/current/password")
     @Operation(summary = "Updates the password of the current authenticated user.")
-    @Transactional
     public Mono<UserDto> updateCurrentUserPassword(@RequestBody CurrentUserPasswordUpdateDto update) {
         return authenticationUserManager
                 .getCurrentUserOrDie()
@@ -165,7 +155,6 @@ public class UserController {
                     @Content(mediaType = MediaType.IMAGE_PNG_VALUE, schema = @Schema(type = "string", format = "binary"))
             })
     )
-    @Transactional
     public Mono<UserDto> updateUserAvatar(ServerHttpRequest request) {
         return DataBufferUtils.join(request.getBody())
                 .map(DataBuffer::asInputStream)
@@ -185,40 +174,40 @@ public class UserController {
     /**
      * Returns the avatar of the specified user.
      */
-    @Bean
-    public RouterFunction<ServerResponse> getUserAvatar() {
-        return RouterFunctions.route(
-                RequestPredicates.GET("/api/user/{id}/avatar"),
-                request -> userManager
-                        .findByIdOrDie(request.pathVariable("id"))
-                        .flatMap(userEntity -> {
-                            if (userEntity instanceof InternalUserEntity) {
-                                final InternalUserEntity internalUserEntity = (InternalUserEntity) userEntity;
+    @GetMapping(path = "/user/{id}/avatar", produces = "image/png")
+    @Operation(
+            summary = "Returns the avatar of the specified user.",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(content = {
+                    @Content(mediaType = MediaType.IMAGE_JPEG_VALUE, schema = @Schema(type = "string", format = "binary"))
+            })
+    )
+    public Mono<ResponseEntity<Flux<DataBuffer>>> getUserAvatar(@PathVariable String id) {
+        return userManager
+                .findByIdOrDie(id)
+                .map(userEntity -> {
+                    if (userEntity instanceof InternalUserEntity) {
+                        final InternalUserEntity internalUserEntity = (InternalUserEntity) userEntity;
 
-                                final DefaultDataBuffer buffer;
-                                if (internalUserEntity.hasAvatar()) {
-                                    buffer = new DefaultDataBufferFactory().wrap(internalUserEntity.getAvatar().orElse(new byte[0]));
-                                } else {
-                                    buffer = new DefaultDataBufferFactory().wrap(defaultUserAvatar);
-                                }
+                        final DefaultDataBuffer buffer;
+                        if (internalUserEntity.hasAvatar()) {
+                            buffer = new DefaultDataBufferFactory().wrap(internalUserEntity.getAvatar().orElse(new byte[0]));
+                        } else {
+                            buffer = new DefaultDataBufferFactory().wrap(defaultUserAvatar);
+                        }
 
-                                return ServerResponse
-                                        .ok()
-                                        .contentType(MediaType.IMAGE_PNG)
-                                        .body(BodyInserters.fromDataBuffers(Flux.just(buffer)));
-                            } else {
-                                final ExternalUserEntity externalUserEntity = (ExternalUserEntity) userEntity;
+                        return ResponseEntity.ok()
+                                .header("Content-Type", MediaType.IMAGE_PNG_VALUE)
+                                .body(Flux.just(buffer));
+                    } else {
+                        final ExternalUserEntity externalUserEntity = (ExternalUserEntity) userEntity;
 
-                                return ServerResponse
-                                        .ok()
-                                        .contentType(MediaType.IMAGE_PNG)
-                                        .body(
-                                                WebClient.create().get().uri(externalUserEntity.getAvatarUrl()).retrieve().bodyToFlux(byte[].class),
-                                                byte[].class
-                                        );
-                            }
-                        })
-        );
+                        return ResponseEntity.ok()
+                                .header("Content-Type", MediaType.IMAGE_PNG_VALUE)
+                                .body(
+                                        WebClient.create().get().uri(externalUserEntity.getAvatarUrl()).retrieve().bodyToFlux(DataBuffer.class)
+                                );
+                    }
+                });
     }
 
     /**
@@ -227,7 +216,6 @@ public class UserController {
     @DeleteMapping(path = "/user/{id}")
     @Operation(summary = "Deletes the user having the specified id.")
     @PreAuthorize("hasRole('ADMIN')")
-    @Transactional
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public Mono<UserDto> deleteUserById(@PathVariable String id) {
         return userManager
