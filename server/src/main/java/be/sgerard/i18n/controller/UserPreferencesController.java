@@ -39,7 +39,6 @@ public class UserPreferencesController {
      */
     @PutMapping(path = "/user/current/preferences")
     @Operation(summary = "Updates preferences for the current user.")
-    @Transactional
     public Mono<UserPreferencesDto> updateCurrentUserPreferences(@RequestBody UserPreferencesDto userPreferences) {
         return userPreferencesManager
                 .update(userPreferences)

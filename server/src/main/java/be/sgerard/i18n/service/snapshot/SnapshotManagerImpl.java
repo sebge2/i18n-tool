@@ -287,6 +287,8 @@ public class SnapshotManagerImpl implements SnapshotManager {
     @SuppressWarnings("BlockingMethodInNonBlockingContext")
     private Mono<SnapshotEntity> moveSnapshotZipFile(File zipFile, SnapshotEntity snapshot) {
         try {
+            snapshot.getZipFileAsJavaFile().getParentFile().mkdirs();
+
             // NICE find a better way
             Files.move(zipFile.toPath(), snapshot.getZipFileAsJavaFile().toPath());
 

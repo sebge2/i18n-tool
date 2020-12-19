@@ -17,7 +17,7 @@ import reactor.core.publisher.Mono;
  */
 @Controller
 @RequestMapping(path = "/api")
-@Tag(name ="GitHub", description = "Controller exposing the GitHub web-hook")
+@Tag(name = "GitHub", description = "Controller exposing the GitHub web-hook")
 public class GitHubController {
 
     private final GitHubWebHookService webHookService;

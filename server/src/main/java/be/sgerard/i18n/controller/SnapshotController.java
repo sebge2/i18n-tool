@@ -1,9 +1,7 @@
 package be.sgerard.i18n.controller;
 
-import be.sgerard.i18n.model.snapshot.SnapshotEntity;
 import be.sgerard.i18n.model.snapshot.dto.SnapshotCreationDto;
 import be.sgerard.i18n.model.snapshot.dto.SnapshotDto;
-import be.sgerard.i18n.service.BadRequestException;
 import be.sgerard.i18n.service.snapshot.SnapshotManager;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -18,15 +16,12 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.http.codec.multipart.FormFieldPart;
-import org.springframework.http.codec.multipart.Part;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -100,7 +95,7 @@ public class SnapshotController {
     @PreAuthorize("hasRole('ADMIN')")
     @ResponseBody
     public Mono<SnapshotDto> importZip(@RequestPart(name = "encryptionPassword", required = false) @Schema(type = "string") FormFieldPart encryptionPasswordPart,
-                                       @RequestPart(name = "file") @Schema(type = "string", format = "binary")  FilePart filePart) {
+                                       @RequestPart(name = "file") @Schema(type = "string", format = "binary") FilePart filePart) {
         return snapshotManager.importZip(filePart::transferTo, filePart.filename(), Optional.ofNullable(encryptionPasswordPart).map(FormFieldPart::value).orElse(null))
                 .map(snapshot -> SnapshotDto.builder(snapshot).build());
     }
@@ -130,44 +125,5 @@ public class SnapshotController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public Mono<Void> delete(@PathVariable String id) {
         return snapshotManager.delete(id);
-    }
-
-    /**
-     * Imports the snapshot.
-     */
-    private Mono<SnapshotEntity> doImportZip(List<Part> partList) {
-        final List<Part> updatedList = new ArrayList<>(partList);
-
-        final FilePart filePart = partList.stream()
-                .filter(FilePart.class::isInstance)
-                .map(FilePart.class::cast)
-                .findFirst()
-                .orElse(null);
-
-        if (filePart == null) {
-            return Mono.error(BadRequestException.missingFilePart());
-        }
-
-        updatedList.remove(filePart);
-
-        final FormFieldPart encryptionPassword = partList.stream()
-                .filter(FormFieldPart.class::isInstance)
-                .map(FormFieldPart.class::cast)
-                .findFirst()
-                .orElse(null);
-
-        final String encryptionPasswordValue;
-        if (encryptionPassword != null) {
-            updatedList.remove(encryptionPassword);
-            encryptionPasswordValue = encryptionPassword.value();
-        } else {
-            encryptionPasswordValue = null;
-        }
-
-        if (!updatedList.isEmpty()) {
-            return Mono.error(BadRequestException.unexpectedFormPart());
-        }
-
-        return snapshotManager.importZip(filePart::transferTo, filePart.filename(), encryptionPasswordValue);
     }
 }
