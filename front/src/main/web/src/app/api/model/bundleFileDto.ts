@@ -36,6 +36,10 @@ export interface BundleFileDto {
      * The number of bundle keys composing this bundle.
      */
     numberKeys: number;
+    /**
+     * The location of the bundle that can be used as path pattern for ignoring this bundle.
+     */
+    locationPathPattern: string;
 }
 export namespace BundleFileDto {
     export type TypeDtoEnum = 'JAVA_PROPERTIES' | 'JSON_ICU';

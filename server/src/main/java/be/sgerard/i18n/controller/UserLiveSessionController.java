@@ -29,7 +29,7 @@ public class UserLiveSessionController {
      * Returns all the current {@link UserLiveSessionDto user live session}.
      */
     @GetMapping("/user-live-session/")
-    @Operation(summary = "Retrieves the current user live sessions.")
+    @Operation(operationId = "getCurrentLiveSessions", summary = "Retrieves the current user live sessions.")
     public Flux<UserLiveSessionDto> getCurrentLiveSessions() {
         return userSessionManager
                 .getCurrentLiveSessions()

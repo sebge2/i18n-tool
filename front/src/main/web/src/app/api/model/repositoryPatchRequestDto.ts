@@ -9,6 +9,7 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
+import { TranslationsConfigurationPatchDto } from './translationsConfigurationPatchDto';
 
 /**
  * Request asking the creation of a repository
@@ -18,6 +19,7 @@ export interface RepositoryPatchRequestDto {
      * The id of the repository to modify
      */
     id: string;
+    translationsConfiguration?: TranslationsConfigurationPatchDto;
     /**
      * Type of this repository
      */

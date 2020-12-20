@@ -35,7 +35,7 @@ public class EventController {
      * Returns all the events that now occurs (hot event source).
      */
     @GetMapping(value = "/event", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    @Operation(summary = "Returns all incoming events.")
+    @Operation(operationId = "getEvents", summary = "Returns all incoming events.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = ServerSentEventDescriptor.class)))
     })

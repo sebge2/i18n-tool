@@ -20,6 +20,7 @@ import { Observable }                                        from 'rxjs';
 import { CurrentUserPasswordUpdateDto } from '../model/currentUserPasswordUpdateDto';
 import { CurrentUserPatchDto } from '../model/currentUserPatchDto';
 import { ErrorMessagesDto } from '../model/errorMessagesDto';
+import { FluxDataBufferDto } from '../model/fluxDataBufferDto';
 import { InternalUserCreationDto } from '../model/internalUserCreationDto';
 import { UserDto } from '../model/userDto';
 import { UserPatchDto } from '../model/userPatchDto';
@@ -59,6 +60,47 @@ export class UserService {
         return false;
     }
 
+
+    /**
+     * Deletes the user having the specified id.
+     * 
+     * @param id 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public _delete(id: string, observe?: 'body', reportProgress?: boolean): Observable<UserDto>;
+    public _delete(id: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<UserDto>>;
+    public _delete(id: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<UserDto>>;
+    public _delete(id: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        if (id === null || id === undefined) {
+            throw new Error('Required parameter id was null or undefined when calling _delete.');
+        }
+
+        let headers = this.defaultHeaders;
+
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            '*/*'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+        ];
+
+        return this.httpClient.request<UserDto>('delete',`${this.basePath}/api/user/${encodeURIComponent(String(id))}`,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
 
     /**
      * Creates a new internal user.
@@ -108,56 +150,15 @@ export class UserService {
     }
 
     /**
-     * Deletes the user having the specified id.
-     * 
-     * @param id 
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
-     */
-    public deleteUserById(id: string, observe?: 'body', reportProgress?: boolean): Observable<UserDto>;
-    public deleteUserById(id: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<UserDto>>;
-    public deleteUserById(id: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<UserDto>>;
-    public deleteUserById(id: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
-
-        if (id === null || id === undefined) {
-            throw new Error('Required parameter id was null or undefined when calling deleteUserById.');
-        }
-
-        let headers = this.defaultHeaders;
-
-        // to determine the Accept header
-        let httpHeaderAccepts: string[] = [
-            '*/*'
-        ];
-        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set('Accept', httpHeaderAcceptSelected);
-        }
-
-        // to determine the Content-Type header
-        const consumes: string[] = [
-        ];
-
-        return this.httpClient.request<UserDto>('delete',`${this.basePath}/api/user/${encodeURIComponent(String(id))}`,
-            {
-                withCredentials: this.configuration.withCredentials,
-                headers: headers,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
-    }
-
-    /**
      * Retrieves all users.
      * 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public findAll2(observe?: 'body', reportProgress?: boolean): Observable<Array<UserDto>>;
-    public findAll2(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<UserDto>>>;
-    public findAll2(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<UserDto>>>;
-    public findAll2(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public findAll(observe?: 'body', reportProgress?: boolean): Observable<Array<UserDto>>;
+    public findAll(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<UserDto>>>;
+    public findAll(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<UserDto>>>;
+    public findAll(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         let headers = this.defaultHeaders;
 
@@ -191,13 +192,13 @@ export class UserService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public findById2(id: string, observe?: 'body', reportProgress?: boolean): Observable<UserDto>;
-    public findById2(id: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<UserDto>>;
-    public findById2(id: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<UserDto>>;
-    public findById2(id: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public findById(id: string, observe?: 'body', reportProgress?: boolean): Observable<UserDto>;
+    public findById(id: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<UserDto>>;
+    public findById(id: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<UserDto>>;
+    public findById(id: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (id === null || id === undefined) {
-            throw new Error('Required parameter id was null or undefined when calling findById2.');
+            throw new Error('Required parameter id was null or undefined when calling findById.');
         }
 
         let headers = this.defaultHeaders;
@@ -253,6 +254,56 @@ export class UserService {
 
         return this.httpClient.request<UserDto>('get',`${this.basePath}/api/user/current`,
             {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Returns the avatar of the specified user.
+     * 
+     * @param id 
+     * @param body 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public getUserAvatar(id: string, body?: Object, observe?: 'body', reportProgress?: boolean): Observable<FluxDataBufferDto>;
+    public getUserAvatar(id: string, body?: Object, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<FluxDataBufferDto>>;
+    public getUserAvatar(id: string, body?: Object, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<FluxDataBufferDto>>;
+    public getUserAvatar(id: string, body?: Object, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        if (id === null || id === undefined) {
+            throw new Error('Required parameter id was null or undefined when calling getUserAvatar.');
+        }
+
+
+        let headers = this.defaultHeaders;
+
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            '*/*',
+            'image/png'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'image/jpeg'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected != undefined) {
+            headers = headers.set('Content-Type', httpContentTypeSelected);
+        }
+
+        return this.httpClient.request<FluxDataBufferDto>('get',`${this.basePath}/api/user/${encodeURIComponent(String(id))}/avatar`,
+            {
+                body: body,
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
                 observe: observe,

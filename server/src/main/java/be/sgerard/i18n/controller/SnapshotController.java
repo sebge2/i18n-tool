@@ -44,7 +44,7 @@ public class SnapshotController {
      * Lists all available {@link SnapshotDto snapshots}.
      */
     @GetMapping(path = "/snapshot")
-    @Operation(summary = "Lists all available snapshots")
+    @Operation(operationId = "findAll", summary = "Lists all available snapshots")
     @PreAuthorize("hasRole('ADMIN')")
     @ResponseBody
     public Flux<SnapshotDto> findAll() {
@@ -57,7 +57,7 @@ public class SnapshotController {
      * Creates a new {@link SnapshotDto snapshot} based on the current tool state.
      */
     @PostMapping(path = "/snapshot")
-    @Operation(summary = "Creates a new snapshot based on the current tool state")
+    @Operation(operationId = "create", summary = "Creates a new snapshot based on the current tool state")
     @PreAuthorize("hasRole('ADMIN')")
     @ResponseBody
     public Mono<SnapshotDto> create(@RequestBody SnapshotCreationDto creationDto) {
@@ -71,6 +71,7 @@ public class SnapshotController {
      */
     @GetMapping(path = "/snapshot/{id}/file", produces = "application/zip")
     @Operation(
+            operationId = "exportZip",
             summary = "Exports the content of the specified snapshot",
             responses = @ApiResponse(content = @Content(mediaType = "application/zip", schema = @Schema(type = "string", format = "binary")))
     )
@@ -91,7 +92,7 @@ public class SnapshotController {
      * Imports the specified {@link SnapshotDto snapshot} file.
      */
     @PostMapping(path = "/snapshot/file", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Import the specified snapshot ZIP file (the form must be composed of a file and optionally of the ZIP's password)")
+    @Operation(operationId = "importZip", summary = "Import the specified snapshot ZIP file (the form must be composed of a file and optionally of the ZIP's password)")
     @PreAuthorize("hasRole('ADMIN')")
     @ResponseBody
     public Mono<SnapshotDto> importZip(@RequestPart(name = "encryptionPassword", required = false) @Schema(type = "string") FormFieldPart encryptionPasswordPart,
@@ -105,6 +106,7 @@ public class SnapshotController {
      */
     @PostMapping(path = "/snapshot/{id}/do", params = "action=RESTORE")
     @Operation(
+            operationId = "restore",
             summary = "Restores the specified snapshot, the tool state will be restored to that state.",
             parameters = @Parameter(name = "action", in = ParameterIn.QUERY, schema = @Schema(allowableValues = {"RESTORE"}))
     )
@@ -119,7 +121,7 @@ public class SnapshotController {
      * Removes the specified {@link SnapshotDto snapshot}.
      */
     @DeleteMapping(path = "/snapshot/{id}")
-    @Operation(summary = "Removes the specified snapshot")
+    @Operation(operationId = "delete", summary = "Removes the specified snapshot")
     @PreAuthorize("hasRole('ADMIN')")
     @ResponseBody
     @ResponseStatus(HttpStatus.NO_CONTENT)

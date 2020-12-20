@@ -36,7 +36,8 @@ public class BundleFileDto {
                 .location(bundleFile.getLocation())
                 .type(bundleFile.getType())
                 .files(bundleFile.getFiles().stream().map(entry -> BundleFileEntryDto.builder(entry).build()).collect(toList()))
-                .numberKeys(bundleFile.getNumberKeys());
+                .numberKeys(bundleFile.getNumberKeys())
+                .locationPathPattern(bundleFile.getType().getLocationPathPattern(bundleFile.getLocation(), bundleFile.getName()));
     }
 
     @Schema(description = "Unique identifier of a bundle file.", required = true)
@@ -55,7 +56,10 @@ public class BundleFileDto {
     private final List<BundleFileEntryDto> files;
 
     @Schema(description = "The number of bundle keys composing this bundle.", required = true)
-    private long numberKeys;
+    private final long numberKeys;
+
+    @Schema(description = "The location of the bundle that can be used as path pattern for ignoring this bundle.", required = true)
+    private final String locationPathPattern;
 
     /**
      * Builder of {@link BundleFileDto bundle file.}

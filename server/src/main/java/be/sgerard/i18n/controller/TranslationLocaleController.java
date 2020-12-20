@@ -34,7 +34,7 @@ public class TranslationLocaleController {
      * Returns all the registered {@link TranslationLocaleDto locales}.
      */
     @GetMapping(path = "/translation/locale/")
-    @Operation(summary = "Returns all translation locales that have been used so far.")
+    @Operation(operationId = "findAll", summary = "Returns all translation locales that have been used so far.")
     public Flux<TranslationLocaleDto> findAll() {
         return localeManager
                 .findAll()
@@ -45,7 +45,7 @@ public class TranslationLocaleController {
      * Returns the registered {@link TranslationLocaleDto locale}.
      */
     @GetMapping(path = "/translation/locale/{id}")
-    @Operation(summary = "Returns the registered locale.")
+    @Operation(operationId = "findById", summary = "Returns the registered locale.")
     public Mono<TranslationLocaleDto> findById(@PathVariable String id) {
         return localeManager
                 .findByIdOrDie(id)
@@ -57,7 +57,7 @@ public class TranslationLocaleController {
      */
     @PostMapping(path = "/translation/locale")
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "Creates a new translation locale.")
+    @Operation(operationId = "create", summary = "Creates a new translation locale.")
     @PreAuthorize("hasRole('ADMIN')")
     public Mono<TranslationLocaleDto> create(@RequestBody TranslationLocaleCreationDto creationDto) {
         return localeManager
@@ -69,7 +69,7 @@ public class TranslationLocaleController {
      * Updates a {@link TranslationLocaleDto translation locale}.
      */
     @PutMapping(path = "/translation/locale/{id}")
-    @Operation(summary = "Updates an existing translation locale.")
+    @Operation(operationId = "update", summary = "Updates an existing translation locale.")
     @PreAuthorize("hasRole('ADMIN')")
     public Mono<TranslationLocaleDto> update(@PathVariable String id,
                                              @RequestBody TranslationLocaleDto localeDto) {
@@ -87,7 +87,7 @@ public class TranslationLocaleController {
      */
     @DeleteMapping(path = "/translation/locale/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Operation(summary = "Deletes a translation locale.")
+    @Operation(operationId = "delete", summary = "Deletes a translation locale.")
     @PreAuthorize("hasRole('ADMIN')")
     public Mono<Void> delete(@PathVariable String id) {
         return localeManager.delete(id).then();

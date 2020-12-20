@@ -74,6 +74,7 @@ public class JavaPropertiesBundleHandler implements BundleHandler {
         return context
                 .getApi()
                 .listNormalFiles(directory)
+                .filter(file -> context.canWalkTrough(BundleType.JAVA_PROPERTIES, file.toPath()))
                 .flatMap(
                         file ->
                                 findLocales(file, context)

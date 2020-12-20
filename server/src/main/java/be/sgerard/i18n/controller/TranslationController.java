@@ -42,6 +42,7 @@ public class TranslationController {
      */
     @PostMapping(path = "/translation/do", params = "action=search")
     @Operation(
+            operationId = "searchTranslations",
             summary = "Returns translations of the workspace having the specified id.",
             parameters = @Parameter(name = "action", in = ParameterIn.QUERY, schema = @Schema(allowableValues = "search"))
     )
@@ -53,7 +54,7 @@ public class TranslationController {
      * Updates a particular {@link TranslationDto translation}.
      */
     @PutMapping(path = "/translation/bundle-key/{bundleKeyId}/locale/{localeId}", consumes = MediaType.TEXT_PLAIN_VALUE)
-    @Operation(summary = "Updates a particular translation.")
+    @Operation(operationId = "updateTranslation", summary = "Updates a particular translation.")
     public Mono<TranslationDto> updateTranslation(@RequestBody(required = false) String translation,
                                                   @PathVariable String bundleKeyId,
                                                   @PathVariable String localeId) {
@@ -72,7 +73,7 @@ public class TranslationController {
      * Updates the specified {@link TranslationDto translations} and returns them.
      */
     @PutMapping(path = "/translation")
-    @Operation(summary = "Updates translations.")
+    @Operation(operationId = "updateTranslations", summary = "Updates translations.")
     public Mono<List<TranslationDto>> updateTranslations(@RequestBody(required = false) List<TranslationUpdateDto> translations) {
         return translationManager
                 .updateTranslations(translations)

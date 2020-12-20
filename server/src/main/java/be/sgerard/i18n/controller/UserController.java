@@ -62,7 +62,7 @@ public class UserController {
      * Finds all users.
      */
     @GetMapping("/user")
-    @Operation(summary = "Retrieves all users.")
+    @Operation(operationId="findAll", summary = "Retrieves all users.")
     @PreAuthorize("hasRole('ADMIN')")
     public Flux<UserDto> findAll() {
         return userManager
@@ -74,7 +74,7 @@ public class UserController {
      * Returns the user having the specified id.
      */
     @GetMapping(path = "/user/{id}")
-    @Operation(summary = "Returns the user having the specified id.")
+    @Operation(operationId="findById", summary = "Returns the user having the specified id.")
     @PreAuthorize("hasRole('ADMIN')")
     public Mono<UserDto> findById(@PathVariable String id) {
         return userManager
@@ -86,7 +86,7 @@ public class UserController {
      * Returns the current user.
      */
     @GetMapping(path = "/user/current")
-    @Operation(summary = "Returns the current user.")
+    @Operation(operationId="getCurrent", summary = "Returns the current user.")
     public Mono<UserDto> getCurrent() {
         return authenticationUserManager
                 .getCurrentUserOrDie()
@@ -98,7 +98,7 @@ public class UserController {
      * Creates a new internal user.
      */
     @PostMapping(path = "/user")
-    @Operation(summary = "Creates a new internal user.")
+    @Operation(operationId="createUser", summary = "Creates a new internal user.")
     @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.CREATED)
     public Mono<UserDto> createUser(@RequestBody InternalUserCreationDto creationDto) {
@@ -111,7 +111,7 @@ public class UserController {
      * Updates the user having the specified id.
      */
     @PatchMapping(path = "/user/{id}")
-    @Operation(summary = "Updates the user having the specified id.")
+    @Operation(operationId="updateUser", summary = "Updates the user having the specified id.")
     @PreAuthorize("hasRole('ADMIN')")
     public Mono<UserDto> updateUser(@PathVariable String id,
                                     @RequestBody UserPatchDto patch) {
@@ -124,7 +124,7 @@ public class UserController {
      * Updates the current authenticated user.
      */
     @PatchMapping(path = "/user/current")
-    @Operation(summary = "Updates the current authenticated user.")
+    @Operation(operationId="updateCurrentUser", summary = "Updates the current authenticated user.")
     public Mono<UserDto> updateCurrentUser(@RequestBody CurrentUserPatchDto patch) {
         return authenticationUserManager
                 .getCurrentUserOrDie()
@@ -136,7 +136,7 @@ public class UserController {
      * Updates the current user's password.
      */
     @PutMapping(path = "/user/current/password")
-    @Operation(summary = "Updates the password of the current authenticated user.")
+    @Operation(operationId="updateCurrentUserPassword", summary = "Updates the password of the current authenticated user.")
     public Mono<UserDto> updateCurrentUserPassword(@RequestBody CurrentUserPasswordUpdateDto update) {
         return authenticationUserManager
                 .getCurrentUserOrDie()
@@ -149,6 +149,7 @@ public class UserController {
      */
     @PutMapping(path = "/user/current/avatar", consumes = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE})
     @Operation(
+            operationId="updateUserAvatar",
             summary = "Updates the avatar of the current authenticated user.",
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(content = {
                     @Content(mediaType = MediaType.IMAGE_JPEG_VALUE, schema = @Schema(type = "string", format = "binary")),
@@ -176,6 +177,7 @@ public class UserController {
      */
     @GetMapping(path = "/user/{id}/avatar", produces = "image/png")
     @Operation(
+            operationId="getUserAvatar",
             summary = "Returns the avatar of the specified user.",
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(content = {
                     @Content(mediaType = MediaType.IMAGE_JPEG_VALUE, schema = @Schema(type = "string", format = "binary"))
@@ -214,10 +216,10 @@ public class UserController {
      * Deletes the user having the specified id.
      */
     @DeleteMapping(path = "/user/{id}")
-    @Operation(summary = "Deletes the user having the specified id.")
+    @Operation(operationId="delete", summary = "Deletes the user having the specified id.")
     @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public Mono<UserDto> deleteUserById(@PathVariable String id) {
+    public Mono<UserDto> delete(@PathVariable String id) {
         return userManager
                 .delete(id)
                 .map(entity -> UserDto.builder(entity).build());

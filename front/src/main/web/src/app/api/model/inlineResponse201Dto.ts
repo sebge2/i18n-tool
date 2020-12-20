@@ -12,4 +12,4 @@
 import { GitHubRepositoryDto } from './gitHubRepositoryDto';
 import { GitRepositoryDto } from './gitRepositoryDto';
 
-export type InlineResponse200Dto = GitHubRepositoryDto | GitRepositoryDto;
+export type InlineResponse201Dto = GitHubRepositoryDto | GitRepositoryDto;

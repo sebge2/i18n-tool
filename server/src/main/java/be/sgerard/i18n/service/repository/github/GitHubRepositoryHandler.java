@@ -30,14 +30,9 @@ public class GitHubRepositoryHandler extends
     private final AppProperties appProperties;
 
     public GitHubRepositoryHandler(GitRepositoryApiProvider apiProvider, AppProperties appProperties) {
-        super(apiProvider);
+        super(apiProvider, RepositoryType.GITHUB);
 
         this.appProperties = appProperties;
-    }
-
-    @Override
-    public boolean support(RepositoryType type) {
-        return type == RepositoryType.GITHUB;
     }
 
     @Override
@@ -49,23 +44,19 @@ public class GitHubRepositoryHandler extends
     }
 
     @Override
-    public Mono<GitHubRepositoryEntity> updateRepository(GitHubRepositoryEntity repository,
-                                                         GitHubRepositoryPatchDto patchDto,
-                                                         GitHubRepositoryTokenCredentials credentials) throws RepositoryException {
-        updateFromPatch(patchDto, repository);
-
-        repository.setAccessKey(patchDto.getUpdateAccessKey(repository).orElse(null));
-        repository.setWebHookSecret(patchDto.getUpdateWebHookSecret(repository).orElse(null));
-
-        return Mono.just(repository);
-    }
-
-    @Override
     public Mono<RepositoryApi> initApi(GitHubRepositoryEntity repository,
                                        GitHubRepositoryTokenCredentials credentials) throws RepositoryException {
         return createConfiguration(repository, credentials)
                 .flatMap(this::initApi)
                 .map(a -> a);
+    }
+
+    @Override
+    protected Mono<GitHubRepositoryEntity> updateGitRepoFromPatch(GitHubRepositoryPatchDto patchDto, GitHubRepositoryEntity repository) {
+        repository.setAccessKey(patchDto.getUpdateAccessKey(repository).orElse(null));
+        repository.setWebHookSecret(patchDto.getUpdateWebHookSecret(repository).orElse(null));
+
+        return Mono.just(repository);
     }
 
     /**

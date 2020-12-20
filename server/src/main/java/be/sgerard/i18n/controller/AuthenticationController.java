@@ -47,7 +47,7 @@ public class AuthenticationController {
      * Retrieves the current authenticated user.
      */
     @GetMapping("/authentication/user")
-    @Operation(summary = "Retrieves the current authenticated user.", security = @SecurityRequirement(name = "basicScheme"))
+    @Operation(operationId = "getCurrentUser", summary = "Retrieves the current authenticated user.", security = @SecurityRequirement(name = "basicScheme"))
     public Mono<AuthenticatedUserDto> getCurrentUser() {
         return authenticationUserManager
                 .getCurrentUser()
@@ -59,7 +59,7 @@ public class AuthenticationController {
      * Retrieves all the clients that can used to authenticate with OAuth2.
      */
     @GetMapping("/authentication/oauth/client")
-    @Operation(summary = "Retrieves all the clients that can used to authenticate with OAuth2.")
+    @Operation(operationId = "getAuthenticationClients", summary = "Retrieves all the clients that can used to authenticate with OAuth2.")
     public List<String> getAuthenticationClients() {
         return StreamSupport.stream(registrationRepository.spliterator(), false)
                 .map(ClientRegistration::getClientName)

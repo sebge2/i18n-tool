@@ -10,6 +10,7 @@
  * Do not edit the class manually.
  */
 import { RepositoryDto } from './repositoryDto';
+import { TranslationsConfigurationDto } from './translationsConfigurationDto';
 
 /**
  * Git Repository
