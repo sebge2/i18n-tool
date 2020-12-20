@@ -1,5 +1,6 @@
 import {RepositoryStatus} from "./repository-status.model";
 import {RepositoryType} from "./repository-type.model";
+import {TranslationsConfiguration} from "./translations-configuration.model";
 
 export class Repository {
 
@@ -7,7 +8,7 @@ export class Repository {
                 public name: string,
                 public type: RepositoryType,
                 public status: RepositoryStatus,
-                public defaultBranch: string) {
+                public translationsConfiguration: TranslationsConfiguration) {
     }
 
     public isNotInitialized(): boolean {

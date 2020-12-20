@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import java.util.Optional;
+
 /**
  * Request asking the creation of a repository.
  *
@@ -21,8 +23,12 @@ public abstract class RepositoryPatchDto {
     @Schema(description = "The id of the repository to modify", required = true)
     private final String id;
 
+    @Schema(description = "The configuration to use for managing translations.")
+    private final TranslationsConfigurationPatchDto translationsConfiguration;
+
     protected RepositoryPatchDto(BaseBuilder<?, ?> builder) {
         this.id = builder.id;
+        this.translationsConfiguration = builder.translationsConfiguration;
     }
 
     /**
@@ -39,17 +45,30 @@ public abstract class RepositoryPatchDto {
     }
 
     /**
+     * @see #translationsConfiguration
+     */
+    public Optional<TranslationsConfigurationPatchDto> getTranslationsConfiguration() {
+        return Optional.ofNullable(translationsConfiguration);
+    }
+
+    /**
      * Builder of {@link RepositoryPatchDto repository patch DTO}.
      */
     public static abstract class BaseBuilder<R extends RepositoryPatchDto, B extends RepositoryPatchDto.BaseBuilder<R, B>> {
 
         private String id;
+        private TranslationsConfigurationPatchDto translationsConfiguration;
 
         protected BaseBuilder() {
         }
 
         public B id(String id) {
             this.id = id;
+            return self();
+        }
+
+        public B translationsConfiguration(TranslationsConfigurationPatchDto translationsConfiguration) {
+            this.translationsConfiguration = translationsConfiguration;
             return self();
         }
 

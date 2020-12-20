@@ -3,7 +3,6 @@ import {EventService} from "../../core/event/service/event.service";
 import {Observable} from "rxjs";
 import {Repository} from "../model/repository/repository.model";
 import {
-    BodyDto,
     GitHubRepositoryCreationRequestDto,
     GitHubRepositoryDto,
     GitRepositoryCreationRequestDto,
@@ -33,7 +32,7 @@ export class RepositoryService {
                 private eventService: EventService,
                 private notificationService: NotificationService) {
         this._synchronizedRepositories = new SynchronizedCollection<RepositoryDto, Repository>(
-            () => apiRepositoryService.findAll(),
+            () => apiRepositoryService.findAll3(),
             this.eventService.subscribeDto(Events.ADDED_REPOSITORY),
             this.eventService.subscribeDto(Events.UPDATED_REPOSITORY),
             this.eventService.subscribeDto(Events.DELETED_REPOSITORY),
@@ -65,7 +64,7 @@ export class RepositoryService {
 
     public createRepository(dto: RepositoryCreationRequestDto): Observable<Repository> {
         return this.apiRepositoryService
-            .create(<(GitHubRepositoryCreationRequestDto | GitRepositoryCreationRequestDto)>dto)
+            .create2(<(GitHubRepositoryCreationRequestDto | GitRepositoryCreationRequestDto)>dto)
             .pipe(
                 map(dto => RepositoryService.fromDto(dto)),
                 tap(repository => this._synchronizedRepositories.add(repository))
@@ -83,7 +82,7 @@ export class RepositoryService {
 
     public updateRepository(id: string, patch: RepositoryPatchRequestDto): Observable<Repository> {
         return this.apiRepositoryService
-            .update(<BodyDto>patch, id)
+            .update1(patch, id)
             .pipe(
                 map(dto => RepositoryService.fromDto(dto)),
                 tap(repository => this._synchronizedRepositories.update(repository))
@@ -92,7 +91,7 @@ export class RepositoryService {
 
     public deleteRepository(repository: Repository): Observable<any> {
         return this.apiRepositoryService
-            ._delete(repository.id)
+            .delete3(repository.id)
             .pipe(tap(() => this._synchronizedRepositories.delete(repository)));
     }
 

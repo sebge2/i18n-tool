@@ -2,9 +2,10 @@ import {Repository} from "./repository.model";
 import {GitHubRepositoryDto} from "../../../api";
 import {RepositoryType} from "./repository-type.model";
 import {RepositoryStatus} from "./repository-status.model";
-import {GitRepository} from "./git-repository.model";
+import {TranslationsConfiguration} from "./translations-configuration.model";
+import {BaseGitRepository} from "./base-git-repository.model";
 
-export class GitHubRepository extends GitRepository {
+export class GitHubRepository extends BaseGitRepository {
 
     public static fromDto(dto: GitHubRepositoryDto): Repository {
         return new GitHubRepository(
@@ -12,6 +13,7 @@ export class GitHubRepository extends GitRepository {
             dto.name,
             RepositoryType[dto.type],
             RepositoryStatus[dto.status],
+            TranslationsConfiguration.fromDto(dto.translationsConfiguration),
             dto.location,
             dto.defaultBranch,
             dto.allowedBranches,
@@ -24,12 +26,13 @@ export class GitHubRepository extends GitRepository {
                 name: string,
                 type: RepositoryType,
                 status: RepositoryStatus,
+                translationsConfiguration: TranslationsConfiguration,
                 location: string,
                 defaultBranch: string,
                 allowedBranches: string,
                 public username: string,
                 public repository: string) {
-        super(id, name, type, status, location, defaultBranch, allowedBranches);
+        super(id, name, type, status, translationsConfiguration, location, defaultBranch, allowedBranches);
     }
 
 }

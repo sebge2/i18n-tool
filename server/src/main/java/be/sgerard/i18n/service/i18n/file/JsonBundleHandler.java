@@ -71,6 +71,7 @@ public class JsonBundleHandler implements BundleHandler {
         return context
                 .getApi()
                 .listNormalFiles(directory)
+                .filter(file -> context.canWalkTrough(BundleType.JSON_ICU, file.toPath()))
                 .flatMap(
                         file ->
                                 findLocales(file, context)

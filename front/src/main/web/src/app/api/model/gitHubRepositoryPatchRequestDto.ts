@@ -10,6 +10,7 @@
  * Do not edit the class manually.
  */
 import { RepositoryPatchRequestDto } from './repositoryPatchRequestDto';
+import { TranslationsConfigurationPatchDto } from './translationsConfigurationPatchDto';
 
 /**
  * Request asking the update of a GitHub repository

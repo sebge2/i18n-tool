@@ -11,6 +11,8 @@ import org.springframework.http.MediaType;
 import static be.sgerard.test.i18n.model.GitRepositoryCreationDtoTestUtils.*;
 import static be.sgerard.test.i18n.model.RepositoryEntityTestUtils.*;
 import static be.sgerard.test.i18n.model.UserEntityTestUtils.GARRICK_KLEIN_TOKEN;
+import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.hamcrest.Matchers.*;
 
 /**
@@ -446,6 +448,49 @@ public class RepositoryControllerTest extends AbstractControllerTest {
         @Test
         @CleanupDatabase
         @WithJaneDoeAdminUser
+        public void updateTranslationsConfiguration() {
+            final GitHubRepositoryDto repository = this.repository.create(i18nToolGitHubRepositoryCreationDto(), GitHubRepositoryDto.class).get();
+
+            final GitHubRepositoryPatchDto patchDto = GitHubRepositoryPatchDto.gitHubBuilder()
+                    .id(repository.getId())
+                    .translationsConfiguration(
+                            TranslationsConfigurationPatchDto.builder()
+                                    .ignoredKeys(asList("my.key.first", "my.key.second"))
+                                    .jsonIcu(
+                                            BundleConfigurationPatchDto.builder()
+                                                    .ignoredPaths(singletonList("/front/src/test/resources"))
+                                                    .includedPaths(singletonList("/front/src/main/resources"))
+                                                    .build()
+                                    )
+                                    .javaProperties(
+                                            BundleConfigurationPatchDto.builder()
+                                                    .ignoredPaths(singletonList("/server/src/test/resources"))
+                                                    .includedPaths(singletonList("/server/src/main/resources"))
+                                                    .build()
+                                    )
+                                    .build()
+                    )
+                    .build();
+
+            webClient
+                    .patch()
+                    .uri("/api/repository/{id}", repository.getId())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(patchDto)
+                    .exchange()
+                    .expectStatus().isOk()
+                    .expectBody()
+                    .jsonPath("$.translationsConfiguration.ignoredKeys[0]").isEqualTo("my.key.first")
+                    .jsonPath("$.translationsConfiguration.ignoredKeys[1]").isEqualTo("my.key.second")
+                    .jsonPath("$.translationsConfiguration.jsonIcu.includedPaths[0]").isEqualTo("/front/src/main/resources")
+                    .jsonPath("$.translationsConfiguration.jsonIcu.ignoredPaths[0]").isEqualTo("/front/src/test/resources")
+                    .jsonPath("$.translationsConfiguration.javaProperties.includedPaths[0]").isEqualTo("/server/src/main/resources")
+                    .jsonPath("$.translationsConfiguration.javaProperties.ignoredPaths[0]").isEqualTo("/server/src/test/resources");
+        }
+
+        @Test
+        @CleanupDatabase
+        @WithJaneDoeAdminUser
         public void deleteRepository() {
             final GitHubRepositoryDto repository = this.repository.create(i18nToolGitHubRepositoryCreationDto(), GitHubRepositoryDto.class).get();
 
@@ -726,6 +771,49 @@ public class RepositoryControllerTest extends AbstractControllerTest {
                     .expectStatus().isBadRequest()
                     .expectBody()
                     .jsonPath("$.messages[0]").value(containsString("Please verify your credentials for accessing the Git repository ["));
+        }
+
+        @Test
+        @CleanupDatabase
+        @WithJaneDoeAdminUser
+        public void updateTranslationsConfiguration() {
+            final GitRepositoryDto repository = this.repository.create(i18nToolGitRepositoryCreationDto(), GitRepositoryDto.class).get();
+
+            final GitRepositoryPatchDto patchDto = GitRepositoryPatchDto.gitBuilder()
+                    .id(repository.getId())
+                    .translationsConfiguration(
+                            TranslationsConfigurationPatchDto.builder()
+                                    .ignoredKeys(asList("my.key.first", "my.key.second"))
+                                    .jsonIcu(
+                                            BundleConfigurationPatchDto.builder()
+                                                    .ignoredPaths(singletonList("/front/src/test/resources"))
+                                                    .includedPaths(singletonList("/front/src/main/resources"))
+                                                    .build()
+                                    )
+                                    .javaProperties(
+                                            BundleConfigurationPatchDto.builder()
+                                                    .ignoredPaths(singletonList("/server/src/test/resources"))
+                                                    .includedPaths(singletonList("/server/src/main/resources"))
+                                                    .build()
+                                    )
+                                    .build()
+                    )
+                    .build();
+
+            webClient
+                    .patch()
+                    .uri("/api/repository/{id}", repository.getId())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(patchDto)
+                    .exchange()
+                    .expectStatus().isOk()
+                    .expectBody()
+                    .jsonPath("$.translationsConfiguration.ignoredKeys[0]").isEqualTo("my.key.first")
+                    .jsonPath("$.translationsConfiguration.ignoredKeys[1]").isEqualTo("my.key.second")
+                    .jsonPath("$.translationsConfiguration.jsonIcu.includedPaths[0]").isEqualTo("/front/src/main/resources")
+                    .jsonPath("$.translationsConfiguration.jsonIcu.ignoredPaths[0]").isEqualTo("/front/src/test/resources")
+                    .jsonPath("$.translationsConfiguration.javaProperties.includedPaths[0]").isEqualTo("/server/src/main/resources")
+                    .jsonPath("$.translationsConfiguration.javaProperties.ignoredPaths[0]").isEqualTo("/server/src/test/resources");
         }
 
         @Test

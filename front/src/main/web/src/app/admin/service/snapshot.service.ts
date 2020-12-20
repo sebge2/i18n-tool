@@ -65,7 +65,7 @@ export class SnapshotService {
 
     public delete(snapshot: Snapshot): Observable<void> {
         return this.apiSnapshotService
-            .delete1(snapshot.id)
+            .delete2(snapshot.id)
             .pipe(tap(() => this._synchronizedSnapshots.delete(snapshot)));
     }
 

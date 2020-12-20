@@ -62,10 +62,10 @@ export class GitHubService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public handle(body?: string, observe?: 'body', reportProgress?: boolean): Observable<string>;
-    public handle(body?: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<string>>;
-    public handle(body?: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<string>>;
-    public handle(body?: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public handleEvent(body?: string, observe?: 'body', reportProgress?: boolean): Observable<string>;
+    public handleEvent(body?: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<string>>;
+    public handleEvent(body?: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<string>>;
+    public handleEvent(body?: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
 
         let headers = this.defaultHeaders;

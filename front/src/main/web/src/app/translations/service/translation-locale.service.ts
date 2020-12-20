@@ -98,7 +98,7 @@ export class TranslationLocaleService {
 
     public createLocale(creationTranslationLocale: TranslationLocaleCreationDto): Observable<TranslationLocale> {
         return this.apiService
-            .create1(creationTranslationLocale)
+            .create(creationTranslationLocale)
             .pipe(
                 map(dto => TranslationLocale.fromDto(dto)),
                 tap(translationLocale => this._synchronizedLocales$.add(translationLocale))
@@ -107,7 +107,7 @@ export class TranslationLocaleService {
 
     public updateLocale(translationLocale: TranslationLocale): Observable<TranslationLocale> {
         return this.apiService
-            .update1(translationLocale.toDto(), translationLocale.id)
+            .update(translationLocale.toDto(), translationLocale.id)
             .pipe(
                 map(dto => TranslationLocale.fromDto(dto)),
                 tap(translationLocale => this._synchronizedLocales$.update(translationLocale))

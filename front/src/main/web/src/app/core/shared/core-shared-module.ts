@@ -57,6 +57,11 @@ import {BundleFileIconPipe} from "./pipe/bundle-file-icon.pipe";
 import {BundleFileNamePipe} from "./pipe/bundle-file-name.pipe";
 import {VisualizeButtonComponent} from "./component/visualize-button/visualize-button.component";
 import {FormAddButtonComponent} from "./component/form-add-button/form-add-button.component";
+import {TableComponent} from "./component/table/table.component";
+import {TableCellComponent} from "./component/table/table-cell/table-cell.component";
+import {TableHeaderComponent} from "./component/table/table-header/table-header.component";
+import {OnEnterDirective} from "./directive/on-enter.directive";
+import {BanButtonComponent} from "./component/ban-button/ban-button.component";
 
 @NgModule({
     declarations: [
@@ -81,6 +86,7 @@ import {FormAddButtonComponent} from "./component/form-add-button/form-add-butto
         VisualizeButtonComponent,
         RestoreButtonComponent,
         RestoreButtonConfirmationComponent,
+        BanButtonComponent,
 
         FormSelectFieldComponent,
 
@@ -109,8 +115,10 @@ import {FormAddButtonComponent} from "./component/form-add-button/form-add-butto
         DialogComponent,
         DialogActionsComponent,
         DialogContentComponent,
-
         CountdownComponent,
+        TableComponent,
+        TableHeaderComponent,
+        TableCellComponent,
 
         WorkspaceIconPipe,
         WorkspaceIconCssPipe,
@@ -121,6 +129,7 @@ import {FormAddButtonComponent} from "./component/form-add-button/form-add-butto
         BundleFileNamePipe,
 
         DragDropDirective,
+        OnEnterDirective,
     ],
     imports: [
         CommonModule,
@@ -153,6 +162,7 @@ import {FormAddButtonComponent} from "./component/form-add-button/form-add-butto
         VisualizeButtonComponent,
         RestoreButtonComponent,
         RestoreButtonConfirmationComponent,
+        BanButtonComponent,
 
         FormSelectFieldComponent,
 
@@ -179,8 +189,10 @@ import {FormAddButtonComponent} from "./component/form-add-button/form-add-butto
         DialogComponent,
         DialogActionsComponent,
         DialogContentComponent,
-
         CountdownComponent,
+        TableComponent,
+        TableHeaderComponent,
+        TableCellComponent,
 
         WorkspaceIconPipe,
         WorkspaceIconCssPipe,
@@ -191,6 +203,7 @@ import {FormAddButtonComponent} from "./component/form-add-button/form-add-butto
         BundleFileNamePipe,
 
         DragDropDirective,
+        OnEnterDirective,
     ],
     providers: [
         WorkspaceIconPipe,

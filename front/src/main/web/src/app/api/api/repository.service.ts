@@ -18,12 +18,13 @@ import { CustomHttpUrlEncodingCodec }                        from '../encoder';
 import { Observable }                                        from 'rxjs';
 
 import { Body1Dto } from '../model/body1Dto';
-import { BodyDto } from '../model/bodyDto';
-import { InlineResponse200Dto } from '../model/inlineResponse200Dto';
+import { Body2Dto } from '../model/body2Dto';
+import { InlineResponse201Dto } from '../model/inlineResponse201Dto';
 
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
 import { Configuration }                                     from '../configuration';
-import {GitHubRepositoryDto, GitRepositoryDto} from "..";
+import {GitHubRepositoryDto} from "../model/gitHubRepositoryDto";
+import {GitRepositoryDto} from "../model/gitRepositoryDto";
 
 
 @Injectable()
@@ -59,60 +60,19 @@ export class RepositoryService {
 
 
     /**
-     * Delete a repository.
-     * 
-     * @param id 
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
-     */
-    public _delete(id: string, observe?: 'body', reportProgress?: boolean): Observable<InlineResponse200Dto>;
-    public _delete(id: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<InlineResponse200Dto>>;
-    public _delete(id: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<InlineResponse200Dto>>;
-    public _delete(id: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
-
-        if (id === null || id === undefined) {
-            throw new Error('Required parameter id was null or undefined when calling _delete.');
-        }
-
-        let headers = this.defaultHeaders;
-
-        // to determine the Accept header
-        let httpHeaderAccepts: string[] = [
-            '*/*'
-        ];
-        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set('Accept', httpHeaderAcceptSelected);
-        }
-
-        // to determine the Content-Type header
-        const consumes: string[] = [
-        ];
-
-        return this.httpClient.request<InlineResponse200Dto>('delete',`${this.basePath}/api/repository/${encodeURIComponent(String(id))}`,
-            {
-                withCredentials: this.configuration.withCredentials,
-                headers: headers,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
-    }
-
-    /**
      * Creates a new repository.
      * 
      * @param body 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public create(body: Body1Dto, observe?: 'body', reportProgress?: boolean): Observable<InlineResponse200Dto>;
-    public create(body: Body1Dto, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<InlineResponse200Dto>>;
-    public create(body: Body1Dto, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<InlineResponse200Dto>>;
-    public create(body: Body1Dto, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public create2(body: Body1Dto, observe?: 'body', reportProgress?: boolean): Observable<InlineResponse201Dto>;
+    public create2(body: Body1Dto, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<InlineResponse201Dto>>;
+    public create2(body: Body1Dto, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<InlineResponse201Dto>>;
+    public create2(body: Body1Dto, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (body === null || body === undefined) {
-            throw new Error('Required parameter body was null or undefined when calling create.');
+            throw new Error('Required parameter body was null or undefined when calling create2.');
         }
 
         let headers = this.defaultHeaders;
@@ -135,9 +95,50 @@ export class RepositoryService {
             headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
-        return this.httpClient.request<InlineResponse200Dto>('post',`${this.basePath}/api/repository`,
+        return this.httpClient.request<InlineResponse201Dto>('post',`${this.basePath}/api/repository`,
             {
                 body: body,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Delete a repository.
+     * 
+     * @param id 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public delete3(id: string, observe?: 'body', reportProgress?: boolean): Observable<InlineResponse201Dto>;
+    public delete3(id: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<InlineResponse201Dto>>;
+    public delete3(id: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<InlineResponse201Dto>>;
+    public delete3(id: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        if (id === null || id === undefined) {
+            throw new Error('Required parameter id was null or undefined when calling delete3.');
+        }
+
+        let headers = this.defaultHeaders;
+
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            '*/*'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+        ];
+
+        return this.httpClient.request<InlineResponse201Dto>('delete',`${this.basePath}/api/repository/${encodeURIComponent(String(id))}`,
+            {
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
                 observe: observe,
@@ -152,10 +153,10 @@ export class RepositoryService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public findAll(observe?: 'body', reportProgress?: boolean): Observable<Array<GitHubRepositoryDto | GitRepositoryDto>>;
-    public findAll(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<GitHubRepositoryDto | GitRepositoryDto>>>;
-    public findAll(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<GitHubRepositoryDto | GitRepositoryDto>>>;
-    public findAll(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public findAll3(observe?: 'body', reportProgress?: boolean): Observable<Array<GitHubRepositoryDto | GitRepositoryDto>>;
+    public findAll3(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<GitHubRepositoryDto | GitRepositoryDto>>>;
+    public findAll3(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<GitHubRepositoryDto | GitRepositoryDto>>>;
+    public findAll3(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         let headers = this.defaultHeaders;
 
@@ -189,13 +190,13 @@ export class RepositoryService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public findById(id: string, observe?: 'body', reportProgress?: boolean): Observable<InlineResponse200Dto>;
-    public findById(id: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<InlineResponse200Dto>>;
-    public findById(id: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<InlineResponse200Dto>>;
-    public findById(id: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public findById2(id: string, observe?: 'body', reportProgress?: boolean): Observable<InlineResponse201Dto>;
+    public findById2(id: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<InlineResponse201Dto>>;
+    public findById2(id: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<InlineResponse201Dto>>;
+    public findById2(id: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (id === null || id === undefined) {
-            throw new Error('Required parameter id was null or undefined when calling findById.');
+            throw new Error('Required parameter id was null or undefined when calling findById2.');
         }
 
         let headers = this.defaultHeaders;
@@ -213,7 +214,7 @@ export class RepositoryService {
         const consumes: string[] = [
         ];
 
-        return this.httpClient.request<InlineResponse200Dto>('get',`${this.basePath}/api/repository/${encodeURIComponent(String(id))}`,
+        return this.httpClient.request<InlineResponse201Dto>('get',`${this.basePath}/api/repository/${encodeURIComponent(String(id))}`,
             {
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
@@ -231,9 +232,9 @@ export class RepositoryService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public initialize(id: string, action?: string, observe?: 'body', reportProgress?: boolean): Observable<InlineResponse200Dto>;
-    public initialize(id: string, action?: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<InlineResponse200Dto>>;
-    public initialize(id: string, action?: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<InlineResponse200Dto>>;
+    public initialize(id: string, action?: string, observe?: 'body', reportProgress?: boolean): Observable<InlineResponse201Dto>;
+    public initialize(id: string, action?: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<InlineResponse201Dto>>;
+    public initialize(id: string, action?: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<InlineResponse201Dto>>;
     public initialize(id: string, action?: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (id === null || id === undefined) {
@@ -261,7 +262,7 @@ export class RepositoryService {
         const consumes: string[] = [
         ];
 
-        return this.httpClient.request<InlineResponse200Dto>('post',`${this.basePath}/api/repository/${encodeURIComponent(String(id))}/do`,
+        return this.httpClient.request<InlineResponse201Dto>('post',`${this.basePath}/api/repository/${encodeURIComponent(String(id))}/do`,
             {
                 params: queryParameters,
                 withCredentials: this.configuration.withCredentials,
@@ -280,17 +281,17 @@ export class RepositoryService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public update(body: BodyDto, id: string, observe?: 'body', reportProgress?: boolean): Observable<InlineResponse200Dto>;
-    public update(body: BodyDto, id: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<InlineResponse200Dto>>;
-    public update(body: BodyDto, id: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<InlineResponse200Dto>>;
-    public update(body: BodyDto, id: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public update1(body: Body2Dto, id: string, observe?: 'body', reportProgress?: boolean): Observable<InlineResponse201Dto>;
+    public update1(body: Body2Dto, id: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<InlineResponse201Dto>>;
+    public update1(body: Body2Dto, id: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<InlineResponse201Dto>>;
+    public update1(body: Body2Dto, id: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (body === null || body === undefined) {
-            throw new Error('Required parameter body was null or undefined when calling update.');
+            throw new Error('Required parameter body was null or undefined when calling update1.');
         }
 
         if (id === null || id === undefined) {
-            throw new Error('Required parameter id was null or undefined when calling update.');
+            throw new Error('Required parameter id was null or undefined when calling update1.');
         }
 
         let headers = this.defaultHeaders;
@@ -313,7 +314,7 @@ export class RepositoryService {
             headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
-        return this.httpClient.request<InlineResponse200Dto>('patch',`${this.basePath}/api/repository/${encodeURIComponent(String(id))}`,
+        return this.httpClient.request<InlineResponse201Dto>('patch',`${this.basePath}/api/repository/${encodeURIComponent(String(id))}`,
             {
                 body: body,
                 withCredentials: this.configuration.withCredentials,

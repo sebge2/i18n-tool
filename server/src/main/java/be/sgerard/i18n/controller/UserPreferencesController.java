@@ -28,7 +28,7 @@ public class UserPreferencesController {
      * Returns preferences for the current user.
      */
     @GetMapping(path = "/user/current/preferences")
-    @Operation(summary = "Returns preferences for the current user.")
+    @Operation(operationId = "getCurrentUserPreferences", summary = "Returns preferences for the current user.")
     public Mono<UserPreferencesDto> getCurrentUserPreferences() {
         return userPreferencesManager.get()
                 .map(pref -> UserPreferencesDto.builder(pref).build());
@@ -38,7 +38,7 @@ public class UserPreferencesController {
      * Updates preferences for the current user.
      */
     @PutMapping(path = "/user/current/preferences")
-    @Operation(summary = "Updates preferences for the current user.")
+    @Operation(operationId = "updateCurrentUserPreferences", summary = "Updates preferences for the current user.")
     public Mono<UserPreferencesDto> updateCurrentUserPreferences(@RequestBody UserPreferencesDto userPreferences) {
         return userPreferencesManager
                 .update(userPreferences)

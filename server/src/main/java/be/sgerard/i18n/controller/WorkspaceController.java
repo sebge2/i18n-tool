@@ -43,7 +43,7 @@ public class WorkspaceController {
      * Finds all the {@link WorkspaceDto workspaces}.
      */
     @GetMapping("/repository/workspace")
-    @Operation(summary = "Returns registered workspaces.")
+    @Operation(operationId = "findAll", summary = "Returns registered workspaces.")
     public Flux<WorkspaceDto> findAll() {
         return workspaceManager.findAll()
                 .flatMapSequential(dtoEnricher::mapAndEnrich);
@@ -53,7 +53,7 @@ public class WorkspaceController {
      * Finds all the {@link WorkspaceDto workspaces} restricted to the specified repository.
      */
     @GetMapping("/repository/{id}/workspace")
-    @Operation(summary = "Returns registered workspaces.")
+    @Operation(operationId = "findAllByRepository", summary = "Returns registered workspaces.")
     public Flux<WorkspaceDto> findAll(@PathVariable String id) {
         return workspaceManager.findAll(id)
                 .flatMapSequential(dtoEnricher::mapAndEnrich);
@@ -63,7 +63,7 @@ public class WorkspaceController {
      * Returns the {@link WorkspaceDto workspace} having the specified id.
      */
     @GetMapping(path = "/repository/workspace/{id}")
-    @Operation(summary = "Returns the workspace having the specified id.")
+    @Operation(operationId = "findById", summary = "Returns the workspace having the specified id.")
     public Mono<WorkspaceDto> findById(@PathVariable String id) {
         return workspaceManager.findByIdOrDie(id)
                 .flatMap(dtoEnricher::mapAndEnrich);
@@ -73,7 +73,7 @@ public class WorkspaceController {
      * Returns {@link BundleFileDto bundle files} composing the specified workspace.
      */
     @GetMapping(path = "/repository/workspace/{id}/bundle-file")
-    @Operation(summary = "Returns bundle files composing the specified workspace.")
+    @Operation(operationId = "findWorkspaceBundleFiles", summary = "Returns bundle files composing the specified workspace.")
     public Mono<List<BundleFileDto>> findWorkspaceBundleFiles(@PathVariable String id) {
         return workspaceManager.findByIdOrDie(id)
                 .flatMapIterable(WorkspaceEntity::getFiles)
@@ -97,7 +97,7 @@ public class WorkspaceController {
      */
     @PostMapping(path = "/repository/{repositoryId}/workspace/do", params = "action=SYNCHRONIZE")
     @Operation(
-            operationId = "synchronize",
+            operationId = "synchronizeWorkspaces",
             summary = "Executes an action on workspaces of a particular repository.",
             parameters = @Parameter(name = "action", in = ParameterIn.QUERY, schema = @Schema(allowableValues = {"SYNCHRONIZE"}))
     )
@@ -111,6 +111,7 @@ public class WorkspaceController {
      */
     @PostMapping(path = "/repository/workspace/{id}/do", params = "action=INITIALIZE")
     @Operation(
+            operationId = "initializeWorkspace",
             hidden = true,
             summary = "Initializes the specified workspace.",
             parameters = @Parameter(name = "action", in = ParameterIn.QUERY, schema = @Schema(allowableValues = {"INITIALIZE", "PUBLISH", "SYNCHRONIZE"}))
@@ -125,6 +126,7 @@ public class WorkspaceController {
      */
     @PostMapping(path = "/repository/workspace/{id}/do", params = "action=SYNCHRONIZE")
     @Operation(
+            operationId = "synchronizeWorkspace",
             hidden = true,
             summary = "Synchronizes the specified workspace.",
             parameters = @Parameter(name = "action", in = ParameterIn.QUERY, schema = @Schema(allowableValues = {"INITIALIZE", "PUBLISH", "SYNCHRONIZE"}))
@@ -140,7 +142,7 @@ public class WorkspaceController {
      */
     @PostMapping(path = "/repository/workspace/{id}/do", params = "action=PUBLISH")
     @Operation(
-            operationId = "executeAction",
+            operationId = "publishWorkspace",
             summary = "Publishes all modifications made on the specified workspace.",
             parameters = @Parameter(name = "action", in = ParameterIn.QUERY, schema = @Schema(allowableValues = {"INITIALIZE", "PUBLISH", "SYNCHRONIZE"}))
     )
@@ -162,6 +164,7 @@ public class WorkspaceController {
      */
     @PostMapping(path = "/repository/workspace/do", params = "action=PUBLISH")
     @Operation(
+            operationId = "publishWorkspaces",
             summary = "Initializes the specified workspace.",
             parameters = @Parameter(name = "action", in = ParameterIn.QUERY, schema = @Schema(allowableValues = {"PUBLISH"}))
     )

@@ -28,7 +28,7 @@ import { Configuration }                                     from '../configurat
 @Injectable()
 export class SnapshotService {
 
-    protected basePath = 'http://localhost:8080';
+    protected basePath = 'http://127.0.0.1:8080';
     public defaultHeaders = new HttpHeaders();
     public configuration = new Configuration();
 
@@ -111,13 +111,13 @@ export class SnapshotService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public delete1(id: string, observe?: 'body', reportProgress?: boolean): Observable<any>;
-    public delete1(id: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
-    public delete1(id: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
-    public delete1(id: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public delete2(id: string, observe?: 'body', reportProgress?: boolean): Observable<any>;
+    public delete2(id: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
+    public delete2(id: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public delete2(id: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (id === null || id === undefined) {
-            throw new Error('Required parameter id was null or undefined when calling delete1.');
+            throw new Error('Required parameter id was null or undefined when calling delete2.');
         }
 
         let headers = this.defaultHeaders;

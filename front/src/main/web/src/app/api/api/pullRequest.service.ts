@@ -108,10 +108,10 @@ export class PullRequestService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public listRequests(observe?: 'body', reportProgress?: boolean): Observable<Array<GitHubPullRequestDto>>;
-    public listRequests(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<GitHubPullRequestDto>>>;
-    public listRequests(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<GitHubPullRequestDto>>>;
-    public listRequests(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public listAllRequests(observe?: 'body', reportProgress?: boolean): Observable<Array<GitHubPullRequestDto>>;
+    public listAllRequests(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<GitHubPullRequestDto>>>;
+    public listAllRequests(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<GitHubPullRequestDto>>>;
+    public listAllRequests(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         let headers = this.defaultHeaders;
 
@@ -145,13 +145,13 @@ export class PullRequestService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public listRequests1(repositoryId: string, observe?: 'body', reportProgress?: boolean): Observable<Array<GitHubPullRequestDto>>;
-    public listRequests1(repositoryId: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<GitHubPullRequestDto>>>;
-    public listRequests1(repositoryId: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<GitHubPullRequestDto>>>;
-    public listRequests1(repositoryId: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public listRequests(repositoryId: string, observe?: 'body', reportProgress?: boolean): Observable<Array<GitHubPullRequestDto>>;
+    public listRequests(repositoryId: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<GitHubPullRequestDto>>>;
+    public listRequests(repositoryId: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<GitHubPullRequestDto>>>;
+    public listRequests(repositoryId: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (repositoryId === null || repositoryId === undefined) {
-            throw new Error('Required parameter repositoryId was null or undefined when calling listRequests1.');
+            throw new Error('Required parameter repositoryId was null or undefined when calling listRequests.');
         }
 
         let headers = this.defaultHeaders;

@@ -64,13 +64,13 @@ export class TranslationLocaleService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public create1(body: TranslationLocaleCreationDto, observe?: 'body', reportProgress?: boolean): Observable<TranslationLocaleDto>;
-    public create1(body: TranslationLocaleCreationDto, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<TranslationLocaleDto>>;
-    public create1(body: TranslationLocaleCreationDto, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<TranslationLocaleDto>>;
-    public create1(body: TranslationLocaleCreationDto, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public create(body: TranslationLocaleCreationDto, observe?: 'body', reportProgress?: boolean): Observable<TranslationLocaleDto>;
+    public create(body: TranslationLocaleCreationDto, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<TranslationLocaleDto>>;
+    public create(body: TranslationLocaleCreationDto, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<TranslationLocaleDto>>;
+    public create(body: TranslationLocaleCreationDto, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (body === null || body === undefined) {
-            throw new Error('Required parameter body was null or undefined when calling create1.');
+            throw new Error('Required parameter body was null or undefined when calling create.');
         }
 
         let headers = this.defaultHeaders;
@@ -230,17 +230,17 @@ export class TranslationLocaleService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public update1(body: TranslationLocaleDto, id: string, observe?: 'body', reportProgress?: boolean): Observable<TranslationLocaleDto>;
-    public update1(body: TranslationLocaleDto, id: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<TranslationLocaleDto>>;
-    public update1(body: TranslationLocaleDto, id: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<TranslationLocaleDto>>;
-    public update1(body: TranslationLocaleDto, id: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public update(body: TranslationLocaleDto, id: string, observe?: 'body', reportProgress?: boolean): Observable<TranslationLocaleDto>;
+    public update(body: TranslationLocaleDto, id: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<TranslationLocaleDto>>;
+    public update(body: TranslationLocaleDto, id: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<TranslationLocaleDto>>;
+    public update(body: TranslationLocaleDto, id: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (body === null || body === undefined) {
-            throw new Error('Required parameter body was null or undefined when calling update1.');
+            throw new Error('Required parameter body was null or undefined when calling update.');
         }
 
         if (id === null || id === undefined) {
-            throw new Error('Required parameter id was null or undefined when calling update1.');
+            throw new Error('Required parameter id was null or undefined when calling update.');
         }
 
         let headers = this.defaultHeaders;

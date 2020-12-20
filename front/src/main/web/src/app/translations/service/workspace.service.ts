@@ -34,7 +34,7 @@ export class WorkspaceService {
                 private notificationService: NotificationService) {
 
         this._synchronizedWorkspaces$ = new SynchronizedCollection<WorkspaceDto, Workspace>(
-            () => this.apiWorkspaceService.findAll3(),
+            () => this.apiWorkspaceService.findAll5(),
             this.eventService.subscribeDto(Events.ADDED_WORKSPACE),
             this.eventService.subscribeDto(Events.UPDATED_WORKSPACE),
             this.eventService.subscribeDto(Events.DELETED_WORKSPACE),

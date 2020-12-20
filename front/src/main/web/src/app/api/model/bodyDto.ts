@@ -9,7 +9,8 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
-import { GitHubRepositoryPatchRequestDto } from './gitHubRepositoryPatchRequestDto';
-import { GitRepositoryPatchRequestDto } from './gitRepositoryPatchRequestDto';
 
-export type BodyDto = GitHubRepositoryPatchRequestDto | GitRepositoryPatchRequestDto;
+export interface BodyDto { 
+    encryptionPassword?: string;
+    file?: Blob;
+}

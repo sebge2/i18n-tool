@@ -30,10 +30,14 @@ public abstract class RepositoryDto {
     @Schema(description = "The current repository status.", required = true)
     private final RepositoryStatus status;
 
+    @Schema(description = "The configuration to use for managing translations", required = true)
+    private final TranslationsConfigurationDto translationsConfiguration;
+
     protected RepositoryDto(BaseBuilder<?, ?> builder) {
         id = builder.id;
         name = builder.name;
         status = builder.status;
+        translationsConfiguration = builder.translationsConfiguration;
     }
 
     /**
@@ -48,6 +52,7 @@ public abstract class RepositoryDto {
         private String id;
         private String name;
         private RepositoryStatus status;
+        private TranslationsConfigurationDto translationsConfiguration;
 
         protected BaseBuilder() {
         }
@@ -64,6 +69,11 @@ public abstract class RepositoryDto {
 
         public B status(RepositoryStatus status) {
             this.status = status;
+            return self();
+        }
+
+        public B translationsConfiguration(TranslationsConfigurationDto translationsConfiguration) {
+            this.translationsConfiguration = translationsConfiguration;
             return self();
         }
 

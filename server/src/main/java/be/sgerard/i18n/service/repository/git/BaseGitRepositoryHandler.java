@@ -1,11 +1,12 @@
 package be.sgerard.i18n.service.repository.git;
 
+import be.sgerard.i18n.model.repository.RepositoryType;
 import be.sgerard.i18n.model.repository.dto.BaseGitRepositoryPatchDto;
 import be.sgerard.i18n.model.repository.dto.RepositoryCreationDto;
 import be.sgerard.i18n.model.repository.persistence.BaseGitRepositoryEntity;
 import be.sgerard.i18n.model.security.repository.RepositoryCredentials;
+import be.sgerard.i18n.service.repository.BaseRepositoryHandler;
 import be.sgerard.i18n.service.repository.RepositoryHandler;
-import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 import java.util.regex.Pattern;
@@ -15,13 +16,13 @@ import java.util.regex.Pattern;
  *
  * @author Sebastien Gerard
  */
-@Component
-public abstract class BaseGitRepositoryHandler<E extends BaseGitRepositoryEntity, C extends RepositoryCreationDto, P extends BaseGitRepositoryPatchDto, D extends RepositoryCredentials>
-        implements RepositoryHandler<E, C, P, D> {
+public abstract class BaseGitRepositoryHandler<E extends BaseGitRepositoryEntity, C extends RepositoryCreationDto, P extends BaseGitRepositoryPatchDto, D extends RepositoryCredentials> extends BaseRepositoryHandler<E, C, P, D> {
 
     private final GitRepositoryApiProvider apiProvider;
 
-    protected BaseGitRepositoryHandler(GitRepositoryApiProvider apiProvider) {
+    protected BaseGitRepositoryHandler(GitRepositoryApiProvider apiProvider, RepositoryType supportedType) {
+        super(supportedType);
+
         this.apiProvider = apiProvider;
     }
 
@@ -62,9 +63,17 @@ public abstract class BaseGitRepositoryHandler<E extends BaseGitRepositoryEntity
     /**
      * Updates the repository based on the specified patch.
      */
-    protected void updateFromPatch(P patchDto, E repository) {
+    protected abstract Mono<E> updateGitRepoFromPatch(P patchDto, E repository);
+
+    /**
+     * Updates the repository based on the specified patch.
+     */
+    @Override
+    protected final Mono<E> updateFromPatch(P patchDto, E repository) {
         repository.setDefaultBranch(patchDto.getDefaultBranch().orElse(repository.getDefaultBranch()));
         repository.setAllowedBranches(patchDto.getAllowedBranches().map(Pattern::compile).orElse(repository.getAllowedBranches()));
+
+        return this.updateGitRepoFromPatch(patchDto, repository);
     }
 
     /**

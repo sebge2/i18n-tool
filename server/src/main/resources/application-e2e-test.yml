@@ -1,6 +1,4 @@
 spring:
-#  datasource:
-#    url: jdbc:h2:file:/tmp/i18n-tool/database/db;DB_CLOSE_ON_EXIT=FALSE;
   security:
     oauth2:
       client:

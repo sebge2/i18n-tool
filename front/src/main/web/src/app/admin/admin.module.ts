@@ -30,6 +30,9 @@ import { SnapshotsComponent } from './component/snapshot/snapshots/snapshots.com
 import { SnapshotCreationFormComponent } from './component/snapshot/snapshots/snapshot-creation-form/snapshot-creation-form.component';
 import { SnapshotImportFormComponent } from './component/snapshot/snapshots/snapshot-import-form/snapshot-import-form.component';
 import { RepositoryGitCredentialsDialogComponent } from './component/repositories/repository-details/repository-details-config/repository-git-credentials-dialog/repository-git-credentials-dialog.component';
+import { RepositoryDetailsTranslationsConfigurationComponent } from './component/repositories/repository-details/repository-details-workspaces/repository-details-translations-configuration/repository-details-translations-configuration.component';
+import { RepositoryDetailsTranslationsGlobalConfigurationComponent } from './component/repositories/repository-details/repository-details-workspaces/repository-details-translations-configuration/repository-details-translations-global-configuration/repository-details-translations-global-configuration.component';
+import { RepositoryDetailsTranslationsBundleConfigurationComponent } from './component/repositories/repository-details/repository-details-workspaces/repository-details-translations-configuration/repository-details-translations-bundle-configuration/repository-details-translations-bundle-configuration.component';
 
 const appRoutes: Routes = [
     {path: 'users', component: UsersComponent},
@@ -61,15 +64,19 @@ const appRoutes: Routes = [
         RepositoryDetailsBundleFileNodeComponent,
         RepositoryDetailsBundleFileEntryNodeComponent,
         RepositoryDetailsWorkspaceTreeNodeComponent,
+        RepositoryDetailsTranslationsConfigurationComponent,
         RepositoryGithubWebHookDialogComponent,
         RepositoryGithubAccessKeyDialogComponent,
         RepositoryGitCredentialsDialogComponent,
         SnapshotsComponent,
         SnapshotCreationFormComponent,
         SnapshotImportFormComponent,
+        RepositoryDetailsTranslationsGlobalConfigurationComponent,
+        RepositoryDetailsTranslationsBundleConfigurationComponent,
     ],
     entryComponents: [
         RepositoryAddWizardComponent,
+        RepositoryDetailsTranslationsConfigurationComponent,
         RepositoryGithubWebHookDialogComponent,
         RepositoryGithubAccessKeyDialogComponent,
         RepositoryGitCredentialsDialogComponent,
