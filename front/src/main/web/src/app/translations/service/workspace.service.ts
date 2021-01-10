@@ -119,6 +119,15 @@ export class WorkspaceService {
             .pipe(tap(workspace => this._synchronizedWorkspaces$.delete(workspace)));
     }
 
+    public synchronizeWorkspace(workspace: Workspace): Observable<Workspace> {
+        return this.apiWorkspaceService
+            .executeAction(workspace.id, '', 'SYNCHRONIZE')
+            .pipe(
+                map(workspace => Workspace.fromDto(workspace)),
+                tap(workspace => this._synchronizedWorkspaces$.update(workspace))
+            );
+    }
+
     public publishAll(workspaces: string[], comment: string): Observable<Workspace[]> {
         return this.apiWorkspaceService
             .publish({workspaces: workspaces, message: comment}, "PUBLISH")

@@ -166,6 +166,7 @@
         "DELETE_WORKSPACE": "Error while deleting the workspace",
         "INITIALIZE_WORKSPACE": "Error while initializing the workspace",
         "WORKSPACES_SYNCHRONIZE": "Error while synchronizing workspaces.",
+        "WORKSPACE_SYNCHRONIZE": "Error while synchronizing the workspace.",
         "EXCLUDING_BUNDLE_FILE": "Error while excluding a bundle file."
       }
     },
