@@ -23,6 +23,7 @@ export class RepositoryDetailsWorkspaceNodeComponent {
 
     public initializationInProgress: boolean = false;
     public deleteInProgress: boolean = false;
+    public syncInProgress: boolean = false;
 
     constructor(private _workspaceService: WorkspaceService,
                 private _notificationService: NotificationService) {
@@ -61,6 +62,10 @@ export class RepositoryDetailsWorkspaceNodeComponent {
         return this.node.workspace.status === WorkspaceStatus.NOT_INITIALIZED;
     }
 
+    public get syncAllowed(): boolean {
+        return (this.node.workspace.status === WorkspaceStatus.INITIALIZED) || (this.node.workspace.status === WorkspaceStatus.IN_REVIEW);
+    }
+
     public onInitialize() {
         this.initializationInProgress = true;
 
@@ -85,6 +90,19 @@ export class RepositoryDetailsWorkspaceNodeComponent {
                 this._notificationService.displayErrorMessage('ADMIN.WORKSPACES.ERROR.DELETE_WORKSPACE', error);
             })
             .finally(() => this.deleteInProgress = false);
+    }
+
+    public onSynchronize() {
+        this.syncInProgress = true;
+
+        this._workspaceService
+            .synchronizeWorkspace(this.node.workspace)
+            .toPromise()
+            .catch(error => {
+                console.error('Error while synchronizing workspace.', error);
+                this._notificationService.displayErrorMessage('ADMIN.WORKSPACES.ERROR.WORKSPACE_SYNCHRONIZE', error);
+            })
+            .finally(() => this.syncInProgress = false);
     }
 
     public get workspaceGitHubLink(): GitHubFileLink {

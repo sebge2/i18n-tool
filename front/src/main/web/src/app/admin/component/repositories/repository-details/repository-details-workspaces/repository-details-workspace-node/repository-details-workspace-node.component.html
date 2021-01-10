@@ -8,6 +8,10 @@
 
         <app-form-delete-button (delete)="onDelete()" [deleteInProgress]="deleteInProgress"></app-form-delete-button>
 
+        <app-sync-button (sync)="onSynchronize()"
+                         [syncInProgress]="syncInProgress"
+                         *ngIf="syncAllowed"></app-sync-button>
+
         <app-download-button (download)="onInitialize()"
                              [initInProgress]="initializationInProgress"
                              *ngIf="initializationAllowed">
