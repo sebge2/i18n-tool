@@ -37,4 +37,9 @@ public interface TranslationManager {
      * Updates translations based on the specified {@link TranslationUpdateDto updates}.
      */
     Mono<List<BundleKeyTranslationEntity>> updateTranslations(List<TranslationUpdateDto> translationsUpdate) throws ResourceNotFoundException;
+
+    /**
+     * Deletes all translations of the specified workspace.
+     */
+    Mono<Void> deleteByWorkspace(WorkspaceEntity workspace);
 }
