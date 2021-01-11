@@ -44,11 +44,6 @@ public class GitDirectPushWorkspaceTranslationsStrategy extends BaseGitWorkspace
     }
 
     @Override
-    public Mono<WorkspaceEntity> onDelete(WorkspaceEntity workspace) {
-        return Mono.just(workspace);
-    }
-
-    @Override
     protected boolean doSupport(BaseGitRepositoryEntity repository) {
         return repository instanceof GitRepositoryEntity;
     }

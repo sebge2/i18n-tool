@@ -43,7 +43,7 @@ import java.util.List;
 @Configuration
 @EnableReactiveMethodSecurity
 @EnableWebFluxSecurity
-@EnableMongoWebSession(maxInactiveIntervalInSeconds = 86400)
+@EnableMongoWebSession
 public class SecurityConfiguration {
 
     private final PasswordEncoder passwordEncoder;

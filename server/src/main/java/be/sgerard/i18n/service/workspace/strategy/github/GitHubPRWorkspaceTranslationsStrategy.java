@@ -15,8 +15,6 @@ import be.sgerard.i18n.service.repository.github.GitHubService;
 import be.sgerard.i18n.service.workspace.strategy.WorkspaceTranslationsStrategy;
 import be.sgerard.i18n.service.workspace.strategy.git.BaseGitWorkspaceTranslationsStrategy;
 import be.sgerard.i18n.service.workspace.strategy.git.GitTranslationRepositoryWriteApi;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
@@ -35,8 +33,6 @@ import static be.sgerard.i18n.service.workspace.strategy.git.GitTranslationRepos
  */
 @Component
 public class GitHubPRWorkspaceTranslationsStrategy extends BaseGitWorkspaceTranslationsStrategy {
-
-    private static final Logger logger = LoggerFactory.getLogger(GitHubPRWorkspaceTranslationsStrategy.class);
 
     private final GitHubService gitHubService;
 
@@ -80,7 +76,12 @@ public class GitHubPRWorkspaceTranslationsStrategy extends BaseGitWorkspaceTrans
     }
 
     @Override
-    public Mono<WorkspaceEntity> onDelete(WorkspaceEntity workspace) {
+    protected boolean doSupport(BaseGitRepositoryEntity repository) {
+        return repository instanceof GitHubRepositoryEntity;
+    }
+
+    @Override
+    protected Mono<Void> doOnDelete(WorkspaceEntity workspace) {
         return repositoryManager
                 .applyGetMono(
                         workspace.getRepository(),
@@ -101,16 +102,14 @@ public class GitHubPRWorkspaceTranslationsStrategy extends BaseGitWorkspaceTrans
                                 logger.info("There is no review associated to the workspace {} skip this step.", workspace.getId());
                             }
 
-                            return Mono.just(workspace);
+                            return Mono.empty();
                         }
                 );
     }
 
-    @Override
-    protected boolean doSupport(BaseGitRepositoryEntity repository) {
-        return repository instanceof GitHubRepositoryEntity;
-    }
-
+    /**
+     * Generates a new unique branch name for the pull-request branch associated to the specified workspace.
+     */
     private String generatePullRequestBranchName(WorkspaceEntity workspace, GitRepositoryApi api) {
         return generateUniqueBranch(workspace.getBranch() + "_i18n_" + LocalDate.ofInstant(Instant.now(), ZoneId.systemDefault()).toString(), api);
     }
