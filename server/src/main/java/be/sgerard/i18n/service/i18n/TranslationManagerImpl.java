@@ -212,7 +212,7 @@ public class TranslationManagerImpl implements TranslationManager {
                 .flatMap(bundleKeyPairs ->
                         Flux
                                 .fromIterable(bundleKeyPairs)
-                                .flatMap(syncStrategy::synchronizeLocalAndRemote)
+                                .flatMap(syncStrategy::synchronizeLocalAndRemote, 1)
                                 .collectList()
                                 .map(bundleKeys -> updateBundleFileStats(workspace, bundleFile, bundleKeys))
                 );
@@ -360,7 +360,8 @@ public class TranslationManagerImpl implements TranslationManager {
                 .flatMap(removedBundleFile ->
                         translationRepository
                                 .deleteByBundleFile(removedBundleFile.getId())
-                                .thenReturn(removedBundleFile)
+                                .thenReturn(removedBundleFile),
+                        1
                 );
     }
 
