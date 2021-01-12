@@ -7,10 +7,10 @@ import {LoginUserPasswordComponent} from './component/login/login-user-password/
 import {CoreSharedModule} from "../shared/core-shared-module";
 import {LoginProviderComponent} from './component/login/login-provider/login-provider.component';
 import {HasRoleDirective} from "./directive/has-role.directive";
+import {HasRepositoryAccessDirective} from './directive/has-repository-access.directive';
 import {LogoutGuard} from "./service/guard/logout.guard";
 import {LoginGuard} from "./service/guard/login.guard";
 import {CoreSharedLibModule} from "../shared/core-shared-lib.module";
-import { HasRepositoryAccessDirective } from './directive/has-repository-access.directive';
 
 const appRoutes: Routes = [
     {
