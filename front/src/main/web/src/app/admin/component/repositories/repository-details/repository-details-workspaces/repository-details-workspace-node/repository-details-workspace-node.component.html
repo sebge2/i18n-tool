@@ -10,11 +10,12 @@
 
         <app-sync-button (sync)="onSynchronize()"
                          [syncInProgress]="syncInProgress"
-                         *ngIf="syncAllowed"></app-sync-button>
+                         *hasRepositoryAccess="node.repository.id; additionalCondition: syncAllowed">
+        </app-sync-button>
 
         <app-download-button (download)="onInitialize()"
                              [initInProgress]="initializationInProgress"
-                             *ngIf="initializationAllowed">
+                             *hasRepositoryAccess="node.repository.id; additionalCondition: initializationAllowed">
         </app-download-button>
     </app-row-actions-item>
 </app-row-actions>

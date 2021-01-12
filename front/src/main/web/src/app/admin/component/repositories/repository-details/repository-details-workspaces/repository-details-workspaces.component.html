@@ -2,7 +2,7 @@
           [headerMatIcon]="'sources'">
     <app-card-header-actions>
         <app-more-actions-button [actionInProgress]="moreActionInProgress" *ngIf="repository.status === RepositoryStatus.INITIALIZED">
-            <app-more-action-item-button>
+            <app-more-action-item-button *hasRepositoryAccess="repository.id">
                 <button mat-menu-item (click)="onSynchronize()">
                     <mat-icon>sync</mat-icon>
                     <span>{{'ADMIN.REPOSITORIES.DETAILS_CARD.ACTIONS.SYNCHRONIZE' | translate}}</span>
@@ -24,7 +24,8 @@
                         <div class="app-centered-container-item">
                             <app-download-button (download)="onInitialize()"
                                                  [initInProgress]="initInProgress"
-                                                 [buttonClass]="'xlarge'">
+                                                 [buttonClass]="'xlarge'"
+                                                 *hasRepositoryAccess="repository.id">
                             </app-download-button>
                         </div>
                         <div class="app-centered-container-item" *ngIf="!initInProgress">
