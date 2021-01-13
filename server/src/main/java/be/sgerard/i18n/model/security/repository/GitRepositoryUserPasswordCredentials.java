@@ -2,9 +2,13 @@ package be.sgerard.i18n.model.security.repository;
 
 import be.sgerard.i18n.service.security.UserRole;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 
-import static java.util.Collections.singletonList;
+import static java.util.Collections.emptySet;
+import static java.util.Collections.singleton;
 
 /**
  * {@link RepositoryCredentials Repository credentials} based on a token that can be
@@ -31,7 +35,8 @@ public class GitRepositoryUserPasswordCredentials implements RepositoryCredentia
         this.password = password;
         this.userDisplayName = userDisplayName;
         this.userEmail = userEmail;
-        this.sessionRoles = new HashSet<>(singletonList(UserRole.MEMBER_OF_REPOSITORY));
+
+        this.sessionRoles = hasCredentials() ? singleton(UserRole.MEMBER_OF_REPOSITORY) : emptySet();
     }
 
     public GitRepositoryUserPasswordCredentials(String repository, String username, String password) {
@@ -79,7 +84,7 @@ public class GitRepositoryUserPasswordCredentials implements RepositoryCredentia
     /**
      * Returns whether credentials are present.
      */
-    public boolean hasCredentials(){
+    public boolean hasCredentials() {
         return getUsername().isPresent() || getPassword().isPresent();
     }
 

@@ -7,6 +7,7 @@ import {LoginUserPasswordComponent} from './component/login/login-user-password/
 import {CoreSharedModule} from "../shared/core-shared-module";
 import {LoginProviderComponent} from './component/login/login-provider/login-provider.component';
 import {HasRoleDirective} from "./directive/has-role.directive";
+import {HasRepositoryAccessDirective} from './directive/has-repository-access.directive';
 import {LogoutGuard} from "./service/guard/logout.guard";
 import {LoginGuard} from "./service/guard/login.guard";
 import {CoreSharedLibModule} from "../shared/core-shared-lib.module";
@@ -31,7 +32,8 @@ const appRoutes: Routes = [
         LoginUserPasswordComponent,
         LoginProviderComponent,
 
-        HasRoleDirective
+        HasRoleDirective,
+        HasRepositoryAccessDirective,
     ],
     imports: [
         RouterModule.forChild(appRoutes),
@@ -41,7 +43,8 @@ const appRoutes: Routes = [
     ],
     exports: [
         RouterModule,
-        HasRoleDirective
+        HasRoleDirective,
+        HasRepositoryAccessDirective,
     ]
 })
 export class CoreAuthModule {
