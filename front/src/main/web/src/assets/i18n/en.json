@@ -158,11 +158,16 @@
           "ERROR_TITLE": "The following errors happened when publishing translations:"
         }
       },
+      "EXPLORE": {
+        "BUNDLE_FILE_EXCLUDED": "The bundle file has been excluded from all workspaces of this repository. This bundle file will disappear the next time you synchronize this workspace. You can configure all the exclusions in the current screen."
+      },
       "ERROR": {
         "GET_ALL": "Error while retrieving workspaces.",
         "DELETE_WORKSPACE": "Error while deleting the workspace",
         "INITIALIZE_WORKSPACE": "Error while initializing the workspace",
-        "WORKSPACES_SYNCHRONIZE": "Error while synchronizing workspaces."
+        "WORKSPACES_SYNCHRONIZE": "Error while synchronizing workspaces.",
+        "WORKSPACE_SYNCHRONIZE": "Error while synchronizing the workspace.",
+        "EXCLUDING_BUNDLE_FILE": "Error while excluding a bundle file."
       }
     },
     "REPOSITORIES": {
@@ -273,6 +278,18 @@
           "PASSWORD_HINT": "User's password (optional)",
           "UNKNOWN_ERROR": "A technical error happened, please verify credentials and try again.",
           "ERROR_TITLE": "The following errors happened when updating credentials:"
+        },
+        "TRANSLATIONS_CONFIG_POPUP": {
+          "TITLE": "Configure Exclusions of Keys and Bundle Files",
+          "IGNORED_KEYS": "Ignored Keys",
+          "IGNORED_PATHS": "Ignored Paths",
+          "ACTIONS": "Actions",
+          "NEW_IGNORED_KEY": "New Ignored Key",
+          "NEW_IGNORED_KEY_HINT": "Ignored keys won't be display in the searcher.",
+          "NEW_IGNORED_PATH": "New Ignored Path",
+          "NEW_IGNORED_PATH_HINT": "Bundles files matching the path (following Ant syntax) will be ignored.",
+          "UNKNOWN_ERROR": "A technical error happened, please verify credentials and try again.",
+          "ERROR_TITLE": "The following errors happened when updating configuration:"
         }
       },
       "DETAILS_CARD": {
@@ -285,7 +302,7 @@
         },
         "ACTIONS": {
           "SYNCHRONIZE": "Synchronize",
-          "EXCLUSION": "Excluded/Included Files"
+          "TRANSLATIONS_CONFIGURATION": "Update Exclusions"
         }
       },
       "ERROR": {

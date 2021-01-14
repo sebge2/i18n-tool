@@ -24,14 +24,9 @@ public class GitRepositoryHandler extends BaseGitRepositoryHandler<GitRepository
     private final AppProperties appProperties;
 
     public GitRepositoryHandler(GitRepositoryApiProvider apiProvider, AppProperties appProperties) {
-        super(apiProvider);
+        super(apiProvider, RepositoryType.GIT);
 
         this.appProperties = appProperties;
-    }
-
-    @Override
-    public boolean support(RepositoryType type) {
-        return type == RepositoryType.GIT;
     }
 
     @Override
@@ -44,23 +39,19 @@ public class GitRepositoryHandler extends BaseGitRepositoryHandler<GitRepository
     }
 
     @Override
-    public Mono<GitRepositoryEntity> updateRepository(GitRepositoryEntity repository,
-                                                      GitRepositoryPatchDto patchDto,
-                                                      GitRepositoryUserPasswordCredentials credentials) throws RepositoryException {
-        updateFromPatch(patchDto, repository);
+    public Mono<RepositoryApi> initApi(GitRepositoryEntity repository, GitRepositoryUserPasswordCredentials credentials) throws RepositoryException {
+        return createConfiguration(repository, credentials)
+                .flatMap(this::initApi)
+                .map(a -> a);
+    }
 
+    @Override
+    protected Mono<GitRepositoryEntity> updateGitRepoFromPatch(GitRepositoryPatchDto patchDto, GitRepositoryEntity repository) {
         patchDto.getName().ifPresent(repository::setName);
         repository.setUsername(patchDto.getUpdatedUserName(repository).orElse(null));
         repository.setPassword(patchDto.getUpdatedPassword(repository).orElse(null));
 
         return Mono.just(repository);
-    }
-
-    @Override
-    public Mono<RepositoryApi> initApi(GitRepositoryEntity repository, GitRepositoryUserPasswordCredentials credentials) throws RepositoryException {
-        return createConfiguration(repository, credentials)
-                .flatMap(this::initApi)
-                .map(a -> a);
     }
 
     /**

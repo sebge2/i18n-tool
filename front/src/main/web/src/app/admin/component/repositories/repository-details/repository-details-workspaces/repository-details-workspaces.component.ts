@@ -16,6 +16,8 @@ import {BundleFile} from "../../../../../translations/model/workspace/bundle-fil
 import {BundleFileEntry} from "../../../../../translations/model/workspace/bundle-file-entry.model";
 import {RepositoryDetailsWorkspaceTreeNodeComponent} from './repository-details-workspace-tree-node/repository-details-workspace-tree-node.component';
 import * as _ from "lodash";
+import {MatDialog} from "@angular/material/dialog";
+import {RepositoryDetailsTranslationsConfigurationComponent} from "./repository-details-translations-configuration/repository-details-translations-configuration.component";
 
 export class WorkspaceTreeNode implements TreeObject {
 
@@ -101,7 +103,8 @@ export class RepositoryDetailsWorkspacesComponent implements OnInit {
 
     constructor(private _repositoryService: RepositoryService,
                 private _workspaceService: WorkspaceService,
-                private _notificationService: NotificationService) {
+                private _notificationService: NotificationService,
+                private _dialog: MatDialog) {
     }
 
     public ngOnInit(): void {
@@ -135,7 +138,7 @@ export class RepositoryDetailsWorkspacesComponent implements OnInit {
             .finally(() => this.moreActionInProgress = false);
     }
 
-    public onOpenExclusion() {
-        // TODO
+    public onOpenTranslationsConfig() {
+        this._dialog.open(RepositoryDetailsTranslationsConfigurationComponent, {data: {repository: this.repository}});
     }
 }

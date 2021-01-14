@@ -33,8 +33,9 @@ public class TranslationsConfigurationEntity {
     /**
      * Adds the {@link BundleConfigurationEntity configuration of bundles}.
      */
-    public void addBundles(BundleConfigurationEntity bundle) {
+    public BundleConfigurationEntity addBundles(BundleConfigurationEntity bundle) {
         this.bundles.add(bundle);
+        return bundle;
     }
 
     /**
@@ -52,6 +53,15 @@ public class TranslationsConfigurationEntity {
         return getBundles().stream()
                 .filter(bundle -> bundle.getBundleType() == bundleType)
                 .findFirst();
+    }
+
+    /**
+     * Returns the {@link BundleConfigurationEntity bundle configuration} for the specified {@link BundleType type}. If it does not exist,
+     * it's created.
+     */
+    public BundleConfigurationEntity getBundleOrCreate(BundleType bundleType) {
+        return getBundle(bundleType)
+                .orElseGet(() -> addBundles(new BundleConfigurationEntity(bundleType)));
     }
 
     /**

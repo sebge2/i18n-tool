@@ -32,7 +32,7 @@ public class PullRequestController {
      * Returns all the pull requests.
      */
     @GetMapping("/github-pull-request")
-    @Operation(summary = "List all pull requests.")
+    @Operation(operationId = "listAllRequests", summary = "List all pull requests.")
     public Flux<GitHubPullRequestDto> listRequests() {
         return gitHubService.findAll();
     }
@@ -41,7 +41,7 @@ public class PullRequestController {
      * Returns all the pull requests of the specified repository.
      */
     @GetMapping("/repository/{repositoryId}/github-pull-request")
-    @Operation(summary = "List all pull requests of a repository.")
+    @Operation(operationId = "listRequests", summary = "List all pull requests of a repository.")
     public Flux<GitHubPullRequestDto> listRequests(@PathVariable String repositoryId) {
         return gitHubService.findAll(repositoryId);
     }
@@ -50,7 +50,7 @@ public class PullRequestController {
      * Returns the status of the pull request having the specified number.
      */
     @GetMapping("/repository/{repositoryId}/github-pull-request/{number}/status")
-    @Operation(summary = "Returns the status of the specified pull request.")
+    @Operation(operationId = "getStatus", summary = "Returns the status of the specified pull request.")
     public Mono<GitHubPullRequestStatus> getStatus(@PathVariable String repositoryId,
                                                    @PathVariable int number) {
         return gitHubService

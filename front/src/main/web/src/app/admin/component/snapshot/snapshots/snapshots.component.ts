@@ -16,7 +16,6 @@ import {AuthenticationService} from "../../../../core/auth/service/authenticatio
 export class SnapshotsComponent implements OnInit, OnDestroy {
 
     public readonly dataSource = new MatTableDataSource<Snapshot>();
-    public readonly displayedColumns: string[] = ['createdOn', 'comment', 'createdBy', 'action'];
 
     public restoreInProgress = false;
     public deleteInProgress = false;

@@ -17,6 +17,7 @@ import static be.sgerard.test.i18n.model.RepositoryEntityTestUtils.*;
 import static be.sgerard.test.i18n.model.TranslationLocaleCreationDtoTestUtils.enLocaleCreationDto;
 import static be.sgerard.test.i18n.model.TranslationLocaleCreationDtoTestUtils.frLocaleCreationDto;
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.hamcrest.Matchers.*;
 
 /**
@@ -141,10 +142,74 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$").value(hasSize(4))
+                .jsonPath("$[0].name").isEqualTo("exception")
+                .jsonPath("$[0].location").isEqualTo("server/src/main/resources/i18n")
+                .jsonPath("$[0].locationPathPattern").isEqualTo("server/src/main/resources/i18n/exception_*.properties")
                 .jsonPath("$[0].files").value(hasSize(greaterThan(1)))
+
+                .jsonPath("$[1].name").isEqualTo("validation")
+                .jsonPath("$[1].location").isEqualTo("server/src/main/resources/i18n")
+                .jsonPath("$[1].locationPathPattern").isEqualTo("server/src/main/resources/i18n/validation_*.properties")
                 .jsonPath("$[1].files").value(hasSize(greaterThan(1)))
+
+                .jsonPath("$[2].name").isEqualTo("file")
+                .jsonPath("$[2].location").isEqualTo("server/src/test/resources/be/sgerard/i18n/service/i18n/file")
+                .jsonPath("$[2].locationPathPattern").isEqualTo("server/src/test/resources/be/sgerard/i18n/service/i18n/file/*.json")
                 .jsonPath("$[2].files").value(hasSize(greaterThanOrEqualTo(1)))
+
+                .jsonPath("$[3].name").isEqualTo("i18n")
+                .jsonPath("$[3].location").isEqualTo("front/src/main/web/src/assets/i18n")
+                .jsonPath("$[3].locationPathPattern").isEqualTo("front/src/main/web/src/assets/i18n/*.json")
                 .jsonPath("$[3].files").value(hasSize(greaterThan(1)));
+    }
+
+    @Test
+    @CleanupDatabase
+    @WithJaneDoeAdminUser
+    public void findWorkspaceBundleFilesSomeIgnored() {
+        final WorkspaceDto masterWorkspace = repository
+                .create(i18nToolGitHubRepositoryCreationDto())
+                .hint("repo")
+                .update(
+                        GitHubRepositoryPatchDto.gitHubBuilder()
+                                .translationsConfiguration(
+                                        TranslationsConfigurationPatchDto.builder()
+                                                .javaProperties(
+                                                        BundleConfigurationPatchDto.builder()
+                                                                .ignoredPaths(singletonList("server/src/main/resources/i18n/exception_*.properties"))
+                                                                .build()
+                                                )
+                                                .jsonIcu(
+                                                        BundleConfigurationPatchDto.builder()
+                                                                .ignoredPaths(singletonList("server/src/test/resources/be/sgerard/i18n/service/i18n/file/*.json"))
+                                                                .build()
+                                                )
+                                                .build()
+                                )
+                )
+                .initialize()
+                .workspaces()
+                .workspaceForBranch("master")
+                .initialize()
+                .get();
+
+        webClient
+                .get()
+                .uri("/api/repository/workspace/{id}/bundle-file", masterWorkspace.getId())
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$").value(hasSize(2))
+
+                .jsonPath("$[0].name").isEqualTo("validation")
+                .jsonPath("$[0].location").isEqualTo("server/src/main/resources/i18n")
+                .jsonPath("$[0].locationPathPattern").isEqualTo("server/src/main/resources/i18n/validation_*.properties")
+                .jsonPath("$[0].files").value(hasSize(greaterThan(1)))
+
+                .jsonPath("$[1].name").isEqualTo("i18n")
+                .jsonPath("$[1].location").isEqualTo("front/src/main/web/src/assets/i18n")
+                .jsonPath("$[1].locationPathPattern").isEqualTo("front/src/main/web/src/assets/i18n/*.json")
+                .jsonPath("$[1].files").value(hasSize(greaterThan(1)));
     }
 
     @Nested

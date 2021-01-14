@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Hidden
 public class ErrorController implements org.springframework.boot.web.servlet.error.ErrorController {
 
+    /*extends AbstractErrorWebExceptionHandler TODO migrate to new mechanism*/
+
     /**
      * Forwards the error path to the web application.
      */

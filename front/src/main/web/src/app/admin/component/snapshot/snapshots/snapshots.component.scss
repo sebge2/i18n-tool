@@ -1,41 +1,19 @@
-@import "../../../../front/src/main/web/src/css/variables";
-
-table {
+:host ::ng-deep table {
   min-width: 600px;
   width: 70%;
   margin: auto;
   min-height: 150px;
 }
 
-.mat-row:hover {
-  background-color: mat-color($color-hover);
-
-  app-restore-button, app-download-button, app-form-delete-button {
-    visibility: visible;
-  }
-}
-
-app-restore-button, app-download-button, app-form-delete-button {
-  visibility: hidden;
-}
-
-.mat-cell {
-  padding: 10px 10px 10px 0;
-}
-
-.mat-column-createdOn {
+:host ::ng-deep .app-table-column-createdOn {
   width: 300px !important;
 }
 
-.mat-column-createdBy {
+:host ::ng-deep .app-table-column-createdBy {
   width: 200px !important;
 }
 
-.mat-column-action * {
-  margin: 5px;
-}
-
-.mat-column-action {
+:host ::ng-deep .app-table-column-action {
   width: 140px !important;
   padding: 0 !important;
 }

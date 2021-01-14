@@ -147,6 +147,13 @@ public class TranslationManagerImpl implements TranslationManager {
                 .map(translations -> translations.stream().map(Pair::getKey).collect(toList()));
     }
 
+    @Override
+    public Mono<Void> deleteByWorkspace(WorkspaceEntity workspace) {
+        logger.info("Delete all translations of the workspace [{}] alias [{}] that has been deleted.", workspace.getId(), workspace.getBranch());
+
+        return translationRepository.deleteByWorkspace(workspace.getId());
+    }
+
     /**
      * Creates the {@link BundleWalkingContext context} used for walking around repository files.
      */
@@ -212,7 +219,7 @@ public class TranslationManagerImpl implements TranslationManager {
                 .flatMap(bundleKeyPairs ->
                         Flux
                                 .fromIterable(bundleKeyPairs)
-                                .flatMap(syncStrategy::synchronizeLocalAndRemote)
+                                .flatMap(syncStrategy::synchronizeLocalAndRemote, 1)
                                 .collectList()
                                 .map(bundleKeys -> updateBundleFileStats(workspace, bundleFile, bundleKeys))
                 );
@@ -358,9 +365,10 @@ public class TranslationManagerImpl implements TranslationManager {
                                 removedBundleFile.getLocation(), removedBundleFile.getName(), removedBundleFile.getFiles().size())
                 )
                 .flatMap(removedBundleFile ->
-                        translationRepository
-                                .deleteByBundleFile(removedBundleFile.getId())
-                                .thenReturn(removedBundleFile)
+                                translationRepository
+                                        .deleteByBundleFile(removedBundleFile.getId())
+                                        .thenReturn(removedBundleFile),
+                        1
                 );
     }
 

@@ -8,9 +8,14 @@
 
         <app-form-delete-button (delete)="onDelete()" [deleteInProgress]="deleteInProgress"></app-form-delete-button>
 
+        <app-sync-button (sync)="onSynchronize()"
+                         [syncInProgress]="syncInProgress"
+                         *hasRepositoryAccess="node.repository.id; additionalCondition: syncAllowed">
+        </app-sync-button>
+
         <app-download-button (download)="onInitialize()"
                              [initInProgress]="initializationInProgress"
-                             *ngIf="initializationAllowed">
+                             *hasRepositoryAccess="node.repository.id; additionalCondition: initializationAllowed">
         </app-download-button>
     </app-row-actions-item>
 </app-row-actions>

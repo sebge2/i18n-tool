@@ -9,6 +9,7 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
+import { TranslationsConfigurationDto } from './translationsConfigurationDto';
 
 /**
  * Repository that can be of different type.
@@ -26,6 +27,7 @@ export interface RepositoryDto {
      * All possible repository statuses.
      */
     status: RepositoryDto.StatusDtoEnum;
+    translationsConfiguration: TranslationsConfigurationDto;
     type?: RepositoryDto.TypeDtoEnum;
 }
 export namespace RepositoryDto {

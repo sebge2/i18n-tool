@@ -80,7 +80,7 @@ export class UserService {
         this.loadUsers();
 
         return this.apiUserService
-            .deleteUserById(user.id)
+            ._delete(user.id)
             .pipe(tap(() => this._synchronizedUsers$.delete(user)));
     }
 
@@ -99,7 +99,7 @@ export class UserService {
     private loadUsers() {
         if (!this._synchronizedUsers$) {
             this._synchronizedUsers$ = new SynchronizedCollection<UserDto, User>(
-                () => this.apiUserService.findAll2(),
+                () => this.apiUserService.findAll(),
                 this.eventService.subscribeDto(Events.ADDED_USER),
                 this.eventService.subscribeDto(Events.UPDATED_USER),
                 this.eventService.subscribeDto(Events.DELETED_USER),

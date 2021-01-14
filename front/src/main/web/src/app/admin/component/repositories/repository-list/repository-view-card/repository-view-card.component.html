@@ -28,8 +28,10 @@
                     {{'ADMIN.REPOSITORIES.VIEW_CARD.WORKSPACE_LABEL' | translate}}
                 </td>
                 <td>
-                    <span [innerHTML]="'ADMIN.REPOSITORIES.VIEW_CARD.WORKSPACES_READY' | translate: {number:numberReadyWorkspaces}" *ngIf="numberReadyWorkspaces > 0"></span>
-                    <span [innerHTML]="'ADMIN.REPOSITORIES.VIEW_CARD.WORKSPACES_NOT_READY' | translate" *ngIf="numberReadyWorkspaces == 0"></span>
+                    <span [innerHTML]="'ADMIN.REPOSITORIES.VIEW_CARD.WORKSPACES_READY' | translate: {number:numberReadyWorkspaces}"
+                          *ngIf="numberReadyWorkspaces > 0"></span>
+                    <span [innerHTML]="'ADMIN.REPOSITORIES.VIEW_CARD.WORKSPACES_NOT_READY' | translate"
+                          *ngIf="numberReadyWorkspaces == 0"></span>
                 </td>
             </tr>
             <tr class="info-table-row">
@@ -37,8 +39,10 @@
                     {{'ADMIN.REPOSITORIES.VIEW_CARD.DEFAULT_WORKSPACE_LABEL' | translate}}
                 </td>
                 <td>
-                    <span [innerHTML]="'ADMIN.REPOSITORIES.VIEW_CARD.STATUS_DEFAULT' | translate: {name:defaultWorkspace?.branch, numberBundleKeys:defaultWorkspace?.numberBundleKeys}" *ngIf="defaultWorkspace"></span>
-                    <span [innerHTML]="'ADMIN.REPOSITORIES.VIEW_CARD.STATUS_DEFAULT_EMPTY' | translate" *ngIf="!defaultWorkspace"></span>
+                    <span [innerHTML]="'ADMIN.REPOSITORIES.VIEW_CARD.STATUS_DEFAULT' | translate: {name:defaultWorkspace?.branch, numberBundleKeys:defaultWorkspace?.numberBundleKeys}"
+                          *ngIf="defaultWorkspace"></span>
+                    <span [innerHTML]="'ADMIN.REPOSITORIES.VIEW_CARD.STATUS_DEFAULT_EMPTY' | translate"
+                          *ngIf="!defaultWorkspace"></span>
                 </td>
             </tr>
             <tr class="info-table-row">
@@ -46,14 +50,19 @@
                     {{'ADMIN.REPOSITORIES.VIEW_CARD.PUBLISH_LABEL' | translate}}
                 </td>
                 <td>
-                    <span [innerHTML]="'ADMIN.REPOSITORIES.VIEW_CARD.PUBLISH_ENABLED' | translate" *ngIf="numberDirtyWorkspaces > 0"></span>
-                    <span [innerHTML]="'ADMIN.REPOSITORIES.VIEW_CARD.PUBLISH_DISABLED' | translate" *ngIf="numberDirtyWorkspaces == 0"></span>
+                    <span [innerHTML]="'ADMIN.REPOSITORIES.VIEW_CARD.PUBLISH_ENABLED' | translate"
+                          *ngIf="numberDirtyWorkspaces > 0"></span>
+                    <span [innerHTML]="'ADMIN.REPOSITORIES.VIEW_CARD.PUBLISH_DISABLED' | translate"
+                          *ngIf="numberDirtyWorkspaces == 0"></span>
                 </td>
             </tr>
         </table>
     </app-card-content>
     <app-card-actions>
-        <app-publish-button [disabled]="numberDirtyWorkspaces == 0" (publish)="onPublish()"></app-publish-button>
+        <app-publish-button [disabled]="numberDirtyWorkspaces == 0"
+                            (publish)="onPublish()"
+                            *hasRepositoryAccess="repository.id">
+        </app-publish-button>
         <app-form-open-tab-button (open)="onOpen()"></app-form-open-tab-button>
     </app-card-actions>
 </app-card>

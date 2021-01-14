@@ -126,28 +126,16 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
     public Mono<WorkspaceEntity> synchronize(String workspaceId) throws ResourceNotFoundException, RepositoryException {
         return findByIdOrDie(workspaceId)
                 .flatMap(workspace ->
-                        repositoryManager
-                                .findByIdOrDie(workspace.getRepository())
-                                .flatMap(repository ->
-                                        translationsStrategy
-                                                .listBranches(repository)
-                                                .hasElement(workspace.getBranch())
-                                                .flatMap(exist -> {
-                                                    if (exist) {
-                                                        return translationsStrategy.onSynchronize(workspace);
-                                                    } else {
-                                                        return delete(workspaceId);
-                                                    }
-                                                })
-                                )
-                )
-                .flatMap(workspace -> {
-                    workspace.setLastSynchronization(Instant.now());
-
-                    return listener
-                            .afterSynchronization(workspace)
-                            .then(Mono.defer(() -> update(workspace)));
-                });
+                        listBranches(workspace.getRepository())
+                                .hasElement(workspace.getBranch())
+                                .flatMap(exist -> {
+                                    if (exist) {
+                                        return doSynchronize(workspace);
+                                    } else {
+                                        return delete(workspaceId);
+                                    }
+                                })
+                );
     }
 
     @Override
@@ -356,5 +344,16 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
         return listener
                 .beforeReview(workspace)
                 .then(Mono.defer(() -> update(workspace)));
+    }
+
+    /**
+     * Synchronizes the specified workspace.
+     */
+    private Mono<WorkspaceEntity> doSynchronize(WorkspaceEntity workspace) {
+        return translationsStrategy
+                .onSynchronize(workspace)
+                .doOnNext(wk -> wk.setLastSynchronization(Instant.now()))
+                .flatMap(wk -> listener.afterSynchronization(wk).thenReturn(wk))
+                .flatMap(this::update);
     }
 }

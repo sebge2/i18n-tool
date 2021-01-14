@@ -41,7 +41,7 @@ public class RepositoryController {
      * Finds all the {@link RepositoryDto repositories}.
      */
     @GetMapping(path = "/repository")
-    @Operation(summary = "Finds all repositories.")
+    @Operation(operationId = "findAll", summary = "Finds all repositories.")
     public Flux<RepositoryDto> findAll() {
         return repositoryManager.findAll()
                 .map(dtoMapper::mapToDto);
@@ -51,7 +51,7 @@ public class RepositoryController {
      * Returns the {@link RepositoryDto repository} having the specified id.
      */
     @GetMapping(path = "/repository/{id}")
-    @Operation(summary = "Finds the repository having the specified id.")
+    @Operation(operationId = "findById", summary = "Finds the repository having the specified id.")
     public Mono<RepositoryDto> findById(@PathVariable String id) {
         return repositoryManager.findByIdOrDie(id)
                 .map(dtoMapper::mapToDto);
@@ -61,7 +61,7 @@ public class RepositoryController {
      * Creates a new {@link RepositoryDto repository} based on the {@link RepositoryCreationDto DTO}.
      */
     @PostMapping(path = "/repository")
-    @Operation(summary = "Creates a new repository.")
+    @Operation(operationId = "create", summary = "Creates a new repository.")
     @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.CREATED)
     public Mono<RepositoryDto> create(@RequestBody RepositoryCreationDto creationDto) {
@@ -73,7 +73,7 @@ public class RepositoryController {
      * Updates the repository as described by the specified {@link RepositoryPatchDto DTO}.
      */
     @PatchMapping(path = "/repository/{id}")
-    @Operation(summary = "Updates an existing repository.")
+    @Operation(operationId = "update", summary = "Updates an existing repository.")
     @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.OK)
     public Mono<RepositoryDto> update(@PathVariable String id,
@@ -101,7 +101,7 @@ public class RepositoryController {
      * Removes the {@link RepositoryDto repository} having the specified id.
      */
     @DeleteMapping(path = "/repository/{id}")
-    @Operation(summary = "Delete a repository.")
+    @Operation(operationId = "delete", summary = "Delete a repository.")
     @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public Mono<RepositoryDto> delete(@PathVariable String id) {

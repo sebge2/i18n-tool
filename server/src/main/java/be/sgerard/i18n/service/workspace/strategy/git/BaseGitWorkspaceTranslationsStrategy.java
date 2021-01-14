@@ -10,6 +10,8 @@ import be.sgerard.i18n.service.repository.RepositoryManager;
 import be.sgerard.i18n.service.repository.git.GitRepositoryApi;
 import be.sgerard.i18n.service.workspace.WorkspaceException;
 import be.sgerard.i18n.service.workspace.strategy.WorkspaceTranslationsStrategy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -21,6 +23,8 @@ import java.util.Objects;
  * @author Sebastien Gerard
  */
 public abstract class BaseGitWorkspaceTranslationsStrategy implements WorkspaceTranslationsStrategy {
+
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     protected final RepositoryManager repositoryManager;
     protected final TranslationManager translationManager;
@@ -67,6 +71,17 @@ public abstract class BaseGitWorkspaceTranslationsStrategy implements WorkspaceT
         return readTranslations(workspace);
     }
 
+    @Override
+    public Mono<WorkspaceEntity> onDelete(WorkspaceEntity workspace) throws WorkspaceException, RepositoryException {
+        return Flux
+                .concat(
+                        doOnDelete(workspace),
+                        translationManager.deleteByWorkspace(workspace),
+                        deleteBranch(workspace)
+                )
+                .then(Mono.just(workspace));
+    }
+
     /**
      * Performs additional support check.
      */
@@ -93,4 +108,34 @@ public abstract class BaseGitWorkspaceTranslationsStrategy implements WorkspaceT
                                         .then(Mono.just(workspace))
                 );
     }
+
+    /**
+     * Performs additional actions when deleting the specified workspace.
+     */
+    protected Mono<Void> doOnDelete(WorkspaceEntity workspace) {
+        return Mono.empty();
+    }
+
+    /**
+     * Deletes the branch associated to the specified workspace.
+     */
+    private Mono<Void> deleteBranch(WorkspaceEntity workspace) {
+        return repositoryManager
+                .applyGetMono(
+                        workspace.getRepository(),
+                        GitRepositoryApi.class,
+                        api -> {
+                            try {
+                                api.removeBranch(workspace.getBranch());
+
+                                logger.info("The branch {} has been removed.", workspace.getBranch());
+                            } catch (RepositoryException e) {
+                                logger.error(String.format("Error while removing the branch %s.", workspace.getBranch()), e);
+                            }
+
+                            return Mono.empty();
+                        }
+                );
+    }
+
 }

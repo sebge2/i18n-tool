@@ -17,7 +17,7 @@ import reactor.core.publisher.Mono;
  */
 @Controller
 @RequestMapping(path = "/api")
-@Tag(name ="GitHub", description = "Controller exposing the GitHub web-hook")
+@Tag(name = "GitHub", description = "Controller exposing the GitHub web-hook")
 public class GitHubController {
 
     private final GitHubWebHookService webHookService;
@@ -30,7 +30,7 @@ public class GitHubController {
      * Handles a notification event coming from GitHub.
      */
     @PostMapping(path = "/git-hub/event")
-    @Operation(summary = "GitHub Web-hook notifying events on the repository. Only called by GitHub.com")
+    @Operation(operationId = "handleEvent", summary = "GitHub Web-hook notifying events on the repository. Only called by GitHub.com")
     @ResponseBody
     public Mono<String> handle(RequestEntity<String> requestEntity) {
         return webHookService.executeWebHook(requestEntity);
