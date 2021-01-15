@@ -125,7 +125,7 @@ public class SecurityConfiguration {
 
 
         if (repository != null) {
-            // TODO unfortunately oauth login redirect to /login if not authenticated
+            // NICE unfortunately oauth login redirect to /login if not authenticated
             httpSecurity.oauth2Login(oAuth2Login ->
                     oAuth2Login
                             .authorizationRequestResolver(new DefaultServerOAuth2AuthorizationRequestResolver(repository, ServerWebExchangeMatchers.pathMatchers(("/auth/oauth2/authorize-client/{registrationId}"))))

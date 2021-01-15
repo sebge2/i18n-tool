@@ -187,7 +187,7 @@ public class UserControllerTest extends AbstractControllerTest {
                 .jsonPath("$.email").isEqualTo("john.doe@warner.com");
     }
 
-    // TODO update current user admin
+    // TODO issue-128 update current user admin
 
     @Test
     @CleanupDatabase

@@ -11,23 +11,23 @@ import reactor.core.publisher.Mono;
 public interface UserLiveSessionListener {
 
     /**
-     * Performs an action when creating the specified session.
+     * Performs an action when the specified session has been persisted.
      */
-    default Mono<Void> onNewSession(UserLiveSessionEntity session) {
+    default Mono<Void> afterStarting(UserLiveSessionEntity session) {
         return Mono.empty();
     }
 
     /**
-     * Performs an action when stopping the specified session.
+     * Performs an action when the specified session has been stopped and persisted.
      */
-    default Mono<Void> onStopSession(UserLiveSessionEntity session) {
+    default Mono<Void> afterStopping(UserLiveSessionEntity session) {
         return Mono.empty();
     }
 
     /**
-     * Performs an action when deleting (physically) the specified session.
+     * Performs an action after the specified session has been deleted.
      */
-    default Mono<Void> onDeletedSession(UserLiveSessionEntity session) {
+    default Mono<Void> afterDeletion(UserLiveSessionEntity session) {
         return Mono.empty();
     }
 }

@@ -1,4 +1,4 @@
-package be.sgerard.i18n.service.user.validator;
+package be.sgerard.i18n.service.user.validation;
 
 import be.sgerard.i18n.model.user.dto.UserPatchDto;
 import be.sgerard.i18n.model.user.persistence.UserEntity;

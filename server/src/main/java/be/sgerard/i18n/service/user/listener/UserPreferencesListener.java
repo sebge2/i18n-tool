@@ -13,7 +13,7 @@ public interface UserPreferencesListener {
     /**
      * Performs an action after the update of the specified user's preferences.
      */
-    default Mono<Void> onUpdate(UserEntity user) {
+    default Mono<Void> afterUpdate(UserEntity user) {
         return Mono.empty();
     }
 

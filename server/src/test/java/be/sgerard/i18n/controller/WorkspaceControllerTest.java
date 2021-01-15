@@ -692,7 +692,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
             remoteRepository.gitHub().forHint("myGitHubRepo").manageRemoteBranches()
                     .branch(pullRequestBranch)
                     .file("/server/src/main/resources/i18n/validation_en.properties")
-//                    .assertContains("validation.repository.name-not-unique=my updated value") TODO fix this
+//                    .assertContains("validation.repository.name-not-unique=my updated value") // TODO issue-128 fix this
             ;
         }
 
@@ -755,7 +755,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                     .jsonPath("$[0].status").isEqualTo(WorkspaceStatus.IN_REVIEW.name());
         }
 
-        // TODO workspace NOT INITIALIZED
+        // TODO issue-128 workspace NOT INITIALIZED
 
         @Test
         @CleanupDatabase

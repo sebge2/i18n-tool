@@ -23,7 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class JavaPropertiesBundleHandlerTest {
 
-    // TODO
+    // TODO issue-128
     @Test
     public void check() throws IOException {
 //        final Locale x = Locale.forLanguageTag(Locale.CANADA_FRENCH.toString());

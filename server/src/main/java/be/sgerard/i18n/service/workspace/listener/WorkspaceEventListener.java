@@ -32,37 +32,20 @@ public class WorkspaceEventListener implements WorkspaceListener {
     }
 
     @Override
-    public Mono<Void> afterCreate(WorkspaceEntity workspace) {
+    public Mono<Void> afterPersist(WorkspaceEntity workspace) {
         return dtoEnricher.mapAndEnrich(workspace)
                 .flatMap(workspaceDto -> eventService.broadcastEvent(ADDED_WORKSPACE, workspaceDto));
     }
 
     @Override
-    public Mono<Void> afterInitialize(WorkspaceEntity workspace) {
-        return dtoEnricher.mapAndEnrich(workspace)
-                .flatMap(workspaceDto -> eventService.broadcastEvent(UPDATED_WORKSPACE, workspaceDto));
-    }
-
-    @Override
-    public Mono<Void> beforeDelete(WorkspaceEntity workspace) {
+    public Mono<Void> afterDelete(WorkspaceEntity workspace) {
         return dtoEnricher.mapAndEnrich(workspace)
                 .flatMap(workspaceDto -> eventService.broadcastEvent(DELETED_WORKSPACE, workspaceDto));
     }
 
     @Override
-    public Mono<Void> beforeReview(WorkspaceEntity workspace) {
+    public Mono<Void> afterUpdate(WorkspaceEntity workspace) {
         return dtoEnricher.mapAndEnrich(workspace)
                 .flatMap(workspaceDto -> eventService.broadcastEvent(UPDATED_WORKSPACE, workspaceDto));
-    }
-
-    @Override
-    public Mono<Void> afterReview(WorkspaceEntity workspace) {
-        return dtoEnricher.mapAndEnrich(workspace)
-                .flatMap(workspaceDto -> eventService.broadcastEvent(UPDATED_WORKSPACE, workspaceDto));
-    }
-
-    @Override
-    public Mono<Void> afterSynchronization(WorkspaceEntity workspace) {
-        return Mono.empty(); // TODO
     }
 }

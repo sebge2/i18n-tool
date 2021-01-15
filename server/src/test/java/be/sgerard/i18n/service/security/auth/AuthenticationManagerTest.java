@@ -9,6 +9,6 @@ import static org.junit.Assert.*;
  */
 public class AuthenticationManagerTest extends AbstractIntegrationTest {
 
-    // TODO
+    // TODO issue-128
 
 }

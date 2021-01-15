@@ -25,7 +25,7 @@ describe('AppComponent', () => {
     it(`should have as title 'i18n-tool'`, () => {
         const fixture = TestBed.createComponent(AppComponent);
         const app = fixture.debugElement.componentInstance;
-        // TODO
+        // TODO issue-125
         // expect(app.title).toEqual('i18n-tool');
     });
 
@@ -33,7 +33,7 @@ describe('AppComponent', () => {
         const fixture = TestBed.createComponent(AppComponent);
         fixture.detectChanges();
         const compiled = fixture.debugElement.nativeElement;
-        // TODO
+        // TODO issue-125
         // expect(compiled.querySelector('h1').textContent).toContain('Welcome to i18n-tool!');
     });
 });

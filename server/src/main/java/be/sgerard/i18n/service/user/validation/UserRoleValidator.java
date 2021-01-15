@@ -1,4 +1,4 @@
-package be.sgerard.i18n.service.user.validator;
+package be.sgerard.i18n.service.user.validation;
 
 import be.sgerard.i18n.model.user.dto.InternalUserCreationDto;
 import be.sgerard.i18n.model.user.dto.UserPatchDto;
@@ -12,8 +12,6 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.Collection;
-
-import static java.util.Collections.emptyList;
 
 /**
  * {@link UserValidator User listener} performing validation of roles.
@@ -38,7 +36,7 @@ public class UserRoleValidator implements UserValidator {
 
     @Override
     public Mono<ValidationResult> beforeUpdate(UserEntity user, UserPatchDto patch) {
-        return validateRoles(patch.getRoles().orElse(emptyList()));
+        return patch.getRoles().map(this::validateRoles).orElse(Mono.just(ValidationResult.EMPTY));
     }
 
     /**

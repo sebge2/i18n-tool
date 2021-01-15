@@ -11,23 +11,37 @@ import reactor.core.publisher.Mono;
 public interface TranslationLocaleListener {
 
     /**
-     * Performs an action when the specified {@link TranslationLocaleEntity locale} has been created.
+     * Performs an action when the specified {@link TranslationLocaleEntity locale} has been persisted.
      */
-    default Mono<Void> onCreatedLocale(TranslationLocaleEntity locale) {
+    default Mono<Void> afterPersist(TranslationLocaleEntity locale) {
+        return Mono.empty();
+    }
+
+    /**
+     * Performs an action when the specified {@link TranslationLocaleEntity locale} is about to be updated.
+     */
+    default Mono<Void> beforeUpdate(TranslationLocaleEntity locale) {
         return Mono.empty();
     }
 
     /**
      * Performs an action when the specified {@link TranslationLocaleEntity locale} has been updated.
      */
-    default Mono<Void> onUpdatedLocale(TranslationLocaleEntity locale) {
+    default Mono<Void> afterUpdate(TranslationLocaleEntity locale) {
+        return Mono.empty();
+    }
+
+    /**
+     * Performs an action when the specified {@link TranslationLocaleEntity locale} is about to be deleted.
+     */
+    default Mono<Void> beforeDelete(TranslationLocaleEntity locale) {
         return Mono.empty();
     }
 
     /**
      * Performs an action when the specified {@link TranslationLocaleEntity locale} has been deleted.
      */
-    default Mono<Void> onDeletedLocale(TranslationLocaleEntity locale) {
+    default Mono<Void> afterDelete(TranslationLocaleEntity locale) {
         return Mono.empty();
     }
 

@@ -15,12 +15,12 @@ import static be.sgerard.i18n.model.event.EventType.*;
  * @author Sebastien Gerard
  */
 @Component
-public class EventAuthenticatedUserListener implements AuthenticatedUserListener {
+public class AuthenticatedUserEventListener implements AuthenticatedUserListener {
 
     private final EventService eventService;
     private final AuthenticatedUserDtoMapper userDtoMapper;
 
-    public EventAuthenticatedUserListener(EventService eventService, AuthenticatedUserDtoMapper userDtoMapper) {
+    public AuthenticatedUserEventListener(EventService eventService, AuthenticatedUserDtoMapper userDtoMapper) {
         this.eventService = eventService;
         this.userDtoMapper = userDtoMapper;
     }

@@ -23,7 +23,7 @@ public class PreferencesTranslationLocaleListener implements TranslationLocaleLi
     }
 
     @Override
-    public Mono<Void> onDeletedLocale(TranslationLocaleEntity locale) {
+    public Mono<Void> beforeDelete(TranslationLocaleEntity locale) {
         return userManager
                 .findAll()
                 .flatMap(user -> {

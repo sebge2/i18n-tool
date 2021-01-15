@@ -1,4 +1,4 @@
-[link=https://travis-ci.org/sebge2/i18n-tool]
+[link=https://travis-ci.com/sebge2/i18n-tool]
 image::https://img.shields.io/travis/sebge2/i18n-tool/master.svg?label=master[Build Status]
 
 = I18n Tool

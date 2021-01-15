@@ -17,7 +17,7 @@ import be.sgerard.i18n.repository.user.UserRepository;
 import be.sgerard.i18n.service.ValidationException;
 import be.sgerard.i18n.service.security.UserRole;
 import be.sgerard.i18n.service.user.listener.UserListener;
-import be.sgerard.i18n.service.user.validator.UserValidator;
+import be.sgerard.i18n.service.user.validation.UserValidator;
 import net.coobird.thumbnailator.Thumbnails;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -123,7 +123,7 @@ public class UserManagerImpl implements UserManager {
                                 })
                 )
                 .flatMap(internalUserRepository::save)
-                .flatMap(user -> listener.afterCreate(user).thenReturn(user));
+                .flatMap(user -> listener.afterPersist(user).thenReturn(user));
     }
 
     @Override
@@ -162,14 +162,14 @@ public class UserManagerImpl implements UserManager {
                                 })
                 )
                 .flatMap(externalUserRepository::save)
-                .flatMap(user -> listener.afterCreate(user).thenReturn(user));
+                .flatMap(user -> listener.afterPersist(user).thenReturn(user));
     }
 
     @Override
     @Transactional
     public Mono<UserEntity> update(UserEntity user) {
-        return userRepository
-                .save(user)
+        return listener.beforeUpdate(user).thenReturn(user)
+                .flatMap(userRepository::save)
                 .flatMap(u -> listener.afterUpdate(u).thenReturn(u));
     }
 
@@ -287,15 +287,9 @@ public class UserManagerImpl implements UserManager {
 
                                     return user;
                                 })
-                                .flatMap(userEntity ->
-                                        userRepository.delete(userEntity)
-                                                .thenReturn(userEntity)
-                                )
-                                .flatMap(rep ->
-                                        listener
-                                                .afterDelete(rep)
-                                                .thenReturn(rep)
-                                )
+                                .flatMap(usr -> listener.beforeDelete(usr).thenReturn(usr))
+                                .flatMap(usr -> userRepository.delete(usr).thenReturn(usr))
+                                .flatMap(usr -> listener.afterDelete(usr).thenReturn(usr))
                 );
     }
 
@@ -309,7 +303,7 @@ public class UserManagerImpl implements UserManager {
     @Order(100)
     public Mono<InternalUserEntity> initializeDefaultAdmin() {
         return internalUserRepository
-                .findByUsername(ADMIN_USER_NAME)
+                .findByUsername(UserEntity.ADMIN_USER_NAME)
                 .switchIfEmpty(Mono.defer(() -> {
                     final String password = appProperties.getSecurity().getDefaultAdminPassword()
                             .orElseGet(() -> {
@@ -325,10 +319,10 @@ public class UserManagerImpl implements UserManager {
                     return this
                             .createUser(
                                     InternalUserCreationDto.builder()
-                                            .username(ADMIN_USER_NAME)
+                                            .username(UserEntity.ADMIN_USER_NAME)
                                             .password(password)
                                             .roles(UserRole.ADMIN)
-                                            .displayName(ADMIN_USER_NAME)
+                                            .displayName(UserEntity.ADMIN_USER_NAME)
                                             .build()
                             )
                             .map(user -> {

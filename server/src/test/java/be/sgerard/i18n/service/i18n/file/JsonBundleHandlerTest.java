@@ -27,7 +27,8 @@ import static org.mockito.Mockito.when;
  */
 public class JsonBundleHandlerTest {
 
-    // TODO
+    // TODO issue-128
+
     @Test
     @Ignore
     public void scanBundles() throws IOException {

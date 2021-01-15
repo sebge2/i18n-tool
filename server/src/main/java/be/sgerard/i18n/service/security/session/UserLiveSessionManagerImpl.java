@@ -52,7 +52,7 @@ public class UserLiveSessionManagerImpl implements UserLiveSessionManager {
                 .flatMap(currentUser -> repository.save(new UserLiveSessionEntity(currentUser)))
                 .flatMap(session ->
                         listener
-                                .onNewSession(session)
+                                .afterStarting(session)
                                 .thenReturn(session)
                 );
     }
@@ -76,7 +76,7 @@ public class UserLiveSessionManagerImpl implements UserLiveSessionManager {
 
                     return repository.save(currentSession);
                 })
-                .flatMap(listener::onStopSession);
+                .flatMap(listener::afterStopping);
     }
 
     @Override
@@ -84,7 +84,7 @@ public class UserLiveSessionManagerImpl implements UserLiveSessionManager {
     public Mono<Void> deleteSession(UserLiveSessionEntity session) {
         return repository
                 .delete(session)
-                .then(listener.onDeletedSession(session));
+                .then(listener.afterDeletion(session));
     }
 
     @Override

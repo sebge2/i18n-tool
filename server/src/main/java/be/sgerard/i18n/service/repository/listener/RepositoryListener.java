@@ -1,8 +1,6 @@
 package be.sgerard.i18n.service.repository.listener;
 
-import be.sgerard.i18n.model.repository.dto.RepositoryPatchDto;
 import be.sgerard.i18n.model.repository.persistence.RepositoryEntity;
-import be.sgerard.i18n.model.validation.ValidationResult;
 import reactor.core.publisher.Mono;
 
 /**
@@ -18,30 +16,38 @@ public interface RepositoryListener<R extends RepositoryEntity> {
     boolean support(RepositoryEntity repositoryEntity);
 
     /**
-     * Performs an action after the creation of the specified repository.
+     * Performs an action before that the specified repository has been persisted.
      */
-    default Mono<Void> afterCreate(R repository) {
+    default Mono<Void> beforePersist(R repository) {
         return Mono.empty();
     }
 
     /**
-     * Performs an action after the initialization of the specified repository.
+     * Performs an action after that the specified repository has been persisted.
+     */
+    default Mono<Void> afterPersist(R repository) {
+        return Mono.empty();
+    }
+
+    /**
+     * Performs an action after the initialization of the specified repository. The repository has been persisted.
+     * {@link #afterUpdate(RepositoryEntity) afterUpdate} is also called (before this callback).
      */
     default Mono<Void> afterInitialize(R repository) {
         return Mono.empty();
     }
 
     /**
-     * Performs an action after the initialization of the specified repository.
+     * Performs an action after that the specified repository has been updated, but changes are not persisted.
      */
-    default Mono<Void> onInitializationError(R repository, Throwable error) {
+    default Mono<Void> beforeUpdate(R repository) {
         return Mono.empty();
     }
 
     /**
-     * Performs an action after the patch of the specified repository.
+     * Performs an action after the update of the specified repository.
      */
-    default Mono<Void> afterUpdate(RepositoryPatchDto patch, R repository) {
+    default Mono<Void> afterUpdate(R repository) {
         return Mono.empty();
     }
 
@@ -49,6 +55,13 @@ public interface RepositoryListener<R extends RepositoryEntity> {
      * Performs an action before the deletion of the specified repository.
      */
     default Mono<Void> beforeDelete(R repository) {
+        return Mono.empty();
+    }
+
+    /**
+     * Performs an action after the deletion of the specified repository.
+     */
+    default Mono<Void> afterDelete(R repository) {
         return Mono.empty();
     }
 

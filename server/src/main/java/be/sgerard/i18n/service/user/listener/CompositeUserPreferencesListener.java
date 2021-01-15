@@ -26,10 +26,10 @@ public class CompositeUserPreferencesListener implements UserPreferencesListener
     }
 
     @Override
-    public Mono<Void> onUpdate(UserEntity user) {
+    public Mono<Void> afterUpdate(UserEntity user) {
         return Flux
                 .fromIterable(listeners)
-                .flatMap(listener -> listener.onUpdate(user))
+                .flatMap(listener -> listener.afterUpdate(user))
                 .then();
     }
 }
