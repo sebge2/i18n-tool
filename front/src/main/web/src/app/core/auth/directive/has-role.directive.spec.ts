@@ -4,7 +4,7 @@ describe('HasRoleDirective', () => {
 
 
   it('should create an instance', () => {
-    // TODO
+    // TODO issue-125
     // const directive = new HasRoleDirective();
     //
     // expect(directive).toBeTruthy();

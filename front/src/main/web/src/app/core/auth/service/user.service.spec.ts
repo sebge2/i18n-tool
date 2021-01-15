@@ -43,7 +43,7 @@ describe('UserService', () => {
                 .then((actual: User[]) => {
                     expect(actual).toEqual(expected);
                 });
-// TODO
+// TODO issue-125
             httpMock.expectOne('/api/user').flush(expected);
             httpMock.verify();
 

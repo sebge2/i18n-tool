@@ -23,7 +23,7 @@ public class UserEventListener implements UserListener {
     }
 
     @Override
-    public Mono<Void> afterCreate(UserEntity user) {
+    public Mono<Void> afterPersist(UserEntity user) {
         return eventService.sendEventToUsers(UserRole.ADMIN, EventType.ADDED_USER, UserDto.builder(user).build());
     }
 

@@ -24,18 +24,18 @@ public class CompositeSnapshotListener implements SnapshotListener {
     }
 
     @Override
-    public Mono<Void> afterCreate(SnapshotEntity snapshot) {
+    public Mono<Void> afterPersist(SnapshotEntity snapshot) {
         return Flux
                 .fromIterable(listeners)
-                .flatMap(listener -> listener.afterCreate(snapshot))
+                .flatMap(listener -> listener.afterPersist(snapshot))
                 .then();
     }
 
     @Override
-    public Mono<Void> beforeDelete(SnapshotEntity snapshot) {
+    public Mono<Void> afterDelete(SnapshotEntity snapshot) {
         return Flux
                 .fromIterable(listeners)
-                .flatMap(listener -> listener.beforeDelete(snapshot))
+                .flatMap(listener -> listener.afterDelete(snapshot))
                 .then();
     }
 }

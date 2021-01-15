@@ -1,6 +1,5 @@
 package be.sgerard.i18n.service.security.repository;
 
-import be.sgerard.i18n.model.repository.dto.RepositoryPatchDto;
 import be.sgerard.i18n.model.repository.persistence.RepositoryEntity;
 import be.sgerard.i18n.model.security.auth.AuthenticatedUser;
 import be.sgerard.i18n.model.security.repository.RepositoryCredentials;
@@ -48,12 +47,12 @@ class RepositoryCredentialsCacheManager implements RepositoryListener<Repository
     }
 
     @Override
-    public Mono<Void> afterCreate(RepositoryEntity repository) {
+    public Mono<Void> beforePersist(RepositoryEntity repository) {
         return reload(repository);
     }
 
     @Override
-    public Mono<Void> afterUpdate(RepositoryPatchDto patch, RepositoryEntity repository) {
+    public Mono<Void> beforeUpdate(RepositoryEntity repository) {
         return reload(repository);
     }
 

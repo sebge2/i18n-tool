@@ -77,8 +77,9 @@ public class RepositoryManagerImpl implements RepositoryManager {
 
                                     return rep;
                                 })
+                                .flatMap(repo -> listener.beforePersist(repo).thenReturn(repo))
                                 .flatMap(repository::save)
-                                .flatMap(repo -> listener.afterCreate(repo).thenReturn(repo))
+                                .flatMap(repo -> listener.afterPersist(repo).thenReturn(repo))
                 );
     }
 
@@ -91,11 +92,11 @@ public class RepositoryManagerImpl implements RepositoryManager {
                         findByIdOrDie(id)
                                 .flatMap(repository ->
                                         Mono.just(repository)
-                                                // TODO initializing
                                                 .filter(repo -> repo.getStatus() != RepositoryStatus.INITIALIZED)
                                                 .flatMap(this::initializeRepository)
                                                 .doOnNext(repo -> repo.setStatus(RepositoryStatus.INITIALIZED))
                                                 .flatMap(this.repository::save)
+                                                .flatMap(rep -> listener.afterUpdate(rep).thenReturn(rep))
                                                 .flatMap(rep -> listener.afterInitialize(rep).thenReturn(rep))
                                                 .onErrorResume(error -> {
                                                     logger.error("Error while initializing repository.", error);
@@ -104,7 +105,7 @@ public class RepositoryManagerImpl implements RepositoryManager {
 
                                                     return this.repository
                                                             .save(repository)
-                                                            .flatMap(rep -> listener.onInitializationError(rep, error).thenReturn(rep));
+                                                            .flatMap(rep -> listener.afterUpdate(rep).thenReturn(rep));
                                                 })
                                                 .switchIfEmpty(Mono.just(repository))
                                 ));
@@ -128,7 +129,7 @@ public class RepositoryManagerImpl implements RepositoryManager {
                                 )
                                 .flatMap(repo -> updateRepository(repo, patch))
                                 .flatMap(repository::save)
-                                .flatMap(repo -> listener.afterUpdate(patch, repo).thenReturn(repo)));
+                                .flatMap(repo -> listener.afterUpdate(repo).thenReturn(repo)));
     }
 
     @Transactional
@@ -153,6 +154,7 @@ public class RepositoryManagerImpl implements RepositoryManager {
                                                 })
                                                 .flatMap(rep -> listener.beforeDelete(rep).thenReturn(rep))
                                                 .flatMap(rep -> repository.delete(rep).thenReturn(rep))
+                                                .flatMap(rep -> listener.afterDelete(rep).thenReturn(rep))
                                 ));
     }
 

@@ -1,5 +1,6 @@
 package be.sgerard.i18n.service.workspace.validation;
 
+import be.sgerard.i18n.model.validation.ValidationMessage;
 import be.sgerard.i18n.model.validation.ValidationResult;
 import be.sgerard.i18n.model.workspace.WorkspaceStatus;
 import be.sgerard.i18n.model.workspace.persistence.WorkspaceEntity;
@@ -20,37 +21,28 @@ public class GlobalWorkspaceValidator implements WorkspaceValidator {
         return true;
     }
 
-    // TODO
-
     @Override
     public Mono<ValidationResult> beforeFinishReview(WorkspaceEntity workspace) {
         if (workspace.getStatus() != WorkspaceStatus.IN_REVIEW) {
-//            return ValidationResult.builder()
-//                    .messages(new ValidationMessage("validation.workspace.cannot-finish-review", workspace.getId()))
-//                    .build();
+            return Mono.just(
+                    ValidationResult.builder()
+                            .messages(new ValidationMessage("validation.workspace.cannot-finish-review-not-in-review"))
+                            .build()
+            );
         }
 
         return Mono.just(ValidationResult.EMPTY);
     }
 
     @Override
-    public Mono<ValidationResult> beforeInitialize(WorkspaceEntity workspace) {
-//        if (workspace.getStatus() == WorkspaceStatus.INITIALIZED) {
-//            return workspace;
-//        } else if (workspace.getStatus() != WorkspaceStatus.NOT_INITIALIZED) {
-//            throw new IllegalStateException("The workspace status must be available, but was " + workspace.getStatus() + ".");
-//        }
-
-        return Mono.just(ValidationResult.EMPTY);
-    }
-
-    @Override
     public Mono<ValidationResult> beforePublish(WorkspaceEntity workspace) {
-//                        if (workspace.getStatus() == WorkspaceStatus.IN_REVIEW) {
-//                    return workspace;
-//                } else if (workspace.getStatus() != WorkspaceStatus.INITIALIZED) {
-//                    throw new IllegalStateException("The workspace status must be available, but was " + workspace.getStatus() + ".");
-//                }
+        if (workspace.getStatus() != WorkspaceStatus.INITIALIZED) {
+            return Mono.just(
+                    ValidationResult.builder()
+                            .messages(new ValidationMessage("validation.workspace.cannot-publish-not-initialized"))
+                            .build()
+            );
+        }
 
         return Mono.just(ValidationResult.EMPTY);
     }

@@ -22,17 +22,17 @@ public class UserLiveSessionEventListener implements UserLiveSessionListener {
     }
 
     @Override
-    public Mono<Void> onNewSession(UserLiveSessionEntity session) {
+    public Mono<Void> afterStarting(UserLiveSessionEntity session) {
         return eventService.broadcastEvent(EventType.CONNECTED_USER_SESSION, UserLiveSessionDto.toDto(session));
     }
 
     @Override
-    public Mono<Void> onStopSession(UserLiveSessionEntity session) {
+    public Mono<Void> afterStopping(UserLiveSessionEntity session) {
         return eventService.broadcastEvent(EventType.DISCONNECTED_USER_SESSION, UserLiveSessionDto.toDto(session));
     }
 
     @Override
-    public Mono<Void> onDeletedSession(UserLiveSessionEntity session) {
+    public Mono<Void> afterDeletion(UserLiveSessionEntity session) {
         return eventService.broadcastEvent(EventType.DISCONNECTED_USER_SESSION, UserLiveSessionDto.toDto(session));
     }
 }

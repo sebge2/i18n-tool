@@ -22,11 +22,6 @@ import java.io.InputStream;
 public interface UserManager {
 
     /**
-     * User name of admin.
-     */
-    String ADMIN_USER_NAME = "admin";
-
-    /**
      * Finds the {@link UserEntity user} having the specified id.
      */
     Mono<UserEntity> findById(String id);

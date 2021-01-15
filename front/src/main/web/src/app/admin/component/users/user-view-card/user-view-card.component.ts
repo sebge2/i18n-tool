@@ -160,7 +160,7 @@ export class UserViewCardComponent {
     }
 
     public onUpdatePassword() {
-// TODO
+        // TODO issue-113
     }
 
     public isExistingUser(): boolean {

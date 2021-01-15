@@ -4,14 +4,15 @@
           [headerImg]="avatarUrl ? avatarUrl : null"
           [maxSizePx]="270">
     <app-card-header-actions>
-        <app-more-actions-button [disabled]="!isMoreActionsEnabled">
-            <app-more-action-item-button>
-                <button mat-menu-item (click)="onUpdatePassword()">
-                    <mat-icon>security</mat-icon>
-                    <span>{{'ADMIN.USERS.UPDATE_PASSWORD' | translate}}</span>
-                </button>
-            </app-more-action-item-button>
-        </app-more-actions-button>
+<!--        TODO issue-113-->
+<!--        <app-more-actions-button [disabled]="!isMoreActionsEnabled">-->
+<!--            <app-more-action-item-button>-->
+<!--                <button mat-menu-item (click)="onUpdatePassword()">-->
+<!--                    <mat-icon>security</mat-icon>-->
+<!--                    <span>{{'ADMIN.USERS.UPDATE_PASSWORD' | translate}}</span>-->
+<!--                </button>-->
+<!--            </app-more-action-item-button>-->
+<!--        </app-more-actions-button>-->
     </app-card-header-actions>
     <app-card-content>
         <form [formGroup]="form" (ngSubmit)="onSave()" autocomplete="off">

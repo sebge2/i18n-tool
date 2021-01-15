@@ -26,10 +26,18 @@ public class CompositeUserListener implements UserListener {
     }
 
     @Override
-    public Mono<Void> afterCreate(UserEntity user) {
+    public Mono<Void> afterPersist(UserEntity user) {
         return Flux
                 .fromIterable(listeners)
-                .flatMap(listener -> listener.afterCreate(user))
+                .flatMap(listener -> listener.afterPersist(user))
+                .then();
+    }
+
+    @Override
+    public Mono<Void> beforeUpdate(UserEntity user) {
+        return Flux
+                .fromIterable(listeners)
+                .flatMap(listener -> listener.beforeUpdate(user))
                 .then();
     }
 
@@ -38,6 +46,14 @@ public class CompositeUserListener implements UserListener {
         return Flux
                 .fromIterable(listeners)
                 .flatMap(listener -> listener.afterUpdate(user))
+                .then();
+    }
+
+    @Override
+    public Mono<Void> beforeDelete(UserEntity user) {
+        return Flux
+                .fromIterable(listeners)
+                .flatMap(listener -> listener.beforeDelete(user))
                 .then();
     }
 

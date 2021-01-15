@@ -24,12 +24,12 @@ public class SnapshotEventListener implements SnapshotListener {
     }
 
     @Override
-    public Mono<Void> afterCreate(SnapshotEntity snapshot) {
+    public Mono<Void> afterPersist(SnapshotEntity snapshot) {
         return this.eventService.broadcastEvent(ADDED_SNAPSHOT, SnapshotDto.builder(snapshot).build());
     }
 
     @Override
-    public Mono<Void> beforeDelete(SnapshotEntity snapshot) {
+    public Mono<Void> afterDelete(SnapshotEntity snapshot) {
         return this.eventService.broadcastEvent(DELETED_SNAPSHOT, SnapshotDto.builder(snapshot).build());
     }
 }

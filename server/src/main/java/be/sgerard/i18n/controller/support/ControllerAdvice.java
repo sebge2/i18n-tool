@@ -160,7 +160,7 @@ public class ControllerAdvice {
 //     */
 //    @ExceptionHandler(value = ResponseStatusException.class)
 //    public ResponseEntity<ErrorMessages> handleResponseStatusException(ResponseStatusException exception) {
-//        // TODO
+//        // TODO issue-126
 //        final ErrorMessages errorMessages = messagesProvider.map(new LocalizedMessageHolder.Simple("MissingServletRequestParameterException.message"));
 //
 //        if (logger.isDebugEnabled()) {
@@ -184,8 +184,6 @@ public class ControllerAdvice {
 
         return new ResponseEntity<>(errorMessages, HttpStatus.FORBIDDEN);
     }
-
-    // TODO
 
 //    /**
 //     * Handles the {@link MethodNotAllowedException method-not-supported exception}.

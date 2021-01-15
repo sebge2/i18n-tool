@@ -106,7 +106,7 @@ public class AuthenticationUserManagerImpl implements AuthenticationUserManager 
         return findSession(authenticatedUser)
                 .switchIfEmpty(Mono.error(ResourceNotFoundException.authenticatedUserNotFoundException(authenticatedUser.getId())))
                 .doOnNext(session -> setAuthenticatedUser(authenticatedUser, session))
-//                .flatMap(sessionRepository::save) TODO
+//                .flatMap(sessionRepository::save) TODO issues-108 conflicts with DefaultWebSessionManager .doOnNext(session -> exchange.getResponse().beforeCommit(() -> save(exchange, session))));
                 .then(listener.afterUpdate(authenticatedUser).thenReturn(authenticatedUser));
     }
 

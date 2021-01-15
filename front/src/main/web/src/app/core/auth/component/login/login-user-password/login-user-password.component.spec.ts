@@ -36,6 +36,6 @@ describe('LoginUserPasswordComponent', () => {
         component = fixture.componentInstance;
     }));
     it('should create', () => {
-        expect(component).toBeTruthy(); // TODO
+        expect(component).toBeTruthy(); // TODO issue-125
     });
 });

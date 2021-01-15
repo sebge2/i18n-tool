@@ -22,17 +22,17 @@ public class TranslationLocaleEventListener implements TranslationLocaleListener
     }
 
     @Override
-    public Mono<Void> onCreatedLocale(TranslationLocaleEntity translationLocale) {
+    public Mono<Void> afterPersist(TranslationLocaleEntity translationLocale) {
         return eventService.broadcastEvent(EventType.ADDED_TRANSLATION_LOCALE, TranslationLocaleDto.builder(translationLocale).build());
     }
 
     @Override
-    public Mono<Void> onUpdatedLocale(TranslationLocaleEntity translationLocale) {
+    public Mono<Void> afterUpdate(TranslationLocaleEntity translationLocale) {
         return eventService.broadcastEvent(EventType.UPDATED_TRANSLATION_LOCALE, TranslationLocaleDto.builder(translationLocale).build());
     }
 
     @Override
-    public Mono<Void> onDeletedLocale(TranslationLocaleEntity translationLocale) {
+    public Mono<Void> afterDelete(TranslationLocaleEntity translationLocale) {
         return eventService.broadcastEvent(EventType.DELETED_TRANSLATION_LOCALE, TranslationLocaleDto.builder(translationLocale).build());
     }
 }

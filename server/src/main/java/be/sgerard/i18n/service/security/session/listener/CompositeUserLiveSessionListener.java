@@ -26,26 +26,26 @@ public class CompositeUserLiveSessionListener implements UserLiveSessionListener
     }
 
     @Override
-    public Mono<Void> onNewSession(UserLiveSessionEntity session) {
+    public Mono<Void> afterStarting(UserLiveSessionEntity session) {
         return Flux
                 .fromIterable(listeners)
-                .flatMap(listener -> listener.onNewSession(session))
+                .flatMap(listener -> listener.afterStarting(session))
                 .then();
     }
 
     @Override
-    public Mono<Void> onStopSession(UserLiveSessionEntity session) {
+    public Mono<Void> afterStopping(UserLiveSessionEntity session) {
         return Flux
                 .fromIterable(listeners)
-                .flatMap(listener -> listener.onStopSession(session))
+                .flatMap(listener -> listener.afterStopping(session))
                 .then();
     }
 
     @Override
-    public Mono<Void> onDeletedSession(UserLiveSessionEntity session) {
+    public Mono<Void> afterDeletion(UserLiveSessionEntity session) {
         return Flux
                 .fromIterable(listeners)
-                .flatMap(listener -> listener.onDeletedSession(session))
+                .flatMap(listener -> listener.afterDeletion(session))
                 .then();
     }
 }

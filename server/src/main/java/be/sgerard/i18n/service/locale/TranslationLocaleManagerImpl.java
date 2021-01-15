@@ -61,11 +61,7 @@ public class TranslationLocaleManagerImpl implements TranslationLocaleManager {
                         })
                 )
                 .flatMap(repository::save)
-                .flatMap(translationLocale ->
-                        localeListener
-                                .onCreatedLocale(translationLocale)
-                                .thenReturn(translationLocale)
-                );
+                .flatMap(translationLocale -> localeListener.afterPersist(translationLocale).thenReturn(translationLocale));
     }
 
     @Override
@@ -87,12 +83,9 @@ public class TranslationLocaleManagerImpl implements TranslationLocaleManager {
                                 .setIcon(localeDto.getIcon())
                                 .setDisplayName(localeDto.getDisplayName().orElse(null))
                 )
+                .flatMap(translationLocale -> localeListener.beforeUpdate(translationLocale).thenReturn(translationLocale))
                 .flatMap(repository::save)
-                .flatMap(translationLocale ->
-                        localeListener
-                                .onUpdatedLocale(translationLocale)
-                                .thenReturn(translationLocale)
-                );
+                .flatMap(translationLocale -> localeListener.afterUpdate(translationLocale).thenReturn(translationLocale));
     }
 
     @Override
@@ -106,16 +99,9 @@ public class TranslationLocaleManagerImpl implements TranslationLocaleManager {
                             return translationLocale;
                         })
                 )
-                .flatMap(translationLocale ->
-                        localeListener
-                                .onDeletedLocale(translationLocale)
-                                .thenReturn(translationLocale)
-                )
-                .flatMap(translationLocale ->
-                        repository
-                                .delete(translationLocale)
-                                .thenReturn(translationLocale)
-                );
+                .flatMap(translationLocale -> localeListener.beforeDelete(translationLocale).thenReturn(translationLocale))
+                .flatMap(translationLocale -> repository.delete(translationLocale).thenReturn(translationLocale))
+                .flatMap(translationLocale -> localeListener.afterDelete(translationLocale).thenReturn(translationLocale));
     }
 
 }

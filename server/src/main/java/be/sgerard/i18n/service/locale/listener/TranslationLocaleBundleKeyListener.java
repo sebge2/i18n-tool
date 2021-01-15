@@ -20,7 +20,7 @@ public class TranslationLocaleBundleKeyListener implements TranslationLocaleList
     }
 
     @Override
-    public Mono<Void> onDeletedLocale(TranslationLocaleEntity locale) {
+    public Mono<Void> beforeDelete(TranslationLocaleEntity locale) {
         return repository.findAll()
                 .doOnNext(bundleKey -> bundleKey.getTranslations().remove(locale.getId()))
                 .flatMap(repository::save)
