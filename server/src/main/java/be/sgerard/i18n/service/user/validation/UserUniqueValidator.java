@@ -30,7 +30,7 @@ public class UserUniqueValidator implements UserValidator {
     }
 
     @Override
-    public Mono<ValidationResult> beforePersist(UserEntity user) {
+    public Mono<ValidationResult> beforePersistOrUpdate(UserEntity user) {
         return validateUniqueName(user.getUsername());
     }
 

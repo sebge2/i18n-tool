@@ -34,37 +34,37 @@ public class CompositeUserValidator implements UserValidator {
     }
 
     @Override
-    public Mono<ValidationResult> beforePersist(InternalUserEntity user, InternalUserCreationDto creationDto) {
+    public Mono<ValidationResult> beforePersistOrUpdate(InternalUserEntity user, InternalUserCreationDto creationDto) {
         return Flux
                 .fromIterable(validators)
-                .flatMap(listener -> listener.beforePersist(user, creationDto))
+                .flatMap(listener -> listener.beforePersistOrUpdate(user, creationDto))
                 .reduce(ValidationResult::merge)
                 .switchIfEmpty(Mono.just(ValidationResult.EMPTY));
     }
 
     @Override
-    public Mono<ValidationResult> beforePersist(ExternalUserEntity user, ExternalUser externalUser) {
+    public Mono<ValidationResult> beforePersistOrUpdate(ExternalUserEntity user, ExternalUser externalUser) {
         return Flux
                 .fromIterable(validators)
-                .flatMap(listener -> listener.beforePersist(user, externalUser))
+                .flatMap(listener -> listener.beforePersistOrUpdate(user, externalUser))
                 .reduce(ValidationResult::merge)
                 .switchIfEmpty(Mono.just(ValidationResult.EMPTY));
     }
 
     @Override
-    public Mono<ValidationResult> beforePersist(UserEntity user) {
+    public Mono<ValidationResult> beforePersistOrUpdate(UserEntity user) {
         return Flux
                 .fromIterable(validators)
-                .flatMap(listener -> listener.beforePersist(user))
+                .flatMap(listener -> listener.beforePersistOrUpdate(user))
                 .reduce(ValidationResult::merge)
                 .switchIfEmpty(Mono.just(ValidationResult.EMPTY));
     }
 
     @Override
-    public Mono<ValidationResult> beforePersist(ExternalUser info) {
+    public Mono<ValidationResult> beforePersistOrUpdate(ExternalUser info) {
         return Flux
                 .fromIterable(validators)
-                .flatMap(listener -> listener.beforePersist(info))
+                .flatMap(listener -> listener.beforePersistOrUpdate(info))
                 .reduce(ValidationResult::merge)
                 .switchIfEmpty(Mono.just(ValidationResult.EMPTY));
     }

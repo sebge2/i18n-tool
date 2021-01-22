@@ -31,7 +31,7 @@ public class UserGlobalInfoValidator implements UserValidator {
     }
 
     @Override
-    public Mono<ValidationResult> beforePersist(InternalUserEntity user, InternalUserCreationDto creationDto) {
+    public Mono<ValidationResult> beforePersistOrUpdate(InternalUserEntity user, InternalUserCreationDto creationDto) {
         return Mono.just(
                 ValidationResult.merge(
                         validateNotEmptyUsername(user.getUsername()),
@@ -43,7 +43,7 @@ public class UserGlobalInfoValidator implements UserValidator {
     }
 
     @Override
-    public Mono<ValidationResult> beforePersist(ExternalUserEntity user, ExternalUser externalUser) {
+    public Mono<ValidationResult> beforePersistOrUpdate(ExternalUserEntity user, ExternalUser externalUser) {
         return Mono.just(
                 ValidationResult.merge(
                         validateNotEmptyExternalId(externalUser.getExternalId()),

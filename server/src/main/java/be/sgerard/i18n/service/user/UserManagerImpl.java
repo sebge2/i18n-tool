@@ -106,7 +106,7 @@ public class UserManagerImpl implements UserManager {
                 .initializeUser(info)
                 .flatMap(user ->
                         validator
-                                .beforePersist(user, info)
+                                .beforePersistOrUpdate(user, info)
                                 .map(validationResult -> {
                                     ValidationException.throwIfFailed(validationResult);
 
@@ -115,7 +115,7 @@ public class UserManagerImpl implements UserManager {
                 )
                 .flatMap(externalUserEntity ->
                         validator
-                                .beforePersist(externalUserEntity)
+                                .beforePersistOrUpdate(externalUserEntity)
                                 .map(validationResult -> {
                                     ValidationException.throwIfFailed(validationResult);
 
@@ -135,7 +135,7 @@ public class UserManagerImpl implements UserManager {
 
         return externalUserRepository
                 .findByExternalId(externalUser.getExternalId())
-                .switchIfEmpty(Mono.defer(() -> Mono.just(new ExternalUserEntity(externalUser.getExternalId(), externalUser.getAuthSystem()))))
+                .switchIfEmpty(Mono.defer(() -> createExternalUser(externalUser)))
                 .doOnNext(userEntity -> {
                     userEntity.setRoles(singleton(UserRole.MEMBER_OF_ORGANIZATION));
                     userEntity.setUsername(externalUser.getUsername());
@@ -145,16 +145,7 @@ public class UserManagerImpl implements UserManager {
                 })
                 .flatMap(externalUserEntity ->
                         validator
-                                .beforePersist(externalUserEntity, externalUser)
-                                .map(validationResult -> {
-                                    ValidationException.throwIfFailed(validationResult);
-
-                                    return externalUserEntity;
-                                })
-                )
-                .flatMap(externalUserEntity ->
-                        validator
-                                .beforePersist(externalUserEntity)
+                                .beforePersistOrUpdate(externalUserEntity, externalUser)
                                 .map(validationResult -> {
                                     ValidationException.throwIfFailed(validationResult);
 
@@ -381,5 +372,22 @@ public class UserManagerImpl implements UserManager {
         } catch (IOException e) {
             return Mono.error(e);
         }
+    }
+
+    /**
+     * Creates the {@link ExternalUserEntity entity} based on the specified {@link ExternalUser external user}.
+     */
+    private Mono<ExternalUserEntity> createExternalUser(ExternalUser externalUser) {
+        return Mono
+                .just(new ExternalUserEntity(externalUser.getExternalId(), externalUser.getAuthSystem()))
+                .flatMap(externalUserEntity ->
+                        validator
+                                .beforePersistOrUpdate(externalUserEntity)
+                                .map(validationResult -> {
+                                    ValidationException.throwIfFailed(validationResult);
+
+                                    return externalUserEntity;
+                                })
+                );
     }
 }

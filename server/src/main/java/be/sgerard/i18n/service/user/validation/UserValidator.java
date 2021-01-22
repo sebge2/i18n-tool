@@ -21,28 +21,28 @@ public interface UserValidator {
     /**
      * Validates the creation of an internal user.
      */
-    default Mono<ValidationResult> beforePersist(InternalUserEntity user, InternalUserCreationDto creationDto) {
+    default Mono<ValidationResult> beforePersistOrUpdate(InternalUserEntity user, InternalUserCreationDto creationDto) {
+        return Mono.just(ValidationResult.EMPTY);
+    }
+
+    /**
+     * Validates the creation or update of an external user.
+     */
+    default Mono<ValidationResult> beforePersistOrUpdate(ExternalUserEntity user, ExternalUser externalUser) {
         return Mono.just(ValidationResult.EMPTY);
     }
 
     /**
      * Validates the creation of an internal user.
      */
-    default Mono<ValidationResult> beforePersist(ExternalUserEntity user, ExternalUser externalUser) {
+    default Mono<ValidationResult> beforePersistOrUpdate(UserEntity user) {
         return Mono.just(ValidationResult.EMPTY);
     }
 
     /**
      * Validates the creation of an internal user.
      */
-    default Mono<ValidationResult> beforePersist(UserEntity user) {
-        return Mono.just(ValidationResult.EMPTY);
-    }
-
-    /**
-     * Validates the creation of an internal user.
-     */
-    default Mono<ValidationResult> beforePersist(ExternalUser info) {
+    default Mono<ValidationResult> beforePersistOrUpdate(ExternalUser info) {
         return Mono.just(ValidationResult.EMPTY);
     }
 

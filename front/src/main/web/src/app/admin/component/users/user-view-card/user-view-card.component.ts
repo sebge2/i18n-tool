@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {User} from "../../../../core/auth/model/user.model";
-import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {AbstractControl, FormBuilder, FormGroup, Validators} from "@angular/forms";
 import * as _ from "lodash";
 import {UserRole} from "../../../../core/auth/model/user-role.model";
 import {UserService} from "../../../../core/auth/service/user.service";
@@ -62,8 +62,12 @@ export class UserViewCardComponent {
         this.resetForm();
     }
 
+    public get displayNameForm(): AbstractControl {
+        return this.form.controls['displayName'];
+    }
+
     public get displayName(): string {
-        const displayName = getStringValue(this.form.controls['displayName']);
+        const displayName = getStringValue(this.displayNameForm);
 
         return !_.isEmpty(displayName) ? displayName : "-";
     }
@@ -72,20 +76,36 @@ export class UserViewCardComponent {
         return this.user.isExternal() ? this.user.externalAuthSystem : 'ADMIN.USERS.USER_TYPE.INTERNAL';
     }
 
+    public get usernameForm(): AbstractControl {
+        return this.form.controls['username'];
+    }
+
     public get username(): string {
-        return getStringValue(this.form.controls['username']);
+        return getStringValue(this.usernameForm);
+    }
+
+    public get emailForm(): AbstractControl {
+        return this.form.controls['email'];
     }
 
     public get email(): string {
-        return getStringValue(this.form.controls['email']);
+        return getStringValue(this.emailForm);
+    }
+
+    public get passwordForm(): AbstractControl {
+        return this.form.controls['password'];
     }
 
     public get password(): string {
-        return getStringValue(this.form.controls['password']);
+        return getStringValue(this.passwordForm);
+    }
+
+    public get rolesForm(): AbstractControl {
+        return this.form.controls['adminRole'];
     }
 
     public get roles(): UserRole[] {
-        if (this.form.controls['adminRole'].value === this.roleOptionAdminPrivilege) {
+        if (this.rolesForm.value === this.roleOptionAdminPrivilege) {
             return [UserRole.ADMIN]
         } else {
             return [];
@@ -156,11 +176,7 @@ export class UserViewCardComponent {
     }
 
     public onGeneratedPassword(generatedPassword: string) {
-        this.form.controls['password'].setValue(generatedPassword);
-    }
-
-    public onUpdatePassword() {
-        // TODO issue-113
+        this.passwordForm.setValue(generatedPassword);
     }
 
     public isExistingUser(): boolean {
@@ -178,48 +194,72 @@ export class UserViewCardComponent {
     }
 
     private toUpdatedUser(): UserPatchDto {
-        return {
-            username: this.username,
-            displayName: this.displayName,
-            email: this.email,
-            password: this.password,
-            roles: this.roles
-        };
+        const patch: UserPatchDto = {};
+
+        if (this.usernameForm.dirty) {
+            patch.username = this.username;
+        }
+
+        if (this.displayNameForm.dirty) {
+            patch.displayName = this.displayName;
+        }
+
+
+        if (this.emailForm.dirty) {
+            patch.email = this.email;
+        }
+
+        if (this.passwordForm.dirty) {
+            patch.password = this.password;
+        }
+
+        if (this.rolesForm.dirty) {
+            patch.roles = this.roles;
+        }
+
+        return patch;
     }
 
     private resetForm() {
-        this.form.controls['username'].setValue(this.user.username);
+        this.usernameForm.setValue(this.user.username);
         if (this.user.isExternal()) {
-            this.form.controls['username'].disable();
+            this.usernameForm.disable();
         }
+        this.usernameForm.markAsPristine();
 
-        this.form.controls['displayName'].setValue(this.user.displayName);
+        this.displayNameForm.setValue(this.user.displayName);
         if (this.user.isExternal()) {
-            this.form.controls['displayName'].disable();
+            this.displayNameForm.disable();
         }
+        this.displayNameForm.markAsPristine();
 
-        this.form.controls['email'].setValue(this.user.email);
+        this.emailForm.setValue(this.user.email);
         if (this.user.isExternal()) {
-            this.form.controls['email'].disable();
+            this.emailForm.disable();
         }
+        this.emailForm.markAsPristine();
 
         if (this.isPasswordEditionAllowed) {
-            this.form.controls['password'].setValue(null);
+            this.passwordForm.setValue(null);
 
-            this.form.controls['password'].setValidators([Validators.minLength(6), Validators.required]);
+            this.passwordForm.setValidators([Validators.minLength(6), Validators.required]);
         } else {
-            this.form.controls['password'].disable();
+            this.passwordForm.disable();
         }
 
-        this.form.controls['adminRole'].setValue(
+        this.passwordForm.markAsPristine();
+
+        this.rolesForm.setValue(
             _.some(this.user.roles, role => role === UserRole.ADMIN) ? this.roleOptionAdminPrivilege : this.roleOptionNoPrivilege
         );
+
+        this.rolesForm.markAsPristine();
 
         if (this.user.isAdminUser()) {
             this.form.disable()
         }
 
-        this.form.markAsPristine();
-        this.form.markAsUntouched();
+        // this.form.markAsPristine();
+        // this.form.markAsUntouched();
     }
 }

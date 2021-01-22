@@ -56,7 +56,7 @@ public class UserSnapshotHandler extends BaseSnapshotHandler<UserEntity, UserSna
 
     @Override
     protected Mono<ValidationResult> validate(UserEntity user) {
-        return userValidator.beforePersist(user);
+        return userValidator.beforePersistOrUpdate(user);
     }
 
     @Override

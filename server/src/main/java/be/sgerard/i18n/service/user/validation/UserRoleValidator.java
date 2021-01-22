@@ -30,7 +30,7 @@ public class UserRoleValidator implements UserValidator {
     }
 
     @Override
-    public Mono<ValidationResult> beforePersist(InternalUserEntity user, InternalUserCreationDto creationDto) {
+    public Mono<ValidationResult> beforePersistOrUpdate(InternalUserEntity user, InternalUserCreationDto creationDto) {
         return validateRoles(creationDto.getRoles());
     }
 
