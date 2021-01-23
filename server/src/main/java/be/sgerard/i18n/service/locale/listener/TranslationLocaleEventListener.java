@@ -1,7 +1,7 @@
 package be.sgerard.i18n.service.locale.listener;
 
 import be.sgerard.i18n.model.event.EventType;
-import be.sgerard.i18n.model.i18n.dto.TranslationLocaleDto;
+import be.sgerard.i18n.model.locale.dto.TranslationLocaleDto;
 import be.sgerard.i18n.model.locale.persistence.TranslationLocaleEntity;
 import be.sgerard.i18n.service.event.EventService;
 import org.springframework.stereotype.Component;

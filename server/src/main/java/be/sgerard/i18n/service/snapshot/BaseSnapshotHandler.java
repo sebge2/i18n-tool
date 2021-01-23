@@ -91,6 +91,7 @@ public abstract class BaseSnapshotHandler<E, D> implements SnapshotHandler {
                 )
                 .flatMap(this::beforeSave)
                 .flatMap(this::save)
+                .flatMap(this::afterSave)
                 .then()
                 .doFinally(signalType -> logger.info("The file {} from snapshot has been restored.", inputFileName));
     }
@@ -179,6 +180,13 @@ public abstract class BaseSnapshotHandler<E, D> implements SnapshotHandler {
      * Performs an action before saving.
      */
     protected Mono<E> beforeSave(E entity) {
+        return Mono.just(entity);
+    }
+
+    /**
+     * Performs an action after saving.
+     */
+    protected Mono<E> afterSave(E entity) {
         return Mono.just(entity);
     }
 

@@ -15,7 +15,7 @@ import reactor.core.publisher.Mono;
  */
 @RestController
 @RequestMapping(path = "/api")
-@Tag(name = "UserPreferences", description = "Controller of user preferences.")
+@Tag(name = "User Preferences", description = "Controller of user preferences.")
 public class UserPreferencesController {
 
     private final UserPreferencesManager userPreferencesManager;

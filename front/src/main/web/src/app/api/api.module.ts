@@ -8,6 +8,7 @@ import { EventService } from './api/event.service';
 import { GitHubService } from './api/gitHub.service';
 import { PullRequestService } from './api/pullRequest.service';
 import { RepositoryService } from './api/repository.service';
+import { ScheduledTaskService } from './api/scheduledTask.service';
 import { SnapshotService } from './api/snapshot.service';
 import { TranslationService } from './api/translation.service';
 import { TranslationLocaleService } from './api/translationLocale.service';
@@ -26,6 +27,7 @@ import { WorkspaceService } from './api/workspace.service';
     GitHubService,
     PullRequestService,
     RepositoryService,
+    ScheduledTaskService,
     SnapshotService,
     TranslationService,
     TranslationLocaleService,

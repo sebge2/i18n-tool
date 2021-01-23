@@ -62,6 +62,10 @@ import {TableCellComponent} from "./component/table/table-cell/table-cell.compon
 import {TableHeaderComponent} from "./component/table/table-header/table-header.component";
 import {OnEnterDirective} from "./directive/on-enter.directive";
 import {BanButtonComponent} from "./component/ban-button/ban-button.component";
+import {LocalizedPipe} from "./pipe/localized.pipe";
+import {PlayButtonComponent} from "./component/play-button/play-button.component";
+import {TooltipComponent} from "./component/tooltip/tooltip.component";
+import {TableExpandedRowComponent} from "./component/table/table-expanded-row/table-expanded-row.component";
 
 @NgModule({
     declarations: [
@@ -87,6 +91,7 @@ import {BanButtonComponent} from "./component/ban-button/ban-button.component";
         RestoreButtonComponent,
         RestoreButtonConfirmationComponent,
         BanButtonComponent,
+        PlayButtonComponent,
 
         FormSelectFieldComponent,
 
@@ -119,6 +124,8 @@ import {BanButtonComponent} from "./component/ban-button/ban-button.component";
         TableComponent,
         TableHeaderComponent,
         TableCellComponent,
+        TableExpandedRowComponent,
+        TooltipComponent,
 
         WorkspaceIconPipe,
         WorkspaceIconCssPipe,
@@ -127,6 +134,7 @@ import {BanButtonComponent} from "./component/ban-button/ban-button.component";
         RepositoryIconPipe,
         BundleFileIconPipe,
         BundleFileNamePipe,
+        LocalizedPipe,
 
         DragDropDirective,
         OnEnterDirective,
@@ -163,6 +171,8 @@ import {BanButtonComponent} from "./component/ban-button/ban-button.component";
         RestoreButtonComponent,
         RestoreButtonConfirmationComponent,
         BanButtonComponent,
+        PlayButtonComponent,
+        TooltipComponent,
 
         FormSelectFieldComponent,
 
@@ -193,6 +203,7 @@ import {BanButtonComponent} from "./component/ban-button/ban-button.component";
         TableComponent,
         TableHeaderComponent,
         TableCellComponent,
+        TableExpandedRowComponent,
 
         WorkspaceIconPipe,
         WorkspaceIconCssPipe,
@@ -201,6 +212,7 @@ import {BanButtonComponent} from "./component/ban-button/ban-button.component";
         RepositoryIconPipe,
         BundleFileIconPipe,
         BundleFileNamePipe,
+        LocalizedPipe,
 
         DragDropDirective,
         OnEnterDirective,
@@ -211,6 +223,7 @@ import {BanButtonComponent} from "./component/ban-button/ban-button.component";
         ToolLocaleIconPipe,
         TranslationLocaleIconPipe,
         RepositoryIconPipe,
+        LocalizedPipe,
     ],
     entryComponents: [
         FormDeleteButtonConfirmationComponent,

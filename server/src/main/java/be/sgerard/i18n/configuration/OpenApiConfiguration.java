@@ -13,6 +13,7 @@ import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springdoc.core.customizers.OpenApiCustomiser;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
@@ -29,6 +30,7 @@ import static org.springframework.web.reactive.function.server.RouterFunctions.r
  * @author Sebastien Gerard
  */
 @Configuration
+@Profile("local")
 public class OpenApiConfiguration {
 
     @Bean

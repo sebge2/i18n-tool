@@ -1,23 +1,60 @@
 @import "../../../../front/src/main/web/src/css/variables";
 
-:host ::ng-deep .app-table-action {
-  visibility: hidden;
+.app-table {
+  display: grid;
+  grid-gap: 0;
+  background: white;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
 }
 
-:host ::ng-deep .app-table-action {
-  margin: 2px;
+.app-table-cell {
+  border-top: 1px solid rgba(0, 0, 0, .12);
+  padding: 3px 0 3px 15px;
 }
 
-.mat-row:hover {
+.app-table-cell-header {
+  font-size: smaller;
+  font-weight: bolder;
+  color: rgba(0, 0, 0, .54);
+}
+
+.app-table-cell-hover {
   background-color: mat-color($color-hover);
-}
 
-:host ::ng-deep .mat-row:hover {
   .app-table-action {
     visibility: visible;
   }
 }
 
-.mat-cell {
-  padding: 5px 10px 5px 0;
+.app-table-cell-non-hover {
+
+  .app-table-action {
+    visibility: hidden;
+  }
+}
+
+.app-table-cell-details-expanded, .app-table-cell-expanded {
+  cursor: n-resize;
+}
+
+.app-table-cell-details-non-expanded, .app-table-cell-non-expanded.app-table-cell-expandable {
+  cursor: s-resize;
+}
+
+.app-table-cell-details-expanded {
+}
+
+.app-table-cell-details-non-expanded {
+  height: 0;
+  padding: 0;
+  overflow: hidden;
+  display: none;
+  grid-column: var(--templateColumnsValue);
+
+  .app-table-cell {
+    opacity: 0;
+    padding: 0;
+    max-height: 0;
+    overflow: hidden;
+  }
 }

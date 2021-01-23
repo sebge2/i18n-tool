@@ -8,24 +8,36 @@
 </div>
 
 <app-table [dataSource]="dataSource">
-    <app-table-header [columnId]="'createdOn'">{{'ADMIN.SNAPSHOTS.TABLE.CREATED_ON' | translate}}</app-table-header>
-    <app-table-header [columnId]="'comment'">{{'ADMIN.SNAPSHOTS.TABLE.COMMENT' | translate}}</app-table-header>
-    <app-table-header [columnId]="'createdBy'">{{'ADMIN.SNAPSHOTS.TABLE.CREATED_BY' | translate}}</app-table-header>
-    <app-table-header [columnId]="'action'">{{'ADMIN.SNAPSHOTS.TABLE.ACTION' | translate}}</app-table-header>
+    <app-table-header [columnId]="'createdOn'"
+                      [columnGridDef]="'minmax(150px, 1fr)'">
+        <p>{{'ADMIN.SNAPSHOTS.TABLE.CREATED_ON' | translate}}</p>
+    </app-table-header>
+    <app-table-header [columnId]="'comment'"
+                      [columnGridDef]="'minmax(200px, 3fr)'">
+        <p>{{'ADMIN.SNAPSHOTS.TABLE.COMMENT' | translate}}</p>
+    </app-table-header>
+    <app-table-header [columnId]="'createdBy'"
+                      [columnGridDef]="'minmax(200px, 2fr)'">
+        <p>{{'ADMIN.SNAPSHOTS.TABLE.CREATED_BY' | translate}}</p>
+    </app-table-header>
+    <app-table-header [columnId]="'action'"
+                      [columnGridDef]="'150px'">
+        <p>{{'ADMIN.SNAPSHOTS.TABLE.ACTION' | translate}}</p>
+    </app-table-header>
 
     <app-table-cell [columnId]="'createdOn'" [template]="createdOn">
         <ng-template let-snapshot="element" #createdOn>
-            {{snapshot.createdOn | date:  'long' }}
+            <p>{{snapshot.createdOn | date:  'short' }}</p>
         </ng-template>
     </app-table-cell>
     <app-table-cell [columnId]="'comment'" [template]="comment">
         <ng-template let-snapshot="element" #comment>
-            {{snapshot.comment}}
+            <p class="app-table-text-wrapped">{{snapshot.comment}}</p>
         </ng-template>
     </app-table-cell>
     <app-table-cell [columnId]="'createdBy'" [template]="createdBy">
         <ng-template let-snapshot="element" #createdBy>
-            {{snapshot.createdBy}}
+            <p>{{snapshot.createdBy}}</p>
         </ng-template>
     </app-table-cell>
     <app-table-cell [columnId]="'action'" [template]="action">

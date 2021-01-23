@@ -1,0 +1,10 @@
+<ng-template #tooltipTemplate>
+    <mat-icon [matTooltip]="text" class="app-tooltip-component">help_outline</mat-icon>
+</ng-template>
+
+<ng-container *ngIf="link; else tooltipTemplate">
+    <a [href]="link" target="_blank">
+        <ng-container *ngTemplateOutlet="tooltipTemplate">
+        </ng-container>
+    </a>
+</ng-container>

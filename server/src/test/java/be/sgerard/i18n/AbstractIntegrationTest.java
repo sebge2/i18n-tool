@@ -48,6 +48,9 @@ public abstract class AbstractIntegrationTest {
     protected SnapshotTestHelper snapshot;
 
     @Autowired
+    protected ScheduledTaskTestHelper scheduledTask;
+
+    @Autowired
     protected WebTestClient webClient;
 
     @Autowired

@@ -1,0 +1,16 @@
+.app-table-cell-hover {
+  .app-table-action {
+    visibility: visible;
+  }
+}
+
+.app-table-cell-non-hover {
+  .app-table-action {
+    visibility: hidden;
+  }
+}
+
+.app-table-no-result {
+  font-size: xx-large;
+  opacity: 0.6;
+}

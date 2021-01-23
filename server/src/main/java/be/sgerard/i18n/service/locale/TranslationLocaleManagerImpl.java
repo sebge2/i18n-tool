@@ -1,7 +1,7 @@
 package be.sgerard.i18n.service.locale;
 
-import be.sgerard.i18n.model.i18n.dto.TranslationLocaleCreationDto;
-import be.sgerard.i18n.model.i18n.dto.TranslationLocaleDto;
+import be.sgerard.i18n.model.locale.dto.TranslationLocaleCreationDto;
+import be.sgerard.i18n.model.locale.dto.TranslationLocaleDto;
 import be.sgerard.i18n.model.locale.persistence.TranslationLocaleEntity;
 import be.sgerard.i18n.repository.i18n.TranslationLocaleRepository;
 import be.sgerard.i18n.service.ValidationException;

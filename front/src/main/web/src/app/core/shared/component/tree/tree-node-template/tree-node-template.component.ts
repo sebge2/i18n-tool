@@ -14,8 +14,7 @@ import {TreeNode} from "../tree.component";
 
 @Component({
     selector: 'app-tree-node-template',
-    templateUrl: './tree-node-template.component.html',
-    styleUrls: ['./tree-node-template.component.css']
+    template: '<ng-template #target></ng-template>',
 })
 export class TreeNodeTemplateComponent implements AfterViewInit, OnDestroy {
 

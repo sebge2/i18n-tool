@@ -17,9 +17,7 @@
                     <input matInput formControlName="language">
                     <mat-hint>
                         {{'ADMIN.LOCALES.LANGUAGE_EXAMPLE' | translate}}
-                        <a href="https://tools.ietf.org/html/bcp47#section-2.2.1" target="_blank">
-                            <mat-icon class="help">help_outline</mat-icon>
-                        </a>
+                        <app-tooltip [link]="'https://tools.ietf.org/html/bcp47#section-2.2.1'"></app-tooltip>
                     </mat-hint>
                 </mat-form-field>
             </p>
@@ -29,9 +27,7 @@
                     <input matInput formControlName="region">
                     <mat-hint>
                         {{'ADMIN.LOCALES.REGION_EXAMPLE' | translate}}
-                        <a href="https://tools.ietf.org/html/bcp47#section-2.2.4" target="_blank">
-                            <mat-icon class="help">help_outline</mat-icon>
-                        </a>
+                        <app-tooltip [link]="'https://tools.ietf.org/html/bcp47#section-2.2.4'"></app-tooltip>
                     </mat-hint>
                 </mat-form-field>
             </p>
@@ -41,9 +37,7 @@
                     <input matInput formControlName="variants">
                     <mat-hint>
                         {{'ADMIN.LOCALES.VARIANTS_EXAMPLE' | translate}}
-                        <a href="https://tools.ietf.org/html/bcp47#section-2.2.5" target="_blank">
-                            <mat-icon class="help">help_outline</mat-icon>
-                        </a>
+                        <app-tooltip [link]="'https://tools.ietf.org/html/bcp47#section-2.2.5'"></app-tooltip>
                     </mat-hint>
                 </mat-form-field>
             </p>
@@ -54,9 +48,7 @@
                     <input matInput formControlName="icon">
                     <mat-hint>
                         {{'ADMIN.LOCALES.ICON_EXAMPLE' | translate}}
-                        <a href="https://github.com/lipis/flag-icon-css/tree/master/flags/1x1" target="_blank">
-                            <mat-icon class="help">help_outline</mat-icon>
-                        </a>.
+                        <app-tooltip [link]="'https://github.com/lipis/flag-icon-css/tree/master/flags/1x1'"></app-tooltip>.
                     </mat-hint>
                 </mat-form-field>
             </p>

@@ -4,3 +4,6 @@ be:
       base-directory: ${BASE_REPOSITORY}
       security:
         default-admin-password: admin
+      scheduled-task:
+        cleanup-frequency: '0 2 * * * *'
+        cleanup-executions-older-than-days: 31

@@ -1,0 +1,28 @@
+@import "../../../../front/src/main/web/src/css/variables";
+
+:host ::ng-deep .app-table {
+  width: 70%;
+  margin: 40px auto auto;
+}
+
+.app-executions-table-no-result p {
+  margin-top: 150px;
+}
+
+.app-execution-result {
+  margin-left: 15px;
+}
+
+.mat-icon {
+  padding: 10px;
+}
+
+.app-execution-result-description {
+  background-color: #eee; // TODO
+  border-left: 4px solid mat-color($color-primary);
+  display: block;
+  padding: 20px;
+  margin: 15px 30px 15px 30px;
+  width: 90%;
+  overflow-wrap: break-word;
+}

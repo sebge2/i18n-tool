@@ -2,14 +2,10 @@ import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-card-actions',
-  templateUrl: './card-actions.component.html',
-  styleUrls: ['./card-actions.component.css']
+  template: '<ng-content></ng-content>',
 })
-export class CardActionsComponent implements OnInit {
+export class CardActionsComponent {
 
   constructor() { }
-
-  ngOnInit(): void {
-  }
 
 }

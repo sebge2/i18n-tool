@@ -6,6 +6,8 @@ import org.springframework.data.convert.WritingConverter;
 import java.util.regex.Pattern;
 
 /**
+ * {@link Converter} from {@link Pattern} to {@link String}.
+ *
  * @author Sebastien Gerard
  */
 @WritingConverter

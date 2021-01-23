@@ -1,14 +1,16 @@
 package be.sgerard.i18n.model.event;
 
-import be.sgerard.i18n.model.i18n.dto.TranslationLocaleDto;
 import be.sgerard.i18n.model.i18n.dto.TranslationsUpdateEventDto;
+import be.sgerard.i18n.model.locale.dto.TranslationLocaleDto;
 import be.sgerard.i18n.model.repository.dto.RepositoryDto;
+import be.sgerard.i18n.model.scheduler.dto.ScheduledTaskDefinitionDto;
+import be.sgerard.i18n.model.scheduler.dto.ScheduledTaskExecutionDto;
 import be.sgerard.i18n.model.security.auth.dto.AuthenticatedUserDto;
 import be.sgerard.i18n.model.security.session.dto.UserLiveSessionDto;
+import be.sgerard.i18n.model.snapshot.dto.SnapshotDto;
 import be.sgerard.i18n.model.user.dto.UserDto;
 import be.sgerard.i18n.model.user.dto.UserPreferencesDto;
 import be.sgerard.i18n.model.workspace.dto.WorkspaceDto;
-import be.sgerard.i18n.model.snapshot.dto.SnapshotDto;
 
 /**
  * All possible kind of events.
@@ -131,4 +133,29 @@ public enum EventType {
      * @see SnapshotDto
      */
     DELETED_SNAPSHOT,
+
+    /**
+     * @see ScheduledTaskDefinitionDto
+     */
+    ADDED_SCHEDULED_TASK_DEFINITION,
+
+    /**
+     * @see ScheduledTaskDefinitionDto
+     */
+    UPDATED_SCHEDULED_TASK_DEFINITION,
+
+    /**
+     * @see ScheduledTaskDefinitionDto
+     */
+    DELETED_SCHEDULED_TASK_DEFINITION,
+
+    /**
+     * @see ScheduledTaskExecutionDto
+     */
+    ADDED_SCHEDULED_TASK_EXECUTION,
+
+    /**
+     * @see ScheduledTaskExecutionDto
+     */
+    DELETED_SCHEDULED_TASK_EXECUTION,
 }

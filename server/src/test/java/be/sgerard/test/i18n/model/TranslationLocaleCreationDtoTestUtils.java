@@ -1,6 +1,6 @@
 package be.sgerard.test.i18n.model;
 
-import be.sgerard.i18n.model.i18n.dto.TranslationLocaleCreationDto;
+import be.sgerard.i18n.model.locale.dto.TranslationLocaleCreationDto;
 import be.sgerard.i18n.model.locale.persistence.TranslationLocaleEntity;
 
 import static be.sgerard.test.i18n.model.TranslationLocaleEntityTestUtils.*;

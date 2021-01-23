@@ -1,6 +1,7 @@
 package be.sgerard.test.i18n.helper;
 
 import be.sgerard.i18n.model.i18n.dto.*;
+import be.sgerard.i18n.model.locale.dto.TranslationLocaleDto;
 import be.sgerard.i18n.model.repository.dto.RepositoryDto;
 import be.sgerard.i18n.model.workspace.dto.WorkspaceDto;
 import junit.framework.AssertionFailedError;

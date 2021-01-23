@@ -20,12 +20,12 @@ import java.util.List;
 @Primary
 public class CompositeRepositoryValidator implements RepositoryValidator<RepositoryEntity> {
 
-    private final List<RepositoryValidator<RepositoryEntity>> listeners;
+    private final List<RepositoryValidator<RepositoryEntity>> validators;
 
     @Lazy
     @SuppressWarnings("unchecked")
-    public CompositeRepositoryValidator(List<RepositoryValidator<?>> listeners) {
-        this.listeners = (List<RepositoryValidator<RepositoryEntity>>) (List<?>) listeners;
+    public CompositeRepositoryValidator(List<RepositoryValidator<?>> validators) {
+        this.validators = (List<RepositoryValidator<RepositoryEntity>>) (List<?>) validators;
     }
 
     @Override
@@ -36,7 +36,7 @@ public class CompositeRepositoryValidator implements RepositoryValidator<Reposit
     @Override
     public Mono<ValidationResult> beforePersist(RepositoryEntity repository) {
         return Flux
-                .fromIterable(listeners)
+                .fromIterable(validators)
                 .filter(listener -> listener.support(repository))
                 .flatMap(listener -> listener.beforePersist(repository))
                 .reduce(ValidationResult::merge)
@@ -46,7 +46,7 @@ public class CompositeRepositoryValidator implements RepositoryValidator<Reposit
     @Override
     public Mono<ValidationResult> beforeUpdate(RepositoryEntity original, RepositoryPatchDto patch) {
         return Flux
-                .fromIterable(listeners)
+                .fromIterable(validators)
                 .filter(listener -> listener.support(original))
                 .flatMap(listener -> listener.beforeUpdate(original, patch))
                 .reduce(ValidationResult::merge)
@@ -56,7 +56,7 @@ public class CompositeRepositoryValidator implements RepositoryValidator<Reposit
     @Override
     public Mono<ValidationResult> beforeDelete(RepositoryEntity repository) {
         return Flux
-                .fromIterable(listeners)
+                .fromIterable(validators)
                 .filter(listener -> listener.support(repository))
                 .flatMap(listener -> listener.beforeDelete(repository))
                 .reduce(ValidationResult::merge)
