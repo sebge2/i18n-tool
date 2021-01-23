@@ -1,7 +1,7 @@
 package be.sgerard.i18n.controller;
 
-import be.sgerard.i18n.model.i18n.dto.TranslationLocaleCreationDto;
-import be.sgerard.i18n.model.i18n.dto.TranslationLocaleDto;
+import be.sgerard.i18n.model.locale.dto.TranslationLocaleCreationDto;
+import be.sgerard.i18n.model.locale.dto.TranslationLocaleDto;
 import be.sgerard.test.i18n.support.CleanupDatabase;
 import be.sgerard.test.i18n.support.auth.internal.WithJaneDoeAdminUser;
 import be.sgerard.test.i18n.support.auth.internal.WithJohnDoeSimpleUser;

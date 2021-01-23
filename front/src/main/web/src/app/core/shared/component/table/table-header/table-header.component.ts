@@ -7,6 +7,7 @@ import {Component, Input, TemplateRef, ViewChild} from '@angular/core';
 export class TableHeaderComponent {
 
     @Input() public columnId: string;
+    @Input() public columnGridDef: string = '1fr';
     @ViewChild(TemplateRef, {read: TemplateRef}) template: TemplateRef<any>;
 
     constructor() {

@@ -1,0 +1,67 @@
+<div class="app-centered-single-item app-table-no-result app-executions-table-no-result" *ngIf="!hasExecutions()">
+    <p>
+        {{'ADMIN.SCHEDULED_TASKS.EXECUTION_TABLE.NO_RESULT' | translate}}
+    </p>
+</div>
+
+<app-table [dataSource]="dataSource" *ngIf="hasExecutions()">
+    <app-table-header [columnId]="'task'"
+                      [columnGridDef]="'minmax(100px, 3fr)'">
+        <p>{{'ADMIN.SCHEDULED_TASKS.EXECUTION_TABLE.TASK' | translate}}</p>
+    </app-table-header>
+    <app-table-header
+            [columnId]="'startTime'"
+            [columnGridDef]="'minmax(100px, 2fr)'">
+        <p>{{'ADMIN.SCHEDULED_TASKS.EXECUTION_TABLE.START_TIME' | translate}}</p>
+    </app-table-header>
+    <app-table-header
+            [columnId]="'duration'"
+            [columnGridDef]="'minmax(100px, 1fr)'">
+        <p>{{'ADMIN.SCHEDULED_TASKS.EXECUTION_TABLE.DURATION' | translate}}</p>
+    </app-table-header>
+    <app-table-header [columnId]="'description'"
+                      [columnGridDef]="'minmax(100px, 4fr)'">
+        <p>{{'ADMIN.SCHEDULED_TASKS.EXECUTION_TABLE.DESCRIPTION' | translate}}</p>
+    </app-table-header>
+    <app-table-header [columnId]="'status'"
+                      [columnGridDef]="'75px'">
+        <p>{{'ADMIN.SCHEDULED_TASKS.EXECUTION_TABLE.STATUS' | translate}}</p>
+    </app-table-header>
+
+    <app-table-cell [columnId]="'task'" [template]="task">
+        <ng-template let-execution="element" #task>
+            <p>{{(getTaskDefinition(execution) | async)?.name | localized | async}}</p>
+        </ng-template>
+    </app-table-cell>
+    <app-table-cell [columnId]="'startTime'" [template]="startTime">
+        <ng-template let-execution="element" #startTime>
+            <p>{{execution.startTime | date: 'short'}}</p>
+        </ng-template>
+    </app-table-cell>
+    <app-table-cell [columnId]="'duration'" [template]="duration">
+        <ng-template let-execution="element" #duration>
+            <p>{{execution.durationInMs}} ms</p>
+        </ng-template>
+    </app-table-cell>
+    <app-table-cell [columnId]="'description'" [template]="description">
+        <ng-template let-execution="element" #description>
+            <p [innerHTML]="execution.shortDescription | localized | async"
+               class="app-table-text-wrapped">
+            </p>
+        </ng-template>
+    </app-table-cell>
+    <app-table-cell [columnId]="'status'" [template]="status">
+        <ng-template let-execution="element" #status>
+            <mat-icon [ngClass]="getIconColor(execution)">{{getIcon(execution)}}</mat-icon>
+        </ng-template>
+    </app-table-cell>
+
+    <app-table-expanded-row [template]="expandedRow">
+        <ng-template let-execution="element" #expandedRow>
+            <span class="app-execution-result">{{'ADMIN.SCHEDULED_TASKS.EXECUTION_TABLE.RESULT_DESCRIPTION_LABEL' | translate}}</span>
+            <span [innerHtml]="execution.descriptionOrFallback | localized | async"
+                 class="app-execution-result-description">
+            </span>
+        </ng-template>
+    </app-table-expanded-row>
+</app-table>

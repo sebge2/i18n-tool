@@ -92,7 +92,8 @@
     "REPOSITORIES_LABEL": "Repositories",
     "USERS_LABEL": "Users",
     "TRANSLATIONS_LABEL": "Translations",
-    "SNAPSHOT_LABEL": "Snapshots"
+    "SNAPSHOT_LABEL": "Snapshots",
+    "SCHEDULED_TASKS_LABEL": "Tasks"
   },
   "ADMIN": {
     "LOCALES": {
@@ -342,6 +343,33 @@
         "DELETE": "Error while deleting the snapshot.",
         "CREATE": "Error while creating a new snapshot.",
         "IMPORT": "Error while importing a snapshot."
+      }
+    },
+    "SCHEDULED_TASKS": {
+      "DEFINITIONS_TAB_LABEL": "Definitions",
+      "EXECUTIONS_TAB_LABEL": "Executions",
+      "DEFINITION_TABLE": {
+        "TYPE": "Type",
+        "NAME": "Name",
+        "DESCRIPTION": "Description",
+        "TRIGGER": "Trigger",
+        "LAST_EXECUTION_TIME": "Last Execution",
+        "NEXT_EXECUTION_TIME": "Next Execution",
+        "ACTION": "Action"
+      },
+      "EXECUTION_TABLE": {
+        "NO_RESULT": "No execution found :(",
+        "TASK": "Task",
+        "START_TIME": "Start Time",
+        "DESCRIPTION": "Description",
+        "STATUS": "Status",
+        "DURATION": "Duration",
+        "RESULT_DESCRIPTION_LABEL": "Result:"
+      },
+      "ERROR": {
+        "GET_ALL_DEFINITIONS": "Error while retrieving scheduled tasks definitions.",
+        "SCHEDULE_UNSCHEDULE": "Error while scheduling/un-scheduling the task definition.",
+        "GET_EXECUTIONS": "Error while retrieving scheduled task executions."
       }
     }
   },

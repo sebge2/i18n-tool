@@ -1,7 +1,7 @@
 package be.sgerard.test.i18n.helper;
 
-import be.sgerard.i18n.model.i18n.dto.TranslationLocaleCreationDto;
-import be.sgerard.i18n.model.i18n.dto.TranslationLocaleDto;
+import be.sgerard.i18n.model.locale.dto.TranslationLocaleCreationDto;
+import be.sgerard.i18n.model.locale.dto.TranslationLocaleDto;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.test.web.reactive.server.WebTestClient;

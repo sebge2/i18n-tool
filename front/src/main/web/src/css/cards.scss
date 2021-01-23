@@ -1,0 +1,9 @@
+@import "./variables.scss";
+
+.mat-card-clickable {
+  cursor: pointer;
+
+  &:hover {
+    @include mat-elevation(8);
+  }
+}

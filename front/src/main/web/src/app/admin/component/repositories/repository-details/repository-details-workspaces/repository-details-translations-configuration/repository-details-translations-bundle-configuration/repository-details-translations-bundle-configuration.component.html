@@ -19,9 +19,7 @@
                                #newIgnorePathElement>
                         <mat-hint>
                             {{'ADMIN.REPOSITORIES.CONFIG_CARD.TRANSLATIONS_CONFIG_POPUP.NEW_IGNORED_PATH_HINT' | translate}}
-                            <a href="https://ant.apache.org/" target="_blank">
-                                <mat-icon class="help">help_outline</mat-icon>
-                            </a>
+                            <app-tooltip [link]="'https://ant.apache.org/'"></app-tooltip>
                         </mat-hint>
                     </mat-form-field>
                 </form>

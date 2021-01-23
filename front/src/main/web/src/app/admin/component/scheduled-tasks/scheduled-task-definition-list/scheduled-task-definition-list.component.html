@@ -1,0 +1,79 @@
+<app-table [dataSource]="dataSource">
+    <app-table-header [columnId]="'type'"
+                      [columnGridDef]="'70px'">
+        <p>{{'ADMIN.SCHEDULED_TASKS.DEFINITION_TABLE.TYPE' | translate}}</p>
+    </app-table-header>
+    <app-table-header [columnId]="'name'"
+                      [columnGridDef]="'minmax(100px, 1fr)'">
+        <p>{{'ADMIN.SCHEDULED_TASKS.DEFINITION_TABLE.NAME' | translate}}</p>
+    </app-table-header>
+    <app-table-header [columnId]="'trigger'"
+                      [columnGridDef]="'minmax(100px, 1fr)'">
+        <p>{{'ADMIN.SCHEDULED_TASKS.DEFINITION_TABLE.TRIGGER' | translate}}</p>
+    </app-table-header>
+    <app-table-header [columnId]="'lastExecutionTime'"
+                      [columnGridDef]="'minmax(150px, 2fr)'">
+        <p>{{'ADMIN.SCHEDULED_TASKS.DEFINITION_TABLE.LAST_EXECUTION_TIME' | translate}}</p>
+    </app-table-header>
+    <app-table-header [columnId]="'nextExecutionTime'"
+                      [columnGridDef]="'minmax(150px, 2fr)'">
+        <p>{{'ADMIN.SCHEDULED_TASKS.DEFINITION_TABLE.NEXT_EXECUTION_TIME' | translate}}</p>
+    </app-table-header>
+    <app-table-header [columnId]="'action'"
+                      [columnGridDef]="'75px'">
+        <p>{{'ADMIN.SCHEDULED_TASKS.DEFINITION_TABLE.ACTION' | translate}}</p>
+    </app-table-header>
+
+    <app-table-cell [columnId]="'type'" [template]="type">
+        <ng-template let-definition="element" #type>
+            <p>
+                <mat-icon [ngClass]="getIconColor(definition)">{{getIcon(definition)}}</mat-icon>
+            </p>
+        </ng-template>
+    </app-table-cell>
+    <app-table-cell [columnId]="'name'" [template]="name">
+        <ng-template let-definition="element" #name>
+            <p>
+                {{definition.name | localized | async }}
+                <app-tooltip [text]="definition.description | localized | async"></app-tooltip>
+            </p>
+        </ng-template>
+    </app-table-cell>
+    <app-table-cell [columnId]="'trigger'" [template]="trigger">
+        <ng-template let-definition="element" #trigger>
+            <ng-container [ngSwitch]="definition.trigger.type()">
+                <ng-container *ngSwitchCase="'NON_RECURRING'">
+                    <p>{{definition.trigger.startTime | date: 'short' }}</p>
+                </ng-container>
+                <ng-container *ngSwitchCase="'RECURRING'">
+                    <p>{{definition.trigger.cronExpression }}</p>
+                </ng-container>
+            </ng-container>
+        </ng-template>
+    </app-table-cell>
+    <app-table-cell [columnId]="'lastExecutionTime'" [template]="lastExecutionTime">
+        <ng-template let-definition="element" #lastExecutionTime>
+            <p>{{definition.lastExecutionTime | date: 'short' }}</p>
+        </ng-template>
+    </app-table-cell>
+    <app-table-cell [columnId]="'nextExecutionTime'" [template]="nextExecutionTime">
+        <ng-template let-definition="element" #nextExecutionTime>
+            <ng-container *ngIf="definition.nextExecutionTime; else nonScheduled">
+                <p>{{definition.nextExecutionTime | date: 'short' }}</p>
+            </ng-container>
+            <ng-template #nonScheduled>
+                <p>/</p>
+            </ng-template>
+        </ng-template>
+    </app-table-cell>
+    <app-table-cell [columnId]="'action'" [template]="action">
+        <ng-template let-definition="element" #action>
+            <app-play-button
+                    class="app-table-action"
+                    [state]="getPlayState(definition)"
+                    [actionInProgress]="actionInProgress"
+                    (press)="onChangeStatus(definition)">
+            </app-play-button>
+        </ng-template>
+    </app-table-cell>
+</app-table>

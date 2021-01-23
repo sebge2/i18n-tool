@@ -1,6 +1,7 @@
 package be.sgerard.i18n.controller;
 
 import be.sgerard.i18n.model.i18n.dto.*;
+import be.sgerard.i18n.model.locale.dto.TranslationLocaleDto;
 import be.sgerard.test.i18n.support.CleanupDatabase;
 import be.sgerard.test.i18n.support.auth.internal.WithJaneDoeAdminUser;
 import org.junit.jupiter.api.*;

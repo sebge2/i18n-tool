@@ -18,6 +18,7 @@ export class RepositoriesComponent implements OnInit, OnDestroy {
     public repositories: Repository[] = [];
 
     @ViewChild('tabs', {static: false}) private tabs: TabsComponent;
+
     private _destroyed$ = new Subject<void>();
     private _initialTab: string;
 

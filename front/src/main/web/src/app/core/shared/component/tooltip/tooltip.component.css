@@ -1,0 +1,6 @@
+.app-tooltip-component {
+    font-size: 13px !important;
+    position: relative;
+    top: 3px;
+    height: auto;
+}

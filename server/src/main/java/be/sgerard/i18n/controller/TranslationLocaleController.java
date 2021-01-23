@@ -1,7 +1,7 @@
 package be.sgerard.i18n.controller;
 
-import be.sgerard.i18n.model.i18n.dto.TranslationLocaleCreationDto;
-import be.sgerard.i18n.model.i18n.dto.TranslationLocaleDto;
+import be.sgerard.i18n.model.locale.dto.TranslationLocaleCreationDto;
+import be.sgerard.i18n.model.locale.dto.TranslationLocaleDto;
 import be.sgerard.i18n.service.BadRequestException;
 import be.sgerard.i18n.service.locale.TranslationLocaleManager;
 import io.swagger.v3.oas.annotations.Operation;
@@ -21,7 +21,7 @@ import java.util.Objects;
  */
 @RestController
 @RequestMapping(path = "/api")
-@Tag(name = "TranslationLocale", description = "Controller handling locales registered by end-users.")
+@Tag(name = "Translation Locale", description = "Controller handling locales registered by end-users.")
 public class TranslationLocaleController {
 
     private final TranslationLocaleManager localeManager;

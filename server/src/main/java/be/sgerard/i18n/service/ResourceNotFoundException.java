@@ -41,6 +41,10 @@ public class ResourceNotFoundException extends RuntimeException implements Local
         return new ResourceNotFoundException("ResourceNotFoundException.snapshot-user.message", "snapshot", reference);
     }
 
+    public static ResourceNotFoundException scheduledTaskDefinitionNotFoundException(String reference) {
+        return new ResourceNotFoundException("ResourceNotFoundException.scheduled-task-definition.message", "scheduled task definition", reference);
+    }
+
     private final String messageKey;
     private final String reference;
 

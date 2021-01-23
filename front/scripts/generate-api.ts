@@ -58,7 +58,7 @@ execCmd(
 
 console.log(`[i18n tool] Generating Model.`);
 execCmd(
-  `java -classpath ${swaggerLocation} io.swagger.codegen.v3.cli.SwaggerCodegen generate -i ${apiUrl} -l typescript-angular --model-name-suffix 'Dto' --additional-properties ngVersion=${angularVersion} -o ${sourceLocation} -a "Authorization:Basic YWRtaW46YWRtaW4="`,
+  `java -classpath ${swaggerLocation} io.swagger.codegen.v3.cli.SwaggerCodegen generate -i ${apiUrl} -l typescript-angular --model-name-suffix 'Dto' --additional-properties ngVersion=${angularVersion} -o ${sourceLocation}`,
 );
 
 console.log(`[i18n tool] Model Generated.`);

@@ -41,9 +41,15 @@ public class AppProperties {
      */
     private Lock lock;
 
+    /**
+     * Properties about scheduled tasks.
+     */
+    private ScheduledTask scheduledTask;
+
     public AppProperties() {
         this.repository = new Repository(this);
         this.security = new Security();
+        this.scheduledTask = new ScheduledTask();
     }
 
     /**
@@ -68,6 +74,14 @@ public class AppProperties {
     @ConfigurationProperties(prefix = "lock")
     public Lock getLock() {
         return lock;
+    }
+
+    /**
+     * @see #scheduledTask
+     */
+    @ConfigurationProperties(prefix = "scheduled-task")
+    public ScheduledTask getScheduledTask() {
+        return scheduledTask;
     }
 
     /**
@@ -135,8 +149,6 @@ public class AppProperties {
          */
         private List<String> restrictedDomains = new ArrayList<>();
 
-        private String toto;
-
         public GoogleOauth() {
         }
 
@@ -179,7 +191,7 @@ public class AppProperties {
         /**
          * Returns whether there is a restriction on the GitHub organization.
          */
-        public boolean isOrganizationRestricted(){
+        public boolean isOrganizationRestricted() {
             return !restrictedOrganizations.isEmpty();
         }
 
@@ -319,7 +331,22 @@ public class AppProperties {
          */
         private int timeoutInMS = 120000;
 
-        public Lock() {
-        }
+    }
+
+    /**
+     * Properties related to scheduled tasks.
+     */
+    @Getter
+    @Setter
+    @Accessors(chain = true)
+    public static class ScheduledTask {
+
+        /**
+         * The CRON expression specifying when the job cleaning old task executions must be executed.
+         */
+        private String cleanupFrequency = "0 2 * * * *";
+
+        private int cleanupExecutionsOlderThanDays = 31;
+
     }
 }

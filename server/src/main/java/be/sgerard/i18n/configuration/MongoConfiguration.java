@@ -1,5 +1,7 @@
 package be.sgerard.i18n.configuration;
 
+import be.sgerard.i18n.model.support.LocalizedStringToMapConverter;
+import be.sgerard.i18n.model.support.MapToLocalizedStringConverter;
 import be.sgerard.i18n.model.support.PatternToStringConverter;
 import be.sgerard.i18n.model.support.StringToPatternConverter;
 import org.springframework.context.annotation.Bean;
@@ -35,7 +37,9 @@ public class MongoConfiguration {
     public MongoCustomConversions mongoCustomConversions() {
         return new MongoCustomConversions(asList(
                 new PatternToStringConverter(),
-                new StringToPatternConverter()
+                new StringToPatternConverter(),
+                new LocalizedStringToMapConverter(),
+                new MapToLocalizedStringConverter()
         ));
     }
 }
