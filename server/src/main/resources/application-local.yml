@@ -4,6 +4,8 @@ be:
       base-directory: ${BASE_REPOSITORY}
       security:
         default-admin-password: admin
+      repository:
+        auto-sync-frequency: '0 0 * * * *'
       scheduled-task:
-        cleanup-frequency: '0 2 * * * *'
+        cleanup-frequency: '0 0 * * * *'
         cleanup-executions-older-than-days: 31

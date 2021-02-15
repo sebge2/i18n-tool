@@ -497,7 +497,7 @@ public class TranslationControllerTest extends AbstractControllerTest {
                 .jsonPath("$[0].updatedValue").isEqualTo("my value updated")
                 .jsonPath("$[0].lastEditor").isNotEmpty()
                 .jsonPath("$[1].locale").isEqualTo(frenchLocaleId)
-                .jsonPath("$[1].originalValue").isEqualTo("Il existe déjà un répository nommé [{0]. Les noms doivent être unique.")
+                .jsonPath("$[1].originalValue").isEqualTo("Il existe déjà un répository nommé [{0}]. Les noms doivent être unique.")
                 .jsonPath("$[1].updatedValue").isEqualTo("ma valeur")
                 .jsonPath("$[1].lastEditor").isNotEmpty();
     }

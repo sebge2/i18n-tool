@@ -1,7 +1,7 @@
 package be.sgerard.i18n.controller.support;
 
+import be.sgerard.i18n.model.core.localized.LocalizedString;
 import be.sgerard.i18n.model.support.ErrorMessages;
-import be.sgerard.i18n.model.support.LocalizedMessageHolder;
 import be.sgerard.i18n.service.BadRequestException;
 import be.sgerard.i18n.service.ResourceNotFoundException;
 import be.sgerard.i18n.service.UnauthorizedRequestException;
@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.server.ServerWebInputException;
 
-import static java.util.Collections.emptyList;
+import java.util.Collections;
 
 /**
  * {@link org.springframework.web.bind.annotation.ControllerAdvice Controller advice} for the whole application.
@@ -60,7 +60,7 @@ public class ControllerAdvice {
     @ExceptionHandler(value = ValidationException.class)
     @ResponseStatus
     public ResponseEntity<ErrorMessages> handle(ValidationException exception) {
-        final ErrorMessages errorMessages = messagesProvider.map(exception.getValidationResult().getMessages());
+        final ErrorMessages errorMessages = messagesProvider.map(exception);
 
         if (logger.isDebugEnabled()) {
             logger.debug(String.format("Validation exception with id %s, message %s.", errorMessages.getId(), exception.getMessage()), exception);
@@ -176,7 +176,7 @@ public class ControllerAdvice {
     @ExceptionHandler(value = AccessDeniedException.class)
     @ResponseStatus
     public ResponseEntity<ErrorMessages> handle(AccessDeniedException exception) {
-        final ErrorMessages errorMessages = messagesProvider.map(new LocalizedMessageHolder.Simple("AccessDeniedException.message"));
+        final ErrorMessages errorMessages = messagesProvider.map(LocalizedString.fromBundle("i18n/exception", "AccessDeniedException.message"));
 
         if (logger.isDebugEnabled()) {
             logger.debug(String.format("Method not allowed exception with id %s, message %s.", errorMessages.getId(), exception.getMessage()), exception);
@@ -207,9 +207,9 @@ public class ControllerAdvice {
     public ResponseEntity<ErrorMessages> handleServerWebInputException(ServerWebInputException exception) {
         final ErrorMessages errorMessages;
         if (exception.getCause() instanceof DecodingException) {
-            errorMessages = messagesProvider.map(new LocalizedMessageHolder.Simple("ServerWebInputException.DecodingException.message"));
+            errorMessages = messagesProvider.map(LocalizedString.fromBundle("i18n/exception", "ServerWebInputException.DecodingException.message"));
         } else {
-            errorMessages = messagesProvider.map(emptyList());
+            errorMessages = messagesProvider.map(Collections::emptyList);
         }
 
         logger.error(String.format("Exception with id %s, message %s.", errorMessages.getId(), exception.getMessage()), exception);
@@ -223,7 +223,7 @@ public class ControllerAdvice {
     @ExceptionHandler(value = Exception.class)
     @ResponseStatus
     public ResponseEntity<ErrorMessages> handleException(Exception exception) {
-        final ErrorMessages errorMessages = messagesProvider.map(new LocalizedMessageHolder.Simple("InternalException.message"));
+        final ErrorMessages errorMessages = messagesProvider.map(LocalizedString.fromBundle("i18n/exception", "InternalException.message"));
 
         logger.error(String.format("Exception with id %s, message %s.", errorMessages.getId(), exception.getMessage()), exception);
 

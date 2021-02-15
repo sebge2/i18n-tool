@@ -5,6 +5,7 @@ import org.apache.commons.text.translate.CharSequenceTranslator;
 import org.apache.commons.text.translate.LookupTranslator;
 
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -32,9 +33,14 @@ public class LocalizedStringFormatter implements LocalizedString.Formatter {
 
     @Override
     public String format(String translation, Locale locale, Object[] arguments) {
-        return MessageFormat.format(ESCAPE_TRANSLATION.translate(translation),
-                postProcessArgs(arguments, localizedString -> localizedString.getTranslationOrFallback(locale, ""))
-        );
+        try {
+            return MessageFormat.format(
+                    ESCAPE_TRANSLATION.translate(translation),
+                    postProcessArgs(arguments, localizedString -> localizedString.getTranslationOrFallback(locale, ""))
+            );
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException(String.format("Error while formatting [%s] with arguments [%s].", translation, Arrays.toString(arguments)), e);
+        }
     }
 
     /**

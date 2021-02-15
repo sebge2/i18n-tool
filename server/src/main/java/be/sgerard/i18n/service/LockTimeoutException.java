@@ -1,29 +1,26 @@
 package be.sgerard.i18n.service;
 
-import be.sgerard.i18n.model.support.LocalizedMessageHolder;
+import be.sgerard.i18n.model.core.localized.LocalizedString;
+import be.sgerard.i18n.model.error.LocalizedMessageHolder;
 
 /**
  * Exception thrown when the lock cannot be obtained.
  *
- * @see LockService
  * @author Sebastien Gerard
+ * @see LockService
  */
 public class LockTimeoutException extends RuntimeException implements LocalizedMessageHolder {
 
-    private final int timeoutInMS;
+    private final LocalizedString localizedMessage;
 
     public LockTimeoutException(int timeoutInMS) {
         super();
-        this.timeoutInMS = timeoutInMS;
+
+        this.localizedMessage = LocalizedString.fromBundle("i18n/exception", "LockTimeoutException.message", timeoutInMS);
     }
 
     @Override
-    public String getMessageKey() {
-        return "LockTimeoutException.message";
-    }
-
-    @Override
-    public Object[] getMessageParameters() {
-        return new Object[]{timeoutInMS};
+    public LocalizedString toLocalizedMessage() {
+        return localizedMessage;
     }
 }

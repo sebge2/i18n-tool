@@ -41,11 +41,17 @@ public abstract class RepositorySnapshotDto {
      */
     private final TranslationsConfigurationSnapshotDto translationsConfiguration;
 
+    /**
+     * @see RepositoryEntity#isAutoSynchronized()
+     */
+    private final boolean autoSynchronized;
+
     protected RepositorySnapshotDto(Builder builder) {
         id = builder.id;
         name = builder.name;
         status = builder.status;
         translationsConfiguration = builder.translationsConfiguration;
+        autoSynchronized = builder.autoSynchronized;
     }
 
     /**
@@ -64,6 +70,7 @@ public abstract class RepositorySnapshotDto {
         private String name;
         private RepositoryStatus status;
         private TranslationsConfigurationSnapshotDto translationsConfiguration = TranslationsConfigurationSnapshotDto.builder().build();
+        private boolean autoSynchronized;
 
         protected Builder() {
         }
@@ -87,6 +94,11 @@ public abstract class RepositorySnapshotDto {
 
         public Builder translationsConfiguration(TranslationsConfigurationSnapshotDto translationsConfiguration) {
             this.translationsConfiguration = translationsConfiguration;
+            return this;
+        }
+
+        public Builder autoSynchronized(boolean autoSynchronized) {
+            this.autoSynchronized = autoSynchronized;
             return this;
         }
     }

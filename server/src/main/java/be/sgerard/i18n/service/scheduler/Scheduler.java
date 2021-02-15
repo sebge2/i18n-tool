@@ -1,5 +1,6 @@
 package be.sgerard.i18n.service.scheduler;
 
+import be.sgerard.i18n.configuration.AppProperties;
 import be.sgerard.i18n.model.core.localized.LocalizedString;
 import be.sgerard.i18n.model.scheduler.ScheduledTaskDefinition;
 import be.sgerard.i18n.model.scheduler.ScheduledTaskExecution;
@@ -16,6 +17,7 @@ import org.springframework.scheduling.TaskScheduler;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,13 +36,18 @@ class Scheduler {
     private final TaskScheduler taskScheduler;
     private final ScheduledTaskExecutor taskExecutor;
     private final Callback callback;
+    private final AppProperties appProperties;
 
     private final List<ScheduledTask> scheduledTasks = new ArrayList<>();
 
-    Scheduler(TaskScheduler taskScheduler, ScheduledTaskExecutor taskExecutor, Callback callback) {
+    Scheduler(TaskScheduler taskScheduler,
+              ScheduledTaskExecutor taskExecutor,
+              Callback callback,
+              AppProperties appProperties) {
         this.taskExecutor = taskExecutor;
         this.taskScheduler = taskScheduler;
         this.callback = callback;
+        this.appProperties = appProperties;
     }
 
     /**
@@ -217,6 +224,13 @@ class Scheduler {
         public boolean isRecurring() {
             return getTaskDefinition().getTrigger().getType().isRecurring();
         }
+
+        @Override
+        public String toString() {
+            return "ScheduledTask{" +
+                    "task=" + getTaskDefinition() +
+                    '}';
+        }
     }
 
     /**
@@ -252,7 +266,16 @@ class Scheduler {
                     )
                     .flatMap(execution -> callback.onExecutedTask(getTaskDefinition(), execution))
                     .flatMap(this::unregisterIfNonRecurring)
-                    .subscribe();
+                    // bug in org.springframework.scheduling.support.CronSequenceGenerator.next
+                    .delayElement(Duration.ofMinutes(appProperties.getScheduledTask().getDelayTaskExecutionInMin()))
+                    .block();
+        }
+
+        @Override
+        public String toString() {
+            return "ScheduledTaskWrapper{" +
+                    "task=" + getTaskDefinition() +
+                    '}';
         }
 
         /**

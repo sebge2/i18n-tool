@@ -20,7 +20,7 @@ import {RepositoryGitCredentialsDialogComponent} from "./repository-git-credenti
 @Component({
     selector: 'app-repository-details-config',
     templateUrl: './repository-details-config.component.html',
-    styleUrls: ['./repository-details-config.component.css']
+    styleUrls: ['./repository-details-config.component.scss']
 })
 export class RepositoryDetailsConfigComponent {
 
@@ -54,12 +54,14 @@ export class RepositoryDetailsConfigComponent {
                 this.form.registerControl('location', this._formBuilder.control('', [Validators.required]));
                 this.form.registerControl('defaultBranch', this._formBuilder.control('', [Validators.required]));
                 this.form.registerControl('allowedBranches', this._formBuilder.control('', [Validators.required]));
+                this.form.registerControl('autoSynchronized', this._formBuilder.control('', [Validators.required]));
 
                 break;
             case "GITHUB":
                 this.form.registerControl('name', this._formBuilder.control('', [Validators.required]));
                 this.form.registerControl('defaultBranch', this._formBuilder.control('', [Validators.required]));
                 this.form.registerControl('allowedBranches', this._formBuilder.control('', [Validators.required]));
+                this.form.registerControl('autoSynchronized', this._formBuilder.control('', [Validators.required]));
 
                 break;
             default:
@@ -128,6 +130,7 @@ export class RepositoryDetailsConfigComponent {
 
                 this.form.controls['defaultBranch'].setValue(gitRepository.defaultBranch);
                 this.form.controls['allowedBranches'].setValue(gitRepository.allowedBranches);
+                this.form.controls['autoSynchronized'].setValue(gitRepository.autoSynchronized);
 
                 break;
             case "GITHUB":
@@ -138,6 +141,7 @@ export class RepositoryDetailsConfigComponent {
 
                 this.form.controls['defaultBranch'].setValue(gitHubRepository.defaultBranch);
                 this.form.controls['allowedBranches'].setValue(gitHubRepository.allowedBranches);
+                this.form.controls['autoSynchronized'].setValue(gitHubRepository.autoSynchronized);
 
                 break;
             default:
@@ -156,7 +160,8 @@ export class RepositoryDetailsConfigComponent {
                     type: this.repository.type,
                     name: this.form.controls['name'].value,
                     defaultBranch: this.form.controls['defaultBranch'].value,
-                    allowedBranches: this.form.controls['allowedBranches'].value
+                    allowedBranches: this.form.controls['allowedBranches'].value,
+                    autoSynchronized: this.form.controls['autoSynchronized'].value
                 };
             case "GITHUB":
                 return <GitHubRepositoryPatchRequestDto>{
@@ -165,7 +170,8 @@ export class RepositoryDetailsConfigComponent {
                     accessKey: null,
                     webHookSecret: null,
                     defaultBranch: this.form.controls['defaultBranch'].value,
-                    allowedBranches: this.form.controls['allowedBranches'].value
+                    allowedBranches: this.form.controls['allowedBranches'].value,
+                    autoSynchronized: this.form.controls['autoSynchronized'].value
                 };
             default:
                 throw new Error(`Unsupported type ${this.repository.type}.`)

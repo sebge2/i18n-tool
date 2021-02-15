@@ -45,6 +45,7 @@ public abstract class AbstractRepositorySnapshotDtoMapper<E extends RepositoryEn
                         .name(repository.getName())
                         .status(mapToDto(repository.getStatus()))
                         .translationsConfiguration(mapToDto(repository.getTranslationsConfiguration()))
+                        .autoSynchronized(repository.isAutoSynchronized())
                         .build()
         );
     }

@@ -17,6 +17,7 @@ export class GitHubRepository extends BaseGitRepository {
             dto.location,
             dto.defaultBranch,
             dto.allowedBranches,
+            dto.autoSynchronized,
             dto.username,
             dto.repository
         );
@@ -30,9 +31,10 @@ export class GitHubRepository extends BaseGitRepository {
                 location: string,
                 defaultBranch: string,
                 allowedBranches: string,
+                autoSynchronized: boolean,
                 public username: string,
                 public repository: string) {
-        super(id, name, type, status, translationsConfiguration, location, defaultBranch, allowedBranches);
+        super(id, name, type, status, translationsConfiguration, location, defaultBranch, allowedBranches, autoSynchronized);
     }
 
 }

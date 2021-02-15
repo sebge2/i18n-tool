@@ -4,6 +4,7 @@ import be.sgerard.i18n.model.core.localized.LocalizedString;
 import be.sgerard.i18n.model.scheduler.ScheduledTaskDefinition;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
@@ -26,6 +27,7 @@ import static be.sgerard.i18n.model.scheduler.persistence.ScheduledTaskTriggerEn
 @Getter
 @Setter
 @Accessors(chain = true)
+@ToString(of = {"internalId"})
 public class ScheduledTaskDefinitionEntity {
 
     /**

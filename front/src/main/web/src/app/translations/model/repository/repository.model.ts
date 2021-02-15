@@ -8,7 +8,8 @@ export class Repository {
                 public name: string,
                 public type: RepositoryType,
                 public status: RepositoryStatus,
-                public translationsConfiguration: TranslationsConfiguration) {
+                public translationsConfiguration: TranslationsConfiguration,
+                public autoSynchronized: boolean) {
     }
 
     public isNotInitialized(): boolean {

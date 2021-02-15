@@ -4,8 +4,14 @@ import be.sgerard.i18n.model.ToolLocale;
 import be.sgerard.i18n.model.core.localized.dto.LocalizedStringDto;
 
 import java.util.*;
+import java.util.function.BiConsumer;
+import java.util.function.BinaryOperator;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.Collector;
 
 import static be.sgerard.i18n.support.StringUtils.isNotEmptyString;
+import static java.util.Collections.emptySet;
 import static java.util.Collections.singletonMap;
 import static java.util.stream.Collectors.toMap;
 
@@ -41,6 +47,13 @@ public class LocalizedString {
         return new LocalizedString(dto.getTranslations());
     }
 
+    /**
+     * Returns a new {@link LocalizedStringCollector collector}.
+     */
+    public static LocalizedStringCollector joiningLocalized(Collector<CharSequence, ?, String> stringCollector) {
+        return new LocalizedStringCollector(stringCollector);
+    }
+
     private final Map<Locale, String> translations;
 
     public LocalizedString(Map<Locale, String> translations) {
@@ -55,6 +68,10 @@ public class LocalizedString {
 
     public LocalizedString(Locale locale, String translation) {
         this(singletonMap(locale, translation));
+    }
+
+    public LocalizedString(String translation) {
+        this(DEFAULT_LOCALE, translation);
     }
 
     /**
@@ -83,6 +100,7 @@ public class LocalizedString {
      */
     public Optional<String> getTranslationOrFallback(Locale locale) {
         return getTranslation(locale)
+                .or(() -> getTranslation(DEFAULT_LOCALE))
                 .or(() -> getTranslations().values().stream().findFirst());
     }
 
@@ -106,7 +124,7 @@ public class LocalizedString {
      */
     public LocalizedString format(Formatter formatter, Object... arguments) {
         return new LocalizedString(
-                translations.entrySet().stream()
+                (Map<Locale, String>) translations.entrySet().stream()
                         .collect(toMap(
                                 Map.Entry::getKey,
                                 entry -> formatter.format(entry.getValue(), entry.getKey(), arguments),
@@ -137,5 +155,57 @@ public class LocalizedString {
          */
         String format(String translation, Locale locale, Object[] arguments);
 
+    }
+
+    /**
+     * {@link Collector Collector} for {@link LocalizedString localized strings}.
+     */
+    public static class LocalizedStringCollector implements Collector<LocalizedString, List<LocalizedString>, LocalizedString> {
+
+        private final Collector<CharSequence, ?, String> stringCollector;
+
+        public LocalizedStringCollector(Collector<CharSequence, ?, String> stringCollector) {
+            this.stringCollector = stringCollector;
+        }
+
+        @Override
+        public Supplier<List<LocalizedString>> supplier() {
+            return ArrayList::new;
+        }
+
+        @Override
+        public BiConsumer<List<LocalizedString>, LocalizedString> accumulator() {
+            return List::add;
+        }
+
+        @Override
+        public BinaryOperator<List<LocalizedString>> combiner() {
+            return (first, second) -> {
+                first.addAll(second);
+                return first;
+            };
+        }
+
+        @Override
+        public Function<List<LocalizedString>, LocalizedString> finisher() {
+            return (list) ->
+                    new LocalizedString(
+                            list.stream()
+                                    .flatMap(string -> string.getLocales().stream())
+                                    .distinct()
+                                    .collect(toMap(
+                                            locale -> locale,
+                                            locale ->
+                                                    list.stream()
+                                                            .map(string -> string.getTranslationOrFallback(locale, "?"))
+                                                            .collect(stringCollector)
+                                    ))
+                    );
+        }
+
+        @Override
+        public Set<Characteristics> characteristics() {
+            return emptySet();
+        }
     }
 }

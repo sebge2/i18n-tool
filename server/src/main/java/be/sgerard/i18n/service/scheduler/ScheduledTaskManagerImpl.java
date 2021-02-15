@@ -1,5 +1,6 @@
 package be.sgerard.i18n.service.scheduler;
 
+import be.sgerard.i18n.configuration.AppProperties;
 import be.sgerard.i18n.model.scheduler.ScheduledTaskDefinition;
 import be.sgerard.i18n.model.scheduler.ScheduledTaskDefinitionSearchRequest;
 import be.sgerard.i18n.model.scheduler.ScheduledTaskExecution;
@@ -12,6 +13,7 @@ import be.sgerard.i18n.service.scheduler.executor.ScheduledTaskExecutor;
 import be.sgerard.i18n.service.scheduler.executor.StaticScheduledTaskProvider;
 import be.sgerard.i18n.service.scheduler.listener.ScheduledTaskListener;
 import be.sgerard.i18n.service.scheduler.validation.ScheduledTaskDefinitionValidator;
+import be.sgerard.i18n.support.ReactiveUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.TaskScheduler;
@@ -20,8 +22,10 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import javax.annotation.PostConstruct;
+import java.util.Comparator;
 
 import static be.sgerard.i18n.model.scheduler.ScheduledTaskDefinitionSearchRequest.requestForScheduledDefinitions;
+import static java.util.Comparator.comparing;
 
 /**
  * Implementation of the {@link ScheduledTaskManager task definition manager}.
@@ -47,14 +51,15 @@ public class ScheduledTaskManagerImpl implements ScheduledTaskManager {
                                     ScheduledTaskDefinitionValidator validator,
                                     ScheduledTaskListener listener,
                                     ScheduledTaskExecutionManager executionManager,
-                                    ScheduledTaskExecutor taskExecutor) {
+                                    ScheduledTaskExecutor taskExecutor,
+                                    AppProperties appProperties) {
         this.repository = repository;
         this.staticTaskProvider = staticTaskProvider;
         this.validator = validator;
         this.listener = listener;
         this.executionManager = executionManager;
         this.taskExecutor = taskExecutor;
-        this.scheduler = new Scheduler(taskScheduler, taskExecutor, new SchedulerCallback());
+        this.scheduler = new Scheduler(taskScheduler, taskExecutor, new SchedulerCallback(), appProperties);
     }
 
     @Override
@@ -112,6 +117,7 @@ public class ScheduledTaskManagerImpl implements ScheduledTaskManager {
                 )
                 .doOnNext(taskDefinition -> applyPatch(taskDefinition, patch))
                 .flatMap(this::schedule)
+                .flatMap(repository::save)
                 .flatMap(task -> listener.afterUpdate(task).thenReturn(task));
     }
 
@@ -134,14 +140,25 @@ public class ScheduledTaskManagerImpl implements ScheduledTaskManager {
      */
     @PostConstruct
     public void init() {
-        this
-                .find(requestForScheduledDefinitions())
-                .filter(ScheduledTaskDefinitionEntity::isEnabled)
-                .flatMap(this::schedule)
-                .subscribe();
+        ReactiveUtils
+                .combine(
+                        Flux.fromIterable(staticTaskProvider.getTaskDefinitions()).sort(comparing(ScheduledTaskDefinition::getId)),
+                        this.find(requestForScheduledDefinitions()).sort(comparing(ScheduledTaskDefinitionEntity::getInternalId)),
+                        (first, second) -> Comparator.<String>naturalOrder().compare(first.getId(), second.getInternalId())
+                )
+                .flatMap(pair -> {
+                    final ScheduledTaskDefinition fromStaticProvider = pair.getLeft();
+                    final ScheduledTaskDefinitionEntity fromRepository = pair.getRight();
 
-        Flux
-                .fromIterable(staticTaskProvider.getTaskDefinitions())
+                    if(fromRepository != null){
+                        return Mono
+                                .just(fromRepository)
+                                .filter(ScheduledTaskDefinitionEntity::isEnabled)
+                                .map(ScheduledTaskDefinitionEntity::toDefinition);
+                    } else {
+                        return Mono.just(fromStaticProvider);
+                    }
+                })
                 .flatMap(this::createOrUpdate)
                 .subscribe();
     }
