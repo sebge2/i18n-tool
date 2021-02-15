@@ -31,3 +31,5 @@ be:
           ignored-paths:
           included-paths:
             - "**/src/assets/i18n"
+      scheduledTask:
+        delayTaskExecutionInMin: 0

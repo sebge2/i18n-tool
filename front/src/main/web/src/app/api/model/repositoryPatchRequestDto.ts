@@ -21,6 +21,10 @@ export interface RepositoryPatchRequestDto {
     id: string;
     translationsConfiguration?: TranslationsConfigurationPatchDto;
     /**
+     * Flag indicating whether repository's workspaces must be automatically synchronized.
+     */
+    autoSynchronized?: boolean;
+    /**
      * Type of this repository
      */
     type: RepositoryPatchRequestDto.TypeDtoEnum;

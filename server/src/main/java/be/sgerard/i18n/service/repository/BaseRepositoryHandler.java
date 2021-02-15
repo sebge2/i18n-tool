@@ -35,6 +35,7 @@ public abstract class BaseRepositoryHandler<E extends RepositoryEntity, C extend
     @Override
     public final Mono<E> updateRepository(E repository, P patchDto, D credentials) throws RepositoryException {
         patchDto.getTranslationsConfiguration().ifPresent(config -> updateRepository(repository, config));
+        patchDto.isAutoSynchronized().ifPresent(repository::setAutoSynchronized);
 
         return updateFromPatch(patchDto, repository);
     }

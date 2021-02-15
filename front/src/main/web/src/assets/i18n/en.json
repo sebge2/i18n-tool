@@ -248,6 +248,8 @@
         "DEFAULT_BRANCH_HINT": "Default branch to use when searching.",
         "ALLOWED_BRANCHES_LABEL": "Allowed Branches",
         "ALLOWED_BRANCHES_HINT": "Regex specifying which branches will be scanned.",
+        "AUTO_SYNCHRONIZED_LABEL": "Auto-Synchronized?",
+        "AUTO_SYNCHRONIZED_HINT": "Is the repository automatically synchronized in a regular basis?",
         "LOCATION_LABEL": "Location",
         "LOCATION_HINT": "Git URL of your repository.",
         "ACTION_UPDATE_GITHUB_ACCESS_KEY": "Update Access Key",

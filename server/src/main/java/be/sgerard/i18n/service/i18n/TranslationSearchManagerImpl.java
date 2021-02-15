@@ -1,13 +1,11 @@
 package be.sgerard.i18n.service.i18n;
 
 import be.sgerard.i18n.model.i18n.TranslationsSearchRequest;
-import be.sgerard.i18n.model.i18n.dto.TranslationsPageDto;
-import be.sgerard.i18n.model.i18n.dto.TranslationsPageRowDto;
-import be.sgerard.i18n.model.i18n.dto.TranslationsPageTranslationDto;
-import be.sgerard.i18n.model.i18n.dto.TranslationsSearchRequestDto;
+import be.sgerard.i18n.model.i18n.dto.*;
 import be.sgerard.i18n.model.i18n.persistence.BundleKeyEntity;
 import be.sgerard.i18n.model.i18n.persistence.BundleKeyTranslationEntity;
 import be.sgerard.i18n.model.locale.persistence.TranslationLocaleEntity;
+import be.sgerard.i18n.model.security.auth.AuthenticatedUser;
 import be.sgerard.i18n.model.workspace.persistence.WorkspaceEntity;
 import be.sgerard.i18n.repository.i18n.BundleKeyEntityRepository;
 import be.sgerard.i18n.service.ResourceNotFoundException;
@@ -18,6 +16,7 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
 
@@ -102,8 +101,17 @@ public class TranslationSearchManagerImpl implements TranslationSearchManager {
     private Mono<TranslationsSearchRequest> createRequest(TranslationsSearchRequestDto searchRequest,
                                                           List<String> workspaces,
                                                           List<String> locales) {
-        return authenticationUserManager
-                .getCurrentUserOrDie()
+        return Mono
+                .defer(() -> {
+                    if (searchRequest.getCriterion() == TranslationSearchCriterion.TRANSLATIONS_CURRENT_USER_UPDATED) {
+                        return authenticationUserManager
+                                .getCurrentUserOrDie()
+                                .map(AuthenticatedUser::getUserId)
+                                .map(Optional::of);
+                    } else {
+                        return Mono.just(Optional.<String>empty());
+                    }
+                })
                 .map(currentUser ->
                         TranslationsSearchRequest.builder()
                                 .workspaces(workspaces)
@@ -114,7 +122,7 @@ public class TranslationSearchManagerImpl implements TranslationSearchManager {
                                 .valueRestriction(searchRequest.getValueRestriction().orElse(null))
                                 .maxKeys(searchRequest.getMaxKeys())
                                 .pageSpec(searchRequest.getPageSpec().orElse(null))
-                                .currentUser(currentUser.getUserId())
+                                .currentUser(currentUser.orElse(null))
                                 .maxKeys(searchRequest.getMaxKeys())
                                 .build()
                 );

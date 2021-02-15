@@ -3,6 +3,7 @@ package be.sgerard.i18n.model.scheduler;
 import be.sgerard.i18n.model.core.localized.LocalizedString;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.time.Instant;
 import java.util.Objects;
@@ -14,6 +15,7 @@ import java.util.Objects;
  */
 @Getter
 @Builder(builderClassName = "Builder", toBuilder = true)
+@ToString(of = {"id"})
 public class ScheduledTaskDefinition {
 
     /**

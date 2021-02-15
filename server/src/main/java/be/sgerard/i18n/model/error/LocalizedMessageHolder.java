@@ -1,45 +1,26 @@
-package be.sgerard.i18n.model.support;
+package be.sgerard.i18n.model.error;
+
+import be.sgerard.i18n.model.core.localized.LocalizedString;
+
+import java.util.List;
+
+import static java.util.Collections.singletonList;
 
 /**
- * Holder of a localized message. The message is identified by a key (the key must be defined in translations bundles).
+ * Holder of a localized message.
  *
  * @author Sebastien Gerard
- * @see org.springframework.context.MessageSource
  */
-public interface LocalizedMessageHolder {
+@FunctionalInterface
+public interface LocalizedMessageHolder extends LocalizedMessagesHolder {
 
     /**
-     * Returns the key of the message (available in translations bundles files).
+     * Returns the message.
      */
-    String getMessageKey();
+    LocalizedString toLocalizedMessage();
 
-    /**
-     * Returns parameters of the message. A parameter can also be a {@link LocalizedMessageHolder localized message holder}.
-     */
-    Object[] getMessageParameters();
-
-    /**
-     * Simple implementation of a message holder.
-     */
-    class Simple implements LocalizedMessageHolder {
-
-        private final String messageKey;
-        private final Object[] parameters;
-
-        public Simple(String messageKey, Object... parameters) {
-            this.messageKey = messageKey;
-            this.parameters = parameters;
-        }
-
-        @Override
-        public String getMessageKey() {
-            return messageKey;
-        }
-
-        @Override
-        public Object[] getMessageParameters() {
-            return parameters;
-        }
+    @Override
+    default List<LocalizedString> toLocalizedMessages() {
+        return singletonList(toLocalizedMessage());
     }
-
 }

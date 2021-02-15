@@ -1,6 +1,7 @@
 package be.sgerard.i18n.service.snapshot;
 
-import be.sgerard.i18n.model.support.LocalizedMessageHolder;
+import be.sgerard.i18n.model.core.localized.LocalizedString;
+import be.sgerard.i18n.model.error.LocalizedMessageHolder;
 
 /**
  * Exception thrown when manipulating a snapshot.
@@ -18,23 +19,16 @@ public class SnapshotException extends RuntimeException implements LocalizedMess
                 "and that the password is correct (if needed)?", "SnapshotException.reading-metadata.message", cause);
     }
 
-    private final String messageKey;
-    private final Object[] parameters;
+    private final LocalizedString localizedMessage;
 
     public SnapshotException(String message, String messageKey, Throwable cause, Object... parameters) {
         super(message, cause);
 
-        this.messageKey = messageKey;
-        this.parameters = parameters;
+        this.localizedMessage = LocalizedString.fromBundle("i18n/exception", messageKey, parameters);
     }
 
     @Override
-    public String getMessageKey() {
-        return messageKey;
-    }
-
-    @Override
-    public Object[] getMessageParameters() {
-        return parameters;
+    public LocalizedString toLocalizedMessage() {
+        return localizedMessage;
     }
 }

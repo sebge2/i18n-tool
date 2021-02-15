@@ -58,7 +58,8 @@ public class RepositoryDtoMapper {
                                 .javaProperties(mapToDto(javaBundleConfig))
                                 .jsonIcu(mapToDto(jsonBundleConfig))
                                 .build()
-                );
+                )
+                .autoSynchronized(repository.isAutoSynchronized());
     }
 
     /**

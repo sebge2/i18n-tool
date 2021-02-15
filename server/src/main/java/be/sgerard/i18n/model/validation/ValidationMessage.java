@@ -1,6 +1,7 @@
 package be.sgerard.i18n.model.validation;
 
-import be.sgerard.i18n.model.support.LocalizedMessageHolder;
+import be.sgerard.i18n.model.core.localized.LocalizedString;
+import be.sgerard.i18n.model.error.LocalizedMessageHolder;
 
 /**
  * Validation message. The message is a key and it's used for translating the validation message in the user's locale.
@@ -9,21 +10,14 @@ import be.sgerard.i18n.model.support.LocalizedMessageHolder;
  */
 public class ValidationMessage implements LocalizedMessageHolder {
 
-    private final String messageKey;
-    private final Object[] messageParameters;
+    private final LocalizedString localizedMessage;
 
     public ValidationMessage(String messageKey, Object... messageParameters) {
-        this.messageKey = messageKey;
-        this.messageParameters = messageParameters;
+        this.localizedMessage = LocalizedString.fromBundle("i18n/validation", messageKey, messageParameters);
     }
 
     @Override
-    public String getMessageKey() {
-        return messageKey;
-    }
-
-    @Override
-    public Object[] getMessageParameters() {
-        return messageParameters;
+    public LocalizedString toLocalizedMessage() {
+        return localizedMessage;
     }
 }

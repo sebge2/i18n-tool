@@ -14,6 +14,7 @@ export class GitRepository extends BaseGitRepository {
             RepositoryType[dto.type],
             RepositoryStatus[dto.status],
             TranslationsConfiguration.fromDto(dto.translationsConfiguration),
+            dto.autoSynchronized,
             dto.location,
             dto.defaultBranch,
             dto.allowedBranches
@@ -25,10 +26,11 @@ export class GitRepository extends BaseGitRepository {
                 type: RepositoryType,
                 status: RepositoryStatus,
                 translationsConfiguration: TranslationsConfiguration,
+                autoSynchronized: boolean,
                 location: string,
                 defaultBranch: string,
                 allowedBranches: string,) {
-        super(id, name, type, status, translationsConfiguration, location, defaultBranch, allowedBranches);
+        super(id, name, type, status, translationsConfiguration, location, defaultBranch, allowedBranches, autoSynchronized);
     }
 
 }

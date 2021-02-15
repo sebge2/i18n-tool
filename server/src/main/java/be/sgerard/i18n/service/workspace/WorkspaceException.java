@@ -1,6 +1,7 @@
 package be.sgerard.i18n.service.workspace;
 
-import be.sgerard.i18n.model.support.LocalizedMessageHolder;
+import be.sgerard.i18n.model.core.localized.LocalizedString;
+import be.sgerard.i18n.model.error.LocalizedMessageHolder;
 
 import java.io.File;
 
@@ -27,23 +28,16 @@ public class WorkspaceException extends RuntimeException implements LocalizedMes
         return new WorkspaceException("Error while writing the content of the file [" + file + "].", "WorkspaceException.error-writing-file.message", cause, file.toPath());
     }
 
-    private final String messageKey;
-    private final Object[] parameters;
+    private final LocalizedString localizedMessage;
 
     public WorkspaceException(String message, String messageKey, Throwable cause, Object... parameters) {
         super(message, cause);
 
-        this.messageKey = messageKey;
-        this.parameters = parameters;
+        this.localizedMessage = LocalizedString.fromBundle("i18n/exception", messageKey, parameters);
     }
 
     @Override
-    public String getMessageKey() {
-        return messageKey;
-    }
-
-    @Override
-    public Object[] getMessageParameters() {
-        return parameters;
+    public LocalizedString toLocalizedMessage() {
+        return localizedMessage;
     }
 }
