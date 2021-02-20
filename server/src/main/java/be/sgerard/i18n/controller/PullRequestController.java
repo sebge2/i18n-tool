@@ -19,7 +19,7 @@ import reactor.core.publisher.Mono;
  */
 @RestController
 @RequestMapping(path = "/api")
-@Tag(name = "PullRequest", description = "Controller GitHub pull requests.")
+@Tag(name = "Pull Request", description = "Controller GitHub pull requests.")
 public class PullRequestController {
 
     private final GitHubService gitHubService;

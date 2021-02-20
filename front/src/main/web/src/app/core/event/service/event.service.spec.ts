@@ -25,6 +25,6 @@ describe('EventService', () => {
     });
 
     xit('should be created', () => {
-        expect(service).toBeTruthy(); // TODO
+        expect(service).toBeTruthy(); // TODO issue-125
     });
 });

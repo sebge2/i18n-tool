@@ -1,6 +1,5 @@
 package be.sgerard.i18n.service.repository.listener;
 
-import be.sgerard.i18n.model.repository.dto.RepositoryPatchDto;
 import be.sgerard.i18n.model.repository.persistence.RepositoryEntity;
 import be.sgerard.i18n.service.event.EventService;
 import be.sgerard.i18n.service.repository.RepositoryDtoMapper;
@@ -31,22 +30,12 @@ public class RepositoryEventListener implements RepositoryListener<RepositoryEnt
     }
 
     @Override
-    public Mono<Void> afterCreate(RepositoryEntity repository) {
+    public Mono<Void> afterPersist(RepositoryEntity repository) {
         return this.eventService.broadcastEvent(ADDED_REPOSITORY, dtoMapper.mapToDto(repository));
     }
 
     @Override
-    public Mono<Void> afterInitialize(RepositoryEntity repository) {
-        return this.eventService.broadcastEvent(UPDATED_REPOSITORY, dtoMapper.mapToDto(repository));
-    }
-
-    @Override
-    public Mono<Void> onInitializationError(RepositoryEntity repository, Throwable error) {
-        return this.eventService.broadcastEvent(UPDATED_REPOSITORY, dtoMapper.mapToDto(repository));
-    }
-
-    @Override
-    public Mono<Void> afterUpdate(RepositoryPatchDto patch, RepositoryEntity repository) {
+    public Mono<Void> afterUpdate(RepositoryEntity repository) {
         return this.eventService.broadcastEvent(UPDATED_REPOSITORY, dtoMapper.mapToDto(repository));
     }
 

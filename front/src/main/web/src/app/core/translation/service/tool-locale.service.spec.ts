@@ -25,7 +25,7 @@ describe('ToolLocaleService', () => {
         service = injector.get(ToolLocaleService);
     });
 
-    // TODO
+    // TODO issue-125
     xit('should be created', () => {
         expect(service).toBeTruthy();
     });

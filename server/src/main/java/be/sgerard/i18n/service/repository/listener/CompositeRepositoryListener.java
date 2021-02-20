@@ -1,6 +1,5 @@
 package be.sgerard.i18n.service.repository.listener;
 
-import be.sgerard.i18n.model.repository.dto.RepositoryPatchDto;
 import be.sgerard.i18n.model.repository.persistence.RepositoryEntity;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Primary;
@@ -33,11 +32,20 @@ public class CompositeRepositoryListener implements RepositoryListener<Repositor
     }
 
     @Override
-    public Mono<Void> afterCreate(RepositoryEntity repository) {
+    public Mono<Void> beforePersist(RepositoryEntity repository) {
         return Flux
                 .fromIterable(listeners)
                 .filter(listener -> listener.support(repository))
-                .flatMap(listener -> listener.afterCreate(repository))
+                .flatMap(listener -> listener.beforePersist(repository))
+                .then();
+    }
+
+    @Override
+    public Mono<Void> afterPersist(RepositoryEntity repository) {
+        return Flux
+                .fromIterable(listeners)
+                .filter(listener -> listener.support(repository))
+                .flatMap(listener -> listener.afterPersist(repository))
                 .then();
     }
 
@@ -51,20 +59,20 @@ public class CompositeRepositoryListener implements RepositoryListener<Repositor
     }
 
     @Override
-    public Mono<Void> onInitializationError(RepositoryEntity repository, Throwable error) {
+    public Mono<Void> beforeUpdate(RepositoryEntity repository) {
         return Flux
                 .fromIterable(listeners)
                 .filter(listener -> listener.support(repository))
-                .flatMap(listener -> listener.onInitializationError(repository, error))
+                .flatMap(listener -> listener.beforeUpdate(repository))
                 .then();
     }
 
     @Override
-    public Mono<Void> afterUpdate(RepositoryPatchDto patch, RepositoryEntity repository) {
+    public Mono<Void> afterUpdate(RepositoryEntity repository) {
         return Flux
                 .fromIterable(listeners)
                 .filter(listener -> listener.support(repository))
-                .flatMap(listener -> listener.afterUpdate(patch, repository))
+                .flatMap(listener -> listener.afterUpdate(repository))
                 .then();
     }
 
@@ -74,6 +82,15 @@ public class CompositeRepositoryListener implements RepositoryListener<Repositor
                 .fromIterable(listeners)
                 .filter(listener -> listener.support(repository))
                 .flatMap(listener -> listener.beforeDelete(repository))
+                .then();
+    }
+
+    @Override
+    public Mono<Void> afterDelete(RepositoryEntity repository) {
+        return Flux
+                .fromIterable(listeners)
+                .filter(listener -> listener.support(repository))
+                .flatMap(listener -> listener.afterDelete(repository))
                 .then();
     }
 }

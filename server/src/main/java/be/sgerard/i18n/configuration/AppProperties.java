@@ -41,9 +41,15 @@ public class AppProperties {
      */
     private Lock lock;
 
+    /**
+     * Properties about scheduled tasks.
+     */
+    private ScheduledTask scheduledTask;
+
     public AppProperties() {
         this.repository = new Repository(this);
         this.security = new Security();
+        this.scheduledTask = new ScheduledTask();
     }
 
     /**
@@ -68,6 +74,14 @@ public class AppProperties {
     @ConfigurationProperties(prefix = "lock")
     public Lock getLock() {
         return lock;
+    }
+
+    /**
+     * @see #scheduledTask
+     */
+    @ConfigurationProperties(prefix = "scheduled-task")
+    public ScheduledTask getScheduledTask() {
+        return scheduledTask;
     }
 
     /**
@@ -135,8 +149,6 @@ public class AppProperties {
          */
         private List<String> restrictedDomains = new ArrayList<>();
 
-        private String toto;
-
         public GoogleOauth() {
         }
 
@@ -179,7 +191,7 @@ public class AppProperties {
         /**
          * Returns whether there is a restriction on the GitHub organization.
          */
-        public boolean isOrganizationRestricted(){
+        public boolean isOrganizationRestricted() {
             return !restrictedOrganizations.isEmpty();
         }
 
@@ -203,27 +215,20 @@ public class AppProperties {
 
         private final AppProperties appProperties;
 
+        /**
+         * The sub-directory in {@link AppProperties#getBaseDirectory() the base directory} containing repository data.
+         */
         private String directory = "repository";
         private final JavaPropertiesBundleConfiguration javaProperties = new JavaPropertiesBundleConfiguration();
         private final JsonPropertiesBundleConfiguration jsonIcu = new JsonPropertiesBundleConfiguration();
 
+        /**
+         * The CRON expression specifying when the job synchronizing workspaces must be executed.
+         */
+        private String autoSyncFrequency = "0 0 1 * * *";
+
         public Repository(AppProperties appProperties) {
             this.appProperties = appProperties;
-        }
-
-        /**
-         * Returns the sub-directory in {@link AppProperties#getBaseDirectory() the base directory} containing repository data.
-         */
-        public String getDirectory() {
-            return directory;
-        }
-
-        /**
-         * Sets the sub-directory in {@link AppProperties#getBaseDirectory() the base directory} containing repository data.
-         */
-        public Repository setDirectory(String directory) {
-            this.directory = directory;
-            return this;
         }
 
         /**
@@ -319,7 +324,30 @@ public class AppProperties {
          */
         private int timeoutInMS = 120000;
 
-        public Lock() {
-        }
+    }
+
+    /**
+     * Properties related to scheduled tasks.
+     */
+    @Getter
+    @Setter
+    @Accessors(chain = true)
+    public static class ScheduledTask {
+
+        /**
+         * The CRON expression specifying when the job cleaning old task executions must be executed.
+         */
+        private String cleanupFrequency = "0 0 6 * * *";
+
+        /**
+         * The number of days after which a task execution will be cleaned.
+         */
+        private int cleanupExecutionsOlderThanDays = 31;
+
+        /**
+         * The delay in minute after the task finishes it's execution. This prevents a bug in Spring, if the task
+         * executes to fast then it's rescheduled 1sec after.
+         */
+        private int delayTaskExecutionInMin = 1;
     }
 }

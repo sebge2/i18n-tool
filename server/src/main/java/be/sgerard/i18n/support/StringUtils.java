@@ -18,4 +18,11 @@ public final class StringUtils {
     public static boolean isNotEmptyString(String value) {
         return !isEmpty(value) && !isEmpty(value.trim());
     }
+
+    /**
+     * Returns whether the specified string does contain useful characters.
+     */
+    public static boolean isEmptyString(String value) {
+        return !isNotEmptyString(value);
+    }
 }

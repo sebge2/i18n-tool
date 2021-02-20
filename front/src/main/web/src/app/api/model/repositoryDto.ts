@@ -28,6 +28,7 @@ export interface RepositoryDto {
      */
     status: RepositoryDto.StatusDtoEnum;
     translationsConfiguration: TranslationsConfigurationDto;
+    autoSynchronized: boolean;
     type?: RepositoryDto.TypeDtoEnum;
 }
 export namespace RepositoryDto {

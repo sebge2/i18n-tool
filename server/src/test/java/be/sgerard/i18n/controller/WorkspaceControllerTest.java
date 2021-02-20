@@ -141,7 +141,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
-                .jsonPath("$").value(hasSize(4))
+                .jsonPath("$").value(hasSize(6))
                 .jsonPath("$[0].name").isEqualTo("exception")
                 .jsonPath("$[0].location").isEqualTo("server/src/main/resources/i18n")
                 .jsonPath("$[0].locationPathPattern").isEqualTo("server/src/main/resources/i18n/exception_*.properties")
@@ -152,15 +152,20 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                 .jsonPath("$[1].locationPathPattern").isEqualTo("server/src/main/resources/i18n/validation_*.properties")
                 .jsonPath("$[1].files").value(hasSize(greaterThan(1)))
 
-                .jsonPath("$[2].name").isEqualTo("file")
-                .jsonPath("$[2].location").isEqualTo("server/src/test/resources/be/sgerard/i18n/service/i18n/file")
-                .jsonPath("$[2].locationPathPattern").isEqualTo("server/src/test/resources/be/sgerard/i18n/service/i18n/file/*.json")
+                .jsonPath("$[2].name").isEqualTo("misc")
+                .jsonPath("$[2].location").isEqualTo("server/src/main/resources/i18n")
+                .jsonPath("$[2].locationPathPattern").isEqualTo("server/src/main/resources/i18n/misc_*.properties")
                 .jsonPath("$[2].files").value(hasSize(greaterThanOrEqualTo(1)))
 
-                .jsonPath("$[3].name").isEqualTo("i18n")
-                .jsonPath("$[3].location").isEqualTo("front/src/main/web/src/assets/i18n")
-                .jsonPath("$[3].locationPathPattern").isEqualTo("front/src/main/web/src/assets/i18n/*.json")
-                .jsonPath("$[3].files").value(hasSize(greaterThan(1)));
+                .jsonPath("$[4].name").isEqualTo("file")
+                .jsonPath("$[4].location").isEqualTo("server/src/test/resources/be/sgerard/i18n/service/i18n/file")
+                .jsonPath("$[4].locationPathPattern").isEqualTo("server/src/test/resources/be/sgerard/i18n/service/i18n/file/*.json")
+                .jsonPath("$[4].files").value(hasSize(greaterThanOrEqualTo(1)))
+
+                .jsonPath("$[5].name").isEqualTo("i18n")
+                .jsonPath("$[5].location").isEqualTo("front/src/main/web/src/assets/i18n")
+                .jsonPath("$[5].locationPathPattern").isEqualTo("front/src/main/web/src/assets/i18n/*.json")
+                .jsonPath("$[5].files").value(hasSize(greaterThan(1)));
     }
 
     @Test
@@ -199,17 +204,22 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
-                .jsonPath("$").value(hasSize(2))
+                .jsonPath("$").value(hasSize(4))
 
                 .jsonPath("$[0].name").isEqualTo("validation")
                 .jsonPath("$[0].location").isEqualTo("server/src/main/resources/i18n")
                 .jsonPath("$[0].locationPathPattern").isEqualTo("server/src/main/resources/i18n/validation_*.properties")
                 .jsonPath("$[0].files").value(hasSize(greaterThan(1)))
 
-                .jsonPath("$[1].name").isEqualTo("i18n")
-                .jsonPath("$[1].location").isEqualTo("front/src/main/web/src/assets/i18n")
-                .jsonPath("$[1].locationPathPattern").isEqualTo("front/src/main/web/src/assets/i18n/*.json")
-                .jsonPath("$[1].files").value(hasSize(greaterThan(1)));
+                .jsonPath("$[1].name").isEqualTo("misc")
+                .jsonPath("$[1].location").isEqualTo("server/src/main/resources/i18n")
+                .jsonPath("$[1].locationPathPattern").isEqualTo("server/src/main/resources/i18n/misc_*.properties")
+                .jsonPath("$[1].files").value(hasSize(greaterThan(1)))
+
+                .jsonPath("$[3].name").isEqualTo("i18n")
+                .jsonPath("$[3].location").isEqualTo("front/src/main/web/src/assets/i18n")
+                .jsonPath("$[3].locationPathPattern").isEqualTo("front/src/main/web/src/assets/i18n/*.json")
+                .jsonPath("$[3].files").value(hasSize(greaterThan(1)));
     }
 
     @Nested
@@ -692,7 +702,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
             remoteRepository.gitHub().forHint("myGitHubRepo").manageRemoteBranches()
                     .branch(pullRequestBranch)
                     .file("/server/src/main/resources/i18n/validation_en.properties")
-//                    .assertContains("validation.repository.name-not-unique=my updated value") TODO fix this
+//                    .assertContains("validation.repository.name-not-unique=my updated value") // TODO issue-128 fix this
             ;
         }
 
@@ -755,7 +765,7 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                     .jsonPath("$[0].status").isEqualTo(WorkspaceStatus.IN_REVIEW.name());
         }
 
-        // TODO workspace NOT INITIALIZED
+        // TODO issue-128 workspace NOT INITIALIZED
 
         @Test
         @CleanupDatabase

@@ -1,0 +1,41 @@
+@import "./variables.scss";
+
+.mat-icon-button.xlarge {
+  width: $button-xlarge-size;
+  height: $button-xlarge-size;
+  line-height: $button-xlarge-size;
+
+  .mat-icon {
+    font-size: $button-xlarge-size;
+    width: $button-xlarge-size;
+    height: $button-xlarge-size;
+    line-height: $button-xlarge-size;
+  }
+
+  .mat-spinner, .mat-spinner svg {
+    font-size: $button-xlarge-size !important;
+    width: $button-xlarge-size !important;;
+    height: $button-xlarge-size !important;;
+    line-height: $button-xlarge-size !important;;
+  }
+}
+
+.mat-icon-button.normal {
+  width: $button-normal-size;
+  height: $button-normal-size;
+  line-height: $button-normal-size;
+
+  .mat-icon {
+    font-size: $button-normal-size;
+    width: $button-normal-size;
+    height: $button-normal-size;
+    line-height: $button-normal-size;
+  }
+
+  .mat-spinner, .mat-spinner svg {
+    font-size: $button-normal-size !important;
+    width: $button-normal-size !important;;
+    height: $button-normal-size !important;;
+    line-height: $button-normal-size !important;;
+  }
+}

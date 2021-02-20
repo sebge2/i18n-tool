@@ -33,12 +33,16 @@ import { RepositoryGitCredentialsDialogComponent } from './component/repositorie
 import { RepositoryDetailsTranslationsConfigurationComponent } from './component/repositories/repository-details/repository-details-workspaces/repository-details-translations-configuration/repository-details-translations-configuration.component';
 import { RepositoryDetailsTranslationsGlobalConfigurationComponent } from './component/repositories/repository-details/repository-details-workspaces/repository-details-translations-configuration/repository-details-translations-global-configuration/repository-details-translations-global-configuration.component';
 import { RepositoryDetailsTranslationsBundleConfigurationComponent } from './component/repositories/repository-details/repository-details-workspaces/repository-details-translations-configuration/repository-details-translations-bundle-configuration/repository-details-translations-bundle-configuration.component';
+import { ScheduledTasksComponent } from './component/scheduled-tasks/scheduled-tasks.component';
+import { ScheduledTaskDefinitionListComponent } from './component/scheduled-tasks/scheduled-task-definition-list/scheduled-task-definition-list.component';
+import { ScheduledTaskExecutionListComponent } from './component/scheduled-tasks/scheduled-task-execution-list/scheduled-task-execution-list.component';
 
 const appRoutes: Routes = [
     {path: 'users', component: UsersComponent},
     {path: 'repositories', component: RepositoriesComponent},
     {path: 'locales', component: LocalesComponent},
     {path: 'snapshots', component: SnapshotsComponent},
+    {path: 'scheduled-tasks', component: ScheduledTasksComponent},
 ];
 
 @NgModule({
@@ -73,6 +77,9 @@ const appRoutes: Routes = [
         SnapshotImportFormComponent,
         RepositoryDetailsTranslationsGlobalConfigurationComponent,
         RepositoryDetailsTranslationsBundleConfigurationComponent,
+        ScheduledTasksComponent,
+        ScheduledTaskDefinitionListComponent,
+        ScheduledTaskExecutionListComponent,
     ],
     entryComponents: [
         RepositoryAddWizardComponent,

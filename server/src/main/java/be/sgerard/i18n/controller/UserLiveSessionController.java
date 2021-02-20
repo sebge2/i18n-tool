@@ -16,7 +16,7 @@ import reactor.core.publisher.Flux;
  */
 @RestController
 @RequestMapping(path = "/api")
-@Tag(name = "UserLiveSession", description = "Controller of user live sessions.")
+@Tag(name = "User Live Session", description = "Controller of user live sessions.")
 public class UserLiveSessionController {
 
     private final UserLiveSessionManager userSessionManager;

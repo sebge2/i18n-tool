@@ -1,21 +1,6 @@
-:host ::ng-deep table {
-  min-width: 600px;
+:host ::ng-deep .app-table {
   width: 70%;
   margin: auto;
-  min-height: 150px;
-}
-
-:host ::ng-deep .app-table-column-createdOn {
-  width: 300px !important;
-}
-
-:host ::ng-deep .app-table-column-createdBy {
-  width: 200px !important;
-}
-
-:host ::ng-deep .app-table-column-action {
-  width: 140px !important;
-  padding: 0 !important;
 }
 
 :host ::ng-deep mat-card {
@@ -40,7 +25,6 @@
   }
 }
 
-// TODO
 .app-snapshot-header {
   min-width: 600px;
   width: 70%;

@@ -68,11 +68,7 @@ public class UserPreferencesManagerImpl implements UserPreferencesManager {
                                 .thenReturn(user)
                 )
                 .flatMap(userManager::update)
-                .flatMap(user ->
-                        listener
-                                .onUpdate(user)
-                                .thenReturn(user.getPreferences())
-                );
+                .flatMap(user -> listener.afterUpdate(user).thenReturn(user.getPreferences()));
 
     }
 

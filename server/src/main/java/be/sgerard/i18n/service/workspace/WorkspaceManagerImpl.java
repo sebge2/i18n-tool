@@ -97,7 +97,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
     public Mono<WorkspaceEntity> initialize(String workspaceId) throws RepositoryException {
         return findByIdOrDie(workspaceId)
                 .flatMap(workspace -> {
-                    if (workspace.getStatus() == WorkspaceStatus.INITIALIZED) {
+                    if (workspace.getStatus() != WorkspaceStatus.NOT_INITIALIZED) {
                         return Mono.just(workspace);
                     }
 
@@ -115,10 +115,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
                                 wk.setStatus(WorkspaceStatus.INITIALIZED);
                                 wk.setLastSynchronization(Instant.now());
                             })
-                            .flatMap(this::update)
-                            .flatMap(wk ->
-                                    listener.afterInitialize(wk).thenReturn(wk)
-                            );
+                            .flatMap(this::update);
                 });
     }
 
@@ -128,13 +125,7 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
                 .flatMap(workspace ->
                         listBranches(workspace.getRepository())
                                 .hasElement(workspace.getBranch())
-                                .flatMap(exist -> {
-                                    if (exist) {
-                                        return doSynchronize(workspace);
-                                    } else {
-                                        return delete(workspaceId);
-                                    }
-                                })
+                                .flatMap(exist -> synchronize(exist ? workspace.getBranch() : null, workspace, workspace.getRepository()))
                 );
     }
 
@@ -176,26 +167,11 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
     }
 
     @Override
-    public Mono<WorkspaceEntity> update(WorkspaceEntity workspace) throws ResourceNotFoundException, RepositoryException {
-        return validator
-                .beforeUpdate(workspace)
-                .then(
-                        repository
-                                .save(workspace)
-                                .flatMap(wk -> listener.afterUpdate(wk).thenReturn(wk))
-                );
-    }
-
-    @Override
     public Mono<WorkspaceEntity> delete(String workspaceId) throws RepositoryException {
         return findById(workspaceId)
                 .flatMap(translationsStrategy::onDelete)
-                .flatMap(workspace ->
-                        listener.beforeDelete(workspace).thenReturn(workspace)
-                )
-                .flatMap(workspace ->
-                        repository.delete(workspace).thenReturn(workspace)
-                )
+                .flatMap(workspace -> repository.delete(workspace).thenReturn(workspace))
+                .flatMap(workspace -> listener.afterDelete(workspace).thenReturn(workspace))
                 .doOnNext(workspace -> logger.info("The workspace [{}] alias [{}] has been deleted.", workspace.getBranch(), workspaceId));
     }
 
@@ -215,61 +191,39 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
     }
 
     /**
+     * Updates the specified workspace. The status cannot be updated.
+     */
+    private Mono<WorkspaceEntity> update(WorkspaceEntity workspace) throws ResourceNotFoundException, RepositoryException {
+        return validator
+                .beforeUpdate(workspace)
+                .map(validationResult -> {
+                    ValidationException.throwIfFailed(validationResult);
+
+                    return workspace;
+                })
+                .flatMap(repository::save)
+                .flatMap(wk -> listener.afterUpdate(wk).thenReturn(wk));
+    }
+
+    /**
      * Synchronizes the matching branch (can be <tt>null</tt>) and the matching workspace (can be <tt>null</tt>).
      */
     private Mono<WorkspaceEntity> synchronize(String matchingBranch, WorkspaceEntity matchingWorkspace, String repositoryId) {
         if (matchingWorkspace == null) {
-            logger.info("Synchronize, there is no workspace for the branch [{}], let's create it.", matchingBranch);
+            return synchronizeWhenMissingWorkspace(matchingBranch, repositoryId);
+        } else if (matchingBranch == null) {
+            logger.info("Synchronize, there is no branch anymore for the {} workspace [{}] alias [{}], let's delete it.",
+                    matchingWorkspace.getStatus(), matchingWorkspace.getBranch(), matchingWorkspace.getId());
 
-            return repositoryManager
-                    .findByIdOrDie(repositoryId)
-                    .flatMap(repository -> createWorkspace(repository, matchingBranch));
+            return delete(matchingWorkspace.getId()).then(Mono.empty());
         } else {
             switch (matchingWorkspace.getStatus()) {
                 case IN_REVIEW:
-                    if (matchingBranch == null) {
-                        logger.info("Synchronize, there is no branch anymore for the workspace [{}] alias [{}], let's delete it.",
-                                matchingWorkspace.getBranch(), matchingWorkspace.getId());
-
-                        return delete(matchingWorkspace.getId())
-                                .then(Mono.empty());
-                    } else {
-                        logger.info("Synchronize, let's check the review status for the workspace [{}] alias [{}].",
-                                matchingWorkspace.getBranch(), matchingWorkspace.getId());
-
-                        return repositoryManager
-                                .findByIdOrDie(repositoryId)
-                                .flatMap(repository -> translationsStrategy.isReviewFinished(matchingWorkspace, repository))
-                                .flatMap(reviewFinished ->
-                                        reviewFinished
-                                                ? doFinishReview(matchingWorkspace)
-                                                : Mono.just(matchingWorkspace)
-                                );
-                    }
+                    return synchronizeWhenInReview(matchingWorkspace);
                 case INITIALIZED:
-                    if (matchingBranch == null) {
-                        logger.info("Synchronize, there is no branch anymore for the initialized workspace [{}] alias [{}], let's delete it.",
-                                matchingWorkspace.getBranch(), matchingWorkspace.getId());
-
-                        return delete(matchingWorkspace.getId()).then(Mono.empty());
-                    } else {
-                        logger.info("Synchronize, the branch for the workspace [{}] alias [{}] is still there, update it.",
-                                matchingWorkspace.getBranch(), matchingWorkspace.getId());
-
-                        return synchronize(matchingWorkspace.getId());
-                    }
+                    return synchronizeWhenInitialized(matchingWorkspace);
                 case NOT_INITIALIZED:
-                    if (matchingBranch == null) {
-                        logger.info("Synchronize, there is no branch anymore for the non-initialized workspace [{}] alias [{}], let's delete it.",
-                                matchingWorkspace.getBranch(), matchingWorkspace.getId());
-
-                        return delete(matchingWorkspace.getId()).then(Mono.empty());
-                    } else {
-                        logger.info("Synchronize, the branch for the workspace [{}] alias [{}] is still there, the workspace is not initialized, don't touch.",
-                                matchingWorkspace.getBranch(), matchingWorkspace.getId());
-
-                        return Mono.just(matchingWorkspace);
-                    }
+                    return synchronizeWhenNotInitialized(matchingWorkspace);
                 default:
                     return Mono.error(new UnsupportedOperationException("Unsupported workspace status [" + matchingWorkspace.getStatus() + "]."));
             }
@@ -277,19 +231,54 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
     }
 
     /**
-     * Creates a new {@link WorkspaceEntity workspace} based on the specified branch.
+     * Synchronizes a branch in the specified repository that has no associated workspace. A workspace will be created.
      */
-    private Mono<WorkspaceEntity> createWorkspace(RepositoryEntity repository, String branch) {
-        return Mono
-                .just(new WorkspaceEntity(repository.getId(), branch))
-                .flatMap(this.repository::save)
-                .doOnNext(workspace -> logger.info("The workspace [{}] alias [{}] has been created.", workspace.getBranch(), workspace.getId()))
-                .flatMap(workspace -> listener.afterCreate(workspace).thenReturn(workspace))
-                .flatMap(workspace ->
-                        translationsStrategy.initializeOnCreate(workspace, repository)
-                                ? initialize(workspace.getId())
+    private Mono<WorkspaceEntity> synchronizeWhenMissingWorkspace(String branch, String repositoryId) {
+        logger.info("Synchronize, there is no workspace for the branch [{}], let's create it.", branch);
+
+        return repositoryManager
+                .findByIdOrDie(repositoryId)
+                .flatMap(repository -> createWorkspace(repository, branch));
+    }
+
+    /**
+     * Synchronizes the specified workspace which is in review. A check will be performed in order to see if it's still in review.
+     */
+    private Mono<WorkspaceEntity> synchronizeWhenInReview(WorkspaceEntity workspace) {
+        logger.info("Synchronize, let's check the review status for the workspace [{}] alias [{}].",
+                workspace.getBranch(), workspace.getId());
+
+        return repositoryManager
+                .findByIdOrDie(workspace.getRepository())
+                .flatMap(repository -> translationsStrategy.isReviewFinished(workspace, repository))
+                .flatMap(reviewFinished ->
+                        reviewFinished
+                                ? doFinishReview(workspace)
                                 : Mono.just(workspace)
                 );
+    }
+
+    /**
+     * Synchronizes the specified workspace which is initialized. Translations will be updated.
+     */
+    private Mono<WorkspaceEntity> synchronizeWhenInitialized(WorkspaceEntity workspace) {
+        logger.info("Synchronize, the branch for the workspace [{}] alias [{}] is still there, update it.",
+                workspace.getBranch(), workspace.getId());
+
+        return translationsStrategy
+                .onSynchronize(workspace)
+                .doOnNext(wk -> wk.setLastSynchronization(Instant.now()))
+                .flatMap(this::update);
+    }
+
+    /**
+     * Synchronizes the specified workspace which is not initialized.
+     */
+    private Mono<WorkspaceEntity> synchronizeWhenNotInitialized(WorkspaceEntity workspace) {
+        logger.info("Synchronize, the branch for the workspace [{}] alias [{}] is still there, the workspace is not initialized, don't touch.",
+                workspace.getBranch(), workspace.getId());
+
+        return Mono.just(workspace);
     }
 
     /**
@@ -323,13 +312,8 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
 
                     return workspace;
                 })
-                .flatMap(wk -> {
-                    wk.setStatus(WorkspaceStatus.INITIALIZED);
-
-                    return listener
-                            .afterReview(workspace)
-                            .then(Mono.defer(() -> update(workspace)));
-                })
+                .doOnNext(wk -> wk.setStatus(WorkspaceStatus.INITIALIZED))
+                .flatMap(this::update)
                 .flatMap(wk -> synchronize(wk.getId()));
     }
 
@@ -341,19 +325,22 @@ public class WorkspaceManagerImpl implements WorkspaceManager {
 
         logger.info("A review started on the workspace [{}] alias [{}] and then creates a new one.", workspace.getBranch(), workspace.getId());
 
-        return listener
-                .beforeReview(workspace)
-                .then(Mono.defer(() -> update(workspace)));
+        return update(workspace);
     }
 
     /**
-     * Synchronizes the specified workspace.
+     * Creates a new {@link WorkspaceEntity workspace} based on the specified branch.
      */
-    private Mono<WorkspaceEntity> doSynchronize(WorkspaceEntity workspace) {
-        return translationsStrategy
-                .onSynchronize(workspace)
-                .doOnNext(wk -> wk.setLastSynchronization(Instant.now()))
-                .flatMap(wk -> listener.afterSynchronization(wk).thenReturn(wk))
-                .flatMap(this::update);
+    private Mono<WorkspaceEntity> createWorkspace(RepositoryEntity repository, String branch) {
+        return Mono
+                .just(new WorkspaceEntity(repository.getId(), branch))
+                .flatMap(this.repository::save)
+                .doOnNext(workspace -> logger.info("The workspace [{}] alias [{}] has been created.", workspace.getBranch(), workspace.getId()))
+                .flatMap(workspace -> listener.afterPersist(workspace).thenReturn(workspace))
+                .flatMap(workspace ->
+                        translationsStrategy.initializeOnCreate(workspace, repository)
+                                ? initialize(workspace.getId())
+                                : Mono.just(workspace)
+                );
     }
 }

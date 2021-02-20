@@ -1,5 +1,8 @@
 package be.sgerard.i18n.model.validation;
 
+import be.sgerard.i18n.model.core.localized.LocalizedString;
+import be.sgerard.i18n.model.error.LocalizedMessagesHolder;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -19,7 +22,7 @@ import static java.util.stream.Collectors.toList;
  *
  * @author Sebastien Gerard
  */
-public class ValidationResult {
+public class ValidationResult implements LocalizedMessagesHolder {
 
     public static ValidationResult singleMessage(ValidationMessage message) {
         return ValidationResult.builder()
@@ -91,6 +94,13 @@ public class ValidationResult {
 
     private ValidationResult(Builder builder) {
         messages = unmodifiableList(builder.messages);
+    }
+
+    @Override
+    public List<LocalizedString> toLocalizedMessages() {
+        return getMessages().stream()
+                .map(ValidationMessage::toLocalizedMessage)
+                .collect(toList());
     }
 
     /**

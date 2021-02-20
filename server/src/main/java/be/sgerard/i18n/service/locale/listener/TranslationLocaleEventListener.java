@@ -1,7 +1,7 @@
 package be.sgerard.i18n.service.locale.listener;
 
 import be.sgerard.i18n.model.event.EventType;
-import be.sgerard.i18n.model.i18n.dto.TranslationLocaleDto;
+import be.sgerard.i18n.model.locale.dto.TranslationLocaleDto;
 import be.sgerard.i18n.model.locale.persistence.TranslationLocaleEntity;
 import be.sgerard.i18n.service.event.EventService;
 import org.springframework.stereotype.Component;
@@ -22,17 +22,17 @@ public class TranslationLocaleEventListener implements TranslationLocaleListener
     }
 
     @Override
-    public Mono<Void> onCreatedLocale(TranslationLocaleEntity translationLocale) {
+    public Mono<Void> afterPersist(TranslationLocaleEntity translationLocale) {
         return eventService.broadcastEvent(EventType.ADDED_TRANSLATION_LOCALE, TranslationLocaleDto.builder(translationLocale).build());
     }
 
     @Override
-    public Mono<Void> onUpdatedLocale(TranslationLocaleEntity translationLocale) {
+    public Mono<Void> afterUpdate(TranslationLocaleEntity translationLocale) {
         return eventService.broadcastEvent(EventType.UPDATED_TRANSLATION_LOCALE, TranslationLocaleDto.builder(translationLocale).build());
     }
 
     @Override
-    public Mono<Void> onDeletedLocale(TranslationLocaleEntity translationLocale) {
+    public Mono<Void> afterDelete(TranslationLocaleEntity translationLocale) {
         return eventService.broadcastEvent(EventType.DELETED_TRANSLATION_LOCALE, TranslationLocaleDto.builder(translationLocale).build());
     }
 }

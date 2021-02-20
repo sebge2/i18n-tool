@@ -42,6 +42,12 @@ public abstract class RepositoryEntity {
     private RepositoryStatus status = RepositoryStatus.NOT_INITIALIZED;
 
     /**
+     * Flag indicating whether repository's workspaces must be automatically synchronized.
+     */
+    @NotNull
+    private boolean autoSynchronized;
+
+    /**
      * The {@link TranslationsConfigurationEntity configuration} to use for managing translations.
      */
     private TranslationsConfigurationEntity translationsConfiguration;

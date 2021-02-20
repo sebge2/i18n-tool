@@ -25,6 +25,11 @@ import java.util.Set;
 public abstract class UserEntity {
 
     /**
+     * User name of admin.
+     */
+    public static final String ADMIN_USER_NAME = "admin";
+
+    /**
      * The unique id of this user.
      */
     @Id

@@ -11,16 +11,16 @@ import reactor.core.publisher.Mono;
 public interface SnapshotListener {
 
     /**
-     * Performs an action after the creation of the specified snapshot.
+     * Performs an action after the the specified snapshot has been persisted.
      */
-    default Mono<Void> afterCreate(SnapshotEntity snapshot) {
+    default Mono<Void> afterPersist(SnapshotEntity snapshot) {
         return Mono.empty();
     }
 
     /**
-     * Performs an action before the deletion of the specified snapshot.
+     * Performs an action after the deletion of the specified snapshot.
      */
-    default Mono<Void> beforeDelete(SnapshotEntity snapshot) {
+    default Mono<Void> afterDelete(SnapshotEntity snapshot) {
         return Mono.empty();
     }
 

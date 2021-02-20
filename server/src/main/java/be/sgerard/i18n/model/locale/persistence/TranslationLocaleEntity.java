@@ -1,6 +1,6 @@
 package be.sgerard.i18n.model.locale.persistence;
 
-import be.sgerard.i18n.model.i18n.dto.TranslationLocaleDto;
+import be.sgerard.i18n.model.locale.dto.TranslationLocaleDto;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;

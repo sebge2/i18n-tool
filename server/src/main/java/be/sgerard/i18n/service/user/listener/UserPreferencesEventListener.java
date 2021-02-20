@@ -23,7 +23,7 @@ public class UserPreferencesEventListener implements UserPreferencesListener {
     }
 
     @Override
-    public Mono<Void> onUpdate(UserEntity user) {
+    public Mono<Void> afterUpdate(UserEntity user) {
         return eventService.sendEventToUser(
                 UserDto.builder(user).build(),
                 EventType.UPDATED_USER_PREFERENCES,

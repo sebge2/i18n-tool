@@ -1,0 +1,20 @@
+.app-centered-container {
+  text-align: center;
+  display: block;
+}
+
+.app-centered-container-child {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.app-centered-container-item {
+}
+
+.app-centered-single-item {
+  text-align: center;
+  display: grid;
+  place-items: center;
+  height: 100%;
+  width: 100%
+}

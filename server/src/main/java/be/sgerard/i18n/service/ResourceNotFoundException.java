@@ -1,6 +1,7 @@
 package be.sgerard.i18n.service;
 
-import be.sgerard.i18n.model.support.LocalizedMessageHolder;
+import be.sgerard.i18n.model.core.localized.LocalizedString;
+import be.sgerard.i18n.model.error.LocalizedMessageHolder;
 
 /**
  * Exception thrown when a resource has not been found with a particular reference.
@@ -41,30 +42,21 @@ public class ResourceNotFoundException extends RuntimeException implements Local
         return new ResourceNotFoundException("ResourceNotFoundException.snapshot-user.message", "snapshot", reference);
     }
 
-    private final String messageKey;
-    private final String reference;
+    public static ResourceNotFoundException scheduledTaskDefinitionNotFoundException(String reference) {
+        return new ResourceNotFoundException("ResourceNotFoundException.scheduled-task-definition.message", "scheduled task definition", reference);
+    }
+
+    private final LocalizedString localizedMessage;
 
     private ResourceNotFoundException(String messageKey, String concept, String reference) {
         super("There is no " + concept + " with reference [" + reference + "].");
 
-        this.messageKey = messageKey;
-        this.reference = reference;
+        this.localizedMessage = LocalizedString.fromBundle("i18n/exception", messageKey, reference);
     }
+
 
     @Override
-    public String getMessageKey() {
-        return messageKey;
-    }
-
-    @Override
-    public Object[] getMessageParameters() {
-        return new Object[]{getReference()};
-    }
-
-    /**
-     * Returns the missing reference.
-     */
-    public String getReference() {
-        return reference;
+    public LocalizedString toLocalizedMessage() {
+        return localizedMessage;
     }
 }

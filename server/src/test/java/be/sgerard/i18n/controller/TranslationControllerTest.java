@@ -1,6 +1,7 @@
 package be.sgerard.i18n.controller;
 
 import be.sgerard.i18n.model.i18n.dto.*;
+import be.sgerard.i18n.model.locale.dto.TranslationLocaleDto;
 import be.sgerard.test.i18n.support.CleanupDatabase;
 import be.sgerard.test.i18n.support.auth.internal.WithJaneDoeAdminUser;
 import org.junit.jupiter.api.*;
@@ -496,7 +497,7 @@ public class TranslationControllerTest extends AbstractControllerTest {
                 .jsonPath("$[0].updatedValue").isEqualTo("my value updated")
                 .jsonPath("$[0].lastEditor").isNotEmpty()
                 .jsonPath("$[1].locale").isEqualTo(frenchLocaleId)
-                .jsonPath("$[1].originalValue").isEqualTo("Il existe déjà un répository nommé [{0]. Les noms doivent être unique.")
+                .jsonPath("$[1].originalValue").isEqualTo("Il existe déjà un répository nommé [{0}]. Les noms doivent être unique.")
                 .jsonPath("$[1].updatedValue").isEqualTo("ma valeur")
                 .jsonPath("$[1].lastEditor").isNotEmpty();
     }

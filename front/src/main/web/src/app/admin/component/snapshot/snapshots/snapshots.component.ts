@@ -20,7 +20,7 @@ export class SnapshotsComponent implements OnInit, OnDestroy {
     public restoreInProgress = false;
     public deleteInProgress = false;
 
-    private _destroyed$ = new Subject<void>();
+    private readonly _destroyed$ = new Subject<void>();
 
     constructor(private _snapshotService: SnapshotService,
                 private _notificationService: NotificationService,

@@ -45,6 +45,6 @@ describe('TranslationEditingCellComponent', () => {
     xit('should create', () => {
         fixture.detectChanges();
 
-        expect(component).toBeTruthy(); // TODO
+        expect(component).toBeTruthy(); // TODO issue-123
     });
 });

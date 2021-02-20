@@ -7,8 +7,7 @@ import be.sgerard.i18n.model.validation.ValidationResult;
 import be.sgerard.i18n.repository.user.UserRepository;
 import be.sgerard.i18n.service.snapshot.BaseSnapshotHandler;
 import be.sgerard.i18n.service.snapshot.SnapshotHandler;
-import be.sgerard.i18n.service.user.UserManager;
-import be.sgerard.i18n.service.user.validator.UserValidator;
+import be.sgerard.i18n.service.user.validation.UserValidator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
@@ -57,13 +56,13 @@ public class UserSnapshotHandler extends BaseSnapshotHandler<UserEntity, UserSna
 
     @Override
     protected Mono<ValidationResult> validate(UserEntity user) {
-        return userValidator.beforePersist(user);
+        return userValidator.beforePersistOrUpdate(user);
     }
 
     @Override
     protected Flux<ValidationResult> validateAll(File snapshotFile) {
         return loadAll(snapshotFile)
-                .filter(user -> Objects.equals(user.getUsername(), UserManager.ADMIN_USER_NAME))
+                .filter(user -> Objects.equals(user.getUsername(), UserEntity.ADMIN_USER_NAME))
                 .hasElements()
                 .flatMapMany(adminPresent ->
                         adminPresent

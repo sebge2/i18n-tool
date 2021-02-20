@@ -67,11 +67,6 @@ public interface WorkspaceManager {
     Mono<WorkspaceEntity> finishReview(String workspaceId) throws ResourceNotFoundException, RepositoryException;
 
     /**
-     * Updates the specified workspace. The status cannot be updated.
-     */
-    Mono<WorkspaceEntity> update(WorkspaceEntity workspaceEntity) throws ResourceNotFoundException, RepositoryException;
-
-    /**
      * Removes the {@link WorkspaceEntity workspace} having the specified id.
      */
     Mono<WorkspaceEntity> delete(String id);

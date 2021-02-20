@@ -1,15 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import {Component} from '@angular/core';
 
 @Component({
-  selector: 'app-card-content',
-  templateUrl: './card-content.component.html',
-  styleUrls: ['./card-content.component.css']
+    selector: 'app-card-content',
+    template: '<ng-content></ng-content>',
 })
-export class CardContentComponent implements OnInit {
+export class CardContentComponent {
 
-  constructor() { }
-
-  ngOnInit(): void {
-  }
+    constructor() {
+    }
 
 }

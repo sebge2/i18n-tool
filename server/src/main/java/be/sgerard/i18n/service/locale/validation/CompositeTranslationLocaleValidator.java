@@ -1,6 +1,6 @@
 package be.sgerard.i18n.service.locale.validation;
 
-import be.sgerard.i18n.model.i18n.dto.TranslationLocaleDto;
+import be.sgerard.i18n.model.locale.dto.TranslationLocaleDto;
 import be.sgerard.i18n.model.locale.persistence.TranslationLocaleEntity;
 import be.sgerard.i18n.model.validation.ValidationResult;
 import org.springframework.context.annotation.Lazy;

@@ -31,38 +31,11 @@ public class CompositeWorkspaceListener implements WorkspaceListener {
     }
 
     @Override
-    public Mono<Void> afterCreate(WorkspaceEntity workspace) {
+    public Mono<Void> afterPersist(WorkspaceEntity workspace) {
         return Flux
                 .fromIterable(listeners)
                 .filter(listener -> listener.support(workspace))
-                .flatMap(listener -> listener.afterCreate(workspace))
-                .then();
-    }
-
-    @Override
-    public Mono<Void> afterInitialize(WorkspaceEntity workspace) {
-        return Flux
-                .fromIterable(listeners)
-                .filter(listener -> listener.support(workspace))
-                .flatMap(listener -> listener.afterInitialize(workspace))
-                .then();
-    }
-
-    @Override
-    public Mono<Void> beforeReview(WorkspaceEntity workspace) {
-        return Flux
-                .fromIterable(listeners)
-                .filter(listener -> listener.support(workspace))
-                .flatMap(listener -> listener.beforeReview(workspace))
-                .then();
-    }
-
-    @Override
-    public Mono<Void> afterReview(WorkspaceEntity workspace) {
-        return Flux
-                .fromIterable(listeners)
-                .filter(listener -> listener.support(workspace))
-                .flatMap(listener -> listener.afterReview(workspace))
+                .flatMap(listener -> listener.afterPersist(workspace))
                 .then();
     }
 
@@ -76,20 +49,11 @@ public class CompositeWorkspaceListener implements WorkspaceListener {
     }
 
     @Override
-    public Mono<Void> afterSynchronization(WorkspaceEntity workspace) {
+    public Mono<Void> afterDelete(WorkspaceEntity workspace) {
         return Flux
                 .fromIterable(listeners)
                 .filter(listener -> listener.support(workspace))
-                .flatMap(listener -> listener.afterSynchronization(workspace))
-                .then();
-    }
-
-    @Override
-    public Mono<Void> beforeDelete(WorkspaceEntity workspace) {
-        return Flux
-                .fromIterable(listeners)
-                .filter(listener -> listener.support(workspace))
-                .flatMap(listener -> listener.beforeDelete(workspace))
+                .flatMap(listener -> listener.afterDelete(workspace))
                 .then();
     }
 }

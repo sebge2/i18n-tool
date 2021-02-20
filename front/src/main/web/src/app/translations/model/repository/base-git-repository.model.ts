@@ -12,8 +12,9 @@ export class BaseGitRepository extends Repository {
                 translationsConfiguration: TranslationsConfiguration,
                 public location: string,
                 public defaultBranch: string,
-                public allowedBranches: string) {
-        super(id, name, type, status, translationsConfiguration);
+                public allowedBranches: string,
+                public autoSynchronized: boolean) {
+        super(id, name, type, status, translationsConfiguration, autoSynchronized);
     }
 
 }

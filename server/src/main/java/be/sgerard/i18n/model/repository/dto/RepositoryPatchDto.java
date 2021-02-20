@@ -26,9 +26,13 @@ public abstract class RepositoryPatchDto {
     @Schema(description = "The configuration to use for managing translations.")
     private final TranslationsConfigurationPatchDto translationsConfiguration;
 
+    @Schema(description = "Flag indicating whether repository's workspaces must be automatically synchronized.")
+    private final Boolean autoSynchronized;
+
     protected RepositoryPatchDto(BaseBuilder<?, ?> builder) {
         this.id = builder.id;
         this.translationsConfiguration = builder.translationsConfiguration;
+        this.autoSynchronized = builder.autoSynchronized;
     }
 
     /**
@@ -52,12 +56,20 @@ public abstract class RepositoryPatchDto {
     }
 
     /**
+     * @see #autoSynchronized
+     */
+    public Optional<Boolean> isAutoSynchronized() {
+        return Optional.ofNullable(autoSynchronized);
+    }
+
+    /**
      * Builder of {@link RepositoryPatchDto repository patch DTO}.
      */
     public static abstract class BaseBuilder<R extends RepositoryPatchDto, B extends RepositoryPatchDto.BaseBuilder<R, B>> {
 
         private String id;
         private TranslationsConfigurationPatchDto translationsConfiguration;
+        private Boolean autoSynchronized;
 
         protected BaseBuilder() {
         }
@@ -69,6 +81,11 @@ public abstract class RepositoryPatchDto {
 
         public B translationsConfiguration(TranslationsConfigurationPatchDto translationsConfiguration) {
             this.translationsConfiguration = translationsConfiguration;
+            return self();
+        }
+
+        public B autoSynchronized(Boolean autoSynchronized) {
+            this.autoSynchronized = autoSynchronized;
             return self();
         }
 

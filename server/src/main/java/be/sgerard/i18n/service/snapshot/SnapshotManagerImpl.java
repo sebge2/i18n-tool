@@ -103,7 +103,7 @@ public class SnapshotManagerImpl implements SnapshotManager {
                 .flatMap(snap -> zipSnapshot(snap, creationDto, tempDirectory))
                 .doFinally(signalType -> deleteDirectory(tempDirectory))
                 .flatMap(snapshotRepository::save)
-                .flatMap(rep -> listener.afterCreate(rep).thenReturn(rep));
+                .flatMap(rep -> listener.afterPersist(rep).thenReturn(rep));
     }
 
     @Override
@@ -141,7 +141,7 @@ public class SnapshotManagerImpl implements SnapshotManager {
                 .flatMap(snapshot -> moveSnapshotZipFile(tempZipFile, snapshot))
                 .doFinally(signalType -> deleteDirectory(tempDirectory))
                 .flatMap(snapshotRepository::save)
-                .flatMap(rep -> listener.afterCreate(rep).thenReturn(rep));
+                .flatMap(rep -> listener.afterPersist(rep).thenReturn(rep));
     }
 
     @Override
@@ -171,8 +171,8 @@ public class SnapshotManagerImpl implements SnapshotManager {
                         logger.warn("Error while deleting snapshot ZIP file.", e);
                     }
                 })
-                .flatMap(rep -> listener.beforeDelete(rep).thenReturn(rep))
-                .flatMap(snapshotRepository::delete);
+                .flatMap(snapshot -> snapshotRepository.delete(snapshot).thenReturn(snapshot))
+                .flatMap(listener::afterDelete);
     }
 
     /**

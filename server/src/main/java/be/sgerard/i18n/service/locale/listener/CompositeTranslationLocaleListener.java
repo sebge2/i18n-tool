@@ -26,26 +26,42 @@ public class CompositeTranslationLocaleListener implements TranslationLocaleList
     }
 
     @Override
-    public Mono<Void> onCreatedLocale(TranslationLocaleEntity locale) {
+    public Mono<Void> afterPersist(TranslationLocaleEntity locale) {
         return Flux
                 .fromIterable(listeners)
-                .flatMap(listener -> listener.onCreatedLocale(locale))
+                .flatMap(listener -> listener.afterPersist(locale))
                 .then();
     }
 
     @Override
-    public Mono<Void> onUpdatedLocale(TranslationLocaleEntity locale) {
+    public Mono<Void> beforeUpdate(TranslationLocaleEntity locale) {
         return Flux
                 .fromIterable(listeners)
-                .flatMap(listener -> listener.onUpdatedLocale(locale))
+                .flatMap(listener -> listener.beforeUpdate(locale))
                 .then();
     }
 
     @Override
-    public Mono<Void> onDeletedLocale(TranslationLocaleEntity locale) {
+    public Mono<Void> afterUpdate(TranslationLocaleEntity locale) {
         return Flux
                 .fromIterable(listeners)
-                .flatMap(listener -> listener.onDeletedLocale(locale))
+                .flatMap(listener -> listener.afterUpdate(locale))
+                .then();
+    }
+
+    @Override
+    public Mono<Void> beforeDelete(TranslationLocaleEntity locale) {
+        return Flux
+                .fromIterable(listeners)
+                .flatMap(listener -> listener.beforeDelete(locale))
+                .then();
+    }
+
+    @Override
+    public Mono<Void> afterDelete(TranslationLocaleEntity locale) {
+        return Flux
+                .fromIterable(listeners)
+                .flatMap(listener -> listener.afterDelete(locale))
                 .then();
     }
 }

@@ -2,12 +2,12 @@ package be.sgerard.i18n.model.support;
 
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.convert.ReadingConverter;
-import org.springframework.data.convert.WritingConverter;
-import org.springframework.stereotype.Component;
 
 import java.util.regex.Pattern;
 
 /**
+ * {@link Converter} from {@link String} to {@link Pattern}.
+ *
  * @author Sebastien Gerard
  */
 @ReadingConverter

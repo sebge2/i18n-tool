@@ -1,6 +1,7 @@
 package be.sgerard.i18n.service;
 
-import be.sgerard.i18n.model.support.LocalizedMessageHolder;
+import be.sgerard.i18n.model.core.localized.LocalizedString;
+import be.sgerard.i18n.model.error.LocalizedMessageHolder;
 
 /**
  * Exception thrown when the caller made a bad request.
@@ -10,7 +11,7 @@ import be.sgerard.i18n.model.support.LocalizedMessageHolder;
 public class BadRequestException extends RuntimeException implements LocalizedMessageHolder {
 
     public static BadRequestException cannotParseException(String content, Throwable cause) {
-        return new BadRequestException("The content [" + content + "] cannot be parsed.", "BadRequestException.cannot-parse.message", null, content);
+        return new BadRequestException("The content [" + content + "] cannot be parsed.", "BadRequestException.cannot-parse.message", cause, content);
     }
 
     public static BadRequestException idRequestNotMatchIdBodyException(String idRequest, String idBody) {
@@ -38,23 +39,16 @@ public class BadRequestException extends RuntimeException implements LocalizedMe
         return new BadRequestException("The multi-form-data has not the expected fields. Please check your request.", "BadRequestException.wrong-multi-form-data.message", null);
     }
 
-    private final String messageKey;
-    private final Object[] parameters;
+    private final LocalizedString localizedMessage;
 
     public BadRequestException(String message, String messageKey, Throwable cause, Object... parameters) {
         super(message, cause);
 
-        this.messageKey = messageKey;
-        this.parameters = parameters;
+        this.localizedMessage = LocalizedString.fromBundle("i18n/exception", messageKey, parameters);
     }
 
     @Override
-    public String getMessageKey() {
-        return messageKey;
-    }
-
-    @Override
-    public Object[] getMessageParameters() {
-        return parameters;
+    public LocalizedString toLocalizedMessage() {
+        return localizedMessage;
     }
 }

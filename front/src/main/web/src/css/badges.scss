@@ -1,0 +1,26 @@
+@import "./variables.scss";
+
+.app-badge-success {
+  background: mat-color($color-success);
+  border-radius: 30px;
+  color: #fff;
+  font-size: 8px;
+  margin-top: -10px;
+  min-width: 20px;
+  padding: 4px;
+  position: absolute;
+  text-align: center;
+}
+
+.app-badge-warning {
+  background: mat-color($color-warning);
+  border-radius: 30px;
+  color: #fff;
+  content: attr(badgeWarning);
+  font-size: 8px;
+  margin-top: -10px;
+  min-width: 20px;
+  padding: 4px;
+  position: absolute;
+  text-align: center;
+}

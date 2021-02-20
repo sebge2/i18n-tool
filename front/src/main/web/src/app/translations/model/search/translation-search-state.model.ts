@@ -40,7 +40,7 @@ export class TranslationsTableState {
         return this._newSearchRequestObs$;
     }
 
-    // TODO should be based on the other one
+    // NICE should be based on the other one
     public get newSearchRequestSync(): TranslationsSearchRequest | undefined {
         return this._newSearchRequest$.getValue();
     }

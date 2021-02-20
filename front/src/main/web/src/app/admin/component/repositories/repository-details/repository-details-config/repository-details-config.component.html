@@ -55,6 +55,14 @@
                             <mat-hint>{{'ADMIN.REPOSITORIES.CONFIG_CARD.ALLOWED_BRANCHES_HINT' | translate}}</mat-hint>
                         </mat-form-field>
                     </p>
+                    <p>
+                        <mat-form-field appearance="standard" class="app-repository-config-auto-synchronized">
+                            <mat-checkbox formControlName="autoSynchronized" color="primary">
+                                {{'ADMIN.REPOSITORIES.CONFIG_CARD.AUTO_SYNCHRONIZED_LABEL' | translate}}</mat-checkbox>
+                            <mat-hint>{{'ADMIN.REPOSITORIES.CONFIG_CARD.AUTO_SYNCHRONIZED_HINT' | translate}}</mat-hint>
+                            <input matInput  [hidden]="true">
+                        </mat-form-field>
+                    </p>
                 </ng-template>
                 <ng-template [ngSwitchCase]="RepositoryType.GITHUB">
                     <p>
@@ -76,6 +84,14 @@
                             <mat-label>{{'ADMIN.REPOSITORIES.CONFIG_CARD.ALLOWED_BRANCHES_LABEL' | translate}}</mat-label>
                             <input matInput formControlName="allowedBranches" autocomplete="off">
                             <mat-hint>{{'ADMIN.REPOSITORIES.CONFIG_CARD.ALLOWED_BRANCHES_HINT' | translate}}</mat-hint>
+                        </mat-form-field>
+                    </p>
+                    <p>
+                        <mat-form-field appearance="standard" class="app-repository-config-auto-synchronized">
+                            <mat-checkbox formControlName="autoSynchronized" color="primary">
+                                {{'ADMIN.REPOSITORIES.CONFIG_CARD.AUTO_SYNCHRONIZED_LABEL' | translate}}</mat-checkbox>
+                            <mat-hint>{{'ADMIN.REPOSITORIES.CONFIG_CARD.AUTO_SYNCHRONIZED_HINT' | translate}}</mat-hint>
+                            <input matInput  [hidden]="true">
                         </mat-form-field>
                     </p>
                 </ng-template>
