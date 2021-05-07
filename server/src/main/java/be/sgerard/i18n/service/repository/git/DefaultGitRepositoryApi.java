@@ -208,7 +208,10 @@ public class DefaultGitRepositoryApi extends BaseGitRepositoryApi {
         try {
             removeLockIfPresent();
 
-            openGit().reset().setMode(ResetCommand.ResetType.HARD).setRef("HEAD").call();
+            final Git git = openGit();
+
+            git.reset().setMode(ResetCommand.ResetType.HARD).setRef("HEAD").call();
+            git.clean().setCleanDirectories(true).call();
 
             return this;
         } catch (Exception e) {
