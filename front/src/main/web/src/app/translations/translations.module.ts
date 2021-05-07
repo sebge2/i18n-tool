@@ -12,6 +12,7 @@ import {CoreTranslationModule} from "../core/translation/core-translation-module
 import {TranslationsWorkspaceRowComponent} from './component/translations-table/translations-workspace-row/translations-workspace-row.component';
 import {TranslationsBundleFileRowComponent} from './component/translations-table/translations-bundle-file-row/translations-bundle-file-row.component';
 import { TranslationsToolBarComponent } from './component/translations-tool-bar/translations-tool-bar.component';
+import { TranslationStringPatternInputComponent } from './component/translations-search-bar/translation-string-pattern-input/translation-string-pattern-input.component';
 
 const appRoutes: Routes = [
     {
@@ -28,7 +29,8 @@ const appRoutes: Routes = [
         TranslationEditingCellComponent,
         TranslationsWorkspaceRowComponent,
         TranslationsBundleFileRowComponent,
-        TranslationsToolBarComponent
+        TranslationsToolBarComponent,
+        TranslationStringPatternInputComponent
     ],
     imports: [
         CommonModule,

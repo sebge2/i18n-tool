@@ -36,6 +36,13 @@
                     </mat-form-field>
                 </p>
                 <p>
+                    <mat-form-field appearance="standard">
+                        <mat-label>{{'TRANSLATIONS.SEARCH_BAR.KEY_LABEL' | translate}}</mat-label>
+                        <app-translation-string-pattern-input [formControlName]="'keyPattern'"></app-translation-string-pattern-input>
+                        <mat-hint>{{'TRANSLATIONS.SEARCH_BAR.KEY_LABEL_HINT' | translate}}</mat-hint>
+                    </mat-form-field>
+                </p>
+                <p>
                     <app-form-search-button [form]="form" (search)="onSearch()"></app-form-search-button>
                 </p>
             </div>

@@ -26,6 +26,19 @@ export function getRouteParamsCollection<T extends { [key: string]: any }, K ext
     }
 }
 
+export function getRouteParamSimpleValue<T>(paramName: string,
+                                            params: Params,
+                                            defaultValue: T,
+                                            mapper?: (rawValue: string) => T): T | undefined {
+    const routeParams = getRouterParams(paramName, params);
+
+    if (_.some(routeParams)) {
+        return mapper ? mapper(routeParams[0]) : routeParams[0];
+    } else {
+        return defaultValue;
+    }
+}
+
 export function getRouteParamObject<T extends { [key: string]: any }, K extends keyof T>(paramName: string,
                                                                                          params: Params,
                                                                                          availableValues: T[],

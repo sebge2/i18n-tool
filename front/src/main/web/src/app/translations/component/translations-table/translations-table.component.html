@@ -1,11 +1,11 @@
 <ng-container *ngIf="!(state.loading | async)">
-    <div class="app-centered-single-item app-table-no-result" *ngIf="state.pageSync.empty">
+    <div class="app-centered-single-item app-table-no-result" *ngIf="state.pageSync?.empty">
         {{'TRANSLATIONS.TABLE.NO_RESULT' | translate}}
     </div>
 
     <div class="app-translations-container"
          [ngStyle]="{'grid-template-columns': '230px repeat(' + (state.newSearchRequestSync.locales.length) + ', 1fr)'}"
-         *ngIf="state.pageSync.hasRows">
+         *ngIf="state.pageSync?.hasRows">
         <div class="app-translations-header app-translations-cell">
             <h3><span class="app-icon-key-solid app-translations-header-icon"></span> {{'TRANSLATIONS.TABLE.KEY_COLUMN' | translate}}</h3>
         </div>

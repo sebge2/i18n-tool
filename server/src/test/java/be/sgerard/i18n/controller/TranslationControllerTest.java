@@ -65,7 +65,7 @@ public class TranslationControllerTest extends AbstractControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(
                         TranslationsSearchRequestDto.builder()
-                                .keyPattern(new TranslationKeyPatternDto(TranslationKeyPatternDto.KeyPatternStrategy.EQUAL, key))
+                                .keyPattern(new TranslationKeyPatternDto(TranslationKeyPatternDto.KeyPatternStrategy.EQUALS, key))
                                 .build()
                 )
                 .exchange()
@@ -88,7 +88,7 @@ public class TranslationControllerTest extends AbstractControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(
                         TranslationsSearchRequestDto.builder()
-                                .keyPattern(new TranslationKeyPatternDto(TranslationKeyPatternDto.KeyPatternStrategy.EQUAL, key))
+                                .keyPattern(new TranslationKeyPatternDto(TranslationKeyPatternDto.KeyPatternStrategy.EQUALS, key))
                                 .build()
                 )
                 .exchange()
@@ -164,7 +164,7 @@ public class TranslationControllerTest extends AbstractControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(
                         TranslationsSearchRequestDto.builder()
-                                .keyPattern(new TranslationKeyPatternDto(TranslationKeyPatternDto.KeyPatternStrategy.EQUAL, key))
+                                .keyPattern(new TranslationKeyPatternDto(TranslationKeyPatternDto.KeyPatternStrategy.EQUALS, key))
                                 .build()
                 )
                 .exchange()
@@ -187,7 +187,7 @@ public class TranslationControllerTest extends AbstractControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(
                         TranslationsSearchRequestDto.builder()
-                                .keyPattern(new TranslationKeyPatternDto(TranslationKeyPatternDto.KeyPatternStrategy.EQUAL, key))
+                                .keyPattern(new TranslationKeyPatternDto(TranslationKeyPatternDto.KeyPatternStrategy.EQUALS, key))
                                 .build()
                 )
                 .exchange()
