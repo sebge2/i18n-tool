@@ -36,7 +36,7 @@
     "bcp-47": "^1.0.7",
     "core-js": "^2.6.11",
     "flag-icon-css": "^3.5.0",
-    "lodash": "^4.17.19",
+    "lodash": "^4.17.21",
     "mat-progress-buttons": "^8.0.8",
     "messageformat": "^2.3.0",
     "ngx-clipboard": "^13.0.1",
