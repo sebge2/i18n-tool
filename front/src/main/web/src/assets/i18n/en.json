@@ -41,9 +41,15 @@
       "WORKSPACES_HINT": "Workspaces to search into.",
       "BUNDLE_FILE_LABEL": "Bundle file",
       "BUNDLE_FILE_HINT": "The bundle file to search into (only available if a single workspace is selected).",
-      "KEY_LABEL": "Translation Key",
-      "KEY_LABEL_HINT": "Search translations associated to the specified key pattern. This pattern can be the beginning, the end, a part of keys to search for.",
-      "KEY_PLACEHOLDER": "Fill how the translation key should look like",
+      "KEY": {
+        "LABEL": "Translation Key",
+        "LABEL_HINT": "Search translations associated to the specified key pattern. This pattern can be the beginning, the end, a part of keys to search for.",
+        "PLACEHOLDER": "Fill how the translation key should look like",
+        "STARTS_WITH_TOOLTIP": "Search translations having keys starting with the specified pattern.",
+        "CONTAINS_TOOLTIP": "Search translations having keys containing the specified pattern.",
+        "EQUALS_TOOLTIP": "Search translations having the specified key.",
+        "ENDS_WITH_TOOLTIP": "Search translations having keys ending with the specified pattern."
+      },
       "LOCALES_LABEL": "Locales",
       "LOCALES_HINT": "Locales to display.",
       "CRITERION_LABEL": "Criterion",
