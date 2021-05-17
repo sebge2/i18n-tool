@@ -5,8 +5,8 @@ import {TranslationService as ApiTranslationService, TranslationUpdateDto} from 
 import {Observable} from "rxjs";
 import {TranslationsPage} from "../model/search/translations-page.model";
 import {map} from "rxjs/operators";
-import * as _ from "lodash";
 import {mapToSingleton} from "../../core/shared/utils/collection-utils";
+import {TranslationKeyPattern} from "../model/search/translation-key-pattern.model";
 
 @Injectable({
     providedIn: 'root'
@@ -25,6 +25,7 @@ export class TranslationService {
                     locales: searchRequest.locales.map(locale => locale.id),
                     criterion: searchRequest.criterion,
                     maxKeys: maxKeys,
+                    keyPattern: TranslationKeyPattern.toDto(searchRequest.keyPattern),
                     pageSpec: searchRequest.pageSpec
                         ? {keyOtherPage: searchRequest.pageSpec.keyOtherPage, nextPage: searchRequest.pageSpec.nextPage}
                         : null

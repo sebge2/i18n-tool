@@ -2,6 +2,9 @@ import {TranslationsSearchCriterion} from "./translations-search-criterion.model
 import {TranslationLocale} from "../translation-locale.model";
 import {Workspace} from "../workspace/workspace.model";
 import {BundleFile} from "../workspace/bundle-file.model";
+import {TranslationKeyPattern} from "./translation-key-pattern.model";
+import {mapAll, mapToSingleton} from "../../../core/shared/utils/collection-utils";
+import * as _ from "lodash";
 
 export class TranslationsSearchPageSpec {
 
@@ -16,6 +19,7 @@ export class TranslationsSearchRequest {
                 public bundleFile: BundleFile | undefined,
                 public locales: TranslationLocale[] = [],
                 public criterion: TranslationsSearchCriterion = TranslationsSearchCriterion.ALL,
+                public keyPattern?: TranslationKeyPattern,
                 public pageSpec?: TranslationsSearchPageSpec) {
     }
 
@@ -25,6 +29,7 @@ export class TranslationsSearchRequest {
             this.bundleFile,
             this.locales,
             this.criterion,
+            this.keyPattern,
             new TranslationsSearchPageSpec(
                 false,
                 firstKeyOfPage
@@ -38,6 +43,7 @@ export class TranslationsSearchRequest {
             this.bundleFile,
             this.locales,
             this.criterion,
+            this.keyPattern,
             new TranslationsSearchPageSpec(
                 true,
                 lastKeyOfPage

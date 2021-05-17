@@ -46,7 +46,7 @@ public class TranslationValueRestrictionDto {
      */
     public enum ValuePatternStrategy {
 
-        EQUAL,
+        EQUALS,
 
         STARTS_WITH,
 

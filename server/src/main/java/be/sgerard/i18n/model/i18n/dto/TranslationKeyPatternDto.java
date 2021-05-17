@@ -23,7 +23,7 @@ public class TranslationKeyPatternDto {
     @JsonCreator
     public TranslationKeyPatternDto(@JsonProperty("strategy") KeyPatternStrategy strategy,
                                     @JsonProperty("pattern") String pattern) {
-        this.strategy = strategy;
+        this.strategy = (strategy != null) ? strategy : KeyPatternStrategy.CONTAINS;
         this.pattern = pattern;
     }
 
@@ -32,7 +32,7 @@ public class TranslationKeyPatternDto {
      */
     public enum KeyPatternStrategy {
 
-        EQUAL,
+        EQUALS,
 
         STARTS_WITH,
 

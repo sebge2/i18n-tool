@@ -44,7 +44,7 @@ export class NotificationService {
             text += message;
         }
 
-        if (cause && (typeof message === 'string') && cause.trim().length > 0) {
+        if (cause && (typeof cause === 'string') && cause.trim().length > 0) {
             if (text.length > 0) {
                 text += " ";
             }
