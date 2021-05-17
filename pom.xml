@@ -11,7 +11,7 @@
     <groupId>be.sgerard.tools</groupId>
     <artifactId>i18n-tool-parent</artifactId>
     <packaging>pom</packaging>
-    <version>0.0.8-SNAPSHOT</version>
+    <version>0.0.8</version>
     <name>i18n-tool-parent</name>
     <description>Parent pom for the internationalization tool.</description>
 
@@ -40,12 +40,12 @@
             <dependency>
                 <groupId>be.sgerard.tools</groupId>
                 <artifactId>i18n-tool-server</artifactId>
-                <version>0.0.8-SNAPSHOT</version>
+                <version>0.0.8</version>
             </dependency>
             <dependency>
                 <groupId>be.sgerard.tools</groupId>
                 <artifactId>i18n-tool-front</artifactId>
-                <version>0.0.8-SNAPSHOT</version>
+                <version>0.0.8</version>
             </dependency>
 
             <dependency>
