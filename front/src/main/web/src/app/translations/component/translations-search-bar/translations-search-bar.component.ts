@@ -16,10 +16,13 @@ import {
     getRouteParamEnum,
     getRouteParamObject,
     getRouteParamsCollection,
+    getRouteParamSimpleValue,
     updateRouteParams
 } from 'src/app/core/shared/utils/router-utils';
 import {filterOutUnavailableElements, mapAll, mapToSingleton} from 'src/app/core/shared/utils/collection-utils';
 import {BundleFile} from "../../model/workspace/bundle-file.model";
+import {TranslationKeyPattern} from "../../model/search/translation-key-pattern.model";
+import {TranslationStringPatternStrategy} from "../../model/search/translation-string-pattern-strategy.enum";
 
 @Component({
     selector: 'app-translations-search-bar',
@@ -49,7 +52,8 @@ export class TranslationsSearchBarComponent implements OnInit, OnDestroy {
             workspaces: [[], Validators.required],
             bundleFile: [null],
             locales: [[], Validators.required],
-            criterion: [null, Validators.required]
+            criterion: [null, Validators.required],
+            keyPattern: [null],
         });
 
         this._searchForAllLocales = combineLatest([this.form.controls['locales'].valueChanges, this._localeService.getAvailableLocales()])
@@ -67,6 +71,7 @@ export class TranslationsSearchBarComponent implements OnInit, OnDestroy {
                 this.updateBundleFile(routeParams);
                 this.updateLocales(availableLocales, routeParams, defaultLocales);
                 this.updateCriterion(routeParams);
+                this.updateKeyPattern(routeParams);
             });
     }
 
@@ -85,10 +90,6 @@ export class TranslationsSearchBarComponent implements OnInit, OnDestroy {
         this.expandedChange.emit(this.expanded);
     }
 
-    public get criterion(): TranslationsSearchCriterion {
-        return this.form.controls['criterion'].value;
-    }
-
     public get workspaces(): Workspace[] {
         return this.form.controls['workspaces'].value;
     }
@@ -101,16 +102,20 @@ export class TranslationsSearchBarComponent implements OnInit, OnDestroy {
             : null;
     }
 
-    public get bundleFile(): BundleFile | undefined {
-        return this.form.controls['bundleFile'].value;
-    }
-
     public isSearchForAllWorkspaces(): Observable<boolean> {
         return this._searchForAllWorkspaces;
     }
 
+    public get bundleFile(): BundleFile | undefined {
+        return this.form.controls['bundleFile'].value;
+    }
+
     public get locales(): TranslationLocale[] {
         return this.form.controls['locales'].value;
+    }
+
+    public get criterion(): TranslationsSearchCriterion {
+        return this.form.controls['criterion'].value;
     }
 
     public get localesAsString(): string {
@@ -125,16 +130,32 @@ export class TranslationsSearchBarComponent implements OnInit, OnDestroy {
         return this._searchForAllLocales;
     }
 
+    public get keyPattern(): TranslationKeyPattern {
+        const value: TranslationKeyPattern = this.form.controls['keyPattern'].value;
+
+        if (!value || _.isEmpty(value.pattern)) {
+            return null;
+        }
+
+        return value;
+    }
+
+    get searchRequest(): TranslationsSearchRequest {
+        return new TranslationsSearchRequest(
+            this.workspaces,
+            this.bundleFile,
+            this.locales,
+            this.criterion,
+            this.keyPattern,
+        );
+    }
+
     public onSearch() {
-        const queryParams: [string, string[]][] = [
-            ['workspace', mapAll(this.workspaces, 'id')],
-            ['bundleFile', mapToSingleton(this.bundleFile, 'id')],
-            ['locale', mapAll(this.locales, 'id')],
-            ['criterion', [_.toString(this.criterion)]]
-        ];
+        const request = this.searchRequest;
+        const queryParams = TranslationsSearchBarComponent.toQueryParams(request);
 
         updateRouteParams(queryParams, this._route, this._router)
-            .finally(() => this.onSearchChange.emit(new TranslationsSearchRequest(this.workspaces, this.bundleFile, this.locales, this.criterion)));
+            .finally(() => this.onSearchChange.emit(request));
     }
 
     private updateWorkspaces(availableWorkspaces: Workspace[], routeParams: Params) {
@@ -150,13 +171,13 @@ export class TranslationsSearchBarComponent implements OnInit, OnDestroy {
     }
 
     private updateBundleFile(routeParams: Params) {
-        if(_.isNil(this.bundleFile) && (this.workspaces.length == 1)){
+        if (_.isNil(this.bundleFile) && (this.workspaces.length == 1)) {
             this._workspaceService
                 .getWorkspaceBundleFiles(this.workspaces[0].id)
                 .pipe(take(1))
                 .toPromise()
                 .then(availableBundleFiles => {
-                    if(_.isNil(this.bundleFile)) { // still not selected
+                    if (_.isNil(this.bundleFile)) { // still not selected
                         this.form.controls['bundleFile'].setValue(
                             getRouteParamObject('bundleFile', routeParams, availableBundleFiles, null, 'id')
                         );
@@ -183,5 +204,38 @@ export class TranslationsSearchBarComponent implements OnInit, OnDestroy {
                 getRouteParamEnum('criterion', TranslationsSearchCriterion, TranslationsSearchCriterion.MISSING_TRANSLATIONS, routeParams)
             );
         }
+    }
+
+    private updateKeyPattern(routeParams: Params) {
+        if (_.isNil(this.keyPattern)) {
+            const value = getRouteParamSimpleValue('keyPatternValue', routeParams, null);
+            const strategy = getRouteParamEnum('keyPatternStrategy', TranslationStringPatternStrategy, TranslationStringPatternStrategy.CONTAINS, routeParams);
+
+            if (!_.isEmpty(value)) {
+                this.form.controls['keyPattern'].setValue(new TranslationKeyPattern(strategy, value));
+            }
+        }
+    }
+
+    private static toQueryParams(request: TranslationsSearchRequest): [string, string[]][] {
+        const keyPatternValue = _.get(request.keyPattern, 'pattern', null);
+        const keyPatternStrategy = _.get(request.keyPattern, 'strategy', null);
+
+        const params: [string, string[]][] = [
+            ['workspace', mapAll(request.workspaces, 'id')],
+            ['bundleFile', mapToSingleton(request.bundleFile, 'id')],
+            ['locale', mapAll(request.locales, 'id')],
+            ['criterion', [_.toString(request.criterion)]],
+        ];
+
+        if (keyPatternValue) {
+            params.push(['keyPatternValue', [keyPatternValue]]);
+        }
+
+        if (keyPatternStrategy) {
+            params.push(['keyPatternStrategy', [keyPatternStrategy]]);
+        }
+
+        return params;
     }
 }

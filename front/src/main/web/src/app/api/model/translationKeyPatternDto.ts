@@ -24,9 +24,9 @@ export interface TranslationKeyPatternDto {
     pattern?: string;
 }
 export namespace TranslationKeyPatternDto {
-    export type StrategyDtoEnum = 'EQUAL' | 'STARTS_WITH' | 'ENDS_WITH' | 'CONTAINS';
+    export type StrategyDtoEnum = 'EQUALS' | 'STARTS_WITH' | 'ENDS_WITH' | 'CONTAINS';
     export const StrategyDtoEnum = {
-        EQUAL: 'EQUAL' as StrategyDtoEnum,
+        EQUALS: 'EQUALS' as StrategyDtoEnum,
         STARTSWITH: 'STARTS_WITH' as StrategyDtoEnum,
         ENDSWITH: 'ENDS_WITH' as StrategyDtoEnum,
         CONTAINS: 'CONTAINS' as StrategyDtoEnum
