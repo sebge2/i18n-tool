@@ -137,7 +137,6 @@ public class UserManagerImpl implements UserManager {
                 .findByExternalId(externalUser.getExternalId())
                 .switchIfEmpty(Mono.defer(() -> createExternalUser(externalUser)))
                 .doOnNext(userEntity -> {
-                    userEntity.setRoles(singleton(UserRole.MEMBER_OF_ORGANIZATION));
                     userEntity.setUsername(externalUser.getUsername());
                     userEntity.setDisplayName(externalUser.getDisplayName());
                     userEntity.setAvatarUrl(externalUser.getAvatarUrl());
