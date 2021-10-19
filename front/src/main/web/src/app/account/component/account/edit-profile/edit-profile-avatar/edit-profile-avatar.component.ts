@@ -72,11 +72,7 @@ export class EditProfileAvatarComponent implements ControlValueAccessor {
         this.disabled = disabled;
     }
 
-    public onFileDropped(file: ImportedFile) {
-        this.value = file;
-    }
-
-    public onFileImported(file: ImportedFile) {
+    public onFile(file: ImportedFile) {
         this.value = file;
     }
 

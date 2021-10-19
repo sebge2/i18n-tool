@@ -12,6 +12,8 @@ export type AppIconsId =
   | "json-file"
   | "key-solid"
   | "paper-plane-solid"
+  | "select-all"
+  | "unselect-all"
   | "window-close-regular";
 
 export type AppIconsKey =
@@ -28,6 +30,8 @@ export type AppIconsKey =
   | "JsonFile"
   | "KeySolid"
   | "PaperPlaneSolid"
+  | "SelectAll"
+  | "UnselectAll"
   | "WindowCloseRegular";
 
 export enum AppIcons {
@@ -44,6 +48,8 @@ export enum AppIcons {
   JsonFile = "json-file",
   KeySolid = "key-solid",
   PaperPlaneSolid = "paper-plane-solid",
+  SelectAll = "select-all",
+  UnselectAll = "unselect-all",
   WindowCloseRegular = "window-close-regular",
 }
 
@@ -61,5 +67,7 @@ export const APP_ICONS_CODEPOINTS: { [key in AppIcons]: string } = {
   [AppIcons.JsonFile]: "61707",
   [AppIcons.KeySolid]: "61708",
   [AppIcons.PaperPlaneSolid]: "61709",
-  [AppIcons.WindowCloseRegular]: "61710",
+  [AppIcons.SelectAll]: "61710",
+  [AppIcons.UnselectAll]: "61711",
+  [AppIcons.WindowCloseRegular]: "61712",
 };

@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 
 
 import { AuthenticationService } from './api/authentication.service';
+import { DictionaryService } from './api/dictionary.service';
 import { EventService } from './api/event.service';
 import { GitHubService } from './api/gitHub.service';
 import { PullRequestService } from './api/pullRequest.service';
@@ -23,6 +24,7 @@ import { WorkspaceService } from './api/workspace.service';
   exports:      [],
   providers: [
     AuthenticationService,
+    DictionaryService,
     EventService,
     GitHubService,
     PullRequestService,

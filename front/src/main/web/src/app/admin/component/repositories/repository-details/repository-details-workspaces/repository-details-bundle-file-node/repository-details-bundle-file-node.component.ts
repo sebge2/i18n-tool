@@ -3,7 +3,7 @@ import {WorkspaceBundleTreeNode} from "../repository-details-workspaces.componen
 import {
     GitHubFileLink,
     GitHubLink
-} from "../../../../../../core/shared/component/git-hub-link-button/git-hub-link-button.component";
+} from "../../../../../../core/shared/component/button/git-hub-link-button/git-hub-link-button.component";
 import {RepositoryType} from "../../../../../../translations/model/repository/repository-type.model";
 import {GitHubRepository} from "../../../../../../translations/model/repository/github-repository.model";
 import {Router} from "@angular/router";

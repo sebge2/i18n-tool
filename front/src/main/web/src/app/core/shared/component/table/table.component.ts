@@ -2,22 +2,42 @@ import {
     AfterContentInit,
     Component,
     ContentChild,
-    ContentChildren,
     Inject,
     Input,
     OnDestroy,
-    QueryList,
     TemplateRef
 } from '@angular/core';
-import {MatTableDataSource} from "@angular/material/table";
 import {TableHeaderComponent} from "./table-header/table-header.component";
 import {takeUntil} from "rxjs/operators";
 import {Subject} from "rxjs";
 import * as _ from "lodash";
 import {TableCellComponent} from "./table-cell/table-cell.component";
-import {TableExpandedRowComponent} from "./table-expanded-row/table-expanded-row.component";
 import {DOCUMENT} from "@angular/common";
 import {DomSanitizer, SafeStyle} from "@angular/platform-browser";
+import {TableTopHeaderRowComponent} from "./table-top-header-row/table-top-header-row.component";
+import {FormArray, FormGroup} from "@angular/forms";
+import {TableRowComponent} from "./table-row/table-row.component";
+import {TableExpandedRowComponent} from "./table-expanded-row/table-expanded-row.component";
+import {TableHeaderRowComponent} from "./table-header-row/table-header-row.component";
+
+export interface TableDataSource<E> {
+    data: E[];
+}
+
+export class SimpleTableDataSource<E> implements TableDataSource<E> {
+    constructor(public data: E[]) {
+    }
+}
+
+export class FormTableDataSource implements TableDataSource<FormGroup> {
+
+    constructor(public form: FormArray) {
+    }
+
+    get data(): FormGroup[] {
+        return <FormGroup[]>this.form.controls;
+    }
+}
 
 @Component({
     selector: 'app-table',
@@ -26,18 +46,15 @@ import {DomSanitizer, SafeStyle} from "@angular/platform-browser";
 })
 export class TableComponent<E> implements AfterContentInit, OnDestroy {
 
-    @Input() public readonly dataSource = new MatTableDataSource<E>();
+    @Input() public readonly dataSource: TableDataSource<E> = new SimpleTableDataSource<E>([]);
+    @Input() public autoscroll: boolean = false;
 
-    @ContentChildren(TableHeaderComponent) public headerComponents: QueryList<TableHeaderComponent>;
-    @ContentChildren(TableCellComponent) public cellComponents: QueryList<TableCellComponent>;
+    @ContentChild(TableTopHeaderRowComponent) public topHeaderComponent: TableTopHeaderRowComponent;
+    @ContentChild(TableHeaderRowComponent) public headerComponent: TableHeaderRowComponent;
+    @ContentChild(TableRowComponent) public rowComponent: TableRowComponent;
     @ContentChild(TableExpandedRowComponent) public expandedRowComponent: TableExpandedRowComponent;
 
-    public displayedColumns: string[];
-    public headers: Map<string, TableHeaderComponent>;
     public cells: Map<string, TableCellComponent>;
-
-    public tableStyle: SafeStyle;
-    public expandedRowStyle: SafeStyle;
     public expandedElement: E | undefined;
     public hoveredElement: E | undefined;
 
@@ -48,15 +65,10 @@ export class TableComponent<E> implements AfterContentInit, OnDestroy {
     }
 
     public ngAfterContentInit(): void {
-        this.headerComponents.changes
-            .pipe(takeUntil(this._destroyed$))
-            .subscribe(() => this.updateHeaders());
-
-        this.cellComponents.changes
+        this.rowComponent.cellComponents.changes
             .pipe(takeUntil(this._destroyed$))
             .subscribe(() => this.updateCells());
 
-        setTimeout(() => this.updateHeaders());
         setTimeout(() => this.updateCells());
     }
 
@@ -69,16 +81,12 @@ export class TableComponent<E> implements AfterContentInit, OnDestroy {
         return !!this.expandedRowComponent;
     }
 
-    public get expandedDivStyle(): any {
-        return {'grid-column': '1 / 6'}
+    public getHeaderComponent(column: string): TableHeaderComponent {
+        return this.headerComponent.headers.get(column);
     }
 
-    public getHeaderTemplate(column: string): TemplateRef<any> {
-        return this.headers.get(column).template;
-    }
-
-    public getCellTemplate(column: string): TemplateRef<any> {
-        return this.cells.get(column).template;
+    public getCellComponent(column: string): TableCellComponent {
+        return this.cells.get(column);
     }
 
     public getExpandedRowTemplate(): TemplateRef<any> | undefined {
@@ -103,22 +111,10 @@ export class TableComponent<E> implements AfterContentInit, OnDestroy {
         this.expandedElement = (this.expandedElement === expandedElement) ? null : expandedElement;
     }
 
-    private updateHeaders() {
-        this.headers = new Map<string, TableHeaderComponent>();
-
-        for (const headerComponent of this.headerComponents.toArray()) {
-            this.headers.set(headerComponent.columnId, headerComponent);
-        }
-
-        this.displayedColumns = _.map(this.headerComponents.toArray(), header => header.columnId);
-        this.tableStyle = this._sanitizer.bypassSecurityTrustStyle(_.chain(this.headerComponents.toArray()).map(header => `${header.columnGridDef}`).join(' ').value());
-        this.expandedRowStyle = this._sanitizer.bypassSecurityTrustStyle(`1 / ${(this.headerComponents.length + 1)}`);
-    }
-
     private updateCells() {
         this.cells = new Map<string, TableCellComponent>();
 
-        for (const cellComponent of this.cellComponents.toArray()) {
+        for (const cellComponent of this.rowComponent.cellComponents.toArray()) {
             this.cells.set(cellComponent.columnId, cellComponent);
         }
     }

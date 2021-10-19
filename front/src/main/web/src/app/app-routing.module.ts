@@ -15,6 +15,10 @@ const routes: Routes = [
                 loadChildren: () => import('./translations/translations.module').then(m => m.TranslationsModule)
             },
             {
+                path: 'dictionary',
+                loadChildren: () => import('./dictionary/dictionary.module').then(m => m.DictionaryModule)
+            },
+            {
                 path: 'account',
                 loadChildren: () => import('./account/account.module').then(m => m.AccountModule)
             },

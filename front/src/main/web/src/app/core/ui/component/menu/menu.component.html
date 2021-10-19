@@ -1,8 +1,11 @@
 <mat-nav-list>
-    <a mat-list-item routerLink="/translations">
+    <a mat-list-item routerLink="/translations" routerLinkActive="menu-active-link">
         <mat-icon mat-list-icon>translate</mat-icon>{{'MENU.TRANSLATIONS_LABEL' | translate}}
     </a>
-    <a mat-list-item routerLink="/account">
+    <a mat-list-item routerLink="/dictionary" routerLinkActive="menu-active-link">
+        <mat-icon mat-list-icon>auto_stories</mat-icon>{{'MENU.DICTIONARY_LABEL' | translate}}
+    </a>
+    <a mat-list-item routerLink="/account" routerLinkActive="menu-active-link">
         <mat-icon mat-list-icon>person</mat-icon>{{'MENU.ACCOUNT_LABEL' | translate}}
     </a>
 
@@ -14,10 +17,10 @@
         <mat-icon *ngIf="showAdmin">expand_more</mat-icon>
     </a>
     <mat-nav-list class="mat-nav-sub-list" *hasRole="['ADMIN']; additionalCondition: showAdmin">
-        <a mat-list-item routerLink="/admin/locales"><mat-icon mat-list-icon>language</mat-icon> {{'MENU.LOCALES_LABEL' | translate}}</a>
-        <a mat-list-item routerLink="/admin/repositories"><mat-icon mat-list-icon>description</mat-icon> {{'MENU.REPOSITORIES_LABEL' | translate}}</a>
-        <a mat-list-item routerLink="/admin/users"><mat-icon mat-list-icon>group</mat-icon> {{'MENU.USERS_LABEL' | translate}}</a>
-        <a mat-list-item routerLink="/admin/scheduled-tasks"><mat-icon mat-list-icon>schedule</mat-icon> {{'MENU.SCHEDULED_TASKS_LABEL' | translate}}</a>
-        <a mat-list-item routerLink="/admin/snapshots"><mat-icon mat-list-icon>backup</mat-icon> {{'MENU.SNAPSHOT_LABEL' | translate}}</a>
+        <a mat-list-item routerLink="/admin/locales" routerLinkActive="menu-active-link"><mat-icon mat-list-icon>language</mat-icon> {{'MENU.LOCALES_LABEL' | translate}}</a>
+        <a mat-list-item routerLink="/admin/repositories" routerLinkActive="menu-active-link"><mat-icon mat-list-icon>description</mat-icon> {{'MENU.REPOSITORIES_LABEL' | translate}}</a>
+        <a mat-list-item routerLink="/admin/users" routerLinkActive="menu-active-link"><mat-icon mat-list-icon>group</mat-icon> {{'MENU.USERS_LABEL' | translate}}</a>
+        <a mat-list-item routerLink="/admin/scheduled-tasks" routerLinkActive="menu-active-link"><mat-icon mat-list-icon>schedule</mat-icon> {{'MENU.SCHEDULED_TASKS_LABEL' | translate}}</a>
+        <a mat-list-item routerLink="/admin/snapshots" routerLinkActive="menu-active-link"><mat-icon mat-list-icon>backup</mat-icon> {{'MENU.SNAPSHOT_LABEL' | translate}}</a>
     </mat-nav-list>
 </mat-nav-list>

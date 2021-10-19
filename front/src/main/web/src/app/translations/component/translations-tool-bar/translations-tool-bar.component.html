@@ -6,10 +6,7 @@
         <!--search-->
     </div>
     <div class="app-translations-toolbar-action app-translations-toolbar-unsaved">
-        <ng-container *ngIf="state.unsavedChanges | async">
-            <span class="app-icon-exclamation-solid app-translations-unsaved-icon"></span>
-            <b>{{'TRANSLATIONS.TABLE.UNSAVED_CHANGES' | translate}}</b>
-        </ng-container>
+        <app-unsaved-label *ngIf="state.unsavedChanges | async"></app-unsaved-label>
     </div>
     <div class="app-translations-toolbar-right">
         <app-forward-button (click)="onNextPage()"></app-forward-button>

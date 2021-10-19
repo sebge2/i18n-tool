@@ -40,7 +40,8 @@
   "MENU": {
     "ACCOUNT_LABEL": "Compte",
     "ADMIN_LABEL": "Admin",
-    "TRANSLATIONS_LABEL": "Traductions"
+    "TRANSLATIONS_LABEL": "Traductions",
+    "DICTIONARY_LABEL": "Dictionnaire"
   },
   "ADMIN": {
     "WORKSPACES": {

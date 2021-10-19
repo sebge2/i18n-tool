@@ -1,0 +1,6 @@
+<app-form-delete-button
+        class="app-table-action"
+        (delete)="onDelete()"
+        [deleteInProgress]="deleteInProgress"
+        [confirmationMessage]="'DICTIONARY.TABLE.DELETE_CONFIRMATION_MESSAGE' | translate:{translations: translationAsString}">
+</app-form-delete-button>

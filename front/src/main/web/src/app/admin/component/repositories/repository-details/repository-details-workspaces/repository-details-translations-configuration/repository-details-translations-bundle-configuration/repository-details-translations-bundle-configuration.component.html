@@ -1,40 +1,44 @@
 <app-table [dataSource]="dataSource">
-    <app-table-header [columnId]="'ignoredPaths'">
-        {{'ADMIN.REPOSITORIES.CONFIG_CARD.TRANSLATIONS_CONFIG_POPUP.IGNORED_PATHS' | translate}}
-    </app-table-header>
-    <app-table-header [columnId]="'actions'">
-        {{'ADMIN.REPOSITORIES.CONFIG_CARD.TRANSLATIONS_CONFIG_POPUP.ACTIONS' | translate}}
-    </app-table-header>
+    <app-table-header-row>
+        <app-table-header [columnId]="'ignoredPaths'">
+            {{'ADMIN.REPOSITORIES.CONFIG_CARD.TRANSLATIONS_CONFIG_POPUP.IGNORED_PATHS' | translate}}
+        </app-table-header>
+        <app-table-header [columnId]="'actions'">
+            {{'ADMIN.REPOSITORIES.CONFIG_CARD.TRANSLATIONS_CONFIG_POPUP.ACTIONS' | translate}}
+        </app-table-header>
+    </app-table-header-row>
 
-    <app-table-cell [columnId]="'ignoredPaths'" [template]="createdOn">
-        <ng-template let-ignoredPath="element" #createdOn>
-            <ng-container *ngIf="ignoredPath;else emptyElement">
-                {{ignoredPath}}
-            </ng-container>
-            <ng-template #emptyElement>
-                <form [formGroup]="form">
-                    <mat-form-field appearance="standard">
-                        <mat-label>{{'ADMIN.REPOSITORIES.CONFIG_CARD.TRANSLATIONS_CONFIG_POPUP.NEW_IGNORED_PATH' | translate}}</mat-label>
-                        <input matInput formControlName="newIgnoredPath" cdkFocusInitial (onEnter)="onAdd()"
-                               #newIgnorePathElement>
-                        <mat-hint>
-                            {{'ADMIN.REPOSITORIES.CONFIG_CARD.TRANSLATIONS_CONFIG_POPUP.NEW_IGNORED_PATH_HINT' | translate}}
-                            <app-tooltip [link]="'https://ant.apache.org/'"></app-tooltip>
-                        </mat-hint>
-                    </mat-form-field>
-                </form>
+    <app-table-row>
+        <app-table-cell [columnId]="'ignoredPaths'" [template]="createdOn">
+            <ng-template let-ignoredPath="element" #createdOn>
+                <ng-container *ngIf="ignoredPath;else emptyElement">
+                    {{ignoredPath}}
+                </ng-container>
+                <ng-template #emptyElement>
+                    <form [formGroup]="form">
+                        <mat-form-field appearance="standard">
+                            <mat-label>{{'ADMIN.REPOSITORIES.CONFIG_CARD.TRANSLATIONS_CONFIG_POPUP.NEW_IGNORED_PATH' | translate}}</mat-label>
+                            <input matInput formControlName="newIgnoredPath" cdkFocusInitial (onEnter)="onAdd()"
+                                   #newIgnorePathElement>
+                            <mat-hint>
+                                {{'ADMIN.REPOSITORIES.CONFIG_CARD.TRANSLATIONS_CONFIG_POPUP.NEW_IGNORED_PATH_HINT' | translate}}
+                                <app-tooltip [link]="'https://ant.apache.org/'"></app-tooltip>
+                            </mat-hint>
+                        </mat-form-field>
+                    </form>
+                </ng-template>
             </ng-template>
-        </ng-template>
-    </app-table-cell>
-    <app-table-cell [columnId]="'actions'" [template]="action">
-        <ng-template let-ignoredPath="element" #action>
-            <ng-container *ngIf="ignoredPath;else emptyElement">
-                <app-form-delete-button class="app-table-action"
-                                        (delete)="onDelete(ignoredPath)"></app-form-delete-button>
-            </ng-container>
-            <ng-template #emptyElement>
-                <app-form-add-button (add)="onAdd()" [disabled]="addDisabled"></app-form-add-button>
+        </app-table-cell>
+        <app-table-cell [columnId]="'actions'" [template]="action">
+            <ng-template let-ignoredPath="element" #action>
+                <ng-container *ngIf="ignoredPath;else emptyElement">
+                    <app-form-delete-button class="app-table-action"
+                                            (delete)="onDelete(ignoredPath)"></app-form-delete-button>
+                </ng-container>
+                <ng-template #emptyElement>
+                    <app-form-add-button (add)="onAdd()" [disabled]="addDisabled"></app-form-add-button>
+                </ng-template>
             </ng-template>
-        </ng-template>
-    </app-table-cell>
+        </app-table-cell>
+    </app-table-row>
 </app-table>

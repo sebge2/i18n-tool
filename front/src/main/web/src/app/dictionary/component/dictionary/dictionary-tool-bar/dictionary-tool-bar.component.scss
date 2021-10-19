@@ -1,0 +1,21 @@
+.app-directory-toolbar {
+  display: grid;
+  grid-template-columns: 80px auto auto 80px;
+  width: 100%;
+}
+
+.app-directory-toolbar-left {
+  padding-left: 50px;
+  padding-bottom: 10px;
+}
+
+.app-directory-toolbar-right {
+  padding-right: 50px;
+  padding-bottom: 10px;
+}
+
+.app-directory-toolbar-action {
+  text-align: center;
+}
+
+

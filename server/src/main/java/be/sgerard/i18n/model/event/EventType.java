@@ -11,6 +11,7 @@ import be.sgerard.i18n.model.snapshot.dto.SnapshotDto;
 import be.sgerard.i18n.model.user.dto.UserDto;
 import be.sgerard.i18n.model.user.dto.UserPreferencesDto;
 import be.sgerard.i18n.model.workspace.dto.WorkspaceDto;
+import be.sgerard.i18n.model.dictionary.dto.DictionaryEntryDto;
 
 /**
  * All possible kind of events.
@@ -158,4 +159,19 @@ public enum EventType {
      * @see ScheduledTaskExecutionDto
      */
     DELETED_SCHEDULED_TASK_EXECUTION,
+
+    /**
+     * @see DictionaryEntryDto
+     */
+    ADDED_DICTIONARY_ENTRY,
+
+    /**
+     * @see DictionaryEntryDto
+     */
+    UPDATED_DICTIONARY_ENTRY,
+
+    /**
+     * @see DictionaryEntryDto
+     */
+    DELETED_DICTIONARY_ENTRY,
 }

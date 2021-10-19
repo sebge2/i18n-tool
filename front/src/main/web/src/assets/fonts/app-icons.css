@@ -1,8 +1,8 @@
 @font-face {
     font-family: "app-icons";
-    src: url("./app-icons.eot?4cb94c04d5442aecd887ba81e67bf242#iefix") format("embedded-opentype"),
-url("./app-icons.woff2?4cb94c04d5442aecd887ba81e67bf242") format("woff2"),
-url("./app-icons.woff?4cb94c04d5442aecd887ba81e67bf242") format("woff");
+    src: url("./app-icons.eot?ae9a0e35b6b92a8d9c34189d767a65e1#iefix") format("embedded-opentype"),
+url("./app-icons.woff2?ae9a0e35b6b92a8d9c34189d767a65e1") format("woff2"),
+url("./app-icons.woff?ae9a0e35b6b92a8d9c34189d767a65e1") format("woff");
 }
 
 *[class^="app-icon-"]:before, *[class*=" app-icon-"]:before {
@@ -55,6 +55,12 @@ url("./app-icons.woff?4cb94c04d5442aecd887ba81e67bf242") format("woff");
 .app-icon-paper-plane-solid:before {
     content: "\f10d";
 }
-.app-icon-window-close-regular:before {
+.app-icon-select-all:before {
     content: "\f10e";
+}
+.app-icon-unselect-all:before {
+    content: "\f10f";
+}
+.app-icon-window-close-regular:before {
+    content: "\f110";
 }

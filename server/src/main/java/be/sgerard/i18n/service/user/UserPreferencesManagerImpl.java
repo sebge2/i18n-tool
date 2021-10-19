@@ -31,7 +31,7 @@ public class UserPreferencesManagerImpl implements UserPreferencesManager {
     /**
      * Validation message key specifying that a translation locale is missing.
      */
-    public static final String MISSING_VALIDATION_LOCALE = "validation.locale.missing";
+    public static final String MISSING_LOCALE = "validation.locale.missing";
 
     private final AuthenticationUserManager authenticationUserManager;
     private final UserManager userManager;
@@ -92,7 +92,7 @@ public class UserPreferencesManagerImpl implements UserPreferencesManager {
                         translationLocaleManager
                                 .findById(id)
                                 .switchIfEmpty(Mono.error(
-                                        new ValidationException(ValidationResult.singleMessage(new ValidationMessage(MISSING_VALIDATION_LOCALE, id)))
+                                        new ValidationException(ValidationResult.singleMessage(new ValidationMessage(MISSING_LOCALE, id)))
                                 ))
                 )
                 .collectList();

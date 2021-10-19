@@ -6,7 +6,7 @@ import {takeUntil} from "rxjs/operators";
 import * as _ from "lodash";
 import {Subject} from "rxjs";
 import {ScheduledTaskTriggerType} from "../../../model/scheduled-task/scheduled-task-trigger.model";
-import {PlayButtonState} from "../../../../core/shared/component/play-button/play-button.component";
+import {PlayButtonState} from "../../../../core/shared/component/button/play-button/play-button.component";
 import {NotificationService} from "../../../../core/notification/service/notification.service";
 
 @Component({

@@ -1,0 +1,16 @@
+<div class="upload-zone p-relative dragAndDropZone"
+     appDragDrop
+     [disabled]="disabled"
+     [allowedFileExtensions]="allowedFileExtensions"
+     [style.backgroundImage]="backgroundImage"
+     (onFileDropped)="onFileDropped($event)">
+    <ng-content select="app-upload-zone-content">
+    </ng-content>
+    <app-form-upload-button color="primary"
+                            class="upload-zone-button"
+                            [disabled]="disabled"
+                            [allowedFileExtensions]="allowedFileExtensions"
+                            (import)="onFileImported($event)">
+        <mat-icon>cloud_upload</mat-icon>
+    </app-form-upload-button>
+</div>

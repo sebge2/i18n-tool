@@ -33,6 +33,10 @@
     "EVENTS": {
       "ERROR_DISCONNECTED": "Connection issue to the server. Please check your internet connection.",
       "INFO_RECONNECTED": "Connection re-established."
+    },
+    "LIST_ORGANIZER": {
+      "SELECT_ALL_LABEL": "Select All",
+      "UNSELECT_ALL_LABEL": "Unselect All"
     }
   },
   "TRANSLATIONS": {
@@ -74,6 +78,36 @@
       "UNSAVED_CHANGES": "Your changes are not saved yet"
     }
   },
+  "DICTIONARY": {
+    "TABLE": {
+      "ACTION": "Action",
+      "DELETE_CONFIRMATION_MESSAGE": "Please confirm the deletion of the following translations: <b>{translations}</b>.",
+      "SETTINGS": "Settings",
+      "DOWNLOAD": "Download",
+      "UPLOAD": "Upload",
+      "DELETE_ALL": "Delete All",
+      "DELETE_ALL_CONFIRMATION":  "Are-you sure to delete all the dictionary entries?",
+      "UPLOAD_POPUP": {
+        "TITLE": "Upload a Dictionary",
+        "DESCRIPTION": "Drag & Drop your CSV dictionary file, or click on the button."
+      },
+      "SETTINGS_POPUP": {
+        "TITLE": "Which Locales to Display?",
+        "AVAILABLE_LABEL": "Unused Locales",
+        "SELECTED_LOCALES_LABEL": "Selected Locales"
+      }
+    },
+    "ERROR": {
+      "GET_ALL": "Error while retrieving dictionary entries.",
+      "DELETE": "Error while deleting the dictionary entry.",
+      "CREATE": "Error while creating a dictionary entry.",
+      "UPDATE": "Error while updating dictionary entries.",
+      "DOWNLOAD": "Error while downloading the dictionary",
+      "UPLOAD": "Error while uploading the CSV dictionary file.",
+      "DELETE_ALL": "Error while deleting dictionary entries.",
+      "SAVING_PREFERENCES": "Error while saving dictionary preferences."
+    }
+  },
   "PREFERENCES": {
     "TITLE": "My Preferences",
     "TOOL_LOCALE": {
@@ -101,6 +135,7 @@
     "REPOSITORIES_LABEL": "Repositories",
     "USERS_LABEL": "Users",
     "TRANSLATIONS_LABEL": "Translations",
+    "DICTIONARY_LABEL": "Dictionary",
     "SNAPSHOT_LABEL": "Snapshots",
     "SCHEDULED_TASKS_LABEL": "Tasks"
   },

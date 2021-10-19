@@ -9,7 +9,7 @@ import {RepositoryType} from "../../../../../../translations/model/repository/re
 import {
     GitHubFileLink,
     GitHubLink
-} from "../../../../../../core/shared/component/git-hub-link-button/git-hub-link-button.component";
+} from "../../../../../../core/shared/component/button/git-hub-link-button/git-hub-link-button.component";
 import {GitHubRepository} from "../../../../../../translations/model/repository/github-repository.model";
 
 @Component({
