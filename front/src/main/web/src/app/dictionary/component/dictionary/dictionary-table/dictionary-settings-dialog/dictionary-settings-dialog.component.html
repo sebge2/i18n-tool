@@ -1,0 +1,33 @@
+<app-dialog [title]="'DICTIONARY.TABLE.SETTINGS_POPUP.TITLE' | translate" [dialogHeight]="'400px'"
+            [dialogWidth]="'500px'">
+    <app-dialog-content>
+        <app-list-organizer
+                class="dictionary-settings-dialog-organizer"
+                [available]="'DICTIONARY.TABLE.SETTINGS_POPUP.AVAILABLE_LABEL' | translate"
+                [selected]="'DICTIONARY.TABLE.SETTINGS_POPUP.SELECTED_LOCALES_LABEL' | translate"
+                [availableElements]="availableLocales"
+                [selectedElements]="selectedLocales"
+                [availableElementTemplate]="availableElement"
+                [selectedElementTemplate]="selectedElement"
+                (select)="onSelect($event)"
+                (unselect)="onUnselect($event)"
+                (selectAll)="onSelectAll()"
+                (unselectAll)="onUnselectAll()"
+                (moveSelected)="onMoveSelected($event)"
+                (moveAvailable)="onMoveAvailable($event)"
+        >
+        </app-list-organizer>
+        <ng-template let-element="element" #availableElement>
+            <span [class]="element | translationLocaleIcon"></span> {{element.displayName}}
+        </ng-template>
+        <ng-template let-element="element" #selectedElement>
+            <span [class]="element | translationLocaleIcon"></span> {{element.displayName}}
+        </ng-template>
+    </app-dialog-content>
+    <app-dialog-actions>
+        <app-form-apply-button
+            [applyInProgress]="applying"
+            (apply)="onApply()">
+        </app-form-apply-button>
+    </app-dialog-actions>
+</app-dialog>

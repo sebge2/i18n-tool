@@ -12,5 +12,7 @@
     "json-file": 61707,
     "key-solid": 61708,
     "paper-plane-solid": 61709,
-    "window-close-regular": 61710
+    "select-all": 61710,
+    "unselect-all": 61711,
+    "window-close-regular": 61712
 }

@@ -42,6 +42,7 @@ import {ReactiveFormsModule} from "@angular/forms";
 import {FlexLayoutModule} from "@angular/flex-layout";
 import {ClipboardModule} from "ngx-clipboard";
 import {ScrollingModule} from "@angular/cdk/scrolling";
+import {DragDropModule} from '@angular/cdk/drag-drop';
 
 @NgModule({
     exports: [
@@ -82,6 +83,7 @@ import {ScrollingModule} from "@angular/cdk/scrolling";
         MatTooltipModule,
         MatTreeModule,
         MatProgressButtonsModule,
+        DragDropModule,
 
         ReactiveFormsModule,
         FlexLayoutModule,

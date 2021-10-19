@@ -11,7 +11,7 @@ import reactor.core.publisher.Mono;
 public interface UserListener {
 
     /**
-     * Performs an action after the the specified user has been persisted.
+     * Performs an action after the specified user has been persisted.
      */
     default Mono<Void> afterPersist(UserEntity user) {
         return Mono.empty();

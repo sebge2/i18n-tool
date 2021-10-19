@@ -51,6 +51,9 @@ public abstract class AbstractIntegrationTest {
     protected ScheduledTaskTestHelper scheduledTask;
 
     @Autowired
+    protected DictionaryTestHelper dictionary;
+
+    @Autowired
     protected WebTestClient webClient;
 
     @Autowired

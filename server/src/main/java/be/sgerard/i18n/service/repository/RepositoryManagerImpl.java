@@ -95,6 +95,7 @@ public class RepositoryManagerImpl implements RepositoryManager {
                                                 .filter(repo -> repo.getStatus() != RepositoryStatus.INITIALIZED)
                                                 .flatMap(this::initializeRepository)
                                                 .doOnNext(repo -> repo.setStatus(RepositoryStatus.INITIALIZED))
+                                                .flatMap(repo -> listener.beforeUpdate(repo).thenReturn(repo))
                                                 .flatMap(this.repository::save)
                                                 .flatMap(rep -> listener.afterUpdate(rep).thenReturn(rep))
                                                 .flatMap(rep -> listener.afterInitialize(rep).thenReturn(rep))
@@ -103,8 +104,8 @@ public class RepositoryManagerImpl implements RepositoryManager {
 
                                                     repository.setStatus(RepositoryStatus.INITIALIZATION_ERROR);
 
-                                                    return this.repository
-                                                            .save(repository)
+                                                    return  listener.beforeUpdate(repository).thenReturn(repository)
+                                                            .flatMap(this.repository::save)
                                                             .flatMap(rep -> listener.afterUpdate(rep).thenReturn(rep));
                                                 })
                                                 .switchIfEmpty(Mono.just(repository))
@@ -128,6 +129,7 @@ public class RepositoryManagerImpl implements RepositoryManager {
                                                 })
                                 )
                                 .flatMap(repo -> updateRepository(repo, patch))
+                                .flatMap(repo -> listener.beforeUpdate(repo).thenReturn(repo))
                                 .flatMap(repository::save)
                                 .flatMap(repo -> listener.afterUpdate(repo).thenReturn(repo)));
     }

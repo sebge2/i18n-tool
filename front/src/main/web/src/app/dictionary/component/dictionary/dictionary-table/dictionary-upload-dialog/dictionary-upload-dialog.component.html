@@ -1,0 +1,22 @@
+<app-dialog [title]="'DICTIONARY.TABLE.UPLOAD_POPUP.TITLE' | translate" [dialogHeight]="'400px'"
+            [dialogWidth]="'500px'">
+    <app-dialog-content>
+        <app-upload-zone
+                [allowedFileExtensions]="allowedFileExtensions"
+                (file)="onFileDropped($event)"
+                class="dictionary-upload-zone"
+                *ngIf="!uploading">
+            <app-upload-zone-content>
+                <div class="app-centered-single-item">
+                    {{'DICTIONARY.TABLE.UPLOAD_POPUP.DESCRIPTION' | translate}}
+                </div>
+            </app-upload-zone-content>
+        </app-upload-zone>
+
+        <div *ngIf="uploading" class="app-centered-single-item">
+            <mat-icon>
+                <mat-spinner color="primary" diameter="40"></mat-spinner>
+            </mat-icon>
+        </div>
+    </app-dialog-content>
+</app-dialog>

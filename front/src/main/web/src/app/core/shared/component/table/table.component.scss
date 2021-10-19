@@ -7,6 +7,11 @@
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
 }
 
+.app-table-autoscroll {
+  overflow: auto;
+  height: 100%;
+}
+
 .app-table-cell {
   border-top: 1px solid rgba(0, 0, 0, .12);
   padding: 3px 0 3px 15px;
@@ -16,6 +21,7 @@
   font-size: smaller;
   font-weight: bolder;
   color: rgba(0, 0, 0, .54);
+  background: white;
 }
 
 .app-table-cell-hover {
@@ -31,6 +37,12 @@
   .app-table-action {
     visibility: hidden;
   }
+}
+
+.app-table-cell-header-sticky {
+  position: sticky;
+  top: 0;
+  z-index: 9;
 }
 
 .app-table-cell-details-expanded, .app-table-cell-expanded {
@@ -56,5 +68,13 @@
     padding: 0;
     max-height: 0;
     overflow: hidden;
+  }
+}
+
+.app-table-column-action {
+  vertical-align: middle;
+
+  ::ng-deep button {
+    height: 100%;
   }
 }

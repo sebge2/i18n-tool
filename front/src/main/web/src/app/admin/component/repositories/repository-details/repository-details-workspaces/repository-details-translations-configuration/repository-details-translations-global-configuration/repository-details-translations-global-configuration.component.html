@@ -1,36 +1,41 @@
 <app-table [dataSource]="dataSource">
-    <app-table-header [columnId]="'ignoredKeys'">
-        {{'ADMIN.REPOSITORIES.CONFIG_CARD.TRANSLATIONS_CONFIG_POPUP.IGNORED_KEYS' | translate}}
-    </app-table-header>
-    <app-table-header [columnId]="'actions'">
-        {{'ADMIN.REPOSITORIES.CONFIG_CARD.TRANSLATIONS_CONFIG_POPUP.ACTIONS' | translate}}
-    </app-table-header>
+    <app-table-header-row>
+        <app-table-header [columnId]="'ignoredKeys'">
+            {{'ADMIN.REPOSITORIES.CONFIG_CARD.TRANSLATIONS_CONFIG_POPUP.IGNORED_KEYS' | translate}}
+        </app-table-header>
+        <app-table-header [columnId]="'actions'">
+            {{'ADMIN.REPOSITORIES.CONFIG_CARD.TRANSLATIONS_CONFIG_POPUP.ACTIONS' | translate}}
+        </app-table-header>
+    </app-table-header-row>
 
-    <app-table-cell [columnId]="'ignoredKeys'" [template]="createdOn">
-        <ng-template let-ignoredKey="element" #createdOn>
-            <ng-container *ngIf="ignoredKey;else emptyElement">
-                {{ignoredKey}}
-            </ng-container>
-            <ng-template #emptyElement>
-                <form [formGroup]="form">
-                    <mat-form-field appearance="standard">
-                        <mat-label>{{'ADMIN.REPOSITORIES.CONFIG_CARD.TRANSLATIONS_CONFIG_POPUP.NEW_IGNORED_KEY' | translate}}</mat-label>
-                        <input matInput formControlName="newIgnoredKey" cdkFocusInitial (onEnter)="onAdd()" #newIgnoreKeyElement>
-                        <mat-hint>{{'ADMIN.REPOSITORIES.CONFIG_CARD.TRANSLATIONS_CONFIG_POPUP.NEW_IGNORED_KEY_HINT' | translate}}</mat-hint>
-                    </mat-form-field>
-                </form>
+    <app-table-row>
+        <app-table-cell [columnId]="'ignoredKeys'" [template]="createdOn">
+            <ng-template let-ignoredKey="element" #createdOn>
+                <ng-container *ngIf="ignoredKey;else emptyElement">
+                    {{ignoredKey}}
+                </ng-container>
+                <ng-template #emptyElement>
+                    <form [formGroup]="form">
+                        <mat-form-field appearance="standard">
+                            <mat-label>{{'ADMIN.REPOSITORIES.CONFIG_CARD.TRANSLATIONS_CONFIG_POPUP.NEW_IGNORED_KEY' | translate}}</mat-label>
+                            <input matInput formControlName="newIgnoredKey" cdkFocusInitial (onEnter)="onAdd()"
+                                   #newIgnoreKeyElement>
+                            <mat-hint>{{'ADMIN.REPOSITORIES.CONFIG_CARD.TRANSLATIONS_CONFIG_POPUP.NEW_IGNORED_KEY_HINT' | translate}}</mat-hint>
+                        </mat-form-field>
+                    </form>
+                </ng-template>
             </ng-template>
-        </ng-template>
-    </app-table-cell>
-    <app-table-cell [columnId]="'actions'" [template]="action">
-        <ng-template let-ignoredKey="element" #action>
-            <ng-container *ngIf="ignoredKey;else emptyElement">
-                <app-form-delete-button class="app-table-action"
-                                        (delete)="onDelete(ignoredKey)"></app-form-delete-button>
-            </ng-container>
-            <ng-template #emptyElement>
-                <app-form-add-button (add)="onAdd()" [disabled]="addDisabled"></app-form-add-button>
+        </app-table-cell>
+        <app-table-cell [columnId]="'actions'" [template]="action">
+            <ng-template let-ignoredKey="element" #action>
+                <ng-container *ngIf="ignoredKey;else emptyElement">
+                    <app-form-delete-button class="app-table-action"
+                                            (delete)="onDelete(ignoredKey)"></app-form-delete-button>
+                </ng-container>
+                <ng-template #emptyElement>
+                    <app-form-add-button (add)="onAdd()" [disabled]="addDisabled"></app-form-add-button>
+                </ng-template>
             </ng-template>
-        </ng-template>
-    </app-table-cell>
+        </app-table-cell>
+    </app-table-row>
 </app-table>

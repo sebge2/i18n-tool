@@ -10,6 +10,8 @@ export enum FileExtension {
 
     ZIP = 'zip',
 
+    CSV = 'csv',
+
 }
 
 export const IMAGE_FILE_EXTENSIONS: FileExtension[] = [FileExtension.JPG, FileExtension.JPEG, FileExtension.PNG];
@@ -19,6 +21,7 @@ export let FILE_CONTENT_TYPES = new Map([
     [FileExtension.JPEG, 'image/jpeg'],
     [FileExtension.PNG, 'image/png'],
     [FileExtension.ZIP, 'application/zip'],
+    [FileExtension.CSV, 'text/csv'],
 ]);
 
 export function createImportedFile(file: File, allowedFileExtensions: FileExtension[]): ImportedFile {

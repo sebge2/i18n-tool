@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -82,8 +83,8 @@ public class SnapshotController {
                 .exportZip(id)
                 .map(pair ->
                         ResponseEntity.ok()
-                                .header("Content-Type", "application/zip")
-                                .header("Content-Disposition", "attachment; filename=" + pair.getFirst())
+                                .header(HttpHeaders.CONTENT_TYPE, "application/zip")
+                                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + pair.getFirst())
                                 .body(pair.getSecond())
                 );
     }

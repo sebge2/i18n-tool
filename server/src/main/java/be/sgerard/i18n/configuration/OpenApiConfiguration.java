@@ -55,7 +55,7 @@ public class OpenApiConfiguration {
     }
 
     @Bean
-    public OpenApiCustomiser schemaCustomiser() {
+    public OpenApiCustomiser schemaCustomizer() {
         final ResolvedSchema resolvedSchema = ModelConverters.getInstance()
                 .resolveAsResolvedSchema(new AnnotatedType(TranslationsUpdateEventDto.class));
 

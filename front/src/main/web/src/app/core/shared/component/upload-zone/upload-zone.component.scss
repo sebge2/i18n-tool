@@ -1,0 +1,24 @@
+.upload-zone {
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+
+    & .mat-icon {
+        transform: scale(1.5);
+    }
+
+    .upload-zone-button {
+        position: absolute;
+        bottom: -28px;
+        right: -28px;
+        opacity: 0;
+        transition: opacity 0.5s ease-out;
+    }
+
+    &:hover .upload-zone-button {
+        opacity: 1;
+    }
+}
+
+
+
