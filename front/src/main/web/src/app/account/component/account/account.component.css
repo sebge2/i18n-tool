@@ -1,5 +1,5 @@
 :host ::ng-deep .mat-tab-body-wrapper {
-    height: calc(100vh - 200px);
-    padding-top: 2%;
-    padding-left: 10%;
+  height: calc(100vh - 200px);
+  padding-top: 2%;
+  padding-left: 10%;
 }

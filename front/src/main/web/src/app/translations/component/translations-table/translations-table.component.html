@@ -1,44 +1,71 @@
 <ng-container *ngIf="!(state.loading | async)">
-    <div class="app-centered-single-item app-table-no-result" *ngIf="state.pageSync?.empty">
-        {{'TRANSLATIONS.TABLE.NO_RESULT' | translate}}
-    </div>
+  <div class="app-centered-single-item app-table-no-result" *ngIf="state.pageSync?.empty">
+    {{ 'TRANSLATIONS.TABLE.NO_RESULT' | translate }}
+  </div>
 
-    <div class="app-translations-container"
-         [ngStyle]="{'grid-template-columns': '230px repeat(' + (state.newSearchRequestSync.locales.length) + ', 1fr)'}"
-         *ngIf="state.pageSync?.hasRows">
-        <div class="app-translations-header app-translations-cell">
-            <h3><span class="app-icon-key-solid app-translations-header-icon"></span> {{'TRANSLATIONS.TABLE.KEY_COLUMN' | translate}}</h3>
-        </div>
-        <div *ngFor="let locale of state.newSearchRequestSync.locales" class="app-translations-header app-translations-cell">
-            <h3><span [class]="locale | translationLocaleIcon" class="app-translations-header-icon"></span> {{locale.displayName}}</h3>
-        </div>
-        <ng-container *ngFor="let rowForm of rows; let rowIndex = index">
-            <ng-container [ngSwitch]="getRowType(rowForm)">
-                <div class="{{spreadRowClass}} app-translations-cell app-translations-workspace-row" *ngSwitchCase="RowType.WORKSPACE">
-                    <app-translations-workspace-row [workspace]="getWorkspace(rowForm) | async"></app-translations-workspace-row>
-                </div>
-                <div class="{{spreadRowClass}} app-translations-cell app-translations-bundle-file-row" *ngSwitchCase="RowType.BUNDLE_FILE">
-                    <app-translations-bundle-file-row [bundleFile]="getBundleFile(rowForm) | async"></app-translations-bundle-file-row>
-                </div>
-                <ng-container *ngSwitchCase="RowType.BUNDLE_KEY">
-                    <div class="app-translations-bundle-key-column app-translations-cell app-translations-translation-row">
-                        <div class="app-translations-bundle-key-column-inner"
-                             [matTooltip]="getBundleKey(rowForm)"
-                             [matTooltipPosition]="'right'"
-                             matTooltipClass="app-translations-bundle-key-tooltip">
-                            {{getBundleKey(rowForm)}}
-                        </div>
-                    </div>
-                    <div *ngFor="let cellForm of getRowTranslations(rowForm); let columnIndex = index; trackBy: trackByFn.bind(this, rowIndex)"
-                         class="app-translations-translation-column app-translations-cell app-translations-translation-row">
-                        <app-translation-editing-cell [form]="cellForm"></app-translation-editing-cell>
-                    </div>
-                </ng-container>
-            </ng-container>
-        </ng-container>
+  <div
+    class="app-translations-container"
+    [ngStyle]="{ 'grid-template-columns': '230px repeat(' + state.newSearchRequestSync.locales.length + ', 1fr)' }"
+    *ngIf="state.pageSync?.hasRows"
+  >
+    <div class="app-translations-header app-translations-cell">
+      <h3>
+        <span class="app-icon-key-solid app-translations-header-icon"></span>
+        {{ 'TRANSLATIONS.TABLE.KEY_COLUMN' | translate }}
+      </h3>
     </div>
+    <div
+      *ngFor="let locale of state.newSearchRequestSync.locales"
+      class="app-translations-header app-translations-cell"
+    >
+      <h3>
+        <span [class]="locale | translationLocaleIcon" class="app-translations-header-icon"></span>
+        {{ locale.displayName }}
+      </h3>
+    </div>
+    <ng-container *ngFor="let rowForm of rows; let rowIndex = index">
+      <ng-container [ngSwitch]="getRowType(rowForm)">
+        <div
+          class="{{ spreadRowClass }} app-translations-cell app-translations-workspace-row"
+          *ngSwitchCase="RowType.WORKSPACE"
+        >
+          <app-translations-workspace-row [workspace]="getWorkspace(rowForm) | async"></app-translations-workspace-row>
+        </div>
+        <div
+          class="{{ spreadRowClass }} app-translations-cell app-translations-bundle-file-row"
+          *ngSwitchCase="RowType.BUNDLE_FILE"
+        >
+          <app-translations-bundle-file-row
+            [bundleFile]="getBundleFile(rowForm) | async"
+          ></app-translations-bundle-file-row>
+        </div>
+        <ng-container *ngSwitchCase="RowType.BUNDLE_KEY">
+          <div class="app-translations-bundle-key-column app-translations-cell app-translations-translation-row">
+            <div
+              class="app-translations-bundle-key-column-inner"
+              [matTooltip]="getBundleKey(rowForm)"
+              [matTooltipPosition]="'right'"
+              matTooltipClass="app-translations-bundle-key-tooltip"
+            >
+              {{ getBundleKey(rowForm) }}
+            </div>
+          </div>
+          <div
+            *ngFor="
+              let cellForm of getRowTranslations(rowForm);
+              let columnIndex = index;
+              trackBy: trackByFn.bind(this, rowIndex)
+            "
+            class="app-translations-translation-column app-translations-cell app-translations-translation-row"
+          >
+            <app-translation-editing-cell [form]="cellForm"></app-translation-editing-cell>
+          </div>
+        </ng-container>
+      </ng-container>
+    </ng-container>
+  </div>
 </ng-container>
 
 <div class="app-centered-single-item" *ngIf="state.loading | async">
-    <mat-progress-bar mode="indeterminate" color="primary"></mat-progress-bar>
+  <mat-progress-bar mode="indeterminate" color="primary"></mat-progress-bar>
 </div>

@@ -1,65 +1,68 @@
 <div class="app-snapshot-loader" *ngIf="restoreInProgress">
-    <mat-spinner [diameter]="60"></mat-spinner>
+  <mat-spinner [diameter]="60"></mat-spinner>
 </div>
 
 <div class="app-snapshot-header">
-    <app-snapshot-creation-form></app-snapshot-creation-form>
-    <app-snapshot-import-form></app-snapshot-import-form>
+  <app-snapshot-creation-form></app-snapshot-creation-form>
+  <app-snapshot-import-form></app-snapshot-import-form>
 </div>
 
 <app-table [dataSource]="dataSource">
-    <app-table-header-row>
-        <app-table-header [columnId]="'createdOn'"
-                          [columnGridDef]="'minmax(150px, 1fr)'">
-            <p>{{'ADMIN.SNAPSHOTS.TABLE.CREATED_ON' | translate}}</p>
-        </app-table-header>
-        <app-table-header [columnId]="'comment'"
-                          [columnGridDef]="'minmax(200px, 3fr)'">
-            <p>{{'ADMIN.SNAPSHOTS.TABLE.COMMENT' | translate}}</p>
-        </app-table-header>
-        <app-table-header [columnId]="'createdBy'"
-                          [columnGridDef]="'minmax(200px, 2fr)'">
-            <p>{{'ADMIN.SNAPSHOTS.TABLE.CREATED_BY' | translate}}</p>
-        </app-table-header>
-        <app-table-header [columnId]="'action'"
-                          [columnGridDef]="'150px'">
-            <p>{{'ADMIN.SNAPSHOTS.TABLE.ACTION' | translate}}</p>
-        </app-table-header>
-    </app-table-header-row>
+  <app-table-header-row>
+    <app-table-header [columnId]="'createdOn'" [columnGridDef]="'minmax(150px, 1fr)'">
+      <p>{{ 'ADMIN.SNAPSHOTS.TABLE.CREATED_ON' | translate }}</p>
+    </app-table-header>
+    <app-table-header [columnId]="'comment'" [columnGridDef]="'minmax(200px, 3fr)'">
+      <p>{{ 'ADMIN.SNAPSHOTS.TABLE.COMMENT' | translate }}</p>
+    </app-table-header>
+    <app-table-header [columnId]="'createdBy'" [columnGridDef]="'minmax(200px, 2fr)'">
+      <p>{{ 'ADMIN.SNAPSHOTS.TABLE.CREATED_BY' | translate }}</p>
+    </app-table-header>
+    <app-table-header [columnId]="'action'" [columnGridDef]="'150px'">
+      <p>{{ 'ADMIN.SNAPSHOTS.TABLE.ACTION' | translate }}</p>
+    </app-table-header>
+  </app-table-header-row>
 
-    <app-table-row>
-        <app-table-cell [columnId]="'createdOn'" [template]="createdOn">
-            <ng-template let-snapshot="element" #createdOn>
-                <p>{{snapshot.createdOn | date:  'short' }}</p>
-            </ng-template>
-        </app-table-cell>
-        <app-table-cell [columnId]="'comment'" [template]="comment">
-            <ng-template let-snapshot="element" #comment>
-                <p class="app-table-text-wrapped">{{snapshot.comment}}</p>
-            </ng-template>
-        </app-table-cell>
-        <app-table-cell [columnId]="'createdBy'" [template]="createdBy">
-            <ng-template let-snapshot="element" #createdBy>
-                <p>{{snapshot.createdBy}}</p>
-            </ng-template>
-        </app-table-cell>
-        <app-table-cell [columnId]="'action'" [template]="action">
-            <ng-template let-snapshot="element" #action>
-                <app-restore-button class="app-table-action"
-                                    (restore)="onRestore(snapshot)"
-                                    [restoreInProgress]="restoreInProgress"
-                                    [confirmationMessage]="'ADMIN.SNAPSHOTS.TABLE.RESTORE_CONFIRMATION_MESSAGE' | translate:{snapshot: snapshot.createdOn | date: 'long'}">
-                </app-restore-button>
-                <app-download-button class="app-table-action"
-                                     (download)="onDownload(snapshot)">
-                </app-download-button>
-                <app-form-delete-button
-                        class="app-table-action"
-                        (delete)="onDelete(snapshot)"
-                        [deleteInProgress]="deleteInProgress"
-                        [confirmationMessage]="'ADMIN.SNAPSHOTS.TABLE.DELETE_CONFIRMATION_MESSAGE' | translate:{snapshot: snapshot.createdOn | date: 'long'}">
-                </app-form-delete-button>
-            </ng-template>
-        </app-table-cell>
-    </app-table-row>
+  <app-table-row>
+    <app-table-cell [columnId]="'createdOn'" [template]="createdOn">
+      <ng-template let-snapshot="element" #createdOn>
+        <p>{{ snapshot.createdOn | date: 'short' }}</p>
+      </ng-template>
+    </app-table-cell>
+    <app-table-cell [columnId]="'comment'" [template]="comment">
+      <ng-template let-snapshot="element" #comment>
+        <p class="app-table-text-wrapped">{{ snapshot.comment }}</p>
+      </ng-template>
+    </app-table-cell>
+    <app-table-cell [columnId]="'createdBy'" [template]="createdBy">
+      <ng-template let-snapshot="element" #createdBy>
+        <p>{{ snapshot.createdBy }}</p>
+      </ng-template>
+    </app-table-cell>
+    <app-table-cell [columnId]="'action'" [template]="action">
+      <ng-template let-snapshot="element" #action>
+        <app-restore-button
+          class="app-table-action"
+          (restore)="onRestore(snapshot)"
+          [restoreInProgress]="restoreInProgress"
+          [confirmationMessage]="
+            'ADMIN.SNAPSHOTS.TABLE.RESTORE_CONFIRMATION_MESSAGE'
+              | translate: { snapshot: snapshot.createdOn | date: 'long' }
+          "
+        >
+        </app-restore-button>
+        <app-download-button class="app-table-action" (download)="onDownload(snapshot)"> </app-download-button>
+        <app-form-delete-button
+          class="app-table-action"
+          (delete)="onDelete(snapshot)"
+          [deleteInProgress]="deleteInProgress"
+          [confirmationMessage]="
+            'ADMIN.SNAPSHOTS.TABLE.DELETE_CONFIRMATION_MESSAGE'
+              | translate: { snapshot: snapshot.createdOn | date: 'long' }
+          "
+        >
+        </app-form-delete-button>
+      </ng-template>
+    </app-table-cell>
+  </app-table-row>
 </app-table>

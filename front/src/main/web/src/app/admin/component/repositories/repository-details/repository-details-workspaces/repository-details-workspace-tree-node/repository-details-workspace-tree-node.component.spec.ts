@@ -8,9 +8,8 @@ describe('RepositoryDetailsWorkspaceTreeNodeComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ RepositoryDetailsWorkspaceTreeNodeComponent ]
-    })
-    .compileComponents();
+      declarations: [RepositoryDetailsWorkspaceTreeNodeComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

@@ -1,12 +1,11 @@
 <button mat-fab [color]="color" [ngClass]="class" [disabled]="disabled" (click)="onItemClick($event)">
-    <ng-content></ng-content>
+  <ng-content></ng-content>
 </button>
 <input
-    #fileInput
-    type="file"
-    hidden
-    (change)="onFilesImport($event.target.files)"
-    [accept]="getAcceptTypes()"
-    (click)="onInputClick($event)"
+  #fileInput
+  type="file"
+  hidden
+  (change)="onFilesImport($event.target.files)"
+  [accept]="getAcceptTypes()"
+  (click)="onInputClick($event)"
 />
-

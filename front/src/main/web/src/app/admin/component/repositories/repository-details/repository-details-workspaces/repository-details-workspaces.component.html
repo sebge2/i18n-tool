@@ -1,47 +1,60 @@
-<app-card [maxSizePx]="900" [title]="'ADMIN.REPOSITORIES.DETAILS_CARD.CARD_TITLE' | translate"
-          [headerMatIcon]="'sources'">
-    <app-card-header-actions>
-        <app-more-actions-button [actionInProgress]="moreActionInProgress" *ngIf="repository.status === RepositoryStatus.INITIALIZED">
-            <app-more-action-item-button *hasRepositoryAccess="repository.id">
-                <button mat-menu-item (click)="onSynchronize()">
-                    <mat-icon>sync</mat-icon>
-                    <span>{{'ADMIN.REPOSITORIES.DETAILS_CARD.ACTIONS.SYNCHRONIZE' | translate}}</span>
-                </button>
-            </app-more-action-item-button>
-            <app-more-action-item-button>
-                <button mat-menu-item (click)="onOpenTranslationsConfig()">
-                    <mat-icon>rule_folder</mat-icon>
-                    <span>{{'ADMIN.REPOSITORIES.DETAILS_CARD.ACTIONS.TRANSLATIONS_CONFIGURATION' | translate}}</span>
-                </button>
-            </app-more-action-item-button>
-        </app-more-actions-button>
-    </app-card-header-actions>
-    <app-card-content>
-        <div style="margin-top: 20px">
-            <div *ngIf="repository.status === RepositoryStatus.NOT_INITIALIZED || repository.status === RepositoryStatus.INITIALIZATION_ERROR">
-                <div class="app-centered-container">
-                    <div class="app-centered-container-child">
-                        <div class="app-centered-container-item">
-                            <app-download-button (download)="onInitialize()"
-                                                 [initInProgress]="initInProgress"
-                                                 [buttonClass]="'xlarge'"
-                                                 *hasRepositoryAccess="repository.id">
-                            </app-download-button>
-                        </div>
-                        <div class="app-centered-container-item" *ngIf="!initInProgress">
-                            {{'ADMIN.REPOSITORIES.DETAILS_CARD.PLEASE_INITIALIZE' | translate }}
-                        </div>
-                    </div>
-                </div>
+<app-card
+  [maxSizePx]="900"
+  [title]="'ADMIN.REPOSITORIES.DETAILS_CARD.CARD_TITLE' | translate"
+  [headerMatIcon]="'sources'"
+>
+  <app-card-header-actions>
+    <app-more-actions-button
+      [actionInProgress]="moreActionInProgress"
+      *ngIf="repository.status === RepositoryStatus.INITIALIZED"
+    >
+      <app-more-action-item-button *hasRepositoryAccess="repository.id">
+        <button mat-menu-item (click)="onSynchronize()">
+          <mat-icon>sync</mat-icon>
+          <span>{{ 'ADMIN.REPOSITORIES.DETAILS_CARD.ACTIONS.SYNCHRONIZE' | translate }}</span>
+        </button>
+      </app-more-action-item-button>
+      <app-more-action-item-button>
+        <button mat-menu-item (click)="onOpenTranslationsConfig()">
+          <mat-icon>rule_folder</mat-icon>
+          <span>{{ 'ADMIN.REPOSITORIES.DETAILS_CARD.ACTIONS.TRANSLATIONS_CONFIGURATION' | translate }}</span>
+        </button>
+      </app-more-action-item-button>
+    </app-more-actions-button>
+  </app-card-header-actions>
+  <app-card-content>
+    <div style="margin-top: 20px">
+      <div
+        *ngIf="
+          repository.status === RepositoryStatus.NOT_INITIALIZED ||
+          repository.status === RepositoryStatus.INITIALIZATION_ERROR
+        "
+      >
+        <div class="app-centered-container">
+          <div class="app-centered-container-child">
+            <div class="app-centered-container-item">
+              <app-download-button
+                (download)="onInitialize()"
+                [initInProgress]="initInProgress"
+                [buttonClass]="'xlarge'"
+                *hasRepositoryAccess="repository.id"
+              >
+              </app-download-button>
             </div>
-            <div *ngIf="repository.status === RepositoryStatus.INITIALIZED">
-                <app-tree
-                        [treeNodeDataSource]="workspacesDataSource"
-                        [nodeComponent]="RepositoryDetailsWorkspaceTreeNodeComponent">
-                </app-tree>
+            <div class="app-centered-container-item" *ngIf="!initInProgress">
+              {{ 'ADMIN.REPOSITORIES.DETAILS_CARD.PLEASE_INITIALIZE' | translate }}
             </div>
+          </div>
         </div>
-    </app-card-content>
-    <app-card-actions>
-    </app-card-actions>
+      </div>
+      <div *ngIf="repository.status === RepositoryStatus.INITIALIZED">
+        <app-tree
+          [treeNodeDataSource]="workspacesDataSource"
+          [nodeComponent]="RepositoryDetailsWorkspaceTreeNodeComponent"
+        >
+        </app-tree>
+      </div>
+    </div>
+  </app-card-content>
+  <app-card-actions> </app-card-actions>
 </app-card>

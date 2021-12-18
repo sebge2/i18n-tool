@@ -1,46 +1,46 @@
 <app-card [maxSizePx]="700">
-    <app-card-content>
-        <form [formGroup]="form" (ngSubmit)="onSave()">
-            <button type="submit" style="display:none">hidden submit</button>
-            <div fxLayout fxLayoutAlign="start start" fxLayoutGap="30px">
-                <div class="preferences-icon">
-                    <mat-icon>settings</mat-icon>
-                </div>
-                <div>
-                    <p>
-                        <mat-form-field appearance="standard">
-                            <mat-label>{{'PREFERENCES.TOOL_LOCALE.LABEL' | translate}}</mat-label>
-                            <mat-select formControlName="toolLocale">
-                                <mat-select-trigger>
-                                    <span [class]="selectedToolLocale | toolLocaleIcon"></span> {{selectedToolLocale.displayName}}
-                                </mat-select-trigger>
-                                <mat-option *ngFor="let toolLocale of toolLocaleService.getAvailableToolLocales()"
-                                            [value]="toolLocale">
-                                    <span [class]="toolLocale | toolLocaleIcon"></span> {{toolLocale.displayName}}
-                                </mat-option>
-                            </mat-select>
-                            <mat-hint *ngIf="autoDetectedToolLocale">
-                                {{'PREFERENCES.TOOL_LOCALE.AUTO_DETECTED' | translate}}
-                            </mat-hint>
-                        </mat-form-field>
-                    </p>
-                    <p>
-                        <mat-form-field appearance="standard">
-                            <app-translation-locale-selector
-                                    formControlName="preferredLocales"
-                                    [labelKey]="'PREFERENCES.PREFERRED_LOCALES.LABEL'">
-                            </app-translation-locale-selector>
-                            <mat-hint *ngIf="autoDetectedPreferredLocales">
-                                {{'PREFERENCES.PREFERRED_LOCALES.AUTO_DETECTED' | translate}}
-                            </mat-hint>
-                        </mat-form-field>
-                    </p>
-                </div>
-            </div>
-        </form>
-    </app-card-content>
-    <app-card-actions>
-        <app-form-cancel-button [form]="form" [cancelInProgress]="loading" (reset)="resetForm()"></app-form-cancel-button>
-        <app-form-save-button [form]="form" [saveInProgress]="loading" (save)="onSave()"></app-form-save-button>
-    </app-card-actions>
+  <app-card-content>
+    <form [formGroup]="form" (ngSubmit)="onSave()">
+      <button type="submit" style="display: none">hidden submit</button>
+      <div fxLayout fxLayoutAlign="start start" fxLayoutGap="30px">
+        <div class="preferences-icon">
+          <mat-icon>settings</mat-icon>
+        </div>
+        <div>
+          <p>
+            <mat-form-field appearance="standard">
+              <mat-label>{{ 'PREFERENCES.TOOL_LOCALE.LABEL' | translate }}</mat-label>
+              <mat-select formControlName="toolLocale">
+                <mat-select-trigger>
+                  <span [class]="selectedToolLocale | toolLocaleIcon"></span> {{ selectedToolLocale.displayName }}
+                </mat-select-trigger>
+                <mat-option *ngFor="let toolLocale of toolLocaleService.getAvailableToolLocales()" [value]="toolLocale">
+                  <span [class]="toolLocale | toolLocaleIcon"></span> {{ toolLocale.displayName }}
+                </mat-option>
+              </mat-select>
+              <mat-hint *ngIf="autoDetectedToolLocale">
+                {{ 'PREFERENCES.TOOL_LOCALE.AUTO_DETECTED' | translate }}
+              </mat-hint>
+            </mat-form-field>
+          </p>
+          <p>
+            <mat-form-field appearance="standard">
+              <app-translation-locale-selector
+                formControlName="preferredLocales"
+                [labelKey]="'PREFERENCES.PREFERRED_LOCALES.LABEL'"
+              >
+              </app-translation-locale-selector>
+              <mat-hint *ngIf="autoDetectedPreferredLocales">
+                {{ 'PREFERENCES.PREFERRED_LOCALES.AUTO_DETECTED' | translate }}
+              </mat-hint>
+            </mat-form-field>
+          </p>
+        </div>
+      </div>
+    </form>
+  </app-card-content>
+  <app-card-actions>
+    <app-form-cancel-button [form]="form" [cancelInProgress]="loading" (reset)="resetForm()"></app-form-cancel-button>
+    <app-form-save-button [form]="form" [saveInProgress]="loading" (save)="onSave()"></app-form-save-button>
+  </app-card-actions>
 </app-card>

@@ -1,24 +1,21 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 @Component({
-    selector: 'app-card-grid',
-    templateUrl: './card-grid.component.html',
-    styleUrls: ['./card-grid.component.css']
+  selector: 'app-card-grid',
+  templateUrl: './card-grid.component.html',
+  styleUrls: ['./card-grid.component.css'],
 })
 export class CardGridComponent implements OnInit {
+  @Input() public allowAdd = true;
+  @Input() public layout = 'flex-start';
 
-    @Input() public allowAdd = true;
-    @Input() public layout = 'flex-start';
+  @Output() public add = new EventEmitter<void>();
 
-    @Output() public add = new EventEmitter<void>();
+  constructor() {}
 
-    constructor() {
-    }
+  ngOnInit() {}
 
-    ngOnInit() {
-    }
-
-    public onAdd() {
-        this.add.emit();
-    }
+  public onAdd() {
+    this.add.emit();
+  }
 }

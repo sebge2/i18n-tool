@@ -8,9 +8,8 @@ describe('WizardStepComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ WizardStepComponent ]
-    })
-    .compileComponents();
+      declarations: [WizardStepComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

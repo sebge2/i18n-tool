@@ -8,9 +8,8 @@ describe('TranslationKeyPatternInputComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ TranslationStringPatternInputComponent ]
-    })
-    .compileComponents();
+      declarations: [TranslationStringPatternInputComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

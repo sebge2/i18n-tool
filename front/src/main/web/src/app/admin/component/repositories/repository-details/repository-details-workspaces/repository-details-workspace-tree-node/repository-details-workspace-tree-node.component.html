@@ -1,16 +1,12 @@
 <div [ngSwitch]="node.level">
-    <ng-template [ngSwitchCase]="1">
-        <app-repository-details-workspace-node [node]="node.data" [loading]="loading">
-        </app-repository-details-workspace-node>
-    </ng-template>
-    <ng-template [ngSwitchCase]="2">
-        <app-repository-details-bundle-file-node [node]="node.data">
-        </app-repository-details-bundle-file-node>
-    </ng-template>
-    <ng-template [ngSwitchCase]="3">
-        <app-repository-details-bundle-file-entry-node [node]="node.data">
-        </app-repository-details-bundle-file-entry-node>
-    </ng-template>
+  <ng-template [ngSwitchCase]="1">
+    <app-repository-details-workspace-node [node]="node.data" [loading]="loading">
+    </app-repository-details-workspace-node>
+  </ng-template>
+  <ng-template [ngSwitchCase]="2">
+    <app-repository-details-bundle-file-node [node]="node.data"> </app-repository-details-bundle-file-node>
+  </ng-template>
+  <ng-template [ngSwitchCase]="3">
+    <app-repository-details-bundle-file-entry-node [node]="node.data"> </app-repository-details-bundle-file-entry-node>
+  </ng-template>
 </div>
-
-

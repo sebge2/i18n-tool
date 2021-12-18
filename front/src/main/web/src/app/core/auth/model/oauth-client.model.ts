@@ -1,6 +1,5 @@
 export enum OAuthClient {
+  GOOGLE = 'GOOGLE',
 
-    GOOGLE = "GOOGLE",
-
-    GITHUB = "GITHUB"
+  GITHUB = 'GITHUB',
 }

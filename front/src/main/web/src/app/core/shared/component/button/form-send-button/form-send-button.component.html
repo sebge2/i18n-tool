@@ -1,11 +1,13 @@
-<button mat-icon-button
-        class="app-button"
-        color="primary"
-        [disabled]="!form.valid || !form.dirty || sendInProgress || disabled"
-        (click)="onSend()"
-        [class.spinner]="sendInProgress">
-    <mat-icon *ngIf="sendInProgress">
-        <mat-spinner color="primary" diameter="20"></mat-spinner>
-    </mat-icon>
-    <mat-icon [fontIcon]="'app-icon-paper-plane-solid'" *ngIf="!sendInProgress"></mat-icon>
+<button
+  mat-icon-button
+  class="app-button"
+  color="primary"
+  [disabled]="!form.valid || !form.dirty || sendInProgress || disabled"
+  (click)="onSend()"
+  [class.spinner]="sendInProgress"
+>
+  <mat-icon *ngIf="sendInProgress">
+    <mat-spinner color="primary" diameter="20"></mat-spinner>
+  </mat-icon>
+  <mat-icon [fontIcon]="'app-icon-paper-plane-solid'" *ngIf="!sendInProgress"></mat-icon>
 </button>

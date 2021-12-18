@@ -8,9 +8,8 @@ describe('WorkspaceBundleFileSelectorComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ WorkspaceBundleFileSelectorComponent ]
-    })
-    .compileComponents();
+      declarations: [WorkspaceBundleFileSelectorComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

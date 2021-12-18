@@ -1,118 +1,131 @@
-<app-card [maxSizePx]="350" [title]="'ADMIN.REPOSITORIES.CONFIG_CARD.CARD_TITLE' | translate"
-          [headerMatIcon]="'settings'">
-    <app-card-header-actions>
-        <app-more-actions-button>
-            <app-more-action-item-button *ngIf="repository.type === RepositoryType.GITHUB">
-                <button mat-menu-item (click)="onUpdateGitHubAccessKey()">
-                    <mat-icon>vpn_key</mat-icon>
-                    <span>{{'ADMIN.REPOSITORIES.CONFIG_CARD.ACTION_UPDATE_GITHUB_ACCESS_KEY' | translate}}</span>
-                </button>
-            </app-more-action-item-button>
-            <app-more-action-item-button *ngIf="repository.type === RepositoryType.GITHUB">
-                <button mat-menu-item (click)="onUpdateGitHubWebHookSecret()">
-                    <mat-icon>security</mat-icon>
-                    <span>{{'ADMIN.REPOSITORIES.CONFIG_CARD.ACTION_UPDATE_GITHUB_WEB_HOOK_SECRET' | translate}}</span>
-                </button>
-            </app-more-action-item-button>
+<app-card
+  [maxSizePx]="350"
+  [title]="'ADMIN.REPOSITORIES.CONFIG_CARD.CARD_TITLE' | translate"
+  [headerMatIcon]="'settings'"
+>
+  <app-card-header-actions>
+    <app-more-actions-button>
+      <app-more-action-item-button *ngIf="repository.type === RepositoryType.GITHUB">
+        <button mat-menu-item (click)="onUpdateGitHubAccessKey()">
+          <mat-icon>vpn_key</mat-icon>
+          <span>{{ 'ADMIN.REPOSITORIES.CONFIG_CARD.ACTION_UPDATE_GITHUB_ACCESS_KEY' | translate }}</span>
+        </button>
+      </app-more-action-item-button>
+      <app-more-action-item-button *ngIf="repository.type === RepositoryType.GITHUB">
+        <button mat-menu-item (click)="onUpdateGitHubWebHookSecret()">
+          <mat-icon>security</mat-icon>
+          <span>{{ 'ADMIN.REPOSITORIES.CONFIG_CARD.ACTION_UPDATE_GITHUB_WEB_HOOK_SECRET' | translate }}</span>
+        </button>
+      </app-more-action-item-button>
 
-            <app-more-action-item-button *ngIf="repository.type === RepositoryType.GIT">
-                <button mat-menu-item (click)="onUpdateGitCredentials()">
-                    <mat-icon>security</mat-icon>
-                    <span>{{'ADMIN.REPOSITORIES.CONFIG_CARD.ACTION_UPDATE_GIT_CREDENTIALS' | translate}}</span>
-                </button>
-            </app-more-action-item-button>
-        </app-more-actions-button>
-    </app-card-header-actions>
-    <app-card-content>
-        <form [formGroup]="form" (ngSubmit)="onSave()" autocomplete="off">
-            <div [ngSwitch]="repository.type">
-                <ng-template [ngSwitchCase]="RepositoryType.GIT">
-                    <p>
-                        <mat-form-field appearance="standard">
-                            <mat-label>{{'ADMIN.REPOSITORIES.CONFIG_CARD.NAME_LABEL' | translate}}</mat-label>
-                            <input matInput formControlName="name" autocomplete="off">
-                            <mat-hint>{{'ADMIN.REPOSITORIES.CONFIG_CARD.NAME_HINT' | translate}}</mat-hint>
-                        </mat-form-field>
-                    </p>
-                    <p>
-                        <mat-form-field appearance="standard">
-                            <mat-label>{{'ADMIN.REPOSITORIES.CONFIG_CARD.LOCATION_LABEL' | translate}}</mat-label>
-                            <input matInput formControlName="location" autocomplete="off">
-                            <mat-hint>{{'ADMIN.REPOSITORIES.CONFIG_CARD.LOCATION_HINT' | translate}}</mat-hint>
-                        </mat-form-field>
-                    </p>
-                    <p>
-                        <mat-form-field appearance="standard">
-                            <mat-label>{{'ADMIN.REPOSITORIES.CONFIG_CARD.DEFAULT_BRANCH_LABEL' | translate}}</mat-label>
-                            <input matInput formControlName="defaultBranch" autocomplete="off">
-                            <mat-hint>{{'ADMIN.REPOSITORIES.CONFIG_CARD.DEFAULT_BRANCH_HINT' | translate}}</mat-hint>
-                        </mat-form-field>
-                    </p>
-                    <p>
-                        <mat-form-field appearance="standard">
-                            <mat-label>{{'ADMIN.REPOSITORIES.CONFIG_CARD.ALLOWED_BRANCHES_LABEL' | translate}}</mat-label>
-                            <input matInput formControlName="allowedBranches" autocomplete="off">
-                            <mat-hint>{{'ADMIN.REPOSITORIES.CONFIG_CARD.ALLOWED_BRANCHES_HINT' | translate}}</mat-hint>
-                        </mat-form-field>
-                    </p>
-                    <p>
-                        <mat-form-field appearance="standard" class="app-repository-config-auto-synchronized">
-                            <mat-checkbox formControlName="autoSynchronized" color="primary">
-                                {{'ADMIN.REPOSITORIES.CONFIG_CARD.AUTO_SYNCHRONIZED_LABEL' | translate}}</mat-checkbox>
-                            <mat-hint>{{'ADMIN.REPOSITORIES.CONFIG_CARD.AUTO_SYNCHRONIZED_HINT' | translate}}</mat-hint>
-                            <input matInput  [hidden]="true">
-                        </mat-form-field>
-                    </p>
-                </ng-template>
-                <ng-template [ngSwitchCase]="RepositoryType.GITHUB">
-                    <p>
-                        <mat-form-field appearance="standard">
-                            <mat-label>{{'ADMIN.REPOSITORIES.CONFIG_CARD.NAME_LABEL' | translate}}</mat-label>
-                            <input matInput formControlName="name" autocomplete="off">
-                            <mat-hint>{{'ADMIN.REPOSITORIES.CONFIG_CARD.NAME_HINT' | translate}}</mat-hint>
-                        </mat-form-field>
-                    </p>
-                    <p>
-                        <mat-form-field appearance="standard">
-                            <mat-label>{{'ADMIN.REPOSITORIES.CONFIG_CARD.DEFAULT_BRANCH_LABEL' | translate}}</mat-label>
-                            <input matInput formControlName="defaultBranch" autocomplete="off">
-                            <mat-hint>{{'ADMIN.REPOSITORIES.CONFIG_CARD.DEFAULT_BRANCH_HINT' | translate}}</mat-hint>
-                        </mat-form-field>
-                    </p>
-                    <p>
-                        <mat-form-field appearance="standard">
-                            <mat-label>{{'ADMIN.REPOSITORIES.CONFIG_CARD.ALLOWED_BRANCHES_LABEL' | translate}}</mat-label>
-                            <input matInput formControlName="allowedBranches" autocomplete="off">
-                            <mat-hint>{{'ADMIN.REPOSITORIES.CONFIG_CARD.ALLOWED_BRANCHES_HINT' | translate}}</mat-hint>
-                        </mat-form-field>
-                    </p>
-                    <p>
-                        <mat-form-field appearance="standard" class="app-repository-config-auto-synchronized">
-                            <mat-checkbox formControlName="autoSynchronized" color="primary">
-                                {{'ADMIN.REPOSITORIES.CONFIG_CARD.AUTO_SYNCHRONIZED_LABEL' | translate}}</mat-checkbox>
-                            <mat-hint>{{'ADMIN.REPOSITORIES.CONFIG_CARD.AUTO_SYNCHRONIZED_HINT' | translate}}</mat-hint>
-                            <input matInput  [hidden]="true">
-                        </mat-form-field>
-                    </p>
-                </ng-template>
-            </div>
-        </form>
-    </app-card-content>
-    <app-card-actions>
-        <app-form-cancel-button [form]="form"
-                                [cancelInProgress]="cancelInProgress"
-                                [disabled]="actionInProgress"
-                                (reset)="onCancel()">
-        </app-form-cancel-button>
-        <app-form-delete-button [deleteInProgress]="deleteInProgress"
-                                [disabled]="!deleteAllowed || actionInProgress"
-                                (delete)="onDelete()"
-                                [confirmationMessage]="'ADMIN.REPOSITORIES.CONFIG_CARD.DELETE.CONFIRMATION_MESSAGE' | translate:{repository: repository.name}">
-        </app-form-delete-button>
-        <app-form-save-button [form]="form"
-                              [saveInProgress]="saveInProgress"
-                              [disabled]="actionInProgress"
-                              (save)="onSave()">
-        </app-form-save-button>
-    </app-card-actions>
+      <app-more-action-item-button *ngIf="repository.type === RepositoryType.GIT">
+        <button mat-menu-item (click)="onUpdateGitCredentials()">
+          <mat-icon>security</mat-icon>
+          <span>{{ 'ADMIN.REPOSITORIES.CONFIG_CARD.ACTION_UPDATE_GIT_CREDENTIALS' | translate }}</span>
+        </button>
+      </app-more-action-item-button>
+    </app-more-actions-button>
+  </app-card-header-actions>
+  <app-card-content>
+    <form [formGroup]="form" (ngSubmit)="onSave()" autocomplete="off">
+      <div [ngSwitch]="repository.type">
+        <ng-template [ngSwitchCase]="RepositoryType.GIT">
+          <p>
+            <mat-form-field appearance="standard">
+              <mat-label>{{ 'ADMIN.REPOSITORIES.CONFIG_CARD.NAME_LABEL' | translate }}</mat-label>
+              <input matInput formControlName="name" autocomplete="off" />
+              <mat-hint>{{ 'ADMIN.REPOSITORIES.CONFIG_CARD.NAME_HINT' | translate }}</mat-hint>
+            </mat-form-field>
+          </p>
+          <p>
+            <mat-form-field appearance="standard">
+              <mat-label>{{ 'ADMIN.REPOSITORIES.CONFIG_CARD.LOCATION_LABEL' | translate }}</mat-label>
+              <input matInput formControlName="location" autocomplete="off" />
+              <mat-hint>{{ 'ADMIN.REPOSITORIES.CONFIG_CARD.LOCATION_HINT' | translate }}</mat-hint>
+            </mat-form-field>
+          </p>
+          <p>
+            <mat-form-field appearance="standard">
+              <mat-label>{{ 'ADMIN.REPOSITORIES.CONFIG_CARD.DEFAULT_BRANCH_LABEL' | translate }}</mat-label>
+              <input matInput formControlName="defaultBranch" autocomplete="off" />
+              <mat-hint>{{ 'ADMIN.REPOSITORIES.CONFIG_CARD.DEFAULT_BRANCH_HINT' | translate }}</mat-hint>
+            </mat-form-field>
+          </p>
+          <p>
+            <mat-form-field appearance="standard">
+              <mat-label>{{ 'ADMIN.REPOSITORIES.CONFIG_CARD.ALLOWED_BRANCHES_LABEL' | translate }}</mat-label>
+              <input matInput formControlName="allowedBranches" autocomplete="off" />
+              <mat-hint>{{ 'ADMIN.REPOSITORIES.CONFIG_CARD.ALLOWED_BRANCHES_HINT' | translate }}</mat-hint>
+            </mat-form-field>
+          </p>
+          <p>
+            <mat-form-field appearance="standard" class="app-repository-config-auto-synchronized">
+              <mat-checkbox formControlName="autoSynchronized" color="primary">
+                {{ 'ADMIN.REPOSITORIES.CONFIG_CARD.AUTO_SYNCHRONIZED_LABEL' | translate }}</mat-checkbox
+              >
+              <mat-hint>{{ 'ADMIN.REPOSITORIES.CONFIG_CARD.AUTO_SYNCHRONIZED_HINT' | translate }}</mat-hint>
+              <input matInput [hidden]="true" />
+            </mat-form-field>
+          </p>
+        </ng-template>
+        <ng-template [ngSwitchCase]="RepositoryType.GITHUB">
+          <p>
+            <mat-form-field appearance="standard">
+              <mat-label>{{ 'ADMIN.REPOSITORIES.CONFIG_CARD.NAME_LABEL' | translate }}</mat-label>
+              <input matInput formControlName="name" autocomplete="off" />
+              <mat-hint>{{ 'ADMIN.REPOSITORIES.CONFIG_CARD.NAME_HINT' | translate }}</mat-hint>
+            </mat-form-field>
+          </p>
+          <p>
+            <mat-form-field appearance="standard">
+              <mat-label>{{ 'ADMIN.REPOSITORIES.CONFIG_CARD.DEFAULT_BRANCH_LABEL' | translate }}</mat-label>
+              <input matInput formControlName="defaultBranch" autocomplete="off" />
+              <mat-hint>{{ 'ADMIN.REPOSITORIES.CONFIG_CARD.DEFAULT_BRANCH_HINT' | translate }}</mat-hint>
+            </mat-form-field>
+          </p>
+          <p>
+            <mat-form-field appearance="standard">
+              <mat-label>{{ 'ADMIN.REPOSITORIES.CONFIG_CARD.ALLOWED_BRANCHES_LABEL' | translate }}</mat-label>
+              <input matInput formControlName="allowedBranches" autocomplete="off" />
+              <mat-hint>{{ 'ADMIN.REPOSITORIES.CONFIG_CARD.ALLOWED_BRANCHES_HINT' | translate }}</mat-hint>
+            </mat-form-field>
+          </p>
+          <p>
+            <mat-form-field appearance="standard" class="app-repository-config-auto-synchronized">
+              <mat-checkbox formControlName="autoSynchronized" color="primary">
+                {{ 'ADMIN.REPOSITORIES.CONFIG_CARD.AUTO_SYNCHRONIZED_LABEL' | translate }}</mat-checkbox
+              >
+              <mat-hint>{{ 'ADMIN.REPOSITORIES.CONFIG_CARD.AUTO_SYNCHRONIZED_HINT' | translate }}</mat-hint>
+              <input matInput [hidden]="true" />
+            </mat-form-field>
+          </p>
+        </ng-template>
+      </div>
+    </form>
+  </app-card-content>
+  <app-card-actions>
+    <app-form-cancel-button
+      [form]="form"
+      [cancelInProgress]="cancelInProgress"
+      [disabled]="actionInProgress"
+      (reset)="onCancel()"
+    >
+    </app-form-cancel-button>
+    <app-form-delete-button
+      [deleteInProgress]="deleteInProgress"
+      [disabled]="!deleteAllowed || actionInProgress"
+      (delete)="onDelete()"
+      [confirmationMessage]="
+        'ADMIN.REPOSITORIES.CONFIG_CARD.DELETE.CONFIRMATION_MESSAGE' | translate: { repository: repository.name }
+      "
+    >
+    </app-form-delete-button>
+    <app-form-save-button
+      [form]="form"
+      [saveInProgress]="saveInProgress"
+      [disabled]="actionInProgress"
+      (save)="onSave()"
+    >
+    </app-form-save-button>
+  </app-card-actions>
 </app-card>

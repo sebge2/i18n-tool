@@ -1,16 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import {ActivatedRoute, Params} from "@angular/router";
-import {map} from "rxjs/operators";
-import {Observable} from "rxjs";
+import { ActivatedRoute, Params } from '@angular/router';
+import { map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-error-standard',
   templateUrl: './error-standard.component.html',
-  styleUrls: ['./error-standard.component.css']
+  styleUrls: ['./error-standard.component.css'],
 })
 export class ErrorStandardComponent implements OnInit {
-
-  constructor(private route: ActivatedRoute) { }
+  constructor(private route: ActivatedRoute) {}
 
   private _statusCode: Observable<String>;
 

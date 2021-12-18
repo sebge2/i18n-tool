@@ -1,16 +1,13 @@
-import {Component, Input} from '@angular/core';
-import {Workspace} from "../../../../translations/model/workspace/workspace.model";
+import { Component, Input } from '@angular/core';
+import { Workspace } from '../../model/workspace/workspace.model';
 
 @Component({
-    selector: 'app-workspace-label',
-    templateUrl: './workspace-label.component.html',
-    styleUrls: ['./workspace-label.component.css']
+  selector: 'app-workspace-label',
+  templateUrl: './workspace-label.component.html',
+  styleUrls: ['./workspace-label.component.css'],
 })
 export class WorkspaceLabelComponent {
+  @Input() public workspace: Workspace;
 
-    @Input() public workspace: Workspace;
-
-    constructor() {
-    }
-
+  constructor() {}
 }

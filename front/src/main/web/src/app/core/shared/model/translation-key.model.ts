@@ -1,9 +1,7 @@
 export class TranslationKey {
+  public static forKey(key: string): TranslationKey {
+    return new TranslationKey(key);
+  }
 
-    public static forKey(key: string): TranslationKey {
-        return new TranslationKey(key);
-    }
-
-    constructor(public key: string) {
-    }
+  constructor(public key: string) {}
 }

@@ -1,15 +1,15 @@
 :host ::ng-deep table {
-    min-width: 150px;
-    width: 90%;
-    margin: 20px auto;
+  min-width: 150px;
+  width: 90%;
+  margin: 20px auto;
 }
 
 :host ::ng-deep .app-table-column-actions {
-    width: 5px !important;
-    padding: 0 !important;
+  width: 5px !important;
+  padding: 0 !important;
 }
 
 .mat-form-field {
-    width: 100%;
-    margin-bottom: 5px;
+  width: 100%;
+  margin-bottom: 5px;
 }

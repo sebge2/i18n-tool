@@ -1,49 +1,61 @@
-<div class="app-table mat-elevation-z8"
-     [style.grid-template-columns]="headerComponent.tableStyle"
-     [class.app-table-autoscroll]="autoscroll"
-     *ngIf="headerComponent.headers && cells">
-    <ng-container *ngIf="topHeaderComponent">
-        <div [style.grid-column]="headerComponent.expandedRowStyle">
-            <ng-container *ngTemplateOutlet="topHeaderComponent.template"></ng-container>
-        </div>
+<div
+  class="app-table mat-elevation-z8"
+  [style.grid-template-columns]="headerComponent.tableStyle"
+  [class.app-table-autoscroll]="autoscroll"
+  *ngIf="headerComponent.headers && cells"
+>
+  <ng-container *ngIf="topHeaderComponent">
+    <div [style.grid-column]="headerComponent.expandedRowStyle">
+      <ng-container *ngTemplateOutlet="topHeaderComponent.template"></ng-container>
+    </div>
+  </ng-container>
+
+  <ng-container *ngFor="let column of headerComponent.displayedColumns; let i = index">
+    <div
+      [ngClass]="'app-table-column-' + column"
+      class="app-table-cell app-table-cell-header"
+      [class.app-table-cell-header-sticky]="headerComponent.sticky"
+    >
+      <ng-container *ngTemplateOutlet="getHeaderComponent(column).template"></ng-container>
+    </div>
+  </ng-container>
+
+  <ng-container *ngFor="let element of dataSource.data; let rowIndex = index">
+    <ng-container *ngFor="let column of headerComponent.displayedColumns; let columnIndex = index">
+      <div
+        [ngClass]="['app-table-column-' + column, 'app-table-cell', 'app-table-cell-element']"
+        [class.app-table-cell-expandable]="hasExpandedRow"
+        [class.app-table-cell-expanded]="element === expandedElement"
+        [class.app-table-cell-non-expanded]="element !== expandedElement"
+        [class.app-table-cell-hover]="element === hoveredElement"
+        [class.app-table-cell-non-hover]="element !== hoveredElement"
+        (mouseover)="onMouseOver(element)"
+        (mouseleave)="onMouseLeave(element)"
+        (click)="onToggleExpand(element)"
+      >
+        <ng-container
+          *ngTemplateOutlet="
+            getCellComponent(column).template;
+            context: { element: element, rowIndex: rowIndex, columnIndex: columnIndex }
+          "
+        ></ng-container>
+      </div>
     </ng-container>
 
-    <ng-container *ngFor="let column of headerComponent.displayedColumns; let i = index">
-        <div [ngClass]="'app-table-column-' + column"
-             class="app-table-cell app-table-cell-header"
-             [class.app-table-cell-header-sticky]="headerComponent.sticky"
-        >
-            <ng-container *ngTemplateOutlet="getHeaderComponent(column).template"></ng-container>
-        </div>
-    </ng-container>
-
-    <ng-container *ngFor="let element of dataSource.data; let rowIndex = index;">
-        <ng-container *ngFor="let column of headerComponent.displayedColumns; let columnIndex = index">
-            <div [ngClass]="[('app-table-column-' + column), 'app-table-cell', 'app-table-cell-element']"
-                 [class.app-table-cell-expandable]="hasExpandedRow"
-                 [class.app-table-cell-expanded]="element === expandedElement"
-                 [class.app-table-cell-non-expanded]="element !== expandedElement"
-                 [class.app-table-cell-hover]="element === hoveredElement"
-                 [class.app-table-cell-non-hover]="element !== hoveredElement"
-                 (mouseover)="onMouseOver(element)"
-                 (mouseleave)="onMouseLeave(element)"
-                 (click)="onToggleExpand(element)">
-                <ng-container *ngTemplateOutlet="getCellComponent(column).template; context: {element: element, rowIndex: rowIndex, columnIndex: columnIndex}"></ng-container>
-            </div>
-        </ng-container>
-
-        <div [class.app-table-cell-details-expanded]="element === expandedElement"
-             [class.app-table-cell-details-non-expanded]="element !== expandedElement"
-             [class.app-table-cell-hover]="element === hoveredElement"
-             [class.app-table-cell-non-hover]="element !== hoveredElement"
-             (mouseover)="onMouseOver(element)"
-             (mouseleave)="onMouseLeave(element)"
-             (click)="onToggleExpand(element)"
-             [style.grid-column]="headerComponent.expandedRowStyle"
-             *ngIf="hasExpandedRow">
-            <ng-container *ngIf="hasExpandedRow">
-                <ng-content *ngTemplateOutlet="getExpandedRowTemplate();  context: {element: element}"></ng-content>
-            </ng-container>
-        </div>
-    </ng-container>
+    <div
+      [class.app-table-cell-details-expanded]="element === expandedElement"
+      [class.app-table-cell-details-non-expanded]="element !== expandedElement"
+      [class.app-table-cell-hover]="element === hoveredElement"
+      [class.app-table-cell-non-hover]="element !== hoveredElement"
+      (mouseover)="onMouseOver(element)"
+      (mouseleave)="onMouseLeave(element)"
+      (click)="onToggleExpand(element)"
+      [style.grid-column]="headerComponent.expandedRowStyle"
+      *ngIf="hasExpandedRow"
+    >
+      <ng-container *ngIf="hasExpandedRow">
+        <ng-content *ngTemplateOutlet="getExpandedRowTemplate(); context: { element: element }"></ng-content>
+      </ng-container>
+    </div>
+  </ng-container>
 </div>

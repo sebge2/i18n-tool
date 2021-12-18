@@ -1,33 +1,29 @@
 <form [formGroup]="parts">
-    <mat-chip-list #localesList
-                   aria-orientation="horizontal"
-                   class="locales-list"
-                   [formControlName]="'list'">
-        <mat-chip
-                *ngFor="let locale of value"
-                [selectable]="true"
-                [removable]="true"
-                (removed)="remove(locale)">
-            <span [class]="locale | translationLocaleIcon" class="app-translation-locale-selector-icon"></span>
-            {{locale.displayName}}
-            <mat-icon matChipRemove>cancel</mat-icon>
-        </mat-chip>
+  <mat-chip-list #localesList aria-orientation="horizontal" class="locales-list" [formControlName]="'list'">
+    <mat-chip *ngFor="let locale of value" [selectable]="true" [removable]="true" (removed)="remove(locale)">
+      <span [class]="locale | translationLocaleIcon" class="app-translation-locale-selector-icon"></span>
+      {{ locale.displayName }}
+      <mat-icon matChipRemove>cancel</mat-icon>
+    </mat-chip>
 
-        <input
-                [placeholder]="labelKey | translate"
-                [formControlName]="'input'"
-                [matAutocomplete]="auto"
-                [matChipInputFor]="localesList"
-                [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-                [matChipInputAddOnBlur]="true"
-                (matChipInputTokenEnd)="onTokenEnd($event)">
-    </mat-chip-list>
-    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
-        <mat-option [value]="'ALL'">
-            <span class="app-icon-check-double-solid app-translation-locale-selector-all-icon"></span> {{'SHARED.FIELDS.LOCALE_SELECTOR.ALL' | translate}}
-        </mat-option>
-        <mat-option *ngFor="let locale of filteredLocales$ | async" [value]="locale">
-            <span [class]="locale | translationLocaleIcon" class="app-translation-locale-selector-icon"></span> {{locale.displayName}}
-        </mat-option>
-    </mat-autocomplete>
+    <input
+      [placeholder]="labelKey | translate"
+      [formControlName]="'input'"
+      [matAutocomplete]="auto"
+      [matChipInputFor]="localesList"
+      [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+      [matChipInputAddOnBlur]="true"
+      (matChipInputTokenEnd)="onTokenEnd($event)"
+    />
+  </mat-chip-list>
+  <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
+    <mat-option [value]="'ALL'">
+      <span class="app-icon-check-double-solid app-translation-locale-selector-all-icon"></span>
+      {{ 'SHARED.FIELDS.LOCALE_SELECTOR.ALL' | translate }}
+    </mat-option>
+    <mat-option *ngFor="let locale of filteredLocales$ | async" [value]="locale">
+      <span [class]="locale | translationLocaleIcon" class="app-translation-locale-selector-icon"></span>
+      {{ locale.displayName }}
+    </mat-option>
+  </mat-autocomplete>
 </form>

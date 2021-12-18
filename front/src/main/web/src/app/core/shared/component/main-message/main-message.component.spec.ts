@@ -1,27 +1,23 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import {MainMessageComponent} from './main-message.component';
+import { MainMessageComponent } from './main-message.component';
 
 describe('MainMessageComponent', () => {
-    let component: MainMessageComponent;
-    let fixture: ComponentFixture<MainMessageComponent>;
+  let component: MainMessageComponent;
+  let fixture: ComponentFixture<MainMessageComponent>;
 
-    beforeEach(async(() => {
-        TestBed
-            .configureTestingModule({
-                declarations: [
-                    MainMessageComponent
-                ]
-            })
-            .compileComponents();
+  beforeEach(async(() => {
+    TestBed.configureTestingModule({
+      declarations: [MainMessageComponent],
+    }).compileComponents();
 
-        fixture = TestBed.createComponent(MainMessageComponent);
-        component = fixture.componentInstance;
-    }));
+    fixture = TestBed.createComponent(MainMessageComponent);
+    component = fixture.componentInstance;
+  }));
 
-    it('should create', () => {
-        fixture.detectChanges();
+  it('should create', () => {
+    fixture.detectChanges();
 
-        expect(component).toBeTruthy(); // TODO issue-125
-    });
+    expect(component).toBeTruthy(); // TODO issue-125
+  });
 });

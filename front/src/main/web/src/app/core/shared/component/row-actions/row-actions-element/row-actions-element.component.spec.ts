@@ -8,9 +8,8 @@ describe('RowActionsElementComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ RowActionsElementComponent ]
-    })
-    .compileComponents();
+      declarations: [RowActionsElementComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

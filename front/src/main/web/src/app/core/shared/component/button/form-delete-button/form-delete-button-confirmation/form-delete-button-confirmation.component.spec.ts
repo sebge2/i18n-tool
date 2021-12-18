@@ -8,9 +8,8 @@ describe('FormDeleteButtonConfirmationComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ FormDeleteButtonConfirmationComponent ]
-    })
-    .compileComponents();
+      declarations: [FormDeleteButtonConfirmationComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

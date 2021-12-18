@@ -26,4 +26,19 @@ export * from './userPreferences.service';
 import { UserPreferencesService } from './userPreferences.service';
 export * from './workspace.service';
 import { WorkspaceService } from './workspace.service';
-export const APIS = [AuthenticationService, DictionaryService, EventService, GitHubService, PullRequestService, RepositoryService, ScheduledTaskService, SnapshotService, TranslationService, TranslationLocaleService, UserService, UserLiveSessionService, UserPreferencesService, WorkspaceService];
+export const APIS = [
+  AuthenticationService,
+  DictionaryService,
+  EventService,
+  GitHubService,
+  PullRequestService,
+  RepositoryService,
+  ScheduledTaskService,
+  SnapshotService,
+  TranslationService,
+  TranslationLocaleService,
+  UserService,
+  UserLiveSessionService,
+  UserPreferencesService,
+  WorkspaceService,
+];

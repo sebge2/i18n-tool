@@ -1,27 +1,23 @@
-import {DictionaryEntryDto} from "../../api";
-import {TranslationLocale} from "../../translations/model/translation-locale.model";
-import * as _ from "lodash";
+import { DictionaryEntryDto } from '../../api';
+import { TranslationLocale } from '@i18n-core-translation';
+import * as _ from 'lodash';
 
 export class DictionaryEntry {
+  public static fromDto(entryDto: DictionaryEntryDto): DictionaryEntry {
+    return new DictionaryEntry(entryDto.id, entryDto.translations);
+  }
 
-    public static fromDto(entryDto: DictionaryEntryDto): DictionaryEntry {
-        return new DictionaryEntry(entryDto.id, entryDto.translations);
-    }
+  constructor(public id: string, private _translations: { [key: string]: string }) {}
 
-    constructor(public id: string,
-                private _translations: { [key: string]: string }) {
-    }
+  public get localeIds(): string[] {
+    return _.keys(this._translations);
+  }
 
-    public get localeIds(): string[] {
-        return _.keys(this._translations)
-    }
+  public getTranslationForLocaleEntity(locale: TranslationLocale): string | undefined {
+    return this.getTranslationForLocale(locale.id);
+  }
 
-    public getTranslationForLocaleEntity(locale: TranslationLocale): string | undefined {
-        return this.getTranslationForLocale(locale.id);
-    }
-
-    public getTranslationForLocale(locale: string): string | undefined {
-        return this._translations[locale];
-    }
-
+  public getTranslationForLocale(locale: string): string | undefined {
+    return this._translations[locale];
+  }
 }

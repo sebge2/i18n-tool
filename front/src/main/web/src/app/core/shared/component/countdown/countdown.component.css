@@ -1,19 +1,19 @@
 .app-countdown {
-    position: relative;
-    float: left;
+  position: relative;
+  float: left;
 }
 
 .app-countdown h2 {
-    text-align:center;
-    position: absolute;
-    width: 100%;
+  text-align: center;
+  position: absolute;
+  width: 100%;
 }
 
 .app-countdown svg {
-    -webkit-transform: rotate(-90deg);
-    transform: rotate(-90deg);
+  -webkit-transform: rotate(-90deg);
+  transform: rotate(-90deg);
 }
 
 .app-countdown circle {
-    transition: all 1s linear;
+  transition: all 1s linear;
 }

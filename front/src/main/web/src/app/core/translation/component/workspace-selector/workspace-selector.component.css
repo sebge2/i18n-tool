@@ -1,13 +1,13 @@
 .mat-chip {
-    justify-content: space-between;
+  justify-content: space-between;
 }
 
 .workspaces-list {
-    width: 100%;
+  width: 100%;
 }
 
 .app-workspace-selector-all-icon {
-    margin-right: 5px;
-    position: relative;
-    top: 2px;
+  margin-right: 5px;
+  position: relative;
+  top: 2px;
 }

@@ -8,9 +8,8 @@ describe('GithubLinkButtonComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ GitHubLinkButtonComponent ]
-    })
-    .compileComponents();
+      declarations: [GitHubLinkButtonComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

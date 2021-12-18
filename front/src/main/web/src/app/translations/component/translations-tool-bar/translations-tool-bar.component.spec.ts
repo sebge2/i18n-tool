@@ -8,9 +8,8 @@ describe('TranslationsToolBarComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ TranslationsToolBarComponent ]
-    })
-    .compileComponents();
+      declarations: [TranslationsToolBarComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

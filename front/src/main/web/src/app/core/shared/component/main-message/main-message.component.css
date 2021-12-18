@@ -1,107 +1,107 @@
 * {
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 body {
-    padding: 0;
-    margin: 0;
+  padding: 0;
+  margin: 0;
 }
 
 #errorMessage {
-    position: relative;
-    height: 100vh;
+  position: relative;
+  height: 100vh;
 }
 
 #errorMessage .errorMessage {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    -webkit-transform: translate(-50%, -50%);
-    -ms-transform: translate(-50%, -50%);
-    transform: translate(-50%, -50%);
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
 }
 
 .errorMessage {
-    max-width: 520px;
-    width: 100%;
-    line-height: 1.4;
+  max-width: 520px;
+  width: 100%;
+  line-height: 1.4;
 }
 
-.errorMessage>div:first-child {
-    padding-left: 200px;
-    padding-top: 12px;
-    height: 170px;
-    margin-bottom: 20px;
+.errorMessage > div:first-child {
+  padding-left: 200px;
+  padding-top: 12px;
+  height: 170px;
+  margin-bottom: 20px;
 }
 
 .errorMessage .errorMessage-status {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 170px;
-    height: 170px;
-    background: #e01818;
-    border-radius: 7px;
-    -webkit-box-shadow: 0px 0px 0px 10px #e01818 inset, 0px 0px 0px 20px #fff inset;
-    box-shadow: 0px 0px 0px 10px #e01818 inset, 0px 0px 0px 20px #fff inset;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 170px;
+  height: 170px;
+  background: #e01818;
+  border-radius: 7px;
+  -webkit-box-shadow: 0px 0px 0px 10px #e01818 inset, 0px 0px 0px 20px #fff inset;
+  box-shadow: 0px 0px 0px 10px #e01818 inset, 0px 0px 0px 20px #fff inset;
 }
 
 .errorMessage .errorMessage-status h1 {
-    font-family: 'Chango', cursive;
-    color: #fff;
-    font-size: 118px;
-    margin: 0px;
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    -webkit-transform: translate(-50%, -50%);
-    -ms-transform: translate(-50%, -50%);
-    transform: translate(-50%, -50%);
-    display: inline-block;
-    height: 60px;
-    line-height: 60px;
+  font-family: 'Chango', cursive;
+  color: #fff;
+  font-size: 118px;
+  margin: 0px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  display: inline-block;
+  height: 60px;
+  line-height: 60px;
 }
 
 .errorMessage h2 {
-    font-family: 'Chango', cursive;
-    font-size: 68px;
-    color: #222;
-    font-weight: 400;
-    text-transform: uppercase;
-    margin: 0px;
-    line-height: 1.1;
+  font-family: 'Chango', cursive;
+  font-size: 68px;
+  color: #222;
+  font-weight: 400;
+  text-transform: uppercase;
+  margin: 0px;
+  line-height: 1.1;
 }
 
 .errorMessage p {
-    font-family: 'Montserrat', sans-serif;
-    font-size: 16px;
-    font-weight: 400;
-    color: #222;
-    margin-top: 5px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: #222;
+  margin-top: 5px;
 }
 
 .errorMessage a {
-    font-family: 'Montserrat', sans-serif;
-    color: #e01818;
-    font-weight: 400;
-    text-decoration: none;
+  font-family: 'Montserrat', sans-serif;
+  color: #e01818;
+  font-weight: 400;
+  text-decoration: none;
 }
 
 @media only screen and (max-width: 480px) {
-    .errorMessage {
-        padding-left: 15px;
-        padding-right: 15px;
-    }
-    .errorMessage>div:first-child {
-        padding: 0px;
-        height: auto;
-    }
-    .errorMessage .errorMessage-status {
-        position: relative;
-        margin-bottom: 15px;
-    }
-    .errorMessage h2 {
-        font-size: 42px;
-    }
+  .errorMessage {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+  .errorMessage > div:first-child {
+    padding: 0px;
+    height: auto;
+  }
+  .errorMessage .errorMessage-status {
+    position: relative;
+    margin-bottom: 15px;
+  }
+  .errorMessage h2 {
+    font-size: 42px;
+  }
 }

@@ -8,9 +8,8 @@ describe('FormDeleteButtonComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ FormDeleteButtonComponent ]
-    })
-    .compileComponents();
+      declarations: [FormDeleteButtonComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

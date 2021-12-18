@@ -1,36 +1,28 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import {LogoutComponent} from './logout.component';
-import {AuthenticationService} from "../../service/authentication.service";
-import {CoreSharedModule} from "../../../shared/core-shared-module";
+import { LogoutComponent } from './logout.component';
+import { AuthenticationService } from '../../service/authentication.service';
+import { CoreSharedModule } from '@i18n-core-shared';
 
 describe('LogoutComponent', () => {
-    let component: LogoutComponent;
-    let fixture: ComponentFixture<LogoutComponent>;
-    let authenticationService: AuthenticationService;
+  let component: LogoutComponent;
+  let fixture: ComponentFixture<LogoutComponent>;
+  let authenticationService: AuthenticationService;
 
-    beforeEach(async(() => {
-        authenticationService = jasmine.createSpyObj('authenticationUser', ['currentUser']);
+  beforeEach(async(() => {
+    authenticationService = jasmine.createSpyObj('authenticationUser', ['currentUser']);
 
-        TestBed
-            .configureTestingModule({
-                imports: [
-                    CoreSharedModule
-                ],
-                declarations: [
-                    LogoutComponent
-                ],
-                providers: [
-                    {provide: AuthenticationService, useValue: authenticationService}
-                ],
-            })
-            .compileComponents();
+    TestBed.configureTestingModule({
+      imports: [CoreSharedModule],
+      declarations: [LogoutComponent],
+      providers: [{ provide: AuthenticationService, useValue: authenticationService }],
+    }).compileComponents();
 
-        fixture = TestBed.createComponent(LogoutComponent);
-        component = fixture.componentInstance;
-    }));
+    fixture = TestBed.createComponent(LogoutComponent);
+    component = fixture.componentInstance;
+  }));
 
-    xit('should create', () => {
-        expect(component).toBeTruthy(); // TODO issue-125
-    });
+  xit('should create', () => {
+    expect(component).toBeTruthy(); // TODO issue-125
+  });
 });

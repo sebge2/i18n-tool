@@ -1,4 +1,4 @@
-@import "../../../../front/src/main/web/src/css/variables";
+@import '../../../../front/src/main/web/src/css/variables';
 
 .app-table {
   display: grid;
@@ -13,14 +13,14 @@
 }
 
 .app-table-cell {
-  border-top: 1px solid rgba(0, 0, 0, .12);
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
   padding: 3px 0 3px 15px;
 }
 
 .app-table-cell-header {
   font-size: smaller;
   font-weight: bolder;
-  color: rgba(0, 0, 0, .54);
+  color: rgba(0, 0, 0, 0.54);
   background: white;
 }
 
@@ -33,7 +33,6 @@
 }
 
 .app-table-cell-non-hover {
-
   .app-table-action {
     visibility: hidden;
   }
@@ -45,11 +44,13 @@
   z-index: 9;
 }
 
-.app-table-cell-details-expanded, .app-table-cell-expanded {
+.app-table-cell-details-expanded,
+.app-table-cell-expanded {
   cursor: n-resize;
 }
 
-.app-table-cell-details-non-expanded, .app-table-cell-non-expanded.app-table-cell-expandable {
+.app-table-cell-details-non-expanded,
+.app-table-cell-non-expanded.app-table-cell-expandable {
   cursor: s-resize;
 }
 

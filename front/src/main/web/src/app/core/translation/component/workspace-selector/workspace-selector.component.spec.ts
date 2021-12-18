@@ -8,9 +8,8 @@ describe('WorkspaceSelectorComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ WorkspaceSelectorComponent ]
-    })
-    .compileComponents();
+      declarations: [WorkspaceSelectorComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

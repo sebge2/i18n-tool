@@ -1,73 +1,71 @@
 <ng-container *ngIf="!(state.loading | async)">
-    <app-table [dataSource]="dataSource" [autoscroll]="true">
-        <app-table-header-row [sticky]="true">
-            <app-table-header *ngFor="let locale of (locales | async); trackBy: localeId"
-                              [columnId]="locale.id"
-                              [columnGridDef]="'minmax(150px, 1fr)'">
-                <p>
-                    <span [class]="locale | translationLocaleIcon"></span>
-                    {{locale.displayName}}
-                </p>
-            </app-table-header>
-            <app-table-header [columnId]="'action'"
-                              [columnGridDef]="'100px'">
-                <span>{{'DICTIONARY.TABLE.ACTION' | translate}}</span>
-                <app-more-actions-button class="p-relative dictionary-table-more-actions"
-                                         [actionInProgress]="moreActionInProgress">
-                    <app-more-action-item-button>
-                        <button mat-menu-item (click)="onSettingsOpen()">
-                            <mat-icon>settings</mat-icon>
-                            <span>{{'DICTIONARY.TABLE.SETTINGS' | translate}}</span>
-                        </button>
-                    </app-more-action-item-button>
-                    <app-more-action-item-button>
-                        <button mat-menu-item (click)="onDownload()">
-                            <mat-icon>cloud_download</mat-icon>
-                            <span>{{'DICTIONARY.TABLE.DOWNLOAD' | translate}}</span>
-                        </button>
-                    </app-more-action-item-button>
-                    <app-more-action-item-button>
-                        <button mat-menu-item (click)="onUpload()">
-                            <mat-icon>cloud_upload</mat-icon>
-                            <span>{{'DICTIONARY.TABLE.UPLOAD' | translate}}</span>
-                        </button>
-                    </app-more-action-item-button>
-                    <app-more-action-item-button>
-                        <button mat-menu-item (click)="onDeleteAll()">
-                            <mat-icon>delete</mat-icon>
-                            <span>{{'DICTIONARY.TABLE.DELETE_ALL' | translate}}</span>
-                        </button>
-                    </app-more-action-item-button>
-                </app-more-actions-button>
-            </app-table-header>
-        </app-table-header-row>
+  <app-table [dataSource]="dataSource" [autoscroll]="true">
+    <app-table-header-row [sticky]="true">
+      <app-table-header
+        *ngFor="let locale of locales | async; trackBy: localeId"
+        [columnId]="locale.id"
+        [columnGridDef]="'minmax(150px, 1fr)'"
+      >
+        <p>
+          <span [class]="locale | translationLocaleIcon"></span>
+          {{ locale.displayName }}
+        </p>
+      </app-table-header>
+      <app-table-header [columnId]="'action'" [columnGridDef]="'100px'">
+        <span>{{ 'DICTIONARY.TABLE.ACTION' | translate }}</span>
+        <app-more-actions-button
+          class="p-relative dictionary-table-more-actions"
+          [actionInProgress]="moreActionInProgress"
+        >
+          <app-more-action-item-button>
+            <button mat-menu-item (click)="onSettingsOpen()">
+              <mat-icon>settings</mat-icon>
+              <span>{{ 'DICTIONARY.TABLE.SETTINGS' | translate }}</span>
+            </button>
+          </app-more-action-item-button>
+          <app-more-action-item-button>
+            <button mat-menu-item (click)="onDownload()">
+              <mat-icon>cloud_download</mat-icon>
+              <span>{{ 'DICTIONARY.TABLE.DOWNLOAD' | translate }}</span>
+            </button>
+          </app-more-action-item-button>
+          <app-more-action-item-button>
+            <button mat-menu-item (click)="onUpload()">
+              <mat-icon>cloud_upload</mat-icon>
+              <span>{{ 'DICTIONARY.TABLE.UPLOAD' | translate }}</span>
+            </button>
+          </app-more-action-item-button>
+          <app-more-action-item-button>
+            <button mat-menu-item (click)="onDeleteAll()">
+              <mat-icon>delete</mat-icon>
+              <span>{{ 'DICTIONARY.TABLE.DELETE_ALL' | translate }}</span>
+            </button>
+          </app-more-action-item-button>
+        </app-more-actions-button>
+      </app-table-header>
+    </app-table-header-row>
 
-        <app-table-row>
-            <app-table-cell *ngFor="let locale of (locales | async)"
-                            [columnId]="locale.id"
-                            [template]="translationTemplate">
-                <ng-template let-entry="element" #translationTemplate>
-                    <app-dictionary-entry-editing-cell
-                            [coordinate]="{entryForm: entry, locale: locale}">
-                    </app-dictionary-entry-editing-cell>
-                </ng-template>
-            </app-table-cell>
-            <app-table-cell
-                    [columnId]="'action'"
-                    [template]="action">
-                <ng-template let-form="element" let-rowIndex="rowIndex" #action>
-                    <ng-container *ngIf="rowIndex==0; else: existing">
-                        <app-dictionary-new-entry-action [form]="form"></app-dictionary-new-entry-action>
-                    </ng-container>
-                    <ng-template #existing>
-                        <app-dictionary-entry-action [form]="form"></app-dictionary-entry-action>
-                    </ng-template>
-                </ng-template>
-            </app-table-cell>
-        </app-table-row>
-    </app-table>
+    <app-table-row>
+      <app-table-cell *ngFor="let locale of locales | async" [columnId]="locale.id" [template]="translationTemplate">
+        <ng-template let-entry="element" #translationTemplate>
+          <app-dictionary-entry-editing-cell [coordinate]="{ entryForm: entry, locale: locale }">
+          </app-dictionary-entry-editing-cell>
+        </ng-template>
+      </app-table-cell>
+      <app-table-cell [columnId]="'action'" [template]="action">
+        <ng-template let-form="element" let-rowIndex="rowIndex" #action>
+          <ng-container *ngIf="rowIndex == 0; else existing">
+            <app-dictionary-new-entry-action [form]="form"></app-dictionary-new-entry-action>
+          </ng-container>
+          <ng-template #existing>
+            <app-dictionary-entry-action [form]="form"></app-dictionary-entry-action>
+          </ng-template>
+        </ng-template>
+      </app-table-cell>
+    </app-table-row>
+  </app-table>
 </ng-container>
 
 <div class="app-centered-single-item" *ngIf="state.loading | async">
-    <mat-progress-bar mode="indeterminate" color="primary"></mat-progress-bar>
+  <mat-progress-bar mode="indeterminate" color="primary"></mat-progress-bar>
 </div>

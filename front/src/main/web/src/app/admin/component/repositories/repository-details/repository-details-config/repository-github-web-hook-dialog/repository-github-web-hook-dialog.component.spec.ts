@@ -8,9 +8,8 @@ describe('RepositoryGithubWebHookDialogComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ RepositoryGithubWebHookDialogComponent ]
-    })
-    .compileComponents();
+      declarations: [RepositoryGithubWebHookDialogComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

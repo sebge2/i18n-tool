@@ -1,22 +1,20 @@
-import {Component, Input} from '@angular/core';
-import {FormGroup} from "@angular/forms";
-import {RepositoryType} from "../../../../../../translations/model/repository/repository-type.model";
+import { Component, Input } from '@angular/core';
+import { FormGroup } from '@angular/forms';
+import { RepositoryType } from '@i18n-core-translation';
 
 @Component({
-    selector: 'app-repository-add-wizard-step-type',
-    templateUrl: './repository-add-wizard-step-type.component.html',
-    styleUrls: ['./repository-add-wizard-step-type.component.scss']
+  selector: 'app-repository-add-wizard-step-type',
+  templateUrl: './repository-add-wizard-step-type.component.html',
+  styleUrls: ['./repository-add-wizard-step-type.component.scss'],
 })
 export class RepositoryAddWizardStepTypeComponent {
+  @Input() form: FormGroup;
 
-    @Input() public form: FormGroup;
+  availableTypes = [RepositoryType.GITHUB, RepositoryType.GIT];
 
-    public availableTypes = [RepositoryType.GITHUB, RepositoryType.GIT];
+  constructor() {}
 
-    constructor() {
-    }
-
-    public onSelect(type: RepositoryType) {
-        this.form.controls['type'].setValue(type);
-    }
+  onSelect(type: RepositoryType) {
+    this.form.controls['type'].setValue(type);
+  }
 }

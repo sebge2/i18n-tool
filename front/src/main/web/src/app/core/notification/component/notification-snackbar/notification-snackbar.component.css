@@ -1,18 +1,18 @@
 .snack-container {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
 }
 
 .snack-container .info {
-    color: white;
+  color: white;
 }
 
 .snack-container .warning {
-    color: red;
+  color: red;
 }
 
 .snack-container .text {
-    margin-left: 15px;
-    color: white;
-    font-weight: bold;
+  margin-left: 15px;
+  color: white;
+  font-weight: bold;
 }

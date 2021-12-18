@@ -1,19 +1,19 @@
 .app-translations-toolbar {
-    display: grid;
-    grid-template-columns: 80px auto auto 80px;
-    width: 100%;
+  display: grid;
+  grid-template-columns: 80px auto auto 80px;
+  width: 100%;
 }
 
 .app-translations-toolbar-left {
-    padding-left: 50px;
-    padding-bottom: 10px;
+  padding-left: 50px;
+  padding-bottom: 10px;
 }
 
 .app-translations-toolbar-right {
-    padding-right: 50px;
-    padding-bottom: 10px;
+  padding-right: 50px;
+  padding-bottom: 10px;
 }
 
 .app-translations-toolbar-action {
-    text-align: center;
+  text-align: center;
 }

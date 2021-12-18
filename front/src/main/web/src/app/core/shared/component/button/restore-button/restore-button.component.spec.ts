@@ -8,9 +8,8 @@ describe('RestoreButtonComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ RestoreButtonComponent ]
-    })
-    .compileComponents();
+      declarations: [RestoreButtonComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {
