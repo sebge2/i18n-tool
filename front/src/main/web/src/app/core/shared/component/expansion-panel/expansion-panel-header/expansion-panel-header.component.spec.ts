@@ -8,9 +8,8 @@ describe('ExpansionPanelHeaderComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ExpansionPanelHeaderComponent ]
-    })
-    .compileComponents();
+      declarations: [ExpansionPanelHeaderComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

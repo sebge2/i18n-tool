@@ -8,9 +8,8 @@ describe('NotificationSnackbarComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ NotificationSnackbarComponent ]
-    })
-    .compileComponents();
+      declarations: [NotificationSnackbarComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

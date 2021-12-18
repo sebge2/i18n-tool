@@ -1,37 +1,51 @@
 <app-card [maxSizePx]="700">
-    <app-card-content>
-        <form [formGroup]="form" (ngSubmit)="onSave()" autocomplete="off">
-            <button type="submit" style="display:none">hidden submit</button>
-            <div fxLayout fxLayoutAlign="start start" fxLayoutGap="30px">
-                <app-edit-profile-avatar class="profile-avatar" formControlName="avatar" [currentUser]="currentUser"></app-edit-profile-avatar>
-                <div>
-                    <p>
-                        <mat-form-field appearance="standard">
-                            <mat-label>{{'ADMIN.USERS.USER_NAME' | translate}}</mat-label>
-                            <input matInput formControlName="username">
-                            <mat-hint>{{'ADMIN.USERS.USER_NAME_EXAMPLE' | translate}}</mat-hint>
-                        </mat-form-field>
-                    </p>
-                    <p>
-                        <mat-form-field appearance="standard">
-                            <mat-label>{{'ADMIN.USERS.DISPLAY_NAME' | translate}}</mat-label>
-                            <input matInput formControlName="displayName">
-                            <mat-hint>{{'ADMIN.USERS.DISPLAY_NAME_EXAMPLE' | translate}}</mat-hint>
-                        </mat-form-field>
-                    </p>
-                    <p>
-                        <mat-form-field appearance="standard">
-                            <mat-label>{{'ADMIN.USERS.EMAIL' | translate}}</mat-label>
-                            <input matInput formControlName="email" type="email">
-                            <mat-hint>{{'ADMIN.USERS.EMAIL_EXAMPLE' | translate}}</mat-hint>
-                        </mat-form-field>
-                    </p>
-                </div>
-            </div>
-        </form>
-    </app-card-content>
-    <app-card-actions>
-        <app-form-cancel-button [form]="form" [cancelInProgress]="cancelInProgress" [disabled]="actionInProgress" (reset)="resetForm()"></app-form-cancel-button>
-        <app-form-save-button [form]="form" [saveInProgress]="saveInProgress" [disabled]="actionInProgress" (save)="onSave()"></app-form-save-button>
-    </app-card-actions>
+  <app-card-content>
+    <form [formGroup]="form" (ngSubmit)="onSave()" autocomplete="off">
+      <button type="submit" style="display: none">hidden submit</button>
+      <div fxLayout fxLayoutAlign="start start" fxLayoutGap="30px">
+        <app-edit-profile-avatar
+          class="profile-avatar"
+          formControlName="avatar"
+          [currentUser]="currentUser"
+        ></app-edit-profile-avatar>
+        <div>
+          <p>
+            <mat-form-field appearance="standard">
+              <mat-label>{{ 'ADMIN.USERS.USER_NAME' | translate }}</mat-label>
+              <input matInput formControlName="username" />
+              <mat-hint>{{ 'ADMIN.USERS.USER_NAME_EXAMPLE' | translate }}</mat-hint>
+            </mat-form-field>
+          </p>
+          <p>
+            <mat-form-field appearance="standard">
+              <mat-label>{{ 'ADMIN.USERS.DISPLAY_NAME' | translate }}</mat-label>
+              <input matInput formControlName="displayName" />
+              <mat-hint>{{ 'ADMIN.USERS.DISPLAY_NAME_EXAMPLE' | translate }}</mat-hint>
+            </mat-form-field>
+          </p>
+          <p>
+            <mat-form-field appearance="standard">
+              <mat-label>{{ 'ADMIN.USERS.EMAIL' | translate }}</mat-label>
+              <input matInput formControlName="email" type="email" />
+              <mat-hint>{{ 'ADMIN.USERS.EMAIL_EXAMPLE' | translate }}</mat-hint>
+            </mat-form-field>
+          </p>
+        </div>
+      </div>
+    </form>
+  </app-card-content>
+  <app-card-actions>
+    <app-form-cancel-button
+      [form]="form"
+      [cancelInProgress]="cancelInProgress"
+      [disabled]="actionInProgress"
+      (reset)="resetForm()"
+    ></app-form-cancel-button>
+    <app-form-save-button
+      [form]="form"
+      [saveInProgress]="saveInProgress"
+      [disabled]="actionInProgress"
+      (save)="onSave()"
+    ></app-form-save-button>
+  </app-card-actions>
 </app-card>

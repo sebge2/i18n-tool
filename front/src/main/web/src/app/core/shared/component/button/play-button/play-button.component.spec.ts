@@ -8,9 +8,8 @@ describe('PlayButtonComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ PlayButtonComponent ]
-    })
-    .compileComponents();
+      declarations: [PlayButtonComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

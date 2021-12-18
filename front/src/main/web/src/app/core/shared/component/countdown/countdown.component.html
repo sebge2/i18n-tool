@@ -1,15 +1,17 @@
 <div class="app-countdown item html">
-    <h2 [style.lineHeight]="(radius + strokeWith) + 'px'">{{countDown}}</h2>
-    <svg [attr.width]="size" [attr.height]="size" xmlns="http://www.w3.org/2000/svg">
-        <g>
-            <circle [attr.r]="radius - strokeWith"
-                    [attr.cy]="radius"
-                    [attr.cx]="radius"
-                    [attr.stroke-width]="strokeWith"
-                    [attr.stroke]="color"
-                    fill="none"
-                    [style.strokeDasharray]="circumference"
-                    [style.strokeDashoffset]="strokeDashoffset"/>
-        </g>
-    </svg>
+  <h2 [style.lineHeight]="radius + strokeWith + 'px'">{{ countDown }}</h2>
+  <svg [attr.width]="size" [attr.height]="size" xmlns="http://www.w3.org/2000/svg">
+    <g>
+      <circle
+        [attr.r]="radius - strokeWith"
+        [attr.cy]="radius"
+        [attr.cx]="radius"
+        [attr.stroke-width]="strokeWith"
+        [attr.stroke]="color"
+        fill="none"
+        [style.strokeDasharray]="circumference"
+        [style.strokeDashoffset]="strokeDashoffset"
+      />
+    </g>
+  </svg>
 </div>

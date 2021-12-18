@@ -8,9 +8,8 @@ describe('FormSaveButtonComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ FormSaveButtonComponent ]
-    })
-    .compileComponents();
+      declarations: [FormSaveButtonComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

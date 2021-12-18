@@ -8,9 +8,8 @@ describe('GeneratePasswordButtonComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ GeneratePasswordButtonComponent ]
-    })
-    .compileComponents();
+      declarations: [GeneratePasswordButtonComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

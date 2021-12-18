@@ -1,19 +1,17 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
-    selector: 'app-expansion-panel',
-    templateUrl: './expansion-panel.component.html',
-    styleUrls: ['./expansion-panel.component.css']
+  selector: 'app-expansion-panel',
+  templateUrl: './expansion-panel.component.html',
+  styleUrls: ['./expansion-panel.component.css'],
 })
 export class ExpansionPanelComponent {
+  @Input() public expanded: boolean = false;
+  @Output() public expandedChange = new EventEmitter<boolean>();
 
-    @Input() public expanded: boolean = false;
-    @Output() public expandedChange = new EventEmitter<boolean>();
+  constructor() {}
 
-    constructor() {
-    }
-
-    public onExpandedChange(expanded: boolean) {
-        this.expandedChange.emit(expanded);
-    }
+  public onExpandedChange(expanded: boolean) {
+    this.expandedChange.emit(expanded);
+  }
 }

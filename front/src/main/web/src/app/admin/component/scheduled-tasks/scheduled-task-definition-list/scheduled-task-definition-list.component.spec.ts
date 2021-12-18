@@ -8,9 +8,8 @@ describe('ScheduledTaskDefinitionListComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ScheduledTaskDefinitionListComponent ]
-    })
-    .compileComponents();
+      declarations: [ScheduledTaskDefinitionListComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

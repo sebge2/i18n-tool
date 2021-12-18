@@ -12,12 +12,15 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "target": "es2015",
-    "typeRoots": [
-      "node_modules/@types"
-    ],
-    "lib": [
-      "es2018",
-      "dom"
-    ]
+    "typeRoots": ["node_modules/@types"],
+    "lib": ["es2018", "dom"],
+    "paths": {
+      "@i18n-core-shared": ["./src/app/core/shared/export"],
+      "@i18n-core-notification": ["./src/app/core/notification/export"],
+      "@i18n-core-auth": ["./src/app/core/auth/export"],
+      "@i18n-core-translation": ["./src/app/core/translation/export"],
+      "@i18n-core-event": ["./src/app/core/event/export"],
+      "@i18n-core-ui": ["./src/app/core/ui/export"],
+    }
   }
 }

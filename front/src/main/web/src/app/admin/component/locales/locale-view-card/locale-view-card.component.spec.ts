@@ -8,9 +8,8 @@ describe('LocaleViewCardComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ LocaleViewCardComponent ]
-    })
-    .compileComponents();
+      declarations: [LocaleViewCardComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

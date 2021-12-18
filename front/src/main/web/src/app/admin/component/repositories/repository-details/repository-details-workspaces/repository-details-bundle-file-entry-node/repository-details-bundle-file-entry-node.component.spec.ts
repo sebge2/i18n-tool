@@ -8,9 +8,8 @@ describe('RepositoryDetailsBundleFileEntryNodeComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ RepositoryDetailsBundleFileEntryNodeComponent ]
-    })
-    .compileComponents();
+      declarations: [RepositoryDetailsBundleFileEntryNodeComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

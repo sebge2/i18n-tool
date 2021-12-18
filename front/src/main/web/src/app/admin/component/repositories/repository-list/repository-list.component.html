@@ -1,8 +1,5 @@
 <app-card-grid (add)="onAdd()">
-    <app-card-grid-item *ngFor="let repository of repositories">
-        <app-repository-view-card
-                [repository]="repository"
-                (open)="openOpen($event)">
-        </app-repository-view-card>
-    </app-card-grid-item>
+  <app-card-grid-item *ngFor="let repository of repositories">
+    <app-repository-view-card [repository]="repository" (open)="openOpen($event)"> </app-repository-view-card>
+  </app-card-grid-item>
 </app-card-grid>

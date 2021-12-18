@@ -8,9 +8,8 @@ describe('TranslationsBundleFileRowComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ TranslationsBundleFileRowComponent ]
-    })
-    .compileComponents();
+      declarations: [TranslationsBundleFileRowComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

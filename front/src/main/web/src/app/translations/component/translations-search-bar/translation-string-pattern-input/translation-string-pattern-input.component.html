@@ -1,44 +1,69 @@
 <ng-template #STARTS_WITH>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 408 38" [matTooltip]="'TRANSLATIONS.SEARCH_BAR.KEY.STARTS_WITH_TOOLTIP' | translate" tabindex="-1">
-        <rect rx="20" height="36" width="300" y="0" x="0" class="app-key-pattern-shape-included"/>
-        <rect rx="20" height="36" width="102" y="0" x="306" class="app-key-pattern-shape-not-included"/>
-    </svg>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 408 38"
+    [matTooltip]="'TRANSLATIONS.SEARCH_BAR.KEY.STARTS_WITH_TOOLTIP' | translate"
+    tabindex="-1"
+  >
+    <rect rx="20" height="36" width="300" y="0" x="0" class="app-key-pattern-shape-included" />
+    <rect rx="20" height="36" width="102" y="0" x="306" class="app-key-pattern-shape-not-included" />
+  </svg>
 </ng-template>
 
 <ng-template #CONTAINS>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 408 38" [matTooltip]="'TRANSLATIONS.SEARCH_BAR.KEY.CONTAINS_TOOLTIP' | translate" tabindex="-1">
-        <rect rx="20" height="36" width="102" y="0" x="0" class="app-key-pattern-shape-not-included"/>
-        <rect rx="20" height="36" width="192" y="0" x="108" class="app-key-pattern-shape-included"/>
-        <rect rx="20" height="36" width="102" y="0" x="306" class="app-key-pattern-shape-not-included"/>
-    </svg>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 408 38"
+    [matTooltip]="'TRANSLATIONS.SEARCH_BAR.KEY.CONTAINS_TOOLTIP' | translate"
+    tabindex="-1"
+  >
+    <rect rx="20" height="36" width="102" y="0" x="0" class="app-key-pattern-shape-not-included" />
+    <rect rx="20" height="36" width="192" y="0" x="108" class="app-key-pattern-shape-included" />
+    <rect rx="20" height="36" width="102" y="0" x="306" class="app-key-pattern-shape-not-included" />
+  </svg>
 </ng-template>
 
 <ng-template #EQUALS>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 408 38" [matTooltip]="'TRANSLATIONS.SEARCH_BAR.KEY.EQUALS_TOOLTIP' | translate" tabindex="-1">
-        <rect rx="20" height="36" width="408" y="0" x="0" class="app-key-pattern-shape-included"/>
-    </svg>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 408 38"
+    [matTooltip]="'TRANSLATIONS.SEARCH_BAR.KEY.EQUALS_TOOLTIP' | translate"
+    tabindex="-1"
+  >
+    <rect rx="20" height="36" width="408" y="0" x="0" class="app-key-pattern-shape-included" />
+  </svg>
 </ng-template>
 
 <ng-template #ENDS_WITH>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 408 38" [matTooltip]="'TRANSLATIONS.SEARCH_BAR.KEY.ENDS_WITH_TOOLTIP' | translate" tabindex="-1">
-        <rect rx="20" height="36" width="102" y="0" x="0" class="app-key-pattern-shape-not-included"/>
-        <rect rx="20" height="36" width="300" y="0" x="108" class="app-key-pattern-shape-included"/>
-    </svg>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 408 38"
+    [matTooltip]="'TRANSLATIONS.SEARCH_BAR.KEY.ENDS_WITH_TOOLTIP' | translate"
+    tabindex="-1"
+  >
+    <rect rx="20" height="36" width="102" y="0" x="0" class="app-key-pattern-shape-not-included" />
+    <rect rx="20" height="36" width="300" y="0" x="108" class="app-key-pattern-shape-included" />
+  </svg>
 </ng-template>
 
 <div class="app-key-pattern-fields" role="group" [formGroup]="parts">
-    <input type="text" formControlName="pattern" matInput [placeholder]="'TRANSLATIONS.SEARCH_BAR.KEY.PLACEHOLDER' | translate">
+  <input
+    type="text"
+    formControlName="pattern"
+    matInput
+    [placeholder]="'TRANSLATIONS.SEARCH_BAR.KEY.PLACEHOLDER' | translate"
+  />
 
-    <div class="app-key-pattern-list"
-         matSuffix
-        [class.app-key-pattern-list-non-empty]="!empty">
-        <div *ngFor="let strategy of strategyTemplates"
-             [class.app-key-pattern-selected]="selectedStrategy === strategy"
-             tabindex="0"
-             class="app-key-pattern"
-             (click)="onPatternStrategySelected(strategy)"
-             (onEnter)="onPatternStrategySelected(strategy)">
-            <ng-container [ngTemplateOutlet]="strategy"></ng-container>
-        </div>
+  <div class="app-key-pattern-list" matSuffix [class.app-key-pattern-list-non-empty]="!empty">
+    <div
+      *ngFor="let strategy of strategyTemplates"
+      [class.app-key-pattern-selected]="selectedStrategy === strategy"
+      tabindex="0"
+      class="app-key-pattern"
+      (click)="onPatternStrategySelected(strategy)"
+      (onEnter)="onPatternStrategySelected(strategy)"
+    >
+      <ng-container [ngTemplateOutlet]="strategy"></ng-container>
     </div>
+  </div>
 </div>

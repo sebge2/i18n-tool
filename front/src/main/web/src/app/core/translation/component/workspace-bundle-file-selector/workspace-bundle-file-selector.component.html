@@ -1,22 +1,24 @@
 <form [formGroup]="parts">
-    <mat-select (openedChange)="onOpen($event)"
-                [panelClass]="loading || !opened ? 'hide-dummy-option' : ''"
-                [formControlName]="'bundleFile'"
-                #selectControl>
-        <mat-select-trigger>
-            <i [ngClass]="value | bundleFileIcon" class="app-file-icon"></i> {{value | bundleFileName}}
-        </mat-select-trigger>
+  <mat-select
+    (openedChange)="onOpen($event)"
+    [panelClass]="loading || !opened ? 'hide-dummy-option' : ''"
+    [formControlName]="'bundleFile'"
+    #selectControl
+  >
+    <mat-select-trigger>
+      <i [ngClass]="value | bundleFileIcon" class="app-file-icon"></i> {{ value | bundleFileName }}
+    </mat-select-trigger>
 
-        <mat-option *ngIf="bundleFilesEmpty | async" disabled></mat-option>
+    <mat-option *ngIf="bundleFilesEmpty | async" disabled></mat-option>
 
-        <mat-option *ngFor="let bundleFile of (bundleFiles | async)" [value]="bundleFile">
-            <i [ngClass]="bundleFile | bundleFileIcon" class="app-file-icon"></i> {{bundleFile | bundleFileName}}
-        </mat-option>
-    </mat-select>
+    <mat-option *ngFor="let bundleFile of bundleFiles | async" [value]="bundleFile">
+      <i [ngClass]="bundleFile | bundleFileIcon" class="app-file-icon"></i> {{ bundleFile | bundleFileName }}
+    </mat-option>
+  </mat-select>
 
-    <mat-label class="workspace-bundle-file-selector-loader">
-        <div>
-            <mat-spinner diameter="20" *ngIf="loading"></mat-spinner>
-        </div>
-    </mat-label>
+  <mat-label class="workspace-bundle-file-selector-loader">
+    <div>
+      <mat-spinner diameter="20" *ngIf="loading"></mat-spinner>
+    </div>
+  </mat-label>
 </form>

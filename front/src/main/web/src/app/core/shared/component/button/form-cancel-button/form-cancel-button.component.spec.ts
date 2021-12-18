@@ -8,9 +8,8 @@ describe('FormCancelButtonComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ FormCancelButtonComponent ]
-    })
-    .compileComponents();
+      declarations: [FormCancelButtonComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

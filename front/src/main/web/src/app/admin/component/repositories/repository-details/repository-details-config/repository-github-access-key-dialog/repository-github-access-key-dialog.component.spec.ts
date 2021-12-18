@@ -8,9 +8,8 @@ describe('RepositoryGithubAccessKeyDialogComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ RepositoryGithubAccessKeyDialogComponent ]
-    })
-    .compileComponents();
+      declarations: [RepositoryGithubAccessKeyDialogComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

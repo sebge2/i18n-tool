@@ -1,16 +1,16 @@
 <mat-tab-group (selectedIndexChange)="onSelectedTab($event)" #tabGroup>
-    <mat-tab *ngFor="let tab of tabs; let i = index" >
-        <ng-template mat-tab-label>
-            <mat-icon *ngIf="tab.matIcon">{{tab.matIcon}}</mat-icon>
-            <span [ngClass]="tab.iconClass" *ngIf="tab.iconClass"></span>
+  <mat-tab *ngFor="let tab of tabs; let i = index">
+    <ng-template mat-tab-label>
+      <mat-icon *ngIf="tab.matIcon">{{ tab.matIcon }}</mat-icon>
+      <span [ngClass]="tab.iconClass" *ngIf="tab.iconClass"></span>
 
-            <span class="tab-label" style="margin-left: 5px">{{tab.title}}</span>
+      <span class="tab-label" style="margin-left: 5px">{{ tab.title }}</span>
 
-            <button mat-icon-button *ngIf="tab.closeable" class="tab-close-icon" (click)="tab.onClose($event)">
-                <mat-icon>close</mat-icon>
-            </button>
-        </ng-template>
+      <button mat-icon-button *ngIf="tab.closeable" class="tab-close-icon" (click)="tab.onClose($event)">
+        <mat-icon>close</mat-icon>
+      </button>
+    </ng-template>
 
-        <ng-container *ngTemplateOutlet="tab.template"></ng-container>
-    </mat-tab>
+    <ng-container *ngTemplateOutlet="tab.template"></ng-container>
+  </mat-tab>
 </mat-tab-group>

@@ -8,9 +8,8 @@ describe('SnapshotCreationFormComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ SnapshotCreationFormComponent ]
-    })
-    .compileComponents();
+      declarations: [SnapshotCreationFormComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

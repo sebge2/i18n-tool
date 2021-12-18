@@ -1,3 +1,3 @@
 export function generateId(): string {
-    return '_' + Math.random().toString(36);
+  return '_' + Math.random().toString(36);
 }

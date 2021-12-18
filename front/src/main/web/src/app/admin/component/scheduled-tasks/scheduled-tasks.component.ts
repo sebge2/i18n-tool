@@ -1,17 +1,15 @@
-import {Component} from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
-    selector: 'app-scheduled-tasks',
-    templateUrl: './scheduled-tasks.component.html',
+  selector: 'app-scheduled-tasks',
+  templateUrl: './scheduled-tasks.component.html',
 })
 export class ScheduledTasksComponent {
+  private _initialTab: string;
 
-    private _initialTab: string;
+  constructor() {}
 
-    constructor() {
-    }
-
-    public onInitialTab(initialTab: string) {
-        this._initialTab = initialTab;
-    }
+  public onInitialTab(initialTab: string) {
+    this._initialTab = initialTab;
+  }
 }

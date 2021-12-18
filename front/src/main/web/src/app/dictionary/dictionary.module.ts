@@ -1,9 +1,9 @@
-import {NgModule} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {RouterModule, Routes} from "@angular/router";
-import {CoreSharedModule} from "../core/shared/core-shared-module";
-import {CoreAuthModule} from "../core/auth/core-auth.module";
-import {CoreTranslationModule} from "../core/translation/core-translation-module";
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterModule, Routes } from '@angular/router';
+import { CoreSharedModule } from '@i18n-core-shared';
+import { CoreAuthModule } from '@i18n-core-auth';
+import { CoreTranslationModule } from '@i18n-core-translation';
 import { DictionaryComponent } from './component/dictionary/dictionary.component';
 import { DictionaryEntryActionComponent } from './component/dictionary/dictionary-table/dictionary-entry-action/dictionary-entry-action.component';
 import { DictionaryEntryEditingCellComponent } from './component/dictionary/dictionary-table/dictionary-entry-editing-cell/dictionary-entry-editing-cell.component';
@@ -14,36 +14,25 @@ import { DictionaryUploadDialogComponent } from './component/dictionary/dictiona
 import { DictionarySettingsDialogComponent } from './component/dictionary/dictionary-table/dictionary-settings-dialog/dictionary-settings-dialog.component';
 
 const appRoutes: Routes = [
-    {
-        path: '', component: DictionaryComponent
-    }
+  {
+    path: '',
+    component: DictionaryComponent,
+  },
 ];
 
 @NgModule({
-    declarations: [
-        DictionaryComponent,
-        DictionaryEntryActionComponent,
-        DictionaryEntryEditingCellComponent,
-        DictionaryTableComponent,
-        DictionaryToolBarComponent,
-        DictionaryNewEntryActionComponent,
-        DictionaryUploadDialogComponent,
-        DictionarySettingsDialogComponent,
-    ],
-    imports: [
-        CommonModule,
-        CoreSharedModule,
-        CoreAuthModule,
-        CoreTranslationModule,
-
-        RouterModule.forChild(appRoutes)
-    ],
-    exports: [RouterModule],
-    entryComponents: [
-        DictionaryUploadDialogComponent,
-        DictionarySettingsDialogComponent,
-    ]
+  declarations: [
+    DictionaryComponent,
+    DictionaryEntryActionComponent,
+    DictionaryEntryEditingCellComponent,
+    DictionaryTableComponent,
+    DictionaryToolBarComponent,
+    DictionaryNewEntryActionComponent,
+    DictionaryUploadDialogComponent,
+    DictionarySettingsDialogComponent,
+  ],
+  imports: [CommonModule, CoreSharedModule, CoreAuthModule, CoreTranslationModule, RouterModule.forChild(appRoutes)],
+  exports: [RouterModule],
+  entryComponents: [DictionaryUploadDialogComponent, DictionarySettingsDialogComponent],
 })
-export class DictionaryModule {
-
-}
+export class DictionaryModule {}

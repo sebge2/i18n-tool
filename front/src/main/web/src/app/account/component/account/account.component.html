@@ -1,11 +1,11 @@
 <app-tabs [enableInitialTab]="true">
-    <app-tab [id]="'profile'" [title]="'ACCOUNT.PROFILE.LABEL' | translate">
-        <app-edit-profile></app-edit-profile>
-    </app-tab>
-    <app-tab [id]="'preferences'" [title]="'ACCOUNT.PREFERENCES.LABEL' | translate">
-        <app-edit-preferences></app-edit-preferences>
-    </app-tab>
-    <app-tab [id]="'security'" [title]="'ACCOUNT.SECURITY.LABEL' | translate" *ngIf="currentUser?.isInternal()">
-        <app-edit-password></app-edit-password>
-    </app-tab>
+  <app-tab [id]="'profile'" [title]="'ACCOUNT.PROFILE.LABEL' | translate">
+    <app-edit-profile></app-edit-profile>
+  </app-tab>
+  <app-tab [id]="'preferences'" [title]="'ACCOUNT.PREFERENCES.LABEL' | translate">
+    <app-edit-preferences></app-edit-preferences>
+  </app-tab>
+  <app-tab [id]="'security'" [title]="'ACCOUNT.SECURITY.LABEL' | translate" *ngIf="currentUser?.isInternal()">
+    <app-edit-password></app-edit-password>
+  </app-tab>
 </app-tabs>

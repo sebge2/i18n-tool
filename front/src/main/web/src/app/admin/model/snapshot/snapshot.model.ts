@@ -1,19 +1,9 @@
-import {SnapshotDto} from "../../../api";
+import { SnapshotDto } from '../../../api';
 
 export class Snapshot {
+  static fromDto(dto: SnapshotDto): Snapshot {
+    return new Snapshot(dto.id, dto.createdOn, dto.createdBy, dto.comment);
+  }
 
-    public static fromDto(dto: SnapshotDto): Snapshot {
-        return new Snapshot(
-            dto.id,
-            dto.createdOn,
-            dto.createdBy,
-            dto.comment
-        );
-    }
-
-    constructor(public id: string,
-                public createdOn: Date,
-                public createdBy: string,
-                public comment?: string) {
-    }
+  constructor(public id: string, public createdOn: Date, public createdBy: string, public comment?: string) {}
 }

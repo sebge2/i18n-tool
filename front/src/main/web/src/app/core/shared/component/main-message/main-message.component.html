@@ -1,18 +1,18 @@
 <div id="errorMessage">
-    <div class="errorMessage">
-        <div>
-            <div class="errorMessage-status">
-                <h1>!</h1>
-            </div>
-            <h2>
-                {{title}}
-                <br *ngIf="subTitle">
-                {{subTitle}}
-            </h2>
-        </div>
-        <p>
-            <ng-content></ng-content>
-        </p>
+  <div class="errorMessage">
+    <div>
+      <div class="errorMessage-status">
+        <h1>!</h1>
+      </div>
+      <h2>
+        {{ title }}
+        <br *ngIf="subTitle" />
+        {{ subTitle }}
+      </h2>
     </div>
+    <p>
+      <ng-content></ng-content>
+    </p>
+  </div>
 </div>
 <!-- This templates was made by Colorlib (https://colorlib.com) -->

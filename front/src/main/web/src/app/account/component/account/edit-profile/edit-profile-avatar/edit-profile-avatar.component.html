@@ -1,13 +1,13 @@
 <app-upload-zone
-        [disabled]="disabled"
-        [allowedFileExtensions]="allowedFileExtensions"
-        [backgroundImage]="valueUrl"
-        (file)="onFile($event)"
-        class="edit-profile-avatar-zone">
-    <app-upload-zone-content>
-    </app-upload-zone-content>
+  [disabled]="disabled"
+  [allowedFileExtensions]="allowedFileExtensions"
+  [backgroundImage]="valueUrl"
+  (file)="onFile($event)"
+  class="edit-profile-avatar-zone"
+>
+  <app-upload-zone-content> </app-upload-zone-content>
 </app-upload-zone>
 
 <div class="avatar-displayName">
-    <h1>{{currentUser?.displayName}}</h1>
+  <h1>{{ currentUser?.displayName }}</h1>
 </div>

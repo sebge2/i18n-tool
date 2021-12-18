@@ -1,5 +1,5 @@
 <app-card-grid (add)="onAdd()">
-    <app-card-grid-item *ngFor="let user of users">
-        <app-user-view-card [user]="user" (save)="onSave(user)" (delete)="onDelete(user)"></app-user-view-card>
-    </app-card-grid-item>
+  <app-card-grid-item *ngFor="let user of users">
+    <app-user-view-card [user]="user" (save)="onSave(user)" (delete)="onDelete(user)"></app-user-view-card>
+  </app-card-grid-item>
 </app-card-grid>

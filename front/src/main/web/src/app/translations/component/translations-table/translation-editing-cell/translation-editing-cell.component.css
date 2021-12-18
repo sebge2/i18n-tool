@@ -1,15 +1,15 @@
 mat-form-field {
-    width: calc(100% - 30px);
+  width: calc(100% - 30px);
 }
 
 mat-form-field app-form-cancel-button {
-    visibility: hidden;
-    transition-delay: .5s;
-    transition-property: visibility;
+  visibility: hidden;
+  transition-delay: 0.5s;
+  transition-property: visibility;
 }
 
 mat-form-field:hover app-form-cancel-button,
 .mat-focused app-form-cancel-button,
 mat-form-field:focus-within app-form-cancel-button {
-    visibility: visible;
+  visibility: visible;
 }

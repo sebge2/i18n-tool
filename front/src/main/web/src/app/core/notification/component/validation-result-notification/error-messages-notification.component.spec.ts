@@ -8,9 +8,8 @@ describe('ErrorMessagesNotificationComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ErrorMessagesNotificationComponent ]
-    })
-    .compileComponents();
+      declarations: [ErrorMessagesNotificationComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

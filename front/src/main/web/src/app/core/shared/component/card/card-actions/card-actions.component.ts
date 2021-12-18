@@ -5,7 +5,5 @@ import { Component, OnInit } from '@angular/core';
   template: '<ng-content></ng-content>',
 })
 export class CardActionsComponent {
-
-  constructor() { }
-
+  constructor() {}
 }

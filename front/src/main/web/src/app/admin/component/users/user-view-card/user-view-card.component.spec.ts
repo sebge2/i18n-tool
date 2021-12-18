@@ -8,9 +8,8 @@ describe('UserViewCardComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ UserViewCardComponent ]
-    })
-    .compileComponents();
+      declarations: [UserViewCardComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

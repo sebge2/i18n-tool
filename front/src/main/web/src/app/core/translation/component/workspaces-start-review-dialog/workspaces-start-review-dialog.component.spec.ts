@@ -8,9 +8,8 @@ describe('WorkspacesStartReviewDialogComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ WorkspacesStartReviewDialogComponent ]
-    })
-    .compileComponents();
+      declarations: [WorkspacesStartReviewDialogComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

@@ -1,17 +1,15 @@
-import {Component, EventEmitter, Output} from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 
 @Component({
-    selector: 'app-form-open-tab-button',
-    templateUrl: './form-open-tab-button.component.html',
+  selector: 'app-form-open-tab-button',
+  templateUrl: './form-open-tab-button.component.html',
 })
 export class FormOpenTabButtonComponent {
+  @Output() public open = new EventEmitter<void>();
 
-    @Output() public open = new EventEmitter<void>();
+  constructor() {}
 
-    constructor() {
-    }
-
-    public onOpen() {
-        this.open.emit();
-    }
+  public onOpen() {
+    this.open.emit();
+  }
 }

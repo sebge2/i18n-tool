@@ -86,7 +86,7 @@
       "DOWNLOAD": "Download",
       "UPLOAD": "Upload",
       "DELETE_ALL": "Delete All",
-      "DELETE_ALL_CONFIRMATION":  "Are-you sure to delete all the dictionary entries?",
+      "DELETE_ALL_CONFIRMATION": "Are-you sure to delete all the dictionary entries?",
       "UPLOAD_POPUP": {
         "TITLE": "Upload a Dictionary",
         "DESCRIPTION": "Drag & Drop your CSV dictionary file, or click on the button."

@@ -8,9 +8,8 @@ describe('RepositoryAddWizardStepInitializationComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ RepositoryAddWizardStepInitializationComponent ]
-    })
-    .compileComponents();
+      declarations: [RepositoryAddWizardStepInitializationComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

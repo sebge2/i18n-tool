@@ -8,9 +8,8 @@ describe('FormSendButtonComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ FormSendButtonComponent ]
-    })
-    .compileComponents();
+      declarations: [FormSendButtonComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

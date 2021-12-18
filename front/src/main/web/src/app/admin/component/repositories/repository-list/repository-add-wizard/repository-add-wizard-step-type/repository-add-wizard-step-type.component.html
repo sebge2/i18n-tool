@@ -1,14 +1,14 @@
 <app-card-grid [allowAdd]="false" [layout]="'center center'">
-    <app-card-grid-item *ngFor="let availableType of availableTypes">
-        <mat-card (click)="onSelect(availableType)" matRipple class="mat-card-clickable repository-type-card">
-            <mat-card-header>
-                <mat-card-title>&nbsp;</mat-card-title>
-            </mat-card-header>
+  <app-card-grid-item *ngFor="let availableType of availableTypes">
+    <mat-card (click)="onSelect(availableType)" matRipple class="mat-card-clickable repository-type-card">
+      <mat-card-header>
+        <mat-card-title>&nbsp;</mat-card-title>
+      </mat-card-header>
 
-            <div mat-card-image [ngClass]="availableType | repositoryIcon" class="repository-type-icon"></div>
-            <mat-card-content class="repository-type-action">
-                <p>{{'ADMIN.REPOSITORIES.ADD_WIZARD.STEP_TYPE.' + availableType | translate}}</p>
-            </mat-card-content>
-        </mat-card>
-    </app-card-grid-item>
+      <div mat-card-image [ngClass]="availableType | repositoryIcon" class="repository-type-icon"></div>
+      <mat-card-content class="repository-type-action">
+        <p>{{ 'ADMIN.REPOSITORIES.ADD_WIZARD.STEP_TYPE.' + availableType | translate }}</p>
+      </mat-card-content>
+    </mat-card>
+  </app-card-grid-item>
 </app-card-grid>

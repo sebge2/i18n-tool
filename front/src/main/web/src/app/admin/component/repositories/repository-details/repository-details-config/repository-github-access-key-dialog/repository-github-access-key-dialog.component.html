@@ -1,38 +1,44 @@
 <form [formGroup]="form" (ngSubmit)="onSave()">
-    <app-dialog [title]="'ADMIN.REPOSITORIES.CONFIG_CARD.GITHUB_ACCESS_KEY_POPUP.TITLE' | translate"
-                [dialogHeight]="'150px'"
-                [dialogWidth]="'400px'">
-        <app-dialog-content>
-            <ng-container *ngIf="!failed">
-                <mat-form-field appearance="standard">
-                    <mat-label>{{'ADMIN.REPOSITORIES.CONFIG_CARD.GITHUB_ACCESS_KEY_POPUP.KEY' | translate}}</mat-label>
-                    <input matInput formControlName="accessKey" autocomplete="off" #accessKeyInput>
-                    <mat-hint>{{'ADMIN.REPOSITORIES.CONFIG_CARD.GITHUB_ACCESS_KEY_POPUP.KEY_HINT' | translate}}</mat-hint>
-                </mat-form-field>
-            </ng-container>
+  <app-dialog
+    [title]="'ADMIN.REPOSITORIES.CONFIG_CARD.GITHUB_ACCESS_KEY_POPUP.TITLE' | translate"
+    [dialogHeight]="'150px'"
+    [dialogWidth]="'400px'"
+  >
+    <app-dialog-content>
+      <ng-container *ngIf="!failed">
+        <mat-form-field appearance="standard">
+          <mat-label>{{ 'ADMIN.REPOSITORIES.CONFIG_CARD.GITHUB_ACCESS_KEY_POPUP.KEY' | translate }}</mat-label>
+          <input matInput formControlName="accessKey" autocomplete="off" #accessKeyInput />
+          <mat-hint>{{ 'ADMIN.REPOSITORIES.CONFIG_CARD.GITHUB_ACCESS_KEY_POPUP.KEY_HINT' | translate }}</mat-hint>
+        </mat-form-field>
+      </ng-container>
 
-            <div *ngIf="unknownError">
-                <p>{{'ADMIN.REPOSITORIES.CONFIG_CARD.GITHUB_ACCESS_KEY_POPUP.UNKNOWN_ERROR' | translate}}</p>
-            </div>
-            <div *ngIf="errorMessages">
-                <p>{{'ADMIN.REPOSITORIES.CONFIG_CARD.GITHUB_ACCESS_KEY_POPUP.ERROR_TITLE' | translate}}</p>
-                <app-error-message-list [errorMessages]="errorMessages"></app-error-message-list>
-            </div>
-        </app-dialog-content>
-        <app-dialog-actions>
-            <app-form-delete-button [deleteInProgress]="deleteInProgress"
-                                    [disabled]="saveInProgress"
-                                    (delete)="onDelete()"
-                                    *ngIf="!failed">
-            </app-form-delete-button>
-            <app-form-save-button [form]="form"
-                                  [saveInProgress]="saveInProgress"
-                                  [disabled]="deleteInProgress"
-                                  (save)="onSave()"
-                                  *ngIf="!failed">
-            </app-form-save-button>
+      <div *ngIf="unknownError">
+        <p>{{ 'ADMIN.REPOSITORIES.CONFIG_CARD.GITHUB_ACCESS_KEY_POPUP.UNKNOWN_ERROR' | translate }}</p>
+      </div>
+      <div *ngIf="errorMessages">
+        <p>{{ 'ADMIN.REPOSITORIES.CONFIG_CARD.GITHUB_ACCESS_KEY_POPUP.ERROR_TITLE' | translate }}</p>
+        <app-error-message-list [errorMessages]="errorMessages"></app-error-message-list>
+      </div>
+    </app-dialog-content>
+    <app-dialog-actions>
+      <app-form-delete-button
+        [deleteInProgress]="deleteInProgress"
+        [disabled]="saveInProgress"
+        (delete)="onDelete()"
+        *ngIf="!failed"
+      >
+      </app-form-delete-button>
+      <app-form-save-button
+        [form]="form"
+        [saveInProgress]="saveInProgress"
+        [disabled]="deleteInProgress"
+        (save)="onSave()"
+        *ngIf="!failed"
+      >
+      </app-form-save-button>
 
-            <app-backward-button (click)="onGoBack()" *ngIf="failed"></app-backward-button>
-        </app-dialog-actions>
-    </app-dialog>
+      <app-backward-button (click)="onGoBack()" *ngIf="failed"></app-backward-button>
+    </app-dialog-actions>
+  </app-dialog>
 </form>

@@ -1,8 +1,6 @@
 <h3 *ngIf="bundleFile">
-    <span [ngClass]="fileTypeClass" class="app-file-icon"></span>
-    {{name}}
+  <span [ngClass]="fileTypeClass" class="app-file-icon"></span>
+  {{ name }}
 </h3>
 
-<h2 *ngIf="!bundleFile">
-    ---
-</h2>
+<h2 *ngIf="!bundleFile">---</h2>

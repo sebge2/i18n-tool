@@ -1,46 +1,36 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {ClipboardService} from "ngx-clipboard";
-import {NotificationService} from "../../../../notification/service/notification.service";
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ClipboardService } from 'ngx-clipboard';
 
 @Component({
-    selector: 'app-generate-password-button',
-    templateUrl: './generate-password-button.component.html',
+  selector: 'app-generate-password-button',
+  templateUrl: './generate-password-button.component.html',
 })
 export class GeneratePasswordButtonComponent implements OnInit {
+  @Input() public disabled: boolean = false;
+  @Input() public length: number = 6;
+  @Output() public generatedPassword = new EventEmitter<string>();
 
-    @Input() public disabled: boolean = false;
-    @Input() public length: number = 6;
-    @Input() public notificationMessage: string;
-    @Output() public generatedPassword = new EventEmitter<string>();
+  constructor(private _clipboardService: ClipboardService) {}
 
-    constructor(private _clipboardService: ClipboardService,
-                private _notificationService: NotificationService) {
+  ngOnInit(): void {}
+
+  public onClick() {
+    const password = GeneratePasswordButtonComponent.generate(this.length);
+
+    this._clipboardService.copy(password);
+
+    this.generatedPassword.emit(password);
+  }
+
+  private static generate(length: number): string {
+    let result = '';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const charactersLength = characters.length;
+
+    for (let i = 0; i < length; i++) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
 
-    ngOnInit(): void {
-    }
-
-    public onClick() {
-        const password = GeneratePasswordButtonComponent.generate(this.length);
-
-        this._clipboardService.copy(password);
-
-        if (this.notificationMessage) {
-            this._notificationService.displayInfoMessage(this.notificationMessage);
-        }
-
-        this.generatedPassword.emit(password);
-    }
-
-    private static generate(length: number): string {
-        let result = '';
-        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-        const charactersLength = characters.length;
-
-        for (let i = 0; i < length; i++) {
-            result += characters.charAt(Math.floor(Math.random() * charactersLength));
-        }
-
-        return result;
-    }
+    return result;
+  }
 }

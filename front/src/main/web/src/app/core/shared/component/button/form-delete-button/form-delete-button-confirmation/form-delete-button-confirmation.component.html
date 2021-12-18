@@ -1,26 +1,19 @@
 <app-dialog [title]="'SHARED.BUTTONS.DELETE.DELETE_CONFIRMATION_POPUP_TITLE' | translate">
-    <app-dialog-content>
-        <div class="app-form-delete-grid">
-            <div class="app-form-delete-countdown">
-                <app-countdown (elapsed)="onElapsed()" [size]="95" [color]="'red'" *ngIf="disabled"></app-countdown>
-            </div>
-            <div [innerHTML]="confirmationMessage || (confirmationMessageKey | translate)" class="app-form-delete-msg"></div>
-        </div>
-    </app-dialog-content>
-    <app-dialog-actions>
-        <button mat-icon-button
-                cdkFocusInitial
-                class="app-button"
-                (click)="onCancel()">
-            <mat-icon [fontIcon]="'app-icon-window-close-regular'"></mat-icon>
-        </button>
+  <app-dialog-content>
+    <div class="app-form-delete-grid">
+      <div class="app-form-delete-countdown">
+        <app-countdown (elapsed)="onElapsed()" [size]="95" [color]="'red'" *ngIf="disabled"></app-countdown>
+      </div>
+      <div [innerHTML]="confirmationMessage || (confirmationMessageKey | translate)" class="app-form-delete-msg"></div>
+    </div>
+  </app-dialog-content>
+  <app-dialog-actions>
+    <button mat-icon-button cdkFocusInitial class="app-button" (click)="onCancel()">
+      <mat-icon [fontIcon]="'app-icon-window-close-regular'"></mat-icon>
+    </button>
 
-        <button mat-icon-button
-                color="warn"
-                class="app-button"
-                [disabled]="disabled"
-                (click)="onConfirm()">
-            <mat-icon>delete</mat-icon>
-        </button>
-    </app-dialog-actions>
+    <button mat-icon-button color="warn" class="app-button" [disabled]="disabled" (click)="onConfirm()">
+      <mat-icon>delete</mat-icon>
+    </button>
+  </app-dialog-actions>
 </app-dialog>

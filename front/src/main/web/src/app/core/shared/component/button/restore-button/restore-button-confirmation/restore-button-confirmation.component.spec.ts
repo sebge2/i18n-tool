@@ -8,9 +8,8 @@ describe('RestoreButtonConfirmationComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ RestoreButtonConfirmationComponent ]
-    })
-    .compileComponents();
+      declarations: [RestoreButtonConfirmationComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

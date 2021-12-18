@@ -1,11 +1,13 @@
-<button mat-icon-button
-        class="app-button"
-        color="primary"
-        [disabled]="(form && !form.valid) || applyInProgress || disabled"
-        (click)="onApply()"
-        [class.spinner]="applyInProgress">
-    <mat-icon *ngIf="applyInProgress">
-        <mat-spinner color="primary" diameter="20"></mat-spinner>
-    </mat-icon>
-    <mat-icon *ngIf="!applyInProgress">done_all</mat-icon>
+<button
+  mat-icon-button
+  class="app-button"
+  color="primary"
+  [disabled]="(form && !form.valid) || applyInProgress || disabled"
+  (click)="onApply()"
+  [class.spinner]="applyInProgress"
+>
+  <mat-icon *ngIf="applyInProgress">
+    <mat-spinner color="primary" diameter="20"></mat-spinner>
+  </mat-icon>
+  <mat-icon *ngIf="!applyInProgress">done_all</mat-icon>
 </button>

@@ -1,23 +1,21 @@
-import {Component, Input} from '@angular/core';
-import {TranslationsTableState} from "../../model/search/translation-search-state.model";
+import { Component, Input } from '@angular/core';
+import { TranslationsTableState } from '../../model/search/translation-search-state.model';
 
 @Component({
-    selector: 'app-translations-tool-bar',
-    templateUrl: './translations-tool-bar.component.html',
-    styleUrls: ['./translations-tool-bar.component.css']
+  selector: 'app-translations-tool-bar',
+  templateUrl: './translations-tool-bar.component.html',
+  styleUrls: ['./translations-tool-bar.component.css'],
 })
 export class TranslationsToolBarComponent {
+  @Input() state: TranslationsTableState = new TranslationsTableState();
 
-    @Input() public state: TranslationsTableState = new TranslationsTableState();
+  constructor() {}
 
-    constructor() {
-    }
+  onPreviousPage() {
+    this.state.goOnPreviousPage();
+  }
 
-    public onPreviousPage() {
-        this.state.goOnPreviousPage();
-    }
-
-    public onNextPage() {
-        this.state.goOnNextPage();
-    }
+  onNextPage() {
+    this.state.goOnNextPage();
+  }
 }

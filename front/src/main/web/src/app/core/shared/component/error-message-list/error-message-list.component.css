@@ -1,25 +1,25 @@
 .list {
-    max-height: 600px;
-    overflow: auto;
+  max-height: 600px;
+  overflow: auto;
 }
 
 .item {
-    font-weight: bold;
+  font-weight: bold;
 }
 
 .item-white {
-    color: white !important;
+  color: white !important;
 }
 
 .item-bullet {
-    color: red;
-    font-weight: normal;
+  color: red;
+  font-weight: normal;
 }
 
 .item:hover .item-bullet-white {
-    color: white;
+  color: white;
 }
 
 .item:hover .item-bullet-dark {
-    color: black;
+  color: black;
 }

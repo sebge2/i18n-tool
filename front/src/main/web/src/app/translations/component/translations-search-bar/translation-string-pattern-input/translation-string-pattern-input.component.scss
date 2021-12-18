@@ -1,55 +1,56 @@
-@import "../../../../front/src/main/web/src/css/variables";
+@import '../../../../front/src/main/web/src/css/variables';
 
 .app-key-pattern-list-non-empty {
-    display: grid !important;
+  display: grid !important;
 }
 
 .app-key-pattern-fields {
-    display: grid;
-    grid-template-columns: 4fr 1fr;
-    gap: 10px;
+  display: grid;
+  grid-template-columns: 4fr 1fr;
+  gap: 10px;
 }
 
 .app-key-pattern-list {
-    display: none;
-    grid-template-columns: repeat(4, min-content);
-    gap: 10px;
+  display: none;
+  grid-template-columns: repeat(4, min-content);
+  gap: 10px;
 }
 
 .app-key-pattern {
-    width: 50px;
-    fill: black;
+  width: 50px;
+  fill: black;
 
-    .app-key-pattern-shape-included {
-        opacity: 0.6;
-    }
+  .app-key-pattern-shape-included {
+    opacity: 0.6;
+  }
+
+  .app-key-pattern-shape-not-included {
+    opacity: 0.2;
+  }
+
+  &:hover,
+  &:focus {
+    cursor: pointer;
+    outline: none;
 
     .app-key-pattern-shape-not-included {
-        opacity: 0.2;
+      opacity: 0.3;
     }
 
-    &:hover, &:focus {
-        cursor: pointer;
-        outline:none;
-
-        .app-key-pattern-shape-not-included {
-            opacity: 0.3;
-        }
-
-        .app-key-pattern-shape-included {
-            opacity: 1;
-        }
+    .app-key-pattern-shape-included {
+      opacity: 1;
     }
+  }
 }
 
 .app-key-pattern-selected {
-    fill: mat-color($color-primary);
+  fill: mat-color($color-primary);
 
-    .app-key-pattern-shape-included {
-        opacity: 0.7;
-    }
+  .app-key-pattern-shape-included {
+    opacity: 0.7;
+  }
 
-    .app-key-pattern-shape-not-included {
-        opacity: 0.3;
-    }
+  .app-key-pattern-shape-not-included {
+    opacity: 0.3;
+  }
 }

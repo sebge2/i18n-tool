@@ -8,9 +8,8 @@ describe('TranslationsWorkspaceRowComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ TranslationsWorkspaceRowComponent ]
-    })
-    .compileComponents();
+      declarations: [TranslationsWorkspaceRowComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

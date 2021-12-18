@@ -8,9 +8,8 @@ describe('RepositoryGitCredentialsDialogComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ RepositoryGitCredentialsDialogComponent ]
-    })
-    .compileComponents();
+      declarations: [RepositoryGitCredentialsDialogComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

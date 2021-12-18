@@ -8,9 +8,8 @@ describe('CardGridItemComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ CardGridItemComponent ]
-    })
-    .compileComponents();
+      declarations: [CardGridItemComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

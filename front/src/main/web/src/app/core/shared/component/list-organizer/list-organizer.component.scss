@@ -1,4 +1,4 @@
-@import "../../../../front/src/main/web/src/css/variables";
+@import '../../../../front/src/main/web/src/css/variables';
 
 .list-organizer-container {
   grid-gap: 2rem;
@@ -13,7 +13,7 @@
 .list-organizer-selection-container {
 }
 
-.list-organizer-list{
+.list-organizer-list {
   border: solid 1px #ccc;
   min-height: 4rem;
   background: white;
@@ -51,9 +51,7 @@
 .cdk-drag-preview {
   box-sizing: border-box;
   border-radius: 4px;
-  box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
-              0 8px 10px 1px rgba(0, 0, 0, 0.14),
-              0 3px 14px 2px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2), 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12);
 }
 
 .cdk-drag-placeholder {

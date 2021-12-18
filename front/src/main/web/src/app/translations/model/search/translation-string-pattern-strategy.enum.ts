@@ -1,11 +1,9 @@
 export enum TranslationStringPatternStrategy {
+  STARTS_WITH = 'STARTS_WITH',
 
-    STARTS_WITH = 'STARTS_WITH',
+  CONTAINS = 'CONTAINS',
 
-    CONTAINS = 'CONTAINS',
+  EQUALS = 'EQUALS',
 
-    EQUALS = 'EQUALS',
-
-    ENDS_WITH = 'ENDS_WITH',
-
+  ENDS_WITH = 'ENDS_WITH',
 }

@@ -1,13 +1,13 @@
 mat-form-field {
-    width: 450px;
+  width: 450px;
 }
 
 .app-start-review-list {
-    width: 450px;
-    margin-bottom: 30px;
+  width: 450px;
+  margin-bottom: 30px;
 }
 
 :host ::ng-deep mat-selection-list {
-    max-height: 200px;
-    overflow: auto;
+  max-height: 200px;
+  overflow: auto;
 }

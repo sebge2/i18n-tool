@@ -8,9 +8,8 @@ describe('InitDownloadButtonComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ DownloadButtonComponent ]
-    })
-    .compileComponents();
+      declarations: [DownloadButtonComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

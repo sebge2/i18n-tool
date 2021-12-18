@@ -8,9 +8,8 @@ describe('FormOpenTabButtonComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ FormOpenTabButtonComponent ]
-    })
-    .compileComponents();
+      declarations: [FormOpenTabButtonComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

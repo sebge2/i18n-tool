@@ -1,19 +1,16 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
-    selector: 'app-backward-button',
-    templateUrl: './backward-button.component.html',
+  selector: 'app-backward-button',
+  templateUrl: './backward-button.component.html',
 })
 export class BackwardButtonComponent {
+  @Input() public disabled: boolean = false;
+  @Output() public publish = new EventEmitter<void>();
 
-    @Input() public disabled: boolean = false;
-    @Output() public publish = new EventEmitter<void>();
+  constructor() {}
 
-    constructor() {
-    }
-
-    public onClick() {
-        this.publish.emit(null);
-    }
+  public onClick() {
+    this.publish.emit(null);
+  }
 }
-

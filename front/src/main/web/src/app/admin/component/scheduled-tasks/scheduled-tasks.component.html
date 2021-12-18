@@ -1,12 +1,16 @@
 <app-tabs [enableInitialTab]="true" [tabUrlParam]="'scheduledTaskTab'" (initialTab)="onInitialTab($event)" #tabs>
-    <app-tab [id]="'executions'" [title]="'ADMIN.SCHEDULED_TASKS.EXECUTIONS_TAB_LABEL' | translate" [matIcon]="'manage_search'">
-        <app-scheduled-task-execution-list></app-scheduled-task-execution-list>
-    </app-tab>
-    <app-tab [id]="'definitions'" [title]="'ADMIN.SCHEDULED_TASKS.DEFINITIONS_TAB_LABEL' | translate" [matIcon]="'schedule'">
-        <app-scheduled-task-definition-list></app-scheduled-task-definition-list>
-    </app-tab>
+  <app-tab
+    [id]="'executions'"
+    [title]="'ADMIN.SCHEDULED_TASKS.EXECUTIONS_TAB_LABEL' | translate"
+    [matIcon]="'manage_search'"
+  >
+    <app-scheduled-task-execution-list></app-scheduled-task-execution-list>
+  </app-tab>
+  <app-tab
+    [id]="'definitions'"
+    [title]="'ADMIN.SCHEDULED_TASKS.DEFINITIONS_TAB_LABEL' | translate"
+    [matIcon]="'schedule'"
+  >
+    <app-scheduled-task-definition-list></app-scheduled-task-definition-list>
+  </app-tab>
 </app-tabs>
-
-
-
-

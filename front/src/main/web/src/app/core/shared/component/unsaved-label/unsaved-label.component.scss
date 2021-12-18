@@ -5,16 +5,26 @@
 }
 
 @-webkit-keyframes fadeInOut {
-  0%,100% { opacity: 0; }
-  50% { opacity: 1; }
+  0%,
+  100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 
 @keyframes fadeInOut {
-  0%,100% { opacity: 0; }
-  50% { opacity: 1; }
+  0%,
+  100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 
 .app-unsaved-container {
   -webkit-animation: fadeInOut 5s linear infinite alternate;
-  animation:  fadeInOut 5s linear infinite alternate;
+  animation: fadeInOut 5s linear infinite alternate;
 }
