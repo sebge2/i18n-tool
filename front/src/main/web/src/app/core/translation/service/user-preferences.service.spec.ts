@@ -8,7 +8,7 @@ describe('UserPreferencesService', () => {
   });
 
   xit('should be created', () => {
-    const service: UserPreferencesService = TestBed.get(UserPreferencesService);
+    const service: UserPreferencesService = TestBed.inject(UserPreferencesService);
 
     expect(service).toBeTruthy();
   });

@@ -18,7 +18,7 @@ import { takeUntil } from 'rxjs/operators';
   selector: '[hasRole]',
 })
 export class HasRoleDirective implements OnInit, OnDestroy {
-  private readonly _destroyed$ = new Subject();
+  private readonly _destroyed$ = new Subject<void>();
 
   private _roles: UserRole[];
   private _additionalCondition: boolean = true;

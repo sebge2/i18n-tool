@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { LoginComponent } from './login.component';
 import { LoginUserPasswordComponent } from './login-user-password/login-user-password.component';
@@ -17,7 +17,7 @@ describe('LoginComponent', () => {
   let translationService: TranslateService;
   let router: Router;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     authenticationService = jasmine.createSpyObj('authenticationUser', ['currentUser']);
     notificationService = jasmine.createSpyObj('notificationService', ['displayErrorMessage']);
     router = jasmine.createSpyObj('router', ['navigate']);

@@ -211,7 +211,6 @@ import {FormApplyButtonComponent} from './component/button/form-apply-button/for
         DragDropDirective,
         OnEnterDirective,
     ],
-    entryComponents: [FormDeleteButtonConfirmationComponent, RestoreButtonConfirmationComponent],
 })
 export class CoreSharedModule {
 }

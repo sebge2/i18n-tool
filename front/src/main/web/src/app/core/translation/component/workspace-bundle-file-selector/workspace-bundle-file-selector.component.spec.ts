@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { WorkspaceBundleFileSelectorComponent } from './workspace-bundle-file-selector.component';
 
@@ -6,7 +6,7 @@ describe('WorkspaceBundleFileSelectorComponent', () => {
   let component: WorkspaceBundleFileSelectorComponent;
   let fixture: ComponentFixture<WorkspaceBundleFileSelectorComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [WorkspaceBundleFileSelectorComponent],
     }).compileComponents();

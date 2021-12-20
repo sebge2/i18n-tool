@@ -1,7 +1,7 @@
 import { BehaviorSubject, EMPTY, Observable, Subject } from 'rxjs';
 import { EventObjectDto } from '../../../api';
 import { NgZone } from '@angular/core';
-import { filter, mergeMap, shareReplay, skip } from 'rxjs/internal/operators';
+import { filter, mergeMap, shareReplay, skip } from 'rxjs/operators';
 import * as _ from 'lodash';
 import { NotificationService } from '@i18n-core-notification';
 

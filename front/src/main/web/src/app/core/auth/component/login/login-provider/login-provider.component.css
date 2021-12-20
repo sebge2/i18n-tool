@@ -2,7 +2,7 @@
   text-align: center;
 }
 
-:host /deep/ .mat-card-header-text {
+:host ::ng-deep .mat-card-header-text {
   width: 100%;
   text-align: center;
 }

@@ -50,7 +50,6 @@ import { ToolLocaleIconPipe } from '../translation/pipe/tool-locale-icon.pipe';
     BundleFileNamePipe,
     LocalizedPipe,
   ],
-  entryComponents: [WorkspacesStartReviewDialogComponent],
   providers: [
     WorkspaceIconPipe,
     WorkspaceIconCssPipe,

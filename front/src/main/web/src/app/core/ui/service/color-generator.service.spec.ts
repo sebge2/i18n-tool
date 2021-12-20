@@ -8,7 +8,7 @@ describe('ColorGeneratorService', () => {
   });
 
   xit('should be created', () => {
-    const service: ColorGeneratorService = TestBed.get(ColorGeneratorService);
+    const service: ColorGeneratorService = TestBed.inject(ColorGeneratorService);
 
     expect(service).toBeTruthy();
   });

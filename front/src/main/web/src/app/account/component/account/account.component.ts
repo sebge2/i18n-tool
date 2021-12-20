@@ -11,7 +11,7 @@ import { User } from '@i18n-core-auth';
 export class AccountComponent implements OnInit, OnDestroy {
   public currentUser: User;
 
-  private readonly _destroyed$ = new Subject();
+  private readonly _destroyed$ = new Subject<void>();
 
   constructor(private _authenticationService: AuthenticationService) {}
 
@@ -20,7 +20,7 @@ export class AccountComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this._destroyed$.next();
+    this._destroyed$.next(null);
     this._destroyed$.complete();
   }
 }

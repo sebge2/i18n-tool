@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { TranslationCriterionSelectorComponent } from './translation-criterion-selector.component';
 import { CoreSharedModule } from '@i18n-core-shared';
@@ -8,7 +8,7 @@ describe('TranslationCriterionSelectorComponent', () => {
   let component: TranslationCriterionSelectorComponent;
   let fixture: ComponentFixture<TranslationCriterionSelectorComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [CoreSharedModule, TranslateModule.forRoot()],
       declarations: [TranslationCriterionSelectorComponent],

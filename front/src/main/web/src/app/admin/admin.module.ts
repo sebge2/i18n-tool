@@ -81,13 +81,6 @@ const appRoutes: Routes = [
     ScheduledTaskDefinitionListComponent,
     ScheduledTaskExecutionListComponent,
   ],
-  entryComponents: [
-    RepositoryAddWizardComponent,
-    RepositoryDetailsTranslationsConfigurationComponent,
-    RepositoryGithubWebHookDialogComponent,
-    RepositoryGithubAccessKeyDialogComponent,
-    RepositoryGitCredentialsDialogComponent,
-  ],
   imports: [
     CommonModule,
     CoreSharedModule,

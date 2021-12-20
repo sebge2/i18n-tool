@@ -8,8 +8,6 @@ import { NotificationSnackbarComponent } from './component/notification-snackbar
 @NgModule({
   declarations: [NotificationSnackbarComponent, ErrorMessagesNotificationComponent],
   imports: [CommonModule, CoreSharedLibModule, CoreSharedModule],
-  providers: [],
   exports: [],
-  entryComponents: [NotificationSnackbarComponent, ErrorMessagesNotificationComponent],
 })
 export class CoreNotificationModule {}

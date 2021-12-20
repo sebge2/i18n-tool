@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { GitHubLinkButtonComponent } from './git-hub-link-button.component';
 
@@ -6,7 +6,7 @@ describe('GithubLinkButtonComponent', () => {
   let component: GitHubLinkButtonComponent;
   let fixture: ComponentFixture<GitHubLinkButtonComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [GitHubLinkButtonComponent],
     }).compileComponents();

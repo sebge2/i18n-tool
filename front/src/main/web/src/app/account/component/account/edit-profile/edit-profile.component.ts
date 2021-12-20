@@ -19,7 +19,7 @@ export class EditProfileComponent implements OnInit, OnDestroy {
   cancelInProgress: boolean = false;
   saveInProgress: boolean = false;
 
-  private readonly _destroyed$ = new Subject();
+  private readonly _destroyed$ = new Subject<void>();
 
   constructor(
     private _formBuilder: FormBuilder,
@@ -43,7 +43,7 @@ export class EditProfileComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this._destroyed$.next();
+    this._destroyed$.next(null);
     this._destroyed$.complete();
   }
 

@@ -25,7 +25,7 @@ export class RepositoryAddWizardStepCreationComponent implements OnDestroy {
   constructor(private repositoryService: RepositoryService) {}
 
   public ngOnDestroy(): void {
-    this._destroyed$.next();
+    this._destroyed$.next(null);
     this._destroyed$.complete();
   }
 

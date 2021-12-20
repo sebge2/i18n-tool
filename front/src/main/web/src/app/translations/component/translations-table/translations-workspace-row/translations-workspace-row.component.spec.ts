@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { TranslationsWorkspaceRowComponent } from './translations-workspace-row.component';
 
@@ -6,7 +6,7 @@ describe('TranslationsWorkspaceRowComponent', () => {
   let component: TranslationsWorkspaceRowComponent;
   let fixture: ComponentFixture<TranslationsWorkspaceRowComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [TranslationsWorkspaceRowComponent],
     }).compileComponents();

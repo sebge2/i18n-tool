@@ -12,7 +12,7 @@ describe('LogoutGuard', () => {
     authenticationService = jasmine.createSpyObj('authenticationUser', ['currentUser']);
 
     TestBed.configureTestingModule({
-      imports: [HttpClientModule, RouterModule.forRoot([])],
+      imports: [HttpClientModule, RouterModule.forRoot([], { relativeLinkResolution: 'legacy' })],
       providers: [LogoutGuard, { provide: AuthenticationService, useValue: authenticationService }],
     });
   });

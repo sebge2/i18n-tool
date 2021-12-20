@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { FormOpenTabButtonComponent } from './form-open-tab-button.component';
 
@@ -6,7 +6,7 @@ describe('FormOpenTabButtonComponent', () => {
   let component: FormOpenTabButtonComponent;
   let fixture: ComponentFixture<FormOpenTabButtonComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [FormOpenTabButtonComponent],
     }).compileComponents();

@@ -56,7 +56,7 @@ export class FormSelectFieldComponent<E>
   private _placeholder: string;
   private _disabled = false;
   private _required = false;
-  private readonly _destroyed$ = new Subject();
+  private readonly _destroyed$ = new Subject<void>();
 
   constructor(
     private injector: Injector,
@@ -93,7 +93,7 @@ export class FormSelectFieldComponent<E>
   }
 
   public ngOnDestroy(): void {
-    this._destroyed$.next();
+    this._destroyed$.next(null);
     this._destroyed$.complete();
 
     this.focusMonitor.stopMonitoring(this.elRef.nativeElement);

@@ -1,3 +1,4 @@
+@use '@angular/material' as mat;
 @import '../../../../front/src/main/web/src/css/variables';
 
 .app-key-pattern-list-non-empty {
@@ -44,7 +45,7 @@
 }
 
 .app-key-pattern-selected {
-  fill: mat-color($color-primary);
+  fill: mat.get-color-from-palette($color-primary);
 
   .app-key-pattern-shape-included {
     opacity: 0.7;

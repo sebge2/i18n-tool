@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { MenuComponent } from './menu.component';
 import { CoreSharedModule } from '@i18n-core-shared';
@@ -18,7 +18,7 @@ describe('MenuComponent', () => {
   );
   let authenticationService: AuthenticationService;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     authenticationService = jasmine.createSpyObj('authenticationUser', ['currentUser']);
     authenticationService.currentAuthenticatedUser = jasmine.createSpy().and.returnValue(user);
 

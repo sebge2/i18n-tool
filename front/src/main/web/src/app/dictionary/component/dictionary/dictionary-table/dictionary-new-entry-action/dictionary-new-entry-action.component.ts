@@ -17,12 +17,12 @@ export class DictionaryNewEntryActionComponent implements OnDestroy {
 
   public saveInProgress: boolean = false;
 
-  private readonly _destroyed$ = new Subject();
+  private readonly _destroyed$ = new Subject<void>();
 
   constructor(private _dictionaryService: DictionaryService, private _notificationService: NotificationService) {}
 
   public ngOnDestroy(): void {
-    this._destroyed$.next();
+    this._destroyed$.next(null);
     this._destroyed$.complete();
   }
 

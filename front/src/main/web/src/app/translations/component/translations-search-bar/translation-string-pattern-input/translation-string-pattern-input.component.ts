@@ -70,7 +70,7 @@ export class TranslationStringPatternInputComponent
   private _forceDisabled = false;
   private _required = false;
 
-  private readonly _destroyed$ = new Subject();
+  private readonly _destroyed$ = new Subject<void>();
 
   private static readonly STRATEGY_ORDER: TranslationStringPatternStrategy[] = [
     TranslationStringPatternStrategy.STARTS_WITH,
@@ -127,7 +127,7 @@ export class TranslationStringPatternInputComponent
   }
 
   ngOnDestroy(): void {
-    this._destroyed$.next();
+    this._destroyed$.next(null);
     this._destroyed$.complete();
 
     this.focusMonitor.stopMonitoring(this.elRef.nativeElement);

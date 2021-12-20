@@ -1,4 +1,4 @@
-import bcp47 from 'bcp-47';
+import * as bcp47 from 'bcp-47';
 import * as _ from 'lodash';
 
 export class Locale {
