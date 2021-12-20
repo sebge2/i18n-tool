@@ -66,6 +66,16 @@ import {UploadZoneComponent} from './component/upload-zone/upload-zone.component
 import {UploadZoneContentComponent} from './component/upload-zone/upload-zone-content/upload-zone-content.component';
 import {ListOrganizerComponent} from './component/list-organizer/list-organizer.component';
 import {FormApplyButtonComponent} from './component/button/form-apply-button/form-apply-button.component';
+import { MenuContainerComponent } from './component/menu/menu-container.component';
+import { MenuHeaderWrapper } from './component/menu/menu-header-wrapper/menu-header-wrapper.component';
+import { MenuWrapperComponent } from './component/menu/menu-wrapper/menu-wrapper.component';
+import { MenuMainWrapperComponent } from './component/menu/menu-main-wrapper/menu-main-wrapper.component';
+import { MenuToolBarContainerComponent } from './component/tool-bar/menu-tool-bar-container.component';
+import { MenuToolBarComponent } from './component/tool-bar/menu-tool-bar/menu-tool-bar.component';
+import { MenuToolBarMainComponent } from './component/tool-bar/menu-tool-bar-main/menu-tool-bar-main.component';
+import {MenuToolBarIconsComponent} from "./component/tool-bar/menu-tool-bar-icons/menu-tool-bar-icons.component";
+import {GenericButtonComponent} from "./component/button/generic-button/generic-button.component";
+import {IconComponent} from "./component/icon/icon.component";
 
 @NgModule({
     declarations: [
@@ -92,6 +102,7 @@ import {FormApplyButtonComponent} from './component/button/form-apply-button/for
         RestoreButtonConfirmationComponent,
         BanButtonComponent,
         PlayButtonComponent,
+        GenericButtonComponent,
 
         FormSelectFieldComponent,
 
@@ -134,6 +145,15 @@ import {FormApplyButtonComponent} from './component/button/form-apply-button/for
         UploadZoneContentComponent,
         ListOrganizerComponent,
         FormApplyButtonComponent,
+        MenuContainerComponent,
+        MenuHeaderWrapper,
+        MenuWrapperComponent,
+        MenuMainWrapperComponent,
+        MenuToolBarContainerComponent,
+        MenuToolBarComponent,
+        MenuToolBarMainComponent,
+        MenuToolBarIconsComponent,
+        IconComponent,
 
         DragDropDirective,
         OnEnterDirective,
@@ -170,6 +190,7 @@ import {FormApplyButtonComponent} from './component/button/form-apply-button/for
         TooltipComponent,
         UnsavedLabelComponent,
         FormApplyButtonComponent,
+        GenericButtonComponent,
 
         FormSelectFieldComponent,
 
@@ -207,6 +228,15 @@ import {FormApplyButtonComponent} from './component/button/form-apply-button/for
         UploadZoneComponent,
         UploadZoneContentComponent,
         ListOrganizerComponent,
+        MenuContainerComponent,
+        MenuHeaderWrapper,
+        MenuWrapperComponent,
+        MenuMainWrapperComponent,
+        MenuToolBarContainerComponent,
+        MenuToolBarComponent,
+        MenuToolBarMainComponent,
+        MenuToolBarIconsComponent,
+        IconComponent,
 
         DragDropDirective,
         OnEnterDirective,

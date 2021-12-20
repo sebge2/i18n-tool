@@ -1,0 +1,23 @@
+<ng-container *ngIf="(toolBarService.isEnabled() | async); else: disabled">
+    <div class="app-menu-tool-bar-container">
+        <mat-sidenav-container class="app-menu-tool-bar-sidenav-container">
+            <mat-sidenav-content class="app-menu-toolbar-bar-main">
+                <ng-content select="app-menu-tool-bar-main"></ng-content>
+            </mat-sidenav-content>
+
+            <mat-sidenav #snav
+                         [opened]="toolBarService.isOpened() | async"
+                         [position]="'end'"
+                         [mode]="'side'"
+                         class="app-menu-tool-bar">
+                <app-menu-tool-bar></app-menu-tool-bar>
+            </mat-sidenav>
+        </mat-sidenav-container>
+
+        <app-menu-tool-bar-icons></app-menu-tool-bar-icons>
+    </div>
+</ng-container>
+
+<ng-template #disabled>
+    <ng-content select="app-menu-tool-bar-main"></ng-content>
+</ng-template>

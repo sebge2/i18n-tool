@@ -1,5 +1,5 @@
 @use '@angular/material' as mat;
-@import '../../../../front/src/main/web/src/css/variables';
+@import 'variables';
 
 :host ::ng-deep .app-table {
   width: 70%;

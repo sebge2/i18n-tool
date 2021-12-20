@@ -40,6 +40,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { ClipboardModule } from 'ngx-clipboard';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { DragDropModule } from '@angular/cdk/drag-drop';
+import { DynamicModule } from 'ng-dynamic-component';
 
 @NgModule({
   imports: [
@@ -89,6 +90,8 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
     FlexLayoutModule,
     ClipboardModule,
     ScrollingModule,
+
+    DynamicModule,
   ],
 })
 export class CoreSharedLibModule {}

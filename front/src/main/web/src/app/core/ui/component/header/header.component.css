@@ -1,20 +1,20 @@
-.app-name {
+.header-app-name {
   margin-left: 8px;
 }
 
-.spacer {
+.header-spacer {
   flex: 1 1 auto;
 }
 
-.user-name {
+.header-user-name {
   font-size: 15px;
 }
 
-.drop-down {
+.header-drop-down {
   padding-left: 5px;
 }
 
-.profile-img {
+.header-profile-img {
   margin-right: 5px;
   vertical-align: middle;
   width: 30px;

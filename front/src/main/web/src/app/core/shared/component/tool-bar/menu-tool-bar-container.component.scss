@@ -1,0 +1,20 @@
+@import 'variables';
+@import 'z-index';
+
+.app-menu-tool-bar-container {
+  width: 100%;
+  height: 100%;
+
+  display: grid;
+  grid-template-columns: 1fr $tool-bar-icons-width;
+  background-color: $color-dark-bg;
+}
+
+.app-menu-tool-bar {
+  width: $tool-bar-width;
+  z-index: $app-tool-bar-z-index !important;
+}
+
+.app-menu-toolbar-bar-main {
+    padding: $main-container-padding;
+}

@@ -6,7 +6,7 @@ import { TranslationsTableState } from '../../model/search/translation-search-st
 @Component({
   selector: 'app-translations',
   templateUrl: './translations.component.html',
-  styleUrls: ['./translations.component.css'],
+  styleUrls: ['./translations.component.scss'],
 })
 export class TranslationsComponent {
   expanded: boolean = true;

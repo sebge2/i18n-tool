@@ -1,3 +1,5 @@
+@import "z-index";
+
 :host ::ng-deep .app-table {
   width: 70%;
   margin: auto;
@@ -15,7 +17,7 @@
   height: 100%;
   opacity: 0.7;
   background-color: #fff;
-  z-index: 99999 !important;
+  z-index: $app-top-z-index;
 
   * {
     position: absolute;

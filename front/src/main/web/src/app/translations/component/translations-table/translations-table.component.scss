@@ -1,3 +1,5 @@
+@import 'z-index';
+
 .app-translations-container {
   display: grid;
   grid-auto-rows: 60px;
@@ -14,7 +16,7 @@
   position: -webkit-sticky; /* For macOS/iOS Safari */
   top: 0;
   background: #fafafa;
-  z-index: 9;
+  z-index: $app-table-header-z-index;
   margin-left: 0;
   height: 50px;
 }

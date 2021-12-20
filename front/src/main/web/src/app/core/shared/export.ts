@@ -9,6 +9,9 @@ export {
 } from './model/file-extension.model';
 export {ImportedFile} from './model/imported-file.model';
 export {TranslationKey} from './model/translation-key.model';
+export {ToolDescriptor, TOOL_DESCRIPTOR_PRIORITIES} from './model/tool-bar/tool-descriptor.model';
+export {ToolSelectionRequest} from './model/tool-bar/tool-selection-request.model';
+export {ToolSelection} from './model/tool-bar/tool-selection.model';
 export {getStringValue} from './utils/form-utils';
 export {instanceOfErrorMessages, instanceOfHttpError} from './utils/error-utils';
 export {updateOriginalCollection} from './utils/synchronized-observable-utils';
@@ -52,4 +55,6 @@ export {
 export {FormDeleteButtonConfirmationComponent} from './component/button/form-delete-button/form-delete-button-confirmation/form-delete-button-confirmation.component';
 export {WizardComponent, StepChangeEvent} from './component/wizard/wizard.component';
 export {MainMessageComponent} from './component/main-message/main-message.component';
+export {MenuContainerComponent} from './component/menu/menu-container.component';
 export {PreferencesService} from './service/preferences.service';
+export {ToolBarService, TOOL_DESCRIPTOR_TOKEN} from './service/tool-bar.service';
