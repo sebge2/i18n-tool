@@ -33,7 +33,7 @@ export class RepositoryDetailsBundleFileEntryNodeComponent implements OnInit, On
   }
 
   ngOnDestroy(): void {
-    this._destroyed$.next();
+    this._destroyed$.next(null);
     this._destroyed$.complete();
   }
 

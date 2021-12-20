@@ -26,7 +26,7 @@ export class EditPreferencesComponent implements OnInit, OnDestroy {
 
   public loading: boolean = false;
 
-  private readonly _destroyed$ = new Subject();
+  private readonly _destroyed$ = new Subject<void>();
 
   constructor(
     private _userPreferencesService: UserPreferencesService,
@@ -70,7 +70,7 @@ export class EditPreferencesComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this._destroyed$.next();
+    this._destroyed$.next(null);
     this._destroyed$.complete();
   }
 

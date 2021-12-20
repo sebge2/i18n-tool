@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { HeaderComponent } from './header.component';
 import { CoreEventModule } from '@i18n-core-event';
@@ -15,7 +15,7 @@ describe('HeaderComponent', () => {
   let currentUser: BehaviorSubject<AuthenticatedUser>;
   let router: Router;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     currentUser = new BehaviorSubject<AuthenticatedUser>(null);
     authenticationService = jasmine.createSpyObj('authenticationUser', ['currentUser']);
     authenticationService.currentAuthenticatedUser = jasmine.createSpy().and.returnValue(currentUser);

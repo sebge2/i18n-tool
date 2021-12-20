@@ -1,3 +1,4 @@
+@use '@angular/material' as mat;
 @import '../../../../front/src/main/web/src/css/variables';
 
 .app-table {
@@ -25,7 +26,7 @@
 }
 
 .app-table-cell-hover {
-  background-color: mat-color($color-hover);
+  background-color: mat.get-color-from-palette($color-hover);
 
   .app-table-action {
     visibility: visible;

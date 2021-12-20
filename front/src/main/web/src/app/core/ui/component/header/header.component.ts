@@ -1,6 +1,6 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Subject } from 'rxjs';
-import { MatSidenav } from '@angular/material';
+import { MatSidenav } from '@angular/material/sidenav';
 import { ScreenService } from '../../service/screen.service';
 import { User } from '@i18n-core-auth';
 import { AuthenticationService } from '@i18n-core-auth';
@@ -14,7 +14,7 @@ import { takeUntil } from 'rxjs/operators';
 export class HeaderComponent implements OnInit, OnDestroy {
   @Input() sideBar: MatSidenav;
 
-  private readonly _destroyed$ = new Subject();
+  private readonly _destroyed$ = new Subject<void>();
   private _currentUser: User = null;
   private _smallSize: boolean;
 
@@ -34,7 +34,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this._destroyed$.next();
+    this._destroyed$.next(null);
     this._destroyed$.complete();
   }
 

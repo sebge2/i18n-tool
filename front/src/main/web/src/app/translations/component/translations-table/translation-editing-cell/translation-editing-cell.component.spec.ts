@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { TranslationEditingCellComponent } from './translation-editing-cell.component';
 import { FormBuilder } from '@angular/forms';
@@ -9,7 +9,7 @@ describe('TranslationEditingCellComponent', () => {
   let component: TranslationEditingCellComponent;
   let fixture: ComponentFixture<TranslationEditingCellComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [BrowserAnimationsModule, CoreSharedModule],
       declarations: [TranslationEditingCellComponent],

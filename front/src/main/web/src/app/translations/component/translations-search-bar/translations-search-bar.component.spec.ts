@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { TranslationsSearchBarComponent } from './translations-search-bar.component';
 import { CoreSharedModule } from '@i18n-core-shared';
@@ -18,7 +18,7 @@ describe('TranslationsSearchBarComponent', () => {
   let workspaceService: WorkspaceService;
   let workspaces: BehaviorSubject<Workspace[]>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     workspaceService = jasmine.createSpyObj('workspaceService', ['getWorkspaces']);
     workspaces = new BehaviorSubject([]);
     workspaceService.getWorkspaces = jasmine.createSpy().and.returnValue(workspaces);

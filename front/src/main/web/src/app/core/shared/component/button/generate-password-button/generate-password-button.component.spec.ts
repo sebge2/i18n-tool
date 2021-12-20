@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { GeneratePasswordButtonComponent } from './generate-password-button.component';
 
@@ -6,7 +6,7 @@ describe('GeneratePasswordButtonComponent', () => {
   let component: GeneratePasswordButtonComponent;
   let fixture: ComponentFixture<GeneratePasswordButtonComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [GeneratePasswordButtonComponent],
     }).compileComponents();

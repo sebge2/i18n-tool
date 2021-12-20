@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { ErrorStandardComponent } from './error-standard.component';
 import { ErrorMessageComponent } from '../error-message/error-message.component';
@@ -11,7 +11,7 @@ describe('ErrorStandardComponent', () => {
   let fixture: ComponentFixture<ErrorStandardComponent>;
   let route: ActivatedRoute;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     route = new ActivatedRoute();
     route.params = new Subject<Params>();
 

@@ -48,7 +48,7 @@ export class RepositoryGitCredentialsDialogComponent implements OnInit, OnDestro
   }
 
   ngOnDestroy(): void {
-    this._destroyed$.next();
+    this._destroyed$.next(null);
     this._destroyed$.complete();
   }
 

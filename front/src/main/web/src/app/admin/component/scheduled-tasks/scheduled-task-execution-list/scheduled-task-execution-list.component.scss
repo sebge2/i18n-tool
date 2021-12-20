@@ -1,3 +1,4 @@
+@use '@angular/material' as mat;
 @import '../../../../front/src/main/web/src/css/variables';
 
 :host ::ng-deep .app-table {
@@ -19,7 +20,7 @@
 
 .app-execution-result-description {
   background-color: #eee; // TODO
-  border-left: 4px solid mat-color($color-primary);
+  border-left: 4px solid mat.get-color-from-palette($color-primary);
   display: block;
   padding: 20px;
   margin: 15px 30px 15px 30px;

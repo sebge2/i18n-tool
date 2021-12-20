@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { EditProfileAvatarComponent } from './edit-profile-avatar.component';
 
@@ -6,7 +6,7 @@ describe('EditProfileAvatarComponent', () => {
   let component: EditProfileAvatarComponent;
   let fixture: ComponentFixture<EditProfileAvatarComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [EditProfileAvatarComponent],
     }).compileComponents();

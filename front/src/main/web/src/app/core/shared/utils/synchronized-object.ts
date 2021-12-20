@@ -44,7 +44,7 @@ export class SynchronizedObject<I, O> {
   }
 
   public destroy() {
-    this._destroyed$.next();
+    this._destroyed$.next(null);
     this._destroyed$.complete();
   }
 

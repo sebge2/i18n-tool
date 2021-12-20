@@ -17,7 +17,7 @@ import { takeUntil } from 'rxjs/operators';
   selector: '[hasRepositoryAccess]',
 })
 export class HasRepositoryAccessDirective implements OnInit, OnDestroy {
-  private readonly _destroyed$ = new Subject();
+  private readonly _destroyed$ = new Subject<void>();
 
   private _repository: string;
   private _additionalCondition: boolean = true;

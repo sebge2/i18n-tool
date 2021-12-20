@@ -33,6 +33,5 @@ const appRoutes: Routes = [
   ],
   imports: [CommonModule, CoreSharedModule, CoreAuthModule, CoreTranslationModule, RouterModule.forChild(appRoutes)],
   exports: [RouterModule],
-  entryComponents: [DictionaryUploadDialogComponent, DictionarySettingsDialogComponent],
 })
 export class DictionaryModule {}

@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { LoginProviderComponent } from './login-provider.component';
 import { CoreSharedModule } from '@i18n-core-shared';
@@ -7,7 +7,7 @@ describe('LoginProviderComponent', () => {
   let component: LoginProviderComponent;
   let fixture: ComponentFixture<LoginProviderComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [CoreSharedModule],
       declarations: [LoginProviderComponent],

@@ -46,7 +46,7 @@ export class RepositoryGithubAccessKeyDialogComponent implements OnInit, OnDestr
   }
 
   ngOnDestroy(): void {
-    this._destroyed$.next();
+    this._destroyed$.next(null);
     this._destroyed$.complete();
   }
 

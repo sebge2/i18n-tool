@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { LogoutComponent } from './logout.component';
 import { AuthenticationService } from '../../service/authentication.service';
@@ -9,7 +9,7 @@ describe('LogoutComponent', () => {
   let fixture: ComponentFixture<LogoutComponent>;
   let authenticationService: AuthenticationService;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     authenticationService = jasmine.createSpyObj('authenticationUser', ['currentUser']);
 
     TestBed.configureTestingModule({

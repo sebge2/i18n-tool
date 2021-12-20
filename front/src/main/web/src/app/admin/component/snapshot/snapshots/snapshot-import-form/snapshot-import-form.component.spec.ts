@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { SnapshotImportFormComponent } from './snapshot-import-form.component';
 
@@ -6,7 +6,7 @@ describe('SnapshotImportFormComponent', () => {
   let component: SnapshotImportFormComponent;
   let fixture: ComponentFixture<SnapshotImportFormComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [SnapshotImportFormComponent],
     }).compileComponents();

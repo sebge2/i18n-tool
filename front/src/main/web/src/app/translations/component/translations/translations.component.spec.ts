@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { TranslationsComponent } from './translations.component';
 import { TranslationsSearchBarComponent } from '../translations-search-bar/translations-search-bar.component';
@@ -31,7 +31,7 @@ describe('TranslationsComponent', () => {
   );
   let authenticationService: AuthenticationService;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     workspaceService = jasmine.createSpyObj('workspaceService', ['getWorkspaces']);
     workspaces = new BehaviorSubject([]);
     workspaceService.getWorkspaces = jasmine.createSpy().and.returnValue(workspaces);

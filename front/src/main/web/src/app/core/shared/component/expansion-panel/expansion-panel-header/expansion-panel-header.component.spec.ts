@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { ExpansionPanelHeaderComponent } from './expansion-panel-header.component';
 
@@ -6,7 +6,7 @@ describe('ExpansionPanelHeaderComponent', () => {
   let component: ExpansionPanelHeaderComponent;
   let fixture: ComponentFixture<ExpansionPanelHeaderComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ExpansionPanelHeaderComponent],
     }).compileComponents();

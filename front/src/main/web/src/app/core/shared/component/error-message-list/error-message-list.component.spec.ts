@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { ErrorMessageListComponent } from './error-message-list.component';
 
@@ -6,7 +6,7 @@ describe('ErrorMessageListComponent', () => {
   let component: ErrorMessageListComponent;
   let fixture: ComponentFixture<ErrorMessageListComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ErrorMessageListComponent],
     }).compileComponents();

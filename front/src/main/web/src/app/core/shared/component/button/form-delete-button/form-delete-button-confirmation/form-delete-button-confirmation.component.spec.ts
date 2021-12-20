@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { FormDeleteButtonConfirmationComponent } from './form-delete-button-confirmation.component';
 
@@ -6,7 +6,7 @@ describe('FormDeleteButtonConfirmationComponent', () => {
   let component: FormDeleteButtonConfirmationComponent;
   let fixture: ComponentFixture<FormDeleteButtonConfirmationComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [FormDeleteButtonConfirmationComponent],
     }).compileComponents();

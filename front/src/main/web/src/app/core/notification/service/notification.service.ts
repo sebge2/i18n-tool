@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { MatSnackBar } from '@angular/material';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { ErrorMessagesNotificationComponent } from '../component/validation-result-notification/error-messages-notification.component';
 import { ErrorMessagesDto } from '../../../api';
 import { TranslateService } from '@ngx-translate/core';

@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
 import { CoreSharedModule } from '@i18n-core-shared';
 import { TranslationEditingCellComponent } from './translation-editing-cell/translation-editing-cell.component';
@@ -12,7 +12,7 @@ describe('TranslationsTableComponent', () => {
   let authenticationService: AuthenticationService;
   let translationsService: TranslationService;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     authenticationService = jasmine.createSpyObj('authenticationUser', ['currentUser']);
     translationsService = jasmine.createSpyObj('translationService', ['getTranslations']);
 

@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { FormSaveButtonComponent } from './form-save-button.component';
 
@@ -6,7 +6,7 @@ describe('FormSaveButtonComponent', () => {
   let component: FormSaveButtonComponent;
   let fixture: ComponentFixture<FormSaveButtonComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [FormSaveButtonComponent],
     }).compileComponents();

@@ -77,7 +77,7 @@ export class WorkspaceBundleFileSelectorComponent
   private _required = false;
 
   private readonly _workspace$ = new BehaviorSubject<Workspace>(null);
-  private readonly _destroyed$ = new Subject();
+  private readonly _destroyed$ = new Subject<void>();
 
   constructor(
     private injector: Injector,
@@ -140,7 +140,7 @@ export class WorkspaceBundleFileSelectorComponent
   }
 
   public ngOnDestroy(): void {
-    this._destroyed$.next();
+    this._destroyed$.next(null);
     this._destroyed$.complete();
 
     this.focusMonitor.stopMonitoring(this.elRef.nativeElement);

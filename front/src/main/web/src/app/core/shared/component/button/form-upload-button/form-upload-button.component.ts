@@ -1,9 +1,9 @@
 import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
-import { ThemePalette } from '@angular/material/core/typings/common-behaviors/color';
 import { createImportedFile, FileExtension } from '../../../model/file-extension.model';
 import { ImportedFile } from '../../../model/imported-file.model';
 import { MouseEventUtils } from '../../../utils/mouse-event-utils';
 import * as _ from 'lodash';
+import {ThemePalette} from "@angular/material/core";
 
 @Component({
   selector: 'app-form-upload-button',

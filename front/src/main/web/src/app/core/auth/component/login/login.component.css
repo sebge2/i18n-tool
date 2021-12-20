@@ -2,7 +2,7 @@
   text-align: center;
 }
 
-:host /deep/ .mat-card {
+:host ::ng-deep .mat-card {
   padding: 40px;
   width: 350px;
   box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.15);

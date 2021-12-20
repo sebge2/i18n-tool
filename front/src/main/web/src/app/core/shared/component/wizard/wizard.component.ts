@@ -48,7 +48,7 @@ export class WizardComponent implements OnInit, OnDestroy, AfterContentInit {
   }
 
   public ngOnDestroy(): void {
-    this._destroyed$.next();
+    this._destroyed$.next(null);
     this._destroyed$.complete();
   }
 

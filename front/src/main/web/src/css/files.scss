@@ -1,15 +1,16 @@
+@use '@angular/material' as mat;
 @import './variables.scss';
 
 .dragAndDropZone {
   cursor: default;
   margin: 20px auto;
-  border: 1px dashed mat-color($color-primary);
+  border: 1px dashed mat.get-color-from-palette($color-primary);
   border-radius: 10px;
 }
 
 .dragAndDropZoneOver {
   cursor: pointer;
-  border: 1px solid mat-color($color-accent);
+  border: 1px solid mat.get-color-from-palette($color-accent);
   opacity: 0.6;
 }
 

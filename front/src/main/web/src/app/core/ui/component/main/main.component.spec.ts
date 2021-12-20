@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { MainComponent } from './main.component';
 import { CoreSharedModule } from '@i18n-core-shared';
@@ -18,13 +18,13 @@ describe('MainComponent', () => {
   let authenticationService: AuthenticationService;
   let currentUser: BehaviorSubject<AuthenticatedUser>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     currentUser = new BehaviorSubject<AuthenticatedUser>(null);
     authenticationService = jasmine.createSpyObj('authenticationUser', ['currentUser']);
     authenticationService.currentAuthenticatedUser = jasmine.createSpy().and.returnValue(currentUser);
 
     TestBed.configureTestingModule({
-      imports: [BrowserAnimationsModule, CoreSharedModule, CoreAuthModule, CoreEventModule, RouterModule.forRoot([])],
+      imports: [BrowserAnimationsModule, CoreSharedModule, CoreAuthModule, CoreEventModule, RouterModule.forRoot([], { relativeLinkResolution: 'legacy' })],
       declarations: [MainComponent, HeaderComponent, MenuComponent],
       providers: [{ provide: AuthenticationService, useValue: authenticationService }],
     }).compileComponents();
