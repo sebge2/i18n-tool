@@ -12,6 +12,8 @@ export {TranslationKey} from './model/translation-key.model';
 export {ToolDescriptor, TOOL_DESCRIPTOR_PRIORITIES} from './model/tool-bar/tool-descriptor.model';
 export {ToolSelectionRequest} from './model/tool-bar/tool-selection-request.model';
 export {ToolSelection} from './model/tool-bar/tool-selection.model';
+export {ButtonSize, BUTTON_SIZE_CLASS} from './model/button/button-size.enum';
+export {SemanticColor, SEMANTIC_COLOR_THEME} from './model/semantic-color.enum';
 export {getStringValue} from './utils/form-utils';
 export {instanceOfErrorMessages, instanceOfHttpError} from './utils/error-utils';
 export {updateOriginalCollection} from './utils/synchronized-observable-utils';

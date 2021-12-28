@@ -1,0 +1,23 @@
+.app-dictionary-tool-translations-container {
+  display: grid;
+  grid-gap: 5px;
+  grid-template-columns: 40px 1fr 40px;
+  justify-items: center;
+}
+
+.app-dictionary-tool-translations-spread {
+  grid-column: 1 / 4;
+}
+
+.app-dictionary-tool-translations-notice {
+
+  & span {
+    font-size: small;
+    font-style: italic;
+  }
+}
+
+.app-dictionary-tool-translation-field {
+  width: 270px;
+  height: 90px;
+}

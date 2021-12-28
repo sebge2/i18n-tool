@@ -1,0 +1,52 @@
+<form [formGroup]="form" autocomplete="off">
+    <p class="align-center">
+        <mat-form-field appearance="fill"
+                        class="app-dictionary-tool-text-field">
+            <mat-label>{{ 'DICTIONARY.TABLE.TOOL_BAR.TEXT_TO_TRANSLATE' | translate }}</mat-label>
+            <textarea matInput
+                      appInputTextSelectionListener
+                      [formControlName]="'text'"
+                      [rows]="3"
+            ></textarea>
+        </mat-form-field>
+    </p>
+    <p>
+        <mat-form-field appearance="standard"
+                        class="app-dictionary-tool-locale-field">
+            <mat-label>{{ 'DICTIONARY.TABLE.TOOL_BAR.FROM_LOCALE' | translate }}</mat-label>
+
+            <app-translation-locale-single-selector
+                    [formControlName]="'fromLocale'">
+            </app-translation-locale-single-selector>
+        </mat-form-field>
+    </p>
+    <p class="align-center">
+        <app-generic-button [icon]="'swap_vert_icon'"
+                            (click)="onInverse()">
+        </app-generic-button>
+    </p>
+    <p>
+        <mat-form-field appearance="standard"
+                        class="app-dictionary-tool-locale-field">
+            <mat-label>{{ 'DICTIONARY.TABLE.TOOL_BAR.TARGET_LOCALE' | translate }}</mat-label>
+
+            <app-translation-locale-single-selector
+                    [formControlName]="'targetLocale'">
+            </app-translation-locale-single-selector>
+        </mat-form-field>
+    </p>
+
+    <div *ngIf="translations || searching">
+        <hr class="app-dictionary-tool-separator"/>
+
+        <ng-container *ngIf="translations">
+            <app-dictionary-tool-translations [translations]="translations">
+            </app-dictionary-tool-translations>
+        </ng-container>
+
+        <ng-container *ngIf="searching">
+            <mat-spinner [diameter]="20" class="margin-center">
+            </mat-spinner>
+        </ng-container>
+    </div>
+</form>

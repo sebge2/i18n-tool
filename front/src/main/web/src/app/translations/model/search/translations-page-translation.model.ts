@@ -1,4 +1,5 @@
-import { TranslationsPageTranslationDto } from '../../../api';
+import {TranslationsPageTranslationDto} from "../../../api/model/translationsPageTranslationDto";
+
 
 export class TranslationsPageTranslation {
   static fromDto(dto: TranslationsPageTranslationDto): TranslationsPageTranslation {

@@ -6,9 +6,10 @@ import org.bson.BsonRegularExpression;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.MongoRegexCreator;
 import org.springframework.data.mongodb.core.query.Query;
 import reactor.core.publisher.Flux;
+
+import static org.springframework.util.StringUtils.isEmpty;
 
 /**
  * Implementation of the {@link DictionaryEntryRepositoryCustom dictionary entry repository}.
@@ -28,18 +29,20 @@ public class DictionaryEntryRepositoryImpl implements DictionaryEntryRepositoryC
     public Flux<DictionaryEntryEntity> find(DictionaryEntrySearchRequest request) {
         final Query query = new Query();
 
-        request.getText().ifPresent(textRestriction ->
-                query.addCriteria(
-                        Criteria.where(DictionaryEntryRepositoryCustom.fieldTranslation(textRestriction.getLocaleId())).regex(
-                                new BsonRegularExpression(MongoRegexCreator.INSTANCE.toRegularExpression(textRestriction.getText(), MongoRegexCreator.MatchMode.CONTAINING), "i")
+        request.getText()
+                .filter(textRestriction -> !isEmpty(textRestriction.getText()))
+                .ifPresent(textRestriction ->
+                        query.addCriteria(
+                                Criteria.where(DictionaryEntryRepositoryCustom.fieldTranslation(textRestriction.getLocaleId())).regex(
+                                        new BsonRegularExpression(textRestriction.getText(), "i")
+                                )
                         )
-                )
-        );
+                );
 
         request.getSort().ifPresent(sortConfig -> {
             final Sort sort = Sort.by(DictionaryEntryRepositoryCustom.fieldTranslation(sortConfig.getLocaleId()));
 
-            if(sortConfig.isAscending()){
+            if (sortConfig.isAscending()) {
                 query.with(sort.ascending());
             } else {
                 query.with(sort.descending());

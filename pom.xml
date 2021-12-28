@@ -23,7 +23,7 @@
 
         <jgit.version>4.6.0.201612231935-r</jgit.version>
         <docker-plugin.version>1.4.1</docker-plugin.version>
-        <spring-doc.version>1.5.0</spring-doc.version>
+        <spring-doc.version>1.6.3</spring-doc.version>
 
         <node.version>v12.22.6</node.version>
         <npm.version>6.14.15</npm.version>

@@ -25,9 +25,9 @@ export class MenuToolBarIconsComponent implements OnInit, OnDestroy {
             .pipe(
                 takeUntil(this._destroyed$),
             )
-            .subscribe((activeTool: ToolSelection) => {
-                this.activeTool = activeTool.toolDescriptor
-            });
+            .subscribe((activeTool: ToolSelection) =>
+                this.activeTool = _.get(activeTool, 'toolDescriptor')
+            );
 
         this.toolBarService
             .getTools()

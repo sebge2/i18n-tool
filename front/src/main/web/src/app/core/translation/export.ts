@@ -24,6 +24,9 @@ export {WorkspaceGithubReview} from './model/workspace/workspace-github-review.m
 export {WorkspaceReviewType, WorkspaceReview} from './model/workspace/workspace-review.model';
 export {WorkspaceStatus} from './model/workspace/workspace-status.model';
 export {LocalizedString} from './model/localized-string.model';
+export {TextTranslations} from './model/text/text-translations.model';
+export {TextTranslation} from './model/text/text-translation.model';
+export {ExternalTranslationSource} from './model/text/external-translation-source.model';
 export {fromWorkspaceReviewDto} from './model/workspace/workspace-utils';
 export {WorkspaceSelectorComponent} from './component/workspace-selector/workspace-selector.component';
 export {TranslationLocaleSelectorComponent} from './component/translation-locale-selector/translation-locale-selector.component';

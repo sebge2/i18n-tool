@@ -1,7 +1,10 @@
 <button type="button"
         mat-icon-button
-        class="app-button"
+        class="app-button app-generic-button"
+        [color]="color"
         [title]="tooltip"
-        (click)="onClick()">
+        (click)="onClick($event)">
     <app-icon [icon]="icon"></app-icon>
+
+    {{label}}
 </button>

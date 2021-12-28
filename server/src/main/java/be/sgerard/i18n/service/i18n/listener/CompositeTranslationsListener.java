@@ -1,6 +1,6 @@
 package be.sgerard.i18n.service.i18n.listener;
 
-import be.sgerard.i18n.model.i18n.dto.TranslationUpdateDto;
+import be.sgerard.i18n.model.i18n.dto.translation.key.TranslationUpdateDto;
 import be.sgerard.i18n.model.i18n.persistence.BundleKeyEntity;
 import be.sgerard.i18n.model.i18n.persistence.BundleKeyTranslationEntity;
 import be.sgerard.i18n.model.validation.ValidationResult;

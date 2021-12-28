@@ -1,5 +1,9 @@
 <mat-form-field [formGroup]="form">
-  <input matInput formControlName="value" />
+  <input matInput
+         appInputTextSelectionListener
+         [formControlName]="'value'"
+         (selectedText)="onSelectedText($event)"
+  />
 
   <app-form-cancel-button (reset)="onReset()" [disabled]="cancelDisabled" matSuffix></app-form-cancel-button>
 </mat-form-field>

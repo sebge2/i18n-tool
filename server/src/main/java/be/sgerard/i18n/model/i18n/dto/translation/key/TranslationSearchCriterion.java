@@ -1,4 +1,4 @@
-package be.sgerard.i18n.model.i18n.dto;
+package be.sgerard.i18n.model.i18n.dto.translation.key;
 
 /**
  * @author Sebastien Gerard

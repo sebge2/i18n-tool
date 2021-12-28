@@ -1,0 +1,58 @@
+<ng-container *ngIf="(translations.translations.length > 0); else: noTranslation">
+    <div class="app-dictionary-tool-translations-container">
+        <div class="app-dictionary-tool-translations-spread">
+            <mat-form-field appearance="fill"
+                            class="app-dictionary-tool-translation-field">
+                <mat-label>Translation</mat-label>
+                <textarea matInput
+                          appInputTextSelectionListener
+                          [value]="currentTranslation?.text"
+                          [rows]="3"
+                          (selectedText)="onSelectedText($event)"
+                ></textarea>
+            </mat-form-field>
+        </div>
+
+        <div>
+            <app-backward-button
+                    [disabled]="!hasPrevious"
+                    [size]="ButtonSize.SMALL"
+                    (click)="onGoPrevious()"
+            >
+            </app-backward-button>
+        </div>
+        <div>
+            <app-copy-button
+                    [disabled]="!textToCopy"
+                    [text]="textToCopy"
+                    [size]="ButtonSize.SMALL"
+                    (click)="onTextCopied()"
+            >
+            </app-copy-button>
+        </div>
+        <div>
+            <app-forward-button
+                    [disabled]="!hasNext"
+                    [size]="ButtonSize.SMALL"
+                    (click)="onGoNext()"
+            >
+            </app-forward-button>
+        </div>
+
+        <div class="align-center app-dictionary-tool-translations-spread app-dictionary-tool-translations-notice">
+            <ng-container *ngIf="currentTranslation && !currentTranslation.externalSource">
+            <span>
+                {{'DICTIONARY.TABLE.TOOL_BAR.TRANSLATIONS.I18N_SOURCE' | translate: {originalText: currentTranslation.originalText} }}
+            </span>
+            </ng-container>
+
+            <ng-container *ngIf="currentTranslation && currentTranslation.externalSource">
+                <span [innerHTML]="'DICTIONARY.TABLE.TOOL_BAR.TRANSLATIONS.EXTERNAL_SOURCE' | translate: {source: toExternalLink(currentTranslation)}"></span>
+            </ng-container>
+        </div>
+    </div>
+</ng-container>
+
+<ng-template #noTranslation>
+    <p class="align-center font-italic">{{'DICTIONARY.TABLE.TOOL_BAR.TRANSLATIONS.NO_TRANSLATION' | translate}}</p>
+</ng-template>

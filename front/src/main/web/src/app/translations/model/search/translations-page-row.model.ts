@@ -1,5 +1,5 @@
-import { TranslationsPageRowDto } from '../../../api';
 import { TranslationsPageTranslation } from './translations-page-translation.model';
+import {TranslationsPageRowDto} from "../../../api/model/translationsPageRowDto";
 
 export class TranslationsPageRow {
   static fromDto(dto: TranslationsPageRowDto): TranslationsPageRow {

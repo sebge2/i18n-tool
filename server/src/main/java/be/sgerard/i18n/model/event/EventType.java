@@ -1,6 +1,6 @@
 package be.sgerard.i18n.model.event;
 
-import be.sgerard.i18n.model.i18n.dto.TranslationsUpdateEventDto;
+import be.sgerard.i18n.model.i18n.dto.translation.key.TranslationsUpdateEventDto;
 import be.sgerard.i18n.model.locale.dto.TranslationLocaleDto;
 import be.sgerard.i18n.model.repository.dto.RepositoryDto;
 import be.sgerard.i18n.model.scheduler.dto.ScheduledTaskDefinitionDto;

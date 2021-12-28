@@ -58,7 +58,10 @@
             "
             class="app-translations-translation-column app-translations-cell app-translations-translation-row"
           >
-            <app-translation-editing-cell [form]="cellForm"></app-translation-editing-cell>
+            <app-translation-editing-cell
+                    [form]="cellForm"
+                    (selectedText)="onTextSelected($event, columnIndex)">
+            </app-translation-editing-cell>
           </div>
         </ng-container>
       </ng-container>

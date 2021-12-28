@@ -1,4 +1,4 @@
-package be.sgerard.i18n.model.i18n.dto;
+package be.sgerard.i18n.model.i18n.dto.translation.key;
 
 import be.sgerard.i18n.model.i18n.persistence.BundleKeyTranslationEntity;
 import be.sgerard.i18n.model.i18n.persistence.BundleKeyTranslationModificationEntity;
@@ -12,15 +12,15 @@ import lombok.Getter;
 import java.util.Optional;
 
 /**
- * Translation of a certain key part of translation bundle.
+ * Translation in a {@link TranslationsPageRowDto translation page row}.
  *
  * @author Sebastien Gerard
  */
-@Schema(name = "Translation", description = "Translation of a key of a bundle file and associated to a locale.")
-@JsonDeserialize(builder = TranslationDto.Builder.class)
+@Schema(name = "TranslationsPageTranslation", description = "Translation in a translation page row.")
+@JsonDeserialize(builder = TranslationsPageTranslationDto.Builder.class)
 @Getter
 @Builder(builderClassName = "Builder")
-public class TranslationDto {
+public class TranslationsPageTranslationDto {
 
     public static Builder builder() {
         return new Builder();
@@ -28,26 +28,10 @@ public class TranslationDto {
 
     public static Builder builder(BundleKeyTranslationEntity translation) {
         return builder()
-                .locale(translation.getLocale())
                 .originalValue(translation.getOriginalValue().orElse(null))
                 .updatedValue(translation.getModification().flatMap(BundleKeyTranslationModificationEntity::getUpdatedValue).orElse(null))
                 .lastEditor(translation.getModification().flatMap(BundleKeyTranslationModificationEntity::getLastEditor).orElse(null));
     }
-
-    @Schema(description = "Unique identifier of a translation.", required = true)
-    private final String id;
-
-    @Schema(description = "Workspace id associated to this translation.", required = true)
-    private final String workspace;
-
-    @Schema(description = "Bundle id associated to this translation.", required = true)
-    private final String bundleFile;
-
-    @Schema(description = "Bundle key associated to this translation.", required = true)
-    private final String bundleKey;
-
-    @Schema(description = "Locale id associated to this translation.", required = true)
-    private final String locale;
 
     @Schema(description = "The original value found when scanning bundle files (initializing step).", required = true)
     private final String originalValue;
@@ -80,7 +64,7 @@ public class TranslationDto {
     }
 
     /**
-     * Builder of {@link TranslationDto bundle key translation}.
+     * Builder of a {@link TranslationsPageTranslationDto page translation}.
      */
     @JsonPOJOBuilder(withPrefix = "")
     @JsonIgnoreProperties(ignoreUnknown = true)

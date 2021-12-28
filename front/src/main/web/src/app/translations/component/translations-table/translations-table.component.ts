@@ -1,5 +1,5 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { TranslationService } from '@i18n-core-translation';
+import {TranslationLocale, TranslationService} from '@i18n-core-translation';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { from, Observable, Subject } from 'rxjs';
 import { NotificationService } from '@i18n-core-notification';
@@ -185,6 +185,12 @@ export class TranslationsTableComponent implements OnInit, OnDestroy {
   // noinspection JSUnusedLocalSymbols
   trackByFn(indexInSource, index, item) {
     return indexInSource;
+  }
+
+  onTextSelected(text: any, columnIndex: number): void {
+    const locale: TranslationLocale = this.state.newSearchRequestSync.locales[columnIndex];
+
+    this.state.notifyTextSelection(text, locale);
   }
 
   private _updateSource(page: TranslationsPage) {

@@ -1,0 +1,8 @@
+.app-generic-button {
+
+  & ::ng-deep .mat-icon {
+    position: relative;
+    top: 5px;
+  }
+
+}
