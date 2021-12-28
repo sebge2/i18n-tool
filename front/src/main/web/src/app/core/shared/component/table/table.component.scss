@@ -1,5 +1,6 @@
 @use '@angular/material' as mat;
-@import '../../../../front/src/main/web/src/css/variables';
+@import 'variables';
+@import 'z-index';
 
 .app-table {
   display: grid;
@@ -42,7 +43,7 @@
 .app-table-cell-header-sticky {
   position: sticky;
   top: 0;
-  z-index: 9;
+  z-index: $app-table-header-z-index;
 }
 
 .app-table-cell-details-expanded,

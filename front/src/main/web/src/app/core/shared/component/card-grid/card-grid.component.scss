@@ -1,0 +1,21 @@
+@import "z-index";
+
+.app-card-grid-add-button {
+  position: fixed;
+  width: 60px;
+  height: 60px;
+  bottom: 20px;
+  right: 20px;
+
+  z-index: $app-add-button-z-index;
+
+  &:hover {
+    opacity: 0.9;
+  }
+
+  & .mat-icon {
+    margin-top: -16px;
+    margin-left: -6px;
+    font-size: 40px;
+  }
+}

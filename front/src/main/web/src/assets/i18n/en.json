@@ -37,6 +37,16 @@
     "LIST_ORGANIZER": {
       "SELECT_ALL_LABEL": "Select All",
       "UNSELECT_ALL_LABEL": "Unselect All"
+    },
+    "TOOL_BAR": {
+      "CLOSE_BUTTON_TOOLTIP": "Close the tool bar."
+    },
+    "HELP": {
+      "TOOL": {
+        "TITLE": "Help",
+        "DESCRIPTION": "Tool providing help about the usage of this tool.",
+        "LINK_LABEL": "Official Documentation"
+      }
     }
   },
   "TRANSLATIONS": {
@@ -95,6 +105,10 @@
         "TITLE": "Which Locales to Display?",
         "AVAILABLE_LABEL": "Unused Locales",
         "SELECTED_LOCALES_LABEL": "Selected Locales"
+      },
+      "TOOL_BAR": {
+        "TITLE": "Dictionary",
+        "DESCRIPTION": "This tool helps you to translate words within the application."
       }
     },
     "ERROR": {

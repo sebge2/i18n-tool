@@ -1,0 +1,30 @@
+@import 'z-index';
+
+.menu-side-bar-container {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 100vh;
+}
+
+.menu-side-bar-main {
+    height: 100%;
+}
+
+.menu-side-bar-menu {
+    z-index: $app-menu-z-index;
+}
+
+.menu-side-bar-sidenav-container {
+    /* When the sidenav is not fixed, stretch the sidenav container to fill the available space. This
+         causes `<mat-sidenav-content>` to act as our scrolling element for desktop layouts. */
+    flex: 1;
+
+    & ::ng-deep .mat-drawer-backdrop {
+        z-index: $app-menu-backdrop-z-index;
+    }
+}

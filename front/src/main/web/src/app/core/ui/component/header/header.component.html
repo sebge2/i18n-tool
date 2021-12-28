@@ -1,25 +1,22 @@
 <mat-toolbar color="primary">
-  <button mat-icon-button (click)="sideBar.toggle()">
+  <button mat-icon-button (click)="onToggle()">
     <mat-icon>menu</mat-icon>
   </button>
 
-  <h1 class="app-name">I18n Tool</h1>
+  <h1 class="header-app-name">I18n Tool</h1>
 
-  <span class="spacer"></span>
+  <span class="header-spacer"></span>
 
   <div *ngIf="currentUser != null">
     <button id="currentUserButtonAction" mat-button [matMenuTriggerFor]="loginMenu">
-      <img [src]="getUrl()" class="img-rounded profile-img" alt="{{ getDisplayName() }}" />
+      <img [src]="avatarUrl" class="img-rounded header-profile-img" alt="{{ userDisplayName }}" />
 
-      <ng-template [ngIf]="!smallSize">
-        <span class="user-name" id="currentUserName">{{ getDisplayName() }}</span>
-      </ng-template>
-
-      <span class="fas fa-caret-down drop-down"></span>
+      <span class="header-user-name" *ngIf="!(smallSize | async )">{{ userDisplayName }}</span>
+      <span class="fas fa-caret-down header-drop-down"></span>
     </button>
 
     <mat-menu #loginMenu="matMenu">
-      <button mat-menu-item id="logoutLink">
+      <button mat-menu-item>
         <a routerLink="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
       </button>
     </mat-menu>

@@ -20,6 +20,7 @@
       "@i18n-core-translation": ["./src/app/core/translation/export"],
       "@i18n-core-event": ["./src/app/core/event/export"],
       "@i18n-core-ui": ["./src/app/core/ui/export"],
+      "@i18n-dictionary": ["./src/app/dictionary/export"],
     }
   }
 }

@@ -1,36 +1,15 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { ScreenService } from '../../service/screen.service';
-import { Subscription } from 'rxjs';
-import { MatSidenav } from '@angular/material/sidenav';
+import {Component, ViewChild} from '@angular/core';
+import {MenuContainerComponent} from '@i18n-core-shared';
 
 @Component({
-  selector: 'app-main',
-  templateUrl: './main.component.html',
-  styleUrls: ['./main.component.css'],
+    selector: 'app-main',
+    templateUrl: './main.component.html',
 })
-export class MainComponent implements OnInit, OnDestroy {
-  @ViewChild('snav', { static: false }) sideNav: MatSidenav;
+export class MainComponent {
 
-  private _smallSizeSubscription: Subscription;
-  private _smallSize: boolean;
+    @ViewChild('sideBar', { static: false }) sideBar: MenuContainerComponent;
 
-  constructor(private mediaService: ScreenService) {}
-
-  ngOnInit(): void {
-    this._smallSizeSubscription = this.mediaService.smallSize.subscribe((mobileSize) => (this._smallSize = mobileSize));
-  }
-
-  ngOnDestroy(): void {
-    this._smallSizeSubscription.unsubscribe();
-  }
-
-  get smallSize(): boolean {
-    return this._smallSize;
-  }
-
-  onClick() {
-    if (this.smallSize) {
-      this.sideNav.close();
+    onMenuToggle() {
+        this.sideBar.toggle();
     }
-  }
 }

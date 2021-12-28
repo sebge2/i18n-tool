@@ -1,0 +1,14 @@
+<div class="app-tool-bar-icons-container">
+    <ng-container *ngFor="let tool of currentTools">
+        <div
+                class="app-tool-bar-icon"
+                [class.app-tool-bar-icon-active]="isActive(tool)"
+        >
+            <app-generic-button
+                [icon]="tool.fontIcon"
+                [tooltip]="tool.description | translate"
+                (click)="onClick(tool)">
+            </app-generic-button>
+        </div>
+    </ng-container>
+</div>
