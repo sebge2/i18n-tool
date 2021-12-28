@@ -1,4 +1,4 @@
-package be.sgerard.i18n.model.i18n.dto;
+package be.sgerard.i18n.model.i18n.dto.translation.key;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;

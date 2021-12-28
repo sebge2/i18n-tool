@@ -1,11 +1,19 @@
 import { BehaviorSubject, merge, Observable, Subject } from 'rxjs';
 import { TranslationsSearchRequest } from './translations-search-request.model';
-import { map, shareReplay, skip } from 'rxjs/operators';
+import {distinctUntilChanged, map, shareReplay, skip } from 'rxjs/operators';
 import { TranslationsPage } from './translations-page.model';
+import {TranslationLocale} from "@i18n-core-translation";
 
 export interface EnrichedTranslationsSearchRequest {
   request: TranslationsSearchRequest;
   origin: 'NEW' | 'NEXT' | 'PREVIOUS';
+}
+
+export interface TextSelection {
+
+  text: string;
+  locale: TranslationLocale;
+
 }
 
 export class TranslationsTableState {
@@ -21,6 +29,9 @@ export class TranslationsTableState {
 
   private readonly _page$ = new BehaviorSubject<TranslationsPage>(null);
   private readonly _pageObs$ = this._page$.pipe(skip(1), shareReplay(1));
+
+  private readonly _textSelection$ = new BehaviorSubject<TextSelection>(null);
+  private readonly _textSelectionObs$ = this._textSelection$.pipe(distinctUntilChanged());
 
   constructor() {
     this._searchRequest$ = merge(
@@ -67,33 +78,20 @@ export class TranslationsTableState {
     return this._newSearchRequest$.getValue();
   }
 
-  notifyNewSearchRequest(request: TranslationsSearchRequest): TranslationsTableState {
-    this._newSearchRequest$.next(request);
-    return this;
+  get textSelection(): Observable<TextSelection> {
+    return this._textSelectionObs$;
   }
 
   get unsavedChanges(): Observable<boolean> {
     return this._unsavedChanges$;
   }
 
-  notifyUnsavedChanges(unsavedChanges: boolean) {
-    this._unsavedChanges$.next(unsavedChanges);
-  }
-
   get loading(): Observable<boolean> {
     return this._loading$;
   }
 
-  notifyLoading(loading: boolean) {
-    this._loading$.next(loading);
-  }
-
   get saving(): Observable<boolean> {
     return this._saving$;
-  }
-
-  notifySaving(saving: boolean) {
-    this._saving$.next(saving);
   }
 
   get page(): Observable<TranslationsPage> {
@@ -102,6 +100,27 @@ export class TranslationsTableState {
 
   get pageSync(): TranslationsPage | undefined {
     return this._page$.getValue();
+  }
+
+  notifyUnsavedChanges(unsavedChanges: boolean) {
+    this._unsavedChanges$.next(unsavedChanges);
+  }
+
+  notifyNewSearchRequest(request: TranslationsSearchRequest): TranslationsTableState {
+    this._newSearchRequest$.next(request);
+    return this;
+  }
+
+  notifyLoading(loading: boolean) {
+    this._loading$.next(loading);
+  }
+
+  notifySaving(saving: boolean) {
+    this._saving$.next(saving);
+  }
+
+  notifyTextSelection(text: string, locale: TranslationLocale): void {
+    this._textSelection$.next({text: text, locale: locale});
   }
 
   updatePage(page: TranslationsPage) {

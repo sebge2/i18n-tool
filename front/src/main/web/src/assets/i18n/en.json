@@ -76,6 +76,10 @@
       },
       "TITLE": "Search {criterion, select, ALL{for <b>all</b> translations} MISSING_TRANSLATIONS{for <b>missing</b> translations} TRANSLATIONS_CURRENT_USER_UPDATED{for translations that <b>I have updated</b>} UPDATED_TRANSLATIONS{for <b>updated</b> translations} other{}}{workspaces, select, true{ for <b>all workspaces</b>} null{} other { on workspaces {workspaces}}}{locales, select, true{ for <b>all locales</b>} null{} other{ for locales {locales}}}."
     },
+    "TOOL_BAR": {
+      "TRANSLATE_BUTTON_WITH_TEXT_LABEL": "Translate {text}",
+      "TRANSLATE_BUTTON_LABEL": "Translate"
+    },
     "ERROR": {
       "SEARCH": "Error while searching for translations.",
       "UPDATE": "Error while updating translations."
@@ -108,7 +112,19 @@
       },
       "TOOL_BAR": {
         "TITLE": "Dictionary",
-        "DESCRIPTION": "This tool helps you to translate words within the application."
+        "DESCRIPTION": "This tool helps you to translate words within the application.",
+        "TEXT_COPIED": "The text has been copied to clipboard.",
+        "FROM_LOCALE": "From Language",
+        "TEXT_TO_TRANSLATE": "Text to Translate",
+        "TARGET_LOCALE": "To Language",
+        "TRANSLATIONS": {
+          "I18N_SOURCE": "Translated with \"{originalText}\" present in your dictionary.",
+          "EXTERNAL_SOURCE": "Translated by {source}.",
+          "NO_TRANSLATION": "No translation found :("
+        },
+        "ERROR": {
+          "TRANSLATE": "Error while translating text."
+        }
       }
     },
     "ERROR": {

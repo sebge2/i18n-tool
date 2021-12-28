@@ -1,7 +1,7 @@
 package be.sgerard.i18n.service.i18n;
 
 import be.sgerard.i18n.model.i18n.TranslationsSearchRequest;
-import be.sgerard.i18n.model.i18n.dto.*;
+import be.sgerard.i18n.model.i18n.dto.translation.key.*;
 import be.sgerard.i18n.model.i18n.persistence.BundleKeyEntity;
 import be.sgerard.i18n.model.i18n.persistence.BundleKeyTranslationEntity;
 import be.sgerard.i18n.model.locale.persistence.TranslationLocaleEntity;

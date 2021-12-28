@@ -1,9 +1,12 @@
 package be.sgerard.i18n.controller;
 
-import be.sgerard.i18n.model.i18n.dto.TranslationDto;
-import be.sgerard.i18n.model.i18n.dto.TranslationUpdateDto;
-import be.sgerard.i18n.model.i18n.dto.TranslationsPageDto;
-import be.sgerard.i18n.model.i18n.dto.TranslationsSearchRequestDto;
+import be.sgerard.i18n.model.i18n.dto.translation.key.TranslationDto;
+import be.sgerard.i18n.model.i18n.dto.translation.key.TranslationUpdateDto;
+import be.sgerard.i18n.model.i18n.dto.translation.key.TranslationsPageDto;
+import be.sgerard.i18n.model.i18n.dto.translation.key.TranslationsSearchRequestDto;
+import be.sgerard.i18n.model.i18n.dto.translation.text.TextTranslationRequestDto;
+import be.sgerard.i18n.model.i18n.dto.translation.text.TextTranslationResponseDto;
+import be.sgerard.i18n.service.i18n.text.TextTranslationManager;
 import be.sgerard.i18n.service.i18n.TranslationManager;
 import be.sgerard.i18n.service.i18n.TranslationSearchManager;
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,10 +34,14 @@ public class TranslationController {
 
     private final TranslationManager translationManager;
     private final TranslationSearchManager translationSearchManager;
+    private final TextTranslationManager translateManager;
 
-    public TranslationController(TranslationManager translationManager, TranslationSearchManager translationSearchManager) {
+    public TranslationController(TranslationManager translationManager,
+                                 TranslationSearchManager translationSearchManager,
+                                 TextTranslationManager translateManager) {
         this.translationManager = translationManager;
         this.translationSearchManager = translationSearchManager;
+        this.translateManager = translateManager;
     }
 
     /**
@@ -46,8 +53,21 @@ public class TranslationController {
             summary = "Returns translations of the workspace having the specified id.",
             parameters = @Parameter(name = "action", in = ParameterIn.QUERY, schema = @Schema(allowableValues = "search"))
     )
-    public Mono<TranslationsPageDto> searchTranslations(@RequestBody TranslationsSearchRequestDto searchRequest) {
-        return translationSearchManager.search(searchRequest);
+    public Mono<TranslationsPageDto> searchTranslations(@RequestBody TranslationsSearchRequestDto request) {
+        return translationSearchManager.search(request);
+    }
+
+    /**
+     * Translates a text in another language.
+     */
+    @PostMapping(path = "/translation/text/do", params = "action=translateText")
+    @Operation(
+            operationId = "translateText",
+            summary = "Translates a text in another language.",
+            parameters = @Parameter(name = "action", in = ParameterIn.QUERY, schema = @Schema(allowableValues = "translateText"))
+    )
+    public Mono<TextTranslationResponseDto> translate(@RequestBody TextTranslationRequestDto request) {
+        return translateManager.translate(request);
     }
 
     /**

@@ -1,7 +1,7 @@
 package be.sgerard.i18n.service.i18n.listener;
 
-import be.sgerard.i18n.model.i18n.dto.TranslationDto;
-import be.sgerard.i18n.model.i18n.dto.TranslationsUpdateEventDto;
+import be.sgerard.i18n.model.i18n.dto.translation.key.TranslationDto;
+import be.sgerard.i18n.model.i18n.dto.translation.key.TranslationsUpdateEventDto;
 import be.sgerard.i18n.model.i18n.persistence.BundleKeyEntity;
 import be.sgerard.i18n.model.i18n.persistence.BundleKeyTranslationEntity;
 import be.sgerard.i18n.service.event.EventService;

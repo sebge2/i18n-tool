@@ -10,6 +10,7 @@ $color-error: mat.define-palette(mat.$red-palette);
 $color-hover: mat.define-palette(mat.$gray-palette, 50);
 $color-dark-bg: darken(mat.get-color-from-palette($color-hover), 10);
 
+$button-small-size: 16px;
 $button-normal-size: 24px;
 $button-xlarge-size: 100px;
 

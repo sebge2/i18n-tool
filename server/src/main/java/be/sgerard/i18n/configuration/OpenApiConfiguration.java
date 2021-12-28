@@ -1,6 +1,6 @@
 package be.sgerard.i18n.configuration;
 
-import be.sgerard.i18n.model.i18n.dto.TranslationsUpdateEventDto;
+import be.sgerard.i18n.model.i18n.dto.translation.key.TranslationsUpdateEventDto;
 import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.converter.ResolvedSchema;

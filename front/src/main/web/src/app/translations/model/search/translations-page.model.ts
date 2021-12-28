@@ -1,4 +1,4 @@
-import { TranslationsPageDto } from '../../../api';
+import {TranslationsPageDto} from "../../../api/model/translationsPageDto";
 import { TranslationsPageRow } from './translations-page-row.model';
 import * as _ from 'lodash';
 

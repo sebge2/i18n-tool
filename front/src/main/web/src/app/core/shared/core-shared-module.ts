@@ -76,6 +76,8 @@ import { MenuToolBarMainComponent } from './component/tool-bar/menu-tool-bar-mai
 import {MenuToolBarIconsComponent} from "./component/tool-bar/menu-tool-bar-icons/menu-tool-bar-icons.component";
 import {GenericButtonComponent} from "./component/button/generic-button/generic-button.component";
 import {IconComponent} from "./component/icon/icon.component";
+import { CopyButtonComponent } from './component/button/copy-button/copy-button.component';
+import { InputTextSelectionListenerDirective } from './directive/input-text-selection-listener.directive';
 
 @NgModule({
     declarations: [
@@ -103,6 +105,7 @@ import {IconComponent} from "./component/icon/icon.component";
         BanButtonComponent,
         PlayButtonComponent,
         GenericButtonComponent,
+        CopyButtonComponent,
 
         FormSelectFieldComponent,
 
@@ -157,6 +160,7 @@ import {IconComponent} from "./component/icon/icon.component";
 
         DragDropDirective,
         OnEnterDirective,
+        InputTextSelectionListenerDirective,
     ],
     imports: [CommonModule, CoreSharedLibModule, TranslateModule],
     exports: [
@@ -191,6 +195,7 @@ import {IconComponent} from "./component/icon/icon.component";
         UnsavedLabelComponent,
         FormApplyButtonComponent,
         GenericButtonComponent,
+        CopyButtonComponent,
 
         FormSelectFieldComponent,
 
@@ -240,6 +245,7 @@ import {IconComponent} from "./component/icon/icon.component";
 
         DragDropDirective,
         OnEnterDirective,
+        InputTextSelectionListenerDirective,
     ],
 })
 export class CoreSharedModule {

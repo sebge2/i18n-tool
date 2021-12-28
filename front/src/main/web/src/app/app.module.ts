@@ -16,6 +16,7 @@ import {CoreNotificationModule} from '@i18n-core-notification';
 import {ApiModule, Configuration, ConfigurationParameters} from './api';
 import {ALL_LOCALES} from '@i18n-core-translation';
 import {CoreTranslationModule} from '@i18n-core-translation';
+import {TOOL_BAR_DESCRIPTOR_PROVIDER} from '@i18n-dictionary';
 
 export function HttpLoaderFactory(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -68,6 +69,7 @@ export class SwaggerConfiguration extends Configuration {
             provide: MESSAGE_FORMAT_CONFIG,
             useValue: {locales: ALL_LOCALES.map((locale) => locale.toString())},
         },
+        TOOL_BAR_DESCRIPTOR_PROVIDER
     ],
 })
 export class AppModule {

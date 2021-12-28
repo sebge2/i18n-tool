@@ -1,10 +1,10 @@
 package be.sgerard.i18n.repository.i18n;
 
 import be.sgerard.i18n.model.i18n.TranslationsSearchRequest;
-import be.sgerard.i18n.model.i18n.dto.TranslationKeyPatternDto;
-import be.sgerard.i18n.model.i18n.dto.TranslationSearchCriterion;
-import be.sgerard.i18n.model.i18n.dto.TranslationValueRestrictionDto;
-import be.sgerard.i18n.model.i18n.dto.TranslationsSearchPageSpecDto;
+import be.sgerard.i18n.model.i18n.dto.translation.key.TranslationKeyPatternDto;
+import be.sgerard.i18n.model.i18n.dto.translation.key.TranslationSearchCriterion;
+import be.sgerard.i18n.model.i18n.dto.translation.key.TranslationValueRestrictionDto;
+import be.sgerard.i18n.model.i18n.dto.translation.key.TranslationsSearchPageSpecDto;
 import be.sgerard.i18n.model.i18n.persistence.BundleKeyEntity;
 import be.sgerard.i18n.model.i18n.persistence.BundleKeyTranslationEntity;
 import be.sgerard.i18n.model.i18n.persistence.BundleKeyTranslationModificationEntity;

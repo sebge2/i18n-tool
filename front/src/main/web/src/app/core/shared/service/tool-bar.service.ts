@@ -1,5 +1,5 @@
 import {Inject, Injectable, InjectionToken} from '@angular/core';
-import {BehaviorSubject, Observable, combineLatest} from "rxjs";
+import {BehaviorSubject, combineLatest, Observable} from "rxjs";
 import {ToolDescriptor} from "../model/tool-bar/tool-descriptor.model";
 import * as _ from "lodash";
 import {map} from "rxjs/operators";
@@ -75,7 +75,12 @@ export class ToolBarService {
         this._enabled.next(false);
     }
 
-    open(): void {
+    open(opened: boolean = true): void {
+        if (!opened) {
+            this.close();
+            return;
+        }
+
         this._opened.next(true);
 
         this._initiateDefaultTool();
@@ -117,7 +122,7 @@ export class ToolBarService {
     private _initiateDefaultTool() {
         if (!_.isNil(this._activeTool.value)) {
             return;
-        } else if(!_.some(this._tools)){
+        } else if (!_.some(this._tools)) {
             return;
         }
 
