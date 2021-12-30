@@ -13,7 +13,6 @@ import be.sgerard.i18n.service.locale.TranslationLocaleManager;
 import be.sgerard.i18n.service.security.auth.AuthenticationUserManager;
 import be.sgerard.i18n.service.user.listener.UserPreferencesListener;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -51,7 +50,6 @@ public class UserPreferencesManagerImpl implements UserPreferencesManager {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public Mono<UserPreferencesEntity> get() throws ResourceNotFoundException {
         return getCurrentUserOrDie()
                 .map(UserEntity::getPreferences);

@@ -17,7 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cglib.proxy.Proxy;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -64,7 +63,6 @@ public class RepositoryManagerImpl implements RepositoryManager {
         return repository.findAll();
     }
 
-    @Transactional
     @Override
     public Mono<RepositoryEntity> create(RepositoryCreationDto creationDto) {
         return handler
@@ -83,7 +81,6 @@ public class RepositoryManagerImpl implements RepositoryManager {
                 );
     }
 
-    @Transactional
     @Override
     public Mono<RepositoryEntity> initialize(String id) throws ResourceNotFoundException, IllegalStateException {
         return lockService.executeAndGetMono(
@@ -104,7 +101,7 @@ public class RepositoryManagerImpl implements RepositoryManager {
 
                                                     repository.setStatus(RepositoryStatus.INITIALIZATION_ERROR);
 
-                                                    return  listener.beforeUpdate(repository).thenReturn(repository)
+                                                    return listener.beforeUpdate(repository).thenReturn(repository)
                                                             .flatMap(this.repository::save)
                                                             .flatMap(rep -> listener.afterUpdate(rep).thenReturn(rep));
                                                 })
@@ -112,7 +109,6 @@ public class RepositoryManagerImpl implements RepositoryManager {
                                 ));
     }
 
-    @Transactional
     @Override
     public Mono<RepositoryEntity> update(RepositoryPatchDto patch) throws ResourceNotFoundException, RepositoryException {
         return lockService.executeAndGetMono(
@@ -134,7 +130,6 @@ public class RepositoryManagerImpl implements RepositoryManager {
                                 .flatMap(repo -> listener.afterUpdate(repo).thenReturn(repo)));
     }
 
-    @Transactional
     @Override
     public Mono<RepositoryEntity> delete(String id) {
         return lockService.executeAndGetMono(
@@ -161,7 +156,6 @@ public class RepositoryManagerImpl implements RepositoryManager {
     }
 
     @Override
-    @Transactional
     public <A extends RepositoryApi, T> Mono<T> applyGetMono(String repositoryId,
                                                              Class<A> apiType,
                                                              RepositoryApi.ApiFunction<A, Mono<T>> apiConsumer) throws RepositoryException {
@@ -185,7 +179,6 @@ public class RepositoryManagerImpl implements RepositoryManager {
     }
 
     @Override
-    @Transactional
     public <A extends RepositoryApi, T> Flux<T> applyGetFlux(String repositoryId,
                                                              Class<A> apiType,
                                                              RepositoryApi.ApiFunction<A, Flux<T>> apiConsumer) throws RepositoryException {

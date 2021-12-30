@@ -1,4 +1,4 @@
-FROM openjdk:12-jdk-alpine
+FROM openjdk:17-jdk-alpine
 VOLUME /srv
 
 ARG DEPENDENCY=target/dependency

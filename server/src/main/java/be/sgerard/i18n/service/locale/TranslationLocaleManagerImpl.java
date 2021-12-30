@@ -8,7 +8,6 @@ import be.sgerard.i18n.service.ValidationException;
 import be.sgerard.i18n.service.locale.listener.TranslationLocaleListener;
 import be.sgerard.i18n.service.locale.validation.TranslationLocaleValidator;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -43,7 +42,6 @@ public class TranslationLocaleManagerImpl implements TranslationLocaleManager {
     }
 
     @Override
-    @Transactional
     public Mono<TranslationLocaleEntity> create(TranslationLocaleCreationDto creationDto) {
         return Mono
                 .just(new TranslationLocaleEntity(
@@ -65,7 +63,6 @@ public class TranslationLocaleManagerImpl implements TranslationLocaleManager {
     }
 
     @Override
-    @Transactional
     public Mono<TranslationLocaleEntity> update(TranslationLocaleDto localeDto) {
         return findById(localeDto.getId())
                 .flatMap(locale -> localeValidator.beforeUpdate(locale, localeDto)
@@ -89,7 +86,6 @@ public class TranslationLocaleManagerImpl implements TranslationLocaleManager {
     }
 
     @Override
-    @Transactional
     public Mono<TranslationLocaleEntity> delete(String localeId) {
         return findById(localeId)
                 .flatMap(translationLocale -> localeValidator.beforeDelete(translationLocale)
@@ -103,5 +99,4 @@ public class TranslationLocaleManagerImpl implements TranslationLocaleManager {
                 .flatMap(translationLocale -> repository.delete(translationLocale).thenReturn(translationLocale))
                 .flatMap(translationLocale -> localeListener.afterDelete(translationLocale).thenReturn(translationLocale));
     }
-
 }

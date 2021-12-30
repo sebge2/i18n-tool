@@ -27,7 +27,6 @@ import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -98,7 +97,6 @@ public class UserManagerImpl implements UserManager {
     }
 
     @Override
-    @Transactional
     public Mono<InternalUserEntity> createUser(InternalUserCreationDto info) {
         return this
                 .initializeUser(info)
@@ -125,7 +123,6 @@ public class UserManagerImpl implements UserManager {
     }
 
     @Override
-    @Transactional
     public Mono<ExternalUserEntity> createOrUpdate(ExternalUser externalUser) {
         if (!externalUser.isAuthorized()) {
             return Mono.empty();
@@ -154,7 +151,6 @@ public class UserManagerImpl implements UserManager {
     }
 
     @Override
-    @Transactional
     public Mono<UserEntity> update(UserEntity user) {
         return listener.beforeUpdate(user).thenReturn(user)
                 .flatMap(userRepository::save)
@@ -162,7 +158,6 @@ public class UserManagerImpl implements UserManager {
     }
 
     @Override
-    @Transactional
     public Mono<UserEntity> update(String id, UserPatchDto patch) {
         return findById(id)
                 .flatMap(user ->
@@ -188,7 +183,6 @@ public class UserManagerImpl implements UserManager {
     }
 
     @Override
-    @Transactional
     public Mono<UserEntity> updateCurrent(String currentUserId, CurrentUserPatchDto patch) {
         return findByIdOrDie(currentUserId)
                 .flatMap(user ->
@@ -211,7 +205,6 @@ public class UserManagerImpl implements UserManager {
     }
 
     @Override
-    @Transactional
     public Mono<UserEntity> updateUserAvatar(String currentUserId, InputStream avatarStream, String contentType) {
         return findByIdOrDie(currentUserId)
                 .flatMap(user ->
@@ -237,7 +230,6 @@ public class UserManagerImpl implements UserManager {
     }
 
     @Override
-    @Transactional
     public Mono<UserEntity> updateCurrentPassword(String currentUserId, CurrentUserPasswordUpdateDto update) {
         return findByIdOrDie(currentUserId)
                 .flatMap(user ->
@@ -264,7 +256,6 @@ public class UserManagerImpl implements UserManager {
     }
 
     @Override
-    @Transactional
     public Mono<UserEntity> delete(String id) {
         return findById(id)
                 .flatMap(user ->
