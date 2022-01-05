@@ -1,6 +1,7 @@
 package be.sgerard.i18n.controller;
 
 import be.sgerard.i18n.model.i18n.dto.translation.key.*;
+import be.sgerard.i18n.model.i18n.dto.translation.text.TextTranslationRequestDto;
 import be.sgerard.i18n.model.locale.dto.TranslationLocaleDto;
 import be.sgerard.test.i18n.support.CleanupDatabase;
 import be.sgerard.test.i18n.support.auth.internal.WithJaneDoeAdminUser;
@@ -10,8 +11,8 @@ import org.springframework.http.MediaType;
 import java.util.List;
 import java.util.Locale;
 
-import static be.sgerard.test.i18n.model.RepositoryEntityTestUtils.I18N_TOOL_GITHUB_ACCESS_TOKEN;
 import static be.sgerard.test.i18n.model.GitRepositoryCreationDtoTestUtils.i18nToolGitHubRepositoryCreationDto;
+import static be.sgerard.test.i18n.model.RepositoryEntityTestUtils.I18N_TOOL_GITHUB_ACCESS_TOKEN;
 import static be.sgerard.test.i18n.model.TranslationLocaleCreationDtoTestUtils.enLocaleCreationDto;
 import static be.sgerard.test.i18n.model.TranslationLocaleCreationDtoTestUtils.frLocaleCreationDto;
 import static java.util.Arrays.asList;
@@ -509,6 +510,37 @@ public class TranslationControllerTest extends AbstractControllerTest {
                     .jsonPath("$[1].originalValue").isEqualTo("Il existe déjà un répository nommé [{0}]. Les noms doivent être unique.")
                     .jsonPath("$[1].updatedValue").isEqualTo("ma valeur")
                     .jsonPath("$[1].lastEditor").isNotEmpty();
+        }
+    }
+
+    @Nested
+    @DisplayName("textTranslate")
+    class TextTranslate extends AbstractControllerTest {
+
+        @Test
+        @CleanupDatabase
+        @WithJaneDoeAdminUser
+        public void withExternalTranslators() {
+            externalTranslator
+                    .createGoogleTranslatorConfig()
+                    .withTranslation(Locale.ENGLISH, "House", Locale.FRENCH, "Maison")
+                    .withTranslation(Locale.FRENCH, "Maison", Locale.ENGLISH, "House");
+
+            webClient
+                    .post()
+                    .uri("/api/translation/text/do?action=translateText")
+                    .bodyValue(new TextTranslationRequestDto(
+                            "House",
+                            locale.findRegisteredLocale(Locale.ENGLISH).get().getId(),
+                            locale.findRegisteredLocale(Locale.FRENCH).get().getId()
+                    ))
+                    .exchange()
+                    .expectStatus().isOk()
+                    .expectBody()
+                    .jsonPath("$.externalSources").value(hasSize(1))
+                    .jsonPath("$.externalSources[0].label").isEqualTo("Google")
+                    .jsonPath("$.translations").value(hasSize(1))
+                    .jsonPath("$.translations[0].text").isEqualTo("Maison");
         }
     }
 }
