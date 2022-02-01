@@ -91,7 +91,7 @@ public class GenericRestExternalTranslator implements ExternalTranslatorHandler<
     }
 
     /**
-     * Process the specified value that may contain parameters. The available template parameters are specified.
+     * Processes the specified value that may contain parameters. The available template parameters are specified.
      */
     private String processTemplatedValue(String value, Map<String, String> templateParameters) {
         return templateService

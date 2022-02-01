@@ -22,8 +22,8 @@ public class ExternalTranslatorGenericRestConfigSnapshotDtoMapper extends Abstra
     }
 
     @Override
-    public boolean support(ExternalTranslatorConfigEntity config) {
-        return config instanceof ExternalTranslatorGenericRestConfigEntity;
+    public boolean support(ExternalTranslatorConfigEntity entity) {
+        return entity instanceof ExternalTranslatorGenericRestConfigEntity;
     }
 
     @Override

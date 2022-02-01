@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 
-@Schema(name = "ITranslateTranslatorConfig", description = "Config of iTranslate.com Translator.")
+@Schema(name = "ITranslateTranslatorConfig", description = "Config of iTranslate.com translator.")
 @Getter
 public class ITranslateTranslatorConfigDto {
 

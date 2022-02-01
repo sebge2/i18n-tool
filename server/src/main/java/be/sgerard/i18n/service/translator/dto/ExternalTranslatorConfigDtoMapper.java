@@ -5,7 +5,7 @@ import be.sgerard.i18n.model.translator.persistence.ExternalTranslatorConfigEnti
 import be.sgerard.i18n.service.translator.ExternalTranslatorConfigType;
 
 /**
- * Mapper for the {@link ExternalTranslatorConfigDto repository DTO}.
+ * Mapper for the {@link ExternalTranslatorConfigDto translator config DTO}.
  *
  * @author Sebastien Gerard
  */

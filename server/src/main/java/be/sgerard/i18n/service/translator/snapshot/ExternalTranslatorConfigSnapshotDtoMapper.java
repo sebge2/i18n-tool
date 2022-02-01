@@ -19,7 +19,7 @@ public interface ExternalTranslatorConfigSnapshotDtoMapper<E extends ExternalTra
     /**
      * Returns whether the specified entity is supported.
      */
-    boolean support(ExternalTranslatorConfigEntity translator);
+    boolean support(ExternalTranslatorConfigEntity entity);
 
     /**
      * Maps the entity from its DTO representation.

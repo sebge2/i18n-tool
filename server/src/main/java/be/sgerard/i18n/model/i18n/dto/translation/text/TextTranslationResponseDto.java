@@ -1,7 +1,6 @@
 package be.sgerard.i18n.model.i18n.dto.translation.text;
 
 import be.sgerard.i18n.model.i18n.dto.translate.ExternalTranslationSourceDto;
-import be.sgerard.i18n.model.validation.ValidationResult;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -29,7 +28,7 @@ import static java.util.stream.Collectors.toSet;
 public class TextTranslationResponseDto {
 
     /**
-     * Returns a new {@link Collector collector} for {@link ValidationResult validation results}.
+     * Returns a new {@link Collector collector} for {@link TextTranslationResponseDto text translation response}.
      */
     public static Collector<TextTranslationResponseDto, List<TextTranslationResponseDto>, TextTranslationResponseDto> toTextTranslationResponse() {
         return new Collector<>() {
