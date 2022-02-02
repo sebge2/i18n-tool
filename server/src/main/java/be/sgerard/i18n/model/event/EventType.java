@@ -1,5 +1,6 @@
 package be.sgerard.i18n.model.event;
 
+import be.sgerard.i18n.model.translator.dto.ExternalTranslatorConfigDto;
 import be.sgerard.i18n.model.i18n.dto.translation.key.TranslationsUpdateEventDto;
 import be.sgerard.i18n.model.locale.dto.TranslationLocaleDto;
 import be.sgerard.i18n.model.repository.dto.RepositoryDto;
@@ -174,4 +175,19 @@ public enum EventType {
      * @see DictionaryEntryDto
      */
     DELETED_DICTIONARY_ENTRY,
+
+    /**
+     * @see ExternalTranslatorConfigDto
+     */
+    ADDED_EXTERNAL_TRANSLATOR_CONFIG,
+
+    /**
+     * @see ExternalTranslatorConfigDto
+     */
+    UPDATED_EXTERNAL_TRANSLATOR_CONFIG,
+
+    /**
+     * @see ExternalTranslatorConfigDto
+     */
+    DELETED_EXTERNAL_TRANSLATOR_CONFIG,
 }

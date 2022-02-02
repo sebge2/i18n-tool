@@ -5,12 +5,13 @@ import be.sgerard.i18n.model.i18n.dto.translation.text.TextTranslationDto;
 import be.sgerard.i18n.model.i18n.dto.translation.text.TextTranslationRequestDto;
 import be.sgerard.i18n.model.i18n.dto.translation.text.TextTranslationResponseDto;
 import be.sgerard.i18n.service.dictionary.DictionaryManager;
+import be.sgerard.i18n.service.translator.ExternalTranslator;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.stream.Stream;
 
+import static be.sgerard.i18n.model.i18n.dto.translation.text.TextTranslationResponseDto.toTextTranslationResponse;
 import static java.util.Collections.emptyList;
 
 /**
@@ -20,25 +21,27 @@ import static java.util.Collections.emptyList;
 public class TextTranslationManagerImpl implements TextTranslationManager {
 
     private final DictionaryManager dictionaryManager;
+    private final ExternalTranslator externalTranslator;
 
-    public TextTranslationManagerImpl(DictionaryManager dictionaryManager) {
+    public TextTranslationManagerImpl(DictionaryManager dictionaryManager, ExternalTranslator externalTranslator) {
         this.dictionaryManager = dictionaryManager;
+        this.externalTranslator = externalTranslator;
     }
 
     @Override
     public Mono<TextTranslationResponseDto> translate(TextTranslationRequestDto request) {
-        return this
-                .translateFromDictionary(request)
-                .map(internalTranslations -> new TextTranslationResponseDto(
-                        emptyList(),
-                        internalTranslations
-                ));
+        return Mono
+                .zip(
+                        translateUsingDictionary(request),
+                        translateUsingExternal(request),
+                        (fromDictionary, fromExternal) -> Stream.of(fromDictionary, fromExternal).collect(toTextTranslationResponse())
+                );
     }
 
     /**
      * Translates using the internal {@link DictionaryManager dictionary manager}.
      */
-    private Mono<List<TextTranslationDto>> translateFromDictionary(TextTranslationRequestDto request) {
+    private Mono<TextTranslationResponseDto> translateUsingDictionary(TextTranslationRequestDto request) {
         return dictionaryManager
                 .find(
                         DictionaryEntrySearchRequest.builder()
@@ -54,6 +57,17 @@ public class TextTranslationManagerImpl implements TextTranslationManager {
                         entry.getTranslation(request.getFromLocaleId()).orElse(null),
                         entry.getTranslation(request.getTargetLocaleId()).orElse(null)
                 ))
-                .collectList();
+                .collectList()
+                .map(internalTranslations -> new TextTranslationResponseDto(
+                        emptyList(),
+                        internalTranslations
+                ));
+    }
+
+    /**
+     * Translates using the internal {@link ExternalTranslator external translator}.
+     */
+    private Mono<TextTranslationResponseDto> translateUsingExternal(TextTranslationRequestDto request) {
+        return externalTranslator.translate(request);
     }
 }

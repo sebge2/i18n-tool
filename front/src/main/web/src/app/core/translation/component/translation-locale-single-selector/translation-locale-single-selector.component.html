@@ -1,5 +1,6 @@
 <form [formGroup]="parts">
-    <mat-select [formControlName]="'translationLocale'">
+    <mat-select [formControlName]="'translationLocale'"
+                [compareWith]="compareIds">
         <mat-select-trigger>
             <span [class]="value | translationLocaleIcon"></span> {{ value?.displayName }}
         </mat-select-trigger>
