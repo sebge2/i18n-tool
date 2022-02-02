@@ -192,6 +192,13 @@ export class TranslationLocaleSingleSelectorComponent
         this.disabled = isDisabled;
     }
 
+    compareIds(locale1: TranslationLocale, locale2: TranslationLocale): boolean {
+        return _.eq(
+            _.get(locale1, 'id'),
+            _.get(locale2, 'id')
+        );
+    }
+
     private _updateLocales(availableLocales: TranslationLocale[]): void {
         this.allLocales = availableLocales;
 
