@@ -33,7 +33,3 @@ be:
             - "**/src/assets/i18n"
       scheduledTask:
         delayTaskExecutionInMin: 0
-
-springdoc:
-  api-docs:
-    enabled: false

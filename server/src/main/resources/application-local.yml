@@ -9,3 +9,7 @@ be:
       scheduled-task:
         cleanup-frequency: '0 0 * * * *'
         cleanup-executions-older-than-days: 31
+
+springdoc:
+  api-docs:
+    enabled: true

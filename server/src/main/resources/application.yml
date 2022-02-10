@@ -13,6 +13,7 @@ springdoc:
     path: "/api/index.html"
   api-docs:
     path: "/api/api-docs"
+    enabled: false
 
 management:
   endpoints:
