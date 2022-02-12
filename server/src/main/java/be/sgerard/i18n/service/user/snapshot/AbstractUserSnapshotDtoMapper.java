@@ -104,7 +104,11 @@ public abstract class AbstractUserSnapshotDtoMapper<E extends UserEntity, D exte
                         userEntity
                                 .getPreferences()
                                 .setToolLocale(preferences.getToolLocale().orElse(null))
-                                .setPreferredLocales(locales)
+                                .setPreferredLocales(
+                                        locales.stream()
+                                                .map(TranslationLocaleEntity::getId)
+                                                .collect(toList())
+                                )
                 );
     }
 
@@ -137,11 +141,7 @@ public abstract class AbstractUserSnapshotDtoMapper<E extends UserEntity, D exte
      */
     protected UserPreferencesSnapshotDto mapToDto(UserPreferencesEntity preferences) {
         return UserPreferencesSnapshotDto.builder()
-                .preferredLocales(
-                        preferences.getPreferredLocales().stream()
-                                .map(TranslationLocaleEntity::getId)
-                                .collect(toList())
-                )
+                .preferredLocales(preferences.getPreferredLocales())
                 .toolLocale(preferences.getToolLocale().orElse(null))
                 .build();
     }

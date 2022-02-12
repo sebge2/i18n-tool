@@ -48,3 +48,6 @@ be:
           ignored-paths:
           included-paths:
             - "**/src/assets/i18n"
+
+mongock:
+  change-logs-scan-package: be.sgerard.i18n.migration.persistence

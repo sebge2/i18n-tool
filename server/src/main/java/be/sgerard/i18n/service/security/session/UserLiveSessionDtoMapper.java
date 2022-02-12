@@ -10,7 +10,7 @@ import reactor.core.publisher.Mono;
 import static be.sgerard.i18n.model.security.session.dto.UserLiveSessionDto.builder;
 
 /**
- * Mapper from {@link UserLiveSessionEntity session entity} to {@link UserLiveSessionDto session DTO.
+ * Mapper from {@link UserLiveSessionEntity session entity} to {@link UserLiveSessionDto session DTO}.
  *
  * @author Sebastien Gerard
  */
