@@ -10,10 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import reactor.test.StepVerifier;
 
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
-
-import static be.sgerard.test.i18n.model.UserEntityTestUtils.JOHN_DOE_USERNAME;
 
 /**
  * @author Sebastien Gerard
@@ -29,7 +26,7 @@ public class UserLiveSessionManagerTest extends AbstractIntegrationTest {
     public void startSession() {
         StepVerifier
                 .create(sessionManager.startSession())
-                .expectNextMatches(session -> Objects.equals(session.getUser().getUsername(), JOHN_DOE_USERNAME))
+                .expectNextCount(1)
                 .expectComplete()
                 .verify();
     }
@@ -40,13 +37,13 @@ public class UserLiveSessionManagerTest extends AbstractIntegrationTest {
     public void getCurrentLiveSessions() {
         StepVerifier
                 .create(sessionManager.startSession())
-                .expectNextMatches(session -> Objects.equals(session.getUser().getUsername(), JOHN_DOE_USERNAME))
+                .expectNextCount(1)
                 .expectComplete()
                 .verify();
 
         StepVerifier
                 .create(sessionManager.getCurrentLiveSessions())
-                .expectNextMatches(session -> Objects.equals(session.getUser().getUsername(), JOHN_DOE_USERNAME))
+                .expectNextCount(1)
                 .expectComplete()
                 .verify();
     }
@@ -59,7 +56,7 @@ public class UserLiveSessionManagerTest extends AbstractIntegrationTest {
 
         StepVerifier
                 .create(sessionManager.getSessionOrDie(session.getId()))
-                .expectNextMatches(actual -> Objects.equals(actual.getUser().getUsername(), JOHN_DOE_USERNAME))
+                .expectNextCount(1)
                 .expectComplete()
                 .verify();
     }
@@ -87,7 +84,7 @@ public class UserLiveSessionManagerTest extends AbstractIntegrationTest {
 
         StepVerifier
                 .create(sessionManager.getSessionOrDie(session.getId()))
-                .expectNextMatches(actual -> Objects.equals(actual.getUser().getUsername(), JOHN_DOE_USERNAME))
+                .expectNextCount(1)
                 .expectComplete()
                 .verify();
 
