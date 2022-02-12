@@ -17,11 +17,13 @@ import java.util.UUID;
  *
  * @author Sebastien Gerard
  */
-@Document("user_live_session")
+@Document(UserLiveSessionEntity.USER_LIVE_SESSION_DOCUMENT)
 @Getter
 @Setter
 @Accessors(chain = true)
 public class UserLiveSessionEntity {
+
+    public static final String USER_LIVE_SESSION_DOCUMENT = "user_live_session";
 
     /**
      * The unique id of this live session.

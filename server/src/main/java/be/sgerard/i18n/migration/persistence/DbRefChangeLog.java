@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import static be.sgerard.i18n.model.security.session.persistence.UserLiveSessionEntity.USER_LIVE_SESSION_DOCUMENT;
 import static be.sgerard.i18n.model.user.persistence.UserEntity.USER_DOCUMENT;
 import static com.mongodb.client.model.Filters.eq;
 import static java.util.stream.Collectors.toList;
@@ -31,7 +32,7 @@ public class DbRefChangeLog {
     /**
      * Migrate all DB-ref contained in user preferences.
      */
-    @ChangeSet(id = "dbRefToId", order = "001", author = "Sebastien Gerard")
+    @ChangeSet(id = "userPreferredLocalesDBRefToIds", order = "001", author = "Sebastien Gerard")
     @SuppressWarnings("unused")
     public void migrateUserPreferencesDbRef(MongockTemplate mongockTemplate) {
         final MongoCollection<Document> users = mongockTemplate.getCollection(USER_DOCUMENT);
@@ -65,6 +66,21 @@ public class DbRefChangeLog {
     }
 
     /**
+     * Removes all user sessions that still contain DB-ref.
+     */
+    @ChangeSet(id = "deleteUserSessionsWithDBRf", order = "002", author = "Sebastien Gerard")
+    @SuppressWarnings("unused")
+    public void removeUserSessions(MongockTemplate mongockTemplate) {
+        final MongoCollection<Document> sessions = mongockTemplate.getCollection(USER_LIVE_SESSION_DOCUMENT);
+
+        for (Document sessionDocument : sessions.find()) {
+            log.info("Deleting user session with id [{}].", sessionDocument.get("_id"));
+
+            sessions.deleteOne(eq("_id", sessionDocument.getString("_id")));
+        }
+    }
+
+    /**
      * Returns user's preferences.
      */
     private Document getUserPreferences(Document userDocument) {
@@ -86,6 +102,4 @@ public class DbRefChangeLog {
                 .map(locales -> (List<Object>) locales)
                 .orElseGet(Collections::emptyList);
     }
-
-    // TODO delete session
 }
