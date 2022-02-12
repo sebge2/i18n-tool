@@ -68,15 +68,19 @@ public class DbRefChangeLog {
     /**
      * Removes all user sessions that still contain DB-ref.
      */
-    @ChangeSet(id = "deleteUserSessionsWithDBRf", order = "002", author = "Sebastien Gerard")
+    @ChangeSet(id = "deleteUserSessionsWithDBRf", order = "002", author = "Sebastien Gerard", runAlways = true)
     @SuppressWarnings("unused")
     public void removeUserSessions(MongockTemplate mongockTemplate) {
         final MongoCollection<Document> sessions = mongockTemplate.getCollection(USER_LIVE_SESSION_DOCUMENT);
 
         for (Document sessionDocument : sessions.find()) {
-            log.info("Deleting user session with id [{}].", sessionDocument.get("_id"));
+            final Object userField = sessionDocument.get("user");
 
-            sessions.deleteOne(eq("_id", sessionDocument.getString("_id")));
+            if (userField instanceof DBRef) {
+                log.info("Deleting user session with id [{}].", sessionDocument.get("_id"));
+
+                sessions.deleteOne(eq("_id", sessionDocument.getString("_id")));
+            }
         }
     }
 
