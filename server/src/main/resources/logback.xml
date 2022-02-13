@@ -11,4 +11,6 @@
         <appender-ref ref="STDOUT"/>
     </root>
 
+<!--    <logger name="be.sgerard.i18n.migration.persistence" level="DEBUG">-->
+<!--    </logger>-->
 </configuration>

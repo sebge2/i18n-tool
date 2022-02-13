@@ -40,6 +40,13 @@ public interface UserLiveSessionManager {
     /**
      * Deletes all {@link UserLiveSessionEntity sessions} of the specified user.
      */
-    Mono<Void> deleteAll(UserEntity userEntity);
+    default Mono<Void> deleteAll(UserEntity userEntity){
+        return deleteAll(userEntity.getId());
+    }
+
+    /**
+     * Deletes all {@link UserLiveSessionEntity sessions} of the specified user.
+     */
+    Mono<Void> deleteAll(String user);
 
 }

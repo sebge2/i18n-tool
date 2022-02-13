@@ -1,7 +1,6 @@
 package be.sgerard.i18n.service.security.session;
 
 import be.sgerard.i18n.model.security.session.persistence.UserLiveSessionEntity;
-import be.sgerard.i18n.model.user.persistence.UserEntity;
 import be.sgerard.i18n.repository.security.UserLiveSessionRepository;
 import be.sgerard.i18n.service.ResourceNotFoundException;
 import be.sgerard.i18n.service.security.auth.AuthenticationUserManager;
@@ -89,9 +88,9 @@ public class UserLiveSessionManagerImpl implements UserLiveSessionManager {
 
     @Override
     @Transactional
-    public Mono<Void> deleteAll(UserEntity userEntity) {
+    public Mono<Void> deleteAll(String user) {
         return repository
-                .findByUser(userEntity)
+                .findByUser(user)
                 .flatMap(this::deleteSession)
                 .then();
     }

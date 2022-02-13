@@ -18,7 +18,7 @@ import java.util.Set;
  *
  * @author Sebastien Gerard
  */
-@Document("user")
+@Document(UserEntity.USER_DOCUMENT)
 @Getter
 @Setter
 @Accessors(chain = true)
@@ -28,6 +28,11 @@ public abstract class UserEntity {
      * User name of admin.
      */
     public static final String ADMIN_USER_NAME = "admin";
+
+    /**
+     * Document name for this entity.
+     */
+    public static final String USER_DOCUMENT = "user";
 
     /**
      * The unique id of this user.

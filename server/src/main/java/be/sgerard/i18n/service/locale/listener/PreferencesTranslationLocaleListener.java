@@ -5,9 +5,6 @@ import be.sgerard.i18n.service.user.UserManager;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
-import java.util.Objects;
-import java.util.Optional;
-
 /**
  * {@link TranslationLocaleListener Listener} applied when deleting a locale. User preferences will be impacted accordingly.
  *
@@ -26,19 +23,11 @@ public class PreferencesTranslationLocaleListener implements TranslationLocaleLi
     public Mono<Void> beforeDelete(TranslationLocaleEntity locale) {
         return userManager
                 .findAll()
+                .filter(user -> user.getPreferences().getPreferredLocales().contains(locale.getId()))
                 .flatMap(user -> {
-                    final Optional<TranslationLocaleEntity> matchingLocale = user.getPreferences()
-                            .getPreferredLocales().stream()
-                            .filter(preferredLocale -> Objects.equals(locale.getId(), preferredLocale.getId()))
-                            .findFirst();
+                    user.getPreferences().getPreferredLocales().remove(locale.getId());
 
-                    if (matchingLocale.isPresent()) {
-                        user.getPreferences().getPreferredLocales().remove(matchingLocale.get());
-
-                        return userManager.update(user);
-                    } else {
-                        return Mono.empty();
-                    }
+                    return userManager.update(user);
                 })
                 .then();
     }

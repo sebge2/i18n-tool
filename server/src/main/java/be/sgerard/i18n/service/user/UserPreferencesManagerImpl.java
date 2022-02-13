@@ -20,6 +20,8 @@ import reactor.core.publisher.Mono;
 import java.util.Collection;
 import java.util.List;
 
+import static java.util.stream.Collectors.toList;
+
 /**
  * Implementation of the {@link UserPreferencesManager user preferences service}.
  *
@@ -63,7 +65,11 @@ public class UserPreferencesManagerImpl implements UserPreferencesManager {
                                 .doOnNext(preferredLocales ->
                                         user.getPreferences()
                                                 .setToolLocale(preferences.getToolLocale().orElse(null))
-                                                .setPreferredLocales(preferredLocales)
+                                                .setPreferredLocales(
+                                                        preferredLocales.stream()
+                                                                .map(TranslationLocaleEntity::getId)
+                                                                .collect(toList())
+                                                )
                                 )
                                 .thenReturn(user)
                 )

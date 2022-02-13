@@ -7,11 +7,9 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.data.annotation.AccessType;
 import org.springframework.data.annotation.PersistenceConstructor;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -30,11 +28,10 @@ public class UserPreferencesEntity {
     private ToolLocale toolLocale;
 
     /**
-     * Locales that are preferred/spoken by the end-user.
+     * {@link TranslationLocaleEntity#getId() Locales} that are preferred/spoken by the end-user.
      */
     @AccessType(AccessType.Type.PROPERTY)
-    @DBRef
-    private final List<TranslationLocaleEntity> preferredLocales = new ArrayList<>();
+    private final List<String> preferredLocales = new ArrayList<>();
 
     @PersistenceConstructor
     UserPreferencesEntity() {
@@ -50,9 +47,9 @@ public class UserPreferencesEntity {
     /**
      * @see #preferredLocales
      */
-    public UserPreferencesEntity setPreferredLocales(List<TranslationLocaleEntity> preferredLocales) {
+    public UserPreferencesEntity setPreferredLocales(List<String> preferredLocales) {
         this.preferredLocales.clear();
-        preferredLocales.stream().filter(Objects::nonNull).forEach(this.preferredLocales::add);
+        this.preferredLocales.addAll(preferredLocales);
         return this;
     }
 }

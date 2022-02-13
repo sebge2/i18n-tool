@@ -1,6 +1,5 @@
 package be.sgerard.i18n.model.security.session.dto;
 
-import be.sgerard.i18n.model.security.session.persistence.UserLiveSessionEntity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
@@ -19,17 +18,6 @@ public class UserLiveSessionDto {
 
     public static Builder builder() {
         return new Builder();
-    }
-
-    public static Builder builder(UserLiveSessionEntity userLiveSession) {
-        return builder()
-                .id(userLiveSession.getId())
-                .userId(userLiveSession.getUser().getId())
-                .userDisplayName(userLiveSession.getUser().getDisplayName());
-    }
-
-    public static UserLiveSessionDto toDto(UserLiveSessionEntity userLiveSession) {
-        return builder(userLiveSession).build();
     }
 
     @Schema(description = "Id of this session.", required = true)

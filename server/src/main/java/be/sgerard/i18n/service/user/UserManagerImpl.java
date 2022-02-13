@@ -38,8 +38,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-import static java.util.Collections.singleton;
-
 /**
  * Implementation of the {@link UserManager user manager}.
  *
