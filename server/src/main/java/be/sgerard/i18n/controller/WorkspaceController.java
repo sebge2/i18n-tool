@@ -1,5 +1,6 @@
 package be.sgerard.i18n.controller;
 
+import be.sgerard.i18n.model.i18n.persistence.BundleFileEntity;
 import be.sgerard.i18n.model.workspace.dto.BundleFileDto;
 import be.sgerard.i18n.model.workspace.dto.WorkspaceDto;
 import be.sgerard.i18n.model.workspace.dto.WorkspacesPublishRequestDto;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -77,6 +79,7 @@ public class WorkspaceController {
     public Mono<List<BundleFileDto>> findWorkspaceBundleFiles(@PathVariable String id) {
         return workspaceManager.findByIdOrDie(id)
                 .flatMapIterable(WorkspaceEntity::getFiles)
+                .sort(Comparator.comparing(BundleFileEntity::getName))
                 .map(bundleFile -> BundleFileDto.builder(bundleFile).build())
                 .collectList();
     }

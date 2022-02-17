@@ -11,8 +11,8 @@ import org.junit.jupiter.api.*;
 
 import java.util.Locale;
 
-import static be.sgerard.test.i18n.model.GitRepositoryCreationDtoTestUtils.i18nToolGitRepositoryCreationDto;
 import static be.sgerard.test.i18n.model.GitRepositoryCreationDtoTestUtils.i18nToolGitHubRepositoryCreationDto;
+import static be.sgerard.test.i18n.model.GitRepositoryCreationDtoTestUtils.i18nToolGitRepositoryCreationDto;
 import static be.sgerard.test.i18n.model.RepositoryEntityTestUtils.*;
 import static be.sgerard.test.i18n.model.TranslationLocaleCreationDtoTestUtils.enLocaleCreationDto;
 import static be.sgerard.test.i18n.model.TranslationLocaleCreationDtoTestUtils.frLocaleCreationDto;
@@ -142,30 +142,35 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$").value(hasSize(6))
+
                 .jsonPath("$[0].name").isEqualTo("exception")
                 .jsonPath("$[0].location").isEqualTo("server/src/main/resources/i18n")
                 .jsonPath("$[0].locationPathPattern").isEqualTo("server/src/main/resources/i18n/exception_*.properties")
                 .jsonPath("$[0].files").value(hasSize(greaterThan(1)))
 
-                .jsonPath("$[1].name").isEqualTo("validation")
-                .jsonPath("$[1].location").isEqualTo("server/src/main/resources/i18n")
-                .jsonPath("$[1].locationPathPattern").isEqualTo("server/src/main/resources/i18n/validation_*.properties")
-                .jsonPath("$[1].files").value(hasSize(greaterThan(1)))
+                .jsonPath("$[1].name").isEqualTo("file")
+                .jsonPath("$[1].location").isEqualTo("server/src/test/resources/be/sgerard/i18n/service/i18n/file")
+                .jsonPath("$[1].locationPathPattern").isEqualTo("server/src/test/resources/be/sgerard/i18n/service/i18n/file/*.json")
+                .jsonPath("$[1].files").value(hasSize(greaterThanOrEqualTo(1)))
 
-                .jsonPath("$[2].name").isEqualTo("misc")
-                .jsonPath("$[2].location").isEqualTo("server/src/main/resources/i18n")
-                .jsonPath("$[2].locationPathPattern").isEqualTo("server/src/main/resources/i18n/misc_*.properties")
-                .jsonPath("$[2].files").value(hasSize(greaterThanOrEqualTo(1)))
+                .jsonPath("$[2].name").isEqualTo("i18n")
+                .jsonPath("$[2].location").isEqualTo("front/src/main/web/src/assets/i18n")
+                .jsonPath("$[2].locationPathPattern").isEqualTo("front/src/main/web/src/assets/i18n/*.json")
+                .jsonPath("$[2].files").value(hasSize(greaterThan(1)))
 
-                .jsonPath("$[4].name").isEqualTo("file")
+                .jsonPath("$[3].name").isEqualTo("misc")
+                .jsonPath("$[3].location").isEqualTo("server/src/main/resources/i18n")
+                .jsonPath("$[3].locationPathPattern").isEqualTo("server/src/main/resources/i18n/misc_*.properties")
+                .jsonPath("$[3].files").value(hasSize(greaterThan(1)))
+
+                .jsonPath("$[4].name").isEqualTo("test_translations")
                 .jsonPath("$[4].location").isEqualTo("server/src/test/resources/be/sgerard/i18n/service/i18n/file")
-                .jsonPath("$[4].locationPathPattern").isEqualTo("server/src/test/resources/be/sgerard/i18n/service/i18n/file/*.json")
-                .jsonPath("$[4].files").value(hasSize(greaterThanOrEqualTo(1)))
+                .jsonPath("$[4].locationPathPattern").isEqualTo("server/src/test/resources/be/sgerard/i18n/service/i18n/file/test_translations_*.properties")
+                .jsonPath("$[4].files").value(hasSize(2))
 
-                .jsonPath("$[5].name").isEqualTo("i18n")
-                .jsonPath("$[5].location").isEqualTo("front/src/main/web/src/assets/i18n")
-                .jsonPath("$[5].locationPathPattern").isEqualTo("front/src/main/web/src/assets/i18n/*.json")
-                .jsonPath("$[5].files").value(hasSize(greaterThan(1)));
+                .jsonPath("$[5].name").isEqualTo("validation")
+                .jsonPath("$[5].location").isEqualTo("server/src/main/resources/i18n")
+                .jsonPath("$[5].locationPathPattern").isEqualTo("server/src/main/resources/i18n/validation_*.properties");
     }
 
     @Test
@@ -206,9 +211,9 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                 .expectBody()
                 .jsonPath("$").value(hasSize(4))
 
-                .jsonPath("$[0].name").isEqualTo("validation")
-                .jsonPath("$[0].location").isEqualTo("server/src/main/resources/i18n")
-                .jsonPath("$[0].locationPathPattern").isEqualTo("server/src/main/resources/i18n/validation_*.properties")
+                .jsonPath("$[0].name").isEqualTo("i18n")
+                .jsonPath("$[0].location").isEqualTo("front/src/main/web/src/assets/i18n")
+                .jsonPath("$[0].locationPathPattern").isEqualTo("front/src/main/web/src/assets/i18n/*.json")
                 .jsonPath("$[0].files").value(hasSize(greaterThan(1)))
 
                 .jsonPath("$[1].name").isEqualTo("misc")
@@ -216,10 +221,14 @@ public class WorkspaceControllerTest extends AbstractControllerTest {
                 .jsonPath("$[1].locationPathPattern").isEqualTo("server/src/main/resources/i18n/misc_*.properties")
                 .jsonPath("$[1].files").value(hasSize(greaterThan(1)))
 
-                .jsonPath("$[3].name").isEqualTo("i18n")
-                .jsonPath("$[3].location").isEqualTo("front/src/main/web/src/assets/i18n")
-                .jsonPath("$[3].locationPathPattern").isEqualTo("front/src/main/web/src/assets/i18n/*.json")
-                .jsonPath("$[3].files").value(hasSize(greaterThan(1)));
+                .jsonPath("$[2].name").isEqualTo("test_translations")
+                .jsonPath("$[2].location").isEqualTo("server/src/test/resources/be/sgerard/i18n/service/i18n/file")
+                .jsonPath("$[2].locationPathPattern").isEqualTo("server/src/test/resources/be/sgerard/i18n/service/i18n/file/test_translations_*.properties")
+                .jsonPath("$[2].files").value(hasSize(2))
+
+                .jsonPath("$[3].name").isEqualTo("validation")
+                .jsonPath("$[3].location").isEqualTo("server/src/main/resources/i18n")
+                .jsonPath("$[3].locationPathPattern").isEqualTo("server/src/main/resources/i18n/validation_*.properties");
     }
 
     @Nested

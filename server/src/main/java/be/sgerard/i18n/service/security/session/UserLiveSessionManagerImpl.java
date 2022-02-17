@@ -7,8 +7,6 @@ import be.sgerard.i18n.service.security.auth.AuthenticationUserManager;
 import be.sgerard.i18n.service.security.session.listener.UserLiveSessionListener;
 import be.sgerard.i18n.service.user.UserManager;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -43,7 +41,6 @@ public class UserLiveSessionManagerImpl implements UserLiveSessionManager {
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public Mono<UserLiveSessionEntity> startSession() {
         return authenticationUserManager
                 .getCurrentUserOrDie()
@@ -57,7 +54,6 @@ public class UserLiveSessionManagerImpl implements UserLiveSessionManager {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public Mono<UserLiveSessionEntity> getSessionOrDie(String id) {
         return repository
                 .findById(id)
@@ -65,7 +61,6 @@ public class UserLiveSessionManagerImpl implements UserLiveSessionManager {
     }
 
     @Override
-    @Transactional
     public Mono<Void> stopSession(UserLiveSessionEntity session) {
         return getSessionOrDie(session.getId())
                 .flatMap(currentSession -> {
@@ -79,7 +74,6 @@ public class UserLiveSessionManagerImpl implements UserLiveSessionManager {
     }
 
     @Override
-    @Transactional
     public Mono<Void> deleteSession(UserLiveSessionEntity session) {
         return repository
                 .delete(session)
@@ -87,7 +81,6 @@ public class UserLiveSessionManagerImpl implements UserLiveSessionManager {
     }
 
     @Override
-    @Transactional
     public Mono<Void> deleteAll(String user) {
         return repository
                 .findByUser(user)

@@ -1,0 +1,28 @@
+version: "3.7"
+services:
+  i18n-tool:
+    image: 'sebge2/i18n-tool:0.0.9-SNAPSHOT'
+    container_name: 'i18n-tool'
+    environment:
+      - SPRING_PROFILES_ACTIVE=container
+      - spring.data.mongodb.host=mongodb
+      - be.sgerard.i18n.security.default-admin-password=admin
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./i18n-tool-data:/srv
+    depends_on:
+      - "mongodb"
+  mongodb:
+    image: 'mongo:4.4.0'
+    container_name: 'mongodb'
+    ports:
+      - "27017-27019:27017-27019"
+    command: ["--replSet", "rs0", "--bind_ip_all"]
+    healthcheck:
+      test: test $$(echo "rs.initiate().ok || rs.status().ok" | mongo --quiet) -eq 1
+      interval: 2s
+      timeout: 2s
+      retries: 20
+    volumes:
+      - ./mongo-data:/data/db

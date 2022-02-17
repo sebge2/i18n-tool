@@ -1,6 +1,7 @@
 spring:
   main:
     banner-mode: "OFF"
+    allow-circular-references: true
   data:
     mongodb:
       auto-index-creation: false

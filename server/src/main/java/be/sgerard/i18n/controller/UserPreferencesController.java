@@ -4,7 +4,6 @@ import be.sgerard.i18n.model.user.dto.UserPreferencesDto;
 import be.sgerard.i18n.service.user.UserPreferencesManager;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 

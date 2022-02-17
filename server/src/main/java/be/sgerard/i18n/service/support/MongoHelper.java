@@ -3,8 +3,8 @@ package be.sgerard.i18n.service.support;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.Order;
+import org.springframework.data.mapping.PersistentEntity;
 import org.springframework.data.mapping.context.MappingContext;
-import org.springframework.data.mapping.model.BasicPersistentEntity;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.convert.MongoConverter;
 import org.springframework.data.mongodb.core.index.IndexOperations;
@@ -48,7 +48,7 @@ public class MongoHelper {
                         mongoMappingContext.getPersistentEntities()
                                 .stream()
                                 .filter(persistentEntity -> persistentEntity.getType().isAnnotationPresent(Document.class))
-                                .map(BasicPersistentEntity::getType)
+                                .map(PersistentEntity::getType)
                                 .collect(toList())
                 )
                 .orElseGet(Collections::emptyList);
