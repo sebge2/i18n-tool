@@ -1,5 +1,17 @@
 version: "3.7"
 services:
+  i18n-tool:
+    image: 'sebge2/i18n-tool:0.0.9-SNAPSHOT'
+    container_name: 'i18n-tool'
+    environment:
+      - SPRING_PROFILES_ACTIVE=container
+      - spring.data.mongodb.host=mongodb
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./i18n-tool-data:/srv
+    depends_on:
+      - "mongodb"
   mongodb:
     image: 'mongo:4.4.0'
     container_name: 'mongodb'
@@ -12,4 +24,4 @@ services:
       timeout: 2s
       retries: 20
     volumes:
-      - ./mongo-db:/data/db
+      - ./mongo-data:/data/db
