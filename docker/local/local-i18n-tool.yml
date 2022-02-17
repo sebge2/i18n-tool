@@ -6,6 +6,7 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=container
       - spring.data.mongodb.host=mongodb
+      - be.sgerard.i18n.security.default-admin-password=admin
     ports:
       - "8080:8080"
     volumes:
