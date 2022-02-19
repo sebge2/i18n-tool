@@ -1,7 +1,6 @@
 package be.sgerard.i18n.model.dictionary;
 
 import be.sgerard.i18n.model.locale.persistence.TranslationLocaleEntity;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.HashMap;
@@ -10,7 +9,6 @@ import java.util.Map;
 /**
  * Request asking the translation of a text.
  */
-@AllArgsConstructor
 @Getter
 public class ExternalSourceTranslationRequest {
 
@@ -32,17 +30,33 @@ public class ExternalSourceTranslationRequest {
     /**
      * The locale in which the text is written.
      */
-    private final TranslationLocaleEntity fromLocale;
+    private final String fromLocale;
 
     /**
      * The locale of the translation.
      */
-    private final TranslationLocaleEntity targetLocale;
+    private final String targetLocale;
 
     /**
      * The text to translate.
      */
     private final String text;
+
+    public ExternalSourceTranslationRequest(TranslationLocaleEntity fromLocale,
+                                            TranslationLocaleEntity targetLocale,
+                                            String text) {
+        this.fromLocale = fromLocale.toLocale().toString();
+        this.targetLocale = targetLocale.toLocale().toString();
+        this.text = text;
+    }
+
+    public ExternalSourceTranslationRequest(String fromLocale,
+                                            String targetLocale,
+                                            String text) {
+        this.fromLocale = fromLocale;
+        this.targetLocale = targetLocale;
+        this.text = text;
+    }
 
     /**
      * Returns those field as parameters map.
@@ -50,8 +64,8 @@ public class ExternalSourceTranslationRequest {
     public Map<String, String> toTranslatorParameters() {
         final Map<String, String> input = new HashMap<>();
 
-        input.put(FROM_LOCALE_VARIABLE, getFromLocale().toLocale().toString());
-        input.put(TARGET_LOCALE_VARIABLE, getTargetLocale().toLocale().toString());
+        input.put(FROM_LOCALE_VARIABLE, getFromLocale());
+        input.put(TARGET_LOCALE_VARIABLE, getTargetLocale());
         input.put(TEXT_VARIABLE, getText());
 
         return input;

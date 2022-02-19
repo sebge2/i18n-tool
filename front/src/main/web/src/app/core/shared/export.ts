@@ -14,6 +14,7 @@ export {ToolSelectionRequest} from './model/tool-bar/tool-selection-request.mode
 export {ToolSelection} from './model/tool-bar/tool-selection.model';
 export {ButtonSize, BUTTON_SIZE_CLASS} from './model/button/button-size.enum';
 export {SemanticColor, SEMANTIC_COLOR_THEME} from './model/semantic-color.enum';
+export {HttpMethod} from './model/http-method.model';
 export {getStringValue} from './utils/form-utils';
 export {instanceOfErrorMessages, instanceOfHttpError} from './utils/error-utils';
 export {updateOriginalCollection} from './utils/synchronized-observable-utils';
@@ -58,5 +59,6 @@ export {FormDeleteButtonConfirmationComponent} from './component/button/form-del
 export {WizardComponent, StepChangeEvent} from './component/wizard/wizard.component';
 export {MainMessageComponent} from './component/main-message/main-message.component';
 export {MenuContainerComponent} from './component/menu/menu-container.component';
+export {CardSelectorItem} from './component/card/card-selector/card-selector.component';
 export {PreferencesService} from './service/preferences.service';
 export {ToolBarService, TOOL_DESCRIPTOR_TOKEN} from './service/tool-bar.service';

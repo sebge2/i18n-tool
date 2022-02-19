@@ -4,6 +4,8 @@ export * from './dictionary.service';
 import { DictionaryService } from './dictionary.service';
 export * from './event.service';
 import { EventService } from './event.service';
+export * from './externalTranslator.service';
+import { ExternalTranslatorService } from './externalTranslator.service';
 export * from './gitHub.service';
 import { GitHubService } from './gitHub.service';
 export * from './pullRequest.service';
@@ -26,19 +28,4 @@ export * from './userPreferences.service';
 import { UserPreferencesService } from './userPreferences.service';
 export * from './workspace.service';
 import { WorkspaceService } from './workspace.service';
-export const APIS = [
-  AuthenticationService,
-  DictionaryService,
-  EventService,
-  GitHubService,
-  PullRequestService,
-  RepositoryService,
-  ScheduledTaskService,
-  SnapshotService,
-  TranslationService,
-  TranslationLocaleService,
-  UserService,
-  UserLiveSessionService,
-  UserPreferencesService,
-  WorkspaceService,
-];
+export const APIS = [AuthenticationService, DictionaryService, EventService, ExternalTranslatorService, GitHubService, PullRequestService, RepositoryService, ScheduledTaskService, SnapshotService, TranslationService, TranslationLocaleService, UserService, UserLiveSessionService, UserPreferencesService, WorkspaceService];

@@ -1,0 +1,42 @@
+<div [ngSwitch]="selection" class="app-repository-add-step-info-content">
+    <form [formGroup]="form" autocomplete="off">
+        <ng-container *ngSwitchCase="ExternalTranslatorSelection.AZURE">
+            <p>
+                <mat-form-field appearance="standard">
+                    <mat-label>{{ 'ADMIN.EXTERNAL_TRANSLATORS.ADD_POPUP.STEP_CONFIG.AZURE.SUBSCRIPTION_KEY_LABEL' | translate }}</mat-label>
+                    <input matInput formControlName="subscriptionKey" autocomplete="off" />
+                    <mat-hint>{{ 'ADMIN.EXTERNAL_TRANSLATORS.ADD_POPUP.STEP_CONFIG.AZURE.SUBSCRIPTION_KEY_HINT' | translate }}</mat-hint>
+                </mat-form-field>
+            </p>
+            <p>
+                <mat-form-field appearance="standard">
+                    <mat-label>{{ 'ADMIN.EXTERNAL_TRANSLATORS.ADD_POPUP.STEP_CONFIG.AZURE.SUBSCRIPTION_REGION_LABEL' | translate }}</mat-label>
+                    <input matInput formControlName="subscriptionRegion" autocomplete="off" />
+                    <mat-hint>{{ 'ADMIN.EXTERNAL_TRANSLATORS.ADD_POPUP.STEP_CONFIG.AZURE.SUBSCRIPTION_REGION_HINT' | translate }}</mat-hint>
+                </mat-form-field>
+            </p>
+        </ng-container>
+
+        <ng-container *ngSwitchCase="ExternalTranslatorSelection.GOOGLE">
+            <p>
+                <mat-form-field appearance="standard">
+                    <mat-label>{{ 'ADMIN.EXTERNAL_TRANSLATORS.ADD_POPUP.STEP_CONFIG.GOOGLE.API_KEY_LABEL' | translate }}</mat-label>
+                    <input matInput formControlName="apiKey" autocomplete="off" />
+                    <mat-hint>{{ 'ADMIN.EXTERNAL_TRANSLATORS.ADD_POPUP.STEP_CONFIG.GOOGLE.API_KEY_HINT' | translate }}</mat-hint>
+                </mat-form-field>
+            </p>
+        </ng-container>
+
+        <ng-container *ngSwitchCase="ExternalTranslatorSelection.ITRANSLATE">
+            <p>
+                <mat-form-field appearance="standard">
+                    <mat-label>{{ 'ADMIN.EXTERNAL_TRANSLATORS.ADD_POPUP.STEP_CONFIG.ITRANSLATE.BEARER_TOKEN_LABEL' | translate }}</mat-label>
+                    <input matInput formControlName="bearerToken" autocomplete="off" />
+                    <mat-hint>{{ 'ADMIN.EXTERNAL_TRANSLATORS.ADD_POPUP.STEP_CONFIG.ITRANSLATE.BEARER_TOKEN_HINT' | translate }}</mat-hint>
+                </mat-form-field>
+            </p>
+        </ng-container>
+
+<!--        TODO support generic rest api-->
+    </form>
+</div>

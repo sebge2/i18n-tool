@@ -15,6 +15,7 @@ import reactor.core.publisher.Flux;
 import java.util.Map;
 
 import static java.util.stream.Collectors.toMap;
+import static org.springframework.util.StringUtils.hasText;
 
 /**
  * {@link ExternalTranslatorHandler Translator} interacting with the external source using REST.
@@ -54,6 +55,7 @@ public class GenericRestExternalTranslator implements ExternalTranslatorHandler<
     private Map<String, String> mapQueryParams(ExternalTranslatorGenericRestConfigEntity externalSource,
                                                Map<String, String> templateParameters) {
         return externalSource.getQueryParameters().entrySet().stream()
+                .filter(entry -> hasText(entry.getValue()))
                 .collect(toMap(
                         Map.Entry::getKey,
                         entry -> processTemplatedValue(entry.getValue(), templateParameters)

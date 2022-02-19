@@ -36,6 +36,11 @@ import { RepositoryDetailsTranslationsBundleConfigurationComponent } from './com
 import { ScheduledTasksComponent } from './component/scheduled-tasks/scheduled-tasks.component';
 import { ScheduledTaskDefinitionListComponent } from './component/scheduled-tasks/scheduled-task-definition-list/scheduled-task-definition-list.component';
 import { ScheduledTaskExecutionListComponent } from './component/scheduled-tasks/scheduled-task-execution-list/scheduled-task-execution-list.component';
+import { ExternalTranslatorsComponent } from './component/external-translators/external-translators.component';
+import { ExternalTranslatorAddPopupComponent } from './component/external-translators/external-translator-add-popup/external-translator-add-popup.component';
+import { ExternalTranslatorAddPopupSelectTypeComponent } from './component/external-translators/external-translator-add-popup/external-translator-add-popup-select-type/external-translator-add-popup-select-type.component';
+import { ExternalTranslatorAddPopupConfigureComponent } from './component/external-translators/external-translator-add-popup/external-translator-add-popup-configure/external-translator-add-popup-configure.component';
+import { ExternalTranslatorAddPopupResultComponent } from './component/external-translators/external-translator-add-popup/external-translator-add-popup-result/external-translator-add-popup-result.component';
 
 const appRoutes: Routes = [
   { path: 'users', component: UsersComponent },
@@ -43,6 +48,7 @@ const appRoutes: Routes = [
   { path: 'locales', component: LocalesComponent },
   { path: 'snapshots', component: SnapshotsComponent },
   { path: 'scheduled-tasks', component: ScheduledTasksComponent },
+  { path: 'external-translators', component: ExternalTranslatorsComponent },
 ];
 
 @NgModule({
@@ -80,6 +86,11 @@ const appRoutes: Routes = [
     ScheduledTasksComponent,
     ScheduledTaskDefinitionListComponent,
     ScheduledTaskExecutionListComponent,
+    ExternalTranslatorsComponent,
+    ExternalTranslatorAddPopupComponent,
+    ExternalTranslatorAddPopupSelectTypeComponent,
+    ExternalTranslatorAddPopupConfigureComponent,
+    ExternalTranslatorAddPopupResultComponent,
   ],
   imports: [
     CommonModule,

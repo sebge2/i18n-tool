@@ -1,0 +1,11 @@
+<div class="app-error-messages-list">
+  <div
+    class="app-error-message-list-item"
+    [ngClass]="whiteFont ? 'app-error-message-list-item-white' : 'app-error-message-list-item-dark'"
+    *ngFor="let errorMessage of errorMessages.messages">
+    <mat-icon mat-list-icon class="app-error-message-list-item-bullet" [ngClass]="whiteFont ? 'app-error-message-list-item-bullet-white' : 'app-error-message-list-item-bullet-dark'">
+      close
+    </mat-icon>
+    {{ errorMessage }}
+  </div>
+</div>

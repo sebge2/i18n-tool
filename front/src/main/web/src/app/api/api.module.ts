@@ -5,6 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { AuthenticationService } from './api/authentication.service';
 import { DictionaryService } from './api/dictionary.service';
 import { EventService } from './api/event.service';
+import { ExternalTranslatorService } from './api/externalTranslator.service';
 import { GitHubService } from './api/gitHub.service';
 import { PullRequestService } from './api/pullRequest.service';
 import { RepositoryService } from './api/repository.service';
@@ -18,13 +19,14 @@ import { UserPreferencesService } from './api/userPreferences.service';
 import { WorkspaceService } from './api/workspace.service';
 
 @NgModule({
-  imports: [],
+  imports:      [],
   declarations: [],
-  exports: [],
+  exports:      [],
   providers: [
     AuthenticationService,
     DictionaryService,
     EventService,
+    ExternalTranslatorService,
     GitHubService,
     PullRequestService,
     RepositoryService,

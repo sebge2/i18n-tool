@@ -1,0 +1,25 @@
+@import "../../../../front/src/main/web/src/css/variables";
+
+:host ::ng-deep app-card-grid-item {
+  margin-top: 30px;
+}
+
+.app-card-selector-card {
+  width: 200px;
+  height: 200px;
+  opacity: 0.9;
+
+  &:hover {
+   //background-color: mat-color($color-hover);
+    opacity: 100%;
+  }
+}
+
+.app-card-selector-item {
+  font-size: 90px;
+  text-align: center;
+}
+
+.app-card-selector-action {
+  text-align: center;
+}

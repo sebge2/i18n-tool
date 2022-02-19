@@ -4,8 +4,8 @@ import {CommonModule} from '@angular/common';
 import {MainMessageComponent} from './component/main-message/main-message.component';
 import {TranslateModule} from '@ngx-translate/core';
 import {CoreSharedLibModule} from './core-shared-lib.module';
-import {CardGridComponent} from './component/card-grid/card-grid.component';
-import {CardGridItemComponent} from './component/card-grid/card-grid-item/card-grid-item.component';
+import {CardGridComponent} from './component/card/card-grid/card-grid.component';
+import {CardGridItemComponent} from './component/card/card-grid/card-grid-item/card-grid-item.component';
 import {FormCancelButtonComponent} from './component/button/form-cancel-button/form-cancel-button.component';
 import {FormSaveButtonComponent} from './component/button/form-save-button/form-save-button.component';
 import {FormDeleteButtonComponent} from './component/button/form-delete-button/form-delete-button.component';
@@ -15,12 +15,12 @@ import {WizardStepComponent} from './component/wizard/wizard-step/wizard-step.co
 import {WizardComponent} from './component/wizard/wizard.component';
 import {TabsComponent} from './component/tabs/tabs.component';
 import {TabComponent} from './component/tabs/tab/tab.component';
-import {ErrorMessageListComponent} from './component/error-message-list/error-message-list.component';
-import {CardComponent} from './component/card/card.component';
-import {CardActionsComponent} from './component/card/card-actions/card-actions.component';
-import {CardContentComponent} from './component/card/card-content/card-content.component';
+import {ErrorMessageListComponent} from './component/error/error-message-list/error-message-list.component';
+import {CardComponent} from './component/card/card/card.component';
+import {CardActionsComponent} from './component/card/card/card-actions/card-actions.component';
+import {CardContentComponent} from './component/card/card/card-content/card-content.component';
 import {FormOpenTabButtonComponent} from './component/button/form-open-tab-button/form-open-tab-button.component';
-import {CardHeaderActionsComponent} from './component/card/card-header-actions/card-header-actions.component';
+import {CardHeaderActionsComponent} from './component/card/card/card-header-actions/card-header-actions.component';
 import {MoreActionItemButtonComponent} from './component/button/more-actions-button/more-action-item-button/more-action-item-button.component';
 import {MoreActionsButtonComponent} from './component/button/more-actions-button/more-actions-button.component';
 import {SyncButtonComponent} from './component/button/sync-button/sync-button.component';
@@ -37,6 +37,7 @@ import {ExpansionPanelContentComponent} from './component/expansion-panel/expans
 import {FormSearchButtonComponent} from './component/button/form-search-button/form-search-button.component';
 import {GitHubLinkButtonComponent} from './component/button/git-hub-link-button/git-hub-link-button.component';
 import {RestoreButtonComponent} from './component/button/restore-button/restore-button.component';
+import { MainAddButtonComponent } from './component/button/main-add-button/main-add-button.component';
 import {RestoreButtonConfirmationComponent} from './component/button/restore-button/restore-button-confirmation/restore-button-confirmation.component';
 import {DialogComponent} from './component/dialog/dialog.component';
 import {DialogActionsComponent} from './component/dialog/dialog-actions/dialog-actions.component';
@@ -78,6 +79,9 @@ import {GenericButtonComponent} from "./component/button/generic-button/generic-
 import {IconComponent} from "./component/icon/icon.component";
 import { CopyButtonComponent } from './component/button/copy-button/copy-button.component';
 import { InputTextSelectionListenerDirective } from './directive/input-text-selection-listener.directive';
+import {CardSelectorComponent} from "./component/card/card-selector/card-selector.component";
+import {TranslatePipe} from "./pipe/translate.pipe";
+import { ErrorDisplayComponent } from './component/error/error-display/error-display.component';
 
 @NgModule({
     declarations: [
@@ -111,6 +115,7 @@ import { InputTextSelectionListenerDirective } from './directive/input-text-sele
 
         MainMessageComponent,
         ErrorMessageListComponent,
+        ErrorDisplayComponent,
         CardGridComponent,
         CardGridItemComponent,
         WizardComponent,
@@ -148,6 +153,7 @@ import { InputTextSelectionListenerDirective } from './directive/input-text-sele
         UploadZoneContentComponent,
         ListOrganizerComponent,
         FormApplyButtonComponent,
+        MainAddButtonComponent,
         MenuContainerComponent,
         MenuHeaderWrapper,
         MenuWrapperComponent,
@@ -157,10 +163,13 @@ import { InputTextSelectionListenerDirective } from './directive/input-text-sele
         MenuToolBarMainComponent,
         MenuToolBarIconsComponent,
         IconComponent,
+        CardSelectorComponent,
 
         DragDropDirective,
         OnEnterDirective,
         InputTextSelectionListenerDirective,
+
+        TranslatePipe,
     ],
     imports: [CommonModule, CoreSharedLibModule, TranslateModule],
     exports: [
@@ -191,6 +200,7 @@ import { InputTextSelectionListenerDirective } from './directive/input-text-sele
         RestoreButtonConfirmationComponent,
         BanButtonComponent,
         PlayButtonComponent,
+        MainAddButtonComponent,
         TooltipComponent,
         UnsavedLabelComponent,
         FormApplyButtonComponent,
@@ -201,6 +211,7 @@ import { InputTextSelectionListenerDirective } from './directive/input-text-sele
 
         MainMessageComponent,
         ErrorMessageListComponent,
+        ErrorDisplayComponent,
         CardGridComponent,
         CardGridItemComponent,
         WizardComponent,
@@ -242,10 +253,13 @@ import { InputTextSelectionListenerDirective } from './directive/input-text-sele
         MenuToolBarMainComponent,
         MenuToolBarIconsComponent,
         IconComponent,
+        CardSelectorComponent,
 
         DragDropDirective,
         OnEnterDirective,
         InputTextSelectionListenerDirective,
+
+        TranslatePipe,
     ],
 })
 export class CoreSharedModule {

@@ -1,0 +1,28 @@
+.app-error-messages-list {
+  max-height: 600px;
+  overflow: auto;
+}
+
+.app-error-message-list-item {
+  font-weight: bold;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-gap: 5px;
+}
+
+.app-error-message-list-item-white {
+  color: white !important;
+}
+
+.app-error-message-list-item-bullet {
+  color: red;
+  font-weight: normal;
+}
+
+.app-error-message-list-item:hover .app-error-message-list-item-bullet-white {
+  color: white;
+}
+
+.app-error-message-list-item:hover .app-error-message-list-item-bullet-dark {
+  color: black;
+}

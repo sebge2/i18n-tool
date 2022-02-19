@@ -17,11 +17,11 @@ import { TextTranslationDto } from './textTranslationDto';
  */
 export interface TextTranslationResponseDto { 
     /**
-     * Unique id of this source.
+     * Definition of external translation sources.
      */
     externalSources?: Array<ExternalTranslationSourceDto>;
     /**
-     * Id of the locale in which the text is written.
+     * Available translations.
      */
     translations?: Array<TextTranslationDto>;
 }
