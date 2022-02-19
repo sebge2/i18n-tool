@@ -18,10 +18,10 @@ import { getStringValue } from '@i18n-core-shared';
   styleUrls: ['./repository-add-wizard.component.css'],
 })
 export class RepositoryAddWizardComponent implements OnInit, OnDestroy {
-  public form: FormGroup;
-  public repositoryType: RepositoryType;
-  public creationRequest: RepositoryCreationRequestDto;
-  public createdRepository: Repository;
+  form: FormGroup;
+  repositoryType: RepositoryType;
+  creationRequest: RepositoryCreationRequestDto;
+  createdRepository: Repository;
 
   @ViewChild('wizard', { static: true }) private wizard: WizardComponent;
 
@@ -36,7 +36,7 @@ export class RepositoryAddWizardComponent implements OnInit, OnDestroy {
   private static FORM_STEP_CREATION = 4;
   private static FORM_STEP_INITIALIZATION = 5;
 
-  private _destroyed$ = new Subject<void>();
+  private readonly _destroyed$ = new Subject<void>();
 
   constructor(private formBuilder: FormBuilder) {
     this.form = this.formBuilder.group({
@@ -69,7 +69,7 @@ export class RepositoryAddWizardComponent implements OnInit, OnDestroy {
     });
   }
 
-  public ngOnInit(): void {
+   ngOnInit(): void {
     this.stepTypeForm.statusChanges.pipe(takeUntil(this._destroyed$)).subscribe((_) => {
       if (this.stepTypeForm.valid) {
         this.wizard.nextStep();
@@ -77,20 +77,20 @@ export class RepositoryAddWizardComponent implements OnInit, OnDestroy {
     });
   }
 
-  public ngOnDestroy(): void {
+   ngOnDestroy(): void {
     this._destroyed$.next(null);
     this._destroyed$.complete();
   }
 
-  public get stepTypeEditable(): boolean {
+   get stepTypeEditable(): boolean {
     return !this.repositoryType;
   }
 
-  public get stepTypeForm(): FormGroup {
+   get stepTypeForm(): FormGroup {
     return <FormGroup>this.stepsForm.at(RepositoryAddWizardComponent.FORM_STEP_TYPE);
   }
 
-  public get stepConfigForm(): FormGroup {
+   get stepConfigForm(): FormGroup {
     let index;
     if (!this.repositoryType) {
       index = RepositoryAddWizardComponent.FORM_STEP_NO_TYPE_CONFIG;
@@ -103,27 +103,28 @@ export class RepositoryAddWizardComponent implements OnInit, OnDestroy {
     return <FormGroup>this.stepsForm.at(index);
   }
 
-  public get stepConfigEditable(): boolean {
+   get stepConfigEditable(): boolean {
+    // it's still editable until the repository has not been properly created
     return this.stepCreationEditable;
   }
 
-  public get stepCreationForm(): FormGroup {
+   get stepCreationForm(): FormGroup {
     return <FormGroup>this.stepsForm.at(RepositoryAddWizardComponent.FORM_STEP_CREATION);
   }
 
-  public get stepCreationEditable(): boolean {
+   get stepCreationEditable(): boolean {
     return !this.stepCreationForm.valid;
   }
 
-  public get stepInitializationForm(): FormGroup {
+   get stepInitializationForm(): FormGroup {
     return <FormGroup>this.stepsForm.at(RepositoryAddWizardComponent.FORM_STEP_INITIALIZATION);
   }
 
-  public get stepInitializationEditable(): boolean {
+   get stepInitializationEditable(): boolean {
     return !this.stepInitializationForm.valid;
   }
 
-  public onStepChange(stepChangeEvent: StepChangeEvent) {
+   onStepChange(stepChangeEvent: StepChangeEvent) {
     if (stepChangeEvent.nextStepIndex == RepositoryAddWizardComponent.STEP_CONFIG) {
       this.repositoryType = this.stepTypeForm.controls['type'].value;
     } else if (stepChangeEvent.nextStepIndex == RepositoryAddWizardComponent.STEP_CREATION) {

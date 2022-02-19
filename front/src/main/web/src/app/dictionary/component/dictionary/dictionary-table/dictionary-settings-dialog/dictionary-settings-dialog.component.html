@@ -1,13 +1,13 @@
 <app-dialog
-  [title]="'DICTIONARY.TABLE.SETTINGS_POPUP.TITLE' | translate"
+  [title]="'DICTIONARY.TABLE.LOCALES_POPUP.TITLE' | translate"
   [dialogHeight]="'400px'"
   [dialogWidth]="'500px'"
 >
   <app-dialog-content>
     <app-list-organizer
       class="dictionary-settings-dialog-organizer"
-      [available]="'DICTIONARY.TABLE.SETTINGS_POPUP.AVAILABLE_LABEL' | translate"
-      [selected]="'DICTIONARY.TABLE.SETTINGS_POPUP.SELECTED_LOCALES_LABEL' | translate"
+      [available]="'DICTIONARY.TABLE.LOCALES_POPUP.AVAILABLE_LABEL' | translate"
+      [selected]="'DICTIONARY.TABLE.LOCALES_POPUP.SELECTED_LOCALES_LABEL' | translate"
       [availableElements]="availableLocales"
       [selectedElements]="selectedLocales"
       [availableElementTemplate]="availableElement"

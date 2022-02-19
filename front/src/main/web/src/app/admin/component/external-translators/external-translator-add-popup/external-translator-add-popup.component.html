@@ -1,0 +1,40 @@
+<app-dialog [dialogWidth]="'860px'" [dialogHeight]="'400px'"
+            [title]="'ADMIN.EXTERNAL_TRANSLATORS.ADD_POPUP.TITLE' | translate">
+    <app-dialog-content>
+        <app-wizard [form]="form" (stepChange)="onStepChange($event)" #wizard>
+            <app-wizard-step
+                    [form]="stepSelectionForm"
+                    [name]="'ADMIN.EXTERNAL_TRANSLATORS.ADD_POPUP.STEP_SELECTION' | translate"
+                    [editable]="stepSelectionEditable"
+                    [previousVisible]="false"
+                    [nextVisible]="false"
+            >
+                <app-external-translator-add-popup-select-type
+                        [form]="stepSelectionForm"
+                        [availableTemplates]="availableTemplates">
+                </app-external-translator-add-popup-select-type>
+            </app-wizard-step>
+
+            <app-wizard-step
+                    [form]="stepConfigForm"
+                    [name]="'ADMIN.EXTERNAL_TRANSLATORS.ADD_POPUP.STEP_CONFIG.TITLE' | translate"
+                    [editable]="stepConfigEditable"
+            >
+                <app-external-translator-add-popup-configure [form]="stepConfigForm" [selection]="selection">
+                </app-external-translator-add-popup-configure>
+            </app-wizard-step>
+
+            <app-wizard-step
+                    [form]="stepConfigForm"
+                    [name]="'ADMIN.EXTERNAL_TRANSLATORS.ADD_POPUP.STEP_RESULT.TITLE' | translate"
+                    [previousVisible]="false"
+                    [editable]="stepResultEditable"
+                    [nextVisible]="false"
+            >
+                <app-external-translator-add-popup-result [form]="stepResultForm"
+                                                          [translatorCreator]="translatorCreator">
+                </app-external-translator-add-popup-result>
+            </app-wizard-step>
+        </app-wizard>
+    </app-dialog-content>
+</app-dialog>

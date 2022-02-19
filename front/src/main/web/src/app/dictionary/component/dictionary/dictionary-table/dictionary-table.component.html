@@ -18,27 +18,27 @@
           [actionInProgress]="moreActionInProgress"
         >
           <app-more-action-item-button>
-            <button mat-menu-item (click)="onSettingsOpen()">
-              <mat-icon>settings</mat-icon>
-              <span>{{ 'DICTIONARY.TABLE.SETTINGS' | translate }}</span>
+            <button mat-menu-item (click)="onLocalesOpen()">
+              <mat-icon>view_column</mat-icon>
+              <span>{{ 'DICTIONARY.TABLE.MORE.LOCALES' | translate }}</span>
             </button>
           </app-more-action-item-button>
           <app-more-action-item-button>
             <button mat-menu-item (click)="onDownload()">
               <mat-icon>cloud_download</mat-icon>
-              <span>{{ 'DICTIONARY.TABLE.DOWNLOAD' | translate }}</span>
+              <span>{{ 'DICTIONARY.TABLE.MORE.DOWNLOAD' | translate }}</span>
             </button>
           </app-more-action-item-button>
           <app-more-action-item-button>
             <button mat-menu-item (click)="onUpload()">
               <mat-icon>cloud_upload</mat-icon>
-              <span>{{ 'DICTIONARY.TABLE.UPLOAD' | translate }}</span>
+              <span>{{ 'DICTIONARY.TABLE.MORE.UPLOAD' | translate }}</span>
             </button>
           </app-more-action-item-button>
           <app-more-action-item-button>
             <button mat-menu-item (click)="onDeleteAll()">
               <mat-icon>delete</mat-icon>
-              <span>{{ 'DICTIONARY.TABLE.DELETE_ALL' | translate }}</span>
+              <span>{{ 'DICTIONARY.TABLE.MORE.DELETE_ALL' | translate }}</span>
             </button>
           </app-more-action-item-button>
         </app-more-actions-button>

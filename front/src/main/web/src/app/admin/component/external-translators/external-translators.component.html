@@ -1,0 +1,47 @@
+<app-table [dataSource]="dataSource">
+    <app-table-header-row>
+        <app-table-header [columnId]="'label'">
+            <p>{{ 'ADMIN.EXTERNAL_TRANSLATORS.EXECUTION_TABLE.LABEL' | translate }}</p>
+        </app-table-header>
+
+        <app-table-header [columnId]="'action'" [columnGridDef]="'150px'">
+            <p>{{ 'ADMIN.EXTERNAL_TRANSLATORS.EXECUTION_TABLE.ACTION' | translate }}</p>
+        </app-table-header>
+    </app-table-header-row>
+
+    <app-table-row>
+        <app-table-cell [columnId]="'label'" [template]="label">
+            <ng-template let-config="element" #label>
+                <p>{{config.label}}</p>
+            </ng-template>
+        </app-table-cell>
+        <app-table-cell [columnId]="'action'" [template]="action">
+            <ng-template let-config="element" #action>
+                <app-form-delete-button
+                        [confirmationMessage]="'ADMIN.EXTERNAL_TRANSLATORS.EXECUTION_TABLE.CONFIRM_DELETE' | translate: {label: config.label}"
+                        [deleteInProgress]="deleteInProgress"
+                        (delete)="onDelete(config)">
+                </app-form-delete-button>
+                <app-form-open-tab-button
+                        (open)="onOpenLink(config.linkUrl)">
+                </app-form-open-tab-button>
+            </ng-template>
+        </app-table-cell>
+    </app-table-row>
+
+<!--    TODO-->
+<!--    <app-table-expanded-row [template]="expandedRow">-->
+<!--        <ng-template let-config="element" #expandedRow>-->
+<!--            <div style="display: grid;   grid-template-columns: auto 1fr auto 1fr; grid-gap: 5px; padding: 15px;">-->
+<!--                <span>Http METHOD</span>-->
+<!--                <span>{{config.method}}</span>-->
+
+<!--                <span>URL</span>-->
+<!--                <span>{{config.url}}</span>-->
+<!--            </div>-->
+<!--        </ng-template>-->
+<!--    </app-table-expanded-row>-->
+</app-table>
+
+<app-main-add-button (add)="onAdd()">
+</app-main-add-button>

@@ -94,21 +94,24 @@
   },
   "DICTIONARY": {
     "TABLE": {
+      "MORE": {
+        "LOCALES": "Languages",
+        "EXTERNAL_TRANSLATORS": "External Translators",
+        "DOWNLOAD": "Download",
+        "UPLOAD": "Upload",
+        "DELETE_ALL": "Delete All"
+      },
       "ACTION": "Action",
       "DELETE_CONFIRMATION_MESSAGE": "Please confirm the deletion of the following translations: <b>{translations}</b>.",
-      "SETTINGS": "Settings",
-      "DOWNLOAD": "Download",
-      "UPLOAD": "Upload",
-      "DELETE_ALL": "Delete All",
       "DELETE_ALL_CONFIRMATION": "Are-you sure to delete all the dictionary entries?",
       "UPLOAD_POPUP": {
         "TITLE": "Upload a Dictionary",
         "DESCRIPTION": "Drag & Drop your CSV dictionary file, or click on the button."
       },
-      "SETTINGS_POPUP": {
-        "TITLE": "Which Locales to Display?",
-        "AVAILABLE_LABEL": "Unused Locales",
-        "SELECTED_LOCALES_LABEL": "Selected Locales"
+      "LOCALES_POPUP": {
+        "TITLE": "Which Languages to Display?",
+        "AVAILABLE_LABEL": "Unused Languages",
+        "SELECTED_LOCALES_LABEL": "Selected Languages"
       },
       "TOOL_BAR": {
         "TITLE": "Dictionary",
@@ -164,6 +167,7 @@
     "LOCALES_LABEL": "Languages",
     "REPOSITORIES_LABEL": "Repositories",
     "USERS_LABEL": "Users",
+    "EXTERNAL_TRANSLATORS": "Ext. Translators",
     "TRANSLATIONS_LABEL": "Translations",
     "DICTIONARY_LABEL": "Dictionary",
     "SNAPSHOT_LABEL": "Snapshots",
@@ -446,6 +450,43 @@
         "GET_ALL_DEFINITIONS": "Error while retrieving scheduled tasks definitions.",
         "SCHEDULE_UNSCHEDULE": "Error while scheduling/un-scheduling the task definition.",
         "GET_EXECUTIONS": "Error while retrieving scheduled task executions."
+      }
+    },
+    "EXTERNAL_TRANSLATORS": {
+      "EXECUTION_TABLE": {
+        "LABEL": "External Translator",
+        "ACTION": "Action",
+        "CONFIRM_DELETE": "Are-you sure to delete the configuration of the <b>{label}</b> translator?"
+      },
+      "ADD_POPUP": {
+        "TITLE": "Configure a new External Translator",
+        "STEP_SELECTION": "Selection",
+        "STEP_CONFIG": {
+          "TITLE": "Configuration",
+          "AZURE": {
+            "SUBSCRIPTION_KEY_LABEL": "Subscription Key",
+            "SUBSCRIPTION_KEY_HINT": "The subscription key to access the Azure translator service.",
+            "SUBSCRIPTION_REGION_LABEL": "Subscription Region",
+            "SUBSCRIPTION_REGION_HINT": "The region of the Azure service."
+          },
+          "GOOGLE": {
+            "API_KEY_LABEL": "API Key",
+            "API_KEY_HINT": "Fills the Google API Key to access the translator service."
+          },
+          "ITRANSLATE": {
+            "BEARER_TOKEN_LABEL": "Bearer Token",
+            "BEARER_TOKEN_HINT": "The bearer token to access the translator service."
+          }
+        },
+        "STEP_RESULT": {
+          "TITLE": "Confirmation",
+          "CREATED": "Your external translator {name} has been created!",
+          "UNKNOWN_ERROR": "A technical error happened, please verify the configuration and try again.",
+          "ERROR_TITLE": "The following errors happened when creating translator:"
+        }
+      },
+      "ERROR": {
+        "DELETE": "Error while deleting the external translator configuration."
       }
     }
   },
