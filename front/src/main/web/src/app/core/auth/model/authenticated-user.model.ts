@@ -4,7 +4,11 @@ import { RepositoryRoles } from './repository-roles.model';
 import * as _ from 'lodash';
 
 export class AuthenticatedUser {
-  public static fromDto(authenticatedUser: AuthenticatedUserDto) {
+  public static fromDto(authenticatedUser: AuthenticatedUserDto): AuthenticatedUser{
+    if(_.isNil(authenticatedUser)){
+      return null;
+    }
+
     return new AuthenticatedUser(
       _.map(authenticatedUser.sessionRoles, (sessionRole) => UserRole[sessionRole]),
       _.map(authenticatedUser.repositoryRoles, (repositoryRoles) => RepositoryRoles.fromDto(repositoryRoles))

@@ -13,6 +13,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import static java.util.stream.Collectors.toSet;
+
 /**
  * User allowed to access the application.
  *
@@ -86,7 +88,10 @@ public abstract class UserEntity {
      * Updates all roles that are {@link UserRole#isAssignableByEndUser() assignables} and preserve the other ones.
      */
     public UserEntity updateAssignableRoles(Collection<UserRole> roles) {
-        this.roles.stream().filter(UserRole::isAssignableByEndUser).forEach(this.roles::remove);
+        this.roles.stream()
+                .filter(UserRole::isAssignableByEndUser)
+                .collect(toSet())
+                .forEach(this.roles::remove);
         this.roles.addAll(roles);
         return this;
     }

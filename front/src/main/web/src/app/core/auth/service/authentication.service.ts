@@ -35,16 +35,16 @@ export class AuthenticationService {
         this._authenticationService.getCurrentUser().pipe(
           catchError((error: HttpResponse<any>) => {
             if (error.status != 404) {
-              return throwError(error);
+              return throwError(() => error);
             } else {
               return of(null);
             }
           })
         ),
-      this._eventService.subscribe(Events.UPDATED_CURRENT_AUTHENTICATED_USER, AuthenticatedUser),
-      this._eventService.subscribe(Events.DELETED_CURRENT_AUTHENTICATED_USER, AuthenticatedUser),
+      this._eventService.subscribeDto(Events.UPDATED_CURRENT_AUTHENTICATED_USER),
+      this._eventService.subscribeDto(Events.DELETED_CURRENT_AUTHENTICATED_USER),
       this._eventService.reconnected(),
-      (dto) => (dto != null ? AuthenticatedUser.fromDto(dto) : null)
+      (dto) => AuthenticatedUser.fromDto(dto)
     );
 
     this.currentAuthenticatedUser().subscribe(
