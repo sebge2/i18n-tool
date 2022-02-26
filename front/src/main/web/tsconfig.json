@@ -21,6 +21,8 @@
       "@i18n-core-event": ["./src/app/core/event/export"],
       "@i18n-core-ui": ["./src/app/core/ui/export"],
       "@i18n-dictionary": ["./src/app/dictionary/export"],
-    }
+    },
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true
   }
 }

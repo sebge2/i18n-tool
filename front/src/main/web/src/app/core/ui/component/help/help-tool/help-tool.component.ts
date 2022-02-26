@@ -1,15 +1,17 @@
 import {Component} from '@angular/core';
+import {AppVersionService} from "../../../../shared/service/app-version.service";
 
 @Component({
     selector: 'app-help-tool',
-    template: `
-    <a href="https://github.com/sebge2/i18n-tool" target="_blank">
-        {{'SHARED.HELP.TOOL.LINK_LABEL' | translate}}
-    </a>`,
+    templateUrl: 'help-tool.component.html',
 })
 export class HelpToolComponent {
 
-    constructor() {
+    constructor(public appVersionService: AppVersionService) {
+    }
+
+    get url(): string {
+        return `https://github.com/sebge2/i18n-tool/tree/${this.appVersionService.version}`;
     }
 
 }

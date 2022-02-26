@@ -16,6 +16,7 @@ git pull --all
 
 
 mvn versions:set -DnewVersion="$RELEASE_VERSION"
+cd front/src/main/web/ && npm version "$RELEASE_VERSION" && cd ../../../../
 git commit -a -m "Set release version $RELEASE_VERSION"
 git push
 
@@ -33,10 +34,11 @@ git merge --no-ff master -m "Final merge $RELEASE_VERSION -> develop"
 git push
 
 
-echo "What the next version? (ex: 0.0.7-SNAPSHOT)"
+echo "What the next version? (ex: 0.0.7)"
 read NEXT_VERSION
 echo "Next version is [$NEXT_VERSION]"
 
-mvn versions:set -DnewVersion="$NEXT_VERSION"
+mvn versions:set -DnewVersion="$NEXT_VERSION-SNAPSHOT"
+cd front/src/main/web/ && npm version "$NEXT_VERSION" && cd ../../../../
 git commit -a -m "Set next version $NEXT_VERSION"
 git push

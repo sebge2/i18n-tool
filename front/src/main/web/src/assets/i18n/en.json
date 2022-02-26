@@ -45,7 +45,7 @@
       "TOOL": {
         "TITLE": "Help",
         "DESCRIPTION": "Tool providing help about the usage of this tool.",
-        "LINK_LABEL": "Official Documentation"
+        "LINK_LABEL": "Official Documentation v{version}"
       }
     }
   },
