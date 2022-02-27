@@ -1,6 +1,6 @@
 {
   "name": "i18n-tool",
-  "version": "0.0.9",
+  "version": "1.0.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve --proxy-config proxy.conf.json",
