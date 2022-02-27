@@ -5,6 +5,7 @@ if ! git diff-index --quiet HEAD --; then
     exit 1;
 fi
 
+set -e
 
 echo "What the release version? (ex: 0.0.6)"
 read RELEASE_VERSION
@@ -16,7 +17,9 @@ git pull --all
 
 
 mvn versions:set -DnewVersion="$RELEASE_VERSION"
-cd front/src/main/web/ && npm version "$RELEASE_VERSION" && cd ../../../../
+cd front/src/main/web/
+npm version "$RELEASE_VERSION" --allow-same-version
+cd ../../../../
 git commit -a -m "Set release version $RELEASE_VERSION"
 git push
 
@@ -39,6 +42,8 @@ read NEXT_VERSION
 echo "Next version is [$NEXT_VERSION]"
 
 mvn versions:set -DnewVersion="$NEXT_VERSION-SNAPSHOT"
-cd front/src/main/web/ && npm version "$NEXT_VERSION" && cd ../../../../
+cd front/src/main/web/
+npm version "$NEXT_VERSION" --allow-same-version
+cd ../../../../
 git commit -a -m "Set next version $NEXT_VERSION"
 git push
