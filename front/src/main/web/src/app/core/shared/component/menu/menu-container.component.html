@@ -1,0 +1,20 @@
+<div class="menu-side-bar-container" [class.menu-side-bar-container-small-size]="smallSize">
+    <ng-content select="app-menu-header-wrapper"></ng-content>
+
+    <mat-sidenav-container class="menu-side-bar-sidenav-container">
+        <mat-sidenav
+            #snav
+            class="menu-side-bar-menu"
+            [mode]="smallSize ? 'over' : 'side'"
+            [fixedInViewport]="smallSize"
+            [opened]="!smallSize"
+            (click)="onClick()"
+        >
+            <ng-content select="app-menu-wrapper"></ng-content>
+        </mat-sidenav>
+
+        <mat-sidenav-content class="menu-side-bar-main">
+            <ng-content select="app-menu-main-wrapper"></ng-content>
+        </mat-sidenav-content>
+    </mat-sidenav-container>
+</div>

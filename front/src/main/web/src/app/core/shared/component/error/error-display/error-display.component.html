@@ -1,0 +1,7 @@
+<div *ngIf="unidentifiedError">
+    <p>{{ unidentifiedErrorLabel }}</p>
+</div>
+<div *ngIf="identifiedError">
+    <p>{{ identifiedErrorLabel }}</p>
+    <app-error-message-list [errorMessages]="identifiedError"></app-error-message-list>
+</div>

@@ -1,44 +1,66 @@
 <app-expansion-panel [(expanded)]="expanded">
-    <app-expansion-panel-header>
-        <div [innerHTML]="'TRANSLATIONS.SEARCH_BAR.TITLE' | translate:{criterion: criterion, workspaces: (((isSearchForAllWorkspaces() | async) ? true : workspacesAsString)), locales: (((isSearchForAllLocales() | async) ? true : localesAsString))}"></div>
-    </app-expansion-panel-header>
+  <app-expansion-panel-header>
+    <div
+      [innerHTML]="
+        'TRANSLATIONS.SEARCH_BAR.TITLE'
+          | translate
+            : {
+                criterion: criterion,
+                workspaces: (isSearchForAllWorkspaces() | async) ? true : workspacesAsString,
+                locales: (isSearchForAllLocales() | async) ? true : localesAsString
+              }
+      "
+    ></div>
+  </app-expansion-panel-header>
 
-    <app-expansion-panel-content>
-        <form [formGroup]="form">
-            <div class="container">
-                <p>
-                    <mat-form-field appearance="standard">
-                        <mat-label>{{'TRANSLATIONS.SEARCH_BAR.WORKSPACES_LABEL' | translate}}</mat-label>
-                        <app-workspace-selector [formControlName]="'workspaces'"></app-workspace-selector>
-                        <mat-hint>{{'TRANSLATIONS.SEARCH_BAR.WORKSPACES_HINT' | translate}}</mat-hint>
-                    </mat-form-field>
-                </p>
-                <p>
-                    <mat-form-field appearance="standard">
-                        <mat-label>{{'TRANSLATIONS.SEARCH_BAR.BUNDLE_FILE_LABEL' | translate}}</mat-label>
-                        <app-workspace-bundle-file-selector [formControlName]="'bundleFile'" [workspace]="(workspaces.length == 1) ? workspaces[0] : null">
-                        </app-workspace-bundle-file-selector>
-                        <mat-hint>{{'TRANSLATIONS.SEARCH_BAR.BUNDLE_FILE_HINT' | translate}}</mat-hint>
-                    </mat-form-field>
-                </p>
-                <p>
-                    <mat-form-field appearance="standard">
-                        <mat-label>{{'TRANSLATIONS.SEARCH_BAR.LOCALES_LABEL' | translate}}</mat-label>
-                        <app-translation-locale-selector [formControlName]="'locales'"></app-translation-locale-selector>
-                        <mat-hint>{{'TRANSLATIONS.SEARCH_BAR.LOCALES_HINT' | translate}}</mat-hint>
-                    </mat-form-field>
-                </p>
-                <p>
-                    <mat-form-field appearance="standard">
-                        <mat-label>{{'TRANSLATIONS.SEARCH_BAR.CRITERION_LABEL' | translate}}</mat-label>
-                        <app-translation-criterion-selector [formControlName]="'criterion'"></app-translation-criterion-selector>
-                        <mat-hint>{{'TRANSLATIONS.SEARCH_BAR.CRITERION_HINT' | translate}}</mat-hint>
-                    </mat-form-field>
-                </p>
-                <p>
-                    <app-form-search-button [form]="form" (search)="onSearch()"></app-form-search-button>
-                </p>
-            </div>
-        </form>
-    </app-expansion-panel-content>
+  <app-expansion-panel-content>
+    <form [formGroup]="form">
+      <div class="container">
+        <p>
+          <mat-form-field appearance="standard">
+            <mat-label>{{ 'TRANSLATIONS.SEARCH_BAR.WORKSPACES_LABEL' | translate }}</mat-label>
+            <app-workspace-selector [formControlName]="'workspaces'"></app-workspace-selector>
+            <mat-hint>{{ 'TRANSLATIONS.SEARCH_BAR.WORKSPACES_HINT' | translate }}</mat-hint>
+          </mat-form-field>
+        </p>
+        <p>
+          <mat-form-field appearance="standard">
+            <mat-label>{{ 'TRANSLATIONS.SEARCH_BAR.BUNDLE_FILE_LABEL' | translate }}</mat-label>
+            <app-workspace-bundle-file-selector
+              [formControlName]="'bundleFile'"
+              [workspace]="workspaces.length == 1 ? workspaces[0] : null"
+            >
+            </app-workspace-bundle-file-selector>
+            <mat-hint>{{ 'TRANSLATIONS.SEARCH_BAR.BUNDLE_FILE_HINT' | translate }}</mat-hint>
+          </mat-form-field>
+        </p>
+        <p>
+          <mat-form-field appearance="standard">
+            <mat-label>{{ 'TRANSLATIONS.SEARCH_BAR.LOCALES_LABEL' | translate }}</mat-label>
+            <app-translation-locale-selector [formControlName]="'locales'"></app-translation-locale-selector>
+            <mat-hint>{{ 'TRANSLATIONS.SEARCH_BAR.LOCALES_HINT' | translate }}</mat-hint>
+          </mat-form-field>
+        </p>
+        <p>
+          <mat-form-field appearance="standard">
+            <mat-label>{{ 'TRANSLATIONS.SEARCH_BAR.CRITERION_LABEL' | translate }}</mat-label>
+            <app-translation-criterion-selector [formControlName]="'criterion'"></app-translation-criterion-selector>
+            <mat-hint>{{ 'TRANSLATIONS.SEARCH_BAR.CRITERION_HINT' | translate }}</mat-hint>
+          </mat-form-field>
+        </p>
+        <p>
+          <mat-form-field appearance="standard">
+            <mat-label>{{ 'TRANSLATIONS.SEARCH_BAR.KEY.LABEL' | translate }}</mat-label>
+            <app-translation-string-pattern-input
+              [formControlName]="'keyPattern'"
+            ></app-translation-string-pattern-input>
+            <mat-hint>{{ 'TRANSLATIONS.SEARCH_BAR.KEY.LABEL_HINT' | translate }}</mat-hint>
+          </mat-form-field>
+        </p>
+        <p>
+          <app-form-search-button [form]="form" (search)="onSearch()"></app-form-search-button>
+        </p>
+      </div>
+    </form>
+  </app-expansion-panel-content>
 </app-expansion-panel>

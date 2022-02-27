@@ -1,9 +1,9 @@
-.app-snapshot-creation-comment{
-    width: calc(60% - 10px);
-    margin: 5px;
+.app-snapshot-creation-comment {
+  width: calc(60% - 10px);
+  margin: 5px;
 }
 
-.app-snapshot-creation-password{
-    width: calc(40% - 10px);
-    margin: 5px;
+.app-snapshot-creation-password {
+  width: calc(40% - 10px);
+  margin: 5px;
 }

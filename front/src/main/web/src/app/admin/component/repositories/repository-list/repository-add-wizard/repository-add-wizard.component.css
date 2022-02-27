@@ -1,14 +1,14 @@
 .close-button {
-    float: right;
-    top: -24px;
-    right: -24px;
-    opacity: 0.5;
+  float: right;
+  top: -24px;
+  right: -24px;
+  opacity: 0.5;
 }
 
 .close-icon {
-    transition: 1s ease-in-out;
+  transition: 1s ease-in-out;
 }
 
 .close-button:hover {
-    opacity: 1;
+  opacity: 1;
 }

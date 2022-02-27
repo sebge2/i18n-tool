@@ -1,125 +1,105 @@
-import {
-    AfterContentInit,
-    Component,
-    ContentChild,
-    ContentChildren,
-    Inject,
-    Input,
-    OnDestroy,
-    QueryList,
-    TemplateRef
-} from '@angular/core';
-import {MatTableDataSource} from "@angular/material/table";
-import {TableHeaderComponent} from "./table-header/table-header.component";
-import {takeUntil} from "rxjs/operators";
-import {Subject} from "rxjs";
-import * as _ from "lodash";
-import {TableCellComponent} from "./table-cell/table-cell.component";
-import {TableExpandedRowComponent} from "./table-expanded-row/table-expanded-row.component";
-import {DOCUMENT} from "@angular/common";
-import {DomSanitizer, SafeStyle} from "@angular/platform-browser";
+import { AfterContentInit, Component, ContentChild, Inject, Input, OnDestroy, TemplateRef } from '@angular/core';
+import { TableHeaderComponent } from './table-header/table-header.component';
+import { takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import * as _ from 'lodash';
+import { TableCellComponent } from './table-cell/table-cell.component';
+import { DOCUMENT } from '@angular/common';
+import { DomSanitizer, SafeStyle } from '@angular/platform-browser';
+import { TableTopHeaderRowComponent } from './table-top-header-row/table-top-header-row.component';
+import { FormArray, FormGroup } from '@angular/forms';
+import { TableRowComponent } from './table-row/table-row.component';
+import { TableExpandedRowComponent } from './table-expanded-row/table-expanded-row.component';
+import { TableHeaderRowComponent } from './table-header-row/table-header-row.component';
+
+export interface TableDataSource<E> {
+  data: E[];
+}
+
+export class SimpleTableDataSource<E> implements TableDataSource<E> {
+  constructor(public data: E[]) {}
+}
+
+export class FormTableDataSource implements TableDataSource<FormGroup> {
+  constructor(public form: FormArray) {}
+
+  get data(): FormGroup[] {
+    return <FormGroup[]>this.form.controls;
+  }
+}
 
 @Component({
-    selector: 'app-table',
-    templateUrl: './table.component.html',
-    styleUrls: ['./table.component.scss'],
+  selector: 'app-table',
+  templateUrl: './table.component.html',
+  styleUrls: ['./table.component.scss'],
 })
 export class TableComponent<E> implements AfterContentInit, OnDestroy {
+  @Input() public readonly dataSource: TableDataSource<E> = new SimpleTableDataSource<E>([]);
+  @Input() public autoscroll: boolean = false;
 
-    @Input() public readonly dataSource = new MatTableDataSource<E>();
+  @ContentChild(TableTopHeaderRowComponent) public topHeaderComponent: TableTopHeaderRowComponent;
+  @ContentChild(TableHeaderRowComponent) public headerComponent: TableHeaderRowComponent;
+  @ContentChild(TableRowComponent) public rowComponent: TableRowComponent;
+  @ContentChild(TableExpandedRowComponent) public expandedRowComponent: TableExpandedRowComponent;
 
-    @ContentChildren(TableHeaderComponent) public headerComponents: QueryList<TableHeaderComponent>;
-    @ContentChildren(TableCellComponent) public cellComponents: QueryList<TableCellComponent>;
-    @ContentChild(TableExpandedRowComponent) public expandedRowComponent: TableExpandedRowComponent;
+  public cells: Map<string, TableCellComponent>;
+  public expandedElement: E | undefined;
+  public hoveredElement: E | undefined;
 
-    public displayedColumns: string[];
-    public headers: Map<string, TableHeaderComponent>;
-    public cells: Map<string, TableCellComponent>;
+  private readonly _destroyed$ = new Subject<void>();
 
-    public tableStyle: SafeStyle;
-    public expandedRowStyle: SafeStyle;
-    public expandedElement: E | undefined;
-    public hoveredElement: E | undefined;
+  constructor(@Inject(DOCUMENT) private _document: Document, private _sanitizer: DomSanitizer) {}
 
-    private readonly _destroyed$ = new Subject<void>();
+  public ngAfterContentInit(): void {
+    this.rowComponent.cellComponents.changes.pipe(takeUntil(this._destroyed$)).subscribe(() => this.updateCells());
 
-    constructor(@Inject(DOCUMENT) private _document: Document,
-                private _sanitizer: DomSanitizer) {
+    setTimeout(() => this.updateCells());
+  }
+
+  public ngOnDestroy(): void {
+    this._destroyed$.next(null);
+    this._destroyed$.complete();
+  }
+
+  public get hasExpandedRow(): boolean {
+    return !!this.expandedRowComponent;
+  }
+
+  public getHeaderComponent(column: string): TableHeaderComponent {
+    return this.headerComponent.headers.get(column);
+  }
+
+  public getCellComponent(column: string): TableCellComponent {
+    return this.cells.get(column);
+  }
+
+  public getExpandedRowTemplate(): TemplateRef<any> | undefined {
+    return _.get(this.expandedRowComponent, 'template');
+  }
+
+  public onMouseOver(element: E) {
+    this.hoveredElement = element;
+  }
+
+  public onMouseLeave(element: E) {
+    if (this.hoveredElement === element) {
+      this.hoveredElement = null;
+    }
+  }
+
+  public onToggleExpand(expandedElement: E) {
+    if (!this.hasExpandedRow) {
+      return;
     }
 
-    public ngAfterContentInit(): void {
-        this.headerComponents.changes
-            .pipe(takeUntil(this._destroyed$))
-            .subscribe(() => this.updateHeaders());
+    this.expandedElement = this.expandedElement === expandedElement ? null : expandedElement;
+  }
 
-        this.cellComponents.changes
-            .pipe(takeUntil(this._destroyed$))
-            .subscribe(() => this.updateCells());
+  private updateCells() {
+    this.cells = new Map<string, TableCellComponent>();
 
-        setTimeout(() => this.updateHeaders());
-        setTimeout(() => this.updateCells());
+    for (const cellComponent of this.rowComponent.cellComponents.toArray()) {
+      this.cells.set(cellComponent.columnId, cellComponent);
     }
-
-    public ngOnDestroy(): void {
-        this._destroyed$.next();
-        this._destroyed$.complete();
-    }
-
-    public get hasExpandedRow(): boolean {
-        return !!this.expandedRowComponent;
-    }
-
-    public get expandedDivStyle(): any {
-        return {'grid-column': '1 / 6'}
-    }
-
-    public getHeaderTemplate(column: string): TemplateRef<any> {
-        return this.headers.get(column).template;
-    }
-
-    public getCellTemplate(column: string): TemplateRef<any> {
-        return this.cells.get(column).template;
-    }
-
-    public getExpandedRowTemplate(): TemplateRef<any> | undefined {
-        return _.get(this.expandedRowComponent, 'template');
-    }
-
-    public onMouseOver(element: E) {
-        this.hoveredElement = element;
-    }
-
-    public onMouseLeave(element: E) {
-        if (this.hoveredElement === element) {
-            this.hoveredElement = null;
-        }
-    }
-
-    public onToggleExpand(expandedElement: E) {
-        if (!this.hasExpandedRow) {
-            return;
-        }
-
-        this.expandedElement = (this.expandedElement === expandedElement) ? null : expandedElement;
-    }
-
-    private updateHeaders() {
-        this.headers = new Map<string, TableHeaderComponent>();
-
-        for (const headerComponent of this.headerComponents.toArray()) {
-            this.headers.set(headerComponent.columnId, headerComponent);
-        }
-
-        this.displayedColumns = _.map(this.headerComponents.toArray(), header => header.columnId);
-        this.tableStyle = this._sanitizer.bypassSecurityTrustStyle(_.chain(this.headerComponents.toArray()).map(header => `${header.columnGridDef}`).join(' ').value());
-        this.expandedRowStyle = this._sanitizer.bypassSecurityTrustStyle(`1 / ${(this.headerComponents.length + 1)}`);
-    }
-
-    private updateCells() {
-        this.cells = new Map<string, TableCellComponent>();
-
-        for (const cellComponent of this.cellComponents.toArray()) {
-            this.cells.set(cellComponent.columnId, cellComponent);
-        }
-    }
+  }
 }

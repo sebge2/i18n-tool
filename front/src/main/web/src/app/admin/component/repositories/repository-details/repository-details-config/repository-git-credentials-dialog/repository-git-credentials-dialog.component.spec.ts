@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { RepositoryGitCredentialsDialogComponent } from './repository-git-credentials-dialog.component';
 
@@ -6,11 +6,10 @@ describe('RepositoryGitCredentialsDialogComponent', () => {
   let component: RepositoryGitCredentialsDialogComponent;
   let fixture: ComponentFixture<RepositoryGitCredentialsDialogComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ RepositoryGitCredentialsDialogComponent ]
-    })
-    .compileComponents();
+      declarations: [RepositoryGitCredentialsDialogComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

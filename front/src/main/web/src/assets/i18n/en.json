@@ -33,6 +33,20 @@
     "EVENTS": {
       "ERROR_DISCONNECTED": "Connection issue to the server. Please check your internet connection.",
       "INFO_RECONNECTED": "Connection re-established."
+    },
+    "LIST_ORGANIZER": {
+      "SELECT_ALL_LABEL": "Select All",
+      "UNSELECT_ALL_LABEL": "Unselect All"
+    },
+    "TOOL_BAR": {
+      "CLOSE_BUTTON_TOOLTIP": "Close the tool bar."
+    },
+    "HELP": {
+      "TOOL": {
+        "TITLE": "Help",
+        "DESCRIPTION": "Tool providing help about the usage of this tool.",
+        "LINK_LABEL": "Official Documentation v{version}"
+      }
     }
   },
   "TRANSLATIONS": {
@@ -41,6 +55,15 @@
       "WORKSPACES_HINT": "Workspaces to search into.",
       "BUNDLE_FILE_LABEL": "Bundle file",
       "BUNDLE_FILE_HINT": "The bundle file to search into (only available if a single workspace is selected).",
+      "KEY": {
+        "LABEL": "Translation Key",
+        "LABEL_HINT": "Search translations associated to the specified key pattern. This pattern can be the beginning, the end, a part of keys to search for.",
+        "PLACEHOLDER": "Fill how the translation key should look like",
+        "STARTS_WITH_TOOLTIP": "Search translations having keys starting with the specified pattern.",
+        "CONTAINS_TOOLTIP": "Search translations having keys containing the specified pattern.",
+        "EQUALS_TOOLTIP": "Search translations having the specified key.",
+        "ENDS_WITH_TOOLTIP": "Search translations having keys ending with the specified pattern."
+      },
       "LOCALES_LABEL": "Locales",
       "LOCALES_HINT": "Locales to display.",
       "CRITERION_LABEL": "Criterion",
@@ -53,6 +76,10 @@
       },
       "TITLE": "Search {criterion, select, ALL{for <b>all</b> translations} MISSING_TRANSLATIONS{for <b>missing</b> translations} TRANSLATIONS_CURRENT_USER_UPDATED{for translations that <b>I have updated</b>} UPDATED_TRANSLATIONS{for <b>updated</b> translations} other{}}{workspaces, select, true{ for <b>all workspaces</b>} null{} other { on workspaces {workspaces}}}{locales, select, true{ for <b>all locales</b>} null{} other{ for locales {locales}}}."
     },
+    "TOOL_BAR": {
+      "TRANSLATE_BUTTON_WITH_TEXT_LABEL": "Translate {text}",
+      "TRANSLATE_BUTTON_LABEL": "Translate"
+    },
     "ERROR": {
       "SEARCH": "Error while searching for translations.",
       "UPDATE": "Error while updating translations."
@@ -63,6 +90,55 @@
       "NO_FURTHER_TRANSLATION": "There is no further translation.",
       "KEY_COLUMN": "Key",
       "UNSAVED_CHANGES": "Your changes are not saved yet"
+    }
+  },
+  "DICTIONARY": {
+    "TABLE": {
+      "MORE": {
+        "LOCALES": "Languages",
+        "EXTERNAL_TRANSLATORS": "External Translators",
+        "DOWNLOAD": "Download",
+        "UPLOAD": "Upload",
+        "DELETE_ALL": "Delete All"
+      },
+      "ACTION": "Action",
+      "DELETE_CONFIRMATION_MESSAGE": "Please confirm the deletion of the following translations: <b>{translations}</b>.",
+      "DELETE_ALL_CONFIRMATION": "Are-you sure to delete all the dictionary entries?",
+      "UPLOAD_POPUP": {
+        "TITLE": "Upload a Dictionary",
+        "DESCRIPTION": "Drag & Drop your CSV dictionary file, or click on the button."
+      },
+      "LOCALES_POPUP": {
+        "TITLE": "Which Languages to Display?",
+        "AVAILABLE_LABEL": "Unused Languages",
+        "SELECTED_LOCALES_LABEL": "Selected Languages"
+      },
+      "TOOL_BAR": {
+        "TITLE": "Dictionary",
+        "DESCRIPTION": "This tool helps you to translate words within the application.",
+        "TEXT_COPIED": "The text has been copied to clipboard.",
+        "FROM_LOCALE": "From Language",
+        "TEXT_TO_TRANSLATE": "Text to Translate",
+        "TARGET_LOCALE": "To Language",
+        "TRANSLATIONS": {
+          "I18N_SOURCE": "Translated with \"{originalText}\" present in your dictionary.",
+          "EXTERNAL_SOURCE": "Translated by {source}.",
+          "NO_TRANSLATION": "No translation found :("
+        },
+        "ERROR": {
+          "TRANSLATE": "Error while translating text."
+        }
+      }
+    },
+    "ERROR": {
+      "GET_ALL": "Error while retrieving dictionary entries.",
+      "DELETE": "Error while deleting the dictionary entry.",
+      "CREATE": "Error while creating a dictionary entry.",
+      "UPDATE": "Error while updating dictionary entries.",
+      "DOWNLOAD": "Error while downloading the dictionary",
+      "UPLOAD": "Error while uploading the CSV dictionary file.",
+      "DELETE_ALL": "Error while deleting dictionary entries.",
+      "SAVING_PREFERENCES": "Error while saving dictionary preferences."
     }
   },
   "PREFERENCES": {
@@ -91,7 +167,9 @@
     "LOCALES_LABEL": "Languages",
     "REPOSITORIES_LABEL": "Repositories",
     "USERS_LABEL": "Users",
+    "EXTERNAL_TRANSLATORS": "Ext. Translators",
     "TRANSLATIONS_LABEL": "Translations",
+    "DICTIONARY_LABEL": "Dictionary",
     "SNAPSHOT_LABEL": "Snapshots",
     "SCHEDULED_TASKS_LABEL": "Tasks"
   },
@@ -372,6 +450,43 @@
         "GET_ALL_DEFINITIONS": "Error while retrieving scheduled tasks definitions.",
         "SCHEDULE_UNSCHEDULE": "Error while scheduling/un-scheduling the task definition.",
         "GET_EXECUTIONS": "Error while retrieving scheduled task executions."
+      }
+    },
+    "EXTERNAL_TRANSLATORS": {
+      "EXECUTION_TABLE": {
+        "LABEL": "External Translator",
+        "ACTION": "Action",
+        "CONFIRM_DELETE": "Are-you sure to delete the configuration of the <b>{label}</b> translator?"
+      },
+      "ADD_POPUP": {
+        "TITLE": "Configure a new External Translator",
+        "STEP_SELECTION": "Selection",
+        "STEP_CONFIG": {
+          "TITLE": "Configuration",
+          "AZURE": {
+            "SUBSCRIPTION_KEY_LABEL": "Subscription Key",
+            "SUBSCRIPTION_KEY_HINT": "The subscription key to access the Azure translator service.",
+            "SUBSCRIPTION_REGION_LABEL": "Subscription Region",
+            "SUBSCRIPTION_REGION_HINT": "The region of the Azure service."
+          },
+          "GOOGLE": {
+            "API_KEY_LABEL": "API Key",
+            "API_KEY_HINT": "Fills the Google API Key to access the translator service."
+          },
+          "ITRANSLATE": {
+            "BEARER_TOKEN_LABEL": "Bearer Token",
+            "BEARER_TOKEN_HINT": "The bearer token to access the translator service."
+          }
+        },
+        "STEP_RESULT": {
+          "TITLE": "Confirmation",
+          "CREATED": "Your external translator {name} has been created!",
+          "UNKNOWN_ERROR": "A technical error happened, please verify the configuration and try again.",
+          "ERROR_TITLE": "The following errors happened when creating translator:"
+        }
+      },
+      "ERROR": {
+        "DELETE": "Error while deleting the external translator configuration."
       }
     }
   },

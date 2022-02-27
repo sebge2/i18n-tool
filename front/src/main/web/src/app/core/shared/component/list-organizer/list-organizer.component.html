@@ -1,0 +1,73 @@
+<div class="grid list-organizer-container">
+  <div class="list-organizer-available-container">
+    <h5>
+      {{ available }}
+      <span
+        class="app-icon-select-all app-button list-organizer-all-action"
+        [title]="'SHARED.LIST_ORGANIZER.SELECT_ALL_LABEL' | translate"
+        (click)="onSelectAll()"
+      >
+      </span>
+    </h5>
+
+    <div
+      class="list-organizer-list"
+      cdkDropList
+      #availableList="cdkDropList"
+      [id]="'availableList'"
+      [cdkDropListData]="availableElements"
+      [cdkDropListConnectedTo]="[selectedList]"
+      (cdkDropListDropped)="onDrop($event)"
+    >
+      <div class="grid element-box" *ngFor="let item of availableElements" cdkDrag>
+        <mat-icon class="list-organizer-reorder-icon">reorder</mat-icon>
+
+        <div>
+          <ng-container *ngIf="availableElementTemplate; else availableNoTemplate">
+            <ng-container *ngTemplateOutlet="availableElementTemplate; context: { element: item }"></ng-container>
+          </ng-container>
+
+          <ng-template #availableNoTemplate>
+            {{ item }}
+          </ng-template>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="list-organizer-selection-container">
+    <h5>
+      {{ selected }}
+      <span
+        class="app-icon-unselect-all app-button list-organizer-all-action"
+        [title]="'SHARED.LIST_ORGANIZER.UNSELECT_ALL_LABEL' | translate"
+        (click)="onUnselectAll()"
+      >
+      </span>
+    </h5>
+
+    <div
+      class="list-organizer-list"
+      cdkDropList
+      #selectedList="cdkDropList"
+      [id]="'selectedList'"
+      [cdkDropListData]="selectedElements"
+      [cdkDropListConnectedTo]="[availableList]"
+      (cdkDropListDropped)="onDrop($event)"
+    >
+      <div class="grid element-box" *ngFor="let item of selectedElements" cdkDrag>
+        <mat-icon class="list-organizer-reorder-icon">reorder</mat-icon>
+
+        <div>
+          <ng-container *ngIf="selectedElementTemplate; else availableNoTemplate">
+            <ng-container *ngTemplateOutlet="selectedElementTemplate; context: { element: item }"></ng-container>
+          </ng-container>
+
+          <ng-template #availableNoTemplate>
+            {{ item }}
+          </ng-template>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

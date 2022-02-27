@@ -14,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.RequestEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
 
 import java.security.MessageDigest;
@@ -22,7 +21,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import static org.springframework.http.HttpHeaders.USER_AGENT;
-import static org.springframework.util.StringUtils.isEmpty;
+import static org.springframework.util.StringUtils.hasText;
 
 /**
  * Service providing a GitHub Web-hook.
@@ -66,16 +65,16 @@ public class GitHubWebHookService {
     /**
      * Executes the specified request invoked on the Web-hook and returns the result.
      */
-    @Transactional
     public Mono<String> executeWebHook(RequestEntity<String> requestEntity) {
         checkUserAgent(requestEntity);
 
-        final Optional<GitHubEventType> eventType = getEventType(requestEntity);
+        final String rawEventType = requestEntity.getHeaders().getFirst(EVENT_TYPE);
+        final Optional<GitHubEventType> eventType = getEventType(rawEventType);
 
         if (eventType.isEmpty()) {
             logger.debug("Ignore GitHub event type [" + eventType + "].");
 
-            return Mono.just("Unsupported event type [" + eventType.orElse(null) + "]. Ignoring it.");
+            return Mono.just("Unsupported event type [" + rawEventType + "]. Ignoring it.");
         }
 
         final BaseGitHubWebHookEventDto event = readEvent(requestEntity, eventType.get());
@@ -98,17 +97,15 @@ public class GitHubWebHookService {
     }
 
     /**
-     * Returns the event type from the specified {@link RequestEntity request}. If the event type is not supported,
+     * Returns the event type from the specified raw event type. If the event type is not supported,
      * nothing is returned.
      */
-    private Optional<GitHubEventType> getEventType(RequestEntity<String> requestEntity) {
-        final String eventType = requestEntity.getHeaders().getFirst(EVENT_TYPE);
-
-        if (isEmpty(eventType)) {
+    private Optional<GitHubEventType> getEventType(String rawEventType) {
+        if (!hasText(rawEventType)) {
             throw BadRequestException.missingHeader(EVENT_TYPE);
         }
 
-        return GitHubEventType.findType(eventType);
+        return GitHubEventType.findType(rawEventType);
     }
 
     /**
@@ -117,7 +114,7 @@ public class GitHubWebHookService {
     private String getSignature(RequestEntity<String> requestEntity) {
         final String signature = requestEntity.getHeaders().getFirst(SIGNATURE);
 
-        return isEmpty(signature) ? null : signature;
+        return !hasText(signature) ? null : signature;
     }
 
     /**
@@ -126,7 +123,7 @@ public class GitHubWebHookService {
     private void checkUserAgent(RequestEntity<String> requestEntity) {
         final String userAgent = requestEntity.getHeaders().getFirst(USER_AGENT);
 
-        if (isEmpty(userAgent) || !userAgent.startsWith(USER_AGENT_PREFIX)) {
+        if (!hasText(userAgent) || !userAgent.startsWith(USER_AGENT_PREFIX)) {
             throw BadRequestException.missingHeader(USER_AGENT);
         }
     }

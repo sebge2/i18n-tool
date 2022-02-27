@@ -1,31 +1,25 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
-import {Error404Component} from './error404.component';
-import {ErrorMessageComponent} from "../error-message/error-message.component";
-import {MainMessageComponent} from "../../../core/shared/component/main-message/main-message.component";
+import { Error404Component } from './error404.component';
+import { ErrorMessageComponent } from '../error-message/error-message.component';
+import { MainMessageComponent } from '@i18n-core-shared';
 
 describe('Error404Component', () => {
-    let component: Error404Component;
-    let fixture: ComponentFixture<Error404Component>;
+  let component: Error404Component;
+  let fixture: ComponentFixture<Error404Component>;
 
-    beforeEach(async(() => {
-        TestBed
-            .configureTestingModule({
-                declarations: [
-                    Error404Component,
-                    ErrorMessageComponent,
-                    MainMessageComponent
-                ]
-            })
-            .compileComponents();
+  beforeEach(waitForAsync(() => {
+    TestBed.configureTestingModule({
+      declarations: [Error404Component, ErrorMessageComponent, MainMessageComponent],
+    }).compileComponents();
 
-        fixture = TestBed.createComponent(Error404Component);
-        component = fixture.componentInstance;
-    }));
+    fixture = TestBed.createComponent(Error404Component);
+    component = fixture.componentInstance;
+  }));
 
-    it('should create', () => {
-        fixture.detectChanges();
+  it('should create', () => {
+    fixture.detectChanges();
 
-        expect(component).toBeTruthy(); // TODO issue-125
-    });
+    expect(component).toBeTruthy(); // TODO issue-125
+  });
 });

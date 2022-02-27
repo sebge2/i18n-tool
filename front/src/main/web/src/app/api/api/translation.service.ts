@@ -18,6 +18,8 @@ import { CustomHttpUrlEncodingCodec }                        from '../encoder';
 import { Observable }                                        from 'rxjs';
 
 import { ErrorMessagesDto } from '../model/errorMessagesDto';
+import { TextTranslationRequestDto } from '../model/textTranslationRequestDto';
+import { TextTranslationResponseDto } from '../model/textTranslationResponseDto';
 import { TranslationDto } from '../model/translationDto';
 import { TranslationUpdateDto } from '../model/translationUpdateDto';
 import { TranslationsPageDto } from '../model/translationsPageDto';
@@ -103,6 +105,61 @@ export class TranslationService {
         }
 
         return this.httpClient.request<TranslationsPageDto>('post',`${this.basePath}/api/translation/do`,
+            {
+                body: body,
+                params: queryParameters,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Translates a text in another language.
+     * 
+     * @param body 
+     * @param translateText 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public translateText(body: TextTranslationRequestDto, translateText?: string, observe?: 'body', reportProgress?: boolean): Observable<TextTranslationResponseDto>;
+    public translateText(body: TextTranslationRequestDto, translateText?: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<TextTranslationResponseDto>>;
+    public translateText(body: TextTranslationRequestDto, translateText?: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<TextTranslationResponseDto>>;
+    public translateText(body: TextTranslationRequestDto, translateText?: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        if (body === null || body === undefined) {
+            throw new Error('Required parameter body was null or undefined when calling translateText.');
+        }
+
+
+        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        if (translateText !== undefined && translateText !== null) {
+            queryParameters = queryParameters.set('action', <any>translateText);
+        }
+
+        let headers = this.defaultHeaders;
+
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            '*/*'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected != undefined) {
+            headers = headers.set('Content-Type', httpContentTypeSelected);
+        }
+
+        return this.httpClient.request<TextTranslationResponseDto>('post',`${this.basePath}/api/translation/text/do`,
             {
                 body: body,
                 params: queryParameters,

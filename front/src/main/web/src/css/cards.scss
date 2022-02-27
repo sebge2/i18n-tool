@@ -1,9 +1,10 @@
-@import "./variables.scss";
+@use '@angular/material' as mat;
+@import './variables.scss';
 
 .mat-card-clickable {
   cursor: pointer;
 
   &:hover {
-    @include mat-elevation(8);
+    @include mat.elevation(8);
   }
 }

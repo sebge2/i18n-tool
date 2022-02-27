@@ -1,46 +1,42 @@
 import {Component, Input, OnDestroy} from '@angular/core';
-import {ErrorMessagesDto, RepositoryCreationRequestDto} from "../../../../../../api";
-import {RepositoryService} from "../../../../../../translations/service/repository.service";
-import {Subject} from "rxjs";
-import {takeUntil} from "rxjs/operators";
-import {FormGroup} from "@angular/forms";
-import {Repository} from "../../../../../../translations/model/repository/repository.model";
-import {instanceOfErrorMessages, instanceOfHttpError} from "../../../../../../core/shared/utils/error-utils";
+import {RepositoryCreationRequestDto} from '../../../../../../api';
+import {Repository, RepositoryService} from '@i18n-core-translation';
+import {Subject} from 'rxjs';
+import {takeUntil} from 'rxjs/operators';
+import {FormGroup} from '@angular/forms';
 
 @Component({
     selector: 'app-repository-add-wizard-step-creation',
     templateUrl: './repository-add-wizard-step-creation.component.html',
-    styleUrls: ['./repository-add-wizard-step-creation.component.css']
+    styleUrls: ['./repository-add-wizard-step-creation.component.css'],
 })
 export class RepositoryAddWizardStepCreationComponent implements OnDestroy {
-
     @Input() public form: FormGroup;
 
-    public creationInProgress = false;
-    public unknownError: any;
-    public errorMessages: ErrorMessagesDto;
+    creationInProgress = false;
+    error: any;
 
     private _creationRequest: RepositoryCreationRequestDto;
-    private _destroyed$ = new Subject<void>();
+    private readonly _destroyed$ = new Subject<void>();
 
     constructor(private repositoryService: RepositoryService) {
     }
 
-    public ngOnDestroy(): void {
-        this._destroyed$.next();
+    ngOnDestroy(): void {
+        this._destroyed$.next(null);
         this._destroyed$.complete();
     }
 
     @Input()
-    public get creationRequest(): RepositoryCreationRequestDto {
+    get creationRequest(): RepositoryCreationRequestDto {
         return this._creationRequest;
     }
 
-    public set creationRequest(value: RepositoryCreationRequestDto) {
+    set creationRequest(value: RepositoryCreationRequestDto) {
         this._creationRequest = value;
         this.repository = null;
-        this.unknownError = null;
-        this.errorMessages = null;
+        this.error = null;
+        this.creationInProgress = false;
 
         if (this._creationRequest) {
             this.creationInProgress = true;
@@ -49,27 +45,17 @@ export class RepositoryAddWizardStepCreationComponent implements OnDestroy {
                 .createRepository(this.creationRequest)
                 .pipe(takeUntil(this._destroyed$))
                 .toPromise()
-                .then(repository => this.repository = repository)
-                .catch(error => this.handleError(error))
-                .finally(() => this.creationInProgress = false);
+                .then((repository) => (this.repository = repository))
+                .catch((error) => this.error = error)
+                .finally(() => (this.creationInProgress = false));
         }
     }
 
-    public get repository(): Repository {
+    get repository(): Repository {
         return this.form.controls['repository'].value;
     }
 
-    public set repository(repository: Repository) {
+    set repository(repository: Repository) {
         this.form.controls['repository'].setValue(repository);
-    }
-
-    private handleError(cause: any) {
-        if (instanceOfHttpError(cause)) {
-            return this.handleError(cause.error);
-        } else if (instanceOfErrorMessages(cause)) {
-            this.errorMessages = <ErrorMessagesDto>cause;
-        } else {
-            this.unknownError = cause;
-        }
     }
 }

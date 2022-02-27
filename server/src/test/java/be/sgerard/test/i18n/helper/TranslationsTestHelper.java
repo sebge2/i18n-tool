@@ -1,6 +1,9 @@
 package be.sgerard.test.i18n.helper;
 
-import be.sgerard.i18n.model.i18n.dto.*;
+import be.sgerard.i18n.model.i18n.dto.translation.key.TranslationsPageDto;
+import be.sgerard.i18n.model.i18n.dto.translation.key.TranslationsPageRowDto;
+import be.sgerard.i18n.model.i18n.dto.translation.key.TranslationsPageTranslationDto;
+import be.sgerard.i18n.model.i18n.dto.translation.key.TranslationsSearchRequestDto;
 import be.sgerard.i18n.model.locale.dto.TranslationLocaleDto;
 import be.sgerard.i18n.model.repository.dto.RepositoryDto;
 import be.sgerard.i18n.model.workspace.dto.WorkspaceDto;

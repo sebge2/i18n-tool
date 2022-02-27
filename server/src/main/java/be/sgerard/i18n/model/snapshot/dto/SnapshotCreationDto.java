@@ -6,8 +6,11 @@ import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
+import org.springframework.util.StringUtils;
 
 import java.util.Optional;
+
+import static org.springframework.util.StringUtils.hasText;
 
 /**
  * Request for the creation of a new snapshot.
@@ -41,7 +44,7 @@ public class SnapshotCreationDto {
      * @see #encryptionPassword
      */
     public Optional<String> getEncryptionPassword() {
-        return Optional.ofNullable(encryptionPassword);
+        return Optional.ofNullable(encryptionPassword).filter(StringUtils::hasText);
     }
 
     /**

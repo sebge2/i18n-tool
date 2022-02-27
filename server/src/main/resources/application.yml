@@ -1,6 +1,7 @@
 spring:
   main:
     banner-mode: "OFF"
+    allow-circular-references: true
   data:
     mongodb:
       auto-index-creation: false
@@ -13,6 +14,7 @@ springdoc:
     path: "/api/index.html"
   api-docs:
     path: "/api/api-docs"
+    enabled: false
 
 management:
   endpoints:
@@ -47,3 +49,6 @@ be:
           ignored-paths:
           included-paths:
             - "**/src/assets/i18n"
+
+mongock:
+  change-logs-scan-package: be.sgerard.i18n.migration.persistence

@@ -1,16 +1,16 @@
 <form [formGroup]="parts">
-    <mat-button-toggle-group [formControlName]="'criterion'">
-        <mat-button-toggle [value]="TranslationsSearchCriterion.ALL">
-            {{'TRANSLATIONS.SEARCH_BAR.CRITERION.ALL' | translate}}
-        </mat-button-toggle>
-        <mat-button-toggle [value]="TranslationsSearchCriterion.MISSING_TRANSLATIONS">
-            {{'TRANSLATIONS.SEARCH_BAR.CRITERION.MISSING' | translate}}
-        </mat-button-toggle>
-        <mat-button-toggle [value]="TranslationsSearchCriterion.TRANSLATIONS_CURRENT_USER_UPDATED">
-            {{'TRANSLATIONS.SEARCH_BAR.CRITERION.USER_UPDATED' | translate}}
-        </mat-button-toggle>
-        <mat-button-toggle [value]="TranslationsSearchCriterion.UPDATED_TRANSLATIONS">
-            {{'TRANSLATIONS.SEARCH_BAR.CRITERION.UPDATED' | translate}}
-        </mat-button-toggle>
-    </mat-button-toggle-group>
+  <mat-button-toggle-group [formControlName]="'criterion'">
+    <mat-button-toggle [value]="TranslationsSearchCriterion.ALL">
+      {{ 'TRANSLATIONS.SEARCH_BAR.CRITERION.ALL' | translate }}
+    </mat-button-toggle>
+    <mat-button-toggle [value]="TranslationsSearchCriterion.MISSING_TRANSLATIONS">
+      {{ 'TRANSLATIONS.SEARCH_BAR.CRITERION.MISSING' | translate }}
+    </mat-button-toggle>
+    <mat-button-toggle [value]="TranslationsSearchCriterion.TRANSLATIONS_CURRENT_USER_UPDATED">
+      {{ 'TRANSLATIONS.SEARCH_BAR.CRITERION.USER_UPDATED' | translate }}
+    </mat-button-toggle>
+    <mat-button-toggle [value]="TranslationsSearchCriterion.UPDATED_TRANSLATIONS">
+      {{ 'TRANSLATIONS.SEARCH_BAR.CRITERION.UPDATED' | translate }}
+    </mat-button-toggle>
+  </mat-button-toggle-group>
 </form>

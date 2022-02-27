@@ -8,7 +8,7 @@ describe('ScreenService', () => {
   });
 
   it('should be created', () => {
-    const service: ScreenService = TestBed.get(ScreenService);
+    const service: ScreenService = TestBed.inject(ScreenService);
     expect(service).toBeTruthy();
   });
 });

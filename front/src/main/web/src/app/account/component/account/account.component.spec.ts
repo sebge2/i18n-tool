@@ -1,25 +1,23 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
-import {AccountComponent} from './account.component';
+import { AccountComponent } from './account.component';
 
 describe('AccountComponent', () => {
-    let component: AccountComponent;
-    let fixture: ComponentFixture<AccountComponent>;
+  let component: AccountComponent;
+  let fixture: ComponentFixture<AccountComponent>;
 
-    beforeEach(async(() => {
-        TestBed
-            .configureTestingModule({
-                declarations: [AccountComponent]
-            })
-            .compileComponents();
+  beforeEach(waitForAsync(() => {
+    TestBed.configureTestingModule({
+      declarations: [AccountComponent],
+    }).compileComponents();
 
-        fixture = TestBed.createComponent(AccountComponent);
-        component = fixture.componentInstance;
-    }));
+    fixture = TestBed.createComponent(AccountComponent);
+    component = fixture.componentInstance;
+  }));
 
-    xit('should create', () => {
-        fixture.detectChanges();
+  xit('should create', () => {
+    fixture.detectChanges();
 
-        expect(component).toBeTruthy(); // TODO issue-125
-    });
+    expect(component).toBeTruthy(); // TODO issue-125
+  });
 });

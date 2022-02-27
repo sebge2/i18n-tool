@@ -1,0 +1,21 @@
+@import "z-index";
+
+.app-main-add-button {
+  position: fixed;
+  width: 60px;
+  height: 60px;
+  bottom: 20px;
+  right: 20px;
+
+  z-index: $app-add-button-z-index;
+
+  &:hover {
+    opacity: 0.9;
+  }
+
+  & .mat-icon {
+    margin-top: -18px;
+    margin-left: -16px;
+    font-size: 40px;
+  }
+}

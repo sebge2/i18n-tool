@@ -1,11 +1,9 @@
 export abstract class ScheduledTaskTrigger {
-
-    public abstract type(): ScheduledTaskTriggerType;
+  public abstract type(): ScheduledTaskTriggerType;
 }
 
 export enum ScheduledTaskTriggerType {
+  RECURRING = 'RECURRING',
 
-    RECURRING = 'RECURRING',
-
-    NON_RECURRING = 'NON_RECURRING'
+  NON_RECURRING = 'NON_RECURRING',
 }

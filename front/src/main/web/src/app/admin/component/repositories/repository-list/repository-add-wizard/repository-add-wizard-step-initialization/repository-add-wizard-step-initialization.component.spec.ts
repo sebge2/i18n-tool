@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { RepositoryAddWizardStepInitializationComponent } from './repository-add-wizard-step-initialization.component';
 
@@ -6,11 +6,10 @@ describe('RepositoryAddWizardStepInitializationComponent', () => {
   let component: RepositoryAddWizardStepInitializationComponent;
   let fixture: ComponentFixture<RepositoryAddWizardStepInitializationComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ RepositoryAddWizardStepInitializationComponent ]
-    })
-    .compileComponents();
+      declarations: [RepositoryAddWizardStepInitializationComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

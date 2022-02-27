@@ -1,5 +1,6 @@
 package be.sgerard.i18n;
 
+import be.sgerard.TestConfiguration;
 import be.sgerard.test.i18n.DatabaseTestHelper;
 import be.sgerard.test.i18n.helper.*;
 import be.sgerard.test.i18n.helper.repository.RemoteRepositoryTestHelper;
@@ -10,12 +11,14 @@ import org.springframework.boot.test.autoconfigure.data.mongo.AutoConfigureDataM
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 @SpringBootTest(classes = {I18nToolApplication.class}, properties = "spring.main.web-application-type=reactive")
 @ComponentScan({"be.sgerard.i18n", "be.sgerard.test.i18n"})
+@Import(TestConfiguration.class)
 @AutoConfigureDataMongo
 @AutoConfigureWebTestClient(timeout = "30000")
 @TestExecutionListeners(
@@ -49,6 +52,12 @@ public abstract class AbstractIntegrationTest {
 
     @Autowired
     protected ScheduledTaskTestHelper scheduledTask;
+
+    @Autowired
+    protected DictionaryTestHelper dictionary;
+
+    @Autowired
+    protected ExternalTranslatorTestHelper externalTranslator;
 
     @Autowired
     protected WebTestClient webClient;

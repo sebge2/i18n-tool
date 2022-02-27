@@ -1,0 +1,15 @@
+<app-card-grid [allowAdd]="false" [layout]="'center center'">
+    <app-card-grid-item *ngFor="let item of items">
+        <mat-card (click)="onSelect(item)" matRipple class="mat-card-clickable app-card-selector-card">
+            <mat-card-header>
+                <mat-card-title>&nbsp;</mat-card-title>
+            </mat-card-header>
+
+            <div mat-card-image [ngClass]="item.icon" class="app-card-selector-item"></div>
+
+            <mat-card-content class="app-card-selector-action">
+                <p>{{ item.label | apptranslate }}</p>
+            </mat-card-content>
+        </mat-card>
+    </app-card-grid-item>
+</app-card-grid>

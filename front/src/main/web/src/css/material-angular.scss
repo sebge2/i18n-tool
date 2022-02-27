@@ -1,12 +1,12 @@
 // Allow a component in the side-nav content to override the side-bar
 .mat-drawer.mat-drawer-side {
-  z-index: 1!important;
+  z-index: 1 !important;
 }
 
 .mat-drawer-content {
-  z-index: auto!important;
+  z-index: auto !important;
 }
 
 .mat-drawer-container {
-  z-index: auto!important;
+  z-index: auto !important;
 }

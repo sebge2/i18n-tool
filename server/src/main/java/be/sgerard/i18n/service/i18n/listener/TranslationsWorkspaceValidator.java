@@ -1,6 +1,6 @@
 package be.sgerard.i18n.service.i18n.listener;
 
-import be.sgerard.i18n.model.i18n.dto.TranslationUpdateDto;
+import be.sgerard.i18n.model.i18n.dto.translation.key.TranslationUpdateDto;
 import be.sgerard.i18n.model.validation.ValidationResult;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;

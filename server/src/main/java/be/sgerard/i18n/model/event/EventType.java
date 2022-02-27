@@ -1,6 +1,7 @@
 package be.sgerard.i18n.model.event;
 
-import be.sgerard.i18n.model.i18n.dto.TranslationsUpdateEventDto;
+import be.sgerard.i18n.model.translator.dto.ExternalTranslatorConfigDto;
+import be.sgerard.i18n.model.i18n.dto.translation.key.TranslationsUpdateEventDto;
 import be.sgerard.i18n.model.locale.dto.TranslationLocaleDto;
 import be.sgerard.i18n.model.repository.dto.RepositoryDto;
 import be.sgerard.i18n.model.scheduler.dto.ScheduledTaskDefinitionDto;
@@ -11,6 +12,7 @@ import be.sgerard.i18n.model.snapshot.dto.SnapshotDto;
 import be.sgerard.i18n.model.user.dto.UserDto;
 import be.sgerard.i18n.model.user.dto.UserPreferencesDto;
 import be.sgerard.i18n.model.workspace.dto.WorkspaceDto;
+import be.sgerard.i18n.model.dictionary.dto.DictionaryEntryDto;
 
 /**
  * All possible kind of events.
@@ -158,4 +160,34 @@ public enum EventType {
      * @see ScheduledTaskExecutionDto
      */
     DELETED_SCHEDULED_TASK_EXECUTION,
+
+    /**
+     * @see DictionaryEntryDto
+     */
+    ADDED_DICTIONARY_ENTRY,
+
+    /**
+     * @see DictionaryEntryDto
+     */
+    UPDATED_DICTIONARY_ENTRY,
+
+    /**
+     * @see DictionaryEntryDto
+     */
+    DELETED_DICTIONARY_ENTRY,
+
+    /**
+     * @see ExternalTranslatorConfigDto
+     */
+    ADDED_EXTERNAL_TRANSLATOR_CONFIG,
+
+    /**
+     * @see ExternalTranslatorConfigDto
+     */
+    UPDATED_EXTERNAL_TRANSLATOR_CONFIG,
+
+    /**
+     * @see ExternalTranslatorConfigDto
+     */
+    DELETED_EXTERNAL_TRANSLATOR_CONFIG,
 }

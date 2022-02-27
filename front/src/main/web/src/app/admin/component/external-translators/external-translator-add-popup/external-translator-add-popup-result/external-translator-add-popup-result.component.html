@@ -1,0 +1,22 @@
+<div class="app-external-translator-add-popup-result-content">
+    <div class="creation-container" *ngIf="creationInProgress">
+        <mat-spinner></mat-spinner>
+    </div>
+
+    <div class="successful-container" *ngIf="translator">
+        <div class="successful-container-child">
+            <div class="container-item">
+                <mat-icon style="color: green; font-size: 150px; width: 150px">check_circle</mat-icon>
+            </div>
+            <div class="container-item">
+                <p>{{ 'ADMIN.EXTERNAL_TRANSLATORS.ADD_POPUP.STEP_RESULT.CREATED' | translate: {name: translator?.label} }}</p>
+            </div>
+        </div>
+    </div>
+
+    <app-error-display
+            [unidentifiedErrorLabel]="'ADMIN.EXTERNAL_TRANSLATORS.ADD_POPUP.STEP_RESULT.UNKNOWN_ERROR' | translate"
+            [identifiedErrorLabel]="'ADMIN.EXTERNAL_TRANSLATORS.ADD_POPUP.STEP_RESULT.ERROR_TITLE' | translate"
+            [error]="error">
+    </app-error-display>
+</div>

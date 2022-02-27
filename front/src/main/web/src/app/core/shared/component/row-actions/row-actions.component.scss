@@ -1,4 +1,5 @@
-@import "../../../../front/src/main/web/src/css/variables";
+@use '@angular/material' as mat;
+@import 'variables';
 
 .app-row-actions {
   width: 100%;
@@ -8,12 +9,12 @@
 
   .app-row-actions-items {
     opacity: 0;
-    transition:visibility 0.3s linear,opacity 0.3s linear;
+    transition: visibility 0.3s linear, opacity 0.3s linear;
   }
 }
 
 .app-row-actions:hover {
-  background-color: mat-color($color-hover);
+  background-color: mat.get-color-from-palette($color-hover);
 
   .app-row-actions-items {
     opacity: 100%;

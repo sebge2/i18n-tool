@@ -1,6 +1,6 @@
 package be.sgerard.i18n.configuration;
 
-import be.sgerard.i18n.model.i18n.dto.TranslationsUpdateEventDto;
+import be.sgerard.i18n.model.i18n.dto.translation.key.TranslationsUpdateEventDto;
 import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.converter.ResolvedSchema;
@@ -55,7 +55,7 @@ public class OpenApiConfiguration {
     }
 
     @Bean
-    public OpenApiCustomiser schemaCustomiser() {
+    public OpenApiCustomiser schemaCustomizer() {
         final ResolvedSchema resolvedSchema = ModelConverters.getInstance()
                 .resolveAsResolvedSchema(new AnnotatedType(TranslationsUpdateEventDto.class));
 

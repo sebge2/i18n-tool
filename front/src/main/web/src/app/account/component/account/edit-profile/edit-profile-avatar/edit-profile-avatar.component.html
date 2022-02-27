@@ -1,17 +1,13 @@
-<div class="avatar-zone"
-     appDragDrop
-     [disabled]="disabled"
-     [allowedFileExtensions]="allowedFileExtensions"
-     [style.backgroundImage]="valueUrl"
-     (onFileDropped)="onFileDropped($event)">
-    <app-form-upload-button color="primary"
-                            class="avatar-upload-button"
-                            [disabled]="disabled"
-                            [allowedFileExtensions]="allowedFileExtensions"
-                            (import)="onFileImported($event)">
-        <mat-icon>cloud_upload</mat-icon>
-    </app-form-upload-button>
-</div>
+<app-upload-zone
+  [disabled]="disabled"
+  [allowedFileExtensions]="allowedFileExtensions"
+  [backgroundImage]="valueUrl"
+  (file)="onFile($event)"
+  class="edit-profile-avatar-zone"
+>
+  <app-upload-zone-content> </app-upload-zone-content>
+</app-upload-zone>
+
 <div class="avatar-displayName">
-    <h1>{{currentUser?.displayName}}</h1>
+  <h1>{{ currentUser?.displayName }}</h1>
 </div>

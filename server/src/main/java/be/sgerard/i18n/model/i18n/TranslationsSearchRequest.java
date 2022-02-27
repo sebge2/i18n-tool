@@ -1,9 +1,9 @@
 package be.sgerard.i18n.model.i18n;
 
-import be.sgerard.i18n.model.i18n.dto.TranslationKeyPatternDto;
-import be.sgerard.i18n.model.i18n.dto.TranslationSearchCriterion;
-import be.sgerard.i18n.model.i18n.dto.TranslationValueRestrictionDto;
-import be.sgerard.i18n.model.i18n.dto.TranslationsSearchPageSpecDto;
+import be.sgerard.i18n.model.i18n.dto.translation.key.TranslationKeyPatternDto;
+import be.sgerard.i18n.model.i18n.dto.translation.key.TranslationSearchCriterion;
+import be.sgerard.i18n.model.i18n.dto.translation.key.TranslationValueRestrictionDto;
+import be.sgerard.i18n.model.i18n.dto.translation.key.TranslationsSearchPageSpecDto;
 import be.sgerard.i18n.model.i18n.persistence.BundleFileEntity;
 import be.sgerard.i18n.model.locale.persistence.TranslationLocaleEntity;
 import be.sgerard.i18n.model.workspace.persistence.WorkspaceEntity;

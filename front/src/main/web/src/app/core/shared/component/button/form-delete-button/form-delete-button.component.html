@@ -1,0 +1,14 @@
+<button
+  mat-icon-button
+  color="warn"
+  class="app-button"
+  [disabled]="disabled || deleteInProgress"
+  (click)="onDelete()"
+  [class.enabled]="!disabled"
+  [class.spinner]="deleteInProgress"
+>
+  <mat-icon *ngIf="deleteInProgress">
+    <mat-spinner color="warn" diameter="20"></mat-spinner>
+  </mat-icon>
+  <mat-icon *ngIf="!deleteInProgress">delete</mat-icon>
+</button>

@@ -1,18 +1,20 @@
 package be.sgerard.i18n.repository.i18n;
 
 import be.sgerard.i18n.model.i18n.TranslationsSearchRequest;
-import be.sgerard.i18n.model.i18n.dto.TranslationKeyPatternDto;
-import be.sgerard.i18n.model.i18n.dto.TranslationSearchCriterion;
-import be.sgerard.i18n.model.i18n.dto.TranslationValueRestrictionDto;
-import be.sgerard.i18n.model.i18n.dto.TranslationsSearchPageSpecDto;
+import be.sgerard.i18n.model.i18n.dto.translation.key.TranslationKeyPatternDto;
+import be.sgerard.i18n.model.i18n.dto.translation.key.TranslationSearchCriterion;
+import be.sgerard.i18n.model.i18n.dto.translation.key.TranslationValueRestrictionDto;
+import be.sgerard.i18n.model.i18n.dto.translation.key.TranslationsSearchPageSpecDto;
 import be.sgerard.i18n.model.i18n.persistence.BundleKeyEntity;
 import be.sgerard.i18n.model.i18n.persistence.BundleKeyTranslationEntity;
 import be.sgerard.i18n.model.i18n.persistence.BundleKeyTranslationModificationEntity;
+import org.bson.BsonRegularExpression;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.MongoRegexCreator;
 import org.springframework.data.mongodb.core.query.Query;
 import reactor.core.publisher.Flux;
 
@@ -151,14 +153,14 @@ public class BundleKeyEntityRepositoryImpl implements BundleKeyEntityRepositoryC
      */
     private Criteria createKeyPatternCriteria(TranslationKeyPatternDto pattern) {
         switch (pattern.getStrategy()) {
-            case EQUAL:
-                return createCriteriaOnBundleKey(pattern, exact().ignoreCase());
+            case EQUALS:
+                return createCriteriaOnBundleKey(pattern, MongoRegexCreator.MatchMode.EXACT);
             case CONTAINS:
-                return createCriteriaOnBundleKey(pattern, contains().ignoreCase());
+                return createCriteriaOnBundleKey(pattern, MongoRegexCreator.MatchMode.CONTAINING);
             case ENDS_WITH:
-                return createCriteriaOnBundleKey(pattern, endsWith().ignoreCase());
+                return createCriteriaOnBundleKey(pattern, MongoRegexCreator.MatchMode.ENDING_WITH);
             case STARTS_WITH:
-                return createCriteriaOnBundleKey(pattern, startsWith().ignoreCase());
+                return createCriteriaOnBundleKey(pattern, MongoRegexCreator.MatchMode.STARTING_WITH);
             default:
                 throw new UnsupportedOperationException("Unsupported pattern strategy [" + pattern.getStrategy() + "].");
         }
@@ -169,42 +171,39 @@ public class BundleKeyEntityRepositoryImpl implements BundleKeyEntityRepositoryC
      */
     private Criteria createValueCriteria(TranslationValueRestrictionDto valueRestriction, List<String> locales) {
         switch (valueRestriction.getStrategy()) {
-            case EQUAL:
-                return createCriteriaOnTranslationKey(valueRestriction, exact().ignoreCase(), locales);
+            case EQUALS:
+                return createCriteriaOnTranslationValue(valueRestriction, exact().ignoreCase(), locales);
             case CONTAINS:
-                return createCriteriaOnTranslationKey(valueRestriction, contains().ignoreCase(), locales);
+                return createCriteriaOnTranslationValue(valueRestriction, contains().ignoreCase(), locales);
             case ENDS_WITH:
-                return createCriteriaOnTranslationKey(valueRestriction, endsWith().ignoreCase(), locales);
+                return createCriteriaOnTranslationValue(valueRestriction, endsWith().ignoreCase(), locales);
             case STARTS_WITH:
-                return createCriteriaOnTranslationKey(valueRestriction, startsWith().ignoreCase(), locales);
+                return createCriteriaOnTranslationValue(valueRestriction, startsWith().ignoreCase(), locales);
             default:
                 throw new UnsupportedOperationException("Unsupported pattern strategy [" + valueRestriction.getStrategy() + "].");
         }
     }
 
     /**
-     * Creates a {@link Criteria criteria} for filtering the {@link BundleKeyEntityRepository#FIELD_BUNDLE_KEY bundle key} field.
+     * Creates a {@link Criteria criteria} for filtering the {@link BundleKeyEntityRepository#FIELD_BUNDLE_KEY bundle key} field
+     * based on the specified  matching {@link MongoRegexCreator.MatchMode mode}.
      */
-    private Criteria createCriteriaOnBundleKey(TranslationKeyPatternDto pattern, ExampleMatcher.GenericPropertyMatcher matcher) {
-        try {
-            final BundleKeyEntity entity = bundleKeyConstructor.newInstance();
-            entity.setKey(pattern.getPattern());
+    private Criteria createCriteriaOnBundleKey(TranslationKeyPatternDto pattern, MongoRegexCreator.MatchMode matchMode) {
+        final String regex = MongoRegexCreator.INSTANCE.toRegularExpression(pattern.getPattern(), matchMode);
 
-            final ExampleMatcher name = ExampleMatcher.matchingAny().withMatcher(FIELD_BUNDLE_KEY, matcher);
-
-            return Criteria.byExample(Example.of(entity, name));
-        } catch (Exception e) {
-            throw new IllegalStateException("Error while initializing the entity.", e);
+        if (regex == null) {
+            throw new IllegalStateException("The regex cannot be null at this point. Hint: please check the algorithm.");
         }
+
+        return Criteria.where(FIELD_BUNDLE_KEY).regex(new BsonRegularExpression(regex, "i"));
     }
 
     /**
-     * Creates a {@link Criteria criteria} for filtering the {@link BundleKeyEntityRepository#FIELD_BUNDLE_KEY bundle key} field.
+     * Creates a {@link Criteria criteria} for filtering the keys based on their translation values.
      */
-    private Criteria createCriteriaOnTranslationKey(TranslationValueRestrictionDto valueRestriction,
-                                                    ExampleMatcher.GenericPropertyMatcher matcher,
-                                                    List<String> allLocales) {
-
+    private Criteria createCriteriaOnTranslationValue(TranslationValueRestrictionDto valueRestriction,
+                                                      ExampleMatcher.GenericPropertyMatcher matcher,
+                                                      List<String> allLocales) {
         return new Criteria().orOperator(
                 valueRestriction.getLocale()
                         .map(Collections::singletonList)

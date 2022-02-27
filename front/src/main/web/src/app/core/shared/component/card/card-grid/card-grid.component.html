@@ -1,0 +1,6 @@
+<div class="container" fxLayout="row wrap" [fxLayoutAlign]="layout" fxLayoutGap="10px grid">
+    <ng-content select="app-card-grid-item"></ng-content>
+
+    <app-main-add-button (add)="onAdd()" *ngIf="allowAdd">
+    </app-main-add-button>
+</div>

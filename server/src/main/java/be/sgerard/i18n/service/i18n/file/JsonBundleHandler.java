@@ -226,7 +226,13 @@ public class JsonBundleHandler implements BundleHandler {
     private Mono<Void> writeTranslations(Flux<Pair<String, String>> translations, File file, File outputStream) {
         return translations
                 .collectList()
-                .map(this::toStructuredMap)
+                .map(translationList -> {
+                    try {
+                        return this.toStructuredMap(translationList);
+                    } catch (Exception e) {
+                        throw WorkspaceException.onFileWriting(file, e);
+                    }
+                })
                 .doOnNext(structuredMap -> {
                     try {
                         objectMapper.writeValue(outputStream, structuredMap);
@@ -256,7 +262,20 @@ public class JsonBundleHandler implements BundleHandler {
                             currentMap.put(parts[i], translation.getValue());
                         } else {
                             currentMap.putIfAbsent(parts[i], new LinkedHashMap<>());
-                            currentMap = (Map<String, Object>) currentMap.get(parts[i]);
+
+                            final Object partValue = currentMap.get(parts[i]);
+                            if(!(partValue instanceof Map)){
+                                throw new IllegalStateException(
+                                        String.format(
+                                                "Error while parsing key [%s], the part [%s] is not associated to a map, but [%s].",
+                                                translation.getKey(),
+                                                parts[i],
+                                                partValue
+                                        )
+                                );
+                            }
+
+                            currentMap = (Map<String, Object>) partValue;
                         }
                     }
                 }

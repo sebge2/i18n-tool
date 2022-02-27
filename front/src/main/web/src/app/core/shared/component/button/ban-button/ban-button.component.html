@@ -1,0 +1,6 @@
+<button mat-icon-button class="app-button" color="warn" [disabled]="disabled" (click)="onClick()">
+  <mat-icon *ngIf="banInProgress">
+    <mat-spinner color="warn" diameter="20"></mat-spinner>
+  </mat-icon>
+  <mat-icon [fontIcon]="'app-icon-ban-solid'" *ngIf="!banInProgress"></mat-icon>
+</button>

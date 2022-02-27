@@ -1,0 +1,19 @@
+<div class="app-menu-tool-bar">
+    <div class="app-menu-tool-bar-header">
+        <app-icon [icon]="toolSelection?.toolDescriptor?.fontIcon"></app-icon>
+
+        <span>{{toolSelection?.toolDescriptor?.title | translate}}</span>
+
+        <app-generic-button
+                [icon]="'exit_to_app'"
+                [tooltip]="'SHARED.TOOL_BAR.CLOSE_BUTTON_TOOLTIP' | translate"
+                (click)="onClose()">
+        </app-generic-button>
+    </div>
+
+    <div class="app-menu-tool-bar-main">
+        <ng-template [ngComponentOutlet]="toolSelection?.toolDescriptor?.component"
+                     [ndcDynamicInputs]="toolSelection?.properties"
+        ></ng-template>
+    </div>
+</div>

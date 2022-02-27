@@ -1,7 +1,7 @@
 be:
   sgerard:
     i18n:
-      base-directory: ${BASE_REPOSITORY}
+      base-directory: ${BASE_REPOSITORY:/tmp/i18n-tool}
       security:
         default-admin-password: admin
       repository:
@@ -9,3 +9,7 @@ be:
       scheduled-task:
         cleanup-frequency: '0 0 * * * *'
         cleanup-executions-older-than-days: 31
+
+springdoc:
+  api-docs:
+    enabled: true

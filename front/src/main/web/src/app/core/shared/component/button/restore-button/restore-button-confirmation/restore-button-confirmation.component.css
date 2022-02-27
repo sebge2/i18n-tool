@@ -1,0 +1,10 @@
+.app-form-delete-grid {
+  display: grid;
+  grid-template-columns: 100px auto;
+}
+
+.app-form-delete-msg {
+  min-height: 100px;
+  margin-left: 20px;
+  vertical-align: middle;
+}

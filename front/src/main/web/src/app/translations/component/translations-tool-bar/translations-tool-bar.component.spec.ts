@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { TranslationsToolBarComponent } from './translations-tool-bar.component';
 
@@ -6,11 +6,10 @@ describe('TranslationsToolBarComponent', () => {
   let component: TranslationsToolBarComponent;
   let fixture: ComponentFixture<TranslationsToolBarComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ TranslationsToolBarComponent ]
-    })
-    .compileComponents();
+      declarations: [TranslationsToolBarComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

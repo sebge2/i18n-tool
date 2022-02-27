@@ -5,10 +5,7 @@ import { Component, OnInit } from '@angular/core';
   templateUrl: './row-actions-item.component.html',
 })
 export class RowActionsItemComponent implements OnInit {
+  constructor() {}
 
-  constructor() { }
-
-  ngOnInit(): void {
-  }
-
+  ngOnInit(): void {}
 }

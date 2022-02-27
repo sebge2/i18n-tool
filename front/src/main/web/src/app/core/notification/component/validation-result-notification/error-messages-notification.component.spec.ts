@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { ErrorMessagesNotificationComponent } from './error-messages-notification.component';
 
@@ -6,11 +6,10 @@ describe('ErrorMessagesNotificationComponent', () => {
   let component: ErrorMessagesNotificationComponent;
   let fixture: ComponentFixture<ErrorMessagesNotificationComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ ErrorMessagesNotificationComponent ]
-    })
-    .compileComponents();
+      declarations: [ErrorMessagesNotificationComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

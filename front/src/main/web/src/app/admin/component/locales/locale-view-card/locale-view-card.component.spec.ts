@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { LocaleViewCardComponent } from './locale-view-card.component';
 
@@ -6,11 +6,10 @@ describe('LocaleViewCardComponent', () => {
   let component: LocaleViewCardComponent;
   let fixture: ComponentFixture<LocaleViewCardComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ LocaleViewCardComponent ]
-    })
-    .compileComponents();
+      declarations: [LocaleViewCardComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

@@ -1,21 +1,22 @@
-@import "variables";
+@use '@angular/material' as mat;
+@import 'variables';
 
 .status-warning {
-  color: mat-color($color-warning);
+  color: mat.get-color-from-palette($color-warning);
 }
 
 .status-error {
-  color: mat-color($color-error);
+  color: mat.get-color-from-palette($color-error);
 }
 
 .status-danger {
-  color: mat-color($color-error);
+  color: mat.get-color-from-palette($color-error);
 }
 
 .status-success {
-  color: mat-color($color-success);
+  color: mat.get-color-from-palette($color-success);
 }
 
 .status-progress {
-  color: mat-color($color-warning);
+  color: mat.get-color-from-palette($color-warning);
 }

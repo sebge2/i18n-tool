@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { RepositoryViewCardComponent } from './repository-view-card.component';
 
@@ -6,11 +6,10 @@ describe('RepositoryViewCardComponent', () => {
   let component: RepositoryViewCardComponent;
   let fixture: ComponentFixture<RepositoryViewCardComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ RepositoryViewCardComponent ]
-    })
-    .compileComponents();
+      declarations: [RepositoryViewCardComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

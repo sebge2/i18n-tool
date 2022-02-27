@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { RepositoryGithubAccessKeyDialogComponent } from './repository-github-access-key-dialog.component';
 
@@ -6,11 +6,10 @@ describe('RepositoryGithubAccessKeyDialogComponent', () => {
   let component: RepositoryGithubAccessKeyDialogComponent;
   let fixture: ComponentFixture<RepositoryGithubAccessKeyDialogComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ RepositoryGithubAccessKeyDialogComponent ]
-    })
-    .compileComponents();
+      declarations: [RepositoryGithubAccessKeyDialogComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

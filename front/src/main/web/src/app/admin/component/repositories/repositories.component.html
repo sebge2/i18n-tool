@@ -1,17 +1,16 @@
 <app-tabs [enableInitialTab]="true" [tabUrlParam]="'repository'" (initialTab)="onInitialTab($event)" #tabs>
-    <app-tab [id]="''" [title]="'ADMIN.REPOSITORIES.TAB_LABEL' | translate" [matIcon]="'view_module'">
-        <app-repository-list [repositories]="repositories" (open)="onOpen($event)"></app-repository-list>
-    </app-tab>
+  <app-tab [id]="''" [title]="'ADMIN.REPOSITORIES.TAB_LABEL' | translate" [matIcon]="'view_module'">
+    <app-repository-list [repositories]="repositories" (open)="onOpen($event)"></app-repository-list>
+  </app-tab>
 
-    <app-tab
-            [id]="repository.id"
-            [title]="repository.name"
-            [iconClass]="repository.type | repositoryIcon"
-            [closeable]="true"
-            (close)="onClose(repository)"
-            *ngFor="let repository of openedRepositories; trackBy:identify"
-    >
-        <app-repository-details [repository]="repository"></app-repository-details>
-    </app-tab>
+  <app-tab
+    [id]="repository.id"
+    [title]="repository.name"
+    [iconClass]="repository.type | repositoryIcon"
+    [closeable]="true"
+    (close)="onClose(repository)"
+    *ngFor="let repository of openedRepositories; trackBy: identify"
+  >
+    <app-repository-details [repository]="repository"></app-repository-details>
+  </app-tab>
 </app-tabs>
-

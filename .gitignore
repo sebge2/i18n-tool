@@ -4,6 +4,9 @@ target
 front/executables
 front/target
 server/target
+docker/local/mongo-data
+docker/local/i18n-tool-data
+docker/local-db/mongo-data
 .elasticbeanstalk/*
 !.elasticbeanstalk/*.cfg.yml
 !.elasticbeanstalk/*.global.yml

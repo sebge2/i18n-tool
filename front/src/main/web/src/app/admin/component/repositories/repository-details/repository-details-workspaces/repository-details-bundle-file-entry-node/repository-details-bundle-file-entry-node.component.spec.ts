@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { RepositoryDetailsBundleFileEntryNodeComponent } from './repository-details-bundle-file-entry-node.component';
 
@@ -6,11 +6,10 @@ describe('RepositoryDetailsBundleFileEntryNodeComponent', () => {
   let component: RepositoryDetailsBundleFileEntryNodeComponent;
   let fixture: ComponentFixture<RepositoryDetailsBundleFileEntryNodeComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ RepositoryDetailsBundleFileEntryNodeComponent ]
-    })
-    .compileComponents();
+      declarations: [RepositoryDetailsBundleFileEntryNodeComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

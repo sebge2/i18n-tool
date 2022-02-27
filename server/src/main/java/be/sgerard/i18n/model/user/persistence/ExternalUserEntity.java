@@ -1,6 +1,7 @@
 package be.sgerard.i18n.model.user.persistence;
 
 import be.sgerard.i18n.model.security.auth.external.ExternalAuthSystem;
+import be.sgerard.i18n.service.security.UserRole;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -11,6 +12,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotNull;
 import java.util.UUID;
+
+import static java.util.Collections.singleton;
 
 /**
  * External {@link UserEntity user}.
@@ -44,11 +47,14 @@ public class ExternalUserEntity extends UserEntity {
 
     @PersistenceConstructor
     ExternalUserEntity() {
+        // issue-149: backward compatible fix TODO to be removed in 1.0.0
+        setRoles(singleton(UserRole.MEMBER_OF_ORGANIZATION));
     }
 
     public ExternalUserEntity(String externalId, ExternalAuthSystem externalAuthSystem) {
         setId(UUID.randomUUID().toString());
         setPreferences(new UserPreferencesEntity());
+        setRoles(singleton(UserRole.MEMBER_OF_ORGANIZATION));
 
         this.externalId = externalId;
         this.externalAuthSystem = externalAuthSystem;

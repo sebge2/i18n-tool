@@ -1,7 +1,20 @@
+@import "variables";
+
 .app-button {
   opacity: 0.7;
+
+  &:not([disabled]):hover {
+    opacity: 1;
+    cursor: pointer;
+  }
 }
 
-.app-button:not([disabled]):hover {
-  opacity: 1;
+.app-button-small {
+
+  & .mat-icon {
+    font-size: $button-small-size;
+    line-height: $button-small-size;
+    width: $button-small-size;
+    height: $button-small-size;
+  }
 }

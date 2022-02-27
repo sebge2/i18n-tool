@@ -1,7 +1,7 @@
 package be.sgerard.i18n.service.i18n;
 
-import be.sgerard.i18n.model.i18n.dto.TranslationsPageDto;
-import be.sgerard.i18n.model.i18n.dto.TranslationsSearchRequestDto;
+import be.sgerard.i18n.model.i18n.dto.translation.key.TranslationsPageDto;
+import be.sgerard.i18n.model.i18n.dto.translation.key.TranslationsSearchRequestDto;
 import be.sgerard.i18n.service.ResourceNotFoundException;
 import reactor.core.publisher.Mono;
 

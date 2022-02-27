@@ -13,12 +13,14 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import static java.util.stream.Collectors.toSet;
+
 /**
  * User allowed to access the application.
  *
  * @author Sebastien Gerard
  */
-@Document("user")
+@Document(UserEntity.USER_DOCUMENT)
 @Getter
 @Setter
 @Accessors(chain = true)
@@ -28,6 +30,11 @@ public abstract class UserEntity {
      * User name of admin.
      */
     public static final String ADMIN_USER_NAME = "admin";
+
+    /**
+     * Document name for this entity.
+     */
+    public static final String USER_DOCUMENT = "user";
 
     /**
      * The unique id of this user.
@@ -81,7 +88,10 @@ public abstract class UserEntity {
      * Updates all roles that are {@link UserRole#isAssignableByEndUser() assignables} and preserve the other ones.
      */
     public UserEntity updateAssignableRoles(Collection<UserRole> roles) {
-        this.roles.stream().filter(UserRole::isAssignableByEndUser).forEach(this.roles::remove);
+        this.roles.stream()
+                .filter(UserRole::isAssignableByEndUser)
+                .collect(toSet())
+                .forEach(this.roles::remove);
         this.roles.addAll(roles);
         return this;
     }

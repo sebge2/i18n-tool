@@ -3,6 +3,8 @@ package be.sgerard.i18n.service;
 import be.sgerard.i18n.model.core.localized.LocalizedString;
 import be.sgerard.i18n.model.error.LocalizedMessageHolder;
 
+import static java.util.Arrays.asList;
+
 /**
  * Exception thrown when the caller made a bad request.
  *
@@ -37,6 +39,10 @@ public class BadRequestException extends RuntimeException implements LocalizedMe
 
     public static BadRequestException unexpectedFormPart() {
         return new BadRequestException("The multi-form-data has not the expected fields. Please check your request.", "BadRequestException.wrong-multi-form-data.message", null);
+    }
+
+    public static BadRequestException parametersMustBeSpecifiedTogether(String... parameterNames) {
+        return new BadRequestException(String.format("The following parameters must be specified together: %s.", asList(parameterNames)), "BadRequestException.parameters-must-be-specified-together.message", null, asList(parameterNames));
     }
 
     private final LocalizedString localizedMessage;

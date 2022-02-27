@@ -1,66 +1,73 @@
-import {Component, Input, OnDestroy, OnInit} from '@angular/core';
-import {FormGroup} from "@angular/forms";
-import {TranslationsPageRow} from "../../../model/search/translations-page-row.model";
-import {WorkspaceService} from "../../../service/workspace.service";
-import {map, takeUntil} from "rxjs/operators";
-import {Subject} from "rxjs";
-import * as _ from "lodash";
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {FormGroup} from '@angular/forms';
+import {TranslationsPageRow} from '../../../model/search/translations-page-row.model';
+import {WorkspaceService} from '@i18n-core-translation';
+import {map, takeUntil} from 'rxjs/operators';
+import {Subject} from 'rxjs';
+import * as _ from 'lodash';
 
 @Component({
     selector: 'app-translation-editing-cell',
     templateUrl: './translation-editing-cell.component.html',
-    styleUrls: ['./translation-editing-cell.component.css']
+    styleUrls: ['./translation-editing-cell.component.css'],
 })
 export class TranslationEditingCellComponent implements OnInit, OnDestroy {
 
+    @Output() readonly selectedText = new EventEmitter<string>();
+
     private _form: FormGroup;
-    private _destroyed$ = new Subject<void>();
+
+    private readonly _destroyed$ = new Subject<void>();
 
     constructor(private _workspaceService: WorkspaceService) {
     }
 
-    public ngOnInit() {
+    ngOnInit() {
         this._workspaceService
             .getWorkspace(this.pageRow.workspace)
             .pipe(
                 takeUntil(this._destroyed$),
-                map(workspace => workspace && !workspace.isInReview())
+                map((workspace) => workspace && !workspace.isInReview())
             )
-            .subscribe(enabled => enabled ? this.form.enable() : this.form.disable());
+            .subscribe((enabled) => (enabled ? this.form.enable() : this.form.disable()));
     }
 
-    public ngOnDestroy(): void {
-        this._destroyed$.next();
+    ngOnDestroy(): void {
+        this._destroyed$.next(null);
         this._destroyed$.complete();
     }
 
     @Input()
-    public get form(): FormGroup {
+    get form(): FormGroup {
         return this._form;
     }
 
-    public set form(form: FormGroup) {
+    set form(form: FormGroup) {
         this._form = form;
     }
 
-    public onReset() {
+    onReset() {
         this.form.controls['value'].setValue(this.originalValue);
         this.form.controls['value'].markAsDirty();
     }
 
-    public get originalValue(): string {
+    get originalValue(): string {
         return this.form.controls['originalValue'].value;
     }
 
-    public get value(): string {
+    get value(): string {
         return this.form.controls['value'].value;
     }
 
-    public get pageRow(): TranslationsPageRow {
+    get pageRow(): TranslationsPageRow {
         return this.form.controls['pageRow'].value;
     }
 
-    public get cancelDisabled(): boolean {
+    get cancelDisabled(): boolean {
         return _.eq(this.value, this.originalValue);
+    }
+
+    onSelectedText(selectedText: string): void {
+        this.selectedText.emit(selectedText);
     }
 }

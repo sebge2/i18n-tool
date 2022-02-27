@@ -1,0 +1,14 @@
+<button
+  mat-icon-button
+  color="primary"
+  class="app-button"
+  [disabled]="disabled || restoreInProgress"
+  (click)="onRestore()"
+  [class.enabled]="!disabled"
+  [class.spinner]="restoreInProgress"
+>
+  <mat-icon *ngIf="restoreInProgress">
+    <mat-spinner color="primary" diameter="20"></mat-spinner>
+  </mat-icon>
+  <mat-icon *ngIf="!restoreInProgress" [fontIcon]="'app-icon-box-open-solid'"></mat-icon>
+</button>

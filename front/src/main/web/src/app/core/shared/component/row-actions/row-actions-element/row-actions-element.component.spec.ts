@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { RowActionsElementComponent } from './row-actions-element.component';
 
@@ -6,11 +6,10 @@ describe('RowActionsElementComponent', () => {
   let component: RowActionsElementComponent;
   let fixture: ComponentFixture<RowActionsElementComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ RowActionsElementComponent ]
-    })
-    .compileComponents();
+      declarations: [RowActionsElementComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

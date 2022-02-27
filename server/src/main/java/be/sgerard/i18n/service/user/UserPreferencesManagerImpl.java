@@ -13,12 +13,13 @@ import be.sgerard.i18n.service.locale.TranslationLocaleManager;
 import be.sgerard.i18n.service.security.auth.AuthenticationUserManager;
 import be.sgerard.i18n.service.user.listener.UserPreferencesListener;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.Collection;
 import java.util.List;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * Implementation of the {@link UserPreferencesManager user preferences service}.
@@ -31,7 +32,7 @@ public class UserPreferencesManagerImpl implements UserPreferencesManager {
     /**
      * Validation message key specifying that a translation locale is missing.
      */
-    public static final String MISSING_VALIDATION_LOCALE = "validation.locale.missing";
+    public static final String MISSING_LOCALE = "validation.locale.missing";
 
     private final AuthenticationUserManager authenticationUserManager;
     private final UserManager userManager;
@@ -49,7 +50,6 @@ public class UserPreferencesManagerImpl implements UserPreferencesManager {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public Mono<UserPreferencesEntity> get() throws ResourceNotFoundException {
         return getCurrentUserOrDie()
                 .map(UserEntity::getPreferences);
@@ -63,7 +63,11 @@ public class UserPreferencesManagerImpl implements UserPreferencesManager {
                                 .doOnNext(preferredLocales ->
                                         user.getPreferences()
                                                 .setToolLocale(preferences.getToolLocale().orElse(null))
-                                                .setPreferredLocales(preferredLocales)
+                                                .setPreferredLocales(
+                                                        preferredLocales.stream()
+                                                                .map(TranslationLocaleEntity::getId)
+                                                                .collect(toList())
+                                                )
                                 )
                                 .thenReturn(user)
                 )
@@ -92,7 +96,7 @@ public class UserPreferencesManagerImpl implements UserPreferencesManager {
                         translationLocaleManager
                                 .findById(id)
                                 .switchIfEmpty(Mono.error(
-                                        new ValidationException(ValidationResult.singleMessage(new ValidationMessage(MISSING_VALIDATION_LOCALE, id)))
+                                        new ValidationException(ValidationResult.singleMessage(new ValidationMessage(MISSING_LOCALE, id)))
                                 ))
                 )
                 .collectList();

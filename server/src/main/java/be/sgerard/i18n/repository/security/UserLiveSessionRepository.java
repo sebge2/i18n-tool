@@ -18,8 +18,8 @@ public interface UserLiveSessionRepository extends ReactiveMongoRepository<UserL
     Flux<UserLiveSessionEntity> findByLogoutTimeIsNull();
 
     /**
-     * Returns all sessions owned by the specified {@link UserEntity user}.
+     * Returns all sessions owned by the specified {@link UserEntity#getId() user}.
      */
-    Flux<UserLiveSessionEntity> findByUser(UserEntity user);
+    Flux<UserLiveSessionEntity> findByUser(String user);
 
 }

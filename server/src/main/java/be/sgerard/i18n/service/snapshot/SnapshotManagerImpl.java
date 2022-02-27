@@ -268,17 +268,16 @@ public class SnapshotManagerImpl implements SnapshotManager {
      * Reads the {@link SnapshotMetadataDto metadata} contained in the specified zip file. The ZIP is eventually
      * encrypted with the specified password (can be <tt>null</tt>). The zip can be unzipped at the specified directory.
      */
-    @SuppressWarnings("BlockingMethodInNonBlockingContext")
     private Mono<SnapshotMetadataDto> readMetadata(File zipFile, File tempDirectory, String encryptionPassword) {
-        try {
-            unzipDirectory(tempDirectory, zipFile, encryptionPassword);
+        return Mono.fromCallable(() -> {
+            try {
+                unzipDirectory(tempDirectory, zipFile, encryptionPassword);
 
-            return Mono.just(
-                    objectMapper.readValue(new File(tempDirectory, METADATA_FILE), SnapshotMetadataDto.class)
-            );
-        } catch (Exception e) {
-            throw SnapshotException.onReadingMetadata(e);
-        }
+                return objectMapper.readValue(new File(tempDirectory, METADATA_FILE), SnapshotMetadataDto.class);
+            } catch (Exception e) {
+                throw SnapshotException.onReadingMetadata(e);
+            }
+        });
     }
 
     /**

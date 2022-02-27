@@ -1,78 +1,76 @@
-import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {Repository} from "../../../translations/model/repository/repository.model";
-import * as _ from "lodash";
-import {TabsComponent} from "../../../core/shared/component/tabs/tabs.component";
-import {Subject} from "rxjs";
-import {takeUntil} from "rxjs/operators";
-import {RepositoryService} from "../../../translations/service/repository.service";
-import { updateOriginalCollection } from 'src/app/core/shared/utils/synchronized-observable-utils';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Repository } from '@i18n-core-translation';
+import * as _ from 'lodash';
+import { TabsComponent } from '@i18n-core-shared';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { RepositoryService } from '@i18n-core-translation';
+import { updateOriginalCollection } from '@i18n-core-shared';
 
 @Component({
-    selector: 'app-repositories',
-    templateUrl: './repositories.component.html',
-    styleUrls: ['./repositories.component.css']
+  selector: 'app-repositories',
+  templateUrl: './repositories.component.html',
+  styleUrls: ['./repositories.component.css'],
 })
 export class RepositoriesComponent implements OnInit, OnDestroy {
+  openedRepositories: Repository[] = [];
+  repositories: Repository[] = [];
 
-    public openedRepositories: Repository[] = [];
-    public repositories: Repository[] = [];
+  @ViewChild('tabs', { static: false }) private tabs: TabsComponent;
 
-    @ViewChild('tabs', {static: false}) private tabs: TabsComponent;
+  private readonly _destroyed$ = new Subject<void>();
+  private _initialTab: string;
 
-    private _destroyed$ = new Subject<void>();
-    private _initialTab: string;
+  constructor(private _repositoryService: RepositoryService) {}
 
-    constructor(private _repositoryService: RepositoryService) {
+  ngOnInit() {
+    this._repositoryService
+      .getRepositories()
+      .pipe(takeUntil(this._destroyed$))
+      .subscribe((repositories) => this.updateRepositories(repositories));
+  }
+
+  ngOnDestroy(): void {
+    this._destroyed$.next(null);
+    this._destroyed$.complete();
+  }
+
+  identify(index: number, repository: Repository) {
+    return repository.id;
+  }
+
+  onOpen(repository: Repository) {
+    const index = _.findIndex(this.openedRepositories, (rep) => rep.id == repository.id);
+
+    if (index < 0) {
+      this.openedRepositories.push(repository);
+      this.tabs.selectTab(this.openedRepositories.length);
+    } else {
+      this.tabs.selectTab(index + 1);
+    }
+  }
+
+  onClose(repository: Repository) {
+    _.remove(this.openedRepositories, (rep) => rep.id == repository.id);
+  }
+
+  onInitialTab(initialTab: string) {
+    this._initialTab = initialTab;
+  }
+
+  updateRepositories(repositories: Repository[]) {
+    this.repositories = repositories;
+
+    this.openedRepositories = updateOriginalCollection(this.openedRepositories, repositories, 'id');
+
+    if (this._initialTab) {
+      const index = _.findIndex(this.repositories, (repo) => _.isEqual(repo.id, this._initialTab));
+
+      if (index >= 0) {
+        this.onOpen(this.repositories[index]);
+      }
     }
 
-    public ngOnInit() {
-        this._repositoryService
-            .getRepositories()
-            .pipe(takeUntil(this._destroyed$))
-            .subscribe((repositories) => this.updateRepositories(repositories));
-    }
-
-    public ngOnDestroy(): void {
-        this._destroyed$.next();
-        this._destroyed$.complete();
-    }
-
-    public identify(index: number, repository: Repository){
-        return repository.id;
-    }
-
-    public onOpen(repository: Repository) {
-        const index = _.findIndex(this.openedRepositories, rep => rep.id == repository.id);
-
-        if (index < 0) {
-            this.openedRepositories.push(repository);
-            this.tabs.selectTab(this.openedRepositories.length)
-        } else {
-            this.tabs.selectTab(index + 1);
-        }
-    }
-
-    public onClose(repository: Repository) {
-        _.remove(this.openedRepositories, rep => rep.id == repository.id);
-    }
-
-    public onInitialTab(initialTab: string) {
-        this._initialTab = initialTab;
-    }
-
-    public updateRepositories(repositories: Repository[]) {
-        this.repositories = repositories;
-
-        this.openedRepositories = updateOriginalCollection(this.openedRepositories, repositories, 'id');
-
-        if(this._initialTab){
-            const index = _.findIndex(this.repositories, repo => _.isEqual(repo.id, this._initialTab));
-
-            if(index >= 0){
-                this.onOpen(this.repositories[index]);
-            }
-        }
-
-        this._initialTab = null;
-    }
+    this._initialTab = null;
+  }
 }

@@ -1,0 +1,32 @@
+@import 'z-index';
+@import 'variables';
+
+.container {
+  height: calc(100% - $main-container-padding);
+  display: grid;
+  grid-template-rows: 48px 1fr auto;
+  grid-gap: 16px;
+}
+
+main {
+  overflow-y: auto;
+}
+
+footer {
+  margin-left: -30px;
+  margin-right: -30px;
+  margin-bottom: -10px;
+}
+
+header {
+  z-index: $app-translations-search-bar-z-index;
+}
+
+app-translations-search-bar {
+  width: calc(100% - 60px);
+  background: white;
+}
+
+app-translations-table {
+  width: 100%;
+}

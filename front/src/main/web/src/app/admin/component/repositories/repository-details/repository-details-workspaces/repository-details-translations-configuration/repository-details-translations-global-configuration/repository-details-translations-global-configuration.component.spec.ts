@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { RepositoryDetailsTranslationsGlobalConfigurationComponent } from './repository-details-translations-global-configuration.component';
 
@@ -6,11 +6,10 @@ describe('RepositoryDetailsTranslationsGlobalConfigurationComponent', () => {
   let component: RepositoryDetailsTranslationsGlobalConfigurationComponent;
   let fixture: ComponentFixture<RepositoryDetailsTranslationsGlobalConfigurationComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ RepositoryDetailsTranslationsGlobalConfigurationComponent ]
-    })
-    .compileComponents();
+      declarations: [RepositoryDetailsTranslationsGlobalConfigurationComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

@@ -1,7 +1,8 @@
-@import "./variables.scss";
+@use '@angular/material' as mat;
+@import './variables.scss';
 
 .app-badge-success {
-  background: mat-color($color-success);
+  background: mat.get-color-from-palette($color-success);
   border-radius: 30px;
   color: #fff;
   font-size: 8px;
@@ -13,7 +14,7 @@
 }
 
 .app-badge-warning {
-  background: mat-color($color-warning);
+  background: mat.get-color-from-palette($color-warning);
   border-radius: 30px;
   color: #fff;
   content: attr(badgeWarning);

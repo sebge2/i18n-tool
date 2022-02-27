@@ -1,17 +1,19 @@
-<div class="main-container" [class.smallSize]="smallSize">
-    <app-header [sideBar]="snav"></app-header>
+<app-menu-container #sideBar>
+  <app-menu-header-wrapper>
+    <app-header (toggle)="onMenuToggle()"></app-header>
+  </app-menu-header-wrapper>
 
-    <mat-sidenav-container class="sidenav-container">
-        <mat-sidenav #snav
-                     [mode]="smallSize ? 'over' : 'side'"
-                     [fixedInViewport]="smallSize"
-                     [opened]="!smallSize"
-                     (click)="onClick()">
-            <app-menu></app-menu>
-        </mat-sidenav>
+  <app-menu-wrapper>
+    <app-menu></app-menu>
+  </app-menu-wrapper>
 
-        <mat-sidenav-content class="inner-container">
-            <router-outlet></router-outlet>
-        </mat-sidenav-content>
-    </mat-sidenav-container>
-</div>
+  <app-menu-main-wrapper>
+
+    <app-menu-tool-bar-container>
+      <app-menu-tool-bar-main>
+        <router-outlet></router-outlet>
+      </app-menu-tool-bar-main>
+    </app-menu-tool-bar-container>
+
+  </app-menu-main-wrapper>
+</app-menu-container>

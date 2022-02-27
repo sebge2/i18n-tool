@@ -1,7 +1,7 @@
 package be.sgerard.i18n.service.workspace;
 
-import be.sgerard.i18n.model.i18n.dto.TranslationSearchCriterion;
-import be.sgerard.i18n.model.i18n.dto.TranslationsSearchRequestDto;
+import be.sgerard.i18n.model.i18n.dto.translation.key.TranslationSearchCriterion;
+import be.sgerard.i18n.model.i18n.dto.translation.key.TranslationsSearchRequestDto;
 import be.sgerard.i18n.model.i18n.persistence.BundleFileEntity;
 import be.sgerard.i18n.model.repository.persistence.RepositoryEntity;
 import be.sgerard.i18n.model.workspace.dto.GitHubReviewDto;

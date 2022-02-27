@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { RepositoryGithubWebHookDialogComponent } from './repository-github-web-hook-dialog.component';
 
@@ -6,11 +6,10 @@ describe('RepositoryGithubWebHookDialogComponent', () => {
   let component: RepositoryGithubWebHookDialogComponent;
   let fixture: ComponentFixture<RepositoryGithubWebHookDialogComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ RepositoryGithubWebHookDialogComponent ]
-    })
-    .compileComponents();
+      declarations: [RepositoryGithubWebHookDialogComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

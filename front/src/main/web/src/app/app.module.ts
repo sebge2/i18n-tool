@@ -1,21 +1,22 @@
-import {BrowserModule} from '@angular/platform-browser';
+import {BrowserModule, HammerModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {NgModule} from '@angular/core';
 
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
-import {CoreUiModule} from "./core/ui/core-ui.module";
-import {CoreAuthModule} from "./core/auth/core-auth.module";
-import {CoreEventModule} from "./core/event/core-event.module";
-import {TranslateCompiler, TranslateLoader, TranslateModule} from "@ngx-translate/core";
-import {HttpClient} from "@angular/common/http";
-import {CoreSharedModule} from "./core/shared/core-shared-module";
+import {CoreUiModule} from '@i18n-core-ui';
+import {CoreAuthModule} from '@i18n-core-auth';
+import {CoreEventModule} from '@i18n-core-event';
+import {TranslateCompiler, TranslateLoader, TranslateModule} from '@ngx-translate/core';
+import {HttpClient} from '@angular/common/http';
+import {CoreSharedModule} from '@i18n-core-shared';
 import {TranslateHttpLoader} from '@ngx-translate/http-loader';
-import {MESSAGE_FORMAT_CONFIG, TranslateMessageFormatCompiler} from "ngx-translate-messageformat-compiler";
-import {CoreNotificationModule} from './core/notification/core-notification.module';
-import {ApiModule, Configuration, ConfigurationParameters} from "./api";
-import {ALL_LOCALES} from "./core/translation/model/tool-locale.model";
-import {CoreTranslationModule} from "./core/translation/core-translation-module";
+import {MESSAGE_FORMAT_CONFIG, TranslateMessageFormatCompiler} from 'ngx-translate-messageformat-compiler';
+import {CoreNotificationModule} from '@i18n-core-notification';
+import {ApiModule, Configuration, ConfigurationParameters} from './api';
+import {ALL_LOCALES} from '@i18n-core-translation';
+import {CoreTranslationModule} from '@i18n-core-translation';
+import {TOOL_BAR_DESCRIPTOR_PROVIDER} from '@i18n-dictionary';
 
 export function HttpLoaderFactory(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -44,12 +45,12 @@ export class SwaggerConfiguration extends Configuration {
             loader: {
                 provide: TranslateLoader,
                 useFactory: HttpLoaderFactory,
-                deps: [HttpClient]
+                deps: [HttpClient],
             },
             compiler: {
                 provide: TranslateCompiler,
-                useClass: TranslateMessageFormatCompiler
-            }
+                useClass: TranslateMessageFormatCompiler,
+            },
         }),
 
         ApiModule.forRoot(configurationFactory),
@@ -59,13 +60,17 @@ export class SwaggerConfiguration extends Configuration {
         CoreTranslationModule,
         CoreUiModule,
         CoreAuthModule,
-        CoreNotificationModule
+        CoreNotificationModule,
+        HammerModule,
     ],
     bootstrap: [AppComponent],
-    providers: [{
-        provide: MESSAGE_FORMAT_CONFIG,
-        useValue: {locales: ALL_LOCALES.map(locale => locale.toString())}
-    }]
+    providers: [
+        {
+            provide: MESSAGE_FORMAT_CONFIG,
+            useValue: {locales: ALL_LOCALES.map((locale) => locale.toString())},
+        },
+        TOOL_BAR_DESCRIPTOR_PROVIDER
+    ],
 })
 export class AppModule {
 }

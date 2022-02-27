@@ -1,23 +1,37 @@
 <mat-nav-list>
-    <a mat-list-item routerLink="/translations">
-        <mat-icon mat-list-icon>translate</mat-icon>{{'MENU.TRANSLATIONS_LABEL' | translate}}
-    </a>
-    <a mat-list-item routerLink="/account">
-        <mat-icon mat-list-icon>person</mat-icon>{{'MENU.ACCOUNT_LABEL' | translate}}
-    </a>
+  <app-menu-item [icon]="'translate'" [link]="'/translations'" [label]="'MENU.TRANSLATIONS_LABEL' | translate">
+  </app-menu-item>
+  <app-menu-item [icon]="'auto_stories'" [link]="'/dictionary'" [label]="'MENU.DICTIONARY_LABEL' | translate">
+  </app-menu-item>
+  <app-menu-item [icon]="'person'" [link]="'/account'" [label]="'MENU.ACCOUNT_LABEL' | translate"> </app-menu-item>
 
-    <a mat-list-item (click)="toggleAdmin()" *hasRole="['ADMIN']">
-        <mat-icon mat-list-icon>admin_panel_settings</mat-icon>
-        {{'MENU.ADMIN_LABEL' | translate}}
+  <a mat-list-item (click)="toggleAdmin()" *hasRole="['ADMIN']">
+    <mat-icon mat-list-icon>admin_panel_settings</mat-icon>
+    {{ 'MENU.ADMIN_LABEL' | translate }}
 
-        <mat-icon *ngIf="!showAdmin">chevron_right</mat-icon>
-        <mat-icon *ngIf="showAdmin">expand_more</mat-icon>
-    </a>
-    <mat-nav-list class="mat-nav-sub-list" *hasRole="['ADMIN']; additionalCondition: showAdmin">
-        <a mat-list-item routerLink="/admin/locales"><mat-icon mat-list-icon>language</mat-icon> {{'MENU.LOCALES_LABEL' | translate}}</a>
-        <a mat-list-item routerLink="/admin/repositories"><mat-icon mat-list-icon>description</mat-icon> {{'MENU.REPOSITORIES_LABEL' | translate}}</a>
-        <a mat-list-item routerLink="/admin/users"><mat-icon mat-list-icon>group</mat-icon> {{'MENU.USERS_LABEL' | translate}}</a>
-        <a mat-list-item routerLink="/admin/scheduled-tasks"><mat-icon mat-list-icon>schedule</mat-icon> {{'MENU.SCHEDULED_TASKS_LABEL' | translate}}</a>
-        <a mat-list-item routerLink="/admin/snapshots"><mat-icon mat-list-icon>backup</mat-icon> {{'MENU.SNAPSHOT_LABEL' | translate}}</a>
-    </mat-nav-list>
+    <mat-icon *ngIf="!showAdmin">chevron_right</mat-icon>
+    <mat-icon *ngIf="showAdmin">expand_more</mat-icon>
+  </a>
+  <mat-nav-list class="mat-nav-sub-list" *hasRole="['ADMIN']; additionalCondition: showAdmin">
+    <app-menu-item [icon]="'language'" [link]="'/admin/locales'" [label]="'MENU.LOCALES_LABEL' | translate">
+    </app-menu-item>
+    <app-menu-item
+      [icon]="'description'"
+      [link]="'/admin/repositories'"
+      [label]="'MENU.REPOSITORIES_LABEL' | translate"
+    >
+    </app-menu-item>
+    <app-menu-item [icon]="'group'" [link]="'/admin/users'" [label]="'MENU.USERS_LABEL' | translate">
+    </app-menu-item>
+    <app-menu-item [icon]="'translate'" [link]="'/admin/external-translators'" [label]="'MENU.EXTERNAL_TRANSLATORS' | translate">
+    </app-menu-item>
+    <app-menu-item
+      [icon]="'schedule'"
+      [link]="'/admin/scheduled-tasks'"
+      [label]="'MENU.SCHEDULED_TASKS_LABEL' | translate"
+    >
+    </app-menu-item>
+    <app-menu-item [icon]="'backup'" [link]="'/admin/snapshots'" [label]="'MENU.SNAPSHOT_LABEL' | translate">
+    </app-menu-item>
+  </mat-nav-list>
 </mat-nav-list>

@@ -1,0 +1,28 @@
+@import 'src/css/variables';
+
+.app-menu-tool-bar {
+  background-color: lighten($color-dark-bg, 5);
+  height: 100%;
+}
+
+.app-menu-tool-bar-header {
+  display: grid;
+  grid-template-columns: 50px 1fr 50px;
+  align-items: center;
+  padding: 5px 5px;
+
+  span {
+    font-weight: bold;
+    padding-top: -2px;
+  }
+
+  app-generic-button {
+    display: flex;
+    width: fit-content;
+    height: fit-content;
+  }
+}
+
+.app-menu-tool-bar-main {
+  margin: 5px;
+}

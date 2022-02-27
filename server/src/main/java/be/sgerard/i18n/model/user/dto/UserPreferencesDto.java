@@ -1,7 +1,6 @@
 package be.sgerard.i18n.model.user.dto;
 
 import be.sgerard.i18n.model.ToolLocale;
-import be.sgerard.i18n.model.locale.persistence.TranslationLocaleEntity;
 import be.sgerard.i18n.model.user.persistence.UserPreferencesEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -17,7 +16,6 @@ import java.util.Optional;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableList;
-import static java.util.stream.Collectors.toList;
 
 /**
  * Preferences of a user.
@@ -36,7 +34,7 @@ public class UserPreferencesDto {
     public static Builder builder(UserPreferencesEntity preferencesEntity) {
         return builder()
                 .toolLocale(preferencesEntity.getToolLocale().orElse(null))
-                .preferredLocales(preferencesEntity.getPreferredLocales().stream().map(TranslationLocaleEntity::getId).collect(toList()));
+                .preferredLocales(preferencesEntity.getPreferredLocales());
     }
 
     @Schema(description = "The locale to use for the user.")

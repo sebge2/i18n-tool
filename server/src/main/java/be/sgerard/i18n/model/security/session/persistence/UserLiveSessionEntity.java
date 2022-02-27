@@ -6,7 +6,6 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotNull;
@@ -18,11 +17,13 @@ import java.util.UUID;
  *
  * @author Sebastien Gerard
  */
-@Document("user_live_session")
+@Document(UserLiveSessionEntity.USER_LIVE_SESSION_DOCUMENT)
 @Getter
 @Setter
 @Accessors(chain = true)
 public class UserLiveSessionEntity {
+
+    public static final String USER_LIVE_SESSION_DOCUMENT = "user_live_session";
 
     /**
      * The unique id of this live session.
@@ -31,11 +32,10 @@ public class UserLiveSessionEntity {
     private String id;
 
     /**
-     * The associated {@link UserEntity user}.
+     * The associated {@link UserEntity#getId() user}.
      */
     @NotNull
-    @DBRef
-    private UserEntity user;
+    private String user;
 
     /**
      * The time when the user logged in.
@@ -53,7 +53,7 @@ public class UserLiveSessionEntity {
     }
 
     public UserLiveSessionEntity(UserEntity user) {
-        this.user = user;
+        this.user = user.getId();
         this.id = UUID.randomUUID().toString();
         this.loginTime = Instant.now();
     }

@@ -46,6 +46,14 @@ public class ResourceNotFoundException extends RuntimeException implements Local
         return new ResourceNotFoundException("ResourceNotFoundException.scheduled-task-definition.message", "scheduled task definition", reference);
     }
 
+    public static ResourceNotFoundException dictionaryEntryNotFoundException(String reference) {
+        return new ResourceNotFoundException("ResourceNotFoundException.dictionary-entry.message", "dictionary entry", reference);
+    }
+
+    public static ResourceNotFoundException externalTranslatorConfigNotFoundException(String reference) {
+        return new ResourceNotFoundException("ResourceNotFoundException.external-translator-config.message", "external translator config", reference);
+    }
+
     private final LocalizedString localizedMessage;
 
     private ResourceNotFoundException(String messageKey, String concept, String reference) {
@@ -53,7 +61,6 @@ public class ResourceNotFoundException extends RuntimeException implements Local
 
         this.localizedMessage = LocalizedString.fromBundle("i18n/exception", messageKey, reference);
     }
-
 
     @Override
     public LocalizedString toLocalizedMessage() {

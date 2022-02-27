@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { UserViewCardComponent } from './user-view-card.component';
 
@@ -6,11 +6,10 @@ describe('UserViewCardComponent', () => {
   let component: UserViewCardComponent;
   let fixture: ComponentFixture<UserViewCardComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ UserViewCardComponent ]
-    })
-    .compileComponents();
+      declarations: [UserViewCardComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { EditProfileComponent } from './edit-profile.component';
 
@@ -6,11 +6,10 @@ describe('EditProfileComponent', () => {
   let component: EditProfileComponent;
   let fixture: ComponentFixture<EditProfileComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ EditProfileComponent ]
-    })
-    .compileComponents();
+      declarations: [EditProfileComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

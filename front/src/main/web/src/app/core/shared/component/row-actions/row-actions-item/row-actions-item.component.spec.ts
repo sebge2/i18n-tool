@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { RowActionsItemComponent } from './row-actions-item.component';
 
@@ -6,11 +6,10 @@ describe('RowActionsItemComponent', () => {
   let component: RowActionsItemComponent;
   let fixture: ComponentFixture<RowActionsItemComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ RowActionsItemComponent ]
-    })
-    .compileComponents();
+      declarations: [RowActionsItemComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

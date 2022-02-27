@@ -1,0 +1,33 @@
+@import 'variables';
+
+.app-tool-bar-icons-container {
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  justify-content: start;
+  flex-direction: column;
+  align-items: center;
+}
+
+.app-tool-bar-icon {
+  width: 100%;
+  height: 50px;
+  text-align: center;
+
+  & > app-generic-button {
+    display: flex;
+
+    margin-top: 4px;
+    margin-left: 12px;
+
+    & ::ng-deep button {
+      width: fit-content !important;
+      height: fit-content !important;
+    }
+  }
+}
+
+.app-tool-bar-icon-active {
+  background-color: darken($color-dark-bg, 10);
+}
