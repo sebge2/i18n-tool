@@ -1,120 +1,126 @@
-import { Injectable } from '@angular/core';
-import { HttpClient, HttpResponse } from '@angular/common/http';
-import { Observable, of, throwError } from 'rxjs';
-import { catchError, map, mergeMap } from 'rxjs/operators';
-import { AuthenticationErrorType } from '../model/authentication-error-type.model';
-import { AuthenticatedUserDto, AuthenticationService as ApiAuthenticationService, Configuration } from '../../../api';
-import { EventService } from '@i18n-core-event';
-import { Events } from '@i18n-core-event';
-import { AuthenticatedUser } from '../model/authenticated-user.model';
-import { OAuthClient } from '../model/oauth-client.model';
-import { User } from '../model/user.model';
-import { UserService } from './user.service';
-import { Router } from '@angular/router';
-import { SynchronizedObject } from '@i18n-core-shared';
-import { NotificationService } from '@i18n-core-notification';
+import {Injectable} from '@angular/core';
+import {HttpClient, HttpResponse} from '@angular/common/http';
+import {Observable, of, throwError} from 'rxjs';
+import {catchError, map, mergeMap, tap} from 'rxjs/operators';
+import {AuthenticationErrorType} from '../model/authentication-error-type.model';
+import {AuthenticatedUserDto, AuthenticationService as ApiAuthenticationService, Configuration} from '../../../api';
+import {Events, EventService} from '@i18n-core-event';
+import {AuthenticatedUser} from '../model/authenticated-user.model';
+import {OAuthClient} from '../model/oauth-client.model';
+import {User} from '../model/user.model';
+import {UserService} from './user.service';
+import {ActivatedRoute, Router} from '@angular/router';
+import {SynchronizedObject} from '@i18n-core-shared';
+import {NotificationService} from '@i18n-core-notification';
+
+export const LOGIN_PATH_SEGMENT = 'login';
+export const LOGOUT_PATH_SEGMENT = 'logout';
 
 @Injectable({
-  providedIn: 'root',
+    providedIn: 'root',
 })
 export class AuthenticationService {
-  private readonly _user$: SynchronizedObject<AuthenticatedUserDto, AuthenticatedUser>;
-  private readonly _currentUser$: Observable<User>;
 
-  constructor(
-    private _httpClient: HttpClient,
-    private _router: Router,
-    private _eventService: EventService,
-    private _userService: UserService,
-    private _configuration: Configuration,
-    private _authenticationService: ApiAuthenticationService,
-    private _notificationService: NotificationService
-  ) {
-    this._user$ = new SynchronizedObject<AuthenticatedUserDto, AuthenticatedUser>(
-      () =>
-        this._authenticationService.getCurrentUser().pipe(
-          catchError((error: HttpResponse<any>) => {
-            if (error.status != 404) {
-              return throwError(() => error);
-            } else {
-              return of(null);
-            }
-          })
-        ),
-      this._eventService.subscribeDto(Events.UPDATED_CURRENT_AUTHENTICATED_USER),
-      this._eventService.subscribeDto(Events.DELETED_CURRENT_AUTHENTICATED_USER),
-      this._eventService.reconnected(),
-      (dto) => AuthenticatedUser.fromDto(dto)
-    );
+    private readonly _user$: SynchronizedObject<AuthenticatedUserDto, AuthenticatedUser>;
+    private readonly _currentUser$: Observable<User>;
 
-    this.currentAuthenticatedUser().subscribe(
-      (currentUser: AuthenticatedUser) => {
-        if (currentUser) {
-          console.debug('Current authenticated user changed.', currentUser);
+    constructor(
+        private _httpClient: HttpClient,
+        private _router: Router,
+        private _eventService: EventService,
+        private _userService: UserService,
+        private _configuration: Configuration,
+        private _authenticationService: ApiAuthenticationService,
+        private _notificationService: NotificationService,
+        private _route: ActivatedRoute,
+    ) {
+        this._user$ = new SynchronizedObject<AuthenticatedUserDto, AuthenticatedUser>(
+            () =>
+                this._authenticationService.getCurrentUser().pipe(
+                    catchError((error: HttpResponse<any>) => {
+                        if (error.status != 404) {
+                            return throwError(() => error);
+                        } else {
+                            return of(null);
+                        }
+                    })
+                ),
+            this._eventService.subscribeDto(Events.UPDATED_CURRENT_AUTHENTICATED_USER),
+            this._eventService.subscribeDto(Events.DELETED_CURRENT_AUTHENTICATED_USER),
+            this._eventService.reconnected(),
+            (dto) => AuthenticatedUser.fromDto(dto)
+        );
 
-          _eventService.enabledEvents();
-        } else {
-          console.debug('No current authenticated user.');
+        this.currentAuthenticatedUser()
+            .pipe(catchError((error: any) => {
+                console.error('Error while retrieving current authenticated user.', error);
+                this._notificationService.displayErrorMessage('USER.ERROR.GET');
 
-          this._router.navigateByUrl('/login');
-          _eventService.disableEvents();
-        }
-      },
-      (error: any) => {
-        console.error('Error while retrieving current authenticated user.', error);
-        this._notificationService.displayErrorMessage('USER.ERROR.GET');
-      }
-    );
+                return null;
+            }))
+            .subscribe(
+                (currentUser: AuthenticatedUser) => {
+                    if (currentUser) {
+                        console.debug('Current authenticated user changed.', currentUser);
 
-    this._currentUser$ = this.currentAuthenticatedUser().pipe(
-      mergeMap((currentUser) => (currentUser ? this._userService.getCurrentUser() : null))
-    );
-  }
+                        _eventService.enabledEvents();
+                    } else {
+                        console.debug('No current authenticated user.');
 
-  currentAuthenticatedUser(): Observable<AuthenticatedUser> {
-    return this._user$.element;
-  }
+                        _eventService.disableEvents();
+                    }
+                }
+            );
 
-  currentUser(): Observable<User> {
-    return this._currentUser$;
-  }
+        this._currentUser$ = this.currentAuthenticatedUser().pipe(
+            mergeMap((currentUser) => (currentUser ? this._userService.getCurrentUser() : null))
+        );
+    }
 
-  getSupportedOauthClients(): Observable<OAuthClient[]> {
-    return this._authenticationService
-      .getAuthenticationClients()
-      .pipe(map((clients) => clients.map((client) => OAuthClient[client.toUpperCase()])));
-  }
+    currentAuthenticatedUser(): Observable<AuthenticatedUser> {
+        return this._user$.element;
+    }
 
-  authenticateWithUserPassword(username: string, password: string): Promise<AuthenticatedUser> {
-    this._configuration.username = username;
-    this._configuration.password = password;
+    currentUser(): Observable<User> {
+        return this._currentUser$;
+    }
 
-    return this._authenticationService
-      .getCurrentUser()
-      .pipe(map((userDto) => AuthenticatedUser.fromDto(userDto)))
-      .toPromise()
-      .then((authenticatedUser) => {
-        this._user$.update(authenticatedUser);
+    getSupportedOauthClients(): Observable<OAuthClient[]> {
+        return this._authenticationService
+            .getAuthenticationClients()
+            .pipe(map((clients) => clients.map((client) => OAuthClient[client.toUpperCase()])));
+    }
 
-        return authenticatedUser;
-      })
-      .catch((result: HttpResponse<any>) => {
-        if (result.status == 401) {
-          throw new Error(AuthenticationErrorType.WRONG_CREDENTIALS);
-        } else {
-          throw new Error(AuthenticationErrorType.AUTHENTICATION_SYSTEM_ERROR);
-        }
-      });
-  }
+    authenticateWithUserPassword(username: string, password: string): Observable<AuthenticatedUser> {
+        this._configuration.username = username;
+        this._configuration.password = password;
 
-  logout(): Promise<void> {
-    return this._httpClient
-      .get('/auth/logout')
-      .toPromise()
-      .then((_) => {
-        console.debug('Logout succeeded, send next user.');
+        return this._authenticationService
+            .getCurrentUser()
+            .pipe(
+                catchError((result: HttpResponse<any>) => {
+                    if (result.status == 401) {
+                        throw new Error(AuthenticationErrorType.WRONG_CREDENTIALS);
+                    } else {
+                        throw new Error(AuthenticationErrorType.AUTHENTICATION_SYSTEM_ERROR);
+                    }
+                }),
+                map((userDto) => AuthenticatedUser.fromDto(userDto)),
+                tap((authenticatedUser) => {
+                    this._user$.update(authenticatedUser);
 
-        this._user$.delete();
-      });
-  }
+                    return authenticatedUser;
+                }),
+            );
+    }
+
+    logout(): Observable<any> {
+        return this._httpClient
+            .get('/auth/logout')
+            .pipe(tap((_) => {
+                console.debug('Logout succeeded, send next user.');
+
+                this._user$.delete();
+            }));
+    }
 }

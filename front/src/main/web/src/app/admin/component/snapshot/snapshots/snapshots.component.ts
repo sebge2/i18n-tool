@@ -1,9 +1,9 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { Snapshot } from '../../../model/snapshot/snapshot.model';
-import { Subject } from 'rxjs';
+import {mergeMap, Subject} from 'rxjs';
 import { SnapshotService } from '../../../service/snapshot.service';
-import { takeUntil } from 'rxjs/operators';
+import {catchError, takeUntil} from 'rxjs/operators';
 import { NotificationService } from '@i18n-core-notification';
 import * as _ from 'lodash';
 import { AuthenticationService } from '@i18n-core-auth';
@@ -48,13 +48,16 @@ export class SnapshotsComponent implements OnInit, OnDestroy {
 
     this._snapshotService
       .restore(snapshot)
-      .toPromise()
-      .then(() => this._authenticationService.logout())
-      .catch((error) => {
-        console.error('Error while restoring the snapshot.', error);
-        this._notificationService.displayErrorMessage('ADMIN.SNAPSHOTS.ERROR.RESTORE', error);
-      })
-      .finally(() => (this.restoreInProgress = false));
+        .pipe(
+            takeUntil(this._destroyed$),
+            mergeMap(() => this._authenticationService.logout()),
+            catchError((error) => {
+              console.error('Error while restoring the snapshot.', error);
+              this._notificationService.displayErrorMessage('ADMIN.SNAPSHOTS.ERROR.RESTORE', error);
+              return null;
+            }),
+        )
+        .subscribe(() => this.restoreInProgress = false);
   }
 
   public onDelete(snapshot: Snapshot) {

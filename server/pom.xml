@@ -313,6 +313,7 @@
                 <configuration>
                     <repository>${docker.repository}/${docker.image.name}</repository>
                     <tag>${docker.image.version}</tag>
+                    <serverId>docker.io</serverId>
                     <useMavenSettingsForAuth>true</useMavenSettingsForAuth>
                 </configuration>
             </plugin>
