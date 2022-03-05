@@ -108,6 +108,7 @@
         "TITLE": "Upload a Dictionary",
         "DESCRIPTION": "Drag & Drop your CSV dictionary file, or click on the button."
       },
+      "EMPTY": "Please define languages first before translating terms using this dictionary.",
       "LOCALES_POPUP": {
         "TITLE": "Which Languages to Display?",
         "AVAILABLE_LABEL": "Unused Languages",
