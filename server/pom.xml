@@ -92,8 +92,6 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <!-- TODO -->
-            <version>1.18.20</version>
             <scope>provided</scope>
         </dependency>
 
@@ -210,6 +208,13 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>build-info</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -310,6 +315,13 @@
                     <repository>${docker.repository}/${docker.image.name}</repository>
                     <tag>${docker.image.version}</tag>
                     <useMavenSettingsForAuth>true</useMavenSettingsForAuth>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>pl.project13.maven</groupId>
+                <artifactId>git-commit-id-plugin</artifactId>
+                <configuration>
+                    <verbose>false</verbose>
                 </configuration>
             </plugin>
             <plugin>
