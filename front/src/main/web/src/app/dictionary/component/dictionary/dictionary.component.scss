@@ -1,5 +1,7 @@
+@import 'variables';
+
 .app-dictionary-container {
-  height: 100%;
+  height: calc(100% - $main-container-padding - 10px);
   display: grid;
   grid-template-rows: 1fr auto;
   grid-gap: 16px;
