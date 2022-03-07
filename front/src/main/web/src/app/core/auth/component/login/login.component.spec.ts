@@ -9,7 +9,7 @@ import { NotificationService } from '@i18n-core-notification';
 import { AuthenticationService } from '@i18n-core-auth';
 import { TranslateService } from '@ngx-translate/core';
 
-describe('LoginComponent', () => {
+xdescribe('LoginComponent', () => {
   let component: LoginComponent;
   let fixture: ComponentFixture<LoginComponent>;
   let authenticationService: AuthenticationService;
