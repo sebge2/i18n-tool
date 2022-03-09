@@ -18,7 +18,7 @@ class ExternalTranslatorControllerTest extends AbstractControllerTest {
     @CleanupDatabase
     @WithJaneDoeAdminUser
     public void findAll() {
-        externalTranslator.createGoogleTranslatorConfig();
+        externalTranslator.googleTranslator().createConfig();
 
         webClient
                 .get()
@@ -37,7 +37,7 @@ class ExternalTranslatorControllerTest extends AbstractControllerTest {
         @CleanupDatabase
         @WithJaneDoeAdminUser
         public void successful() {
-            final ExternalTranslatorConfigDto config = externalTranslator.createGoogleTranslatorConfig().get();
+            final ExternalTranslatorConfigDto config = externalTranslator.googleTranslator().createConfig().get();
 
             webClient
                     .get()
@@ -64,7 +64,7 @@ class ExternalTranslatorControllerTest extends AbstractControllerTest {
         @CleanupDatabase
         @WithJaneDoeAdminUser
         public void notFound() {
-            externalTranslator.createGoogleTranslatorConfig(); // noise
+            externalTranslator.googleTranslator().createConfig().get(); // noise
 
             webClient
                     .get()
@@ -108,10 +108,12 @@ class ExternalTranslatorControllerTest extends AbstractControllerTest {
         @CleanupDatabase
         @WithJaneDoeAdminUser
         public void iTranslate() {
+            externalTranslator.iTranslate();
+
             webClient
                     .post()
                     .uri("/api/external-translator/iTranslate")
-                    .bodyValue(new ITranslateTranslatorConfigDto("my-token"))
+                    .bodyValue(new ITranslateTranslatorConfigDto("s6fQ8Dpm35kJ4eEDW7a5aY9K"))
                     .exchange()
                     .expectStatus().isCreated()
                     .expectBody()
@@ -121,7 +123,7 @@ class ExternalTranslatorControllerTest extends AbstractControllerTest {
                     .jsonPath("$.method").isEqualTo("POST")
                     .jsonPath("$.url").isEqualTo("https://dev-api.itranslate.com/translation/v2/")
                     .jsonPath("$.queryExtractor").isEqualTo("$.target.text")
-                    .jsonPath("$.queryHeaders.Authorization").isEqualTo("Bearer my-token")
+                    .jsonPath("$.queryHeaders.Authorization").isEqualTo("Bearer s6fQ8Dpm35kJ4eEDW7a5aY9K")
                     .jsonPath("$.queryHeaders.Content-Type").isEqualTo("application/json")
                     .jsonPath("$.queryParameters").isEmpty()
                     .jsonPath("$.bodyTemplate").isEqualTo("{\n    \"source\": {\"dialect\": \"${fromLocale}\", \"text\": \"${text}\"},\n    \"target\": {\"dialect\": \"${targetLocale}\"}\n}")
@@ -132,10 +134,12 @@ class ExternalTranslatorControllerTest extends AbstractControllerTest {
         @CleanupDatabase
         @WithJaneDoeAdminUser
         public void googleTranslate() {
+            externalTranslator.googleTranslator();
+
             webClient
                     .post()
                     .uri("/api/external-translator/google")
-                    .bodyValue(new GoogleTranslatorConfigDto("my-key"))
+                    .bodyValue(new GoogleTranslatorConfigDto("N9722i7TMHhwyk67JT4dhRUv"))
                     .exchange()
                     .expectStatus().isCreated()
                     .expectBody()
@@ -147,7 +151,7 @@ class ExternalTranslatorControllerTest extends AbstractControllerTest {
                     .jsonPath("$.queryExtractor").isEqualTo("$.data.translations[*].translatedText")
                     .jsonPath("$.queryParameters.q").isEqualTo("${text}")
                     .jsonPath("$.queryParameters.source").isEqualTo("${fromLocale}")
-                    .jsonPath("$.queryParameters.key").isEqualTo("my-key")
+                    .jsonPath("$.queryParameters.key").isEqualTo("N9722i7TMHhwyk67JT4dhRUv")
                     .jsonPath("$.queryParameters.target").isEqualTo("${targetLocale}")
                     .jsonPath("$.queryHeaders").isEmpty()
                     .jsonPath("$.bodyTemplate").isEmpty()
@@ -158,10 +162,12 @@ class ExternalTranslatorControllerTest extends AbstractControllerTest {
         @CleanupDatabase
         @WithJaneDoeAdminUser
         public void azureTranslator() {
+            externalTranslator.azure();
+
             webClient
                     .post()
                     .uri("/api/external-translator/azure")
-                    .bodyValue(new AzureTranslatorConfigDto("my-api-key", "europe"))
+                    .bodyValue(new AzureTranslatorConfigDto("ZY27euFJ8ASgcYa54t4jxU22", "c3ANj6QQ5nT6aN7V52xXqv4x"))
                     .exchange()
                     .expectStatus().isCreated()
                     .expectBody()
@@ -174,8 +180,8 @@ class ExternalTranslatorControllerTest extends AbstractControllerTest {
                     .jsonPath("$.queryParameters.api-version").isEqualTo("3.0")
                     .jsonPath("$.queryParameters.from").isEqualTo("${fromLocale}")
                     .jsonPath("$.queryParameters.to").isEqualTo("${targetLocale}")
-                    .jsonPath("$.queryHeaders.Ocp-Apim-Subscription-Key").isEqualTo("my-api-key")
-                    .jsonPath("$.queryHeaders.Ocp-Apim-Subscription-Region").isEqualTo("europe")
+                    .jsonPath("$.queryHeaders.Ocp-Apim-Subscription-Key").isEqualTo("ZY27euFJ8ASgcYa54t4jxU22")
+                    .jsonPath("$.queryHeaders.Ocp-Apim-Subscription-Region").isEqualTo("c3ANj6QQ5nT6aN7V52xXqv4x")
                     .jsonPath("$.queryHeaders.Content-Type").isEqualTo("application/json")
                     .jsonPath("$.bodyTemplate").isEqualTo("[{\"Text\":\"${text}\"}]")
                     .jsonPath("$.type").isEqualTo("EXTERNAL_GENERIC_REST");
@@ -190,10 +196,9 @@ class ExternalTranslatorControllerTest extends AbstractControllerTest {
         @CleanupDatabase
         @WithJaneDoeAdminUser
         public void genericRest() {
-            final ExternalTranslatorGenericRestConfigDto config = externalTranslator.createGoogleTranslatorConfig().get();
+            final ExternalTranslatorGenericRestConfigDto config = externalTranslator.googleTranslator().createConfig().get();
             final ExternalTranslatorGenericRestConfigDto updated = ExternalTranslatorGenericRestConfigDto.builder(config)
-                    .url("another")
-                    .bodyTemplate("another body")
+                    .label("another")
                     .build();
 
             webClient
@@ -204,17 +209,17 @@ class ExternalTranslatorControllerTest extends AbstractControllerTest {
                     .expectStatus().isOk()
                     .expectBody()
                     .jsonPath("$.id").isNotEmpty()
-                    .jsonPath("$.label").isEqualTo("Google")
+                    .jsonPath("$.label").isEqualTo("another")
                     .jsonPath("$.linkUrl").isEqualTo("https://www.google.com")
                     .jsonPath("$.method").isEqualTo("POST")
-                    .jsonPath("$.url").isEqualTo("another")
+                    .jsonPath("$.url").isEqualTo("https://translation.googleapis.com/language/translate/v2")
                     .jsonPath("$.queryExtractor").isEqualTo("$.data.translations[*].translatedText")
                     .jsonPath("$.queryParameters.q").isEqualTo("${text}")
                     .jsonPath("$.queryParameters.source").isEqualTo("${fromLocale}")
                     .jsonPath("$.queryParameters.key").isEqualTo("N9722i7TMHhwyk67JT4dhRUv")
                     .jsonPath("$.queryParameters.target").isEqualTo("${targetLocale}")
                     .jsonPath("$.queryHeaders").isEmpty()
-                    .jsonPath("$.bodyTemplate").isEqualTo("another body")
+                    .jsonPath("$.bodyTemplate").isEmpty()
                     .jsonPath("$.type").isEqualTo("EXTERNAL_GENERIC_REST");
         }
 
@@ -222,7 +227,7 @@ class ExternalTranslatorControllerTest extends AbstractControllerTest {
         @CleanupDatabase
         @WithJaneDoeAdminUser
         public void failedWrongId() {
-            final ExternalTranslatorConfigDto config = externalTranslator.createGoogleTranslatorConfig().get();
+            final ExternalTranslatorConfigDto config = externalTranslator.googleTranslator().createConfig().get();
 
             webClient
                     .put()
@@ -241,7 +246,7 @@ class ExternalTranslatorControllerTest extends AbstractControllerTest {
         @CleanupDatabase
         @WithJaneDoeAdminUser
         public void successful() {
-            final ExternalTranslatorConfigDto config = externalTranslator.createGoogleTranslatorConfig().get();
+            final ExternalTranslatorConfigDto config = externalTranslator.googleTranslator().createConfig().get();
 
             webClient
                     .delete()
@@ -254,7 +259,7 @@ class ExternalTranslatorControllerTest extends AbstractControllerTest {
         @CleanupDatabase
         @WithJaneDoeAdminUser
         public void notFound() {
-            externalTranslator.createGoogleTranslatorConfig(); // noise
+            externalTranslator.googleTranslator().createConfig(); // noise
 
             webClient
                     .delete()

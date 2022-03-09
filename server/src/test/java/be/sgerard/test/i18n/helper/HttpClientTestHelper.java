@@ -60,8 +60,8 @@ public class HttpClientTestHelper {
             return addPredicate(request -> Objects.equals(headers, request.getHeaders()));
         }
 
-        public MockRequestStep headersHavingCount(int count) {
-            return addPredicate(request -> Objects.equals(count, request.getHeaders().size()));
+        public MockRequestStep bodyMatchingExactly(String body) {
+            return addPredicate(request -> Objects.equals(body, request.getBody().orElse(null)));
         }
 
         @SuppressWarnings("UnusedReturnValue")

@@ -521,8 +521,7 @@ public class TranslationControllerTest extends AbstractControllerTest {
         @CleanupDatabase
         @WithJaneDoeAdminUser
         public void withExternalTranslators() {
-            externalTranslator
-                    .createGoogleTranslatorConfig()
+            externalTranslator.googleTranslator().createConfig()
                     .withTranslation(Locale.ENGLISH, "House", Locale.FRENCH, "Maison")
                     .withTranslation(Locale.FRENCH, "Maison", Locale.ENGLISH, "House");
 

@@ -6,6 +6,7 @@ import be.sgerard.i18n.model.validation.ValidationResult;
 import be.sgerard.i18n.repository.i18n.TranslationLocaleRepository;
 import be.sgerard.test.i18n.model.TranslationLocaleEntityAsserter;
 import be.sgerard.test.i18n.support.CleanupDatabase;
+import be.sgerard.test.i18n.support.auth.internal.WithJaneDoeAdminUser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -42,6 +43,7 @@ public class TranslationLocaleSnapshotHandlerTest extends AbstractIntegrationTes
 
     @Test
     @CleanupDatabase
+    @WithJaneDoeAdminUser
     public void exportCleanValidate() {
         StepVerifier
                 .create(handler.exportAll(tempDir))
@@ -63,6 +65,7 @@ public class TranslationLocaleSnapshotHandlerTest extends AbstractIntegrationTes
 
     @Test
     @CleanupDatabase
+    @WithJaneDoeAdminUser
     public void exportCleanImport() {
         assertNumberLocales(2);
 
