@@ -22,7 +22,7 @@ public class SinglePageAppFilter implements WebFilter {
     /**
      * All prefixes that are not referencing the single page application.
      */
-    public static final List<String> NON_STATIC_PATHS = asList("/api", "/auth", "/ws", "/swagger-ui.html");
+    public static final List<String> NON_STATIC_PATHS = asList("/api", "/auth", "/ws", "/swagger-ui.html", "/info", "/health");
 
     @Override
     @NonNull

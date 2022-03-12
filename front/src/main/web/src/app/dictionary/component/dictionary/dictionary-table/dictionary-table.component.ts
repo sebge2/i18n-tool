@@ -57,19 +57,20 @@ export class DictionaryTableComponent implements OnInit, OnDestroy {
     private _destroyed$ = new Subject<void>();
 
     constructor(
-        private _dictionaryService: DictionaryService,
+        public dictionaryService: DictionaryService,
         private _notificationService: NotificationService,
         private _formBuilder: FormBuilder,
+
         private _dialog: MatDialog
     ) {
-        this.locales = this._dictionaryService.getLocales$();
+        this.locales = this.dictionaryService.getLocales$();
         this.dataSource = new FormTableDataSource(_formBuilder.array([]));
     }
 
     ngOnInit(): void {
         this.state.notifyLoading(true);
 
-        combineLatest([this._dictionaryService.getDictionary$(), this.locales])
+        combineLatest([this.dictionaryService.getDictionary$(), this.locales])
             .pipe(takeUntil(this._destroyed$))
             .subscribe(([entries, locales]) => {
                 this.state.notifyLoading(true);
@@ -110,7 +111,7 @@ export class DictionaryTableComponent implements OnInit, OnDestroy {
     onDownload(): void {
         this.moreActionInProgress = true;
 
-        this._dictionaryService
+        this.dictionaryService
             .download()
             .pipe(takeUntil(this._destroyed$))
             .toPromise()
@@ -193,7 +194,7 @@ export class DictionaryTableComponent implements OnInit, OnDestroy {
     }
 
     private _saveTranslations(dirtyTranslations: DirtyTranslationForm[]): void {
-        this._dictionaryService
+        this.dictionaryService
             .updateTranslations(
                 dirtyTranslations.map(
                     (dirtyTranslation) =>
@@ -228,7 +229,7 @@ export class DictionaryTableComponent implements OnInit, OnDestroy {
     private _onDeleteAllConfirmed() {
         this.moreActionInProgress = true;
 
-        this._dictionaryService
+        this.dictionaryService
             .deleteAll()
             .pipe(takeUntil(this._destroyed$))
             .toPromise()

@@ -20,9 +20,12 @@ management:
   endpoints:
     web:
       exposure:
-        include: health
+        include:
+        - health
+        - info
       base-path: /
-
+      path-mapping:
+        info: '/api/info'
 
 server:
   error:

@@ -113,6 +113,10 @@ export class DictionaryService {
         return this._locales$;
     }
 
+    getAvailableLocales$(): Observable<TranslationLocale[]> {
+        return this._localeService.getAvailableLocales();
+    }
+
     setPreferredLocales(preferredLocales: TranslationLocale[]): Observable<TranslationLocale[]> {
         const preferredLocaleIds = _.map(preferredLocales, (locale) => locale.id);
 

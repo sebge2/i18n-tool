@@ -1,5 +1,11 @@
-<p style="text-align: center">
-    <a [href]="url" target="_blank">
-        {{'SHARED.HELP.TOOL.LINK_LABEL' | translate: {version: appVersionService.version} }}
-    </a>
-</p>
+<div *ngIf="!appInfo; else: loaded" >
+    <mat-spinner [diameter]="20" class="margin-center"></mat-spinner>
+</div>
+
+<ng-template #loaded>
+    <p style="text-align: center">
+        <a [href]="appInfo.link" target="_blank">
+            {{'SHARED.HELP.TOOL.LINK_LABEL' | translate: {version: appInfo.version} }}
+        </a>
+    </p>
+</ng-template>

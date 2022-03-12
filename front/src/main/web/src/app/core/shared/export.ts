@@ -10,6 +10,7 @@ export {
 export {ImportedFile} from './model/imported-file.model';
 export {TranslationKey} from './model/translation-key.model';
 export {ToolDescriptor, TOOL_DESCRIPTOR_PRIORITIES} from './model/tool-bar/tool-descriptor.model';
+export {AppVersion} from './model/app-version.model';
 export {ToolSelectionRequest} from './model/tool-bar/tool-selection-request.model';
 export {ToolSelection} from './model/tool-bar/tool-selection.model';
 export {ButtonSize, BUTTON_SIZE_CLASS} from './model/button/button-size.enum';
@@ -62,3 +63,4 @@ export {MenuContainerComponent} from './component/menu/menu-container.component'
 export {CardSelectorItem} from './component/card/card-selector/card-selector.component';
 export {PreferencesService} from './service/preferences.service';
 export {ToolBarService, TOOL_DESCRIPTOR_TOKEN} from './service/tool-bar.service';
+export {AppVersionService} from './service/app-version.service';

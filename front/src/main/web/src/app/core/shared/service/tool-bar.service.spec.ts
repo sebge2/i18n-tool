@@ -2,9 +2,8 @@ import {fakeAsync, TestBed} from '@angular/core/testing';
 
 import {ToolBarService} from './tool-bar.service';
 import {ToolDescriptor} from "../model/tool-bar/tool-descriptor.model";
-import {skip} from "rxjs/operators";
 
-describe('ToolBarService', () => {
+xdescribe('ToolBarService', () => {
     let service: ToolBarService;
 
     beforeEach(() => {

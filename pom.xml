@@ -1,25 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>2.6.3</version>
-        <relativePath/>
+        <relativePath />
     </parent>
     <groupId>be.sgerard.tools</groupId>
     <artifactId>i18n-tool-parent</artifactId>
     <packaging>pom</packaging>
-    <version>0.0.9</version>
+    <version>0.0.11-SNAPSHOT</version>
     <name>i18n-tool-parent</name>
     <description>Parent pom for the internationalization tool.</description>
+
+    <issueManagement>
+        <url>https://github.com/sebge2/i18n-tool/issues</url>
+        <system>GitHub Issues</system>
+    </issueManagement>
+
+    <scm>
+        <url>https://github.com/sebge2/i18n-tool</url>
+        <connection>scm:git:git://github.com/sebge2/i18n-tool.git</connection>
+        <developerConnection>scm:git:git@github.com:sebge2/i18n-tool.git</developerConnection>
+      <tag>HEAD</tag>
+  </scm>
 
     <properties>
         <java.version>17</java.version>
         <docker.repository>sebge2</docker.repository>
         <docker.image.name>i18n-tool</docker.image.name>
         <docker.image.version>${project.version}</docker.image.version>
+        <frontend.version>1.12.0</frontend.version>
+        <maven.javadoc.skip>true</maven.javadoc.skip>
 
         <spring-security.version>5.6.1</spring-security.version>
         <spring-session.version>2021.1.1</spring-session.version>
@@ -31,7 +44,6 @@
         <mongock.version>4.1.19</mongock.version>
         <mongodb-driver.version>4.4.0</mongodb-driver.version>
 
-        <lombok.vesrion>1.18.20</lombok.vesrion>
         <node.version>v12.22.6</node.version>
         <npm.version>6.14.15</npm.version>
         <npm.command>npm</npm.command>
@@ -47,12 +59,12 @@
             <dependency>
                 <groupId>be.sgerard.tools</groupId>
                 <artifactId>i18n-tool-server</artifactId>
-                <version>0.0.9</version>
+                <version>0.0.11-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>be.sgerard.tools</groupId>
                 <artifactId>i18n-tool-front</artifactId>
-                <version>0.0.9</version>
+                <version>0.0.11-SNAPSHOT</version>
             </dependency>
 
             <dependency>
@@ -172,7 +184,18 @@
                 <plugin>
                     <groupId>com.github.eirslett</groupId>
                     <artifactId>frontend-maven-plugin</artifactId>
-                    <version>1.12.0</version>
+                    <version>${frontend.version}</version>
+                    <configuration>
+                        <nodeVersion>${node.version}</nodeVersion>
+                        <npmVersion>${npm.version}</npmVersion>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <configuration>
+                        <tagNameFormat>@{project.version}</tagNameFormat>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -183,7 +206,5 @@
                 </plugin>
             </plugins>
         </pluginManagement>
-        <plugins>
-        </plugins>
     </build>
 </project>

@@ -33,8 +33,8 @@ class ExternalTranslatorConfigSnapshotHandlerTest extends AbstractIntegrationTes
 
     @BeforeEach
     public void setupUser() {
-        googleConfig = externalTranslator.createGoogleTranslatorConfig().get();
-        iTranslateConfig = externalTranslator.createITranslateTranslatorConfig().get();
+        googleConfig = externalTranslator.googleTranslator().createConfig().get();
+        iTranslateConfig = externalTranslator.iTranslate().createConfig().get();
     }
 
     @Test

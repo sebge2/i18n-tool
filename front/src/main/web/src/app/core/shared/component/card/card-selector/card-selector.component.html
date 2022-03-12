@@ -1,6 +1,6 @@
 <app-card-grid [allowAdd]="false" [layout]="'center center'">
     <app-card-grid-item *ngFor="let item of items">
-        <mat-card (click)="onSelect(item)" matRipple class="mat-card-clickable app-card-selector-card">
+        <mat-card (click)="onSelect(item)" matRipple class="mat-card-clickable app-card-selector-card app-hover">
             <mat-card-header>
                 <mat-card-title>&nbsp;</mat-card-title>
             </mat-card-header>

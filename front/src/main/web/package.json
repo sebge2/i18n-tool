@@ -1,12 +1,11 @@
 {
   "name": "i18n-tool",
-  "version": "0.0.9",
   "scripts": {
     "ng": "ng",
     "start": "ng serve --proxy-config proxy.conf.json",
     "build": "ng build",
     "postinstall": "ngcc",
-    "test": "ng test --watch=false --browsers=ChromeHeadless --code-coverage",
+    "test": "ng test --watch=false --browsers=ChromeHeadless",
     "test-local": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",

@@ -1,3 +1,4 @@
+@use '@angular/material' as mat;
 @import './variables.scss';
 @import '~@fortawesome/fontawesome-free/css/all.css';
 @import '~flag-icon-css/css/flag-icons.min.css';
@@ -43,4 +44,13 @@ body {
 
 .margin-center {
   margin:0 auto;
+}
+
+.app-hover {
+  opacity: $hover-opacity-min;
+
+  &:hover {
+    background-color: mat.get-color-from-palette($color-hover);
+    opacity: $hover-opacity-max;
+  }
 }

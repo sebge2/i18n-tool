@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>be.sgerard.tools</groupId>
         <artifactId>i18n-tool-parent</artifactId>
-        <version>0.0.9</version>
+        <version>0.0.11-SNAPSHOT</version>
     </parent>
     <artifactId>i18n-tool-server</artifactId>
     <name>i18n-tool-server</name>
@@ -22,7 +21,7 @@
                     <plugin>
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration combine.self="override">
-                            <excludedGroups></excludedGroups>
+                            <excludedGroups />
                         </configuration>
                     </plugin>
                 </plugins>
@@ -34,7 +33,7 @@
         <dependency>
             <groupId>be.sgerard.tools</groupId>
             <artifactId>i18n-tool-front</artifactId>
-            <version>0.0.9</version>
+            <version>0.0.11-SNAPSHOT</version>
         </dependency>
 
         <dependency>
@@ -92,8 +91,6 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <!-- TODO -->
-            <version>1.18.20</version>
             <scope>provided</scope>
         </dependency>
 
@@ -210,6 +207,13 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>build-info</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -310,6 +314,13 @@
                     <repository>${docker.repository}/${docker.image.name}</repository>
                     <tag>${docker.image.version}</tag>
                     <useMavenSettingsForAuth>true</useMavenSettingsForAuth>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>pl.project13.maven</groupId>
+                <artifactId>git-commit-id-plugin</artifactId>
+                <configuration>
+                    <verbose>false</verbose>
                 </configuration>
             </plugin>
             <plugin>
