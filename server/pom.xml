@@ -4,7 +4,7 @@
     <parent>
         <groupId>be.sgerard.tools</groupId>
         <artifactId>i18n-tool-parent</artifactId>
-        <version>0.0.11-SNAPSHOT</version>
+        <version>0.0.10</version>
     </parent>
     <artifactId>i18n-tool-server</artifactId>
     <name>i18n-tool-server</name>
@@ -33,7 +33,7 @@
         <dependency>
             <groupId>be.sgerard.tools</groupId>
             <artifactId>i18n-tool-front</artifactId>
-            <version>0.0.11-SNAPSHOT</version>
+            <version>0.0.10</version>
         </dependency>
 
         <dependency>
