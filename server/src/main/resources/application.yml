@@ -24,7 +24,8 @@ management:
         - health
         - info
       base-path: /
-
+      path-mapping:
+        info: '/api/info'
 
 server:
   error:

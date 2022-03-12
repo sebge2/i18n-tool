@@ -14,9 +14,6 @@
         <skipTests>false</skipTests>
     </properties>
 
-    <dependencies>
-    </dependencies>
-
     <build>
         <plugins>
             <plugin>

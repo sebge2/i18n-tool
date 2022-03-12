@@ -43,7 +43,6 @@
         <mongock.version>4.1.19</mongock.version>
         <mongodb-driver.version>4.4.0</mongodb-driver.version>
 
-        <lombok.version>1.18.20</lombok.version>
         <node.version>v12.22.6</node.version>
         <npm.version>6.14.15</npm.version>
         <npm.command>npm</npm.command>
@@ -195,16 +194,6 @@
                     <artifactId>maven-release-plugin</artifactId>
                     <configuration>
                         <tagNameFormat>@{project.version}</tagNameFormat>
-                        <preparationGoals>com.github.eirslett:frontend-maven-plugin:npm@tag-version -N, scm:checkin -N
-                            verify
-                        </preparationGoals>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-scm-plugin</artifactId>
-                    <configuration>
-                        <message>[maven-scm-plugin] set ${project.version} version in files</message>
-                        <includes>front/src/main/web/package.json,front/src/main/web/package-lock.json</includes>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -216,28 +205,5 @@
                 </plugin>
             </plugins>
         </pluginManagement>
-
-        <plugins>
-            <plugin>
-                <groupId>com.github.eirslett</groupId>
-                <artifactId>frontend-maven-plugin</artifactId>
-                <configuration>
-                    <workingDirectory>${project.basedir}/front/src/main/web</workingDirectory>
-                    <installDirectory>${project.basedir}/front/executables/</installDirectory>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>tag-version</id>
-                        <phase>none</phase>
-                        <goals>
-                            <goal>npm</goal>
-                        </goals>
-                        <configuration>
-                            <arguments>version ${project.version} --allow-same-version</arguments>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
     </build>
 </project>
