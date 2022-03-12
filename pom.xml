@@ -10,7 +10,7 @@
     <groupId>be.sgerard.tools</groupId>
     <artifactId>i18n-tool-parent</artifactId>
     <packaging>pom</packaging>
-    <version>0.0.10</version>
+    <version>0.0.11-SNAPSHOT</version>
     <name>i18n-tool-parent</name>
     <description>Parent pom for the internationalization tool.</description>
 
@@ -23,7 +23,7 @@
         <url>https://github.com/sebge2/i18n-tool</url>
         <connection>scm:git:git://github.com/sebge2/i18n-tool.git</connection>
         <developerConnection>scm:git:git@github.com:sebge2/i18n-tool.git</developerConnection>
-      <tag>0.0.10</tag>
+      <tag>HEAD</tag>
   </scm>
 
     <properties>
@@ -59,12 +59,12 @@
             <dependency>
                 <groupId>be.sgerard.tools</groupId>
                 <artifactId>i18n-tool-server</artifactId>
-                <version>0.0.10</version>
+                <version>0.0.11-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>be.sgerard.tools</groupId>
                 <artifactId>i18n-tool-front</artifactId>
-                <version>0.0.10</version>
+                <version>0.0.11-SNAPSHOT</version>
             </dependency>
 
             <dependency>
