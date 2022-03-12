@@ -32,6 +32,7 @@
         <docker.image.name>i18n-tool</docker.image.name>
         <docker.image.version>${project.version}</docker.image.version>
         <frontend.version>1.12.0</frontend.version>
+        <maven.javadoc.skip>true</maven.javadoc.skip>
 
         <spring-security.version>5.6.1</spring-security.version>
         <spring-session.version>2021.1.1</spring-session.version>
